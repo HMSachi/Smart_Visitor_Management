@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-mas-black text-[#F2F2F7] m-0 antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  * {
+    @apply rounded-none transition-all duration-200;
+    border-radius: 0 !important;
+  }
+}
+
+@layer components {
+  .mas-glass {
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.8)];
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  }
+
+  .mas-panel {
+    @apply bg-mas-dark border border-mas-border shadow-2xl;
+  }
+
+  .mas-input {
+    @apply bg-mas-gray/50 border border-mas-border text-white px-4 py-2 focus:border-mas-red/50 focus:bg-mas-gray transition-all outline-none text-sm tracking-tight;
+  }
+
+  .mas-button-primary {
+    @apply bg-mas-red text-white px-6 py-2.5 hover:bg-[#D91235] active:bg-[#B30E29] transition-all uppercase tracking-[0.2em] font-black text-[10px] relative overflow-hidden;
+  }
+
+  .mas-button-primary::after {
+    content: '';
+    @apply absolute inset-0 bg-white/10 translate-x-[-100%] transition-transform duration-300;
+  }
+
+  .mas-button-primary:hover::after {
+    @apply translate-x-0;
+  }
+
+  .mas-button-outline {
+    @apply bg-transparent border border-mas-red text-mas-red px-6 py-2.5 hover:bg-mas-red hover:text-white transition-all uppercase tracking-[0.2em] font-black text-[10px];
+  }
+
+  .mas-sidebar-item {
+    @apply flex items-center gap-4 px-8 py-5 text-mas-text-dim hover:text-white hover:bg-white/[0.02] border-l-[3px] border-transparent hover:border-mas-red transition-all cursor-pointer;
+  }
+
+  .mas-sidebar-item.active {
+    @apply text-white bg-mas-red/5 border-mas-red;
+  }
+}
+
+/* Glass Shine Effect */
+@keyframes glass-shine {
+  from { transform: translateX(-100%) skewX(-15deg); }
+  to { transform: translateX(200%) skewX(-15deg); }
+}
+
+.animate-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+  animation: glass-shine 3s infinite;
+}
+
+/* Skeleton Loading Animation */
+@keyframes skeleton-loading {
+  0% { background-color: #1C1C1E; }
+  50% { background-color: #2C2C2E; }
+  100% { background-color: #1C1C1E; }
+}
+
+.skeleton {
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+}
+

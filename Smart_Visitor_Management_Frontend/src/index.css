@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  @apply bg-charcoal-900 text-gray-100;
+  margin: 0;
+}
+
+.sharp-glow {
+  @apply border border-mas-red/20 transition-all duration-300;
+}
+
+.sharp-glow:hover {
+  @apply border-mas-red/60 shadow-[0_0_20px_rgba(200,16,46,0.2)];
+}
+
+.glass-panel {
+  @apply bg-charcoal-800/80 backdrop-blur-xl border border-white/5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
