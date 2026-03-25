@@ -33,7 +33,7 @@ const Header = () => {
 
         <button className="flex items-center gap-4 group text-left">
           <div className="hidden md:block">
-            <p className="text-[11px] font-black text-white uppercase tracking-tighter mb-0.5">John Doe</p>
+            <p className="text-[11px] font-black text-white uppercase tracking-tighter mb-0.5">Samith</p>
             <p className="text-[9px] text-mas-red uppercase font-black tracking-widest text-right">ROOT ADMIN</p>
           </div>
           <div className="w-10 h-10 bg-mas-red/10 flex items-center justify-center border border-mas-red/30 group-hover:bg-mas-red group-hover:text-white transition-all text-mas-red">

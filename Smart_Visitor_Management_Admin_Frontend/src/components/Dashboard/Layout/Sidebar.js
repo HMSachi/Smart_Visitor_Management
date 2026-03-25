@@ -37,8 +37,13 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
   return (
     <div className="w-72 h-screen fixed left-0 top-0 bg-mas-dark border-r border-mas-border flex flex-col z-50">
       <div className="p-8 border-b border-mas-border">
-        <div className="flex items-center gap-3">
-          <div className="w-2 h-8 bg-mas-red"></div>
+        <div className="flex items-center gap-4">
+          <img 
+            src="/logo_mas.png" 
+            alt="MAS Logo" 
+            className="h-10 w-auto"
+          />
+          <div className="h-8 w-[1px] bg-mas-border mx-1"></div>
           <div>
             <h1 className="text-xl font-bold tracking-[0.2em] text-white">MAS</h1>
             <p className="text-[10px] tracking-[0.3em] text-mas-text-dim uppercase">Visitor Management</p>
