@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import Header from '../../../components/Contact_Person/Layout/Header';
 import HistoryTable from '../../../components/Contact_Person/History/HistoryTable';
-import { Search, Calendar, Download, Filter, Database } from 'lucide-react';
+import { Search,  Download, Filter, Database } from 'lucide-react';
 
 const VisitorHistory = () => {
-    const [searchTerm, setSearchTerm] = useState('');
+    
 
     const historyData = [
         { id: '1', visitor: 'Michael Brown', date: 'Oct 20, 2024', category: 'Maintenance', status: 'Approved' },

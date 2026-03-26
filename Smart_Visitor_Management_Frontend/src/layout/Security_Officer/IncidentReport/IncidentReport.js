@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Security_Officer/Layout/Sidebar';
 import Header from '../../../components/Security_Officer/Layout/Header';
-import { AlertOctagon, Upload, Trash2, ShieldAlert, Send } from 'lucide-react';
+import { AlertOctagon, Upload,   Send } from 'lucide-react';
 
 const IncidentReport = () => {
     return (

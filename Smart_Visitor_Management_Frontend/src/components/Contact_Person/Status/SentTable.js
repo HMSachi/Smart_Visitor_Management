@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, CheckCircle, XCircle, ChevronRight, Activity } from 'lucide-react';
+import {  CheckCircle, XCircle,  Activity } from 'lucide-react';
 
 const ProgressionTimeline = ({ status }) => {
     const steps = [

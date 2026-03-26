@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from '../../../components/Security_Officer/Layout/Sidebar';
 import Header from '../../../components/Security_Officer/Layout/Header';
-import { ClipboardList, Briefcase, AlertTriangle, Check, X, ShieldCheck } from 'lucide-react';
+import { ClipboardList, Briefcase, AlertTriangle, Check,  ShieldCheck } from 'lucide-react';
 
 const ExitVerification = () => {
     const [checks, setChecks] = useState({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, CheckCircle, XCircle, Clock, Info, ArrowRight } from 'lucide-react';
+import {  CheckCircle, XCircle, Clock, Info, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const NotificationList = ({ notifications }) => {

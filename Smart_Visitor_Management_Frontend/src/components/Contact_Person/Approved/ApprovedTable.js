@@ -1,5 +1,5 @@
 import React from 'react';
-import { Eye, Clock, UserCheck, ArrowRight } from 'lucide-react';
+import {  Clock, UserCheck, ArrowRight } from 'lucide-react';
 
 const ApprovedTable = ({ requests, onQuickView }) => {
     return (

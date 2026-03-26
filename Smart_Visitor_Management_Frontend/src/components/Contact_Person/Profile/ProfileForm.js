@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Mail, Lock, Shield, Save } from 'lucide-react';
+import { User, Mail, Lock,  Save } from 'lucide-react';
 
 const ProfileForm = () => {
 

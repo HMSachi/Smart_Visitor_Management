@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, ShieldAlert, MoreVertical, Plus, Trash2 } from 'lucide-react';
+import { Search,   Plus, Trash2 } from 'lucide-react';
 
 const BlacklistTable = () => {
   const blacklist = [

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import Header from '../../../components/Contact_Person/Layout/Header';
 import NotificationList from '../../../components/Contact_Person/Notifications/NotificationList';
-import { Bell, Settings2, Trash2, CheckSquare } from 'lucide-react';
+import { Bell,  Trash2, CheckSquare } from 'lucide-react';
 
 const Notifications = () => {
     const [notifications, setNotifications] = useState([

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Inbox, ClipboardCheck, LogOut, CheckCircle, XCircle, Send, History, Bell, UserCircle } from 'lucide-react';
+import { LayoutDashboard, Inbox, ClipboardCheck, LogOut, CheckCircle,  Send,  Bell, UserCircle } from 'lucide-react';
 
 const Sidebar = () => {
     const menuItems = [

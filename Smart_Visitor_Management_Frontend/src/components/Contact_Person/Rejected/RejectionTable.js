@@ -1,5 +1,5 @@
 import React from 'react';
-import { Octagon, ShieldAlert, ArrowRight } from 'lucide-react';
+import { Octagon,  ArrowRight } from 'lucide-react';
 
 const RejectionTable = ({ requests, onSelect }) => {
     return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Security_Officer/Layout/Sidebar';
 import Header from '../../../components/Security_Officer/Layout/Header';
-import { Users, MapPin, Clock, Search, ExternalLink } from 'lucide-react';
+import { Users,  Clock, Search, ExternalLink } from 'lucide-react';
 
 const ActiveVisitors = () => {
     const activeVisitors = [

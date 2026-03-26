@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, X, ShieldCheck, AlertCircle, Info, ChevronRight, MessageSquare } from 'lucide-react';
+import { Check, X,  AlertCircle, Info, ChevronRight, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ApprovalChecklist = () => {

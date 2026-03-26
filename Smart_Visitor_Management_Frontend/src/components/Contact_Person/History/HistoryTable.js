@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Download, Filter, Search, Calendar, User, Briefcase, FileText } from 'lucide-react';
+import { ChevronDown, ChevronUp,     User, Briefcase, FileText } from 'lucide-react';
 
 const HistoryTable = ({ history }) => {
     const [expandedRow, setExpandedRow] = useState(null);
