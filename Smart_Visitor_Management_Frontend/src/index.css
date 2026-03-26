@@ -4,14 +4,81 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    color: #D1D1D1 !important;
+    line-height: 1.6 !important;
+    @apply bg-charcoal-900;
+    margin: 0;
+  }
+
+  h1 {
+    font-size: 32px !important;
+  }
+
+  h2, h3 {
+    font-size: 18px !important;
+  }
+
+  h4, h5, h6 {
+    font-size: 13px !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    color: #FFFFFF !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    line-height: 1.4 !important;
+    margin-bottom: 12px !important;
+    font-style: normal !important;
+  }
+
+
+  /* Remove conflicting default styles from headings */
+  h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    color: inherit !important;
+    letter-spacing: inherit !important;
+  }
+
+  label {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 12px !important;
+    color: #888888 !important;
+    font-weight: 500 !important;
+  }
+
+  input, textarea, select {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Reset all fonts to Inter globally to prevent mix */
+  * {
+    font-family: 'Inter', sans-serif;
+  }
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  @apply bg-charcoal-900 text-gray-100;
-  margin: 0;
+@layer components {
+  .subheading {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: #A1A1A1 !important;
+    letter-spacing: 0.3px !important;
+    text-transform: uppercase !important;
+    line-height: 1.5 !important;
+    margin-top: -6px !important; /* Forces 6px gap if following an H* element (12px - 6px = 6px) */
+    margin-bottom: 10px !important; /* 10px spacing before content */
+    display: block;
+  }
 }
 
 .sharp-glow {
@@ -26,11 +93,50 @@ body {
   @apply bg-charcoal-800/80 backdrop-blur-xl border border-white/5;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', sans-serif;
-}
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.mas-glass {
+  @apply bg-[#0A0A0B]/80 backdrop-blur-2xl border border-white/[0.05];
+}
+
+.mas-sidebar-item {
+  @apply flex items-center gap-4 px-8 py-4 cursor-pointer transition-all duration-300 border-l-2 border-transparent hover:bg-white/[0.02];
+}
+
+.mas-sidebar-item.active {
+  @apply bg-mas-red/[0.03] border-mas-red;
+}
+
+.mas-input {
+  @apply bg-mas-black border border-mas-border px-4 py-3 text-white focus:outline-none focus:border-mas-red transition-all;
+}
+
+.bg-mas-black {
+  background-color: #0A0A0B;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0.1s; }
+.stagger-item:nth-child(2) { animation-delay: 0.2s; }
+.stagger-item:nth-child(3) { animation-delay: 0.3s; }
+.stagger-item:nth-child(4) { animation-delay: 0.4s; }

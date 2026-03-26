@@ -8,6 +8,11 @@ module.exports = {
     extend: {
       colors: {
         'mas-red': '#C8102E',
+        'mas-black': '#000000',
+        'mas-dark': '#0F0F10',
+        'mas-gray': '#1A1A1A',
+        'mas-border': 'rgba(255, 255, 255, 0.05)',
+        'mas-text-dim': '#888888',
         'charcoal': {
             800: '#121212',
             900: '#0F0F10',

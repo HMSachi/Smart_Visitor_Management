@@ -1,0 +1,68 @@
+import React, { useState } from 'react';
+import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
+import Header from '../../../components/Contact_Person/Layout/Header';
+import RejectionTable from '../../../components/Contact_Person/Rejected/RejectionTable';
+import RejectionAlertPanel from '../../../components/Contact_Person/Rejected/RejectionAlertPanel';
+import { XCircle } from 'lucide-react';
+
+const RejectedRequests = () => {
+    const [selectedVisitor, setSelectedVisitor] = useState(null);
+
+    const requests = [
+        { 
+            id: 'VR-2024-004', 
+            name: 'Robert Brown', 
+            date: 'Oct 27, 2024', 
+            reason: 'Invalid Identification Protocol', 
+            comments: 'Passport verification failed at primary node. Expired documentation detected.' 
+        },
+        { 
+            id: 'VR-2024-005', 
+            name: 'Emma Wilson', 
+            date: 'Oct 26, 2024', 
+            reason: 'Access Range Restriction', 
+            comments: 'Visitor requested access to restricted Production Area 08 without Tier-1 clearance.' 
+        },
+        { 
+            id: 'VR-2024-006', 
+            name: 'Michael Davis', 
+            date: 'Oct 25, 2024', 
+            reason: 'Duplicate System Node Entry', 
+            comments: 'Active session already exists for this NIC. Suspected duplicate registration attempt.' 
+        },
+    ];
+
+    return (
+        <div className="flex min-h-screen bg-mas-black overflow-x-hidden text-white">
+            <Sidebar />
+            
+            <main className="flex-1 ml-72 flex flex-col min-w-0 bg-[#0A0A0B]">
+                <Header title="Rejected Requests" />
+
+                <div className="p-12 space-y-12 animate-fade-in">
+                    <div className="flex items-end justify-between border-b border-mas-border pb-8">
+                        <div>
+                            <div className="flex items-center gap-4 mb-4">
+                                <XCircle size={14} className="text-mas-red" />
+                                <span className="text-mas-red uppercase">Protocol Breach Log</span>
+                                <div className="h-[1px] w-12 bg-mas-red"></div>
+                            </div>
+                            <h1 className="uppercase text-white">Rejection Tracking</h1>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 items-start">
+                        <div className="xl:col-span-2">
+                             <RejectionTable requests={requests} onSelect={setSelectedVisitor} />
+                        </div>
+                        <div>
+                             <RejectionAlertPanel visitor={selectedVisitor} />
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+};
+
+export default RejectedRequests;
