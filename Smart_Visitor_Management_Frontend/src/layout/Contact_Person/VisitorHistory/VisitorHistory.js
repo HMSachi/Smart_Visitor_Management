@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import Header from '../../../components/Contact_Person/Layout/Header';
 import HistoryTable from '../../../components/Contact_Person/History/HistoryTable';
