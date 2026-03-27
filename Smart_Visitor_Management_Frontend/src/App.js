@@ -3,14 +3,19 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import store from './store';
 import Layout from './layout/Layout';
 import HeaderComponent from './components/Visitor/Header/HeaderComponent';
-import Home from './layout/Visitor/home/home';
-import AccessPage from './layout/Visitor/access/AccessPage';
-import Step1Request from './layout/Visitor/request/Step1Request';
-import Step2Request from './layout/Visitor/request/Step2Request';
-import StatusPage from './layout/Visitor/status/StatusPage';
-import QRPage from './layout/Visitor/qr/QRPage';
-import InstructionsPage from './layout/Visitor/instructions/InstructionsPage';
-import AdminDashboard from './layout/Admin/Dashboard';
+import Home from './layout/Visitor/Home/Home';
+import AccessPage from './layout/Visitor/Access/Access';
+import Step1Request from './layout/Visitor/Request/Step1';
+import Step2Request from './layout/Visitor/Request/Step2';
+import StatusPage from './layout/Visitor/Status/Status';
+import QRPage from './layout/Visitor/QR/QR';
+import InstructionsPage from './layout/Visitor/Instructions/Instructions';
+import AdminDashboard from './layout/Admin/Dashboard/Dashboard';
+import ApprovalManagement from './layout/Admin/ApprovalManagement/ApprovalManagement';
+import SecurityMonitoringPage from './layout/Admin/SecurityMonitoring/SecurityMonitoring';
+import BlacklistManagement from './layout/Admin/BlacklistManagement/BlacklistManagement';
+import ReportsAndLogs from './layout/Admin/ReportsAndLogs/ReportsAndLogs';
+import UserManagement from './layout/Admin/UserManagement/UserManagement';
 
 import LoginPage from './layout/Login/LoginPage';
 
@@ -32,13 +37,13 @@ import ActiveVisitors from './layout/Security_Officer/ActiveVisitors/ActiveVisit
 import ExitVerification from './layout/Security_Officer/ExitVerification/ExitVerification';
 import IncidentReport from './layout/Security_Officer/IncidentReport/IncidentReport';
 import LogsHistory from './layout/Security_Officer/LogsHistory/LogsHistory';
-import SecurityNotifications from './layout/Security_Officer/Notifications/SecurityNotifications';
-import SecurityDashboard from './layout/Security_Officer/Dashboard/SecurityDashboard';
+import SecurityNotifications from './layout/Security_Officer/Notifications/Notifications';
+import SecurityDashboard from './layout/Security_Officer/Dashboard/Dashboard';
 
 const AppContent = () => {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
-  const isDashboardPath = location.pathname.startsWith('/admin-dashboard') || 
+  const isDashboardPath = location.pathname.startsWith('/admin') || 
                           location.pathname.startsWith('/contact_person') || 
                           location.pathname.startsWith('/security-dashboard') ||
                           location.pathname.startsWith('/Security_Officer');
@@ -61,8 +66,14 @@ const AppContent = () => {
           <Route path="/qr" element={<QRPage />} />
           <Route path="/instructions" element={<InstructionsPage />} />
           
-          {/* Role-Based Dashboards */}
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          {/* Admin Routes */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/approval-management" element={<ApprovalManagement />} />
+          <Route path="/admin/security-monitoring" element={<SecurityMonitoringPage />} />
+          <Route path="/admin/blacklist-management" element={<BlacklistManagement />} />
+          <Route path="/admin/reports-logs" element={<ReportsAndLogs />} />
+          <Route path="/admin/user-management" element={<UserManagement />} />
+          <Route path="/admin-dashboard" element={<Navigate to="/admin/dashboard" replace />} />
           
           {/* Contact Person Routes */}
           <Route path="/contact_person/dashboard" element={<ContactDashboard />} />
