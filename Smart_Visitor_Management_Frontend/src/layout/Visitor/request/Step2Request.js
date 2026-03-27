@@ -3,6 +3,7 @@ import VisitorGroup from '../../../components/Visitor/Request/Step2/VisitorGroup
 import EquipmentDeclaration from '../../../components/Visitor/Request/Step2/EquipmentDeclaration';
 import IdentificationUpload from '../../../components/Visitor/Request/Step2/IdentificationUpload';
 import Phase1Summary from '../../../components/Visitor/Request/Step2/Phase1Summary';
+import { getLastRequestId, getStep1SummaryFromLatest, updateVisitorRequestStep2 } from '../../../services/visitorRequestService';
 
 const Step2Request = () => {
     const [visitors, setVisitors] = useState([{ id: Date.now(), fullName: '', nic: '', contact: '' }]);
@@ -11,14 +12,9 @@ const Step2Request = () => {
     const [status, setStatus] = useState(null); // 'submitting', 'review', 'rejected', 'approved'
     const [uploadProgress, setUploadProgress] = useState(0);
     const [uploadedFile, setUploadedFile] = useState(null);
+    const [requestId] = useState(getLastRequestId());
 
-    // Step 1 Summary Mock
-    const step1Summary = {
-        date: '2026-03-25',
-        purpose: 'BUSINESS MEETING',
-        visitors: 1,
-        areas: ['MAIN RECEPTION', 'CORPORATE OFFICE']
-    };
+    const step1Summary = getStep1SummaryFromLatest();
 
     const addVisitor = () => {
         setVisitors([...visitors, { id: Date.now(), fullName: '', nic: '', contact: '' }]);
@@ -57,10 +53,29 @@ const Step2Request = () => {
         setUploadProgress(0);
     };
 
+    const updateVisitor = (id, field, value) => {
+        setVisitors((prev) => prev.map((item) => (
+            item.id === id ? { ...item, [field]: value } : item
+        )));
+    };
+
+    const updateEquipment = (id, field, value) => {
+        setEquipment((prev) => prev.map((item) => (
+            item.id === id ? { ...item, [field]: value } : item
+        )));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         setStatus('submitting');
-        setTimeout(() => setStatus('review'), 2000);
+        setTimeout(() => {
+            updateVisitorRequestStep2(requestId, {
+                visitors,
+                equipment,
+                uploadedFile,
+            });
+            setStatus('review');
+        }, 2000);
     };
 
     if (status === 'review') {
@@ -110,8 +125,8 @@ const Step2Request = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-24">
-                    <VisitorGroup visitors={visitors} onAdd={addVisitor} onRemove={removeVisitor} />
-                    <EquipmentDeclaration items={equipment} onAdd={addEquipment} onRemove={removeEquipment} />
+                    <VisitorGroup visitors={visitors} onAdd={addVisitor} onRemove={removeVisitor} onChange={updateVisitor} />
+                    <EquipmentDeclaration items={equipment} onAdd={addEquipment} onRemove={removeEquipment} onChange={updateEquipment} />
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                         <IdentificationUpload 

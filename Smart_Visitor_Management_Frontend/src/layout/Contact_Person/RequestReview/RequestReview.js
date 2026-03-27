@@ -1,36 +1,57 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import Header from '../../../components/Contact_Person/Layout/Header';
 import { VisitorIdentification, VisitParameters, VehicleConfiguration, GroupMembers, EquipmentManifest, DocumentReview } from '../../../components/Contact_Person/Review/ReviewSections';
 import ReviewActions from '../../../components/Contact_Person/Review/ReviewActions';
 import RejectionModal from '../../../components/Contact_Person/Review/RejectionModal';
+import ApprovalModal from '../../../components/Contact_Person/Review/ApprovalModal';
 import { ArrowLeft } from 'lucide-react';
+import { getAllVisitorRequests, getVisitorRequestById, updateVisitorRequestStatus } from '../../../services/visitorRequestService';
 
 const RequestReview = () => {
     const navigate = useNavigate();
-    const [openSections, setOpenSections] = useState({
-        visitor: true,
-        visit: true,
-        vehicle: false,
-        group: false,
-        equipment: false,
-        docs: false
-    });
+    const location = useLocation();
+    const [requestData, setRequestData] = useState(null);
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectionReason, setRejectionReason] = useState('');
     const [rejectionComment, setRejectionComment] = useState('');
+    const [showApproveModal, setShowApproveModal] = useState(false);
+    const [approvalComment, setApprovalComment] = useState('');
 
-    const toggleSection = (section) => {
-        setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
-    };
+    useEffect(() => {
+        const selectedId = location.state?.requestId;
+        const selectedRequest = selectedId
+            ? getVisitorRequestById(selectedId)
+            : getAllVisitorRequests()[0] || null;
+        setRequestData(selectedRequest);
+    }, [location.state]);
 
-    const handleApprove = () => {
+
+
+    const confirmApprove = () => {
+        if (requestData?.id) {
+            updateVisitorRequestStatus(requestData.id, 'Approved', {
+                comment: approvalComment,
+            });
+        }
         alert('Request Approved & Sent to Admin');
+        setShowApproveModal(false);
         navigate('/contact_person/requests-inbox');
     };
 
     const confirmReject = () => {
+        if (!rejectionComment.trim()) {
+           alert('Detailed observations are required for rejection.');
+           return;
+        }
+
+        if (requestData?.id) {
+            updateVisitorRequestStatus(requestData.id, 'Rejected', {
+                reason: rejectionReason,
+                comment: rejectionComment,
+            });
+        }
         alert(`Request Rejected: ${rejectionReason}`);
         setShowRejectModal(false);
         navigate('/contact_person/requests-inbox');
@@ -58,29 +79,35 @@ const RequestReview = () => {
                                 <span className="text-mas-text-dim uppercase mb-1">Current Sync Status</span>
                                 <div className="flex items-center gap-2">
                                      <div className="w-1.5 h-1.5 rounded-full bg-mas-red animate-pulse"></div>
-                                     <span className="uppercase text-mas-red">Pending Node Approval</span>
+                                     <span className="uppercase text-mas-red">{requestData?.status || 'Pending Node Approval'}</span>
                                 </div>
                             </div>
                             <div className="h-8 w-px bg-mas-border"></div>
-                            <span className="text-white">#VR-2024-001</span>
+                            <span className="text-white">#{requestData?.id || 'N/A'}</span>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-                        <div className="lg:col-span-2 space-y-4">
-                            <VisitorIdentification isOpen={openSections.visitor} onToggle={toggleSection} />
-                            <VisitParameters isOpen={openSections.visit} onToggle={toggleSection} />
-                            <VehicleConfiguration isOpen={openSections.vehicle} onToggle={toggleSection} />
-                            <GroupMembers isOpen={openSections.group} onToggle={toggleSection} />
-                            <EquipmentManifest isOpen={openSections.equipment} onToggle={toggleSection} />
-                            <DocumentReview isOpen={openSections.docs} onToggle={toggleSection} />
-                        </div>
+                    <div className="space-y-4">
+                        <VisitorIdentification request={requestData} />
+                        <VisitParameters request={requestData} />
+                        <VehicleConfiguration request={requestData} />
+                        <GroupMembers request={requestData} />
+                        <EquipmentManifest request={requestData} />
+                        <DocumentReview request={requestData} />
+                    </div>
 
-                        <div>
-                            <ReviewActions onApprove={handleApprove} onReject={() => setShowRejectModal(true)} />
-                        </div>
+                    <div className="mt-8">
+                        <ReviewActions onApprove={() => setShowApproveModal(true)} onReject={() => setShowRejectModal(true)} />
                     </div>
                 </div>
+
+                <ApprovalModal
+                    isOpen={showApproveModal}
+                    onClose={() => setShowApproveModal(false)}
+                    onConfirm={confirmApprove}
+                    comment={approvalComment}
+                    setComment={setApprovalComment}
+                />
 
                 <RejectionModal 
                     isOpen={showRejectModal} 

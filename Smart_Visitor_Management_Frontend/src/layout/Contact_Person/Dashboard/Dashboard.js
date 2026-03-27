@@ -2,8 +2,7 @@ import React from 'react';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import Header from '../../../components/Contact_Person/Layout/Header';
 import MetricsGrid from '../../../components/Contact_Person/Dashboard/MetricsGrid';
-import ActivityTimeline from '../../../components/Contact_Person/Dashboard/ActivityTimeline';
-import { PerformanceAnalytics, NodeConfiguration } from '../../../components/Contact_Person/Dashboard/DashboardElements';
+import { PerformanceAnalytics } from '../../../components/Contact_Person/Dashboard/DashboardElements';
 
 const Dashboard = () => {
     return (
@@ -16,15 +15,6 @@ const Dashboard = () => {
                 <div className="p-12 space-y-12 animate-fade-in">
                     <PerformanceAnalytics />
                     <MetricsGrid />
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                        <div className="lg:col-span-2">
-                            <ActivityTimeline />
-                        </div>
-                        <div>
-                            <NodeConfiguration />
-                        </div>
-                    </div>
                 </div>
             </main>
         </div>

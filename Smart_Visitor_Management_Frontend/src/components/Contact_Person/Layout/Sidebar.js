@@ -6,11 +6,8 @@ const Sidebar = () => {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/contact_person/dashboard' },
         { id: 'inbox', label: 'Requests Inbox', icon: Inbox, path: '/contact_person/requests-inbox' },
-        { id: 'review', label: 'Request Review', icon: ClipboardCheck, path: '/contact_person/request-review' },
-        { id: 'approved', label: 'Approved Entries', icon: CheckCircle, path: '/contact_person/approved-requests' },
-        { id: 'sent', label: 'Waiting for Admin', icon: Send, path: '/contact_person/sent-to-admin' },
+        { id: 'approved', label: 'Admin Approved Forms', icon: CheckCircle, path: '/contact_person/approved-requests' },
         { id: 'notifications', label: 'Notifications', icon: Bell, path: '/contact_person/notifications' },
-        { id: 'profile', label: 'Profile', icon: UserCircle, path: '/contact_person/profile-settings' },
     ];
 
     return (

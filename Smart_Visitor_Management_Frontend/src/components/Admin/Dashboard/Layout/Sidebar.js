@@ -27,7 +27,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'approvals', label: 'Approval Management', icon: CheckSquare },
-    { id: 'qrcode', label: 'QR Code Management', icon: QrCode },
     { id: 'security', label: 'Security Monitoring', icon: ShieldAlert },
     { id: 'blacklist', label: 'Blacklist Management', icon: UserX },
     { id: 'reports', label: 'Reports & Logs', icon: FileText },

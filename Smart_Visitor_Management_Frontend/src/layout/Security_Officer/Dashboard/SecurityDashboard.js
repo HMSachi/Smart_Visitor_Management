@@ -2,7 +2,7 @@ import React from 'react';
 import Sidebar from '../../../components/Security_Officer/Layout/Sidebar';
 import Header from '../../../components/Security_Officer/Layout/Header';
 import SecurityMetrics from '../../../components/Security_Officer/Dashboard/SecurityMetrics';
-import { Shield, Zap, Activity, Clock } from 'lucide-react';
+import { Shield, Zap } from 'lucide-react';
 
 const SecurityDashboard = () => {
     return (
@@ -47,73 +47,7 @@ const SecurityDashboard = () => {
 
                     <SecurityMetrics />
 
-                    {/* Operational Overview */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                         <div className="mas-glass p-12 border-mas-border space-y-8 relative overflow-hidden">
-                             <div className="flex items-center justify-between">
-                                 <div className="flex items-center gap-4">
-                                     <Activity size={18} className="text-mas-red" />
-                                     <h3 className="uppercase text-white">Recent Activity Node</h3>
-                                 </div>
-                                 <button className="text-mas-text-dim uppercase hover:text-white transition-colors underline decoration-mas-red underline-offset-8">View Full Log</button>
-                             </div>
-                             <div className="space-y-6">
-                                 {[
-                                     { time: '12:45:01', action: 'Identity Sync Success', sub: 'Visitor John Doe | VER-4291', status: 'COMPLETED' },
-                                     { time: '12:30:15', action: 'QR Protocol Initiated', sub: 'Personnel Emma Watson', status: 'COMPLETED' },
-                                     { time: '12:15:30', action: 'Manual Override Logged', sub: 'Admin ID: 8812 - Node 04', status: 'FLAGGED' },
-                                 ].map((log, i) => (
-                                     <div key={i} className="flex items-center justify-between p-6 bg-white/[0.01] border border-white/5 hover:border-white/10 transition-all">
-                                         <div className="flex items-center gap-8">
-                                             <span className="text-mas-red">{log.time}</span>
-                                             <div>
-                                                 <p className="uppercase text-white mb-1.5">{log.action}</p>
-                                                 <p className="text-mas-text-dim uppercase">{log.sub}</p>
-                                             </div>
-                                         </div>
-                                         <span className={`px-3 py-1 border ${log.status === 'FLAGGED' ? 'border-mas-red text-mas-red' : 'border-mas-text-dim/20 text-mas-text-dim'}`}>{log.status}</span>
-                                     </div>
-                                 ))}
-                             </div>
-                         </div>
 
-                         <div className="mas-glass p-12 border-mas-border space-y-8 relative overflow-hidden">
-                             <div className="flex items-center gap-4 mb-8">
-                                 <Clock size={18} className="text-mas-red" />
-                                 <h3 className="uppercase text-white">Facility Load Tracking</h3>
-                             </div>
-                             <div className="space-y-8">
-                                 <div className="space-y-4">
-                                     <div className="flex justify-between items-end">
-                                         <span className="text-white uppercase">Production Area Load</span>
-                                         <span className="text-mas-red">78%</span>
-                                     </div>
-                                     <div className="h-1.5 w-full bg-white/5">
-                                         <div className="h-full bg-mas-red shadow-[0_0_15px_rgba(200,16,46,0.5)]" style={{ width: '78%' }}></div>
-                                     </div>
-                                 </div>
-                                 <div className="space-y-4">
-                                     <div className="flex justify-between items-end">
-                                         <span className="text-white uppercase">Office Block Capacity</span>
-                                         <span className="text-white">42%</span>
-                                     </div>
-                                     <div className="h-1.5 w-full bg-white/5">
-                                         <div className="h-full bg-white/20" style={{ width: '42%' }}></div>
-                                     </div>
-                                 </div>
-                                 <div className="pt-8 grid grid-cols-2 gap-8 border-t border-white/5">
-                                     <div>
-                                         <p className="text-mas-text-dim uppercase mb-1">Total Entry (24h)</p>
-                                         <p className="text-white">412</p>
-                                     </div>
-                                     <div>
-                                         <p className="text-mas-text-dim uppercase mb-1">Current Alerts</p>
-                                         <p className="text-mas-red">02</p>
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
-                    </div>
                 </div>
             </main>
         </div>

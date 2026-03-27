@@ -4,21 +4,17 @@ import { Link } from 'react-router-dom';
 const WelcomeSection = () => {
     return (
         <section className="relative min-h-screen flex items-center pt-20 overflow-hidden text-white">
-            {/* Background Video */}
+            {/* Background Image */}
             <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
-                <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="absolute min-w-full min-h-full object-cover object-[center_10%]"
-                >
-                    <source src="/main_img.mp4" type="video/mp4" />
-                </video>
-                {/* Dark Overlay (Shade) */}
-                <div className="absolute inset-0 bg-black/70 z-10"></div>
-                {/* Optional: Gradient to blend better */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent z-20"></div>
+                <img
+                    src="/main.jpeg"
+                    alt="Background Facility"
+                    className="absolute w-full h-full object-cover object-[center_10%]"
+                />
+                {/* Dark Overlay (Shade) - Fades from dark on left (for text readability) to transparent on right (to show colorful image) */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0b] via-[#0a0a0b]/60 to-transparent z-10"></div>
+                {/* Optional: Subtle colorful gradient on the right side */}
+                <div className="absolute inset-0 bg-gradient-to-l from-mas-red/10 to-transparent mix-blend-overlay z-20"></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
