@@ -3,6 +3,7 @@ import VisitorOverview from '../../../components/Visitor/Request/Step1/VisitorOv
 import VisitInformation from '../../../components/Visitor/Request/Step1/VisitInformation';
 import VehicleDetails from '../../../components/Visitor/Request/Step1/VehicleDetails';
 import AreasToVisit from '../../../components/Visitor/Request/Step1/AreasToVisit';
+import { createVisitorRequest } from '../../../services/visitorRequestService';
 
 const Step1Request = () => {
     const [formData, setFormData] = useState({
@@ -21,6 +22,7 @@ const Step1Request = () => {
     });
 
     const [status, setStatus] = useState(null); // 'submitting', 'sent', 'rejected'
+    const [requestRef, setRequestRef] = useState('MAS-VAS-PENDING');
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -51,6 +53,10 @@ const Step1Request = () => {
         e.preventDefault();
         setStatus('submitting');
         setTimeout(() => {
+            const createdRequest = createVisitorRequest(formData);
+            if (createdRequest?.id) {
+                setRequestRef(createdRequest.id);
+            }
             setStatus('sent');
         }, 1500);
     };
@@ -66,7 +72,7 @@ const Step1Request = () => {
                     </div>
                     <h2 className="uppercase mb-4">Request Sent for Approval</h2>
                     <p className="text-gray-300 mb-12 uppercase">
-                        Your basic clearance request has been dispatched to the MAS Security Node. <br /> Reference: <span className="text-mas-red">MAS-VAS-PENDING</span>
+                        Your basic clearance request has been dispatched to the MAS Security Node. <br /> Reference: <span className="text-mas-red">{requestRef}</span>
                     </p>
                     <button 
                         onClick={() => window.location.href = '/status'}

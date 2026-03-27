@@ -15,11 +15,11 @@ const VerificationPanel = () => {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="flex flex-col gap-12 w-full max-w-4xl mx-auto">
             {/* Details Panel */}
-            <div className="space-y-8">
+            <div className="flex flex-col gap-12">
                     {/* Visitor Main */}
-                    <div className="mas-glass p-10 border-mas-border space-y-10 relative overflow-hidden">
+                    <div className="mas-glass p-10 border-mas-border space-y-10 relative overflow-hidden h-full">
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                         <User size={120} />
                     </div>
@@ -58,8 +58,8 @@ const VerificationPanel = () => {
                     </div>
 
                     {/* Equipment & Vehicle */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="mas-glass p-10 border-mas-border relative overflow-hidden group">
+                    <div className="flex flex-col gap-8 h-full">
+                    <div className="mas-glass p-10 border-mas-border relative overflow-hidden group flex-1">
                         <div className="flex items-center gap-4 mb-8">
                             <Car size={18} className="text-mas-red" />
                             <h3 className="uppercase text-white">Vehicle Manifest</h3>
@@ -73,7 +73,7 @@ const VerificationPanel = () => {
                         </div>
                     </div>
 
-                    <div className="mas-glass p-10 border-mas-border relative overflow-hidden group">
+                    <div className="mas-glass p-10 border-mas-border relative overflow-hidden group flex-1">
                             <div className="flex items-center gap-4 mb-8">
                             <Briefcase size={18} className="text-mas-red" />
                             <h3 className="uppercase text-white">Asset Registry</h3>
@@ -91,15 +91,15 @@ const VerificationPanel = () => {
             </div>
 
             {/* Validation Status Panel */}
-            <div className="xl:sticky xl:top-36 h-fit space-y-8">
-                    <div className={`mas-glass p-12 border-2 relative overflow-hidden ${visitorData.mismatch ? 'border-mas-red shadow-[inset_0_0_50px_rgba(200,16,46,0.1)]' : 'border-green-500/30'}`}>
-                        <div className="flex flex-col items-center text-center space-y-8">
+            <div className="h-fit space-y-8">
+                    <div className={`mas-glass p-12 lg:py-24 border-2 relative overflow-hidden ${visitorData.mismatch ? 'border-mas-red shadow-[inset_0_0_50px_rgba(200,16,46,0.1)]' : 'border-green-500/30'}`}>
+                        <div className="flex flex-col items-center text-center space-y-8 max-w-2xl mx-auto">
                             <div className={`w-24 h-24 flex items-center justify-center rounded-none border-2 p-4 animate-pulse ${visitorData.mismatch ? 'border-mas-red text-mas-red' : 'border-green-500 text-green-500'}`}>
                                 {visitorData.mismatch ? <AlertTriangle size={48} /> : <CheckCircle2 size={48} />}
                             </div>
                             
                             <div className="space-y-2">
-                                <h3 className={`uppercase ${visitorData.mismatch ? 'text-mas-red' : 'text-green-500'}`}>
+                                <h3 className={`uppercase text-2xl ${visitorData.mismatch ? 'text-mas-red' : 'text-green-500'}`}>
                                     {visitorData.mismatch ? 'PROTOCOL BREACH' : 'AUTHENTICATION SUCCESS'}
                                 </h3>
                                 <p className="text-mas-text-dim uppercase">
@@ -121,7 +121,7 @@ const VerificationPanel = () => {
 
                             <button 
                             onClick={() => window.location.href = '/Security_Officer/entry-approval'}
-                            className={`w-full py-5 uppercase transition-all ${visitorData.mismatch ? 'bg-mas-red text-white shadow-[0_0_30px_rgba(200,16,46,0.2)]' : 'bg-green-600 text-white shadow-[0_0_30px_rgba(34,197,94,0.2)]'}`}
+                            className={`w-full py-5 text-lg uppercase transition-all ${visitorData.mismatch ? 'bg-mas-red text-white shadow-[0_0_30px_rgba(200,16,46,0.2)]' : 'bg-green-600 text-white shadow-[0_0_30px_rgba(34,197,94,0.2)]'}`}
                             >
                                 Proceed to Final Approval
                             </button>

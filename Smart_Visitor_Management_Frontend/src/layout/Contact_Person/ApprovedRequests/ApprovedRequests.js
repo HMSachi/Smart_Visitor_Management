@@ -10,9 +10,9 @@ const ApprovedRequests = () => {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
 
     const requests = [
-        { id: 'VR-2024-001', name: 'John Doe', date: 'Oct 28, 2024', adminStatus: 'Pending Dispatch' },
-        { id: 'VR-2024-002', name: 'Sarah Smith', date: 'Oct 29, 2024', adminStatus: 'Pending Dispatch' },
-        { id: 'VR-2024-003', name: 'Michael Chen', date: 'Oct 28, 2024', adminStatus: 'Admin Approved' },
+        { id: 'VR-2026-001', name: 'ADITHYA BANDARA', date: 'Mar 25, 2026', adminStatus: 'Pending Dispatch' },
+        { id: 'VR-2026-002', name: 'KASUN PERERA', date: 'Mar 25, 2026', adminStatus: 'Pending Dispatch' },
+        { id: 'VR-2026-003', name: 'SARAH JENKINS', date: 'Mar 24, 2026', adminStatus: 'Dispatched to Visitor' },
     ];
 
     const handleQuickView = (visitor) => {

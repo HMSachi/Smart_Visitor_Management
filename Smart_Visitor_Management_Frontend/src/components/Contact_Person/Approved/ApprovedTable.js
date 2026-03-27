@@ -31,7 +31,7 @@ const ApprovedTable = ({ requests, onQuickView }) => {
                             </td>
                             <td className="px-6 py-6 whitespace-nowrap">
                                 <div className={`inline-flex items-center gap-2 px-4 py-1 border uppercase ${req.adminStatus === 'Pending Dispatch' ? 'text-mas-red border-mas-red/20 bg-mas-red/5' : 'text-green-400 border-green-400/20 bg-green-400/5'}`}>
-                                    {req.adminStatus === 'Admin Approved' ? <UserCheck size={10} /> : <Clock size={10} />}
+                                    {req.adminStatus === 'Dispatched to Visitor' ? <UserCheck size={10} /> : <Clock size={10} />}
                                     {req.adminStatus}
                                 </div>
                             </td>
