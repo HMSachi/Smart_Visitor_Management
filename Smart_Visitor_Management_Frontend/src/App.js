@@ -1,5 +1,7 @@
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import store from './store';
 import Layout from './layout/Layout';
 import HeaderComponent from './components/Visitor/Header/HeaderComponent';
@@ -39,6 +41,22 @@ import IncidentReport from './layout/Security_Officer/IncidentReport/IncidentRep
 import LogsHistory from './layout/Security_Officer/LogsHistory/LogsHistory';
 import SecurityNotifications from './layout/Security_Officer/Notifications/Notifications';
 import SecurityDashboard from './layout/Security_Officer/Dashboard/Dashboard';
+
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#E50914', // MAS Red
+    },
+    background: {
+      default: '#0A0A0B',
+      paper: '#121214',
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+  },
+});
 
 const AppContent = () => {
   const location = useLocation();
@@ -110,11 +128,15 @@ const AppContent = () => {
 function App() {
   return (
     <Provider store={store}>
-      <Router>
-        <AppContent />
-      </Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <AppContent />
+        </Router>
+      </ThemeProvider>
     </Provider>
   );
 }
 
 export default App;
+

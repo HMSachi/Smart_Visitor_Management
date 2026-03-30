@@ -1,34 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, Eye, EyeOff, Shield, Users, User, ArrowRight } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { 
+  Box, 
+  Button, 
+  Container, 
+  TextField, 
+  Typography, 
+  IconButton, 
+  InputAdornment, 
+  Paper, 
+  Tab, 
+  Tabs,
+  CircularProgress,
+  Fade,
+  Stack
+} from '@mui/material';
+import { 
+  Lock, 
+  Mail, 
+  Eye, 
+  EyeOff, 
+  Shield, 
+  Users as UsersIcon, 
+  User as UserIcon, 
+  ArrowForward as ArrowForwardIcon 
+} from '@mui/icons-material';
+import { GetLogin } from '../../actions/LoginAction';
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { isLoading: reduxLoading, error: reduxError, user } = useSelector(state => state.login);
+
     const [role, setRole] = useState('visitor');
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [localError, setLocalError] = useState('');
 
     const roles = [
         { id: 'admin', label: 'Admin', icon: Shield },
-        { id: 'contact', label: 'Contact Person', icon: Users },
+        { id: 'contact', label: 'Contact Person', icon: UsersIcon },
         { id: 'security', label: 'Security', icon: Lock },
-        { id: 'visitor', label: 'Visitor', icon: User },
+        { id: 'visitor', label: 'Visitor', icon: UserIcon },
     ];
+
+    useEffect(() => {
+        if (user) {
+            // Success logic based on user payload
+        }
+    }, [user]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-        setError('');
+        setLocalError('');
+    };
+
+    const handleRoleChange = (event, newRole) => {
+        if (newRole) setRole(newRole);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        setError('');
+        setLocalError('');
 
-        // Simulate Login Logic
+        // Dispatch Redux Action
+        dispatch(GetLogin());
+
+        // Simulate Navigation (Keep original logic but integrate with Redux state)
         setTimeout(() => {
             const { email, password } = formData;
             
@@ -36,9 +76,8 @@ const LoginPage = () => {
                 if (email === 'visitor@company.com' && password === '123456') {
                     navigate('/home');
                 } else {
-                    setError('Invalid visitor credentials.');
+                    setLocalError('Invalid visitor credentials.');
                 }
-                setIsLoading(false);
                 return;
             }
 
@@ -50,174 +89,275 @@ const LoginPage = () => {
                 } else if (role === 'security' && email === 'security@company.com') {
                     navigate('/security-dashboard');
                 } else {
-                    setError('Invalid credentials for selected role.');
+                    setLocalError('Invalid credentials for selected role.');
                 }
             } else {
-                setError('Invalid password. Please try again.');
+                setLocalError('Invalid password. Please try again.');
             }
-            setIsLoading(false);
         }, 1500);
     };
 
     return (
-        <div className="min-h-screen bg-[#0E0E10] text-white flex flex-col md:flex-row font-sans selection:bg-[#E50914] selection:text-white">
-            
+        <Box 
+            sx={{ 
+                minHeight: '100vh', 
+                bgcolor: '#0E0E10', 
+                color: 'white', 
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                fontFamily: 'Inter, sans-serif'
+            }}
+        >
             {/* Left Box: Branding & Vision */}
-            <div className="hidden md:flex flex-col md:w-[45%] lg:w-[40%] bg-black relative overflow-hidden items-center justify-center p-12 lg:p-20 border-r border-white/5 shadow-[20px_0_50px_rgba(0,0,0,0.5)] z-20">
-                {/* Subtle animated grid background */}
-                <div className="absolute inset-0 z-0 opacity-[0.03]"
-                     style={{
-                         backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)',
-                         backgroundSize: '40px 40px'
-                     }}>
-                </div>
+            <Box 
+                sx={{ 
+                    display: { xs: 'none', md: 'flex' },
+                    flexDirection: 'column',
+                    width: { md: '45%', lg: '40%' },
+                    bgcolor: 'black',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    p: { md: 8, lg: 12 },
+                    borderRight: '1px solid rgba(255,255,255,0.05)',
+                    zIndex: 20
+                }}
+            >
+                <Box 
+                    sx={{ 
+                        position: 'absolute', 
+                        inset: 0, 
+                        opacity: 0.03,
+                        backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)',
+                        backgroundSize: '40px 40px'
+                    }}
+                />
                 
-                {/* Floating subtle red glow blobs behind logo */}
-                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#E50914]/10 rounded-full blur-[100px] pointer-events-none"></div>
+                <Box 
+                    sx={{ 
+                        position: 'absolute', 
+                        top: '33%', 
+                        left: '50%', 
+                        transform: 'translate(-50%, -50%)', 
+                        width: 400, 
+                        height: 400, 
+                        bgcolor: 'rgba(229, 9, 20, 0.1)', 
+                        borderRadius: '50%', 
+                        filter: 'blur(100px)',
+                        pointerEvents: 'none'
+                    }}
+                />
 
-                <div className="relative z-10 flex flex-col items-center text-center animate-fade-in">
-                    <img src="/logo_mas.png" alt="MAS Logo" className="h-28 w-auto mx-auto mb-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform duration-700 hover:scale-105" />
-                    <h1 className="text-4xl lg:text-5xl font-black text-white uppercase tracking-tight mb-4">MAS <span className="text-[#E50914]">ACCESS</span></h1>
-                    <p className="text-gray-400 text-lg lg:text-xl font-light tracking-[0.2em] uppercase">Change is Courage</p>
+                <Box sx={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
+                    <img src="/logo_mas.png" alt="MAS Logo" style={{ height: '7rem', width: 'auto', marginBottom: '2.5rem' }} />
+                    <Typography variant="h3" sx={{ fontWeight: 900, color: 'white', textTransform: 'uppercase', mb: 1 }}>
+                        MAS <Box component="span" sx={{ color: '#E50914' }}>ACCESS</Box>
+                    </Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '1.1rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 300 }}>
+                        Change is Courage
+                    </Typography>
                     
-                    <div className="mt-20 flex flex-col items-center">
-                        <div className="h-[2px] w-12 bg-gradient-to-r from-transparent via-[#E50914] to-transparent mb-8"></div>
-                        <p className="text-gray-500 text-sm tracking-wider uppercase max-w-xs leading-relaxed">
+                    <Box sx={{ mt: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Box sx={{ height: 2, width: 48, background: 'linear-gradient(to right, transparent, #E50914, transparent)', mb: 4 }} />
+                        <Typography sx={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem', letterSpacing: '0.1em', textTransform: 'uppercase', maxWidth: 280, lineHeight: 1.6 }}>
                             Enterprise Visitation & Security Management Core System
-                        </p>
-                    </div>
-                </div>
-            </div>
+                        </Typography>
+                    </Box>
+                </Box>
+            </Box>
 
             {/* Right Box: Login Form Container */}
-            <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative overflow-hidden bg-gradient-to-br from-[#121214] to-[#0A0A0C]">
-                {/* Subtle background red glow for login side */}
-                <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#E50914]/5 rounded-full blur-[120px] pointer-events-none"></div>
+            <Box 
+                sx={{ 
+                    flex: 1, 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    p: { xs: 3, md: 6 }, 
+                    position: 'relative', 
+                    overflow: 'hidden',
+                    background: 'radial-gradient(circle at top left, #121214, #0A0A0C)'
+                }}
+            >
+                <Box 
+                    sx={{ 
+                        position: 'absolute', 
+                        bottom: 0, 
+                        right: 0, 
+                        width: 500, 
+                        height: 500, 
+                        bgcolor: 'rgba(229, 9, 20, 0.05)', 
+                        borderRadius: '50%', 
+                        filter: 'blur(120px)',
+                        pointerEvents: 'none'
+                    }}
+                />
 
-                <div className="w-full max-w-lg relative z-10 animate-slide-up">
-                    
-                    {/* Glassmorphism Card */}
-                    <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-2xl p-10 lg:p-14 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative">
-                        
+                <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 10 }}>
+                    <Paper 
+                        elevation={24}
+                        sx={{ 
+                            p: { xs: 4, lg: 7 }, 
+                            bgcolor: 'rgba(255, 255, 255, 0.03)', 
+                            backdropFilter: 'blur(20px)', 
+                            border: '1px solid rgba(255, 255, 255, 0.1)', 
+                            borderRadius: 4,
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}
+                    >
                         {/* Soft Red Top Border Glow */}
-                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#E50914] to-transparent opacity-80 shadow-[0_0_20px_#E50914]"></div>
+                        <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 1, background: 'linear-gradient(to right, transparent, #E50914, transparent)', opacity: 0.8 }} />
 
-                        <div className="mb-10 text-center">
-                            <h2 className="text-2xl font-bold text-white mb-2 tracking-wide">Welcome Back</h2>
-                            <p className="text-gray-400 text-sm">Please select your role and authenticate</p>
-                        </div>
+                        <Box sx={{ mb: 5, textAlign: 'center' }}>
+                            <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Welcome Back</Typography>
+                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)' }}>Please select your role and authenticate</Typography>
+                        </Box>
 
-                        {/* Pill-style Role Tabs */}
-                        <div className="flex flex-wrap gap-3 mb-12 justify-center">
-                            {roles.map((r) => {
-                                const isActive = role === r.id;
-                                return (
-                                    <button
-                                        key={r.id}
-                                        onClick={() => setRole(r.id)}
-                                        className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                                            isActive 
-                                            ? 'bg-gradient-to-r from-[#E50914] to-[#B0060E] text-white shadow-[0_0_15px_rgba(229,9,20,0.4)] border border-transparent' 
-                                            : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/5'
-                                        }`}
-                                    >
-                                        <r.icon size={16} />
-                                        {r.label}
-                                    </button>
-                                );
-                            })}
-                        </div>
+                        <Tabs 
+                            value={role} 
+                            onChange={handleRoleChange}
+                            centered
+                            sx={{ 
+                                mb: 6,
+                                '& .MuiTabs-indicator': { display: 'none' },
+                                '& .MuiTab-root': { 
+                                    color: 'rgba(255,255,255,0.4)', 
+                                    borderRadius: 10,
+                                    mx: 0.5,
+                                    fontSize: '0.75rem',
+                                    transition: '0.3s',
+                                    '&.Mui-selected': { 
+                                        color: 'white',
+                                        bgcolor: '#E50914',
+                                        boxShadow: '0 0 15px rgba(229, 9, 20, 0.4)'
+                                    }
+                                }
+                            }}
+                        >
+                            {roles.map((r) => (
+                                <Tab 
+                                    key={r.id} 
+                                    value={r.id} 
+                                    label={r.label} 
+                                    icon={<r.icon sx={{ fontSize: '1rem !important' }} />} 
+                                    iconPosition="start"
+                                />
+                            ))}
+                        </Tabs>
 
-                        {/* Form */}
-                        <form onSubmit={handleSubmit} className="space-y-8">
-                            
-                            {/* Floating Label Email Input */}
-                            <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400 group-focus-within:text-[#E50914] transition-colors">
-                                    <Mail size={20} />
-                                </div>
-                                <input
-                                    type="email"
+                        <form onSubmit={handleSubmit}>
+                            <Stack spacing={4}>
+                                <TextField
+                                    fullWidth
+                                    label="Email Address"
                                     name="email"
-                                    id="email"
+                                    type="email"
                                     required
+                                    variant="outlined"
                                     value={formData.email}
                                     onChange={handleInputChange}
-                                    className="block w-full px-12 py-4 text-white bg-black/20 border border-white/10 rounded-xl appearance-none focus:outline-none focus:ring-1 focus:ring-[#E50914] focus:border-[#E50914] focus:bg-black/40 transition-all peer placeholder-transparent shadow-inner"
-                                    placeholder="Email Address"
+                                    placeholder="your@email.com"
+                                    autoComplete="email"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Mail sx={{ color: 'rgba(255,255,255,0.3)' }} />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 3,
+                                            bgcolor: 'rgba(0,0,0,0.2)',
+                                            '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+                                            '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
+                                            '&.Mui-focused fieldset': { borderColor: '#E50914' },
+                                        }
+                                    }}
                                 />
-                                <label htmlFor="email" className="absolute left-12 top-4 text-gray-400 text-sm transition-all duration-200 peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-6 peer-focus:text-xs peer-focus:text-[#E50914] peer-valid:-top-6 peer-valid:text-xs peer-valid:text-gray-400 font-medium">
-                                    Email Address
-                                </label>
-                                <p className="absolute -bottom-6 left-1 text-[11px] text-gray-500 uppercase tracking-widest">
-                                    Use your corporate ID
-                                </p>
-                            </div>
 
-                            {/* Floating Label Password Input */}
-                            <div className="relative group mt-10">
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400 group-focus-within:text-[#E50914] transition-colors">
-                                    <Lock size={20} />
-                                </div>
-                                <input
-                                    type={showPassword ? "text" : "password"}
+                                <TextField
+                                    fullWidth
+                                    label="Password"
                                     name="password"
-                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     required
+                                    variant="outlined"
                                     value={formData.password}
                                     onChange={handleInputChange}
-                                    className="block w-full px-12 py-4 text-white bg-black/20 border border-white/10 rounded-xl appearance-none focus:outline-none focus:ring-1 focus:ring-[#E50914] focus:border-[#E50914] focus:bg-black/40 transition-all peer placeholder-transparent shadow-inner"
-                                    placeholder="Password"
+                                    autoComplete="current-password"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Lock sx={{ color: 'rgba(255,255,255,0.3)' }} />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton 
+                                                    onClick={() => setShowPassword(!showPassword)} 
+                                                    edge="end"
+                                                    sx={{ color: 'rgba(255,255,255,0.3)' }}
+                                                >
+                                                    {showPassword ? <EyeOff /> : <Eye />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: 3,
+                                            bgcolor: 'rgba(0,0,0,0.2)',
+                                            '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+                                            '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
+                                            '&.Mui-focused fieldset': { borderColor: '#E50914' },
+                                        }
+                                    }}
                                 />
-                                <label htmlFor="password" className="absolute left-12 top-4 text-gray-400 text-sm transition-all duration-200 peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-6 peer-focus:text-xs peer-focus:text-[#E50914] peer-valid:-top-6 peer-valid:text-xs peer-valid:text-gray-400 font-medium">
-                                    Password
-                                </label>
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-white transition-colors"
-                                >
-                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                                </button>
-                                <p className="absolute -bottom-6 left-1 text-[11px] text-gray-500 uppercase tracking-widest">
-                                    Minimum 8 characters
-                                </p>
-                                <p className="absolute -bottom-6 right-0 text-xs text-gray-400 hover:text-[#E50914] cursor-pointer transition-colors font-medium">
-                                    Forgot Password?
-                                </p>
-                            </div>
 
-                            {error && (
-                                <div className="text-[#E50914] text-sm text-center pt-2 animate-shake">
-                                    {error}
-                                </div>
-                            )}
+                                {(localError || reduxError) && (
+                                    <Fade in={true}>
+                                        <Typography sx={{ color: '#E50914', fontSize: '0.85rem', textAlign: 'center' }}>
+                                            {localError || reduxError}
+                                        </Typography>
+                                    </Fade>
+                                )}
 
-                            {/* Primary Button */}
-                            <div className="pt-6">
-                                <button
+                                <Button
+                                    fullWidth
                                     type="submit"
-                                    disabled={isLoading}
-                                    className="w-full flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-[#E50914] to-[#B0060E] text-white rounded-xl font-bold tracking-wide uppercase transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(229,9,20,0.3)] disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-wait"
+                                    variant="contained"
+                                    disabled={reduxLoading}
+                                    endIcon={!reduxLoading && <ArrowForwardIcon />}
+                                    sx={{ 
+                                        py: 1.8, 
+                                        borderRadius: 3, 
+                                        fontWeight: 700, 
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.1em',
+                                        bgcolor: '#E50914',
+                                        '&:hover': { bgcolor: '#B0060E' }
+                                    }}
                                 >
-                                    {isLoading ? 'Authenticating...' : role === 'visitor' ? 'Request Access' : 'Login Securely'}
-                                    {!isLoading && <ArrowRight size={18} className="opacity-80" />}
-                                </button>
-                            </div>
-
+                                    {reduxLoading ? <CircularProgress size={24} color="inherit" /> : (role === 'visitor' ? 'Request Access' : 'Login Securely')}
+                                </Button>
+                            </Stack>
                         </form>
-                    </div>
+                    </Paper>
 
-                    <div className="mt-8 text-center">
-                        <p className="text-xs text-gray-600">
+                    <Box sx={{ mt: 5, textAlign: 'center' }}>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.2)', display: 'block', lineHeight: 1.8 }}>
                             Secured by MAS Global Security Protocol 2.4<br/>
                             Unauthorized access is strictly prohibited
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </Typography>
+                    </Box>
+                </Container>
+            </Box>
+        </Box>
     );
 };
 
 export default LoginPage;
+

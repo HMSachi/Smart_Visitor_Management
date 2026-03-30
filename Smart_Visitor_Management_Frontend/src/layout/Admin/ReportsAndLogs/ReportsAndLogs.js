@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Admin/Layout/Sidebar';
 import Header from '../../../components/Admin/Layout/Header';
-import ReportsAndLogsMain from '../../../components/Admin/ReportsAndLogs/ReportsAndLogsMain';
+import ReportsAndLogsMain from '../../../components/Admin/ReportsAndLogs/ReportsAndLogs';
 
 const ReportsAndLogs = () => {
   return (

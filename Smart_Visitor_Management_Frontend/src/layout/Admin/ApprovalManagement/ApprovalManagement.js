@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Admin/Layout/Sidebar';
 import Header from '../../../components/Admin/Layout/Header';
-import ApprovalManagementMain from '../../../components/Admin/ApprovalManagement/ApprovalManagementMain';
+import ApprovalManagementMain from '../../../components/Admin/ApprovalManagement/ApprovalManagement';
 
 const ApprovalManagement = () => {
   return (

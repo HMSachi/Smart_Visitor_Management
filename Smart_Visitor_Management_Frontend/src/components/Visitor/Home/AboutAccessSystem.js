@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Container, Grid, Typography, Paper, Stack } from '@mui/material';
 
 const AboutAccessSystem = () => {
     const features = [
@@ -20,45 +21,99 @@ const AboutAccessSystem = () => {
     ];
 
     return (
-        <section id="about" className="py-32 bg-charcoal-900 relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-24">
-                    <div className="max-w-2xl">
-                        <div className="flex items-center space-x-4 mb-6">
-                            <div className="w-8 h-[1px] bg-mas-red"></div>
-                            <span className="uppercase text-mas-red">Architecture</span>
-                        </div>
-                        <h2 className="md: text-white uppercase">
-                            SYSTEM <span className="text-mas-red">INTELLIGENCE</span>
-                        </h2>
-                    </div>
-                    <p className="mt-8 md:mt-0 text-gray-300 uppercase max-w-xs">
+        <Box 
+            id="about" 
+            component="section" 
+            sx={{ 
+                py: { xs: 12, md: 20 }, 
+                bgcolor: '#0a0a0b', 
+                position: 'relative', 
+                overflow: 'hidden' 
+            }}
+        >
+            <Container maxWidth="lg">
+                <Box 
+                    sx={{ 
+                        display: 'flex', 
+                        flexDirection: { xs: 'column', md: 'row' }, 
+                        alignItems: { xs: 'flex-start', md: 'flex-end' }, 
+                        justifyContent: 'space-between', 
+                        mb: 12 
+                    }}
+                >
+                    <Box sx={{ maxWidth: 600 }}>
+                        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+                            <Box sx={{ width: 32, height: 1, bgcolor: '#E50914' }} />
+                            <Typography sx={{ color: '#E50914', textTransform: 'uppercase', letterSpacing: '0.2em', fontSize: '0.75rem', fontWeight: 700 }}>
+                                Architecture
+                            </Typography>
+                        </Stack>
+                        <Typography variant="h3" sx={{ color: 'white', fontWeight: 900, textTransform: 'uppercase', lineHeight: 1.1 }}>
+                            SYSTEM <Box component="span" sx={{ color: '#E50914' }}>INTELLIGENCE</Box>
+                        </Typography>
+                    </Box>
+                    <Typography sx={{ mt: { xs: 4, md: 0 }, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontSize: '0.85rem', maxWidth: 300, fontWeight: 500 }}>
                         Engineered for the high-precision environments of MAS Holdings.
-                    </p>
-                </div>
+                    </Typography>
+                </Box>
 
-                <div className="grid grid-cols-1 gap-1 md:grid-cols-3 bg-white/5 border border-white/5">
+                <Grid container sx={{ border: '1px solid rgba(255,255,255,0.05)', bgcolor: 'rgba(255,255,255,0.02)' }}>
                     {features.map((feature, index) => (
-                        <div key={index} className="group relative p-12 bg-charcoal-900 hover:bg-charcoal-800 transition-colors duration-500 border border-transparent hover:border-mas-red/20 shadow-none">
-                            <div className="text-3xl text-mas-red opacity-60 mb-8 group-hover:opacity-100 transition-opacity">
-                                {feature.icon}
-                            </div>
-                            <h3 className="text-white mb-4 uppercase">{feature.title}</h3>
-                            <p className="text-gray-300">{feature.description}</p>
+                        <Grid item xs={12} md={4} key={index}>
+                            <Paper 
+                                elevation={0}
+                                sx={{ 
+                                    p: 6, 
+                                    height: '100%',
+                                    bgcolor: 'transparent', 
+                                    borderRadius: 0,
+                                    borderRight: { md: index < 2 ? '1px solid rgba(255,255,255,0.05)' : 'none' },
+                                    borderBottom: { xs: index < 2 ? '1px solid rgba(255,255,255,0.05)' : 'none', md: 'none' },
+                                    position: 'relative',
+                                    transition: '0.4s',
+                                    '&:hover': {
+                                        bgcolor: 'rgba(255,255,255,0.03)',
+                                        '& .accent-bar': { height: '100%' }
+                                    }
+                                }}
+                            >
+                                <Typography sx={{ fontSize: '2rem', color: '#E50914', opacity: 0.6, fontWeight: 900, mb: 4 }}>
+                                    {feature.icon}
+                                </Typography>
+                                <Typography variant="h6" sx={{ color: 'white', fontWeight: 700, mb: 2, textTransform: 'uppercase' }}>
+                                    {feature.title}
+                                </Typography>
+                                <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                                    {feature.description}
+                                </Typography>
 
-                            {/* Hover accent */}
-                            <div className="absolute top-0 left-0 w-[2px] h-0 bg-mas-red group-hover:h-full transition-all duration-500"></div>
-                        </div>
+                                {/* Hover accent bar */}
+                                <Box className="accent-bar" sx={{ position: 'absolute', top: 0, left: 0, width: 2, height: 0, bgcolor: '#E50914', transition: '0.4s' }} />
+                            </Paper>
+                        </Grid>
                     ))}
-                </div>
-            </div>
+                </Grid>
+            </Container>
 
-            {/* Background Text */}
-            <div className="absolute top-1/2 left-0 -translate-y-1/2 text-white/[0.02] -z-10 select-none pointer-events-none">
+            {/* Background Text Overlay */}
+            <Typography sx={{ 
+                position: 'absolute', 
+                top: '50%', 
+                left: 0, 
+                transform: 'translateY(-50%)', 
+                color: 'rgba(255,255,255,0.02)', 
+                fontSize: '15rem', 
+                fontWeight: 900, 
+                letterSpacing: '0.1em',
+                pointerEvents: 'none',
+                zIndex: -1,
+                userSelect: 'none'
+            }}>
                 PROTOCOL
-            </div>
-        </section>
+            </Typography>
+        </Box>
     );
 };
 
 export default AboutAccessSystem;
+

@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Security_Officer/Layout/Sidebar';
 import Header from '../../../components/Security_Officer/Layout/Header';
-import LogsHistoryMain from '../../../components/Security_Officer/LogsHistory/LogsHistoryMain';
+import LogsHistoryComponent from '../../../components/Security_Officer/LogsHistory/LogsHistory';
 
 const LogsHistory = () => {
     return (
@@ -9,7 +9,7 @@ const LogsHistory = () => {
             <Sidebar />
             <main className="flex-1 ml-72 flex flex-col min-w-0 bg-[#0A0A0B]">
                 <Header title="Movement Logs History" />
-                <LogsHistoryMain />
+                <LogsHistoryComponent />
             </main>
         </div>
     );

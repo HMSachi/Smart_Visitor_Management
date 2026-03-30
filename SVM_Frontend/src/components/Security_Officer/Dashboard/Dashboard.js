@@ -1,0 +1,48 @@
+import React from 'react';
+import { useSelector } from 'react-redux';
+import SecurityMetrics from './SecurityMetrics';
+import { Shield, Zap } from 'lucide-react';
+
+const DashboardMain = () => {
+    const { commandStatus, stationId } = useSelector(state => state.security);
+
+    return (
+        <div className="p-12 space-y-12 animate-fade-in">
+            {/* Hero Section */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-mas-border pb-12">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                        < Zap size={14} className="text-mas-red" />
+                        <span className="text-mas-red uppercase">Primary Security Node</span>
+                        <div className="h-[1px] w-12 bg-mas-red"></div>
+                    </div>
+                    <h1 className="uppercase text-white flex items-center gap-6">
+                        Dashboard
+                        <div className="p-4 mas-glass border-mas-red/20 bg-mas-red/[0.03]">
+                            <Shield size={32} className="text-mas-red" />
+                        </div>
+                    </h1>
+                </div>
+
+                <div className="flex items-center gap-12 mas-glass p-8 border-white/5">
+                     <div className="space-y-2">
+                         <p className="text-mas-text-dim uppercase">Command Status</p>
+                         <div className="flex items-center gap-3">
+                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></div>
+                             <p className="text-white">{commandStatus}</p>
+                         </div>
+                     </div>
+                     <div className="h-10 w-px bg-white/10"></div>
+                     <div className="space-y-2">
+                         <p className="text-mas-text-dim uppercase">Station ID</p>
+                         <p className="text-white">{stationId}</p>
+                     </div>
+                </div>
+            </div>
+
+            <SecurityMetrics />
+        </div>
+    );
+};
+
+export default DashboardMain;

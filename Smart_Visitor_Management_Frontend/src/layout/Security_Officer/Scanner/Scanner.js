@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Security_Officer/Layout/Sidebar';
 import Header from '../../../components/Security_Officer/Layout/Header';
-import ScannerMain from '../../../components/Security_Officer/Scanner/ScannerMain';
+import ScannerComponent from '../../../components/Security_Officer/Scanner/Scanner';
 
 const Scanner = () => {
     return (
@@ -9,7 +9,7 @@ const Scanner = () => {
             <Sidebar />
             <main className="flex-1 ml-72 flex flex-col min-w-0 bg-[#0A0A0B]">
                 <Header title="Tactical QR Scanner" />
-                <ScannerMain />
+                <ScannerComponent />
             </main>
         </div>
     );

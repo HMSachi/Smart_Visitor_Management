@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import Header from '../../../components/Contact_Person/Layout/Header';
-import DashboardMain from '../../../components/Contact_Person/Dashboard/DashboardMain';
+import DashboardMain from '../../../components/Contact_Person/Dashboard/Dashboard';
 
 const Dashboard = () => {
     return (

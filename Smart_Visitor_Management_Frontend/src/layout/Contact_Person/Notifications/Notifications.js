@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import Header from '../../../components/Contact_Person/Layout/Header';
-import NotificationsMain from '../../../components/Contact_Person/Notifications/NotificationsMain';
+import NotificationsMain from '../../../components/Contact_Person/Notifications/Notifications';
 
 const Notifications = () => {
     return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Admin/Layout/Sidebar';
 import Header from '../../../components/Admin/Layout/Header';
-import BlacklistManagementMain from '../../../components/Admin/BlacklistManagement/BlacklistManagementMain';
+import BlacklistManagementMain from '../../../components/Admin/BlacklistManagement/BlacklistManagement';
 
 const BlacklistManagement = () => {
   return (

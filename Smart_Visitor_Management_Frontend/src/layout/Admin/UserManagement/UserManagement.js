@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../../components/Admin/Layout/Sidebar';
 import Header from '../../../components/Admin/Layout/Header';
-import UserManagementMain from '../../../components/Admin/UserManagement/UserManagementMain';
+import UserManagementMain from '../../../components/Admin/UserManagement/UserManagement';
 
 const UserManagement = () => {
   return (
