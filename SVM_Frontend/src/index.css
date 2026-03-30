@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    color: #D1D1D1 !important;
+    line-height: 1.6 !important;
+    @apply bg-[#0A0A0B];
+    margin: 0;
+  }
+
+  h1 {
+    font-size: 32px !important;
+  }
+
+  h2, h3 {
+    font-size: 18px !important;
+  }
+
+  h4, h5, h6 {
+    font-size: 13px !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    color: #FFFFFF !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    line-height: 1.4 !important;
+    margin-bottom: 12px !important;
+    font-style: normal !important;
+  }
+
+
+  /* Remove conflicting default styles from headings */
+  h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    color: inherit !important;
+    letter-spacing: inherit !important;
+  }
+
+  label {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 12px !important;
+    color: #888888 !important;
+    font-weight: 500 !important;
+  }
+
+  input, textarea, select {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Futuristic UI Utilities */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  }
+
+  .neon-border-red {
+    border: 1px solid rgba(200, 16, 46, 0.3);
+    box-shadow: 0 0 15px rgba(200, 16, 46, 0.1), inset 0 0 10px rgba(200, 16, 46, 0.05);
+  }
+
+  .neon-border-blue {
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.1), inset 0 0 10px rgba(0, 242, 255, 0.05);
+  }
+
+  .glow-text-red {
+    text-shadow: 0 0 10px rgba(200, 16, 46, 0.5);
+  }
+
+  .glow-text-blue {
+    text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes float-particle {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    25% { opacity: 0.5; }
+    50% { transform: translateY(-100px) translateX(20px); opacity: 0.8; }
+    75% { opacity: 0.5; }
+    100% { transform: translateY(-200px) translateX(-20px); opacity: 0; }
+  }
+
+  .particle {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float-particle 10s linear infinite;
+  }
+
+  .metallic-text {
+    background: linear-gradient(135deg, #ffffff 0%, #a1a1a1 50%, #ffffff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+  }
+  
+  /* Fix Browser Autofill Background */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active{
+      -webkit-box-shadow: 0 0 0 30px #000000 inset !important;
+      -webkit-text-fill-color: white !important;
+      transition: background-color 5000s ease-in-out 0s;
+  }
+
+  .circuit-grid {
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  .glow-pulse-red {
+    box-shadow: 0 0 15px rgba(200, 16, 46, 0.2);
+    animation: glow-pulse-red-anim 2s infinite ease-in-out;
+  }
+
+  @keyframes glow-pulse-red-anim {
+    0%, 100% { box-shadow: 0 0 10px rgba(200, 16, 46, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(200, 16, 46, 0.4); }
+  }
+  
+  /* Reset all fonts to Inter globally to prevent mix */
+  * {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .subheading {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: #A1A1A1 !important;
+    letter-spacing: 0.3px !important;
+    text-transform: uppercase !important;
+    line-height: 1.5 !important;
+    margin-top: -6px !important; /* Forces 6px gap if following an H* element (12px - 6px = 6px) */
+    margin-bottom: 10px !important; /* 10px spacing before content */
+    display: block;
+  }
+}
+
+.sharp-glow {
+  @apply border border-mas-red/20 transition-all duration-300;
+}
+
+.sharp-glow:hover {
+  @apply border-mas-red/60 shadow-[0_0_20px_rgba(200,16,46,0.2)];
+}
+
+.glass-panel {
+  @apply bg-[#121212]/80 backdrop-blur-xl border border-white/5;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.mas-glass {
+  @apply bg-[#0A0A0B]/80 backdrop-blur-2xl border border-white/[0.05];
+}
+
+.mas-sidebar-item {
+  @apply flex items-center gap-4 px-8 py-4 cursor-pointer transition-all duration-300 border-l-2 border-transparent hover:bg-white/[0.02];
+}
+
+.mas-sidebar-item.active {
+  @apply bg-mas-red/[0.03] border-mas-red;
+}
+
+.mas-input {
+  @apply bg-mas-black border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-mas-red transition-all;
+}
+
+.bg-mas-black {
+  background-color: #0A0A0B;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0.1s; }
+.stagger-item:nth-child(2) { animation-delay: 0.2s; }
+.stagger-item:nth-child(3) { animation-delay: 0.3s; }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

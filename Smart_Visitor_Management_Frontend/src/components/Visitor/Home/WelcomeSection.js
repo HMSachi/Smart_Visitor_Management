@@ -4,12 +4,15 @@ import { Link } from 'react-router-dom';
 const WelcomeSection = () => {
     return (
         <section className="relative min-h-screen flex items-center pt-20 overflow-hidden text-white">
-            {/* Background Image */}
+            {/* Background Image Container with Fixed Attachment for Parallax */}
             <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
-                <img
-                    src="/main.jpeg"
-                    alt="Background Facility"
-                    className="absolute w-full h-full object-cover object-[center_10%]"
+                <div 
+                    className="absolute inset-0 w-full h-full bg-cover bg-no-repeat"
+                    style={{ 
+                        backgroundImage: 'url("/main.jpeg")',
+                        backgroundAttachment: 'fixed',
+                        backgroundPosition: 'center 10%'
+                    }}
                 />
                 {/* Dark Overlay (Shade) - Fades from dark on left (for text readability) to transparent on right (to show colorful image) */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0b] via-[#0a0a0b]/60 to-transparent z-10"></div>
