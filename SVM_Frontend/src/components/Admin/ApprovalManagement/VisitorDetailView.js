@@ -1,19 +1,35 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+import {
+  ArrowLeft, User, Shield, Calendar, MapPin,
+  Car, Users, Briefcase, Hash, Mail, Phone,
+  Package, Info, CheckCircle2, AlertCircle
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const SectionHeader = ({ title }) => (
-    <div className="flex items-center gap-4 mb-8">
-        <div className="w-6 h-[2px] bg-mas-red/80"></div>
-        <h3 className="uppercase text-white text-lg tracking-wide font-medium">{title}</h3>
+const SectionHeader = ({ title, icon: Icon }) => (
+  <div className="flex items-center gap-5 mb-10 group/header">
+    <div className="w-1.5 h-6 bg-mas-red rounded-full shadow-[0_0_10px_#C8102E] group-hover/header:h-10 transition-all duration-500"></div>
+    <div className="flex items-center gap-3">
+      {Icon && <Icon size={16} className="text-mas-red/40 group-hover/header:scale-110 transition-transform" />}
+      <h3 className="uppercase text-white text-[13px] tracking-[0.4em] font-black italic">{title}</h3>
     </div>
+    <div className="flex-1 h-[1px] bg-white/[0.05] ml-4 group-hover/header:bg-mas-red/20 transition-all"></div>
+  </div>
 );
 
-const Field = ({ label, value }) => (
-    <div className="space-y-4">
-        <label className="text-mas-text-dim uppercase text-xs tracking-wider">{label}</label>
-        <p className="text-white text-sm font-medium uppercase border-b border-white/5 pb-4">{value || 'N/A'}</p>
+const Field = ({ label, value, icon: Icon }) => (
+  <div className="group/field relative">
+    <div className="flex items-center gap-3 mb-4">
+      {Icon && <Icon size={12} className="text-mas-red/20 group-hover/field:text-mas-red/60 transition-colors" />}
+      <label className="text-mas-text-dim/40 uppercase text-[9px] font-black tracking-[0.3em] group-hover/field:text-mas-text-dim transition-colors">{label}</label>
     </div>
+    <div className="relative">
+      <p className="text-white text-xs font-black uppercase tracking-widest bg-[#121214] border border-white/5 py-4 px-6 rounded-2xl group-hover/field:border-mas-red/30 group-hover/field:bg-[#161618] transition-all duration-500 shadow-xl">
+        {value || 'DATA_NOT_FOUND'}
+      </p>
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-mas-red/10 rounded-full group-hover/field:bg-mas-red transition-colors"></div>
+    </div>
+  </div>
 );
 
 const VisitorDetailView = ({ visitor, onBack, onAction }) => {
@@ -21,133 +37,174 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="pb-12 max-w-5xl mx-auto px-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="pb-20 max-w-6xl mx-auto px-6"
     >
-      {/* Step Indicator Header */}
-      <div className="pt-2 pb-5 border-b border-white/5 relative mb-4">
-        <div className="flex justify-between items-end mb-3">
-          <div className="flex gap-2 text-white">
-            <span className="text-mas-red">01</span>
-            <span className="text-white/20">/</span>
-            <span className="text-white/40">02</span>
+      {/* Protocol Intelligence Header */}
+      <div className="pt-2 pb-8 border-b border-white/5 relative mb-12 flex justify-between items-end">
+        <div>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[10px] font-black tracking-widest rounded-lg">LIVE_PROTOCOL</span>
+            <div className="w-1.5 h-1.5 bg-mas-red rounded-full animate-pulse shadow-[0_0_8px_#C8102E]"></div>
           </div>
-          <p className="text-mas-text-dim uppercase text-xs tracking-wider">Basic Information</p>
+          <h1 className="text-white text-2xl font-black uppercase tracking-widest italic flex items-center gap-4">
+            Personnel Auth. Protocol <span className="text-mas-text-dim/20 font-light">// {visitor.batchId}</span>
+          </h1>
         </div>
-        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-white/5">
-          <div className="w-[120px] h-[3px] bg-mas-red -mt-[1px]"></div>
+
+        <div className="text-right hidden sm:block">
+          <div className="flex items-center justify-end gap-3 mb-2">
+            <span className="text-mas-red text-sm font-black">01</span>
+            <span className="text-white/10 text-lg">/</span>
+            <span className="text-mas-text-dim/20 text-xs font-black uppercase tracking-widest">02_MATRIX</span>
+          </div>
+          <p className="text-mas-text-dim/40 uppercase text-[9px] font-black tracking-[0.3em]">INTELLIGENCE_LAYER: ALPHA</p>
+        </div>
+
+        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-white/[0.03]">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: '50%' }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="h-[3px] bg-mas-red -mt-[1px] shadow-[0_0_15px_#C8102E]"
+          ></motion.div>
         </div>
       </div>
 
-      {/* Header Navigation */}
-      <div className="flex justify-between items-center mb-16">
+      {/* Control Navigation */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-20 bg-[#121214] p-8 border border-white/5 rounded-[32px] shadow-2xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-mas-red/5 to-transparent pointer-events-none"></div>
+
         <button
           onClick={onBack}
-          className="flex items-center gap-3 uppercase text-mas-text-dim text-xs tracking-wider hover:text-white transition-all group"
+          className="flex items-center gap-4 uppercase text-white text-[10px] font-black tracking-[0.4em] hover:text-mas-red transition-all group relative z-10"
         >
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          Protocol List
+          <div className="w-10 h-10 rounded-xl bg-black border border-white/5 flex items-center justify-center group-hover:border-mas-red transition-all">
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+          </div>
+          Return to Registry
         </button>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 w-full lg:w-auto relative z-10">
           <button
             onClick={() => onAction(visitor, 'Approve')}
-            className="px-8 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-sm font-medium tracking-wide uppercase transition-all shadow-[0_0_15px_rgba(0,177,79,0.2)]"
+            className="flex-1 lg:flex-none px-10 py-5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[11px] font-black tracking-[0.3em] uppercase rounded-2xl transition-all shadow-[0_10px_30px_rgba(0,177,79,0.2)] flex items-center justify-center gap-3 group"
           >
-            Approve Access
+            <CheckCircle2 size={16} className="group-hover:scale-110 transition-transform" />
+            Authorize Access
           </button>
           <button
             onClick={() => onAction(visitor, 'Reject')}
-            className="px-8 py-2.5 bg-[#DA291C] hover:bg-[#c22419] text-white text-sm font-medium tracking-wide uppercase transition-all shadow-[0_0_15px_rgba(218,41,28,0.2)]"
+            className="flex-1 lg:flex-none px-10 py-5 bg-mas-red hover:bg-[#A00D25] text-white text-[11px] font-black tracking-[0.3em] uppercase rounded-2xl transition-all shadow-[0_10px_30px_rgba(200,16,46,0.2)] flex items-center justify-center gap-3 group"
           >
-            Reject Block
+            <AlertCircle size={16} className="group-hover:scale-110 transition-transform" />
+            Protocol Denial
           </button>
         </div>
       </div>
 
-      {/* Visitor Overview */}
-      <div className="mb-16">
-        <SectionHeader title="Visitor Overview" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-          <Field label="Full Name" value={visitor.name} />
-          <Field label="NIC / ID Number" value={visitor.nic} />
-          <Field label="Contact Number" value={visitor.contact} />
-          <Field label="Email Address" value={visitor.email || "VISITOR@DOMAIN.COM"} />
+      {/* Visitor Profile Matrix */}
+      <div className="mb-20">
+        <SectionHeader title="Personnel Profile Intelligence" icon={User} />
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+          <Field label="Full Identity Name" value={visitor.name} icon={User} />
+          <Field label="Auth Identifier (NIC)" value={visitor.nic} icon={Hash} />
+          <Field label="Signal Protocol (Phone)" value={visitor.contact} icon={Phone} />
+          <Field label="Grid Address (Email)" value={visitor.email || "DEFAULT_SECURE@DOMAIN.COM"} icon={Mail} />
         </div>
       </div>
 
-      {/* Visit Information */}
-      <div className="mb-16">
-        <SectionHeader title="Visit Information" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-          <Field label="Visit Date" value={visitor.date} />
-          <Field label="Purpose of Visit" value={visitor.purpose || "GENERAL"} />
-          
-          <div className="space-y-4">
-            <label className="text-mas-text-dim uppercase text-xs tracking-wider">Related To Company?</label>
-            <p className="text-white text-sm font-medium uppercase border-b border-white/5 pb-4">YES</p>
-          </div>
-
-          <Field label="Number of Visitors" value={(visitor.members?.length || 0) + 1} />
+      {/* Visit Protocol Dynamics */}
+      <div className="mb-20">
+        <SectionHeader title="Visit Protocol Dynamics" icon={Briefcase} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <Field label="Deployment Date" value={visitor.date} icon={Calendar} />
+          <Field label="Mission Purpose" value={visitor.purpose || "GENERAL_INSTITUTIONAL"} icon={Info} />
+          <Field label="Institutional Link" value="AUTHORIZED_COMPANY_LINK" icon={Briefcase} />
+          <Field label="Unit Total Count" value={`${(visitor.members?.length || 0) + 1} PERSONNEL`} icon={Users} />
         </div>
 
-        {/* Areas To Visit nested under Visit Info logically per screenshot */}
-        <div className="mt-10">
-          <SectionHeader title="Areas To Visit" />
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {/* Infrastructure Authorization Grid */}
+        <div className="mt-16 bg-black/40 p-10 border border-white/5 rounded-[40px] shadow-inner relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mas-red/20 to-transparent"></div>
+          <div className="flex items-center gap-4 mb-10">
+            <div className="w-1 h-4 bg-mas-red rounded-full"></div>
+            <p className="text-mas-text-dim/60 text-[10px] font-black uppercase tracking-[0.4em] italic">Infrastructure_Zone_Authorization</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {visitor.areas && visitor.areas.length > 0 ? visitor.areas.map((area, idx) => (
-               <div key={idx} className="p-6 bg-[#0E0E10] border border-white/5 text-white uppercase text-xs tracking-wider flex items-center justify-center text-center hover:border-mas-red/30 transition-all">
-                  {area}
-               </div>
+              <motion.div
+                key={idx}
+                whileHover={{ scale: 1.05, borderColor: '#C8102E' }}
+                className="p-6 bg-[#0E0E10] border border-white/5 rounded-2xl text-white uppercase text-[10px] font-black tracking-widest flex flex-col items-center justify-center text-center gap-3 transition-all shadow-xl group/zone"
+              >
+                <MapPin size={14} className="text-mas-red/20 group-hover/zone:text-mas-red transition-colors" />
+                {area}
+              </motion.div>
             )) : (
-               <div className="col-span-full text-mas-text-dim text-sm uppercase">No specific areas declared</div>
+              <div className="col-span-full border border-dashed border-white/10 p-10 rounded-3xl text-center">
+                <p className="text-mas-text-dim/20 uppercase text-[11px] font-black tracking-widest">No specific zones requested</p>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Vehicle Details */}
-      <div className="mb-16">
-        <SectionHeader title="Vehicle Details" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-          <Field label="Vehicle Number" value={visitor.vehicle !== 'None' ? visitor.vehicle : 'N/A'} />
-          <Field label="Vehicle Type" value={visitor.vehicle !== 'None' ? 'CAR/UNKNOWN' : 'N/A'} />
+      {/* Logistics & Vehicle Registry */}
+      <div className="mb-20">
+        <SectionHeader title="Logistics & Vehicle Registry" icon={Car} />
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          <Field label="Transport Identifier" value={visitor.vehicle !== 'None' ? visitor.vehicle : 'NO_TRANSPORT_DECLARED'} icon={Car} />
+          <Field label="Registry Type" value={visitor.vehicle !== 'None' ? 'CIVILIAN_TRANSPORT' : 'N/A'} icon={Hash} />
+          <Field label="Zone Clearance" value={visitor.vehicle !== 'None' ? 'PERMITTED_ZONE_A' : 'NOT_APPLICABLE'} icon={Shield} />
         </div>
       </div>
 
-      {/* Visitor Group */}
+      {/* Personnel Registry (Auxiliary) */}
       {visitor.members && visitor.members.length > 0 && (
-        <div className="mb-16">
-          <SectionHeader title="Visitor Group" />
-          <div className="space-y-4">
+        <div className="mb-20">
+          <SectionHeader title="Personnel Registry (Auxiliary)" icon={Users} />
+          <div className="space-y-6">
             {visitor.members.map((member, idx) => (
-              <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-6 pb-6 border-b border-white/5">
-                <Field label="Full Name" value={member.name} />
-                <Field label="NIC / ID" value={member.nic} />
-                <Field label="Contact" value={member.contact || 'N/A'} />
-              </div>
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-10 bg-[#121214] border border-white/5 rounded-[32px] group/aux shadow-2xl relative overflow-hidden"
+              >
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-mas-red group-hover:w-2 transition-all"></div>
+                <Field label={`Unit_${(idx + 2).toString().padStart(2, '0')} Identity`} value={member.name} icon={User} />
+                <Field label="Auth Identifier (NIC)" value={member.nic} icon={Hash} />
+                <Field label="Signal Protocol (Phone)" value={member.contact || 'PROTOCOL_NOT_ESTABLISHED'} icon={Phone} />
+              </motion.div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Equipment Grid */}
+      {/* Material Intake Protocol */}
       {visitor.equipment && visitor.equipment.length > 0 && (
-        <div className="mb-16 bg-[#0E0E10] p-8 border border-white/5">
-          <SectionHeader title="Equipment Grid" />
-          <div className="space-y-4 mt-8">
+        <div className="mb-20 bg-[#0A0A0B] p-12 border border-white/5 rounded-[40px] shadow-[inset_0_0_60px_rgba(0,0,0,0.5)]">
+          <SectionHeader title="Material Intake Protocol" icon={Package} />
+          <div className="grid grid-cols-1 gap-6 mt-12">
             {visitor.equipment.map((item, idx) => (
-              <div key={idx} className="grid grid-cols-1 md:grid-cols-12 gap-x-6 gap-y-6 pb-6 border-b border-white/5 text-left">
-                <div className="md:col-span-4"><Field label="Item Name" value={item} /></div>
-                <div className="md:col-span-2"><Field label="Qty" value="1" /></div>
-                <div className="md:col-span-6"><Field label="Description" value="DECLARED AT GATE" /></div>
-              </div>
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="grid grid-cols-1 md:grid-cols-12 gap-8 p-8 bg-[#121214]/40 border border-white/5 rounded-3xl group/item hover:border-mas-red/20 transition-all shadow-xl"
+              >
+                <div className="md:col-span-5"><Field label="Asset Nomenclature" value={item} icon={Package} /></div>
+                <div className="md:col-span-2"><Field label="Asset Qty" value="01_UNIT" icon={Hash} /></div>
+                <div className="md:col-span-5"><Field label="Intake Description" value="DECLARED_AT_PERIMETER_GATE" icon={Info} /></div>
+              </motion.div>
             ))}
           </div>
         </div>
       )}
-
     </motion.div>
   );
 };

@@ -1,24 +1,37 @@
-import React from 'react';
-import { Search, Bell, Settings, User, ArrowLeft } from 'lucide-react';
+import { Search, Bell, Settings, User, ArrowLeft, Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleMobileMenu } from '../../../reducers/uiSlice';
 
 const Header = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isMobile = useSelector(state => state.ui.isMobile);
+  const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
 
   return (
-    <header className="h-20 bg-mas-black/95 backdrop-blur sticky top-0 z-40 px-6 md:px-8 flex items-center justify-between border-b border-white/10">
-      <div className="flex-1 max-w-xl flex items-center gap-4">
-        <button 
-          onClick={() => navigate(-1)} 
-          className="p-3 text-mas-text-dim hover:text-white transition-colors bg-white/5 border border-white/10 group"
-          title="Go Back"
-        >
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-        </button>
-        <div className="relative group w-full">
-          <Search 
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-mas-text-dim group-focus-within:text-mas-red transition-all duration-300" 
-            size={16} 
+    <header className="h-16 md:h-20 bg-mas-black/95 backdrop-blur sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between border-b border-white/10 shadow-2xl">
+      <div className="flex-1 max-w-xl flex items-center gap-3 md:gap-4">
+        {isMobile ? (
+          <button
+            onClick={() => dispatch(toggleMobileMenu())}
+            className="p-2.5 text-mas-red bg-mas-red/5 border border-mas-red/20 rounded-lg hover:bg-mas-red/10 active:scale-95 transition-all shadow-lg"
+          >
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate(-1)}
+            className="p-3 text-mas-text-dim hover:text-white transition-colors bg-white/5 border border-white/10 group rounded-lg"
+            title="Go Back"
+          >
+            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+          </button>
+        )}
+        <div className="relative group w-full hidden sm:block">
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-mas-text-dim group-focus-within:text-mas-red transition-all duration-300"
+            size={16}
           />
           <input
             type="text"
@@ -38,7 +51,7 @@ const Header = () => {
             <Settings size={18} strokeWidth={2} />
           </button>
         </div>
-        
+
         <div className="h-6 w-[1px] bg-white/10 hidden sm:block"></div>
 
         <button className="flex items-center gap-4 group text-left">

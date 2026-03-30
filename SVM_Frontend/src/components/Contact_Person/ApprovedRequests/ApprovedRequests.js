@@ -19,26 +19,31 @@ const ApprovedRequestsMain = () => {
     };
 
     return (
-        <div className="flex-1 flex flex-col min-w-0 bg-[#0A0A0B]">
-            <div className="p-12 space-y-12 animate-fade-in">
-                <div className="flex items-end justify-between border-b border-mas-border pb-8">
+        <div className="flex-1 flex flex-col min-w-0 bg-[#0A0A0B]/50">
+            <div className="p-10 space-y-10 animate-fade-in-slow">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
                     <div>
-                        <div className="flex items-center gap-4 mb-4">
-                            <CheckCircle size={14} className="text-green-500" />
-                            <span className="text-green-500 uppercase">Validation Success</span>
-                            <div className="h-[1px] w-12 bg-green-500"></div>
+                        <div className="flex items-center gap-3 mb-1">
+                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.5)] animate-pulse"></div>
+                            <span className="text-green-500 text-[10px] font-black uppercase tracking-[0.3em]">Validation Success</span>
                         </div>
-                        <h1 className="uppercase">Verified Registry</h1>
+                        <p className="text-mas-text-dim text-xs uppercase tracking-widest opacity-60">Verified Personnel Registry & Archive</p>
+                    </div>
+                    <div className="flex items-center gap-4 bg-white/[0.02] border border-white/5 p-3 px-5 rounded-2xl backdrop-blur-sm">
+                        <div className="text-right">
+                            <p className="text-mas-text-dim text-[9px] uppercase font-bold tracking-wider mb-0.5 opacity-40">Total Verified</p>
+                            <span className="text-xl font-bold text-white">1,284</span>
+                        </div>
                     </div>
                 </div>
 
                 <ApprovedTable requests={requests} onQuickView={handleQuickView} />
             </div>
 
-            <QuickViewPanel 
-                isOpen={isPanelOpen} 
-                onClose={() => setIsPanelOpen(false)} 
-                visitor={selectedVisitor} 
+            <QuickViewPanel
+                isOpen={isPanelOpen}
+                onClose={() => setIsPanelOpen(false)}
+                visitor={selectedVisitor}
             />
         </div>
     );

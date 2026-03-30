@@ -38,8 +38,8 @@ const RequestReviewMain = () => {
 
     const confirmReject = () => {
         if (!rejectionComment.trim()) {
-           alert('Detailed observations are required for rejection.');
-           return;
+            alert('Detailed observations are required for rejection.');
+            return;
         }
 
         if (requestData?.id) {
@@ -54,31 +54,38 @@ const RequestReviewMain = () => {
     };
 
     return (
-        <div className="flex-1 flex flex-col min-w-0 bg-[#0A0A0B] relative">
-            <div className="p-12 space-y-12 animate-fade-in relative z-10">
+        <div className="flex-1 flex flex-col min-w-0 bg-[#0A0A0B]/50 relative overflow-x-hidden">
+            <div className="p-10 space-y-8 animate-fade-in relative z-10 max-w-7xl mx-auto w-full">
                 {/* Top Header */}
-                <div className="flex items-center justify-between border-b border-mas-border pb-8">
-                    <button 
-                        onClick={() => navigate('/contact_person/requests-inbox')}
-                        className="flex items-center gap-3 text-mas-text-dim uppercase hover:text-white transition-colors group"
-                    >
-                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                        Return to Inbox
-                    </button>
-                    <div className="flex items-center gap-8">
-                        <div className="flex flex-col items-end">
-                            <span className="text-mas-text-dim uppercase mb-1">Current Sync Status</span>
-                            <div className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-mas-red animate-pulse"></div>
-                                    <span className="uppercase text-mas-red">{requestData?.status || 'Pending Node Approval'}</span>
-                            </div>
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-4">
+                    <div>
+                        <button
+                            onClick={() => navigate('/contact_person/requests-inbox')}
+                            className="flex items-center gap-3 text-mas-text-dim text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition-colors group mb-4"
+                        >
+                            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                            Return to Command Center
+                        </button>
+                        <div className="flex items-center gap-4">
+                            <div className="w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E] animate-pulse"></div>
+                            <span className="text-mas-red text-[11px] font-black uppercase tracking-[0.3em]">Personnel Authorization Protocol</span>
                         </div>
-                        <div className="h-8 w-px bg-mas-border"></div>
-                        <span className="text-white">#{requestData?.id || 'N/A'}</span>
+                    </div>
+
+                    <div className="flex items-center gap-6 bg-white/[0.02] border border-white/5 p-4 px-6 rounded-2xl backdrop-blur-md shadow-2xl">
+                        <div className="text-right">
+                            <p className="text-mas-text-dim text-[9px] uppercase font-black tracking-widest mb-1 opacity-40">Entry Reference</p>
+                            <span className="text-white font-mono text-sm tracking-widest font-bold">#{requestData?.id || 'ALPHA-000'}</span>
+                        </div>
+                        <div className="h-10 w-[1px] bg-white/10"></div>
+                        <div className="text-right">
+                            <p className="text-mas-text-dim text-[9px] uppercase font-black tracking-widest mb-1 opacity-40">Sync Status</p>
+                            <span className="text-mas-red text-[10px] font-black uppercase tracking-widest">{requestData?.status || 'PENDING_NODE'}</span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-6">
                     <VisitorIdentification request={requestData} />
                     <VisitParameters request={requestData} />
                     <VehicleConfiguration request={requestData} />
@@ -87,7 +94,7 @@ const RequestReviewMain = () => {
                     <DocumentReview request={requestData} />
                 </div>
 
-                <div className="mt-8">
+                <div className="pt-6">
                     <ReviewActions onApprove={() => setShowApproveModal(true)} onReject={() => setShowRejectModal(true)} />
                 </div>
             </div>
@@ -100,8 +107,8 @@ const RequestReviewMain = () => {
                 setComment={setApprovalComment}
             />
 
-            <RejectionModal 
-                isOpen={showRejectModal} 
+            <RejectionModal
+                isOpen={showRejectModal}
                 onClose={() => setShowRejectModal(false)}
                 onConfirm={confirmReject}
                 reason={rejectionReason}
@@ -111,9 +118,9 @@ const RequestReviewMain = () => {
             />
 
             {/* Decorative background logo */}
-            <img 
-                src="/logo_mas.png" 
-                alt="" 
+            <img
+                src="/logo_mas.png"
+                alt=""
                 className="fixed -bottom-20 -right-20 h-96 w-auto opacity-[0.02] pointer-events-none select-none z-0"
             />
         </div>

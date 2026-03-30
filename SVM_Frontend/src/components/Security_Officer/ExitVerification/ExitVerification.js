@@ -1,119 +1,211 @@
-import React, { useState } from 'react';
-import { ClipboardList, Briefcase, AlertTriangle, Check, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ClipboardList, Briefcase, AlertTriangle, Check, ShieldCheck, ShieldAlert, Activity, Package, Camera, Laptop, RefreshCw, ChevronRight, Info, Zap, Lock, Terminal, Fingerprint, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ExitVerificationMain = () => {
     const [checks, setChecks] = useState({
         equipment: false,
-        noItems: false
+        noItems: false,
+        clearance: false
     });
+    const [authenticating, setAuthenticating] = useState(null);
+    const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     const equipmentList = [
-        { id: 1, name: 'Laptop (MacBook Pro)', status: 'Verified' },
-        { id: 2, name: 'Camera (DSLR)', status: 'Missing', mismatch: true },
+        { id: 1, name: 'MacBook_Pro_16_M3', category: 'Computing', status: 'Verified', sn: 'SN-4291-AAPL' },
+        { id: 2, name: 'DSLR_Canon_EOS_R5', category: 'Optics', status: 'Missing', mismatch: true, sn: 'SN-4310-CANO' },
+        { id: 3, name: 'Technical_ID_Badge', category: 'Credentials', status: 'Verified', sn: 'ID-8822-MAS' },
     ];
 
     const toggleCheck = (id) => {
-        setChecks(prev => ({ ...prev, [id]: !prev[id] }));
+        if (!checks[id]) {
+            setAuthenticating(id);
+            setTimeout(() => {
+                setChecks(prev => ({ ...prev, [id]: true }));
+                setAuthenticating(null);
+            }, 800);
+        } else {
+            setChecks(prev => ({ ...prev, [id]: false }));
+        }
     };
 
     const hasMismatch = equipmentList.some(item => item.mismatch);
     const allChecked = Object.values(checks).every(v => v);
 
     return (
-        <div className="p-12 space-y-12 animate-fade-in">
-            <div className="flex items-end justify-between border-b border-mas-border pb-8">
-                <div>
-                    <div className="flex items-center gap-4 mb-4">
-                        <ClipboardList size={14} className="text-mas-red" />
-                        <span className="text-mas-red uppercase">Exit Protocol Node</span>
+        <div className="p-8 md:p-12 space-y-12 bg-[#0A0A0B] min-h-full">
+            {/* Tactical Protocol Header */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 border-b border-white/5 pb-10">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                        <div className="p-2 rounded-lg bg-mas-red/10 border border-mas-red/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
+                            <ClipboardList size={16} className="text-mas-red" />
+                        </div>
+                        <span className="text-mas-red font-black uppercase text-[10px] tracking-[0.4em] italic">Operational_Exit_Protocol</span>
+                        <div className="h-[1px] w-12 bg-gradient-to-r from-mas-red/50 to-transparent"></div>
                     </div>
-                    <h1 className="uppercase">Exit Verification</h1>
+                    <div className="flex items-center gap-8">
+                        <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase">
+                            Exit_Verification
+                        </h1>
+                        <div className="px-5 py-2 mas-glass border-mas-red/30 bg-mas-red/5 text-mas-red text-xs font-black italic shadow-[0_0_30px_rgba(200,16,46,0.1)] rounded-xl border flex items-center gap-3">
+                            <ShieldAlert size={14} className={hasMismatch ? 'animate-pulse' : ''} />
+                            NODE_VIS_4291_EXIT
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-8">
+                    <div className="hidden sm:flex flex-col text-right">
+                        <p className="text-mas-text-dim/20 text-[8px] font-black uppercase tracking-widest">Protocol_Sync_Time</p>
+                        <p className="text-white text-sm font-mono font-bold tracking-widest">{currentTime}</p>
+                    </div>
+                    <div className="w-[1px] h-12 bg-white/5 hidden sm:block"></div>
+                    <div className="flex flex-col text-right">
+                        <p className="text-mas-text-dim/20 text-[8px] font-black uppercase tracking-widest">Security_Level</p>
+                        <p className="text-mas-red text-sm font-black italic tracking-widest">ENFORCED</p>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                {/* Equipment Verification Panel */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                {/* Declared Asset Matrix */}
                 <div className="space-y-8">
-                    <div className="mas-glass p-10 border-mas-border space-y-8 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-8 opacity-5">
-                            <Briefcase size={80} />
+                    <div className="flex items-center gap-6 px-4">
+                        <div className="flex items-center gap-3">
+                            <Briefcase size={14} className="text-mas-red" />
+                            <h4 className="text-mas-text-dim/30 uppercase text-[9px] font-black tracking-[0.5em] italic">Declared_Asset_Matrix</h4>
                         </div>
-                        
-                        <section className="space-y-6">
-                            <h3 className="text-mas-red uppercase">Declared Asset Checklist</h3>
-                            <div className="space-y-4">
-                                {equipmentList.map((item) => (
-                                    <div key={item.id} className={`p-6 border flex items-center justify-between transition-all ${item.mismatch ? 'bg-mas-red/5 border-mas-red/30' : 'bg-white/[0.02] border-white/5'}`}>
-                                        <div className="flex items-center gap-6">
-                                            <div className={`w-8 h-8 flex items-center justify-center border ${item.mismatch ? 'bg-mas-red text-white border-mas-red' : 'bg-green-500/10 text-green-500 border-green-500'}`}>
-                                                {item.mismatch ? <AlertTriangle size={16} /> : <Check size={16} />}
-                                            </div>
-                                            <span className={`uppercase ${item.mismatch ? 'text-mas-red' : 'text-white'}`}>{item.name}</span>
+                        <div className="h-[1px] flex-1 bg-gradient-to-r from-white/5 via-white/10 to-transparent"></div>
+                    </div>
+
+                    <div className="mas-glass border-white/5 bg-[#121214]/60 backdrop-blur-3xl rounded-[32px] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.4)] border border-white/10 relative">
+                        <div className="absolute top-0 right-0 p-10 opacity-[0.02] pointer-events-none font-mono text-[100px] font-black italic select-none">ASSET_MTRX</div>
+
+                        <div className="p-10 space-y-6">
+                            {equipmentList.map((item) => (
+                                <motion.div
+                                    key={item.id}
+                                    whileHover={{ x: 6 }}
+                                    className={`p-6 border group flex items-center justify-between transition-all duration-500 rounded-2xl relative overflow-hidden ${item.mismatch ? 'bg-mas-red/[0.03] border-mas-red/20 shadow-[0_0_30px_rgba(200,16,46,0.05)]' : 'bg-white/[0.01] border-white/5 hover:border-white/20'}`}
+                                >
+                                    <div className="flex items-center gap-8 relative z-10">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 border-2 ${item.mismatch ? 'bg-mas-red border-mas-red text-white shadow-[0_0_20px_#C8102E] animate-pulse' : 'bg-[#0D0D0E] border-white/10 text-mas-text-dim group-hover:border-white/40'}`}>
+                                            {item.mismatch ? <AlertTriangle size={20} strokeWidth={3} /> : <Check size={20} strokeWidth={4} />}
                                         </div>
-                                        <span className={`uppercase ${item.mismatch ? 'text-mas-red' : 'text-mas-text-dim'}`}>{item.status}</span>
+                                        <div className="space-y-1">
+                                            <p className={`text-sm font-black tracking-widest italic transition-all duration-300 uppercase ${item.mismatch ? 'text-mas-red' : 'text-white'}`}>{item.name}</p>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-mas-text-dim/30 text-[9px] font-black uppercase tracking-widest">{item.category}</span>
+                                                <span className="w-1 h-1 bg-white/10 rounded-full"></span>
+                                                <span className="text-mas-text-dim/30 text-[9px] font-mono tracking-widest uppercase">{item.sn}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                ))}
-                            </div>
-                        </section>
+                                    <div className="flex items-center gap-6 relative z-10">
+                                        <span className={`text-[10px] font-black uppercase tracking-widest italic transition-all duration-300 ${item.mismatch ? 'text-mas-red animate-bounce' : 'text-mas-text-dim/40 group-hover:text-white'}`}>{item.status}</span>
+                                        <ChevronRight size={14} className="text-white/5 group-hover:text-mas-red transition-all" />
+                                    </div>
+
+                                    {item.mismatch && (
+                                        <div className="absolute top-0 left-0 h-full bg-mas-red/5 animate-shimmer pointer-events-none"></div>
+                                    )}
+                                </motion.div>
+                            ))}
+                        </div>
 
                         {hasMismatch && (
-                            <div className="p-6 bg-mas-red/10 border border-mas-red/20 space-y-4">
-                                <div className="flex items-center gap-3">
-                                    <AlertTriangle size={16} className="text-mas-red" />
-                                    <span className="uppercase text-white">Asset Mismatch Warning</span>
+                            <div className="mx-10 mb-10 p-8 bg-mas-red/10 border border-mas-red/20 rounded-2xl relative group/warning cursor-help">
+                                <div className="absolute -inset-1 bg-mas-red/5 blur-lg opacity-50 group-hover/warning:opacity-100 transition-opacity"></div>
+                                <div className="relative z-10 flex items-start gap-6">
+                                    <div className="p-3 rounded-xl bg-mas-red text-white shadow-[0_0_20px_rgba(200,16,46,0.3)]">
+                                        <ShieldAlert size={20} className="animate-pulse" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h4 className="text-white text-sm font-black uppercase tracking-widest italic group-hover/warning:text-mas-red transition-colors">Asset_Mismatch_Protocol_Engaged</h4>
+                                        <p className="text-mas-text-dim/60 text-[10px] font-black uppercase tracking-widest italic leading-6">
+                                            Registered OPTICS_GEAR (SN-4310) not detected at exit node. Clearance restricted until incident reporting or manual verification.
+                                        </p>
+                                    </div>
                                 </div>
-                                <p className="text-mas-text-dim uppercase leading-6">
-                                    The registered DSLR Camera was not scanned during the exit protocol. Report incident if item is missing.
-                                </p>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Checklist & Approval Panel */}
+                {/* Exit Integrity Protocol Matrix */}
                 <div className="space-y-8">
-                     <div className="mas-glass p-10 border-mas-border space-y-8">
-                         <h3 className="text-mas-red uppercase">Final Integrity Check</h3>
-                         <div className="space-y-4">
-                            {[
-                                { id: 'equipment', label: 'All Registered Assets Verified', desc: 'Confirm physical inspection of all declared equipment.' },
-                                { id: 'noItems', label: 'No Unauthorized Material', desc: 'Verify personnel are not carrying prohibited company items.' }
-                            ].map((item) => (
-                                <div 
+                    <div className="flex items-center gap-6 px-4">
+                        <div className="flex items-center gap-3">
+                            <Activity size={14} className="text-mas-red" />
+                            <h4 className="text-mas-text-dim/30 uppercase text-[9px] font-black tracking-[0.5em] italic">Integrity_Verification_Matrix</h4>
+                        </div>
+                        <div className="h-[1px] flex-1 bg-gradient-to-r from-white/5 via-white/10 to-transparent"></div>
+                    </div>
+
+                    <div className="mas-glass p-10 border-white/5 bg-[#121214]/40 backdrop-blur-3xl rounded-[32px] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.4)] border border-white/10 space-y-6">
+                        {[
+                            { id: 'equipment', label: 'Registered_Assets_Sync', desc: 'Secure physical audit match for all declared personnel units.' },
+                            { id: 'noItems', label: 'Prohibited_Material_Sanitized', desc: 'Cross-check for unauthorized digital or physical company assets.' },
+                            { id: 'clearance', label: 'Operational_Approval_Verified', desc: 'Confirm final exit clearance from the respective department node.' }
+                        ].map((item) => {
+                            const isAuth = authenticating === item.id;
+                            const isChecked = checks[item.id];
+                            return (
+                                <motion.div
                                     key={item.id}
+                                    whileHover={{ x: 6 }}
                                     onClick={() => toggleCheck(item.id)}
-                                    className={`p-6 mas-glass border-white/5 flex items-center gap-6 cursor-pointer transition-all hover:bg-white/[0.03] ${checks[item.id] ? 'bg-mas-red/5 border-mas-red/20' : ''}`}
+                                    className={`mas-glass p-6 border-white/5 bg-[#121214]/60 flex items-center justify-between cursor-pointer transition-all duration-500 rounded-2xl group relative overflow-hidden ${isChecked ? 'bg-mas-red/[0.04] border-mas-red/20' : 'hover:border-white/20'}`}
                                 >
-                                    <div className={`w-6 h-6 flex items-center justify-center border ${checks[item.id] ? 'bg-mas-red border-mas-red text-white' : 'bg-black border-white/10 text-mas-text-dim'}`}>
-                                        {checks[item.id] && <Check size={14} strokeWidth={4} />}
+                                    <div className="flex gap-6 items-center relative z-10">
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-700 border ${isChecked ? 'bg-mas-red border-mas-red text-white rotate-12 shadow-[0_0_20px_#C8102E]' : 'bg-[#0D0D0E] border-white/10 text-mas-text-dim group-hover:border-white'}`}>
+                                            {isAuth ? <RefreshCw size={18} className="animate-spin" /> : isChecked ? <Check size={20} strokeWidth={4} /> : <Zap size={18} />}
+                                        </div>
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-3">
+                                                <p className={`text-[12px] font-black tracking-widest transition-all duration-500 uppercase italic ${isChecked ? 'text-white' : 'text-mas-text-dim group-hover:text-white'}`}>{item.label}</p>
+                                                {isAuth && <span className="text-mas-red text-[8px] font-black animate-pulse tracking-[0.3em]">SYNCING...</span>}
+                                            </div>
+                                            <p className="text-mas-text-dim/20 text-[9px] font-black uppercase tracking-widest italic">{item.desc}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="uppercase text-white">{item.label}</p>
-                                        <p className="text-mas-text-dim uppercase mt-1">{item.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
-                         </div>
-                     </div>
+                                    <div className={`w-1.5 h-6 rounded-full transition-all duration-700 ${isChecked ? 'bg-mas-red shadow-[0_0_8px_#C8102E]' : 'bg-white/5'}`}></div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
 
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <button className="py-5 border-2 border-mas-red text-mas-red uppercase hover:bg-mas-red hover:text-white transition-all flex items-center justify-center gap-4">
-                            <ShieldCheck size={18} strokeWidth={3} />
-                            Report Issue
+                    {/* Exit Authorization Terminal */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <button className="group relative overflow-hidden w-full py-5 rounded-2xl border border-mas-red text-mas-red bg-transparent font-black uppercase text-[11px] tracking-[0.4em] italic hover:bg-mas-red hover:text-white transition-all duration-700 flex items-center justify-center gap-4 shadow-xl active:scale-95">
+                            <ShieldAlert size={18} strokeWidth={2.5} className="group-hover:rotate-12 transition-transform duration-500" />
+                            Report_Breach
                         </button>
-                        <button 
+                        <button
                             disabled={!allChecked}
-                            className={`py-5 uppercase flex items-center justify-center gap-4 transition-all ${allChecked ? 'bg-mas-red text-white shadow-[0_0_50px_rgba(200,16,46,0.3)]' : 'bg-white/5 text-white/20 border border-white/5 grayscale pointer-events-none'}`}
+                            className={`group relative overflow-hidden w-full py-5 rounded-2xl font-black uppercase text-[11px] tracking-[0.4em] italic flex items-center justify-center gap-4 transition-all duration-700 shadow-2xl active:scale-95 ${allChecked ? 'bg-mas-red text-white shadow-[0_0_50px_rgba(200,16,46,0.3)] cursor-pointer' : 'bg-white/5 text-white/10 border border-white/5 cursor-not-allowed opacity-20 grayscale'}`}
                         >
-                            <Check size={18} strokeWidth={3} />
-                            Confirm Exit
+                            <Fingerprint size={18} strokeWidth={2.5} className={allChecked ? 'animate-pulse' : ''} />
+                            Final_Clearance
                         </button>
-                     </div>
+                    </div>
 
-                     <div className="p-6 mas-glass border-mas-red/20 flex flex-col items-center text-center space-y-2">
-                         <span className="uppercase text-mas-red">Guardian Node Log</span>
-                         <p className="text-mas-text-dim uppercase">All exit movements are recorded for auditing purposes</p>
-                     </div>
+                    {/* Guardian Node Log Footer */}
+                    <div className="mas-glass p-8 border-mas-red/10 bg-[#121214]/60 backdrop-blur-3xl rounded-[28px] border text-center flex flex-col items-center gap-3 group/footer hover:border-mas-red/30 transition-all">
+                        <div className="flex items-center gap-3">
+                            <Lock size={12} className="text-mas-red animate-pulse" />
+                            <span className="uppercase text-mas-red font-black text-[10px] tracking-[0.4em] italic">Guardian_Node_Registry_Active</span>
+                        </div>
+                        <p className="text-mas-text-dim/40 text-[9px] font-black tracking-widest uppercase italic max-w-xs leading-5">
+                            All exit telemetry recorded via Secure_Core_08. Transmission to MAS_Command encrypted and logged in vault_331.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

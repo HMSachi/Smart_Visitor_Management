@@ -24,10 +24,25 @@ module.exports = {
         ans: ['Inter', 'sans-serif'],
         display: ['Poppins', 'sans-serif'],
       },
-      borderRadius: {
-        'xl': '0',
-        '2xl': '0',
-        '3xl': '0',
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out forwards',
+        'fade-in-slow': 'fadeIn 1s ease-out forwards',
+        'slide-in-right': 'slideInRight 0.5s ease-out forwards',
+        'pulse-subtle': 'pulseSubtle 2s infinite ease-in-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideInRight: {
+          '0%': { opacity: '0', transform: 'translateX(20px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        pulseSubtle: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' },
+        },
       },
       backgroundImage: {
         'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
