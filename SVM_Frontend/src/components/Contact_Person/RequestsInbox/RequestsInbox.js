@@ -35,7 +35,7 @@ const RequestsInboxMain = () => {
     };
 
     return (
-        <div className="p-12 space-y-8 animate-fade-in">
+        <div className="p-4 sm:p-8 animate-fade-in">
             <RequestsTable 
                 requests={filteredRequests} 
                 searchTerm={searchTerm} 

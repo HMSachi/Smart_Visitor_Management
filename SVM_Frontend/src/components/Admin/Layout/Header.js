@@ -28,15 +28,15 @@ const Header = () => {
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
           </button>
         )}
-        <div className="relative group w-full hidden sm:block">
+        <div className="relative group w-full hidden sm:block max-w-md">
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-mas-red transition-all duration-300"
-            size={16}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-mas-red transition-all duration-300"
+            size={14}
           />
           <input
             type="text"
-            placeholder="ENCRYPTED SEARCH: SYSTEM NODES..."
-            className="mas-input w-full pl-12 pr-4 py-3 bg-white/[0.02] border border-white/5 focus:bg-white/[0.04] placeholder: placeholder: placeholder:"
+            placeholder="Search system nodes..."
+            className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-white/10 focus:border-mas-red/40 focus:bg-white/[0.05] rounded-xl text-[11px] text-white placeholder:text-gray-500 outline-none transition-all uppercase tracking-widest"
           />
         </div>
       </div>

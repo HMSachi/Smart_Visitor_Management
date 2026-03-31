@@ -48,7 +48,7 @@ const Header = ({ title }) => {
                             <div className="w-8 h-[1px] bg-mas-red/60"></div>
                             <span className="text-gray-300/80 uppercase text-[9px] font-medium tracking-[0.4em] italic">Operational_Interface</span>
                         </div>
-                        <h2 className="uppercase text-white text-xl font-bold tracking-[0.2em] italic truncate group-hover:text-mas-red transition-colors">{title}</h2>
+                        <h2 className="uppercase text-white text-base md:text-lg font-bold tracking-[0.2em] italic truncate group-hover:text-mas-red transition-colors">{title}</h2>
                     </div>
                 </div>
             </div>

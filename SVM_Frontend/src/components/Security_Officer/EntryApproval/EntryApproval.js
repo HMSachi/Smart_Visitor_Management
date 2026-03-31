@@ -52,7 +52,7 @@ const EntryApprovalMain = () => {
     };
 
     return (
-        <div className="p-8 md:p-12 space-y-10 bg-[#0A0A0B] relative overflow-x-hidden min-h-full">
+        <div className="p-6 md:p-8 space-y-6 bg-[#0A0A0B] relative overflow-x-hidden min-h-full">
             {/* Tactical background elements */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-mas-red/5 rounded-full blur-[140px] pointer-events-none opacity-80"></div>
 
@@ -64,18 +64,18 @@ const EntryApprovalMain = () => {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
-                            className="space-y-8"
+                            className="space-y-6"
                         >
                             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                                 <div>
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <div className="p-2 rounded-lg bg-mas-red/10 border border-mas-red/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
-                                            <Activity size={16} className="text-mas-red animate-pulse" />
+                                    <div className="flex items-center gap-3 mb-1">
+                                        <div className="p-1.5 sm:p-2 rounded-lg bg-mas-red/10 border border-mas-red/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
+                                            <Activity size={12} className="text-mas-red animate-pulse sm:w-4 sm:h-4" />
                                         </div>
-                                        <span className="text-mas-red font-medium uppercase text-[10px] tracking-[0.4em] italic">Access_Control_Queue</span>
+                                        <span className="text-mas-red font-medium uppercase text-[8px] sm:text-[10px] tracking-[0.4em] italic">Access_Control_Queue</span>
                                     </div>
-                                    <h1 className="text-4xl md:text-5xl font-bold text-white italic tracking-tighter uppercase">
-                                        Pending_Verification
+                                    <h1 className="text-base sm:text-lg md:text-xl font-bold text-white italic tracking-tighter uppercase break-words max-w-[280px] sm:max-w-none">
+                                        Pending Verification
                                     </h1>
                                 </div>
                                 <div className="relative w-full sm:w-80 group">
@@ -84,8 +84,8 @@ const EntryApprovalMain = () => {
                                         type="text"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        placeholder="FILTER_QUEUE (NAME/ID)..."
-                                        className="w-full pl-14 pr-6 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-[10px] uppercase font-medium tracking-widest text-white placeholder:text-white/80 focus:border-mas-red/40 outline-none transition-all duration-500 italic shadow-xl"
+                                        placeholder="FILTER_QUEUE..."
+                                        className="w-full pl-14 pr-6 py-3 sm:py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-[9px] sm:text-[10px] uppercase font-medium tracking-widest text-white placeholder:text-white/60 focus:border-mas-red/40 outline-none transition-all duration-500 italic shadow-xl"
                                     />
                                 </div>
                             </div>
@@ -95,22 +95,22 @@ const EntryApprovalMain = () => {
                                     <div 
                                         key={v.id}
                                         onClick={() => handleSelectVisitor(v)}
-                                        className="mas-glass p-8 border-white/5 bg-[#121214]/60 backdrop-blur-3xl rounded-[28px] cursor-pointer group hover:border-mas-red/30 hover:bg-[#121214]/80 transition-all duration-500 shadow-[0_20px_40px_rgba(0,0,0,0.4)] overflow-hidden relative"
+                                        className="mas-glass p-6 sm:p-8 border-white/5 bg-[#121214]/60 backdrop-blur-3xl rounded-[28px] cursor-pointer group hover:border-mas-red/30 hover:bg-[#121214]/80 transition-all duration-500 shadow-[0_20px_40px_rgba(0,0,0,0.4)] overflow-hidden relative"
                                     >
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-mas-red/5 rounded-full blur-[60px] pointer-events-none group-hover:bg-mas-red/20 transition-all"></div>
-                                        <div className="flex items-center justify-between mb-8 relative z-10">
-                                            <div className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-gray-300/80 text-[8px] font-medium uppercase tracking-widest italic">{v.time} via {v.nodeOrigin.split('_')[0]}</div>
-                                            <div className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[8px] font-medium uppercase tracking-widest italic animate-pulse">Waiting</div>
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 relative z-10">
+                                            <div className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-gray-300/80 text-[8px] font-medium uppercase tracking-widest italic w-fit">{v.time} via {v.nodeOrigin.split('_')[0]}</div>
+                                            <div className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[8px] font-medium uppercase tracking-widest italic animate-pulse w-fit">Waiting</div>
                                         </div>
-                                        <div className="flex items-center gap-6 relative z-10">
-                                            <div className="w-16 h-16 rounded-2xl bg-mas-dark border border-white/10 flex items-center justify-center text-mas-red font-medium text-xl italic group-hover:scale-110 group-hover:bg-mas-red group-hover:text-white transition-all shadow-[0_0_15px_rgba(200,16,46,0.1)]">
+                                        <div className="flex items-center gap-4 sm:gap-5 relative z-10">
+                                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-mas-dark border border-white/10 flex items-center justify-center text-mas-red font-semibold text-sm italic group-hover:scale-110 group-hover:bg-mas-red group-hover:text-white transition-all shadow-[0_0_15px_rgba(200,16,46,0.1)] shrink-0">
                                                 {v.initials}
                                             </div>
-                                            <div>
-                                                <h3 className="text-white text-xl md:text-2xl font-bold uppercase tracking-widest italic group-hover:text-mas-red transition-colors">{v.name}</h3>
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-white text-lg sm:text-2xl font-bold uppercase tracking-widest italic group-hover:text-mas-red transition-colors truncate break-words">{v.name}</h3>
                                                 <div className="flex items-center gap-2 mt-1">
-                                                    <Shield size={12} className="text-gray-300/90" />
-                                                    <span className="text-gray-300/90 text-[10px] font-medium uppercase tracking-[0.2em]">{v.id}</span>
+                                                    <Shield size={10} className="text-gray-300/90 sm:w-3 sm:h-3" />
+                                                    <span className="text-gray-300/90 text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.2em] truncate">{v.id}</span>
                                                 </div>
                                             </div>
                                         </div>
