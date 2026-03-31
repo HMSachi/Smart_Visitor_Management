@@ -9,8 +9,8 @@ const Phase1Summary = ({ summary }) => {
                     <ClipboardCheck size={20} />
                 </div>
                 <div>
-                    <h2 className="text-xl font-black text-white uppercase tracking-tight">Security Profile Recap</h2>
-                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]">Synchronized Parameters</p>
+                    <h2 className="text-xl font-bold text-white uppercase tracking-tight">Security Profile Recap</h2>
+                    <p className="text-gray-500 text-[10px] font-medium uppercase tracking-[0.2em]">Synchronized Parameters</p>
                 </div>
             </div>
 
@@ -27,10 +27,10 @@ const Phase1Summary = ({ summary }) => {
                         <div key={item.label} className="group/item">
                             <div className="flex items-center gap-3 mb-3">
                                 <item.icon size={14} className="text-mas-red/60 group-hover/item:text-mas-red transition-colors" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">{item.label}</span>
+                                <span className="text-[10px] font-medium uppercase tracking-widest text-gray-500">{item.label}</span>
                             </div>
                             <div className="pl-7">
-                                <span className="text-white text-sm font-black uppercase tracking-wider">{item.value || 'NOT DECLARED'}</span>
+                                <span className="text-white text-sm font-medium uppercase tracking-wider">{item.value || 'NOT DECLARED'}</span>
                             </div>
                         </div>
                     ))}
@@ -38,17 +38,17 @@ const Phase1Summary = ({ summary }) => {
                     <div className="md:col-span-2 group/item">
                         <div className="flex items-center gap-3 mb-5">
                             <MapPin size={14} className="text-mas-red/60 group-hover/item:text-mas-red transition-colors" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Authorized Facility Zones</span>
+                            <span className="text-[10px] font-medium uppercase tracking-widest text-gray-500">Authorized Facility Zones</span>
                         </div>
                         <div className="pl-7 flex flex-wrap gap-3">
                             {(summary.areas || []).length > 0 ? (
                                 (summary.areas || []).map((area) => (
-                                    <span key={area} className="px-4 py-2 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[10px] font-black uppercase tracking-widest rounded-xl italic">
+                                    <span key={area} className="px-4 py-2 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[10px] font-medium uppercase tracking-widest rounded-xl italic">
                                         {area}
                                     </span>
                                 ))
                             ) : (
-                                <span className="text-gray-700 text-[10px] font-black uppercase tracking-widest italic">No Zones Designated</span>
+                                <span className="text-gray-700 text-[10px] font-medium uppercase tracking-widest italic">No Zones Designated</span>
                             )}
                         </div>
                     </div>
@@ -57,9 +57,9 @@ const Phase1Summary = ({ summary }) => {
                 <div className="mt-12 pt-8 border-t border-white/[0.03] flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-mas-red animate-pulse" />
-                        <span className="text-[9px] font-black text-gray-600 uppercase tracking-[0.3em]">Integrity Check Passed</span>
+                        <span className="text-[9px] font-medium text-gray-600 uppercase tracking-[0.3em]">Integrity Check Passed</span>
                     </div>
-                    <span className="text-[9px] font-black text-gray-800 uppercase tracking-[0.3em]">MAS ACCESS PROTOCOL</span>
+                    <span className="text-[9px] font-medium text-gray-800 uppercase tracking-[0.3em]">MAS ACCESS PROTOCOL</span>
                 </div>
             </div>
         </section>

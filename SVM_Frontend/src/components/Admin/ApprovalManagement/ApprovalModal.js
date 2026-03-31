@@ -37,56 +37,56 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="w-full max-w-xl bg-[#0A0A0B]/95 backdrop-blur-3xl border border-white/5 shadow-[0_30px_100px_rgba(0,0,0,0.8)] rounded-[40px] pointer-events-auto overflow-hidden relative"
+              className="w-full max-w-xl bg-[#161618]/95 backdrop-blur-3xl border border-white/20 shadow-[0_30px_100px_rgba(0,0,0,1)] rounded-[40px] pointer-events-auto overflow-hidden relative"
             >
               <div className="absolute top-0 right-0 w-64 h-64 bg-mas-red/5 rounded-full blur-[100px] pointer-events-none"></div>
 
               {/* Header */}
-              <div className="p-10 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative z-10">
-                <div className="flex items-center gap-5">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-colors ${type === 'Approve' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-mas-red/10 border-mas-red/20 text-mas-red'}`}>
-                    {type === 'Approve' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
+              <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative z-10">
+                <div className="flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-colors ${type === 'Approve' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-mas-red/10 border-mas-red/20 text-mas-red'}`}>
+                    {type === 'Approve' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
                   </div>
                   <div>
-                    <p className="text-mas-text-dim/40 text-[9px] font-black uppercase tracking-[0.4em] mb-1 italic">Administrative_Final_Review</p>
-                    <h2 className="text-white text-xl font-black uppercase tracking-widest italic">
+                    <p className="text-gray-300/90 text-[10px] font-medium uppercase tracking-widest mb-1">Administrative Final Review</p>
+                    <h2 className="text-white text-lg font-bold uppercase tracking-widest">
                       {type === 'Approve' ? 'Confirm Authorization' : 'Deny Access Protocol'}
                     </h2>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-mas-text-dim/40 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5 transition-all duration-300"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-300/90 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5 transition-all duration-300"
                 >
-                  <X size={20} />
+                  <X size={18} />
                 </button>
               </div>
 
               {/* Content */}
-              <form onSubmit={handleSubmit} className="p-10 space-y-10 relative z-10">
-                <div className="p-8 bg-[#121214] border border-white/5 rounded-[24px] shadow-inner flex justify-between items-center group/target hover:border-mas-red/20 transition-all duration-500">
+              <form onSubmit={handleSubmit} className="p-8 space-y-8 relative z-10">
+                <div className="p-6 bg-[#121214] border border-white/5 rounded-2xl shadow-inner flex justify-between items-center group/target hover:border-mas-red/20 transition-all duration-500">
                   <div className="flex items-center gap-4">
                     <div className="w-1.5 h-6 bg-mas-red/40 group-hover:bg-mas-red rounded-full transition-all"></div>
                     <div>
-                      <p className="text-mas-text-dim/20 text-[8px] font-black uppercase tracking-[0.3em] mb-1">Target_Subject_Identity</p>
-                      <p className="text-white text-sm font-black uppercase tracking-widest group-hover:text-mas-red transition-colors">{visitor?.name}</p>
+                      <p className="text-gray-300/80 text-[9px] font-medium uppercase tracking-widest mb-1">Target Subject Identity</p>
+                      <p className="text-white text-sm font-medium uppercase tracking-widest group-hover:text-mas-red transition-colors">{visitor?.name}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-mas-text-dim/20 text-[8px] font-black uppercase tracking-[0.3em] mb-1">Reg_Batch_ID</p>
-                    <p className="text-mas-text-dim text-[10px] font-mono italic">{visitor?.id || visitor?.batchId}</p>
+                    <p className="text-gray-300/80 text-[9px] font-medium uppercase tracking-widest mb-1">Reg Batch ID</p>
+                    <p className="text-gray-300/90 text-[11px] font-mono tracking-wider">{visitor?.id || visitor?.batchId}</p>
                   </div>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="flex justify-between items-end">
-                    <label className="text-mas-text-dim/40 uppercase text-[9px] font-black tracking-[0.3em] flex items-center gap-3">
+                    <label className="text-gray-300/90 uppercase text-[10px] font-medium tracking-widest flex items-center gap-2">
                       <Send size={12} className="text-mas-red/40" />
                       Protocol Feedback {type === 'Reject' && <span className="text-mas-red animate-pulse">*</span>}
                     </label>
                     {error && (
-                      <span className="text-mas-red text-[9px] font-black uppercase animate-pulse flex items-center gap-2 tracking-widest">
-                        <AlertCircle size={10} /> REQUIRED_FOR_DENIAL
+                      <span className="text-mas-red text-[10px] font-medium uppercase animate-pulse flex items-center gap-1.5 tracking-widest">
+                        <AlertCircle size={12} /> Required For Denial
                       </span>
                     )}
                   </div>
@@ -97,23 +97,23 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                       setComment(e.target.value);
                       if (e.target.value.trim()) setError(false);
                     }}
-                    placeholder={type === 'Approve' ? "APPEND AUTHORIZATION REMARKS (OPTIONAL)..." : "SPECIFY REFUSAL RATIONALE (MANDATORY_FIELD)..."}
-                    className={`w-full bg-[#0A0A0B] border border-white/5 text-white text-[11px] font-black tracking-widest p-6 rounded-[24px] focus:ring-0 focus:border-mas-red/40 focus:bg-[#161618] transition-all duration-500 resize-none shadow-inner placeholder:text-mas-text-dim/20 ${error ? 'border-mas-red/50 bg-mas-red/5' : ''}`}
+                    placeholder={type === 'Approve' ? "Append authorization remarks (optional)..." : "Specify refusal rationale (mandatory field)..."}
+                    className={`w-full bg-[#0A0A0B] border border-white/5 text-white text-sm font-normal tracking-wide p-5 rounded-xl focus:ring-0 focus:border-mas-red/40 focus:bg-[#161618] transition-all duration-500 resize-none shadow-inner placeholder:text-gray-300/80 ${error ? 'border-mas-red/50 bg-mas-red/5' : ''}`}
                   />
                 </div>
 
                 {/* Footer Actions */}
-                <div className="flex gap-4 pt-4">
+                <div className="flex gap-4 pt-2">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 h-16 border border-white/5 text-mas-text-dim/40 text-[10px] font-black uppercase tracking-[0.4em] hover:text-white hover:border-mas-red/40 hover:bg-white/[0.02] transition-all rounded-[20px] shadow-xl"
+                    className="flex-1 py-3.5 border border-white/5 text-gray-300/90 text-xs font-medium uppercase tracking-widest hover:text-white hover:border-mas-red/40 hover:bg-white/[0.02] transition-all rounded-xl shadow-xl"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className={`flex-[1.5] h-16 ${type === 'Approve' ? 'bg-[#00B14F] shadow-[0_10px_30px_rgba(0,177,79,0.2)]' : 'bg-mas-red shadow-[0_10px_30px_rgba(200,16,46,0.2)]'} text-white text-[10px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-4 rounded-[20px] transition-all hover:scale-[1.02] active:scale-[0.98] group`}
+                    className={`flex-[1.5] py-3.5 ${type === 'Approve' ? 'bg-[#00B14F] shadow-[0_5px_20px_rgba(0,177,79,0.2)]' : 'bg-mas-red shadow-[0_5px_20px_rgba(200,16,46,0.2)]'} text-white text-xs font-medium uppercase tracking-widest flex items-center justify-center gap-3 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] group`}
                   >
                     {type === 'Approve' ? 'Commit Authorization' : 'Commit Denial Protocol'}
                     <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

@@ -62,7 +62,7 @@ const Login = () => {
     return (
         <div className="min-h-screen bg-[#020202] text-white flex flex-col md:flex-row relative overflow-hidden font-sans selection:bg-mas-red/30">
             {/* AI Background Particles & Grid */}
-            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden circuit-grid opacity-20" />
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden circuit-grid opacity-70" />
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                 {[...Array(15)].map((_, i) => (
                     <motion.div
@@ -99,11 +99,11 @@ const Login = () => {
                         <div className="absolute -inset-8 border border-mas-red/10 rounded-full animate-ping opacity-10" />
                     </div>
 
-                    <h1 className="text-4xl font-black tracking-[0.2em] mb-4 metallic-text uppercase leading-tight">
+                    <h1 className="text-4xl font-bold tracking-[0.2em] mb-4 metallic-text uppercase leading-tight">
                         CHANGE IS COURAGE
                     </h1>
 
-                    <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-mas-red to-transparent mb-6 opacity-60" />
+                    <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-mas-red to-transparent mb-6 opacity-90" />
 
                     <div className="space-y-4">
                         <h2 className="text-xl font-bold tracking-[0.4em] text-white/90 uppercase">
@@ -119,11 +119,11 @@ const Login = () => {
                 <div className="absolute bottom-12 left-12 right-12 flex justify-between items-center opacity-30">
                     <div className="flex flex-col gap-1.5">
                         <div className="h-[1px] w-6 bg-blue-500" />
-                        <span className="text-[7px] font-bold tracking-[0.25em] uppercase">SYSTEM.ACTIVE</span>
+                        <span className="text-[7px] font-medium tracking-[0.25em] uppercase">SYSTEM.ACTIVE</span>
                     </div>
                     <div className="flex flex-col gap-1.5 items-end">
                         <div className="h-[1px] w-6 bg-mas-red" />
-                        <span className="text-[7px] font-bold tracking-[0.25em] uppercase">PROTO.4.0.5</span>
+                        <span className="text-[7px] font-medium tracking-[0.25em] uppercase">PROTO.4.0.5</span>
                     </div>
                 </div>
             </div>
@@ -141,13 +141,13 @@ const Login = () => {
                         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-mas-red/30 to-transparent" />
 
                         <div className="mb-10 text-center">
-                            <h3 className="text-2xl font-black mb-1 letter-spacing-wide tracking-[0.2em] uppercase">LOGIN PORTAL</h3>
-                            <p className="text-mas-text-dim text-[9px] tracking-[0.3em] uppercase opacity-60">SECURE ENTERPRISE AUTHENTICATION</p>
+                            <h3 className="text-2xl font-bold mb-1 letter-spacing-wide tracking-[0.2em] uppercase">LOGIN PORTAL</h3>
+                            <p className="text-gray-300 text-[9px] tracking-[0.3em] uppercase opacity-90">SECURE ENTERPRISE AUTHENTICATION</p>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="group space-y-2">
-                                <label className="text-[8px] font-black tracking-[0.25em] text-white/30 uppercase ml-1">IDENTIFIER PROTOCOL</label>
+                                <label className="text-[8px] font-medium tracking-[0.25em] text-white/30 uppercase ml-1">IDENTIFIER PROTOCOL</label>
                                 <TextField
                                     fullWidth
                                     name="email"
@@ -163,7 +163,7 @@ const Login = () => {
                                                 <Mail size={16} color="rgba(255, 255, 255, 0.35)" />
                                             </InputAdornment>
                                         ),
-                                        className: "rounded-none bg-black/60 border-white/5 text-xs text-white uppercase font-bold tracking-widest transition-all focus-within:bg-black group-hover:border-white/10"
+                                        className: "rounded-none bg-black/60 border-white/5 text-xs text-white uppercase font-medium tracking-widest transition-all focus-within:bg-black group-hover:border-white/10"
                                     }}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
@@ -176,7 +176,7 @@ const Login = () => {
                             </div>
 
                             <div className="group space-y-2">
-                                <label className="text-[8px] font-black tracking-[0.25em] text-white/30 uppercase ml-1">SECURITY ACCESS CODE</label>
+                                <label className="text-[8px] font-medium tracking-[0.25em] text-white/30 uppercase ml-1">SECURITY ACCESS CODE</label>
                                 <TextField
                                     fullWidth
                                     name="password"
@@ -216,8 +216,8 @@ const Login = () => {
                             </div>
 
                             <div className="flex justify-between items-center px-1">
-                                <button type="button" className="text-[8px] font-black tracking-[0.2em] text-blue-500/40 hover:text-blue-400 uppercase transition-colors">Recover Keys</button>
-                                <button type="button" className="text-[8px] font-black tracking-[0.2em] text-mas-red/40 hover:text-mas-red uppercase transition-colors">Visitor Link</button>
+                                <button type="button" className="text-[8px] font-medium tracking-[0.2em] text-blue-500/40 hover:text-blue-400 uppercase transition-colors">Recover Keys</button>
+                                <button type="button" className="text-[8px] font-medium tracking-[0.2em] text-mas-red/40 hover:text-mas-red uppercase transition-colors">Visitor Link</button>
                             </div>
 
                             <AnimatePresence>
@@ -225,7 +225,7 @@ const Login = () => {
                                     <motion.p
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="text-mas-red text-[9px] text-center font-bold tracking-widest uppercase py-2 bg-mas-red/5 rounded-none border border-mas-red/20"
+                                        className="text-mas-red text-[9px] text-center font-medium tracking-widest uppercase py-2 bg-mas-red/5 rounded-none border border-mas-red/20"
                                     >
                                         {localError || reduxError}
                                     </motion.p>
@@ -237,7 +237,7 @@ const Login = () => {
                                 whileTap={{ scale: 0.98 }}
                                 type="submit"
                                 disabled={reduxLoading}
-                                className="w-full bg-mas-red hover:bg-[#B0060E] py-5 rounded-[0px] text-[10px] font-black tracking-[0.3em] uppercase flex items-center justify-center gap-3 transition-all relative overflow-hidden shadow-[0_10px_30px_rgba(200,16,46,0.2)]"
+                                className="w-full bg-mas-red hover:bg-[#B0060E] py-5 rounded-[0px] text-[10px] font-medium tracking-[0.3em] uppercase flex items-center justify-center gap-3 transition-all relative overflow-hidden shadow-[0_10px_30px_rgba(200,16,46,0.2)]"
                             >
                                 {reduxLoading ? (
                                     <CircularProgress size={16} color="inherit" strokeWidth={6} />
@@ -252,7 +252,7 @@ const Login = () => {
                     </div>
 
                     <div className="mt-8 text-center">
-                        <span className="text-[8px] font-bold tracking-[0.4em] text-white/10 uppercase">Global Data Security Encrypted • v4.2.1</span>
+                        <span className="text-[8px] font-medium tracking-[0.4em] text-white/10 uppercase">Global Data Security Encrypted • v4.2.1</span>
                     </div>
                 </motion.div>
             </div>

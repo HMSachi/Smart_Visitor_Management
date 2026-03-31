@@ -40,7 +40,7 @@ const HeaderComponent = () => {
                             className="h-8 md:h-10 w-auto filter brightness-110 group-hover:brightness-125 transition-all"
                         />
                         <div className="hidden sm:block ml-4 h-6 w-px bg-white/10"></div>
-                        <span className="hidden sm:block ml-4 text-white font-bold tracking-tighter text-lg uppercase">
+                        <span className="hidden sm:block ml-4 text-white font-medium tracking-tighter text-lg uppercase">
                             Access <span className="text-mas-red">Portal</span>
                         </span>
                     </Link>
@@ -60,7 +60,7 @@ const HeaderComponent = () => {
                     
                     <button 
                         onClick={() => navigate('/request-step-1')}
-                        className="px-8 py-3.5 bg-mas-red text-white text-sm font-bold uppercase rounded-xl hover:bg-mas-red-hover hover:shadow-[0_0_30px_rgba(200,16,46,0.4)] transition-all transform active:scale-95"
+                        className="px-8 py-3.5 bg-mas-red text-white text-sm font-medium uppercase rounded-xl hover:bg-mas-red-hover hover:shadow-[0_0_30px_rgba(200,16,46,0.4)] transition-all transform active:scale-95"
                     >
                         Request Visit
                     </button>
@@ -92,7 +92,7 @@ const HeaderComponent = () => {
             >
                 <Box className="p-8 h-full flex flex-col">
                     <div className="flex justify-between items-center mb-12">
-                        <span className="text-mas-red font-black tracking-widest text-xl">MENU</span>
+                        <span className="text-mas-red font-medium tracking-widest text-xl">MENU</span>
                         <IconButton onClick={() => dispatch(setMobileMenu(false))} className="text-white bg-white/5">
                             <X size={20} />
                         </IconButton>
@@ -111,7 +111,7 @@ const HeaderComponent = () => {
                                 </ListItemIcon>
                                 <ListItemText 
                                     primary={item.label} 
-                                    className="text-white uppercase font-bold"
+                                    className="text-white uppercase font-medium"
                                     primaryTypographyProps={{ style: { fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.1em' } }}
                                 />
                             </ListItem>
@@ -121,7 +121,7 @@ const HeaderComponent = () => {
                     <div className="mt-auto">
                         <button 
                             onClick={() => handleNavigate('/request-step-1')}
-                            className="w-full py-6 bg-mas-red text-white font-black uppercase rounded-2xl shadow-[0_20px_40px_rgba(200,16,46,0.2)] flex items-center justify-center gap-3"
+                            className="w-full py-6 bg-mas-red text-white font-medium uppercase rounded-2xl shadow-[0_20px_40px_rgba(200,16,46,0.2)] flex items-center justify-center gap-3"
                         >
                             <Plus size={20} /> Request Visit
                         </button>

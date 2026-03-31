@@ -7,17 +7,17 @@ const RejectionTable = ({ requests, onSelect }) => {
             <table className="w-full text-left border-collapse">
                 <thead>
                     <tr className="border-b border-mas-border bg-white/[0.02]">
-                        <th className="px-8 py-6 uppercase text-mas-text-dim">Batch ID</th>
-                        <th className="px-8 py-6 uppercase text-mas-text-dim">Visitor</th>
-                        <th className="px-8 py-6 uppercase text-mas-text-dim">Rejection Date</th>
-                        <th className="px-8 py-6 uppercase text-mas-text-dim">Root Cause</th>
-                        <th className="px-8 py-6 uppercase text-mas-text-dim text-right">Details</th>
+                        <th className="px-8 py-6 uppercase text-gray-300">Batch ID</th>
+                        <th className="px-8 py-6 uppercase text-gray-300">Visitor</th>
+                        <th className="px-8 py-6 uppercase text-gray-300">Rejection Date</th>
+                        <th className="px-8 py-6 uppercase text-gray-300">Root Cause</th>
+                        <th className="px-8 py-6 uppercase text-gray-300 text-right">Details</th>
                     </tr>
                 </thead>
                 <tbody>
                     {requests.map((req) => (
                         <tr key={req.id} className="border-b border-mas-border group hover:bg-white/[0.03] transition-all cursor-pointer" onClick={() => onSelect(req)}>
-                            <td className="px-8 py-6 text-mas-text-dim">#{req.id}</td>
+                            <td className="px-8 py-6 text-gray-300">#{req.id}</td>
                             <td className="px-8 py-6">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 bg-mas-red/10 flex items-center justify-center text-mas-red border border-mas-red/20 group-hover:bg-mas-red group-hover:text-white transition-all">
@@ -36,7 +36,7 @@ const RejectionTable = ({ requests, onSelect }) => {
                                 </div>
                             </td>
                             <td className="px-8 py-6 text-right">
-                                <div className="text-mas-text-dim group-hover:text-mas-red transition-all inline-block">
+                                <div className="text-gray-300 group-hover:text-mas-red transition-all inline-block">
                                     <ArrowRight size={14} />
                                 </div>
                             </td>

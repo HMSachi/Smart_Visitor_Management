@@ -7,11 +7,11 @@ const StatusBadge = ({ status }) => {
     'Pending': 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
     'Rejected': 'text-mas-red bg-mas-red/10 border-mas-red/20',
     'Checked In': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
-    'Checked Out': 'text-mas-text-dim/60 bg-white/5 border-white/10',
+    'Checked Out': 'text-gray-300/90 bg-white/5 border-white/10',
   };
 
   return (
-    <span className={`px-2.5 py-1 text-[10px] font-black tracking-widest uppercase border rounded-lg ${styles[status] || styles['Pending']}`}>
+    <span className={`px-2.5 py-1 text-[10px] font-medium tracking-widest uppercase border rounded-lg ${styles[status] || styles['Pending']}`}>
       {status}
     </span>
   );
@@ -29,18 +29,18 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
           </div>
           <div>
             <h2 className="text-xl font-bold tracking-tight text-white uppercase">Personnel Authorization</h2>
-            <p className="text-mas-text-dim text-[10px] font-black uppercase tracking-[0.2em] mt-1 opacity-60">Database Synchronization Active</p>
+            <p className="text-gray-300 text-[10px] font-medium uppercase tracking-[0.2em] mt-1 opacity-90">Database Synchronization Active</p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
           {/* Custom Search Bar */}
           <div className="relative flex-1 xl:w-72 group">
-            <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-mas-text-dim/40 group-focus-within:text-mas-red transition-colors" />
+            <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300/80 group-focus-within:text-mas-red transition-colors" />
             <input
               type="text"
               placeholder="SEARCH MATRIX..."
-              className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-xl text-[10px] text-white placeholder:text-mas-text-dim/30 focus:border-mas-red/30 focus:bg-white/[0.05] outline-none transition-all uppercase tracking-widest"
+              className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-xl text-[10px] text-white placeholder:text-gray-300/30 focus:border-mas-red/30 focus:bg-white/[0.05] outline-none transition-all uppercase tracking-widest"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -51,7 +51,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full pl-4 pr-10 py-2.5 bg-white/[0.03] border border-white/5 rounded-xl text-[10px] font-black text-mas-text-dim uppercase tracking-widest focus:text-white focus:border-mas-red/30 transition-all cursor-pointer outline-none appearance-none"
+              className="w-full pl-4 pr-10 py-2.5 bg-white/[0.03] border border-white/5 rounded-xl text-[10px] font-medium text-gray-300 uppercase tracking-widest focus:text-white focus:border-mas-red/30 transition-all cursor-pointer outline-none appearance-none"
             >
               <option value="All">ALL STATUS</option>
               <option value="Pending">PENDING</option>
@@ -59,12 +59,12 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
               <option value="Rejected">REJECTED</option>
               <option value="Checked Out">CHECKED OUT</option>
             </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-mas-text-dim/40 border-l border-white/10 pl-3">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-300/80 border-l border-white/10 pl-3">
               <Eye size={12} />
             </div>
           </div>
 
-          <button className="flex items-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-black uppercase tracking-widest text-mas-text-dim hover:text-white hover:border-mas-red/30 hover:bg-mas-red/5 transition-all group">
+          <button className="flex items-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-medium uppercase tracking-widest text-gray-300 hover:text-white hover:border-mas-red/30 hover:bg-mas-red/5 transition-all group">
             <Download size={14} className="group-hover:translate-y-0.5 transition-transform" /> Export Data
           </button>
         </div>
@@ -73,7 +73,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="bg-white/[0.02] border-b border-white/5 text-mas-text-dim text-[10px] font-black uppercase tracking-[0.2em]">
+            <tr className="bg-white/[0.02] border-b border-white/5 text-gray-300 text-[10px] font-medium uppercase tracking-[0.2em]">
               <th className="px-8 py-4 w-20 text-center">Unit</th>
               <th className="px-8 py-4">Visitor Identity</th>
               <th className="px-8 py-4">Reference Protocol</th>
@@ -86,24 +86,24 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             {requests.map((visitor) => (
               <tr key={visitor.id} className="group transition-all hover:bg-white/[0.01]">
                 <td className="px-8 py-5 text-center">
-                  <div className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 text-[10px] font-black text-mas-text-dim flex items-center justify-center transition-all mx-auto group-hover:border-mas-red/20 group-hover:text-white">
+                  <div className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 text-[10px] font-medium text-gray-300 flex items-center justify-center transition-all mx-auto group-hover:border-mas-red/20 group-hover:text-white">
                     {visitor.members.length + 1}
                   </div>
                 </td>
                 <td className="px-8 py-5">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-mas-red/20 to-transparent border border-mas-red/20 flex items-center justify-center text-mas-red text-[11px] font-black group-hover:shadow-[0_0_15px_rgba(200,16,46,0.15)] transition-all">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-mas-red/20 to-transparent border border-mas-red/20 flex items-center justify-center text-mas-red text-[11px] font-medium group-hover:shadow-[0_0_15px_rgba(200,16,46,0.15)] transition-all">
                       {visitor.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div>
-                      <p className="text-white text-sm font-bold truncate max-w-[200px]">{visitor.name}</p>
-                      <p className="text-mas-text-dim text-[9px] uppercase tracking-widest font-bold opacity-60">Lead Personnel</p>
+                      <p className="text-white text-sm font-medium truncate max-w-[200px]">{visitor.name}</p>
+                      <p className="text-gray-300 text-[9px] uppercase tracking-widest font-medium opacity-90">Lead Personnel</p>
                     </div>
                   </div>
                 </td>
                 <td className="px-8 py-5">
                   <p className="text-white/80 font-mono text-[11px] tracking-tighter mb-1 select-all">{visitor.batchId}</p>
-                  <p className="text-mas-text-dim text-[10px] uppercase font-medium">{visitor.contactPerson}</p>
+                  <p className="text-gray-300 text-[10px] uppercase font-medium">{visitor.contactPerson}</p>
                 </td>
                 <td className="px-8 py-5">
                   <div className="flex flex-col gap-1">
@@ -111,7 +111,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
                       <span className="w-1 h-1 bg-mas-red rounded-full"></span>
                       {visitor.date}
                     </div>
-                    <p className="text-mas-text-dim text-[10px] uppercase tracking-wider pl-3">{visitor.timeIn} | {visitor.areas[0]}</p>
+                    <p className="text-gray-300 text-[10px] uppercase tracking-wider pl-3">{visitor.timeIn} | {visitor.areas[0]}</p>
                   </div>
                 </td>
                 <td className="px-8 py-5 text-center">
@@ -120,7 +120,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
                 <td className="px-8 py-5 text-right">
                   <button
                     onClick={() => onReview(visitor.id)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/5 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black hover:border-white transition-all group/btn shadow-lg"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/5 text-white text-[10px] font-medium uppercase tracking-widest hover:bg-white hover:text-black hover:border-white transition-all group/btn shadow-lg"
                   >
                     <Eye size={14} className="group-hover/btn:scale-110 transition-transform" />
                     Review
@@ -130,7 +130,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             ))}
             {requests.length === 0 && (
               <tr>
-                <td colSpan="6" className="px-8 py-20 text-center text-mas-text-dim uppercase text-xs tracking-[0.3em] font-black opacity-40">
+                <td colSpan="6" className="px-8 py-20 text-center text-gray-300 uppercase text-xs tracking-[0.3em] font-medium opacity-80">
                   NO VISITOR AUTHORIZATIONS FOUND
                 </td>
               </tr>

@@ -21,22 +21,22 @@ const NotificationsMain = () => {
                 <div>
                     <div className="flex items-center gap-3 mb-1">
                         <div className="w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E] animate-pulse"></div>
-                        <span className="text-mas-red text-[10px] font-black uppercase tracking-[0.3em]">Operational Alerts</span>
+                        <span className="text-mas-red text-[10px] font-medium uppercase tracking-[0.3em]">Operational Alerts</span>
                     </div>
                     <div className="flex items-center gap-6">
-                        <p className="text-mas-text-dim text-xs uppercase tracking-widest opacity-60">System intelligence and activity log</p>
-                        <span className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[9px] font-black uppercase tracking-widest rounded-lg">
+                        <p className="text-gray-300 text-xs uppercase tracking-widest opacity-90">System intelligence and activity log</p>
+                        <span className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[9px] font-medium uppercase tracking-widest rounded-lg">
                             {notifications.filter(n => n.unread).length} Active Alerts
                         </span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <button onClick={markAllRead} className="flex items-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-black uppercase tracking-widest text-mas-text-dim hover:text-white hover:border-white/20 transition-all group">
+                    <button onClick={markAllRead} className="flex items-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-medium uppercase tracking-widest text-gray-300 hover:text-white hover:border-white/20 transition-all group">
                         <CheckSquare size={14} className="group-hover:text-mas-red transition-colors" />
                         Acknowledge All
                     </button>
-                    <button className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-mas-text-dim hover:text-mas-red hover:border-mas-red transition-all shadow-lg">
+                    <button className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-gray-300 hover:text-mas-red hover:border-mas-red transition-all shadow-lg">
                         <Trash2 size={18} />
                     </button>
                 </div>

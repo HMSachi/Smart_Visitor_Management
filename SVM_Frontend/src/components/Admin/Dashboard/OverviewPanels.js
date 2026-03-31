@@ -22,7 +22,7 @@ const Panel = ({ iconName, label, value, trend, colorClass }) => {
 
       <div className="flex justify-between items-start relative z-10">
         <div>
-          <p className="text-mas-text-dim text-[10px] font-black uppercase tracking-[0.2em] mb-4 opacity-40 group-hover:opacity-100 transition-opacity">{label}</p>
+          <p className="text-gray-300 text-[10px] font-medium uppercase tracking-[0.2em] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">{label}</p>
           <h3 className="text-white text-3xl font-bold tracking-tighter group-hover:text-mas-red transition-colors">{value}</h3>
         </div>
         <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group-hover:border-mas-red/40 group-hover:bg-mas-red/10 transition-all duration-500 shadow-lg">
@@ -32,14 +32,14 @@ const Panel = ({ iconName, label, value, trend, colorClass }) => {
 
       <div className="mt-10 flex items-center justify-between relative z-10">
         <div className="flex items-center gap-3">
-          <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border ${trend.includes('+') ? 'text-green-500 border-green-500/10 bg-green-500/5' : 'text-mas-text-dim border-white/5 bg-white/5'}`}>
+          <div className={`text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-lg border ${trend.includes('+') ? 'text-green-500 border-green-500/10 bg-green-500/5' : 'text-gray-300 border-white/5 bg-white/5'}`}>
             {trend}
           </div>
-          <span className="text-[9px] font-black uppercase tracking-widest text-mas-text-dim opacity-30 group-hover:opacity-60">vs last cycle</span>
+          <span className="text-[9px] font-medium uppercase tracking-widest text-gray-300 opacity-30 group-hover:opacity-90">vs last cycle</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-1 h-1 bg-mas-red rounded-full"></div>
-          <p className="text-mas-text-dim text-[9px] font-black uppercase tracking-widest">Protocol Active</p>
+          <p className="text-gray-300 text-[9px] font-medium uppercase tracking-widest">Protocol Active</p>
         </div>
       </div>
 

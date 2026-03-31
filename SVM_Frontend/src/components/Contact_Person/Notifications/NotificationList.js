@@ -26,18 +26,18 @@ const NotificationList = ({ notifications }) => {
 
                         <div className="flex-1">
                             <div className="flex justify-between items-center mb-1">
-                                <h4 className={`text-[11px] font-black tracking-[0.1em] uppercase ${notif.unread ? 'text-white' : 'text-mas-text-dim opacity-60 group-hover:opacity-100 transition-opacity'}`}>
+                                <h4 className={`text-[11px] font-medium tracking-[0.1em] uppercase ${notif.unread ? 'text-white' : 'text-gray-300 opacity-90 group-hover:opacity-100 transition-opacity'}`}>
                                     {notif.title}
                                 </h4>
-                                <span className="text-mas-text-dim text-[9px] font-black uppercase tracking-widest opacity-40">
+                                <span className="text-gray-300 text-[9px] font-medium uppercase tracking-widest opacity-80">
                                     {notif.time}
                                 </span>
                             </div>
-                            <p className={`text-[13px] font-medium leading-relaxed ${notif.unread ? 'text-white/90' : 'text-mas-text-dim/70 group-hover:text-mas-text-dim transition-colors'}`}>
+                            <p className={`text-[13px] font-medium leading-relaxed ${notif.unread ? 'text-white/90' : 'text-gray-300/70 group-hover:text-gray-300 transition-colors'}`}>
                                 {notif.message}
                             </p>
                         </div>
-                        <div className={`p-2 rounded-lg bg-white/[0.02] border border-white/5 opacity-0 group-hover:opacity-100 transition-all ${notif.unread ? 'text-mas-red' : 'text-mas-text-dim'}`}>
+                        <div className={`p-2 rounded-lg bg-white/[0.02] border border-white/5 opacity-0 group-hover:opacity-100 transition-all ${notif.unread ? 'text-mas-red' : 'text-gray-300'}`}>
                             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>

@@ -9,11 +9,11 @@ const AlertItem = ({ type, location, time, severity }) => (
         <ShieldAlert size={16} className={severity === 'high' ? 'text-mas-red animate-pulse' : 'text-yellow-500'} />
         <span className="uppercase text-white">{type}</span>
       </div>
-      <span className="text-mas-text-dim uppercase">{time}</span>
+      <span className="text-gray-300 uppercase">{time}</span>
     </div>
     <div className="flex items-center gap-2 mb-3">
-      <MapPin size={12} className="text-mas-text-dim" />
-      <span className="text-mas-text-dim uppercase">{location}</span>
+      <MapPin size={12} className="text-gray-300" />
+      <span className="text-gray-300 uppercase">{location}</span>
     </div>
     <div className="flex gap-2">
       <button className="flex-1 bg-mas-gray uppercase py-1.5 border border-mas-border hover:border-mas-red hover:text-white transition-all">
@@ -35,12 +35,12 @@ const SecurityMonitoring = () => {
         <div className="absolute inset-0 bg-mas-black/20 z-10 pointer-events-none"></div>
         <div className="absolute top-6 left-6 z-20">
           <h2 className="uppercase text-white">Zone Tracking Map</h2>
-          <p className="text-mas-text-dim uppercase mt-1">Real-time visitor location monitoring</p>
+          <p className="text-gray-300 uppercase mt-1">Real-time visitor location monitoring</p>
         </div>
         
         {/* Mock Map Placeholder */}
         <div className="absolute inset-0 flex items-center justify-center bg-[#0d0d0e]">
-          <div className="w-full h-full opacity-20 pointer-events-none">
+          <div className="w-full h-full opacity-70 pointer-events-none">
              <div className="grid grid-cols-12 h-full w-full">
                 {[...Array(144)].map((_, i) => (
                    <div key={i} className="border-[0.5px] border-mas-red/20"></div>
@@ -56,7 +56,7 @@ const SecurityMonitoring = () => {
                 </div>
              </div>
           </div>
-          <p className="z-20 text-mas-text-dim uppercase animate-pulse">Scanning live zones...</p>
+          <p className="z-20 text-gray-300 uppercase animate-pulse">Scanning live zones...</p>
         </div>
 
         <div className="absolute bottom-6 right-6 z-20 flex gap-2">
@@ -78,7 +78,7 @@ const SecurityMonitoring = () => {
           ))}
         </div>
         <div className="p-4 border-t border-mas-border bg-mas-dark/30 text-center">
-          <button className="uppercase text-mas-text-dim hover:text-white transition-all underline">
+          <button className="uppercase text-gray-300 hover:text-white transition-all underline">
             View all security logs
           </button>
         </div>

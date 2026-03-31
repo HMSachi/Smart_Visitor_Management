@@ -21,11 +21,11 @@ const QuickAccessHub = ({ setActiveTab }) => {
           <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-mas-red/[0.02] rounded-full blur-2xl group-hover:bg-mas-red/5 transition-all"></div>
 
           <div className={`w-14 h-14 mb-6 flex items-center justify-center rounded-2xl bg-white/[0.02] border border-white/10 group-hover:border-mas-red group-hover:bg-mas-red group-hover:text-white transition-all duration-500 shadow-lg relative z-10`}>
-            <link.icon size={24} className={link.id === 'approvals' ? 'text-mas-red group-hover:text-white' : 'text-mas-text-dim group-hover:text-white'} strokeWidth={2} />
+            <link.icon size={24} className={link.id === 'approvals' ? 'text-mas-red group-hover:text-white' : 'text-gray-300 group-hover:text-white'} strokeWidth={2} />
           </div>
 
-          <h3 className="text-white text-[11px] font-black uppercase tracking-[0.2em] mb-2 relative z-10 group-hover:text-mas-red transition-colors">{link.label}</h3>
-          <p className="text-mas-text-dim text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-60 transition-all duration-500 translate-y-2 group-hover:translate-y-0 relative z-10">
+          <h3 className="text-white text-[11px] font-bold uppercase tracking-[0.2em] mb-2 relative z-10 group-hover:text-mas-red transition-colors">{link.label}</h3>
+          <p className="text-gray-300 text-[9px] font-medium uppercase tracking-widest opacity-0 group-hover:opacity-90 transition-all duration-500 translate-y-2 group-hover:translate-y-0 relative z-10">
             {link.desc}
           </p>
         </div>

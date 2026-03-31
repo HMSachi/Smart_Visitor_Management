@@ -40,7 +40,7 @@ const ActiveVisitorsCard = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
-            <p className="text-mas-text-dim uppercase">Protocols Active</p>
+            <p className="text-gray-300 uppercase">Protocols Active</p>
           </div>
           <AnimatePresence mode="wait">
             <motion.h2 
@@ -61,14 +61,14 @@ const ActiveVisitorsCard = () => {
 
       <div className="space-y-6 relative z-10">
         <div className="flex justify-between items-end border-b border-white/5 pb-2">
-          <p className="text-white/40 uppercase">Traffic Density</p>
+          <p className="text-white/80 uppercase">Traffic Density</p>
           <div className="flex items-center text-green-500 uppercase">
             <Activity size={12} className="mr-1.5" />
             STABLE
           </div>
         </div>
         
-        <div className="h-20 w-full opacity-60 group-hover:opacity-100 transition-all">
+        <div className="h-20 w-full opacity-90 group-hover:opacity-100 transition-all">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
               <Bar dataKey="val">

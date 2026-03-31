@@ -9,15 +9,15 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                     <Info size={20} />
                 </div>
                 <div>
-                    <h2 className="text-xl font-black text-white uppercase tracking-tight">Visit Details</h2>
-                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]">Purpose & Logistics</p>
+                    <h2 className="text-xl font-bold text-white uppercase tracking-tight">Visit Details</h2>
+                    <p className="text-gray-500 text-[10px] font-medium uppercase tracking-[0.2em]">Purpose & Logistics</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-3xl">
                 {/* Visit Date */}
                 <div className="relative group/field">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2 block group-focus-within/field:text-mas-red transition-colors">
+                    <label className="text-[10px] font-medium uppercase tracking-widest text-gray-500 mb-2 block group-focus-within/field:text-mas-red transition-colors">
                         Planned Date
                     </label>
                     <div className="relative">
@@ -37,7 +37,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
 
                 {/* Purpose of Visit */}
                 <div className="relative group/field">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2 block group-focus-within/field:text-mas-red transition-colors">
+                    <label className="text-[10px] font-medium uppercase tracking-widest text-gray-500 mb-2 block group-focus-within/field:text-mas-red transition-colors">
                         Nature of Visit
                     </label>
                     <div className="relative">
@@ -63,8 +63,8 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                 {/* Company Related Toggle */}
                 <div className="flex items-center justify-between p-6 bg-white/[0.03] border border-white/10 rounded-2xl group/toggle">
                     <div className="flex flex-col">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-white group-hover:text-mas-red transition-colors">Corporate Business?</label>
-                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Related to MAS operations</span>
+                        <label className="text-[10px] font-medium uppercase tracking-widest text-white group-hover:text-mas-red transition-colors">Corporate Business?</label>
+                        <span className="text-[9px] text-gray-500 font-medium uppercase tracking-wider">Related to MAS operations</span>
                     </div>
                     <button 
                         type="button"
@@ -78,8 +78,8 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                 {/* Visitor Count */}
                 <div className="flex items-center justify-between p-6 bg-white/[0.03] border border-white/10 rounded-2xl">
                     <div className="flex flex-col">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-white">Delegation Size</label>
-                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Total persons entering</span>
+                        <label className="text-[10px] font-medium uppercase tracking-widest text-white">Delegation Size</label>
+                        <span className="text-[9px] text-gray-500 font-medium uppercase tracking-wider">Total persons entering</span>
                     </div>
                     <div className="flex items-center gap-6 bg-mas-dark-900/50 p-2 rounded-xl border border-white/5">
                         <button 
@@ -89,7 +89,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                         >
                             <Minus size={16} />
                         </button>
-                        <span className="text-white font-black text-lg w-6 text-center tabular-nums">{data.visitorCount}</span>
+                        <span className="text-white font-medium text-lg w-6 text-center tabular-nums">{data.visitorCount}</span>
                         <button 
                             type="button" 
                             onClick={(e) => { e.preventDefault(); onCountChange(1); }}

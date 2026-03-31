@@ -33,9 +33,9 @@ const SafetyFeatures = () => {
                     <div className="max-w-xl text-left">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-10 h-[2px] bg-mas-red" />
-                            <span className="text-mas-red uppercase tracking-[0.3em] text-[10px] font-black">Security Infrastructure</span>
+                            <span className="text-mas-red uppercase tracking-[0.3em] text-[10px] font-medium">Security Infrastructure</span>
                         </div>
-                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none mb-8">
+                        <h2 className="text-4xl md:text-6xl font-bold text-white uppercase tracking-tighter leading-none mb-8">
                             Elite <span className="text-mas-red">Compliance</span>
                         </h2>
                         <p className="text-gray-400 text-lg leading-relaxed font-medium">
@@ -57,18 +57,18 @@ const SafetyFeatures = () => {
                                 <div className="w-12 h-12 bg-mas-red/5 rounded-xl flex items-center justify-center text-mas-red">
                                     <category.icon size={22} />
                                 </div>
-                                <span className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Layer 0{index + 1}</span>
+                                <span className="text-[10px] font-medium text-gray-600 uppercase tracking-[0.2em]">Layer 0{index + 1}</span>
                             </div>
 
-                            <h3 className="text-white text-lg font-black mb-8 uppercase tracking-widest group-hover:text-mas-red transition-colors">
+                            <h3 className="text-white text-lg font-bold mb-8 uppercase tracking-widest group-hover:text-mas-red transition-colors">
                                 {category.name}
                             </h3>
                             
                             <ul className="space-y-5">
                                 {category.items.map((item, idx) => (
                                     <li key={idx} className="flex items-center gap-3">
-                                        <CheckCircle2 size={14} className="text-mas-red opacity-40" />
-                                        <span className="text-gray-500 text-xs font-bold uppercase tracking-wider group-hover:text-gray-300 transition-colors">
+                                        <CheckCircle2 size={14} className="text-mas-red opacity-80" />
+                                        <span className="text-gray-500 text-xs font-medium uppercase tracking-wider group-hover:text-gray-300 transition-colors">
                                             {item}
                                         </span>
                                     </li>
@@ -90,17 +90,17 @@ const SafetyFeatures = () => {
                     
                     <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
                         <div className="max-w-2xl text-center md:text-left">
-                            <h3 className="text-3xl md:text-4xl font-black text-white mb-6 uppercase tracking-tighter leading-none">
+                            <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 uppercase tracking-tighter leading-none">
                                 Registration Protocol Required?
                             </h3>
-                            <p className="text-white/70 uppercase text-[10px] font-black tracking-[0.2em] leading-relaxed max-w-lg">
+                            <p className="text-white/70 uppercase text-[10px] font-medium tracking-[0.2em] leading-relaxed max-w-lg">
                                 Initiate your secure entry request for MAS Holdings facilities. Our automated protocol ensures rapid authorization across all zones.
                             </p>
                         </div>
 
                         <button 
                             onClick={() => navigate('/request-step-1')}
-                            className="px-10 py-5 bg-white text-mas-red font-black uppercase text-xs tracking-[0.3em] rounded-2xl hover:bg-mas-dark-900 hover:text-white shadow-2xl transition-all flex items-center gap-4 active:scale-95"
+                            className="px-10 py-5 bg-white text-mas-red font-medium uppercase text-xs tracking-[0.3em] rounded-2xl hover:bg-mas-dark-900 hover:text-white shadow-2xl transition-all flex items-center gap-4 active:scale-95"
                         >
                             Request Visit
                             <ArrowRight size={18} />

@@ -1,94 +1,250 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ApprovalChecklist from './ApprovalChecklist';
-import { ShieldCheck, Zap, Activity, Clock, Shield, Lock, Cpu, Server } from 'lucide-react';
+import { ShieldCheck, Activity, Shield, Lock, Search, ChevronRight, User, Camera, Car, Package, ArrowLeft, FileText, CheckCircle2 } from 'lucide-react';
+
+const pendingVisitors = [
+    { 
+        id: 'VER-SYNC-4291', 
+        name: 'John Doe', 
+        type: 'Staff_Visitor', 
+        nodeOrigin: 'RECEPTION_01', 
+        time: '12:34:02 PM', 
+        status: 'Pending Verification', 
+        company: 'Logistics Pro', 
+        nic: '901234567V', 
+        phone: '+94 77 111 2222', 
+        purpose: 'Hardware Maintenance', 
+        vehicle: 'Toyota Prius (WP CAX-1234)', 
+        equipment: [{name: 'Diagnostic Toolbox', serial: 'TB-991'}, {name: 'Testing Kit', serial: 'TK-12'}], 
+        initials: 'JD' 
+    },
+    { 
+        id: 'VER-SYNC-4310', 
+        name: 'Jane Smith', 
+        type: 'Contractor', 
+        nodeOrigin: 'GATE_02', 
+        time: '01:15:00 PM', 
+        status: 'Pending Verification', 
+        company: 'BuildCorp', 
+        nic: '852345678V', 
+        phone: '+94 71 333 4444', 
+        purpose: 'Site Inspection', 
+        vehicle: 'N/A (Walk-in)', 
+        equipment: [], 
+        initials: 'JS' 
+    }
+];
 
 const EntryApprovalMain = () => {
-    const [nodeSync, setNodeSync] = useState(false);
+    const [view, setView] = useState('list'); // 'list', 'details', 'verification'
+    const [selectedVisitor, setSelectedVisitor] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setNodeSync(prev => !prev);
-        }, 4000);
-        return () => clearInterval(interval);
-    }, []);
+    const filteredVisitors = pendingVisitors.filter(v => 
+        v.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        v.id.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const handleSelectVisitor = (visitor) => {
+        setSelectedVisitor(visitor);
+        setView('details');
+    };
 
     return (
-        <div className="p-10 md:p-16 space-y-16 animate-fade-in-slow bg-[#0A0A0B] relative overflow-hidden min-h-full">
+        <div className="p-8 md:p-12 space-y-10 bg-[#0A0A0B] relative overflow-x-hidden min-h-full">
             {/* Tactical background elements */}
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-mas-red/5 rounded-full blur-[140px] pointer-events-none opacity-40"></div>
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-mas-red/5 rounded-full blur-[140px] pointer-events-none opacity-80"></div>
 
-            {/* Hero Protocol Section */}
-            <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-12 border-b border-white/5 pb-16">
-                <div className="space-y-10">
-                    <div className="flex items-center gap-6">
-                        <div className="relative">
-                            <div className="p-3 bg-mas-red/10 border border-mas-red/20 rounded-xl relative z-10">
-                                <Zap size={14} className="text-mas-red animate-pulse" />
+            <div className="relative z-10 h-full flex flex-col">
+                <AnimatePresence mode="wait">
+                    {view === 'list' && (
+                        <motion.div
+                            key="list"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="space-y-8"
+                        >
+                            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="p-2 rounded-lg bg-mas-red/10 border border-mas-red/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
+                                            <Activity size={16} className="text-mas-red animate-pulse" />
+                                        </div>
+                                        <span className="text-mas-red font-medium uppercase text-[10px] tracking-[0.4em] italic">Access_Control_Queue</span>
+                                    </div>
+                                    <h1 className="text-4xl md:text-5xl font-bold text-white italic tracking-tighter uppercase">
+                                        Pending_Verification
+                                    </h1>
+                                </div>
+                                <div className="relative w-full sm:w-80 group">
+                                    <Search size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-mas-red transition-colors" />
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="FILTER_QUEUE (NAME/ID)..."
+                                        className="w-full pl-14 pr-6 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-[10px] uppercase font-medium tracking-widest text-white placeholder:text-white/80 focus:border-mas-red/40 outline-none transition-all duration-500 italic shadow-xl"
+                                    />
+                                </div>
                             </div>
-                            <div className="absolute inset-0 bg-mas-red/20 blur-lg rounded-full"></div>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <span className="text-mas-red uppercase text-[10px] font-black tracking-[0.5em] italic">Final_Clearance_Node_Alpha_01</span>
-                            <div className="h-[1px] w-32 bg-gradient-to-r from-mas-red to-transparent"></div>
-                        </div>
-                    </div>
 
-                    <div className="relative group">
-                        <h1 className="text-white text-5xl md:text-6xl font-black uppercase tracking-widest italic leading-none flex flex-col md:flex-row md:items-center gap-6">
-                            Entry
-                            <div className="hidden md:block h-10 w-[2px] bg-white/10 mx-2"></div>
-                            <span className="text-mas-text-dim/10 font-light text-3xl md:text-4xl tracking-[0.2em] italic group-hover:text-mas-red/20 transition-colors duration-700 underline decoration-mas-red/10 decoration-4 underline-offset-8">AUTHORIZATION</span>
-                        </h1>
-                        <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-1 h-16 bg-mas-red rounded-full shadow-[0_0_20px_#C8102E] hidden xl:block"></div>
-                    </div>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                                {filteredVisitors.map(v => (
+                                    <div 
+                                        key={v.id}
+                                        onClick={() => handleSelectVisitor(v)}
+                                        className="mas-glass p-8 border-white/5 bg-[#121214]/60 backdrop-blur-3xl rounded-[28px] cursor-pointer group hover:border-mas-red/30 hover:bg-[#121214]/80 transition-all duration-500 shadow-[0_20px_40px_rgba(0,0,0,0.4)] overflow-hidden relative"
+                                    >
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-mas-red/5 rounded-full blur-[60px] pointer-events-none group-hover:bg-mas-red/20 transition-all"></div>
+                                        <div className="flex items-center justify-between mb-8 relative z-10">
+                                            <div className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-gray-300/80 text-[8px] font-medium uppercase tracking-widest italic">{v.time} via {v.nodeOrigin.split('_')[0]}</div>
+                                            <div className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[8px] font-medium uppercase tracking-widest italic animate-pulse">Waiting</div>
+                                        </div>
+                                        <div className="flex items-center gap-6 relative z-10">
+                                            <div className="w-16 h-16 rounded-2xl bg-mas-dark border border-white/10 flex items-center justify-center text-mas-red font-medium text-xl italic group-hover:scale-110 group-hover:bg-mas-red group-hover:text-white transition-all shadow-[0_0_15px_rgba(200,16,46,0.1)]">
+                                                {v.initials}
+                                            </div>
+                                            <div>
+                                                <h3 className="text-white text-xl md:text-2xl font-bold uppercase tracking-widest italic group-hover:text-mas-red transition-colors">{v.name}</h3>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <Shield size={12} className="text-gray-300/90" />
+                                                    <span className="text-gray-300/90 text-[10px] font-medium uppercase tracking-[0.2em]">{v.id}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {filteredVisitors.length === 0 && (
+                                    <div className="col-span-full py-20 text-center">
+                                        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+                                            <CheckCircle2 size={24} className="text-gray-300/80" />
+                                        </div>
+                                        <p className="text-white/80 font-medium uppercase tracking-widest text-xs italic">No pending verifications</p>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
 
-                    <div className="flex gap-4">
-                        {['AUTH_PROTOCOL:V3', 'LEVEL_02_ACCESS', 'REAL_TIME_SYNC:OK'].map((tag, i) => (
-                            <div key={i} className="px-5 py-2.5 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center gap-3 group hover:border-mas-red/30 transition-all cursor-crosshair">
-                                <div className="w-1.5 h-1.5 rounded-full bg-mas-red group-hover:scale-125 transition-transform shadow-[0_0_8px_#C8102E]"></div>
-                                <span className="text-mas-text-dim/40 uppercase text-[9px] font-black tracking-widest italic group-hover:text-white transition-colors">{tag}</span>
+                    {view === 'details' && (
+                        <motion.div
+                            key="details"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="space-y-8"
+                        >
+                            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                                <button 
+                                    onClick={() => setView('list')}
+                                    className="px-6 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-gray-300 hover:text-white hover:border-white/30 transition-all flex items-center gap-3 text-[10px] font-medium uppercase tracking-widest group"
+                                >
+                                    <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Access Queue
+                                </button>
+                                <div className="px-5 py-2.5 bg-mas-red/10 border border-mas-red/20 rounded-xl flex items-center gap-3 shadow-[0_0_20px_rgba(200,16,46,0.1)]">
+                                    <Lock size={14} className="text-mas-red" />
+                                    <span className="text-mas-red text-[10px] font-medium uppercase tracking-widest italic">Encrypted_Profile_Sync</span>
+                                </div>
                             </div>
-                        ))}
-                    </div>
-                </div>
 
-                <div className="flex items-center gap-10">
-                    <div className="px-8 py-5 mas-glass border-white/5 bg-[#121214]/40 rounded-2xl flex gap-10">
-                        <div className="space-y-1.5">
-                            <p className="text-mas-text-dim/20 text-[8px] font-black uppercase tracking-widest">Protocol_State</p>
-                            <div className="flex items-center gap-3">
-                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></div>
-                                <span className="text-white text-sm font-black italic tracking-widest">ENFORCING</span>
+                            <div className="mas-glass p-10 md:p-14 border-mas-red/20 bg-[#121214]/80 backdrop-blur-3xl rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-96 h-96 bg-mas-red/5 rounded-full blur-[100px] pointer-events-none"></div>
+                                <div className="absolute top-0 right-0 p-8 opacity-[0.02] font-mono text-7xl md:text-8xl font-medium pointer-events-none">{selectedVisitor?.id.split('-').pop()}</div>
+
+                                <div className="flex flex-col lg:flex-row gap-12 relative z-10 w-full">
+                                    <div className="w-full lg:w-1/3 space-y-6 flex flex-col items-center lg:items-start text-center lg:text-left">
+                                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-mas-red border border-white/10 shadow-[0_0_30px_rgba(200,16,46,0.3)] flex items-center justify-center text-white font-medium text-3xl md:text-4xl italic">
+                                            {selectedVisitor?.initials}
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <h2 className="text-white text-2xl font-bold uppercase tracking-widest italic">{selectedVisitor?.name}</h2>
+                                            <div className="flex items-center justify-center lg:justify-start gap-3 mt-1 text-mas-red text-[9px] font-medium uppercase tracking-[0.2em]">
+                                                <span>{selectedVisitor?.type}</span>
+                                                <div className="w-1 h-1 rounded-full bg-mas-red"></div>
+                                                <span>{selectedVisitor?.nodeOrigin}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-10">
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                                <User size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Identity / NIC</span>
+                                            </div>
+                                            <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-3 px-4 rounded-xl">{selectedVisitor?.nic}</p>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                                <Activity size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Company / Org</span>
+                                            </div>
+                                            <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-3 px-4 rounded-xl">{selectedVisitor?.company}</p>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                                <FileText size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Mission Purpose</span>
+                                            </div>
+                                            <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-3 px-4 rounded-xl">{selectedVisitor?.purpose}</p>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                                <Car size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Vehicle Profile</span>
+                                            </div>
+                                            <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-3 px-4 rounded-xl">{selectedVisitor?.vehicle}</p>
+                                        </div>
+                                        <div className="sm:col-span-2 space-y-4">
+                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                                <Package size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Declared Assets</span>
+                                            </div>
+                                            {selectedVisitor?.equipment.length > 0 ? (
+                                                <div className="flex flex-wrap gap-4">
+                                                    {selectedVisitor.equipment.map((eq, i) => (
+                                                        <div key={i} className="px-5 py-3 bg-[#0A0A0B] border border-white/10 rounded-xl flex items-center gap-4">
+                                                            <span className="text-white text-[11px] font-medium uppercase tracking-widest">{eq.name}</span>
+                                                            <div className="h-3 w-[1px] bg-white/10"></div>
+                                                            <span className="text-gray-300/90 text-[9px] font-mono tracking-widest opacity-90">S/N: {eq.serial}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="px-5 py-4 bg-white/5 border border-white/10 rounded-xl">
+                                                    <p className="text-gray-300/90 text-[10px] italic font-medium uppercase tracking-widest">No assets declared</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-14 pt-10 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 w-full">
+                                    <div className="text-center md:text-left">
+                                        <p className="text-[8px] font-medium uppercase tracking-[0.4em] text-gray-300/80 mb-1">Next Protocol Stage</p>
+                                        <p className="text-white text-[10px] uppercase font-medium tracking-widest italic">Awaiting Matrix Validation</p>
+                                    </div>
+                                    <button 
+                                        onClick={() => setView('verification')}
+                                        className="w-full md:w-auto px-10 py-5 bg-mas-red text-white uppercase font-medium tracking-[0.3em] text-[11px] rounded-2xl shadow-[0_15px_30px_rgba(200,16,46,0.3)] hover:shadow-[0_20px_40px_rgba(200,16,46,0.5)] transition-all hover:-translate-y-1 flex items-center justify-center gap-4 italic group"
+                                    >
+                                        Initiate Verification Matrix <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div className="w-px h-8 bg-white/5 self-center"></div>
-                        <div className="space-y-1.5">
-                            <p className="text-mas-text-dim/20 text-[8px] font-black uppercase tracking-widest">Nodal_Sync</p>
-                            <div className="flex items-center gap-3">
-                                <Server size={12} className="text-mas-red" />
-                                <span className="text-white text-sm font-mono font-black">99.9%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        </motion.div>
+                    )}
+
+                    {view === 'verification' && (
+                        <motion.div
+                            key="verification"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="bg-transparent"
+                        >
+                            <ApprovalChecklist visitor={selectedVisitor} onBack={() => setView('details')} />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-
-            <div className="relative z-10">
-                <ApprovalChecklist />
-            </div>
-
-            {/* Strategic Background Pulsars */}
-            <AnimatePresence>
-                {nodeSync && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 0.05, scale: 1 }}
-                        exit={{ opacity: 0, scale: 1.1 }}
-                        className="absolute inset-0 border-[2px] border-mas-red/10 m-32 rounded-[60px] pointer-events-none"
-                    />
-                )}
-            </AnimatePresence>
         </div>
     );
 };

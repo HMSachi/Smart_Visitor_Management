@@ -16,26 +16,26 @@ const VisitorHistoryMain = () => {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-2">
                 <div>
                     <div className="flex items-center gap-3 mb-1">
-                        <div className="w-1.5 h-1.5 bg-mas-text-dim rounded-full opacity-40 shadow-[0_0_8px_rgba(255,255,255,0.3)]"></div>
-                        <span className="text-mas-text-dim text-[10px] font-black uppercase tracking-[0.3em]">Historical Ledger</span>
+                        <div className="w-1.5 h-1.5 bg-mas-text-dim rounded-full opacity-80 shadow-[0_0_8px_rgba(255,255,255,0.3)]"></div>
+                        <span className="text-gray-300 text-[10px] font-medium uppercase tracking-[0.3em]">Historical Ledger</span>
                     </div>
-                    <p className="text-mas-text-dim text-xs uppercase tracking-widest opacity-60">Verified personnel archive and entry logs</p>
+                    <p className="text-gray-300 text-xs uppercase tracking-widest opacity-90">Verified personnel archive and entry logs</p>
                 </div>
 
                 <div className="flex items-center gap-4">
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-mas-text-dim group-focus-within:text-mas-red transition-colors" size={14} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-mas-red transition-colors" size={14} />
                         <input
                             type="text"
                             placeholder="SEARCH ARCHIVES..."
-                            className="bg-white/[0.03] border border-white/5 text-[10px] font-black uppercase tracking-widest text-white placeholder:text-white/20 w-80 pl-12 py-3 rounded-xl focus:outline-none focus:border-mas-red focus:bg-white/[0.05] transition-all"
+                            className="bg-white/[0.03] border border-white/5 text-[10px] font-medium uppercase tracking-widest text-white placeholder:text-white/70 w-80 pl-12 py-3 rounded-xl focus:outline-none focus:border-mas-red focus:bg-white/[0.05] transition-all"
                         />
                     </div>
                     <div className="flex items-center gap-2 px-5 py-3 bg-white/[0.03] border border-white/5 rounded-xl cursor-pointer hover:border-mas-red group transition-all">
-                        <Filter size={14} className="text-mas-text-dim group-hover:text-mas-red" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-mas-text-dim group-hover:text-white">Filters</span>
+                        <Filter size={14} className="text-gray-300 group-hover:text-mas-red" />
+                        <span className="text-[10px] font-medium uppercase tracking-widest text-gray-300 group-hover:text-white">Filters</span>
                     </div>
-                    <button className="flex items-center gap-3 px-6 py-3 bg-mas-red text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-mas-red-dark transition-all shadow-[0_4px_20px_rgba(200,16,46,0.2)]">
+                    <button className="flex items-center gap-3 px-6 py-3 bg-mas-red text-white text-[10px] font-medium uppercase tracking-widest rounded-xl hover:bg-mas-red-dark transition-all shadow-[0_4px_20px_rgba(200,16,46,0.2)]">
                         <Download size={14} />
                         Export Ledger
                     </button>
@@ -49,11 +49,11 @@ const VisitorHistoryMain = () => {
                     { label: 'Fiscal Log', val: '1,492', color: 'text-white' },
                     { label: 'Approved Entries', val: '1,120', color: 'text-green-500' },
                     { label: 'Breach Events', val: '00', color: 'text-mas-red' },
-                    { label: 'Pending Sync', val: '12', color: 'text-mas-text-dim' }
+                    { label: 'Pending Sync', val: '12', color: 'text-gray-300' }
                 ].map((stat, i) => (
                     <div key={i} className="p-6 rounded-3xl bg-[#121214] border border-white/5 shadow-xl group hover:border-white/10 transition-all">
-                        <p className="text-mas-text-dim text-[9px] font-black uppercase tracking-[0.2em] mb-4 opacity-40 group-hover:opacity-100 transition-opacity">{stat.label}</p>
-                        <p className={`text-2xl font-bold tracking-tight ${stat.color}`}>{stat.val}</p>
+                        <p className="text-gray-300 text-[9px] font-medium uppercase tracking-[0.2em] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">{stat.label}</p>
+                        <p className={`text-2xl font-medium tracking-tight ${stat.color}`}>{stat.val}</p>
                     </div>
                 ))}
             </div>

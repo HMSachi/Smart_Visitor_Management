@@ -53,32 +53,41 @@ const StatusCard = ({ status }) => {
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`relative p-10 md:p-14 bg-white/[0.03] border border-white/10 rounded-[2.5rem] overflow-hidden group shadow-2xl transition-all duration-500`}
+            className={`relative p-6 md:p-8 bg-white/[0.03] border border-white/10 rounded-[2rem] overflow-hidden group shadow-2xl transition-all duration-500`}
         >
             {/* Status Glow Overlay */}
             <div className={`absolute -right-32 -bottom-32 w-80 h-80 ${current.bg.replace('/10', '/5')} rounded-full blur-[100px] transition-colors duration-1000`}></div>
             
             <div className="flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
                 <div className="flex items-center gap-8 text-center md:text-left flex-col md:flex-row">
-                    <div className={`w-20 h-20 md:w-24 md:h-24 rounded-3xl ${current.bg} border ${current.border} flex items-center justify-center ${current.color} shadow-2xl`}>
-                        <Icon size={40} className={status === 'step1_pending' || status === 'step2_pending' ? 'animate-pulse' : ''} />
+                    <div className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl ${current.bg} border ${current.border} flex items-center justify-center ${current.color} shadow-2xl`}>
+                        <Icon size={24} className={status === 'step1_pending' || status === 'step2_pending' ? 'animate-pulse' : ''} />
                     </div>
                     <div>
-                        <span className={`text-[10px] font-black uppercase tracking-[0.4em] ${current.color} mb-3 block`}>Live Protocol Status</span>
-                        <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic mb-2">
+                        <span className={`text-[8px] font-medium uppercase tracking-[0.4em] ${current.color} mb-2 block`}>Live Protocol Status</span>
+                        <h2 className="text-xl md:text-2xl font-medium text-white uppercase tracking-tight mb-1">
                             {current.label}
                         </h2>
-                        <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">{current.desc}</p>
+                        <p className="text-gray-300 text-[9px] font-medium uppercase tracking-widest">{current.desc}</p>
                     </div>
                 </div>
 
-                <div className="bg-white/[0.02] border border-white/5 rounded-3xl px-10 py-8 text-center md:text-right w-full md:w-auto">
-                    <span className="text-gray-500 text-[9px] font-black uppercase tracking-[0.3em] block mb-2">Internal Priority</span>
-                    <div className="flex items-center justify-center md:justify-end gap-3">
-                        <span className="text-white text-lg font-black uppercase tracking-widest tabular-nums italic">High Node</span>
-                        <div className="w-2 h-2 rounded-full bg-mas-red shadow-[0_0_10px_#C8102E] animate-ping" />
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl px-6 py-4 text-center md:text-right w-full md:w-auto flex flex-col justify-center items-center md:items-end">
+                    <span className="text-gray-400 text-[8px] font-medium uppercase tracking-[0.3em] block mb-1">Internal Priority</span>
+                    <div className="flex items-center justify-center md:justify-end gap-2">
+                        <span className="text-white text-base font-medium uppercase tracking-widest tabular-nums">High Node</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-mas-red shadow-[0_0_8px_#C8102E] animate-ping" />
                     </div>
-                    <p className="mt-4 text-[8px] text-gray-700 font-bold uppercase tracking-widest">Target Facility: MAS Holdings</p>
+                    {status === 'step1_approved' || status === 'step1_pending' ? (
+                        <button 
+                            onClick={() => window.location.href='/request-step-2'}
+                            className="mt-6 w-full px-6 py-3 bg-mas-red text-white text-[10px] font-medium uppercase tracking-widest rounded-xl shadow-[0_10px_20px_rgba(200,16,46,0.3)] hover:shadow-[0_10px_30px_rgba(200,16,46,0.5)] transition-all animate-pulse"
+                        >
+                            Proceed to Form 02
+                        </button>
+                    ) : (
+                        <p className="mt-4 text-[8px] text-gray-400 font-medium uppercase tracking-widest">Target Facility: MAS Holdings</p>
+                    )}
                 </div>
             </div>
             

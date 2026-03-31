@@ -61,26 +61,26 @@ const RequestReviewMain = () => {
                     <div>
                         <button
                             onClick={() => navigate('/contact_person/requests-inbox')}
-                            className="flex items-center gap-3 text-mas-text-dim text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition-colors group mb-4"
+                            className="flex items-center gap-3 text-gray-300 text-[10px] font-medium uppercase tracking-[0.2em] hover:text-white transition-colors group mb-4"
                         >
                             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                             Return to Command Center
                         </button>
                         <div className="flex items-center gap-4">
                             <div className="w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E] animate-pulse"></div>
-                            <span className="text-mas-red text-[11px] font-black uppercase tracking-[0.3em]">Personnel Authorization Protocol</span>
+                            <span className="text-mas-red text-[11px] font-medium uppercase tracking-[0.3em]">Personnel Authorization Protocol</span>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-6 bg-white/[0.02] border border-white/5 p-4 px-6 rounded-2xl backdrop-blur-md shadow-2xl">
                         <div className="text-right">
-                            <p className="text-mas-text-dim text-[9px] uppercase font-black tracking-widest mb-1 opacity-40">Entry Reference</p>
-                            <span className="text-white font-mono text-sm tracking-widest font-bold">#{requestData?.id || 'ALPHA-000'}</span>
+                            <p className="text-gray-300 text-[9px] uppercase font-medium tracking-widest mb-1 opacity-80">Entry Reference</p>
+                            <span className="text-white font-mono text-sm tracking-widest font-medium">#{requestData?.id || 'ALPHA-000'}</span>
                         </div>
                         <div className="h-10 w-[1px] bg-white/10"></div>
                         <div className="text-right">
-                            <p className="text-mas-text-dim text-[9px] uppercase font-black tracking-widest mb-1 opacity-40">Sync Status</p>
-                            <span className="text-mas-red text-[10px] font-black uppercase tracking-widest">{requestData?.status || 'PENDING_NODE'}</span>
+                            <p className="text-gray-300 text-[9px] uppercase font-medium tracking-widest mb-1 opacity-80">Sync Status</p>
+                            <span className="text-mas-red text-[10px] font-medium uppercase tracking-widest">{requestData?.status || 'PENDING_NODE'}</span>
                         </div>
                     </div>
                 </div>

@@ -21,18 +21,18 @@ const HomeMain = () => {
                     <div className="flex flex-col items-center md:items-start gap-4">
                         <div className="flex items-center group">
                             <img src="/logo_mas.png" alt="MAS Logo" className="h-6 w-auto mr-4 brightness-90" />
-                            <span className="text-white font-black tracking-tighter text-sm uppercase">Access <span className="text-mas-red">Portal</span></span>
+                            <span className="text-white font-medium tracking-tighter text-sm uppercase">Access <span className="text-mas-red">Portal</span></span>
                         </div>
-                        <p className="text-gray-600 text-[10px] font-bold uppercase tracking-[0.3em]">Facility Intelligence v4.0.5</p>
+                        <p className="text-gray-600 text-[10px] font-medium uppercase tracking-[0.3em]">Facility Intelligence v4.0.5</p>
                     </div>
 
-                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest text-center">
+                    <p className="text-gray-500 text-[10px] font-medium uppercase tracking-widest text-center">
                         © 2026 MAS Holdings. All rights reserved.
                     </p>
 
                     <div className="flex items-center gap-8">
-                        <Link to="/privacy" className="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-mas-red transition-colors">Privacy</Link>
-                        <Link to="/terms" className="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-mas-red transition-colors">Terms</Link>
+                        <Link to="/privacy" className="text-[10px] font-medium uppercase tracking-widest text-gray-500 hover:text-mas-red transition-colors">Privacy</Link>
+                        <Link to="/terms" className="text-[10px] font-medium uppercase tracking-widest text-gray-500 hover:text-mas-red transition-colors">Terms</Link>
                     </div>
                 </div>
             </footer>

@@ -16,15 +16,15 @@ const VisitorOverview = ({ data, onChange }) => {
                     <User size={20} />
                 </div>
                 <div>
-                    <h2 className="text-xl font-black text-white uppercase tracking-tight">Visitor Profile</h2>
-                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]">Personal Identification</p>
+                    <h2 className="text-xl font-bold text-white uppercase tracking-tight">Visitor Profile</h2>
+                    <p className="text-gray-500 text-[10px] font-medium uppercase tracking-[0.2em]">Personal Identification</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/[0.02] border border-white/5 p-8 rounded-3xl">
                 {fields.map((field) => (
                     <div key={field.name} className="relative group/field">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2 block group-focus-within/field:text-mas-red transition-colors">
+                        <label className="text-[10px] font-medium uppercase tracking-widest text-gray-500 mb-2 block group-focus-within/field:text-mas-red transition-colors">
                             {field.label}
                         </label>
                         <div className="relative">

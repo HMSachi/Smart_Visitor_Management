@@ -10,7 +10,7 @@ const AlertsSection = () => {
     switch (type) {
       case 'critical': return <AlertCircle className="text-mas-red" size={20} />;
       case 'warning': return <AlertTriangle className="text-yellow-500" size={20} />;
-      default: return <Info className="text-mas-text-dim" size={20} />;
+      default: return <Info className="text-gray-300" size={20} />;
     }
   };
 
@@ -49,17 +49,17 @@ const AlertsSection = () => {
                   <div className="mt-0.5">{getAlertIcon(alert.type)}</div>
                   <div>
                     <p className="text-white uppercase group-hover:text-mas-red transition-colors">{alert.message}</p>
-                    <p className="text-mas-text-dim mt-2 uppercase">{alert.time}</p>
+                    <p className="text-gray-300 mt-2 uppercase">{alert.time}</p>
                   </div>
                 </div>
-                <ChevronRight size={16} className="text-mas-text-dim group-hover:text-white transition-colors" />
+                <ChevronRight size={16} className="text-gray-300 group-hover:text-white transition-colors" />
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
 
-      <button className="mt-10 w-full py-4 uppercase text-mas-text-dim hover:text-white hover:bg-mas-red/10 border border-white/10 hover:border-mas-red transition-all duration-500">
+      <button className="mt-10 w-full py-4 uppercase text-gray-300 hover:text-white hover:bg-mas-red/10 border border-white/10 hover:border-mas-red transition-all duration-500">
         Access Signal Archives
       </button>
     </div>

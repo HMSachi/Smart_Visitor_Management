@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Check, X, AlertCircle, Info, ChevronRight, MessageSquare, Shield, Activity, User, Fingerprint, Camera, Package, Car, FileCheck, Zap, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ApprovalChecklist = () => {
+const ApprovalChecklist = ({ visitor, onBack }) => {
+    const displayVisitor = visitor || { name: 'JOHN DOE', type: 'Staff_Visitor', id: 'VER-SYNC-4291', time: '12:34:02 PM', nodeOrigin: 'Reception_01', initials: 'JD' };
     const [checks, setChecks] = useState({
         identity: false,
         vehicle: false,
@@ -28,14 +29,24 @@ const ApprovalChecklist = () => {
 
     return (
         <div className="max-w-4xl mx-auto w-full py-12 space-y-12">
+            {/* Back Button */}
+            <div className="mb-2 flex justify-start">
+                <button 
+                    onClick={onBack}
+                    className="px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl text-gray-300 hover:text-white hover:border-white/30 transition-all flex items-center gap-3 text-[10px] font-medium uppercase tracking-widest group"
+                >
+                    <ChevronRight size={14} className="group-hover:-translate-x-1 transition-transform rotate-180" /> Back to Profile Sync
+                </button>
+            </div>
+
             {/* Personnel Authorization Identity Card */}
             <div className="relative group">
                 <div className="mas-glass p-8 md:p-10 border-white/5 bg-[#121214]/60 backdrop-blur-3xl rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/10 overflow-hidden hover:border-mas-red/20 transition-all duration-700">
                     <div className="flex flex-col md:flex-row items-center gap-10 md:gap-14">
                         {/* Profile/Biometric Node */}
                         <div className="relative">
-                            <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-mas-red flex items-center justify-center text-white text-3xl font-black shadow-[0_0_30px_rgba(200,16,46,0.2)] border border-white/10 relative z-10 group-hover:rotate-6 transition-transform duration-700 italic">
-                                JD
+                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-mas-red flex items-center justify-center text-white text-2xl font-medium shadow-[0_0_30px_rgba(200,16,46,0.2)] border border-white/10 relative z-10 group-hover:rotate-6 transition-transform duration-700 italic">
+                                {displayVisitor.initials}
                             </div>
                             <div className="absolute -bottom-1 -right-1 p-2 bg-[#0D0D0E] rounded-xl border border-white/10 shadow-xl z-20">
                                 <Fingerprint size={14} className="text-mas-red animate-pulse" />
@@ -45,27 +56,27 @@ const ApprovalChecklist = () => {
                         <div className="flex-1 space-y-6 text-center md:text-left">
                             <div className="space-y-2">
                                 <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
-                                    <div className="px-2 py-0.5 rounded-md bg-mas-red/10 border border-mas-red/20 text-mas-red text-[8px] font-black tracking-widest italic uppercase">Staff_Visitor</div>
-                                    <div className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-mas-text-dim text-[8px] font-black tracking-widest italic uppercase">Sync: Verified</div>
+                                    <div className="px-2 py-0.5 rounded-md bg-mas-red/10 border border-mas-red/20 text-mas-red text-[8px] font-medium tracking-widest italic uppercase">{displayVisitor.type}</div>
+                                    <div className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[8px] font-medium tracking-widest italic uppercase">Sync: Verified</div>
                                 </div>
-                                <h3 className="text-white text-3xl md:text-4xl font-black uppercase tracking-widest italic group-hover:text-mas-red transition-colors duration-500">John Doe</h3>
-                                <p className="text-mas-text-dim/40 uppercase text-[10px] font-black tracking-[0.4em] italic mt-1 underline decoration-mas-red/20 underline-offset-4">Ref: VER-SYNC-4291</p>
+                                <h3 className="text-white text-3xl md:text-4xl font-bold uppercase tracking-widest italic group-hover:text-mas-red transition-colors duration-500">{displayVisitor.name}</h3>
+                                <p className="text-gray-300/80 uppercase text-[10px] font-medium tracking-[0.4em] italic mt-1 underline decoration-mas-red/20 underline-offset-4">Ref: {displayVisitor.id}</p>
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-4 border-t border-white/5">
                                 <div className="space-y-1">
-                                    <p className="text-mas-text-dim/20 text-[7px] font-black uppercase tracking-widest">Access_Log</p>
-                                    <p className="text-white text-[11px] font-mono font-bold">12:34:02 PM</p>
+                                    <p className="text-gray-300/80 text-[7px] font-medium uppercase tracking-widest">Access_Log</p>
+                                    <p className="text-white text-[11px] font-mono font-medium">{displayVisitor.time}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-mas-text-dim/20 text-[7px] font-black uppercase tracking-widest">Node_Origin</p>
-                                    <p className="text-white text-[11px] font-black italic uppercase">Reception_01</p>
+                                    <p className="text-gray-300/80 text-[7px] font-medium uppercase tracking-widest">Node_Origin</p>
+                                    <p className="text-white text-[11px] font-medium italic uppercase">{displayVisitor.nodeOrigin.split('_')[0]}</p>
                                 </div>
                                 <div className="hidden md:block space-y-1">
-                                    <p className="text-mas-text-dim/20 text-[7px] font-black uppercase tracking-widest">Encryption</p>
+                                    <p className="text-gray-300/80 text-[7px] font-medium uppercase tracking-widest">Encryption</p>
                                     <div className="flex items-center gap-1.5">
                                         <Lock size={8} className="text-mas-red" />
-                                        <span className="text-white text-[9px] font-black tracking-widest">SECURED</span>
+                                        <span className="text-white text-[9px] font-medium tracking-widest">SECURED</span>
                                     </div>
                                 </div>
                             </div>
@@ -73,7 +84,7 @@ const ApprovalChecklist = () => {
                     </div>
 
                     {/* Decorative corner ID element */}
-                    <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none font-mono text-[100px] font-black italic select-none">VIS_4291</div>
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none font-mono text-[100px] font-medium italic select-none">{displayVisitor.id.split('-').pop()}</div>
                 </div>
             </div>
 
@@ -82,7 +93,7 @@ const ApprovalChecklist = () => {
                 <div className="flex items-center gap-6 px-4">
                     <div className="flex items-center gap-3">
                         <Shield size={14} className="text-mas-red" />
-                        <h4 className="text-mas-text-dim/30 uppercase text-[9px] font-black tracking-[0.5em] italic">Verification_Protocol_Matrix</h4>
+                        <h4 className="text-gray-300/30 uppercase text-[9px] font-medium tracking-[0.5em] italic">Verification_Protocol_Matrix</h4>
                     </div>
                     <div className="h-[1px] flex-1 bg-gradient-to-r from-white/5 via-white/10 to-transparent"></div>
                 </div>
@@ -104,21 +115,21 @@ const ApprovalChecklist = () => {
                             >
                                 <div className="flex gap-8 items-center relative z-10">
                                     <div className="relative">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-700 border ${isChecked ? 'bg-mas-red border-mas-red text-white rotate-12 shadow-[0_0_20px_#C8102E]' : 'bg-[#0D0D0E] border-white/10 text-mas-text-dim group-hover:border-white'}`}>
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-700 border ${isChecked ? 'bg-mas-red border-mas-red text-white rotate-12 shadow-[0_0_20px_#C8102E]' : 'bg-[#0D0D0E] border-white/10 text-gray-300 group-hover:border-white'}`}>
                                             {isAuth ? <Activity size={18} className="animate-spin" /> : isChecked ? <Check size={20} strokeWidth={4} /> : <item.icon size={18} />}
                                         </div>
                                     </div>
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-3">
-                                            <p className={`text-[13px] font-black tracking-widest transition-all duration-500 uppercase italic ${isChecked ? 'text-white' : 'text-mas-text-dim group-hover:text-white'}`}>{item.label}</p>
-                                            {isAuth && <span className="text-mas-red text-[7px] font-black animate-pulse tracking-[0.3em]">PROCESSING...</span>}
+                                            <p className={`text-[13px] font-medium tracking-widest transition-all duration-500 uppercase italic ${isChecked ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>{item.label}</p>
+                                            {isAuth && <span className="text-mas-red text-[7px] font-medium animate-pulse tracking-[0.3em]">PROCESSING...</span>}
                                         </div>
-                                        <p className="text-mas-text-dim/20 text-[9px] font-black uppercase tracking-widest italic">{item.desc}</p>
+                                        <p className="text-gray-300/80 text-[9px] font-medium uppercase tracking-widest italic">{item.desc}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 relative z-10 px-4">
                                     <div className={`w-1.5 h-6 rounded-full transition-all duration-700 ${isChecked ? 'bg-mas-red shadow-[0_0_8px_#C8102E]' : 'bg-white/5'}`}></div>
-                                    <Info size={14} className="text-mas-text-dim/10 group-hover:text-mas-text-dim transition-colors" />
+                                    <Info size={14} className="text-gray-300/10 group-hover:text-gray-300 transition-colors" />
                                 </div>
 
                                 {/* Internal Scanning Visualizer */}
@@ -139,14 +150,14 @@ const ApprovalChecklist = () => {
             <div className="pt-12 grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-white/5">
                 <button
                     onClick={() => setShowRejectModal(true)}
-                    className="group relative overflow-hidden w-full py-5 rounded-xl border border-mas-red text-mas-red bg-transparent font-black uppercase text-[11px] tracking-[0.4em] italic hover:bg-mas-red hover:text-white transition-all duration-700 flex items-center justify-center gap-4 shadow-xl active:scale-95"
+                    className="group relative overflow-hidden w-full py-5 rounded-xl border border-mas-red text-mas-red bg-transparent font-medium uppercase text-[11px] tracking-[0.4em] italic hover:bg-mas-red hover:text-white transition-all duration-700 flex items-center justify-center gap-4 shadow-xl active:scale-95"
                 >
                     <X size={16} strokeWidth={4} className="group-hover:rotate-90 transition-transform duration-500" />
                     Protocol_Refusal
                 </button>
                 <button
                     disabled={!allChecked}
-                    className={`group relative overflow-hidden w-full py-5 rounded-xl font-black uppercase text-[11px] tracking-[0.4em] italic flex items-center justify-center gap-4 transition-all duration-700 shadow-2xl active:scale-95 ${allChecked ? 'bg-mas-red text-white shadow-[0_0_50px_rgba(200,16,46,0.3)] cursor-pointer' : 'bg-white/5 text-white/10 border border-white/5 cursor-not-allowed opacity-20 grayscale'}`}
+                    className={`group relative overflow-hidden w-full py-5 rounded-xl font-medium uppercase text-[11px] tracking-[0.4em] italic flex items-center justify-center gap-4 transition-all duration-700 shadow-2xl active:scale-95 ${allChecked ? 'bg-mas-red text-white shadow-[0_0_50px_rgba(200,16,46,0.3)] cursor-pointer' : 'bg-white/5 text-white/10 border border-white/5 cursor-not-allowed opacity-70 grayscale'}`}
                 >
                     <Check size={16} strokeWidth={4} />
                     Grant_Authorization
@@ -172,7 +183,7 @@ const ApprovalChecklist = () => {
                             className="relative mas-glass max-w-2xl w-full p-12 md:p-16 border-mas-red bg-[#0D0D0E]/95 backdrop-blur-3xl rounded-[40px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.8)] border border-mas-red/40"
                         >
                             {/* Terminal Scanline */}
-                            <div className="absolute top-0 left-0 w-full h-[1px] bg-mas-red animate-scan z-20 opacity-40"></div>
+                            <div className="absolute top-0 left-0 w-full h-[1px] bg-mas-red animate-scan z-20 opacity-80"></div>
 
                             <div className="space-y-12 relative z-10">
                                 <div className="flex items-center gap-8">
@@ -180,14 +191,14 @@ const ApprovalChecklist = () => {
                                         <AlertCircle size={28} strokeWidth={2.5} />
                                     </div>
                                     <div>
-                                        <h3 className="text-white text-3xl font-black uppercase tracking-[0.3em] italic">Protocol_Refusal</h3>
-                                        <p className="text-mas-red uppercase text-[10px] font-black tracking-[0.5em] mt-2 italic animate-pulse">Initializing_Refusal_Circuit...</p>
+                                        <h3 className="text-white text-3xl font-bold uppercase tracking-[0.3em] italic">Protocol_Refusal</h3>
+                                        <p className="text-mas-red uppercase text-[10px] font-medium tracking-[0.5em] mt-2 italic animate-pulse">Initializing_Refusal_Circuit...</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between px-4">
-                                        <label className="text-mas-text-dim/40 uppercase text-[9px] font-black tracking-[0.4em] italic">Breach_Description_Input</label>
+                                        <label className="text-gray-300/80 uppercase text-[9px] font-medium tracking-[0.4em] italic">Breach_Description_Input</label>
                                         <MessageSquare size={14} className="text-mas-red opacity-50" />
                                     </div>
                                     <div className="relative group">
@@ -197,20 +208,20 @@ const ApprovalChecklist = () => {
                                             placeholder="ENTER_PROTOCOL_BREACH_DETAILS_HERE..."
                                             className="w-full min-h-[200px] bg-white/[0.02] border-2 border-white/10 rounded-3xl p-8 text-white uppercase font-mono text-sm tracking-widest placeholder:text-white/5 focus:border-mas-red/50 focus:bg-mas-red/[0.02] outline-none transition-all duration-500 resize-none"
                                         ></textarea>
-                                        <div className="absolute bottom-4 right-6 text-mas-text-dim/10 text-[8px] font-black tracking-widest italic group-hover:text-mas-red/40 transition-colors">TERMINAL_REF: ERR_PROT_404</div>
+                                        <div className="absolute bottom-4 right-6 text-gray-300/10 text-[8px] font-medium tracking-widest italic group-hover:text-mas-red/40 transition-colors">TERMINAL_REF: ERR_PROT_404</div>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col md:flex-row gap-6">
                                     <button
                                         onClick={() => setShowRejectModal(false)}
-                                        className="flex-1 py-5 rounded-2xl bg-white/[0.02] border border-white/10 text-mas-text-dim uppercase text-[11px] font-black tracking-[0.4em] hover:text-white hover:bg-white/5 transition-all duration-300 italic"
+                                        className="flex-1 py-5 rounded-2xl bg-white/[0.02] border border-white/10 text-gray-300 uppercase text-[11px] font-medium tracking-[0.4em] hover:text-white hover:bg-white/5 transition-all duration-300 italic"
                                     >
                                         Abort_Refusal
                                     </button>
                                     <button
                                         disabled={!rejectionReason}
-                                        className="flex-[2] py-5 rounded-2xl bg-mas-red text-white uppercase text-[11px] font-black tracking-[0.4em] shadow-[0_0_40px_rgba(200,16,46,0.4)] disabled:opacity-30 disabled:grayscale transition-all duration-500 hover:scale-[1.02] active:scale-95 italic"
+                                        className="flex-[2] py-5 rounded-2xl bg-mas-red text-white uppercase text-[11px] font-medium tracking-[0.4em] shadow-[0_0_40px_rgba(200,16,46,0.4)] disabled:opacity-30 disabled:grayscale transition-all duration-500 hover:scale-[1.02] active:scale-95 italic"
                                     >
                                         Confirm_System_Refusal
                                     </button>

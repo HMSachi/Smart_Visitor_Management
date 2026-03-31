@@ -11,7 +11,7 @@ const SectionHeader = ({ title, icon: Icon }) => (
     <div className="w-1.5 h-6 bg-mas-red rounded-full shadow-[0_0_10px_#C8102E] group-hover/header:h-10 transition-all duration-500"></div>
     <div className="flex items-center gap-3">
       {Icon && <Icon size={16} className="text-mas-red/40 group-hover/header:scale-110 transition-transform" />}
-      <h3 className="uppercase text-white text-[13px] tracking-[0.4em] font-black italic">{title}</h3>
+      <h3 className="uppercase text-white text-xs tracking-widest font-semibold">{title}</h3>
     </div>
     <div className="flex-1 h-[1px] bg-white/[0.05] ml-4 group-hover/header:bg-mas-red/20 transition-all"></div>
   </div>
@@ -19,12 +19,12 @@ const SectionHeader = ({ title, icon: Icon }) => (
 
 const Field = ({ label, value, icon: Icon }) => (
   <div className="group/field relative">
-    <div className="flex items-center gap-3 mb-4">
+    <div className="flex items-center gap-3 mb-2">
       {Icon && <Icon size={12} className="text-mas-red/20 group-hover/field:text-mas-red/60 transition-colors" />}
-      <label className="text-mas-text-dim/40 uppercase text-[9px] font-black tracking-[0.3em] group-hover/field:text-mas-text-dim transition-colors">{label}</label>
+      <label className="text-gray-300/80 uppercase text-[10px] font-medium tracking-widest group-hover/field:text-gray-300 transition-colors">{label}</label>
     </div>
     <div className="relative">
-      <p className="text-white text-xs font-black uppercase tracking-widest bg-[#121214] border border-white/5 py-4 px-6 rounded-2xl group-hover/field:border-mas-red/30 group-hover/field:bg-[#161618] transition-all duration-500 shadow-xl">
+      <p className="text-white text-sm font-normal uppercase tracking-widest bg-[#121214] border border-white/5 py-2.5 px-4 rounded-xl group-hover/field:border-mas-red/30 group-hover/field:bg-[#161618] transition-all duration-500 shadow-xl">
         {value || 'DATA_NOT_FOUND'}
       </p>
       <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-mas-red/10 rounded-full group-hover/field:bg-mas-red transition-colors"></div>
@@ -44,22 +44,22 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
       {/* Protocol Intelligence Header */}
       <div className="pt-2 pb-8 border-b border-white/5 relative mb-12 flex justify-between items-end">
         <div>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[10px] font-black tracking-widest rounded-lg">LIVE_PROTOCOL</span>
+          <div className="flex items-center gap-3 mb-3">
+            <span className="px-2 py-0.5 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[10px] font-medium tracking-widest rounded-md">LIVE_PROTOCOL</span>
             <div className="w-1.5 h-1.5 bg-mas-red rounded-full animate-pulse shadow-[0_0_8px_#C8102E]"></div>
           </div>
-          <h1 className="text-white text-2xl font-black uppercase tracking-widest italic flex items-center gap-4">
-            Personnel Auth. Protocol <span className="text-mas-text-dim/20 font-light">// {visitor.batchId}</span>
+          <h1 className="text-white text-base font-bold uppercase tracking-widest flex items-center gap-4">
+            Personnel Auth. Protocol <span className="text-gray-300/80 font-light">// {visitor.batchId}</span>
           </h1>
         </div>
 
         <div className="text-right hidden sm:block">
-          <div className="flex items-center justify-end gap-3 mb-2">
-            <span className="text-mas-red text-sm font-black">01</span>
+          <div className="flex items-center justify-end gap-3 mb-1">
+            <span className="text-mas-red text-sm font-medium">01</span>
             <span className="text-white/10 text-lg">/</span>
-            <span className="text-mas-text-dim/20 text-xs font-black uppercase tracking-widest">02_MATRIX</span>
+            <span className="text-gray-300/80 text-xs font-medium uppercase tracking-widest">02_MATRIX</span>
           </div>
-          <p className="text-mas-text-dim/40 uppercase text-[9px] font-black tracking-[0.3em]">INTELLIGENCE_LAYER: ALPHA</p>
+          <p className="text-gray-300/80 uppercase text-[10px] font-medium tracking-widest">INTELLIGENCE_LAYER: ALPHA</p>
         </div>
 
         <div className="absolute bottom-0 left-0 w-full h-[1px] bg-white/[0.03]">
@@ -73,14 +73,14 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
       </div>
 
       {/* Control Navigation */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-20 bg-[#121214] p-8 border border-white/5 rounded-[32px] shadow-2xl relative overflow-hidden">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-16 bg-[#121214] p-5 border border-white/5 rounded-2xl shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-mas-red/5 to-transparent pointer-events-none"></div>
 
         <button
           onClick={onBack}
-          className="flex items-center gap-4 uppercase text-white text-[10px] font-black tracking-[0.4em] hover:text-mas-red transition-all group relative z-10"
+          className="flex items-center gap-3 uppercase text-white text-xs font-medium tracking-widest hover:text-mas-red transition-all group relative z-10"
         >
-          <div className="w-10 h-10 rounded-xl bg-black border border-white/5 flex items-center justify-center group-hover:border-mas-red transition-all">
+          <div className="w-8 h-8 rounded-lg bg-black border border-white/5 flex items-center justify-center group-hover:border-mas-red transition-all">
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
           </div>
           Return to Registry
@@ -89,14 +89,14 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
         <div className="flex gap-4 w-full lg:w-auto relative z-10">
           <button
             onClick={() => onAction(visitor, 'Approve')}
-            className="flex-1 lg:flex-none px-10 py-5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[11px] font-black tracking-[0.3em] uppercase rounded-2xl transition-all shadow-[0_10px_30px_rgba(0,177,79,0.2)] flex items-center justify-center gap-3 group"
+            className="flex-1 lg:flex-none px-6 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-xs font-medium tracking-widest uppercase rounded-xl transition-all shadow-[0_5px_15px_rgba(0,177,79,0.2)] flex items-center justify-center gap-2 group"
           >
             <CheckCircle2 size={16} className="group-hover:scale-110 transition-transform" />
             Authorize Access
           </button>
           <button
             onClick={() => onAction(visitor, 'Reject')}
-            className="flex-1 lg:flex-none px-10 py-5 bg-mas-red hover:bg-[#A00D25] text-white text-[11px] font-black tracking-[0.3em] uppercase rounded-2xl transition-all shadow-[0_10px_30px_rgba(200,16,46,0.2)] flex items-center justify-center gap-3 group"
+            className="flex-1 lg:flex-none px-6 py-2.5 bg-mas-red hover:bg-[#A00D25] text-white text-xs font-medium tracking-widest uppercase rounded-xl transition-all shadow-[0_5px_15px_rgba(200,16,46,0.2)] flex items-center justify-center gap-2 group"
           >
             <AlertCircle size={16} className="group-hover:scale-110 transition-transform" />
             Protocol Denial
@@ -130,21 +130,21 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mas-red/20 to-transparent"></div>
           <div className="flex items-center gap-4 mb-10">
             <div className="w-1 h-4 bg-mas-red rounded-full"></div>
-            <p className="text-mas-text-dim/60 text-[10px] font-black uppercase tracking-[0.4em] italic">Infrastructure_Zone_Authorization</p>
+            <p className="text-gray-300/90 text-[10px] font-medium uppercase tracking-widest">Infrastructure Zone Authorization</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {visitor.areas && visitor.areas.length > 0 ? visitor.areas.map((area, idx) => (
               <motion.div
                 key={idx}
                 whileHover={{ scale: 1.05, borderColor: '#C8102E' }}
-                className="p-6 bg-[#0E0E10] border border-white/5 rounded-2xl text-white uppercase text-[10px] font-black tracking-widest flex flex-col items-center justify-center text-center gap-3 transition-all shadow-xl group/zone"
+                className="p-6 bg-[#0E0E10] border border-white/5 rounded-2xl text-white uppercase text-[10px] font-medium tracking-widest flex flex-col items-center justify-center text-center gap-3 transition-all shadow-xl group/zone"
               >
                 <MapPin size={14} className="text-mas-red/20 group-hover/zone:text-mas-red transition-colors" />
                 {area}
               </motion.div>
             )) : (
               <div className="col-span-full border border-dashed border-white/10 p-10 rounded-3xl text-center">
-                <p className="text-mas-text-dim/20 uppercase text-[11px] font-black tracking-widest">No specific zones requested</p>
+                <p className="text-gray-300/80 uppercase text-[11px] font-medium tracking-widest">No specific zones requested</p>
               </div>
             )}
           </div>

@@ -7,7 +7,7 @@ const QRCodeManagement = () => {
       <div className="flex justify-between items-start mb-10">
         <div>
           <h2 className="uppercase text-white">QR Clearance Node</h2>
-          <p className="text-mas-text-dim uppercase mt-2">Secure Token Generation & Verification</p>
+          <p className="text-gray-300 uppercase mt-2">Secure Token Generation & Verification</p>
         </div>
         <div className="w-12 h-12 bg-mas-red/10 border border-mas-red/20 flex items-center justify-center text-mas-red">
           <Shield size={24} strokeWidth={2.5} />
@@ -27,7 +27,7 @@ const QRCodeManagement = () => {
         </div>
         
         <p className="mt-8 text-white uppercase">Node: MAS-HQ-SEC-01</p>
-        <p className="mt-2 text-mas-text-dim uppercase">Valid for next 12 hours</p>
+        <p className="mt-2 text-gray-300 uppercase">Valid for next 12 hours</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -39,7 +39,7 @@ const QRCodeManagement = () => {
         </button>
       </div>
       
-      <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between text-mas-text-dim">
+      <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between text-gray-300">
         <div className="flex items-center gap-3">
           <Database size={14} />
           <span className="uppercase">Logs Syncing...</span>

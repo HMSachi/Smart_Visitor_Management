@@ -25,7 +25,7 @@ const stages = [];
     ];
 
     return (
-        <div className="space-y-12 relative px-2">
+        <div className="space-y-8 relative px-2">
             {/* High-Tech Vertical Line */}
             <div className="absolute left-[15px] top-4 bottom-4 w-[1px] bg-gradient-to-b from-mas-red via-white/10 to-white/5 opacity-50"></div>
             
@@ -57,28 +57,28 @@ const stages = [];
                         </div>
 
                         <div className="flex flex-col gap-1">
-                            <h4 className={`text-[11px] font-black uppercase tracking-[0.2em] transition-colors ${ 
-                                status === 'upcoming' ? 'text-gray-600' : status === 'active' ? 'text-mas-red underline underline-offset-4 decoration-mas-red/20' : 'text-white' 
+                            <h4 className={`text-[11px] font-normal uppercase tracking-[0.2em] transition-colors ${ 
+                                status === 'upcoming' ? 'text-gray-400' : status === 'active' ? 'text-mas-red underline underline-offset-4 decoration-mas-red/20' : 'text-white' 
                             }`}>
                                 {stage.label}
                             </h4>
-                            <div className="flex items-center gap-3">
-                                <span className={`text-[9px] font-bold uppercase tracking-widest ${ 
-                                    status === 'active' ? 'text-mas-red italic' : 'text-gray-500' 
+                             <div className="flex items-center gap-3">
+                                <span className={`text-[9px] font-normal uppercase tracking-widest ${ 
+                                    status === 'active' ? 'text-mas-red' : 'text-gray-300' 
                                 }`}>
                                     {status === 'active' ? 'NODE ACTIVE' : stage.time}
                                 </span>
                                 {status === 'completed' && (
-                                    <span className="text-[8px] font-black text-mas-red/40 uppercase tracking-tighter italic">Verified</span>
+                                    <span className="text-[8px] font-medium text-mas-red/80 uppercase tracking-tighter">Verified</span>
                                 )}
                             </div>
                         </div>
 
-                        {/* Hover Detail Card Overlay (Optional Premium Touch) */}
-                        <div className="absolute top-0 left-full ml-8 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden md:block">
-                            <div className="bg-white/[0.03] border border-white/10 p-4 rounded-xl backdrop-blur-md min-w-[200px]">
-                                <p className="text-[9px] text-gray-500 uppercase font-black tracking-widest mb-1">Target Module</p>
-                                <p className="text-white text-[10px] font-bold">Facility Clearance Section {idx + 1}</p>
+                        {/* Hover Detail Card Overlay (Integrated Below) */}
+                        <div className="mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 max-h-0 group-hover:max-h-20 overflow-hidden pointer-events-none hidden md:block">
+                            <div className="bg-white/[0.03] border border-white/10 p-4 rounded-xl backdrop-blur-md inline-block">
+                                <p className="text-[9px] text-gray-400 uppercase font-medium tracking-widest mb-1">Target Module</p>
+                                <p className="text-white text-[10px] font-normal">Facility Clearance Section {idx + 1}</p>
                             </div>
                         </div>
                     </motion.div>

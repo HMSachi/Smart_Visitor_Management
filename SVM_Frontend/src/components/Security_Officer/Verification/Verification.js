@@ -13,7 +13,7 @@ const VerificationMain = () => {
                     <h1 className="uppercase">Verification Log</h1>
                 </div>
                 <div className="text-right space-y-2">
-                     <p className="text-mas-text-dim uppercase">Entry Ref ID</p>
+                     <p className="text-gray-300 uppercase">Entry Ref ID</p>
                      <p className="text-white">VER-SYNC-4291</p>
                 </div>
             </div>

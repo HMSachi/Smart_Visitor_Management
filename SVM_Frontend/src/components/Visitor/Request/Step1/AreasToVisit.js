@@ -18,8 +18,8 @@ const AreasToVisit = ({ selectedAreas, onToggle }) => {
                     <Map size={20} />
                 </div>
                 <div>
-                    <h2 className="text-xl font-black text-white uppercase tracking-tight">Access Zones</h2>
-                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]">Authorized Parameters</p>
+                    <h2 className="text-xl font-bold text-white uppercase tracking-tight">Access Zones</h2>
+                    <p className="text-gray-500 text-[10px] font-medium uppercase tracking-[0.2em]">Authorized Parameters</p>
                 </div>
             </div>
 
@@ -41,7 +41,7 @@ const AreasToVisit = ({ selectedAreas, onToggle }) => {
                         }`}>
                             <area.icon size={28} />
                         </div>
-                        <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
+                        <span className={`text-[10px] font-medium uppercase tracking-widest transition-colors ${
                             selectedAreas.includes(area.id) ? 'text-white' : 'text-gray-500 group-hover:text-white'
                         }`}>
                             {area.name}

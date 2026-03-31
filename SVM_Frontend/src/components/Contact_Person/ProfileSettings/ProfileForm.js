@@ -23,7 +23,7 @@ const ProfileForm = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
                     <div className="space-y-2">
-                        <label className="text-mas-text-dim uppercase">Full Name</label>
+                        <label className="text-gray-300 uppercase">Full Name</label>
                         <input
                             type="text"
                             defaultValue="Saman Kumara"
@@ -32,7 +32,7 @@ const ProfileForm = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-mas-text-dim uppercase">Employee ID</label>
+                        <label className="text-gray-300 uppercase">Employee ID</label>
                         <input
                             type="text"
                             defaultValue="MAS-CP-4291"
@@ -42,10 +42,10 @@ const ProfileForm = () => {
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
-                        <label className="text-mas-text-dim uppercase">Email Address</label>
+                        <label className="text-gray-300 uppercase">Email Address</label>
                         <div className="relative">
                             <Mail
-                                className="absolute left-4 top-1/2 -translate-y-1/2 text-mas-text-dim"
+                                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"
                                 size={14}
                             />
                             <input
@@ -69,7 +69,7 @@ const ProfileForm = () => {
                 <div className="space-y-6">
 
                     <div className="space-y-2">
-                        <label className="text-mas-text-dim uppercase">Current Password</label>
+                        <label className="text-gray-300 uppercase">Current Password</label>
                         <input
                             type="password"
                             className={inputClass}
@@ -79,7 +79,7 @@ const ProfileForm = () => {
                     <div className="grid grid-cols-2 gap-8">
 
                         <div className="space-y-2">
-                            <label className="text-mas-text-dim uppercase">New Password</label>
+                            <label className="text-gray-300 uppercase">New Password</label>
                             <input
                                 type="password"
                                 className={inputClass}
@@ -87,7 +87,7 @@ const ProfileForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-mas-text-dim uppercase">Confirm Password</label>
+                            <label className="text-gray-300 uppercase">Confirm Password</label>
                             <input
                                 type="password"
                                 className={inputClass}

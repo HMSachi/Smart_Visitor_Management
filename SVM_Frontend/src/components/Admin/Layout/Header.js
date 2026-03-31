@@ -22,7 +22,7 @@ const Header = () => {
         ) : (
           <button
             onClick={() => navigate(-1)}
-            className="p-3 text-mas-text-dim hover:text-white transition-colors bg-white/5 border border-white/10 group rounded-lg"
+            className="p-3 text-gray-300 hover:text-white transition-colors bg-white/5 border border-white/10 group rounded-lg"
             title="Go Back"
           >
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
@@ -30,7 +30,7 @@ const Header = () => {
         )}
         <div className="relative group w-full hidden sm:block">
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-mas-text-dim group-focus-within:text-mas-red transition-all duration-300"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-mas-red transition-all duration-300"
             size={16}
           />
           <input
@@ -43,11 +43,11 @@ const Header = () => {
 
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-4">
-          <button className="relative p-2 text-mas-text-dim hover:text-white transition-all group">
+          <button className="relative p-2 text-gray-300 hover:text-white transition-all group">
             <Bell size={18} strokeWidth={2} />
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-mas-red animate-pulse shadow-[0_0_5px_#C8102E]"></span>
           </button>
-          <button className="p-2 text-mas-text-dim hover:text-white transition-all">
+          <button className="p-2 text-gray-300 hover:text-white transition-all">
             <Settings size={18} strokeWidth={2} />
           </button>
         </div>

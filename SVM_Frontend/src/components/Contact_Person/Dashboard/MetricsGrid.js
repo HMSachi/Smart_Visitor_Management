@@ -1,43 +1,65 @@
 import React from 'react';
 import { Layers, Clock, CheckSquare, Send } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const iconMap = {
+    Layers,
+    Clock,
+    CheckSquare,
+    Send
+};
+
+const Panel = ({ icon, label, value, trend }) => {
+  const Icon = icon;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="bg-[#121214] border border-white/5 p-8 rounded-[32px] flex flex-col justify-between group cursor-pointer hover:border-white/10 transition-all duration-500 relative overflow-hidden shadow-2xl h-full"
+    >
+      <div className="absolute -top-12 -right-12 w-24 h-24 bg-mas-red/5 rounded-full blur-3xl group-hover:bg-mas-red/10 transition-all"></div>
+
+      <div className="flex justify-between items-start relative z-10">
+        <div>
+          <p className="text-white/80 text-[10px] font-medium uppercase tracking-[0.2em] mb-4 group-hover:text-white transition-opacity">{label}</p>
+          <h3 className="text-white text-3xl font-bold tracking-tighter group-hover:text-mas-red transition-colors">{value}</h3>
+        </div>
+        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group-hover:border-mas-red/40 group-hover:bg-mas-red/10 transition-all duration-500 shadow-lg">
+          <Icon className="text-mas-red group-hover:scale-110 transition-transform" size={20} strokeWidth={2.5} />
+        </div>
+      </div>
+
+      <div className="mt-10 flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-3">
+          <div className={`text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-lg border ${trend.includes('+') ? 'text-green-500 border-green-500/10 bg-green-500/5' : 'text-gray-300 border-white/5 bg-white/5'}`}>
+            {trend}
+          </div>
+          <span className="text-[9px] font-medium uppercase tracking-widest text-white/90 group-hover:text-white/90">vs last cycle</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-1 h-1 bg-mas-red rounded-full"></div>
+          <p className="text-white/80 text-[9px] font-medium uppercase tracking-widest">Protocol Active</p>
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-mas-red group-hover:w-full transition-all duration-700 shadow-[0_0_10px_#C8102E]"></div>
+    </motion.div>
+  );
+};
 
 const MetricsGrid = () => {
     const stats = [
-        { label: 'Total Syncs', value: '1,284', icon: Layers, trend: '+12.5%', color: 'mas-red', subtitle: 'Global Records' },
-        { label: 'Awaiting Action', value: '42', icon: Clock, trend: 'Priority', color: 'mas-red', subtitle: 'Urgent Review' },
-        { label: 'Authorization Success', value: '892', icon: CheckSquare, trend: '+8.2%', color: 'mas-red', subtitle: 'Completed Cycles' },
-        { label: 'Admin Escalations', value: '350', icon: Send, trend: 'Finalized', color: 'mas-red', subtitle: 'HQ Reporting' },
+        { label: 'Total Syncs', value: '1,284', icon: Layers, trend: '+12.5%' },
+        { label: 'Awaiting Action', value: '42', icon: Clock, trend: 'Priority' },
+        { label: 'Authorization Success', value: '892', icon: CheckSquare, trend: '+8.2%' },
+        { label: 'Admin Escalations', value: '350', icon: Send, trend: 'Finalized' },
     ];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {stats.map((stat, i) => (
-                <div key={i} className="bg-[#121214] p-5 sm:p-6 rounded-3xl border border-white/5 hover:border-mas-red/30 transition-all duration-500 group relative overflow-hidden shadow-xl">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-mas-red/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-
-                    <div className="flex items-center justify-between mb-6">
-                        <div className={`p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 group-hover:bg-mas-red/10 group-hover:border-mas-red/30 text-mas-text-dim group-hover:text-mas-red transition-all duration-500`}>
-                            <stat.icon size={20} className="group-hover:scale-110 transition-transform duration-500" />
-                        </div>
-                        <span className={`text-[9px] font-black uppercase tracking-[0.15em] py-1 px-2.5 rounded-lg bg-white/[0.03] border border-white/5 ${stat.trend === 'Priority' ? 'text-mas-red animate-pulse border-mas-red/20 bg-mas-red/5' : 'text-mas-text-dim'}`}>
-                            {stat.trend}
-                        </span>
-                    </div>
-
-                    <div className="relative z-10">
-                        <h3 className="text-3xl font-bold text-white mb-0.5 tracking-tight group-hover:translate-x-1 transition-transform duration-500">{stat.value}</h3>
-                        <p className="text-mas-text-dim text-[10px] font-bold uppercase tracking-[0.1em] mb-4">{stat.label}</p>
-                        <div className="flex items-center gap-3">
-                            <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
-                                <div
-                                    className="h-full bg-mas-red shadow-[0_0_8px_#C8102E]"
-                                    style={{ width: i === 0 ? '70%' : i === 1 ? '40%' : i === 2 ? '85%' : '60%' }}
-                                ></div>
-                            </div>
-                            <span className="text-[8px] text-mas-text-dim/40 uppercase font-bold whitespace-nowrap">{stat.subtitle}</span>
-                        </div>
-                    </div>
-                </div>
+                <Panel key={i} {...stat} />
             ))}
         </div>
     );

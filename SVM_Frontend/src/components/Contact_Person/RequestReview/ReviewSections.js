@@ -25,11 +25,11 @@ const SectionWrapper = ({ icon: Icon, title, subtitle, children }) => (
                     <Icon size={20} />
                 </div>
                 <div>
-                    <h3 className="text-white text-[11px] font-black tracking-[0.2em] uppercase">{title}</h3>
-                    <p className="text-mas-text-dim text-[9px] font-black uppercase tracking-widest opacity-40">{subtitle}</p>
+                    <h3 className="text-white text-[11px] font-bold tracking-[0.2em] uppercase">{title}</h3>
+                    <p className="text-gray-300 text-[9px] font-medium uppercase tracking-widest opacity-80">{subtitle}</p>
                 </div>
             </div>
-            <div className="opacity-10 group-hover:opacity-20 transition-opacity">
+            <div className="opacity-10 group-hover:opacity-70 transition-opacity">
                 <Icon size={40} />
             </div>
         </div>
@@ -41,11 +41,11 @@ const SectionWrapper = ({ icon: Icon, title, subtitle, children }) => (
 
 const Field = ({ label, value, icon: Icon }) => (
     <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5 group/field hover:border-mas-red/20 transition-all">
-        <div className="flex items-center gap-2 opacity-40 group-hover/field:opacity-60 transition-opacity">
+        <div className="flex items-center gap-2 opacity-80 group-hover/field:opacity-90 transition-opacity">
             {Icon && <Icon size={10} className="text-mas-red" />}
-            <label className="text-mas-text-dim text-[9px] font-black uppercase tracking-widest">{label}</label>
+            <label className="text-gray-300 text-[9px] font-medium uppercase tracking-widest">{label}</label>
         </div>
-        <p className="text-white text-[13px] font-bold tracking-wide uppercase leading-tight">{value}</p>
+        <p className="text-white text-[13px] font-medium tracking-wide uppercase leading-tight">{value}</p>
     </div>
 );
 
@@ -78,13 +78,13 @@ export const VisitParameters = ({ request }) => (
         </div>
 
         <div className="space-y-4">
-            <div className="flex items-center gap-2 opacity-40">
+            <div className="flex items-center gap-2 opacity-80">
                 <MapPin size={12} className="text-mas-red" />
-                <span className="text-[9px] font-black uppercase tracking-widest text-mas-text-dim">Authorized Access Zones</span>
+                <span className="text-[9px] font-medium uppercase tracking-widest text-gray-300">Authorized Access Zones</span>
             </div>
             <div className="flex flex-wrap gap-3">
                 {(request?.selectedAreas?.length ? request.selectedAreas : ['N/A']).map((area) => (
-                    <div key={area} className="px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl text-white text-[10px] font-bold uppercase tracking-widest hover:border-mas-red transition-all shadow-lg active:scale-95">
+                    <div key={area} className="px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl text-white text-[10px] font-medium uppercase tracking-widest hover:border-mas-red transition-all shadow-lg active:scale-95">
                         {area}
                     </div>
                 ))}
@@ -162,13 +162,13 @@ export const DocumentReview = ({ request }) => (
                 <FileText size={28} />
             </div>
             <div className="flex-1">
-                <p className="text-[12px] font-bold text-white uppercase tracking-widest mb-1">{request?.uploadedFile || 'PENDING_UPLOAD.PDF'}</p>
+                <p className="text-[12px] font-medium text-white uppercase tracking-widest mb-1">{request?.uploadedFile || 'PENDING_UPLOAD.PDF'}</p>
                 <div className="flex items-center gap-2">
                     <Info size={10} className="text-mas-red" />
-                    <p className="text-[9px] font-black text-mas-text-dim uppercase tracking-widest opacity-40">Primary Identity Documentation Secured</p>
+                    <p className="text-[9px] font-medium text-gray-300 uppercase tracking-widest opacity-80">Primary Identity Documentation Secured</p>
                 </div>
             </div>
-            <button className="px-5 py-2.5 bg-white/[0.05] border border-white/10 text-[10px] font-black text-white uppercase tracking-widest rounded-xl hover:bg-mas-red hover:border-mas-red transition-all">
+            <button className="px-5 py-2.5 bg-white/[0.05] border border-white/10 text-[10px] font-medium text-white uppercase tracking-widest rounded-xl hover:bg-mas-red hover:border-mas-red transition-all">
                 Analyze
             </button>
         </div>

@@ -66,22 +66,22 @@ const Step1Main = () => {
                         <CheckCircle2 size={40} className="animate-bounce" />
                     </div>
                     
-                    <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-4 italic">Request Dispatched</h2>
-                    <p className="text-gray-500 text-xs font-bold uppercase tracking-[0.2em] mb-10 leading-relaxed">
+                    <h2 className="text-2xl font-bold text-white uppercase tracking-tight mb-4 italic">Request Dispatched</h2>
+                    <p className="text-gray-500 text-xs font-medium uppercase tracking-[0.2em] mb-10 leading-relaxed">
                         Your clearance request is being processed by <span className="text-white">MAS Security Node</span>.
-                        <br /> Ref: <span className="text-mas-red font-black">{requestRef}</span>
+                        <br /> Ref: <span className="text-mas-red font-medium">{requestRef}</span>
                     </p>
 
                     <div className="flex flex-col gap-4">
                         <button 
                             onClick={() => window.location.href = '/status'}
-                            className="w-full py-5 bg-mas-red text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-[0_20px_40px_rgba(200,16,46,0.2)] hover:shadow-[0_20px_50px_rgba(200,16,46,0.4)] transition-all flex items-center justify-center gap-3"
+                            className="w-full py-5 bg-mas-red text-white font-medium uppercase text-xs tracking-widest rounded-2xl shadow-[0_20px_40px_rgba(200,16,46,0.2)] hover:shadow-[0_20px_50px_rgba(200,16,46,0.4)] transition-all flex items-center justify-center gap-3"
                         >
                             Track Clearance <ArrowRight size={18} />
                         </button>
                         <button 
                             onClick={() => window.location.href = '/home'}
-                            className="w-full py-5 bg-white/[0.03] border border-white/10 text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-white/[0.07] transition-all"
+                            className="w-full py-5 bg-white/[0.03] border border-white/10 text-white font-medium uppercase text-xs tracking-widest rounded-2xl hover:bg-white/[0.07] transition-all"
                         >
                             Return to Portal
                         </button>
@@ -98,19 +98,19 @@ const Step1Main = () => {
                 <div className="text-center md:text-left">
                     <div className="flex items-center gap-3 mb-4 justify-center md:justify-start">
                         <div className="w-10 h-[2.5px] bg-mas-red" />
-                        <span className="text-mas-red font-black uppercase tracking-[0.4em] text-[10px]">Phase 01 / 02</span>
+                        <span className="text-mas-red font-medium uppercase tracking-[0.4em] text-[10px]">Phase 01 / 02</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none mb-2 italic">
+                    <h1 className="text-4xl md:text-6xl font-bold uppercase tracking-tighter leading-none mb-2 italic">
                         Visitor <span className="text-mas-red">Registration</span>
                     </h1>
-                    <p className="text-gray-500 text-[10px] uppercase font-black tracking-[0.2em]">Required for enterprise facility access</p>
+                    <p className="text-gray-500 text-[10px] uppercase font-medium tracking-[0.2em]">Required for enterprise facility access</p>
                 </div>
 
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/[0.03] border border-white/10 rounded-2xl">
                     <Clock size={20} className="text-mas-red" />
                     <div className="text-left">
-                        <p className="text-white text-[10px] font-black uppercase tracking-widest">Est. Processing</p>
-                        <p className="text-gray-500 text-[9px] uppercase font-bold tracking-widest">15 - 30 Minutes</p>
+                        <p className="text-white text-[10px] font-medium uppercase tracking-widest">Est. Processing</p>
+                        <p className="text-gray-500 text-[9px] uppercase font-medium tracking-widest">15 - 30 Minutes</p>
                     </div>
                 </div>
             </div>
@@ -158,7 +158,7 @@ const Step1Main = () => {
                         whileTap={{ scale: 0.98 }}
                         type="submit"
                         disabled={status === 'submitting'}
-                        className="relative group w-full md:w-auto px-20 py-7 bg-mas-red text-white font-black uppercase text-sm tracking-[0.3em] rounded-2xl shadow-[0_20px_60px_rgba(200,16,46,0.25)] hover:shadow-[0_20px_80px_rgba(200,16,46,0.4)] transition-all overflow-hidden disabled:opacity-50"
+                        className="relative group w-full md:w-auto px-20 py-7 bg-mas-red text-white font-medium uppercase text-sm tracking-[0.3em] rounded-2xl shadow-[0_20px_60px_rgba(200,16,46,0.25)] hover:shadow-[0_20px_80px_rgba(200,16,46,0.4)] transition-all overflow-hidden disabled:opacity-50"
                     >
                         <div className="relative z-10 flex items-center justify-center gap-4">
                             {status === 'submitting' ? (

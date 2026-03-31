@@ -22,23 +22,23 @@ const Header = ({ title }) => {
                 ) : (
                     <button
                         onClick={() => navigate(-1)}
-                        className="p-2 rounded-xl text-mas-text-dim hover:text-white transition-all bg-white/[0.03] border border-white/5 hover:border-white/20 group flex-shrink-0"
+                        className="p-2 rounded-xl text-gray-300 hover:text-white transition-all bg-white/[0.03] border border-white/5 hover:border-white/20 group flex-shrink-0"
                         title="Go Back"
                     >
                         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                     </button>
                 )}
                 <div className="flex flex-col">
-                    <span className="text-[9px] text-mas-red font-black tracking-[0.3em] uppercase mb-0.5 opacity-80 truncate">Command Hub</span>
+
                     <h2 className="text-sm md:text-base font-bold tracking-tight text-white uppercase truncate">{title}</h2>
                 </div>
 
                 <div className="hidden lg:flex max-w-sm w-full relative group ml-2">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-mas-text-dim/40 group-focus-within:text-mas-red transition-colors" size={14} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300/80 group-focus-within:text-mas-red transition-colors" size={14} />
                     <input
                         type="text"
                         placeholder="Search matrix..."
-                        className="w-full pl-10 pr-4 py-2.5 bg-white/[0.02] border border-white/5 focus:border-mas-red/30 focus:bg-white/[0.04] rounded-xl text-[11px] transition-all outline-none text-white placeholder:text-mas-text-dim/30 uppercase tracking-widest"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white/[0.02] border border-white/5 focus:border-mas-red/30 focus:bg-white/[0.04] rounded-xl text-[11px] transition-all outline-none text-white placeholder:text-gray-300/30 uppercase tracking-widest"
                     />
                 </div>
             </div>
@@ -48,11 +48,11 @@ const Header = ({ title }) => {
                     <div className="flex flex-col items-end">
                         <div className="flex items-center gap-2 text-mas-red/80 mb-0.5">
                             <Globe size={10} className="animate-pulse" />
-                            <span className="text-[9px] font-black tracking-widest uppercase">NODE: 08_COL</span>
+                            <span className="text-[9px] font-medium tracking-widest uppercase">NODE: 08_COL</span>
                         </div>
-                        <div className="flex items-center gap-2 text-mas-text-dim/40">
+                        <div className="flex items-center gap-2 text-gray-300/80">
                             <Clock size={10} />
-                            <span className="text-[9px] font-bold tracking-widest uppercase">14:18 GMT</span>
+                            <span className="text-[9px] font-medium tracking-widest uppercase">14:18 GMT</span>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@ const Header = ({ title }) => {
                 <div className="flex items-center gap-4">
                     <div className="relative p-2 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 cursor-pointer group transition-all">
                         <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E] border border-[#0a0a0b]"></div>
-                        <Bell size={18} className="text-mas-text-dim group-hover:text-white transition-colors" />
+                        <Bell size={18} className="text-gray-300 group-hover:text-white transition-colors" />
                     </div>
                 </div>
             </div>

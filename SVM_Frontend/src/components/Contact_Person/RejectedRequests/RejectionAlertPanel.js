@@ -6,7 +6,7 @@ const RejectionAlertPanel = ({ visitor }) => {
     if (!visitor) return (
         <div className="h-full mas-glass border-mas-border border-dashed p-12 flex flex-col items-center justify-center gap-4 text-center">
             <Info size={32} className="text-white/10" />
-            <p className="text-mas-text-dim uppercase opacity-30">Select a record to view rejection audit log</p>
+            <p className="text-gray-300 uppercase opacity-30">Select a record to view rejection audit log</p>
         </div>
     );
 
@@ -25,14 +25,14 @@ const RejectionAlertPanel = ({ visitor }) => {
                 </div>
 
                 <div className="space-y-4 mb-10">
-                    <p className="text-mas-text-dim uppercase mb-1">Root Cause Determination</p>
+                    <p className="text-gray-300 uppercase mb-1">Root Cause Determination</p>
                     <div className="p-4 bg-mas-red/10 border border-mas-red/20">
                         <p className="uppercase text-mas-red">{visitor.reason}</p>
                     </div>
                 </div>
 
                 <div className="space-y-4">
-                     <p className="text-mas-text-dim uppercase mb-1 flex items-center gap-3">
+                     <p className="text-gray-300 uppercase mb-1 flex items-center gap-3">
                         <MessageSquare size={14} />
                         Internal Observations
                      </p>
@@ -46,7 +46,7 @@ const RejectionAlertPanel = ({ visitor }) => {
 
              <div className="p-8 border border-white/5 bg-white/[0.01]">
                 <div className="flex justify-between items-center uppercase">
-                    <span className="text-mas-text-dim">Status Code</span>
+                    <span className="text-gray-300">Status Code</span>
                     <span className="text-mas-red">R-BLOCK-4291</span>
                 </div>
              </div>
