@@ -47,7 +47,7 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
   ];
 
   return (
-    <Box className="h-full flex flex-col p-4 bg-mas-dark/95 border-r border-white/10">
+    <Box className="h-full flex flex-col pt-10 p-4 bg-mas-dark/95 border-r border-white/10">
       {/* Sidebar Top: Logo */}
       <div className={`mb-12 flex items-center ${isCollapsed ? 'justify-center' : 'px-4 gap-3'}`}>
          <img src="/logo_mas.png" alt="Logo" className={`${isCollapsed ? 'h-5' : 'h-5'} w-auto transition-all duration-500`} />

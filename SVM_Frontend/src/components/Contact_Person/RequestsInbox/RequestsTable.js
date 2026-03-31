@@ -22,7 +22,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
     <div className="bg-[#121214] border border-white/5 rounded-3xl overflow-hidden shadow-2xl animate-fade-in">
 
       {/* Table Header Section */}
-      <div className="p-8 border-b border-white/5 bg-gradient-to-r from-white/[0.02] to-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8">
+      <div className="p-6 sm:p-8 border-b border-white/5 bg-gradient-to-r from-white/[0.02] to-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8">
         <div className="flex items-center gap-5">
           <div className="w-12 h-12 rounded-2xl bg-mas-red/10 border border-mas-red/20 flex items-center justify-center text-mas-red shadow-[0_0_20px_rgba(200,16,46,0.1)]">
             <Download size={22} className="opacity-80" />
@@ -70,9 +70,9 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
+      <div className="overflow-x-auto sm:overflow-visible p-4 sm:p-0">
+        <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
+          <thead className="hidden sm:table-header-group">
             <tr className="bg-white/[0.02] border-b border-white/5 text-gray-300 text-[10px] font-medium uppercase tracking-[0.2em]">
               <th className="px-8 py-4 w-20 text-center">Unit</th>
               <th className="px-8 py-4">Visitor Identity</th>
@@ -82,15 +82,17 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
               <th className="px-8 py-4 text-right">Control</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.03]">
+          <tbody className="block sm:table-row-group">
             {requests.map((visitor) => (
-              <tr key={visitor.id} className="group transition-all hover:bg-white/[0.01]">
-                <td className="px-8 py-5 text-center">
-                  <div className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 text-[10px] font-medium text-gray-300 flex items-center justify-center transition-all mx-auto group-hover:border-mas-red/20 group-hover:text-white">
+              <tr key={visitor.id} className="group transition-all hover:bg-white/[0.01] block sm:table-row bg-[#161618] sm:bg-transparent border border-white/5 sm:border-none rounded-3xl sm:rounded-none mb-6 sm:mb-0 p-6 sm:p-0 shadow-2xl sm:shadow-none">
+                <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-center border-b border-white/5 sm:border-none last:border-none">
+                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Unit Member Count</span>
+                  <div className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 text-[10px] font-medium text-gray-300 flex items-center justify-center transition-all mx-0 sm:mx-auto group-hover:border-mas-red/20 group-hover:text-white">
                     {visitor.members.length + 1}
                   </div>
                 </td>
-                <td className="px-8 py-5">
+                <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b border-white/5 sm:border-none last:border-none">
+                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Visitor Identity</span>
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-mas-red/20 to-transparent border border-mas-red/20 flex items-center justify-center text-mas-red text-[11px] font-medium group-hover:shadow-[0_0_15px_rgba(200,16,46,0.15)] transition-all">
                       {visitor.name.split(' ').map(n => n[0]).join('')}
@@ -101,11 +103,13 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
                     </div>
                   </div>
                 </td>
-                <td className="px-8 py-5">
+                <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b border-white/5 sm:border-none last:border-none">
+                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Reference Protocol</span>
                   <p className="text-white/80 font-mono text-[11px] tracking-tighter mb-1 select-all">{visitor.batchId}</p>
                   <p className="text-gray-300 text-[10px] uppercase font-medium">{visitor.contactPerson}</p>
                 </td>
-                <td className="px-8 py-5">
+                <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b border-white/5 sm:border-none last:border-none">
+                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Schedule Matrix</span>
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2 text-white/80 text-[11px] font-medium">
                       <span className="w-1 h-1 bg-mas-red rounded-full"></span>
@@ -114,10 +118,12 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
                     <p className="text-gray-300 text-[10px] uppercase tracking-wider pl-3">{visitor.timeIn} | {visitor.areas[0]}</p>
                   </div>
                 </td>
-                <td className="px-8 py-5 text-center">
+                <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-center border-b border-white/5 sm:border-none last:border-none">
+                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Authorization</span>
                   <StatusBadge status={visitor.status} />
                 </td>
-                <td className="px-8 py-5 text-right">
+                <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-right">
+                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Actions</span>
                   <button
                     onClick={() => onReview(visitor.id)}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/5 text-white text-[10px] font-medium uppercase tracking-widest hover:bg-white hover:text-black hover:border-white transition-all group/btn shadow-lg"

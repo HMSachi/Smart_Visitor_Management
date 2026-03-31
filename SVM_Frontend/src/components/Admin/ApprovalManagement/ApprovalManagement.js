@@ -1,39 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Activity, Clock, Users, CheckCircle2, AlertCircle, Search, Filter, RefreshCw, Zap } from 'lucide-react';
-import VisitorTable from './VisitorTable';
-import VisitorDetailView from './VisitorDetailView';
-import ApprovalModal from './ApprovalModal';
-import QRSuccessModal from './QRSuccessModal';
-import { setSearchTerm as setAdminSearchTerm, updateVisitorStatus } from '../../../reducers/adminSlice';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Shield,
+  Activity,
+  Clock,
+  Users,
+  CheckCircle2,
+  AlertCircle,
+  Search,
+  Filter,
+  RefreshCw,
+  Zap,
+} from "lucide-react";
+import VisitorTable from "./VisitorTable";
+import VisitorDetailView from "./VisitorDetailView";
+import ApprovalModal from "./ApprovalModal";
+import QRSuccessModal from "./QRSuccessModal";
+import {
+  setSearchTerm as setAdminSearchTerm,
+  updateVisitorStatus,
+} from "../../../reducers/adminSlice";
 
 const ApprovalManagementMain = () => {
   const dispatch = useDispatch();
-  const { visitorList, searchTerm } = useSelector(state => state.admin.approvals);
+  const { visitorList, searchTerm } = useSelector(
+    (state) => state.admin.approvals,
+  );
 
   const [selectedVisitor, setSelectedVisitor] = useState(null);
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'details'
+  const [viewMode, setViewMode] = useState("list"); // 'list' or 'details'
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState('Approve');
+  const [modalType, setModalType] = useState("Approve");
   const [showQRModal, setShowQRModal] = useState(false);
   const [approvedVisitorData, setApprovedVisitorData] = useState(null);
 
-
   // Filtered list based on Redux searchTerm
-  const filteredVisitors = visitorList.filter(v =>
-    v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.batchId.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredVisitors = visitorList.filter(
+    (v) =>
+      v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      v.batchId.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleViewDetails = (visitor) => {
     setSelectedVisitor(visitor);
-    setViewMode('details');
+    setViewMode("details");
   };
 
   const handleBackToList = () => {
     setSelectedVisitor(null);
-    setViewMode('list');
+    setViewMode("list");
   };
 
   const handleAction = (visitor, type) => {
@@ -48,10 +64,8 @@ const ApprovalManagementMain = () => {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-mas-red/30 to-transparent"></div>
 
       <div className="max-w-[1700px] mx-auto relative z-10">
-
-
         <div className="space-y-12">
-          {viewMode === 'list' && (
+          {viewMode === "list" && (
             <div className="flex justify-between items-center -mb-8 relative z-20">
               <div className="relative group w-full max-w-md">
                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none opacity-70 group-focus-within:opacity-100 transition-opacity">
@@ -69,7 +83,7 @@ const ApprovalManagementMain = () => {
           )}
 
           <AnimatePresence mode="wait">
-            {viewMode === 'list' ? (
+            {viewMode === "list" ? (
               <motion.div
                 key="list"
                 initial={{ opacity: 0, y: 20 }}
@@ -106,16 +120,20 @@ const ApprovalManagementMain = () => {
             visitor={selectedVisitor}
             type={modalType}
             onConfirm={(id, type, comment) => {
-              dispatch(updateVisitorStatus({
-                id,
-                status: type === 'Approve' ? 'Approved' : 'Rejected'
-              }));
+              dispatch(
+                updateVisitorStatus({
+                  id,
+                  status: type === "Approve" ? "Approved" : "Rejected",
+                }),
+              );
 
-              if (type === 'Approve') {
-                setApprovedVisitorData(visitorList.find(v => v.id === id) || selectedVisitor);
+              if (type === "Approve") {
+                setApprovedVisitorData(
+                  visitorList.find((v) => v.id === id) || selectedVisitor,
+                );
                 setShowQRModal(true);
               }
-              if (viewMode === 'details') setViewMode('list');
+              if (viewMode === "details") setViewMode("list");
               setIsModalOpen(false);
             }}
           />

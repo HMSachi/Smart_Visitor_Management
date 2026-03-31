@@ -16,34 +16,35 @@ const NotificationsMain = () => {
     };
 
     return (
-        <div className="p-10 space-y-10 animate-fade-in-slow">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-2">
-                <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <div className="w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E] animate-pulse"></div>
-                        <span className="text-mas-red text-[10px] font-medium uppercase tracking-[0.3em]">Operational Alerts</span>
-                    </div>
-                    <div className="flex items-center gap-6">
-                        <p className="text-gray-300 text-xs uppercase tracking-widest opacity-90">System intelligence and activity log</p>
-                        <span className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[9px] font-medium uppercase tracking-widest rounded-lg">
-                            {notifications.filter(n => n.unread).length} Active Alerts
+        <div className="px-4 sm:px-8 py-2 sm:py-4 animate-fade-in-slow">
+            <div className="bg-[#121214] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+                {/* Compact Action Bar - No Redundant Title */}
+                <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-white/5 bg-gradient-to-r from-white/[0.02] to-transparent flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E] animate-pulse"></div>
+                            <span className="text-gray-300 text-[9px] font-medium uppercase tracking-[0.3em] opacity-90">Operational Alerts</span>
+                        </div>
+                        <span className="px-2.5 py-0.5 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[8px] font-medium uppercase tracking-widest rounded-lg">
+                            {notifications.filter(n => n.unread).length} New
                         </span>
                     </div>
+
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                        <button onClick={markAllRead} className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-medium uppercase tracking-widest text-gray-300 hover:text-white hover:border-mas-red/30 hover:bg-mas-red/5 transition-all group">
+                            <CheckSquare size={14} className="group-hover:text-mas-red transition-colors" /> Acknowledge All
+                        </button>
+                        <button className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-gray-300 hover:text-mas-red hover:border-mas-red transition-all shadow-lg shrink-0">
+                            <Trash2 size={18} />
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <button onClick={markAllRead} className="flex items-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-medium uppercase tracking-widest text-gray-300 hover:text-white hover:border-white/20 transition-all group">
-                        <CheckSquare size={14} className="group-hover:text-mas-red transition-colors" />
-                        Acknowledge All
-                    </button>
-                    <button className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-gray-300 hover:text-mas-red hover:border-mas-red transition-all shadow-lg">
-                        <Trash2 size={18} />
-                    </button>
+                <div className="p-4 sm:p-6 bg-[#0A0A0B]/30">
+                    <div className="max-w-none space-y-4">
+                        <NotificationList notifications={notifications} />
+                    </div>
                 </div>
-            </div>
-
-            <div className="max-w-4xl space-y-4">
-                <NotificationList notifications={notifications} />
             </div>
         </div>
     );
