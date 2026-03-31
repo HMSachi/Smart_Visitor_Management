@@ -39,13 +39,13 @@ const AboutAccessSystem = () => {
                     <div className="max-w-2xl">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-10 h-[2px] bg-mas-red" />
-                            <span className="text-mas-red uppercase tracking-[0.3em] text-[10px] font-black">Service Grid</span>
+                            <span className="text-mas-red uppercase tracking-[0.3em] text-[10px] font-medium">Service Grid</span>
                         </div>
-                        <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none">
+                        <h2 className="text-4xl md:text-6xl font-bold text-white uppercase tracking-tighter leading-none">
                             Our Digital <span className="text-mas-red">Ecosystem</span>
                         </h2>
                     </div>
-                    <p className="max-w-xs text-gray-500 text-xs uppercase tracking-[0.2em] leading-relaxed font-bold">
+                    <p className="max-w-xs text-gray-500 text-xs uppercase tracking-[0.2em] leading-relaxed font-medium">
                         Engineered for the high-precision environments of MAS Holdings.
                     </p>
                 </div>
@@ -68,7 +68,7 @@ const AboutAccessSystem = () => {
                                     <feature.icon size={28} />
                                 </div>
                                 
-                                <h3 className="text-white text-xl md:text-2xl font-black mb-4 uppercase tracking-tight">
+                                <h3 className="text-white text-xl md:text-2xl font-bold mb-4 uppercase tracking-tight">
                                     {feature.title}
                                 </h3>
                                 
@@ -77,7 +77,7 @@ const AboutAccessSystem = () => {
                                 </p>
 
                                 <div className="flex items-center gap-2 text-mas-red group-hover:text-white transition-colors">
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Learn More</span>
+                                    <span className="text-[10px] font-medium uppercase tracking-widest">Learn More</span>
                                     <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                 </div>
                             </div>

@@ -1,30 +1,65 @@
 import React from 'react';
 import { Layers, Clock, CheckSquare, Send } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const iconMap = {
+    Layers,
+    Clock,
+    CheckSquare,
+    Send
+};
+
+const Panel = ({ icon, label, value, trend }) => {
+  const Icon = icon;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="bg-[#121214] border border-white/5 p-8 rounded-[32px] flex flex-col justify-between group cursor-pointer hover:border-white/10 transition-all duration-500 relative overflow-hidden shadow-2xl h-full"
+    >
+      <div className="absolute -top-12 -right-12 w-24 h-24 bg-mas-red/5 rounded-full blur-3xl group-hover:bg-mas-red/10 transition-all"></div>
+
+      <div className="flex justify-between items-start relative z-10">
+        <div>
+          <p className="text-white/80 text-[10px] font-medium uppercase tracking-[0.2em] mb-4 group-hover:text-white transition-opacity">{label}</p>
+          <h3 className="text-white text-3xl font-bold tracking-tighter group-hover:text-mas-red transition-colors">{value}</h3>
+        </div>
+        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group-hover:border-mas-red/40 group-hover:bg-mas-red/10 transition-all duration-500 shadow-lg">
+          <Icon className="text-mas-red group-hover:scale-110 transition-transform" size={20} strokeWidth={2.5} />
+        </div>
+      </div>
+
+      <div className="mt-10 flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-3">
+          <div className={`text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-lg border ${trend.includes('+') ? 'text-green-500 border-green-500/10 bg-green-500/5' : 'text-gray-300 border-white/5 bg-white/5'}`}>
+            {trend}
+          </div>
+          <span className="text-[9px] font-medium uppercase tracking-widest text-white/90 group-hover:text-white/90">vs last cycle</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-1 h-1 bg-mas-red rounded-full"></div>
+          <p className="text-white/80 text-[9px] font-medium uppercase tracking-widest">Protocol Active</p>
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-mas-red group-hover:w-full transition-all duration-700 shadow-[0_0_10px_#C8102E]"></div>
+    </motion.div>
+  );
+};
 
 const MetricsGrid = () => {
     const stats = [
-        { label: 'Total Requests', value: '1,284', icon: Layers, trend: '+12.5%', color: 'white' },
-        { label: 'Pending Reviews', value: '42', icon: Clock, trend: 'Priority', color: 'mas-red' },
-        { label: 'Approved Requests', value: '892', icon: CheckSquare, trend: '+8.2%', color: 'white' },
-        { label: 'Sent to Admin', value: '350', icon: Send, trend: 'Finalized', color: 'white' },
+        { label: 'Total Syncs', value: '1,284', icon: Layers, trend: '+12.5%' },
+        { label: 'Awaiting Action', value: '42', icon: Clock, trend: 'Priority' },
+        { label: 'Authorization Success', value: '892', icon: CheckSquare, trend: '+8.2%' },
+        { label: 'Admin Escalations', value: '350', icon: Send, trend: 'Finalized' },
     ];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {stats.map((stat, i) => (
-                <div key={i} className="mas-glass p-8 border-mas-border group hover:border-mas-red/40 transition-all duration-500 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-1 h-0 group-hover:h-full bg-mas-red transition-all duration-500"></div>
-                    <div className="flex items-start justify-between mb-8">
-                        <div className={`p-4 bg-white/5 border border-white/5 group-hover:border-mas-red/20 group-hover:text-mas-red transition-all ${stat.color === 'mas-red' ? 'text-mas-red' : 'text-mas-text-dim'}`}>
-                            <stat.icon size={20} />
-                        </div>
-                        <span className={`uppercase ${stat.color === 'mas-red' ? 'text-mas-red animate-pulse' : 'text-mas-text-dim'}`}>
-                            {stat.trend}
-                        </span>
-                    </div>
-                    <h3 className="mb-2 group-hover:translate-x-1 transition-transform">{stat.value}</h3>
-                    <p className="text-mas-text-dim uppercase">{stat.label}</p>
-                </div>
+                <Panel key={i} {...stat} />
             ))}
         </div>
     );

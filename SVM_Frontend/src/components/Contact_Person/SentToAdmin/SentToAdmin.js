@@ -22,7 +22,7 @@ const SentToAdminMain = () => {
                     <h1 className="uppercase text-white flex items-center gap-6">
                         Sent to Admin
                         <div className="p-3 mas-glass border-white/10 bg-white/5 inline-flex">
-                            <Target size={24} className="text-mas-text-dim" />
+                            <Target size={24} className="text-gray-300" />
                         </div>
                     </h1>
                 </div>
@@ -33,7 +33,7 @@ const SentToAdminMain = () => {
                      <div className="absolute right-0 top-0 h-full w-32 bg-mas-red/5 blur-2xl"></div>
                      <span className="uppercase text-white">Active Forwarding Nodes: 4</span>
                      <div className="h-4 w-px bg-white/10 mx-4"></div>
-                     <span className="uppercase text-mas-text-dim">Synchronization Status: Primary</span>
+                     <span className="uppercase text-gray-300">Synchronization Status: Primary</span>
                 </div>
                 <SentTable requests={requests} />
             </div>

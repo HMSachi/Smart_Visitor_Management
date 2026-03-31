@@ -16,7 +16,7 @@ const ActivityTimeline = () => {
                     <Activity size={14} className="text-mas-red" />
                     Real-Time Node Activity
                 </h3>
-                <button className="text-mas-text-dim uppercase hover:text-white transition-colors">View All Streams</button>
+                <button className="text-gray-300 uppercase hover:text-white transition-colors">View All Streams</button>
             </div>
 
             <div className="space-y-4">
@@ -25,16 +25,16 @@ const ActivityTimeline = () => {
                         <div className="flex items-center gap-6">
                             <div className="relative">
                                 <div className={`w-3 h-3 rounded-full ${act.status === 'priority' || act.status === 'urgent' ? 'bg-mas-red shadow-[0_0_8px_#C8102E]' : 'bg-green-500 shadow-[0_0_8px_#22c55e]'}`}></div>
-                                <div className={`absolute -inset-1 rounded-full animate-ping opacity-20 ${act.status === 'priority' || act.status === 'urgent' ? 'bg-mas-red' : 'bg-green-500'}`}></div>
+                                <div className={`absolute -inset-1 rounded-full animate-ping opacity-70 ${act.status === 'priority' || act.status === 'urgent' ? 'bg-mas-red' : 'bg-green-500'}`}></div>
                             </div>
                             <div>
                                 <h4 className="text-white uppercase mb-1">{act.visitor}</h4>
-                                <p className="text-mas-text-dim uppercase">{act.action}</p>
+                                <p className="text-gray-300 uppercase">{act.action}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-8">
-                            <span className="text-mas-text-dim uppercase">{act.time}</span>
-                            <ArrowUpRight size={14} className="text-mas-text-dim group-hover:text-mas-red transition-colors cursor-pointer" />
+                            <span className="text-gray-300 uppercase">{act.time}</span>
+                            <ArrowUpRight size={14} className="text-gray-300 group-hover:text-mas-red transition-colors cursor-pointer" />
                         </div>
                     </div>
                 ))}

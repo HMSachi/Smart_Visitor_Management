@@ -63,11 +63,11 @@ const LiveFeed = () => {
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 bg-mas-red rounded-full"></div>
-                        <span className="text-mas-text-dim uppercase">Biometric Sync: Enabled</span>
+                        <span className="text-gray-300 uppercase">Biometric Sync: Enabled</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 bg-mas-red rounded-full"></div>
-                        <span className="text-mas-text-dim uppercase">Auto-Log: Active</span>
+                        <span className="text-gray-300 uppercase">Auto-Log: Active</span>
                     </div>
                 </div>
             </div>

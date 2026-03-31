@@ -1,110 +1,150 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { 
-    QrCode, 
-    ShieldCheck, 
-    UserCheck, 
-    Users, 
-    ClipboardList, 
-    AlertOctagon, 
-    History, 
-    Bell, 
-    LogOut,
-    ChevronLeft,
-    ChevronRight
+  ShieldCheck,
+  QrCode,
+  Shield,
+  UserCheck,
+  Users,
+  ClipboardList,
+  AlertOctagon,
+  History,
+  Bell,
+  ChevronLeft,
+  ChevronRight,
+  LogOut
 } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Drawer, Box, IconButton, Tooltip } from '@mui/material';
+import { toggleSidebar, setMobileMenu } from '../../../reducers/uiSlice';
+
+const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
+  <div 
+    className={`flex items-center gap-4 px-4 py-3.5 cursor-pointer transition-all duration-500 rounded-xl mb-2 group relative
+      ${active ? 'bg-mas-red shadow-[0_0_20px_rgba(200,16,46,0.2)]' : 'hover:bg-white/[0.03]'}
+      ${collapsed ? 'justify-center px-2' : ''}`}
+    onClick={onClick}
+  >
+    <div className={`transition-transform duration-500 ${active ? 'text-white' : 'text-gray-500 group-hover:text-mas-red group-hover:scale-110'}`}>
+      <Icon size={20} strokeWidth={active ? 2.5 : 2} />
+    </div>
+    
+    {!collapsed && (
+      <span className={`uppercase text-[10px] font-medium tracking-[0.2em] transition-all duration-500 ${active ? 'text-white' : 'text-gray-500 group-hover:text-white'}`}>
+        {label}
+      </span>
+    )}
+
+    {collapsed && (
+       <div className="absolute left-[120%] px-3 py-2 bg-mas-dark-800 border border-white/10 rounded-lg text-[9px] font-medium text-white uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none z-50 shadow-2xl">
+         {label}
+       </div>
+    )}
+  </div>
+);
+
+const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
+  const menuItems = [
+        { id: 'dashboard', label: 'Command Hub', icon: ShieldCheck, path: '/Security_Officer/dashboard' },
+        { id: 'scanner', label: 'Node Scanner', icon: QrCode, path: '/Security_Officer/scanner' },
+        { id: 'approval', label: 'Access Control', icon: UserCheck, path: '/Security_Officer/entry-approval' },
+  ];
+
+  return (
+    <Box className="h-full flex flex-col p-4 bg-mas-dark/95 border-r border-white/10">
+      {/* Sidebar Top: Logo */}
+      <div className={`mb-12 flex items-center ${isCollapsed ? 'justify-center' : 'px-4 gap-3'}`}>
+         <img src="/logo_mas.png" alt="Logo" className={`${isCollapsed ? 'h-5' : 'h-5'} w-auto transition-all duration-500`} />
+         {!isCollapsed && <span className="text-white font-medium tracking-tighter text-sm flex-none uppercase animate-fade-in">Security <span className="text-mas-red">Portal</span></span>}
+      </div>
+
+      <nav className="flex-1 overflow-y-auto custom-scrollbar pb-10">
+        {menuItems.map((item) => (
+          <SidebarItem
+            key={item.id}
+            icon={item.icon}
+            label={item.label}
+            active={currentPath === item.path}
+            onClick={() => onNavigate(item.path)}
+            collapsed={isCollapsed}
+          />
+        ))}
+      </nav>
+
+      {/* Sidebar Bottom: User & Logout */}
+      <div className={`mt-auto pt-6 border-t border-white/5`}>
+        <div className={`flex items-center gap-4 ${isCollapsed ? 'justify-center' : 'px-2'}`}>
+            <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0">
+                <span className="text-mas-red font-medium text-xs">SO</span>
+            </div>
+            {!isCollapsed && (
+                <div className="animate-fade-in overflow-hidden">
+                    <p className="text-white text-[10px] font-medium uppercase tracking-wider truncate">Guardian</p>
+                    <p className="text-gray-500 text-[8px] uppercase tracking-widest truncate">Security Node</p>
+                </div>
+            )}
+        </div>
+      </div>
+    </Box>
+  );
+};
 
 const Sidebar = () => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  
+  const isCollapsed = useSelector(state => state.ui.isSidebarCollapsed);
+  const isMobile = useSelector(state => state.ui.isMobile);
+  const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
 
-    const menuItems = [
-        { id: 'dashboard', label: 'Command Center', icon: ShieldCheck, path: '/Security_Officer/dashboard' },
-        { id: 'scanner', label: 'QR Scanner', icon: QrCode, path: '/Security_Officer/scanner' },
-        { id: 'verification', label: 'Verification', icon: ShieldCheck, path: '/Security_Officer/verification' },
-        { id: 'approval', label: 'Entry Approval', icon: UserCheck, path: '/Security_Officer/entry-approval' },
-        { id: 'active', label: 'Active Visitors', icon: Users, path: '/Security_Officer/active-visitors' },
-        { id: 'exit', label: 'Exit Check', icon: ClipboardList, path: '/Security_Officer/exit-verification' },
-        { id: 'incident', label: 'Report Incident', icon: AlertOctagon, path: '/Security_Officer/incident-report' },
-        { id: 'logs', label: 'Movement Logs', icon: History, path: '/Security_Officer/logs-history' },
-        { id: 'notifications', label: 'Security Alerts', icon: Bell, path: '/Security_Officer/notifications' },
-    ];
+  const handleNavigate = (path) => {
+    navigate(path);
+    if (isMobile) {
+      dispatch(setMobileMenu(false));
+    }
+  };
 
+  // Mobile Version stays as a drawer
+  if (isMobile) {
     return (
-        <aside className={`flex-none relative ${isCollapsed ? 'w-20' : 'w-72 md:w-80 lg:w-72'} bg-mas-dark/95 border-r border-white/5 z-50 flex flex-col transition-[width] duration-300 ease-in-out shadow-2xl`}>
-            {/* Tactical Header & Toggle */}
-            <div className={`p-6 border-b border-white/5 bg-mas-black/50 relative flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
-                {!isCollapsed && (
-                    <div className="flex flex-col gap-1 animate-fade-in">
-                        <img src="/logo_mas.png" alt="MAS Logo" className="h-7 w-auto mb-2" />
-                        <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-mas-red shadow-[0_0_8px_#C8102E]"></div>
-                            <span className="text-mas-text-dim uppercase text-[10px] tracking-widest font-black">TACTICAL NODE</span>
-                        </div>
-                    </div>
-                )}
-                {isCollapsed && (
-                    <img src="/logo_mas.png" alt="MAS Logo" className="h-6 w-auto" />
-                )}
-
-                <button 
-                  onClick={() => setIsCollapsed(!isCollapsed)}
-                  className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-mas-red text-white flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(200,16,46,0.3)] hover:scale-110 transition-transform z-50 border border-white/10"
-                >
-                  {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-                </button>
-            </div>
-
-            <nav className="flex-1 py-8 overflow-y-auto no-scrollbar">
-                {!isCollapsed && (
-                    <div className="px-8 mb-6 animate-fade-in">
-                        <span className="text-mas-text-dim uppercase text-[9px] tracking-[0.3em] font-black opacity-30">Operational Protocol</span>
-                    </div>
-                )}
-                <div className="flex flex-col">
-                    {menuItems.map((item) => (
-                        <NavLink
-                            key={item.id}
-                            to={item.path}
-                            className={({ isActive }) => `
-                                relative group flex items-center gap-4 px-8 py-4 transition-all duration-300 border-l-2 ${isActive ? 'bg-mas-red/5 border-mas-red text-white' : 'border-transparent text-mas-text-dim hover:bg-white/[0.02] hover:text-white'} ${isCollapsed ? 'justify-center border-l-0' : ''}
-                            `}
-                        >
-                            <item.icon size={18} />
-                            {!isCollapsed && <span className="uppercase text-[11px] font-black tracking-widest animate-fade-in">{item.label}</span>}
-                            
-                            {isCollapsed && (
-                                <div className="absolute left-full ml-4 px-3 py-2 bg-mas-red text-white text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap rounded-sm shadow-xl">
-                                    {item.label}
-                                </div>
-                            )}
-                        </NavLink>
-                    ))}
-                </div>
-            </nav>
-
-            {/* Profile Block */}
-            <div className={`p-6 border-t border-white/5 bg-mas-black/30 transition-all ${isCollapsed ? 'flex flex-col items-center gap-6' : ''}`}>
-                <div className="flex items-center gap-4 group cursor-pointer">
-                    <div className="w-10 h-10 bg-mas-red flex items-center justify-center text-white font-black text-xs shadow-[0_0_15px_rgba(200,16,46,0.2)] border border-white/10 group-hover:scale-105 transition-transform">
-                        SO
-                    </div>
-                    {!isCollapsed && (
-                        <div className="animate-fade-in overflow-hidden">
-                            <p className="text-white uppercase text-[11px] font-black truncate">Guardian Node 04</p>
-                            <p className="text-mas-text-dim uppercase text-[8px] tracking-widest font-medium truncate">Duty Officer</p>
-                        </div>
-                    )}
-                </div>
-                
-                <div className={`mt-8 ${isCollapsed ? 'w-full flex justify-center' : ''}`}>
-                    <NavLink to="/login" className="flex items-center gap-3 text-mas-text-dim hover:text-mas-red uppercase transition-colors group">
-                        <LogOut size={14} className="group-hover:scale-110 transition-transform" />
-                        {!isCollapsed && <span className="text-[10px] font-black tracking-widest">Terminate Session</span>}
-                    </NavLink>
-                </div>
-            </div>
-        </aside>
+      <Drawer
+        anchor="left"
+        open={isMobileMenuOpen}
+        onClose={() => dispatch(setMobileMenu(false))}
+        PaperProps={{ sx: { width: 280, border: 'none' } }}
+      >
+        <SidebarContent 
+          isCollapsed={false} 
+          currentPath={location.pathname} 
+          onNavigate={handleNavigate} 
+        />
+      </Drawer>
     );
+  }
+
+  // Desktop version
+  return (
+    <aside 
+      className={`flex-none relative h-screen transition-[width] duration-500 ease-in-out z-40 bg-mas-dark/95 border-r border-white/10
+        ${isCollapsed ? 'w-24' : 'w-72'}`}
+    >
+      <SidebarContent 
+        isCollapsed={isCollapsed} 
+        currentPath={location.pathname} 
+        onNavigate={handleNavigate} 
+      />
+
+      {/* Floating Toggle Button */}
+      <IconButton 
+        onClick={() => dispatch(toggleSidebar())}
+        className="absolute -right-4 top-24 bg-mas-dark-800 border border-white/10 text-mas-red hover:bg-mas-red hover:text-white transition-all shadow-xl z-50 p-1 rounded-full"
+        size="small"
+      >
+        {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+      </IconButton>
+    </aside>
+  );
 };
 
 export default Sidebar;

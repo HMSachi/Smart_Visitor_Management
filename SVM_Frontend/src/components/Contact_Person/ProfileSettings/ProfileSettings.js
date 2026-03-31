@@ -15,7 +15,7 @@ const ProfileSettingsMain = () => {
                     <h1 className="uppercase text-white flex items-center gap-6">
                         Profile Settings
                         <div className="p-3 mas-glass border-white/10 bg-white/5 inline-flex">
-                            <ShieldCheck size={24} className="text-mas-text-dim" />
+                            <ShieldCheck size={24} className="text-gray-300" />
                         </div>
                     </h1>
                 </div>

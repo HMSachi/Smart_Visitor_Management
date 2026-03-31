@@ -31,12 +31,12 @@ const InstructionSection = ({ title, items, type = 'info', icon: Icon, delay = 0
                     <DisplayIcon size={20} className={isWarning ? 'animate-pulse' : ''} />
                 </div>
                 <div>
-                    <h3 className={`text-xl font-black uppercase tracking-tight italic ${ 
+                    <h3 className={`text-xl font-medium uppercase tracking-tight italic ${ 
                         isWarning ? 'text-mas-red' : 'text-white' 
                     }`}>
                         {title}
                     </h3>
-                    <p className={`text-[9px] font-bold uppercase tracking-[0.2em] ${isWarning ? 'text-mas-red/60' : 'text-gray-500'}`}>
+                    <p className={`text-[9px] font-medium uppercase tracking-[0.2em] ${isWarning ? 'text-mas-red/60' : 'text-gray-500'}`}>
                         Protocol Category
                     </p>
                 </div>
@@ -54,7 +54,7 @@ const InstructionSection = ({ title, items, type = 'info', icon: Icon, delay = 0
                         }`}>
                             •
                         </div>
-                        <span className={`text-[11px] font-bold leading-relaxed tracking-wide uppercase ${
+                        <span className={`text-[11px] font-medium leading-relaxed tracking-wide uppercase ${
                             isWarning ? 'text-mas-red/80 group-hover/item:text-mas-red' : 'text-gray-400 group-hover/item:text-gray-200'
                         } transition-colors`}>
                             {item}

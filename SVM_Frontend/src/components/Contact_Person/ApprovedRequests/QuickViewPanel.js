@@ -30,10 +30,10 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                                 </div>
                                 <div>
                                     <h3 className="uppercase">Approved Entry</h3>
-                                    <p className="text-mas-text-dim uppercase">Ref: #{visitor.id}</p>
+                                    <p className="text-gray-300 uppercase">Ref: #{visitor.id}</p>
                                 </div>
                             </div>
-                            <button onClick={onClose} className="p-2 text-mas-text-dim hover:text-white transition-colors">
+                            <button onClick={onClose} className="p-2 text-gray-300 hover:text-white transition-colors">
                                 <X size={24} />
                             </button>
                         </div>
@@ -43,24 +43,24 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                                 <label className="text-mas-red uppercase mb-6 block">Visitor Credentials</label>
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-6 p-6 bg-white/[0.02] border border-white/5">
-                                        <div className="w-12 h-12 bg-white/5 flex items-center justify-center rounded-none border border-white/10 text-mas-text-dim">
+                                        <div className="w-12 h-12 bg-white/5 flex items-center justify-center rounded-none border border-white/10 text-gray-300">
                                             <User size={20} />
                                         </div>
                                         <div>
-                                            <p className="text-mas-text-dim uppercase mb-1">Full Identity</p>
+                                            <p className="text-gray-300 uppercase mb-1">Full Identity</p>
                                             <p className="uppercase text-white">{visitor.name}</p>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="p-6 bg-white/[0.02] border border-white/5">
-                                            <p className="text-mas-text-dim uppercase mb-2">Visit Date</p>
+                                            <p className="text-gray-300 uppercase mb-2">Visit Date</p>
                                             <div className="flex items-center gap-2 text-white">
                                                 <Calendar size={14} className="text-mas-red" />
                                                 <span className="">{visitor.date}</span>
                                             </div>
                                         </div>
                                         <div className="p-6 bg-white/[0.02] border border-white/5">
-                                            <p className="text-mas-text-dim uppercase mb-2">Check-In</p>
+                                            <p className="text-gray-300 uppercase mb-2">Check-In</p>
                                             <div className="flex items-center gap-2 text-white">
                                                 <Clock size={14} className="text-mas-red" />
                                                 <span className="">09:15 AM</span>
@@ -80,7 +80,7 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
 
                             <section className="pt-8 border-t border-mas-border">
                                 <div className="flex items-center justify-between mb-8">
-                                    <span className="uppercase text-mas-text-dim">Admin Authorization</span>
+                                    <span className="uppercase text-gray-300">Admin Authorization</span>
                                     <span className="text-green-500 uppercase flex items-center gap-2">
                                         <ShieldCheck size={14} />
                                         QR Token Generated
@@ -99,7 +99,7 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                                         <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-mas-red"></div>
                                         <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-mas-red"></div>
                                     </div>
-                                    <p className="text-mas-text-dim uppercase text-xs tracking-widest mt-2 font-mono">NODE-TOKEN: {visitor.id}</p>
+                                    <p className="text-gray-300 uppercase text-xs tracking-widest mt-2 font-mono">NODE-TOKEN: {visitor.id}</p>
                                 </div>
 
                                 <button 

@@ -12,35 +12,38 @@ const iconMap = {
 const Panel = ({ iconName, label, value, trend, colorClass }) => {
   const Icon = iconMap[iconName] || Users;
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      whileHover={{ y: -5 }}
-      className="mas-glass p-8 flex flex-col justify-between group cursor-pointer animate-shine transition-all duration-500"
+      className="bg-[#121214] border border-white/5 p-8 rounded-[32px] flex flex-col justify-between group cursor-pointer hover:border-white/10 transition-all duration-500 relative overflow-hidden shadow-2xl h-full"
     >
-      <div className="flex justify-between items-start">
+      <div className="absolute -top-12 -right-12 w-24 h-24 bg-mas-red/5 rounded-full blur-3xl group-hover:bg-mas-red/10 transition-all"></div>
+
+      <div className="flex justify-between items-start relative z-10">
         <div>
-          <p className="uppercase text-mas-text-dim mb-2">{label}</p>
-          <h3 className="text-white">{value}</h3>
+          <p className="text-gray-300 text-[10px] font-medium uppercase tracking-[0.2em] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">{label}</p>
+          <h3 className="text-white text-3xl font-bold tracking-tighter group-hover:text-mas-red transition-colors">{value}</h3>
         </div>
-        <div className="p-4 bg-white/5 border border-white/10 group-hover:border-mas-red/50 group-hover:bg-mas-red/5 transition-all duration-500">
-          <Icon className="text-mas-red" size={24} strokeWidth={2} />
+        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group-hover:border-mas-red/40 group-hover:bg-mas-red/10 transition-all duration-500 shadow-lg">
+          <Icon className="text-mas-red group-hover:scale-110 transition-transform" size={20} strokeWidth={2.5} />
         </div>
-      </div>
-      
-      <div className="mt-8 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className={`uppercase ${trend.includes('+') ? 'text-green-500' : 'text-mas-text-dim'}`}>
-            {trend}
-          </div>
-          <div className="w-8 h-[1px] bg-white/10"></div>
-        </div>
-        <p className="text-mas-text-dim uppercase">Protocol Active</p>
       </div>
 
-      {/* Subtle underline indicator */}
-      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-mas-red group-hover:w-full transition-all duration-700"></div>
+      <div className="mt-10 flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-3">
+          <div className={`text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-lg border ${trend.includes('+') ? 'text-green-500 border-green-500/10 bg-green-500/5' : 'text-gray-300 border-white/5 bg-white/5'}`}>
+            {trend}
+          </div>
+          <span className="text-[9px] font-medium uppercase tracking-widest text-gray-300 opacity-30 group-hover:opacity-90">vs last cycle</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-1 h-1 bg-mas-red rounded-full"></div>
+          <p className="text-gray-300 text-[9px] font-medium uppercase tracking-widest">Protocol Active</p>
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-mas-red group-hover:w-full transition-all duration-700 shadow-[0_0_10px_#C8102E]"></div>
     </motion.div>
   );
 };

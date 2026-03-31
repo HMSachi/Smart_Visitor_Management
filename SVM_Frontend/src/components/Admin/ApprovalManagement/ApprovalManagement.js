@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Shield, Activity, Clock, Users, CheckCircle2, AlertCircle, Search, Filter, RefreshCw, Zap } from 'lucide-react';
 import VisitorTable from './VisitorTable';
 import VisitorDetailView from './VisitorDetailView';
 import ApprovalModal from './ApprovalModal';
@@ -18,8 +19,9 @@ const ApprovalManagementMain = () => {
   const [showQRModal, setShowQRModal] = useState(false);
   const [approvedVisitorData, setApprovedVisitorData] = useState(null);
 
+
   // Filtered list based on Redux searchTerm
-  const filteredVisitors = visitorList.filter(v => 
+  const filteredVisitors = visitorList.filter(v =>
     v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     v.batchId.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -41,62 +43,56 @@ const ApprovalManagementMain = () => {
   };
 
   return (
-    <div className="flex-1 p-8 overflow-y-auto">
-      <div className="max-w-[1600px] mx-auto">
-        <header className="mb-6 flex justify-between items-end border-b border-white/[0.03] pb-4">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-[2px] bg-mas-red"></div>
-              <span className="text-mas-red uppercase tracking-wider text-xs font-semibold">Command Center</span>
-            </div>
-            <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
-              Approval Management
-            </h1>
-          </div>
-          <div className="hidden lg:flex items-center gap-8 text-mas-text-dim">
-            <div className="text-right">
-              <p className="uppercase mb-1 text-[10px] tracking-[0.2em] font-medium">Access Node</p>
-              <p className="text-mas-red font-bold tracking-widest text-xs uppercase">Restricted</p>
-            </div>
-          </div>
-        </header>
+    <div className="flex-1 p-10 space-y-12 animate-fade-in-slow overflow-y-auto bg-[#0A0A0B] relative">
+      {/* Dynamic Operational Aura */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-mas-red/30 to-transparent"></div>
 
-        <div className="space-y-8">
-          <div className="flex justify-between items-center mb-4">
-             <div className="relative w-96">
-                <input 
-                  type="text" 
-                  placeholder="SEARCH VISITOR BATCH / NAME..." 
-                  className="w-full bg-white/5 border border-white/10 px-4 py-2 text-white uppercase text-xs focus:border-mas-red outline-none transition-all"
+      <div className="max-w-[1700px] mx-auto relative z-10">
+
+
+        <div className="space-y-12">
+          {viewMode === 'list' && (
+            <div className="flex justify-between items-center -mb-8 relative z-20">
+              <div className="relative group w-full max-w-md">
+                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none opacity-70 group-focus-within:opacity-100 transition-opacity">
+                  <div className="w-1.5 h-[1px] bg-mas-red mr-2"></div>
+                </div>
+                <input
+                  type="text"
+                  placeholder="SCAN REGISTRY / ENTER IDENTIFIER..."
+                  className="w-full bg-[#121214] border border-white/5 rounded-2xl px-10 py-5 text-white uppercase text-[11px] font-medium tracking-widest focus:border-mas-red/50 focus:bg-[#161618] outline-none transition-all shadow-2xl placeholder:opacity-70"
                   value={searchTerm}
                   onChange={(e) => dispatch(setAdminSearchTerm(e.target.value))}
                 />
-             </div>
-          </div>
+              </div>
+            </div>
+          )}
 
           <AnimatePresence mode="wait">
             {viewMode === 'list' ? (
               <motion.div
                 key="list"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               >
-                <VisitorTable 
+                <VisitorTable
                   visitors={filteredVisitors}
-                  onViewDetails={handleViewDetails} 
+                  onViewDetails={handleViewDetails}
                   onAction={handleAction}
                 />
               </motion.div>
             ) : (
               <motion.div
                 key="details"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               >
-                <VisitorDetailView 
-                  visitor={selectedVisitor} 
+                <VisitorDetailView
+                  visitor={selectedVisitor}
                   onBack={handleBackToList}
                   onAction={handleAction}
                 />
@@ -104,27 +100,27 @@ const ApprovalManagementMain = () => {
             )}
           </AnimatePresence>
 
-          <ApprovalModal 
+          <ApprovalModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             visitor={selectedVisitor}
             type={modalType}
             onConfirm={(id, type, comment) => {
-              dispatch(updateVisitorStatus({ 
-                id, 
-                status: type === 'Approve' ? 'Approved' : 'Rejected' 
+              dispatch(updateVisitorStatus({
+                id,
+                status: type === 'Approve' ? 'Approved' : 'Rejected'
               }));
-              
+
               if (type === 'Approve') {
-                 setApprovedVisitorData(visitorList.find(v => v.id === id) || selectedVisitor);
-                 setShowQRModal(true);
+                setApprovedVisitorData(visitorList.find(v => v.id === id) || selectedVisitor);
+                setShowQRModal(true);
               }
               if (viewMode === 'details') setViewMode('list');
               setIsModalOpen(false);
             }}
           />
 
-          <QRSuccessModal 
+          <QRSuccessModal
             isOpen={showQRModal}
             onClose={() => setShowQRModal(false)}
             visitorData={approvedVisitorData}

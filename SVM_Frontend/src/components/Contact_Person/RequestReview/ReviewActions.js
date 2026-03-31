@@ -1,25 +1,31 @@
 import React from 'react';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { Send, ShieldAlert, Check } from 'lucide-react';
 
 const ReviewActions = ({ onApprove, onReject }) => {
     return (
-        <div className="mas-glass border-mas-border p-8 bg-[#0E0E10] border border-white/5 shadow-sm">
+        <div className="bg-[#121214] border border-white/5 p-10 rounded-[32px] shadow-2xl animate-fade-in-slow">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+                <div className="flex-1">
+                    <h4 className="text-white text-[11px] font-medium tracking-[0.2em] uppercase mb-1">Authorization Finalization</h4>
+                    <p className="text-gray-300 text-[9px] font-medium uppercase tracking-widest opacity-80">Synchronize decision with Administrative Node 01</p>
+                </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-                <button 
-                    onClick={onApprove}
-                    className="flex-1 py-4 bg-mas-red text-white uppercase flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(200,16,46,0.2)] hover:shadow-[0_0_40px_rgba(200,16,46,0.4)] transition-all transform active:scale-[0.98]"
-                >
-                    <CheckCircle size={18} />
-                    Approve & Send to Admin
-                </button>
-                <button 
-                    onClick={onReject}
-                    className="flex-1 py-4 bg-transparent border border-white/10 text-mas-text-dim uppercase flex items-center justify-center gap-3 hover:border-mas-red/50 hover:text-white transition-all transform active:scale-[0.98]"
-                >
-                    <XCircle size={18} />
-                    Reject Request
-                </button>
+                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                    <button
+                        onClick={onApprove}
+                        className="flex-1 sm:flex-none px-10 py-4 bg-mas-red text-white text-[11px] font-medium uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-4 shadow-[0_4px_30px_rgba(200,16,46,0.3)] hover:bg-mas-red-dark hover:shadow-[0_4px_40px_rgba(200,16,46,0.5)] transition-all transform active:scale-[0.98] group"
+                    >
+                        <Check size={18} className="group-hover:scale-125 transition-transform" />
+                        Transmit Protocol
+                    </button>
+                    <button
+                        onClick={onReject}
+                        className="flex-1 sm:flex-none px-10 py-4 bg-white/[0.03] border border-white/5 text-gray-300 text-[11px] font-medium uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-4 hover:border-mas-red/50 hover:text-white transition-all transform active:scale-[0.98] group"
+                    >
+                        <ShieldAlert size={18} className="group-hover:text-mas-red transition-colors" />
+                        Deny Entry
+                    </button>
+                </div>
             </div>
         </div>
     );

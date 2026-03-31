@@ -17,7 +17,7 @@ const UserManagementMain = () => {
         </header>
 
         <div className="p-20 text-center bg-[#0F0F10] border border-white/5">
-          <h2 className="uppercase text-mas-text-dim text-xl tracking-widest">User Management</h2>
+          <h2 className="uppercase text-gray-300 text-xl tracking-widest">User Management</h2>
           <p className="mt-4 text-mas-red uppercase text-sm tracking-wider">Experimental Module Node - Under Construction</p>
         </div>
       </div>

@@ -61,12 +61,12 @@ const InstructionsMain = () => {
                 <div>
                     <div className="flex items-center gap-3 mb-4">
                         <div className="w-10 h-[2.5px] bg-mas-red" />
-                        <span className="text-mas-red font-black uppercase tracking-[0.4em] text-[10px]">Operational Protocol</span>
+                        <span className="text-mas-red font-medium uppercase tracking-[0.4em] text-[10px]">Operational Protocol</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none italic">
+                    <h1 className="text-4xl md:text-6xl font-bold text-white uppercase tracking-tighter leading-none italic">
                         Security <span className="text-mas-red">Guidelines</span>
                     </h1>
-                    <p className="text-gray-500 text-[10px] uppercase font-black tracking-[0.2em] mt-2">Facility Rules & Regulations [V.2.0]</p>
+                    <p className="text-gray-500 text-[10px] uppercase font-medium tracking-[0.2em] mt-2">Facility Rules & Regulations [V.2.0]</p>
                 </div>
             </motion.header>
 
@@ -112,12 +112,12 @@ const InstructionsMain = () => {
                             </div>
                         </div>
                         <div>
-                            <span className={`text-[11px] font-black uppercase tracking-widest transition-colors mb-2 block ${
+                            <span className={`text-[11px] font-medium uppercase tracking-widest transition-colors mb-2 block ${
                                 agreed ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'
                             }`}>
                                 Acknowledgment of Terms
                             </span>
-                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider leading-relaxed block max-w-2xl">
+                            <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider leading-relaxed block max-w-2xl">
                                 I confirm that I have read and understood the <span className="text-mas-red italic">MAS Security Protocol</span>. I agree to follow the facility guidelines and acknowledge that any violation may result in immediate clearance revocation.
                             </span>
                         </div>
@@ -126,7 +126,7 @@ const InstructionsMain = () => {
                     <button 
                         disabled={!agreed}
                         onClick={() => window.location.href='/home'}
-                        className={`flex items-center justify-center gap-4 px-12 py-6 rounded-2xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${
+                        className={`flex items-center justify-center gap-4 px-12 py-6 rounded-2xl text-[10px] font-medium uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${
                             agreed 
                             ? 'bg-mas-red text-white hover:bg-[#A60D26] hover:shadow-[0_15px_30px_rgba(200,16,46,0.4)] transform hover:scale-105 active:scale-95' 
                             : 'bg-white/[0.03] border border-white/10 text-gray-600 cursor-not-allowed'

@@ -24,14 +24,14 @@ const LogsHistoryMain = () => {
 
                 <div className="flex items-center gap-4">
                     <div className="relative">
-                        <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-mas-text-dim" />
+                        <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
                         <input 
                             type="text"
                             placeholder="SEARCH LOGS..."
                             className="mas-input w-80 pl-12 bg-white/[0.02] border-white/5 focus:border-mas-red uppercase"
                         />
                     </div>
-                    <button className="flex items-center gap-3 px-6 py-3 mas-glass border-white/5 text-mas-text-dim hover:text-white transition-all uppercase">
+                    <button className="flex items-center gap-3 px-6 py-3 mas-glass border-white/5 text-gray-300 hover:text-white transition-all uppercase">
                         <Filter size={14} />
                         Filter
                     </button>
@@ -46,11 +46,11 @@ const LogsHistoryMain = () => {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-white/[0.02] border-b border-white/5">
-                            <th className="px-10 py-6 uppercase text-mas-text-dim"> personnel</th>
-                            <th className="px-10 py-6 uppercase text-mas-text-dim">entry protocol</th>
-                            <th className="px-10 py-6 uppercase text-mas-text-dim">exit protocol</th>
-                            <th className="px-10 py-6 uppercase text-mas-text-dim">validation</th>
-                            <th className="px-10 py-6 uppercase text-mas-text-dim text-right">registry</th>
+                            <th className="px-10 py-6 uppercase text-gray-300"> personnel</th>
+                            <th className="px-10 py-6 uppercase text-gray-300">entry protocol</th>
+                            <th className="px-10 py-6 uppercase text-gray-300">exit protocol</th>
+                            <th className="px-10 py-6 uppercase text-gray-300">validation</th>
+                            <th className="px-10 py-6 uppercase text-gray-300 text-right">registry</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.03]">
@@ -59,22 +59,22 @@ const LogsHistoryMain = () => {
                                 <td className="px-10 py-8">
                                     <div>
                                         <p className="uppercase text-white mb-1">{log.name}</p>
-                                        <p className="text-mas-text-dim uppercase">{log.date}</p>
+                                        <p className="text-gray-300 uppercase">{log.date}</p>
                                     </div>
                                 </td>
                                 <td className="px-10 py-8">
                                     <span className="text-white">{log.entry}</span>
                                 </td>
                                 <td className="px-10 py-8">
-                                    <span className={`${log.exit === '--:--:--' ? 'text-mas-text-dim opacity-30' : 'text-white'}`}>{log.exit}</span>
+                                    <span className={`${log.exit === '--:--:--' ? 'text-gray-300 opacity-30' : 'text-white'}`}>{log.exit}</span>
                                 </td>
                                 <td className="px-10 py-8">
-                                    <span className={`px-4 py-1.5 border uppercase ${log.status === 'Active' ? 'border-mas-red text-mas-red bg-mas-red/5 animate-pulse' : 'border-mas-text-dim/20 text-mas-text-dim bg-white/[0.02]'}`}>
+                                    <span className={`px-4 py-1.5 border uppercase ${log.status === 'Active' ? 'border-mas-red text-mas-red bg-mas-red/5 animate-pulse' : 'border-mas-text-dim/20 text-gray-300 bg-white/[0.02]'}`}>
                                         {log.status}
                                     </span>
                                 </td>
                                 <td className="px-10 py-8 text-right">
-                                    <button className="text-mas-text-dim hover:text-mas-red transition-all">
+                                    <button className="text-gray-300 hover:text-mas-red transition-all">
                                         <ChevronRight size={18} />
                                     </button>
                                 </td>

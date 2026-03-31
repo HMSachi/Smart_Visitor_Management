@@ -26,7 +26,7 @@ const IncidentReportMain = () => {
                         <h3 className="text-mas-red uppercase mb-6">Subject Identification</h3>
                         <div className="grid grid-cols-2 gap-8">
                             <div className="space-y-2">
-                                <label className="text-mas-text-dim uppercase">Personnel Name</label>
+                                <label className="text-gray-300 uppercase">Personnel Name</label>
                                 <input 
                                     type="text" 
                                     defaultValue="John Doe"
@@ -34,7 +34,7 @@ const IncidentReportMain = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-mas-text-dim uppercase">Reference Node ID</label>
+                                <label className="text-gray-300 uppercase">Reference Node ID</label>
                                 <input 
                                     type="text" 
                                     defaultValue="VER-SYNC-4291"
@@ -48,7 +48,7 @@ const IncidentReportMain = () => {
                         <h3 className="text-mas-red uppercase mb-6">Protocol Breach Details</h3>
                         <div className="space-y-8">
                             <div className="space-y-2">
-                                <label className="text-mas-text-dim uppercase">Issue Type</label>
+                                <label className="text-gray-300 uppercase">Issue Type</label>
                                 <select className="mas-input w-full bg-[#121212] border-white/10 text-white uppercase cursor-pointer px-4">
                                     <option>ASSET MISMATCH / MISSING ITEM</option>
                                     <option>UNAUTHORIZED LOCATION ACCESS</option>
@@ -58,7 +58,7 @@ const IncidentReportMain = () => {
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-mas-text-dim uppercase">Detailed Incident Description</label>
+                                <label className="text-gray-300 uppercase">Detailed Incident Description</label>
                                 <textarea 
                                     placeholder="DESCRIBE THE LOGICAL SEQUENCE OF THE BREACH..."
                                     className="mas-input w-full min-h-[180px] bg-white/[0.01] border-white/10 p-6 uppercase"
@@ -72,11 +72,11 @@ const IncidentReportMain = () => {
                         <h3 className="text-mas-red uppercase">Evidence Artifacts</h3>
                         <div className="border-2 border-dashed border-white/5 hover:border-mas-red/30 transition-all p-12 flex flex-col items-center justify-center gap-6 bg-white/[0.01] group cursor-pointer">
                             <div className="p-4 bg-mas-dark border border-white/10 group-hover:scale-110 transition-transform">
-                                <Upload size={24} className="text-mas-text-dim group-hover:text-mas-red" />
+                                <Upload size={24} className="text-gray-300 group-hover:text-mas-red" />
                             </div>
                             <div className="text-center space-y-2">
                                 <p className="text-white uppercase">Select files or drag and drop</p>
-                                <p className="text-mas-text-dim uppercase">Max Size: 25MB • SEC-ENCRYPTED</p>
+                                <p className="text-gray-300 uppercase">Max Size: 25MB • SEC-ENCRYPTED</p>
                             </div>
                         </div>
                     </section>

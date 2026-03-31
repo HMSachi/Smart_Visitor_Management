@@ -28,11 +28,11 @@ const VerificationPanel = () => {
                         <h3 className="text-mas-red uppercase mb-6">Visitor Identity</h3>
                         <div className="grid grid-cols-2 gap-8">
                             <div className="space-y-2">
-                                <p className="text-mas-text-dim uppercase">Full Personnel Name</p>
+                                <p className="text-gray-300 uppercase">Full Personnel Name</p>
                                 <p className="uppercase text-white">{visitorData.name}</p>
                             </div>
                             <div className="space-y-2">
-                                <p className="text-mas-text-dim uppercase">NIC / Identity Ref</p>
+                                <p className="text-gray-300 uppercase">NIC / Identity Ref</p>
                                 <p className="uppercase text-white">{visitorData.nic}</p>
                             </div>
                         </div>
@@ -65,10 +65,10 @@ const VerificationPanel = () => {
                             <h3 className="uppercase text-white">Vehicle Manifest</h3>
                         </div>
                         <div className="space-y-4">
-                            <p className="text-mas-text-dim uppercase">Authorized Record</p>
+                            <p className="text-gray-300 uppercase">Authorized Record</p>
                             <div className="p-4 bg-mas-dark border-l-2 border-mas-red flex justify-between items-center">
                                 <span className="uppercase text-white">{visitorData.vehicle.number}</span>
-                                <span className="text-mas-text-dim uppercase">{visitorData.vehicle.type}</span>
+                                <span className="text-gray-300 uppercase">{visitorData.vehicle.type}</span>
                             </div>
                         </div>
                     </div>
@@ -102,7 +102,7 @@ const VerificationPanel = () => {
                                 <h3 className={`uppercase text-2xl ${visitorData.mismatch ? 'text-mas-red' : 'text-green-500'}`}>
                                     {visitorData.mismatch ? 'PROTOCOL BREACH' : 'AUTHENTICATION SUCCESS'}
                                 </h3>
-                                <p className="text-mas-text-dim uppercase">
+                                <p className="text-gray-300 uppercase">
                                     {visitorData.mismatch ? `Mismatch detected at node: ${visitorData.mismatchField}` : 'Primary and Tactical nodes in sync'}
                                 </p>
                             </div>
@@ -113,7 +113,7 @@ const VerificationPanel = () => {
                                         <div className="w-4 h-4 rounded-full bg-mas-red"></div>
                                         <span className="uppercase text-white">Manual Counter-Check Required</span>
                                     </div>
-                                    <p className="text-mas-text-dim uppercase leading-6 decoration-white/10 underline underline-offset-4 decoration-dashed">
+                                    <p className="text-gray-300 uppercase leading-6 decoration-white/10 underline underline-offset-4 decoration-dashed">
                                     Actual vehicle number plate does not match the registered manifest node in Step 2.
                                     </p>
                                 </div>
@@ -129,8 +129,8 @@ const VerificationPanel = () => {
                     </div>
 
                     <div className="p-8 mas-glass border-white/5 bg-white/[0.01] flex justify-between items-center">
-                        <span className="uppercase text-mas-text-dim">Tactical Node: NODE-SEC-08</span>
-                        <span className="uppercase text-mas-text-dim">Uptime: 04:21:09</span>
+                        <span className="uppercase text-gray-300">Tactical Node: NODE-SEC-08</span>
+                        <span className="uppercase text-gray-300">Uptime: 04:21:09</span>
                     </div>
             </div>
         </div>

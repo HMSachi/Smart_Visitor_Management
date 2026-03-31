@@ -18,7 +18,7 @@ const NotificationsMain = () => {
         switch(type) {
             case 'critical': return <ShieldAlert size={18} className="text-mas-red" />;
             case 'warning': return <AlertTriangle size={18} className="text-yellow-500" />;
-            default: return <Info size={18} className="text-mas-text-dim" />;
+            default: return <Info size={18} className="text-gray-300" />;
         }
     };
 
@@ -40,11 +40,11 @@ const NotificationsMain = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <button onClick={markAllRead} className="flex items-center gap-3 px-8 py-3 mas-glass border-white/5 text-mas-text-dim uppercase hover:text-white hover:border-white/20 transition-all">
+                    <button onClick={markAllRead} className="flex items-center gap-3 px-8 py-3 mas-glass border-white/5 text-gray-300 uppercase hover:text-white hover:border-white/20 transition-all">
                         <CheckCircle2 size={14} />
                         Clear Alert Buffer
                     </button>
-                    <button className="p-3 mas-glass border-white/5 text-mas-text-dim hover:text-mas-red hover:border-mas-red transition-all">
+                    <button className="p-3 mas-glass border-white/5 text-gray-300 hover:text-mas-red hover:border-mas-red transition-all">
                         <Trash2 size={18} />
                     </button>
                 </div>
@@ -62,24 +62,24 @@ const NotificationsMain = () => {
                         
                         <div className="flex-1 space-y-3">
                             <div className="flex justify-between items-center">
-                                <h4 className={`uppercase ${notif.unread ? 'text-white' : 'text-mas-text-dim group-hover:text-white'}`}>
+                                <h4 className={`uppercase ${notif.unread ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
                                     {notif.title}
                                 </h4>
-                                <span className="text-mas-text-dim uppercase">
+                                <span className="text-gray-300 uppercase">
                                     {notif.time}
                                 </span>
                             </div>
-                            <p className="text-mas-text-dim uppercase leading-6 max-w-2xl">
+                            <p className="text-gray-300 uppercase leading-6 max-w-2xl">
                                 {notif.message}
                             </p>
                             <div className="pt-4 flex items-center gap-6">
                                  <div className="flex items-center gap-2">
                                      <div className="w-1 h-1 bg-mas-red rounded-full"></div>
-                                     <span className="text-mas-text-dim uppercase">Source: FRONT-DOOR-SCANNER-02</span>
+                                     <span className="text-gray-300 uppercase">Source: FRONT-DOOR-SCANNER-02</span>
                                  </div>
                                  <div className="flex items-center gap-2">
                                      <div className="w-1 h-1 bg-mas-red rounded-full"></div>
-                                     <span className="text-mas-text-dim uppercase">Verification Logged</span>
+                                     <span className="text-gray-300 uppercase">Verification Logged</span>
                                  </div>
                             </div>
                         </div>

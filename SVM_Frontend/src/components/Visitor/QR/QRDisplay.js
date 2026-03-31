@@ -12,13 +12,13 @@ const QRDisplay = ({ visitorData }) => {
                         <Shield size={18} />
                     </div>
                     <div>
-                        <p className="text-[10px] font-black text-white uppercase tracking-[0.2em] italic leading-tight">MAS Holdings</p>
-                        <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">Access Node 01</p>
+                        <p className="text-[10px] font-medium text-white uppercase tracking-[0.2em] italic leading-tight">MAS Holdings</p>
+                        <p className="text-[8px] font-medium text-gray-500 uppercase tracking-widest">Access Node 01</p>
                     </div>
                 </div>
                 <div className="text-right">
-                    <p className="text-[8px] font-black text-mas-red uppercase tracking-widest animate-pulse">Security Active</p>
-                    <p className="text-[10px] font-bold text-white uppercase tracking-tighter italic">Facility Pass</p>
+                    <p className="text-[8px] font-medium text-mas-red uppercase tracking-widest animate-pulse">Security Active</p>
+                    <p className="text-[10px] font-medium text-white uppercase tracking-tighter italic">Facility Pass</p>
                 </div>
             </div>
 
@@ -48,7 +48,7 @@ const QRDisplay = ({ visitorData }) => {
                         </div>
                     </div>
                 </div>
-                <p className="mt-6 text-[9px] font-black text-gray-400 uppercase tracking-[0.4em]">Scan at Terminal</p>
+                <p className="mt-6 text-[9px] font-medium text-gray-400 uppercase tracking-[0.4em]">Scan at Terminal</p>
             </div>
 
             {/* Holder Information */}
@@ -57,16 +57,16 @@ const QRDisplay = ({ visitorData }) => {
                     <div className="space-y-1">
                         <div className="flex items-center gap-2 mb-1">
                             <User size={12} className="text-mas-red" />
-                            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Authorized Holder</span>
+                            <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">Authorized Holder</span>
                         </div>
-                        <p className="text-sm font-black text-black uppercase tracking-tight truncate">{visitorData.name}</p>
+                        <p className="text-sm font-medium text-black uppercase tracking-tight truncate">{visitorData.name}</p>
                     </div>
                     <div className="space-y-1 text-right">
                         <div className="flex items-center gap-2 mb-1 justify-end">
                             <Calendar size={12} className="text-mas-red" />
-                            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Access Date</span>
+                            <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">Access Date</span>
                         </div>
-                        <p className="text-sm font-black text-black uppercase tracking-tight">{visitorData.date}</p>
+                        <p className="text-sm font-medium text-black uppercase tracking-tight">{visitorData.date}</p>
                     </div>
                 </div>
 
@@ -74,16 +74,16 @@ const QRDisplay = ({ visitorData }) => {
                     <div className="space-y-1">
                         <div className="flex items-center gap-2 mb-1">
                             <QrCode size={12} className="text-mas-red" />
-                            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Clearance ID</span>
+                            <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">Clearance ID</span>
                         </div>
-                        <p className="text-[11px] font-bold text-gray-700 font-mono">{visitorData.refId}</p>
+                        <p className="text-[11px] font-medium text-gray-700 font-mono">{visitorData.refId}</p>
                     </div>
                     <div className="space-y-1 text-right">
                         <div className="flex items-center gap-2 mb-1 justify-end">
                             <MapPin size={12} className="text-mas-red" />
-                            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Secure Zone</span>
+                            <span className="text-[9px] font-medium text-gray-400 uppercase tracking-widest">Secure Zone</span>
                         </div>
-                        <p className="text-[10px] font-black text-mas-red uppercase bg-mas-red/5 px-3 py-1 rounded-lg inline-block italic">
+                        <p className="text-[10px] font-medium text-mas-red uppercase bg-mas-red/5 px-3 py-1 rounded-lg inline-block italic">
                             {visitorData.zone}
                         </p>
                     </div>

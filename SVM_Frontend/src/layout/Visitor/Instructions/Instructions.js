@@ -7,7 +7,7 @@ const InstructionsPage = () => {
             <Instructions />
             
             {/* Background Texture Overlay */}
-            <div className="fixed inset-0 pointer-events-none opacity-20 mix-blend-overlay">
+            <div className="fixed inset-0 pointer-events-none opacity-70 mix-blend-overlay">
                 <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
                     <filter id="noise">
                         <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
