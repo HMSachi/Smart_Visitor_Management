@@ -3,63 +3,60 @@ import { ClipboardCheck, Calendar, Info, Users, MapPin } from 'lucide-react';
 
 const Phase1Summary = ({ summary }) => {
     return (
-        <section className="animate-fade-in stagger-item">
-            <div className="flex items-center gap-4 mb-10">
-                <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 text-mas-red">
-                    <ClipboardCheck size={20} />
+        <section className="stagger-item">
+            <div className="flex items-center gap-3 mb-8">
+                <div className="text-mas-red">
+                    <ClipboardCheck size={16} />
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold text-white uppercase tracking-tight">Security Profile Recap</h2>
-                    <p className="text-gray-500 text-[10px] font-medium uppercase tracking-[0.2em]">Synchronized Parameters</p>
+                    <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-0">Profile Summary</h2>
+                    <p className="text-gray-600 text-[9px] font-bold uppercase tracking-widest">Initial Parameters</p>
                 </div>
             </div>
 
-            <div className="bg-white/[0.02] border border-white/5 p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden group">
-                {/* Background Decor */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-mas-red/5 rounded-full blur-3xl -mr-32 -mt-32 group-hover:bg-mas-red/10 transition-all duration-700" />
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10 relative z-10">
+            <div className="bg-white/[0.01] border border-white/5 p-8 rounded-xl relative overflow-hidden group">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 relative z-10">
                     {[
-                        { label: 'Deployment Date', value: summary.date, icon: Calendar },
-                        { label: 'Strategic Purpose', value: summary.purpose, icon: Info },
-                        { label: 'Delegation Size', value: `${summary.visitors} Persons`, icon: Users }
+                        { label: 'Date', value: summary.date, icon: Calendar },
+                        { label: 'Purpose', value: summary.purpose, icon: Info },
+                        { label: 'Size', value: `${summary.visitors} Persons`, icon: Users }
                     ].map((item) => (
                         <div key={item.label} className="group/item">
-                            <div className="flex items-center gap-3 mb-3">
-                                <item.icon size={14} className="text-mas-red/60 group-hover/item:text-mas-red transition-colors" />
-                                <span className="text-[10px] font-medium uppercase tracking-widest text-gray-500">{item.label}</span>
+                            <div className="flex items-center gap-2 mb-2">
+                                <item.icon size={12} className="text-mas-red/60" />
+                                <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600">{item.label}</span>
                             </div>
-                            <div className="pl-7">
-                                <span className="text-white text-sm font-medium uppercase tracking-wider">{item.value || 'NOT DECLARED'}</span>
+                            <div className="pl-5">
+                                <span className="text-gray-300 text-[12px] font-bold uppercase tracking-tight">{item.value || 'NOT_DECLARED'}</span>
                             </div>
                         </div>
                     ))}
 
                     <div className="md:col-span-2 group/item">
-                        <div className="flex items-center gap-3 mb-5">
-                            <MapPin size={14} className="text-mas-red/60 group-hover/item:text-mas-red transition-colors" />
-                            <span className="text-[10px] font-medium uppercase tracking-widest text-gray-500">Authorized Facility Zones</span>
+                        <div className="flex items-center gap-2 mb-4">
+                            <MapPin size={12} className="text-mas-red/60" />
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600">Authorized Zones</span>
                         </div>
-                        <div className="pl-7 flex flex-wrap gap-3">
+                        <div className="pl-5 flex flex-wrap gap-2">
                             {(summary.areas || []).length > 0 ? (
                                 (summary.areas || []).map((area) => (
-                                    <span key={area} className="px-4 py-2 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[10px] font-medium uppercase tracking-widest rounded-xl italic">
+                                    <span key={area} className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[9px] font-bold uppercase tracking-widest rounded-lg">
                                         {area}
                                     </span>
                                 ))
                             ) : (
-                                <span className="text-gray-700 text-[10px] font-medium uppercase tracking-widest italic">No Zones Designated</span>
+                                <span className="text-gray-800 text-[10px] font-bold uppercase tracking-widest italic">No Zones Designated</span>
                             )}
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-white/[0.03] flex items-center justify-between">
+                <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-mas-red animate-pulse" />
-                        <span className="text-[9px] font-medium text-gray-600 uppercase tracking-[0.3em]">Integrity Check Passed</span>
+                        <div className="w-1 h-1 rounded-full bg-mas-red/40" />
+                        <span className="text-[8px] font-bold text-gray-700 uppercase tracking-widest">Integrity Check Active</span>
                     </div>
-                    <span className="text-[9px] font-medium text-gray-800 uppercase tracking-[0.3em]">MAS ACCESS PROTOCOL</span>
+                    <span className="text-[8px] font-bold text-gray-800 uppercase tracking-widest">MAS_ACCESS_PROTOCOL</span>
                 </div>
             </div>
         </section>

@@ -22,37 +22,37 @@ const HeaderComponent = () => {
     };
 
     return (
-        <header className="fixed top-0 left-0 w-full z-[100] h-20 bg-mas-dark-900/80 backdrop-blur-2xl border-b border-white/[0.05] flex items-center">
+        <header className="fixed top-0 left-0 w-full z-[100] h-16 bg-mas-dark-900 border-b border-white/[0.03] flex items-center">
             <div className="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
                 {/* Logo and Back */}
                 <div className="flex items-center gap-4 md:gap-8">
                     <button 
                         onClick={() => navigate(-1)} 
-                        className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-gray-400 hover:text-white transition-all active:scale-95"
+                        className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all active:scale-95"
                     >
-                        <ArrowLeft size={20} />
+                        <ArrowLeft size={16} />
                     </button>
                     
                     <Link to="/home" className="flex items-center group">
                         <img 
                             src="/logo_mas.png" 
                             alt="MAS Logo" 
-                            className="h-8 md:h-10 w-auto filter brightness-110 group-hover:brightness-125 transition-all"
+                            className="h-6 w-auto brightness-90 group-hover:brightness-100 transition-all"
                         />
-                        <div className="hidden sm:block ml-4 h-6 w-px bg-white/10"></div>
-                        <span className="hidden sm:block ml-4 text-white font-medium tracking-tighter text-lg uppercase">
+                        <div className="hidden sm:block ml-3 h-4 w-px bg-white/10"></div>
+                        <span className="hidden sm:block ml-3 text-white font-medium tracking-tighter text-sm uppercase">
                             Access <span className="text-mas-red">Portal</span>
                         </span>
                     </Link>
                 </div>
 
                 {/* Desktop Nav */}
-                <nav className="hidden md:flex items-center space-x-10">
+                <nav className="hidden md:flex items-center space-x-6">
                     {menuItems.map((item) => (
                         <Link 
                             key={item.path}
                             to={item.path} 
-                            className="text-sm font-semibold text-gray-400 hover:text-mas-red transition-all uppercase tracking-widest"
+                            className="text-[10px] font-bold text-gray-500 hover:text-white transition-all uppercase tracking-widest"
                         >
                             {item.label}
                         </Link>
@@ -60,7 +60,7 @@ const HeaderComponent = () => {
                     
                     <button 
                         onClick={() => navigate('/request-step-1')}
-                        className="px-8 py-3.5 bg-mas-red text-white text-sm font-medium uppercase rounded-xl hover:bg-mas-red-hover hover:shadow-[0_0_30px_rgba(200,16,46,0.4)] transition-all transform active:scale-95"
+                        className="compact-btn !px-5 !py-2"
                     >
                         Request Visit
                     </button>
@@ -83,10 +83,9 @@ const HeaderComponent = () => {
                 PaperProps={{
                     sx: {
                         width: '85%',
-                        maxWidth: '360px',
+                        maxWidth: '320px',
                         backgroundColor: '#0A0A0B',
-                        backgroundImage: 'linear-gradient(to bottom, rgba(200, 16, 46, 0.05), transparent)',
-                        borderLeft: '1px solid rgba(255, 255, 255, 0.05)'
+                        borderLeft: '1px solid rgba(255, 255, 255, 0.03)'
                     }
                 }}
             >
@@ -98,21 +97,20 @@ const HeaderComponent = () => {
                         </IconButton>
                     </div>
 
-                    <List className="space-y-4">
+                    <List className="space-y-2">
                         {menuItems.map((item) => (
                             <ListItem 
                                 button 
                                 key={item.path}
                                 onClick={() => handleNavigate(item.path)}
-                                className="rounded-2xl bg-white/[0.03] border border-white/[0.05] p-5"
+                                className="rounded-lg bg-white/[0.01] border border-white/5 p-4"
                             >
-                                <ListItemIcon className="min-w-0 mr-4">
-                                    <item.icon className="text-mas-red" size={24} />
+                                <ListItemIcon className="min-w-0 mr-3">
+                                    <item.icon className="text-mas-red" size={18} />
                                 </ListItemIcon>
                                 <ListItemText 
                                     primary={item.label} 
-                                    className="text-white uppercase font-medium"
-                                    primaryTypographyProps={{ style: { fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.1em' } }}
+                                    primaryTypographyProps={{ style: { fontWeight: 800, fontSize: '9px', letterSpacing: '0.15em', color: '#fff', textTransform: 'uppercase' } }}
                                 />
                             </ListItem>
                         ))}
@@ -121,9 +119,9 @@ const HeaderComponent = () => {
                     <div className="mt-auto">
                         <button 
                             onClick={() => handleNavigate('/request-step-1')}
-                            className="w-full py-6 bg-mas-red text-white font-medium uppercase rounded-2xl shadow-[0_20px_40px_rgba(200,16,46,0.2)] flex items-center justify-center gap-3"
+                            className="compact-btn !w-full !py-4 flex items-center justify-center gap-2"
                         >
-                            <Plus size={20} /> Request Visit
+                            <Plus size={16} /> Request Visit
                         </button>
                     </div>
                 </Box>
