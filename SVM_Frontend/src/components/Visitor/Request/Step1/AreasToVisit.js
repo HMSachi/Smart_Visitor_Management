@@ -13,48 +13,35 @@ const AreasToVisit = ({ selectedAreas, onToggle }) => {
 
     return (
         <section className="animate-fade-in stagger-item">
-            <div className="flex items-center gap-4 mb-10">
-                <div className="p-3 rounded-xl bg-mas-red/10 border border-mas-red/20 text-mas-red">
-                    <Map size={20} />
+            <div className="flex items-center gap-3 mb-6">
+                <div className="text-mas-red">
+                    <Map size={14} />
                 </div>
-                <div>
-                    <h2 className="text-xl font-bold text-white uppercase tracking-tight">Access Zones</h2>
-                    <p className="text-gray-500 text-[10px] font-medium uppercase tracking-[0.2em]">Authorized Parameters</p>
-                </div>
+                <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0 transition-all">Access Zones</h3>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                 {areasList.map((area) => (
-                    <motion.div 
+                    <div 
                         key={area.id}
-                        whileHover={{ y: -4 }}
-                        whileTap={{ scale: 0.95 }}
                         onClick={() => onToggle(area.id)}
-                        className={`group relative p-6 md:p-8 rounded-[2rem] border transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-4 ${
+                        className={`group relative py-4 px-3 rounded-xl border transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2 ${
                             selectedAreas.includes(area.id) 
-                            ? 'bg-mas-red border-mas-red shadow-[0_15px_30px_rgba(200,16,46,0.3)]' 
-                            : 'bg-white/[0.03] border-white/10 hover:border-mas-red/40 hover:bg-white/[0.05]'
+                            ? 'bg-mas-red border-mas-red' 
+                            : 'bg-white/[0.02] border-white/5 hover:border-white/20 hover:bg-white/[0.04]'
                         }`}
                     >
                         <div className={`transition-all duration-300 ${
-                            selectedAreas.includes(area.id) ? 'text-white scale-110' : 'text-gray-500 group-hover:text-mas-red'
+                            selectedAreas.includes(area.id) ? 'text-white' : 'text-gray-500 group-hover:text-mas-red'
                         }`}>
-                            <area.icon size={28} />
+                            <area.icon size={18} />
                         </div>
-                        <span className={`text-[10px] font-medium uppercase tracking-widest transition-colors ${
+                        <span className={`text-[10px] font-semibold uppercase tracking-widest transition-colors ${
                             selectedAreas.includes(area.id) ? 'text-white' : 'text-gray-500 group-hover:text-white'
                         }`}>
                             {area.name}
                         </span>
-                        
-                        {/* Selected Indicator Dot */}
-                        {selectedAreas.includes(area.id) && (
-                            <motion.div 
-                                layoutId="indicator"
-                                className="absolute top-4 right-4 w-2 h-2 bg-white rounded-full animate-pulse" 
-                            />
-                        )}
-                    </motion.div>
+                    </div>
                 ))}
             </div>
         </section>

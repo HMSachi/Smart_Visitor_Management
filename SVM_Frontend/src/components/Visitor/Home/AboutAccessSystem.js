@@ -30,61 +30,48 @@ const AboutAccessSystem = () => {
     ];
 
     return (
-        <section id="about" className="py-20 md:py-32 bg-mas-dark-900 relative overflow-hidden">
-            {/* Background elements */}
-            <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-mas-red/[0.02] blur-[150px] rounded-full" />
-            
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-8">
-                    <div className="max-w-2xl">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-[2px] bg-mas-red" />
-                            <span className="text-mas-red uppercase tracking-[0.3em] text-[10px] font-medium">Service Grid</span>
+        <section id="about" className="py-12 md:py-24 bg-mas-dark-900 border-t border-white/5">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="flex flex-col md:flex-row items-baseline justify-between mb-12 gap-4">
+                    <div className="max-w-xl">
+                        <div className="flex items-center gap-2 mb-3">
+                            <div className="w-6 h-[1px] bg-mas-red/50"></div>
+                            <span className="text-mas-red uppercase tracking-widest text-[9px] font-bold">Facility Grid</span>
                         </div>
-                        <h2 className="text-4xl md:text-6xl font-bold text-white uppercase tracking-tighter leading-none">
-                            Our Digital <span className="text-mas-red">Ecosystem</span>
+                        <h2 className="text-2xl md:text-3xl font-bold text-white uppercase tracking-tight leading-none">
+                            Digital <span className="text-mas-red">Ecosystem</span>
                         </h2>
                     </div>
-                    <p className="max-w-xs text-gray-500 text-xs uppercase tracking-[0.2em] leading-relaxed font-medium">
-                        Engineered for the high-precision environments of MAS Holdings.
+                    <p className="max-w-xs text-gray-600 text-[10px] uppercase tracking-widest leading-relaxed font-semibold">
+                        Precision Access for MAS Holdings Facilities.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {features.map((feature, index) => (
-                        <motion.div 
+                        <div 
                             key={index}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
                             onClick={() => navigate(feature.path)}
-                            className={`group relative p-8 md:p-10 bg-white/[0.03] border border-white/10 rounded-[2rem] cursor-pointer hover:border-mas-red/30 transition-all duration-500 overflow-hidden`}
+                            className="group relative p-6 bg-white/[0.02] border border-white/5 rounded-xl cursor-pointer hover:border-mas-red/20 transition-all duration-300"
                         >
-                            {/* Gradient Background on Hover */}
-                            <div className={`absolute inset-0 bg-gradient-to-br ${feature.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
-                            
-                            <div className="relative z-10">
-                                <div className="w-14 h-14 bg-white/[0.05] rounded-2xl flex items-center justify-center mb-10 group-hover:bg-white/10 group-hover:scale-110 transition-all duration-500 text-mas-red group-hover:text-white">
-                                    <feature.icon size={28} />
+                            <div className="flex items-start gap-4 h-full">
+                                <div className="w-10 h-10 bg-white/[0.03] border border-white/10 rounded-lg flex items-center justify-center text-mas-red group-hover:bg-mas-red group-hover:text-white transition-all">
+                                    <feature.icon size={18} />
                                 </div>
-                                
-                                <h3 className="text-white text-xl md:text-2xl font-bold mb-4 uppercase tracking-tight">
-                                    {feature.title}
-                                </h3>
-                                
-                                <p className="text-gray-500 text-sm leading-relaxed tracking-wide group-hover:text-white/80 transition-all duration-500 mb-8 max-w-[240px]">
-                                    {feature.description}
-                                </p>
-
-                                <div className="flex items-center gap-2 text-mas-red group-hover:text-white transition-colors">
-                                    <span className="text-[10px] font-medium uppercase tracking-widest">Learn More</span>
-                                    <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                <div className="flex-1">
+                                    <h3 className="text-white text-sm font-bold mb-2 uppercase tracking-tight">
+                                        {feature.title}
+                                    </h3>
+                                    <p className="text-gray-500 text-[11px] leading-relaxed mb-4 group-hover:text-gray-300">
+                                        {feature.description}
+                                    </p>
+                                    <div className="flex items-center gap-2 text-mas-red text-[10px] font-bold uppercase tracking-widest">
+                                        <span>Initialize</span>
+                                        <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                    </div>
                                 </div>
                             </div>
-
-                            {/* Decorative Edge Glow */}
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-mas-red/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </div>

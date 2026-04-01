@@ -7,10 +7,10 @@
 @layer base {
   body {
     font-family: 'Inter', sans-serif !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
     font-weight: 400 !important;
     color: #D1D1D1 !important;
-    line-height: 1.6 !important;
+    line-height: 1.5 !important;
     @apply bg-[#0A0A0B];
     margin: 0;
     overflow-x: hidden;
@@ -18,11 +18,11 @@
   }
 
   h1 {
-    font-size: 20px !important;
+    font-size: 20px;
   }
 
   h2, h3 {
-    font-size: 15px !important;
+    font-size: 14px;
   }
 
   h4, h5, h6 {
@@ -30,18 +30,18 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 600 !important;
-    color: #FFFFFF !important;
-    letter-spacing: 0.5px !important;
-    text-transform: uppercase !important;
-    line-height: 1.4 !important;
-    margin-bottom: 12px !important;
-    font-style: normal !important;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: #FFFFFF;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    font-style: normal;
   }
 
 
-  /* Remove conflicting default styles from headings */
+  /* Removed heavy decorations */
   h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
     font-size: inherit !important;
     font-weight: inherit !important;
@@ -62,41 +62,28 @@
     font-weight: 500 !important;
   }
   
-  /* Futuristic UI Utilities */
+  /* Flat & Minimal Utilities */
   .glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.3s ease;
   }
 
-  .neon-border-red {
-    border: 1px solid rgba(200, 16, 46, 0.3);
-    box-shadow: 0 0 15px rgba(200, 16, 46, 0.1), inset 0 0 10px rgba(200, 16, 46, 0.05);
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.04);
   }
 
-  .neon-border-blue {
-    border: 1px solid rgba(0, 242, 255, 0.3);
-    box-shadow: 0 0 15px rgba(0, 242, 255, 0.1), inset 0 0 10px rgba(0, 242, 255, 0.05);
+  .compact-input {
+    @apply bg-white/[0.02] border border-white/5 rounded-lg px-3 py-2 text-white placeholder:text-gray-600 focus:border-mas-red/40 focus:bg-white/[0.04] outline-none transition-all text-sm;
   }
 
-  .glow-text-red {
-    text-shadow: 0 0 10px rgba(200, 16, 46, 0.5);
+  .compact-btn {
+    @apply px-4 py-2 bg-mas-red text-white text-[11px] font-semibold uppercase tracking-wider rounded-lg hover:bg-mas-red-hover active:scale-95 transition-all;
   }
 
-  .glow-text-blue {
-    text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-  }
-
-  @keyframes pulse-glow {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 4s ease-in-out infinite;
-  }
+  /* Pulse removed; using subtle transitions instead */
 
   @keyframes float-particle {
     0% { transform: translateY(0) translateX(0); opacity: 0; }
@@ -115,11 +102,8 @@
   }
 
   .metallic-text {
-    background: linear-gradient(135deg, #ffffff 0%, #a1a1a1 50%, #ffffff 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+    color: #ffffff;
+    filter: drop-shadow(0 0 2px rgba(255,255,255,0.1));
   }
   
   /* Fix Browser Autofill Background */

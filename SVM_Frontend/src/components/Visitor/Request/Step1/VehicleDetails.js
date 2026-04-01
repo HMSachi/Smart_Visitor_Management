@@ -4,56 +4,47 @@ import { Truck, Hash, Car } from 'lucide-react';
 const VehicleDetails = ({ data, onChange }) => {
     return (
         <section className="animate-fade-in stagger-item">
-            <div className="flex items-center gap-4 mb-10">
-                <div className="p-3 rounded-xl bg-mas-red/10 border border-mas-red/20 text-mas-red">
-                    <Car size={20} />
+            <div className="flex items-center gap-3 mb-6">
+                <div className="text-mas-red">
+                    <Car size={14} />
                 </div>
-                <div>
-                    <h2 className="text-xl font-bold text-white uppercase tracking-tight">Access Vehicle</h2>
-                    <p className="text-gray-500 text-[10px] font-medium uppercase tracking-[0.2em]">Logistics & Entry Node</p>
-                </div>
+                <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0 transition-all">Vehicle Logistics</h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-3xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 px-4 py-6 rounded-xl border border-white/5 bg-white/[0.01]">
                 {/* Vehicle Number */}
-                <div className="relative group/field">
-                    <label className="text-[10px] font-medium uppercase tracking-widest text-gray-500 mb-2 block group-focus-within/field:text-mas-red transition-colors">
+                <div className="space-y-1.5">
+                    <label className="text-[11px] font-medium text-gray-500 uppercase tracking-widest block">
                         Registration Number
                     </label>
                     <div className="relative">
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within/field:text-mas-red transition-colors">
-                            <Hash size={18} />
-                        </div>
                         <input 
                             type="text"
                             name="vehicleNumber"
                             value={data.vehicleNumber}
                             onChange={onChange}
                             placeholder="WP ABC-0000"
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white text-sm focus:outline-none focus:border-mas-red/50 transition-all placeholder-gray-700 uppercase tracking-widest"
+                            className="compact-input w-full uppercase tracking-widest"
                         />
                     </div>
                 </div>
 
                 {/* Vehicle Type */}
-                <div className="relative group/field">
-                    <label className="text-[10px] font-medium uppercase tracking-widest text-gray-500 mb-2 block group-focus-within/field:text-mas-red transition-colors">
-                        Vessel Category
+                <div className="space-y-1.5">
+                    <label className="text-[11px] font-medium text-gray-500 uppercase tracking-widest block">
+                        Vehicle Category
                     </label>
                     <div className="relative">
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within/field:text-mas-red transition-colors pointer-events-none">
-                            <Truck size={18} />
-                        </div>
                         <select 
                             name="vehicleType"
                             value={data.vehicleType}
                             onChange={onChange}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white text-sm focus:outline-none focus:border-mas-red/50 transition-all appearance-none uppercase tracking-wider cursor-pointer"
+                            className="compact-input w-full cursor-pointer"
                         >
-                            <option value="Car" className="bg-mas-dark-800">Car / Sedan</option>
-                            <option value="Van" className="bg-mas-dark-800">Van / SUV</option>
-                            <option value="Truck" className="bg-mas-dark-800">Heavy Truck</option>
-                            <option value="Other" className="bg-mas-dark-800">Other Vessel</option>
+                            <option value="Car">Car / Sedan</option>
+                            <option value="Van">Van / SUV</option>
+                            <option value="Truck">Heavy Truck</option>
+                            <option value="Other">Other Category</option>
                         </select>
                     </div>
                 </div>

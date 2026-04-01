@@ -39,56 +39,44 @@ const NotificationPanel = ({ status }) => {
     const alerts = getAlerts();
 
     return (
-        <section className="bg-white/[0.03] border border-white/10 p-6 rounded-[2.5rem] h-full shadow-2xl relative overflow-hidden group">
-            {/* Background Decor */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-mas-red/5 -mr-16 -mt-16 group-hover:bg-mas-red/10 transition-all duration-700" />
-            
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/[0.05] relative z-10">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-mas-red/10 text-mas-red">
-                        <Terminal size={16} />
-                    </div>
-                    <h3 className="text-sm font-medium text-white uppercase tracking-[0.2em]">Security Log</h3>
-                </div>
+        <section className="bg-white/[0.01] border border-white/5 p-6 rounded-xl">
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
                 <div className="flex items-center gap-2">
-                    <span className="text-[7.5px] text-gray-300 font-medium uppercase tracking-widest animate-pulse">Node Sync Live</span>
-                    <div className="w-1.5 h-1.5 rounded-full bg-mas-red shadow-[0_0_8px_#C8102E] animate-ping" />
+                    <div className="text-mas-red">
+                        <Terminal size={14} />
+                    </div>
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0">Security Log</h3>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-mas-red/40" />
+                    <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Protocol Sync</span>
                 </div>
             </div>
 
-            <div className="space-y-6 relative z-10">
+            <div className="space-y-4">
                 {alerts.map((alert, index) => (
-                    <motion.div 
+                    <div 
                         key={`${status}-${alert.id}`}
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="group/item relative pl-8 py-2 border-l border-white/5 hover:border-mas-red transition-all cursor-pointer"
+                        className="pl-4 py-1.5 border-l border-white/5 hover:border-mas-red transition-all cursor-pointer group/item"
                     >
-                        <div className="flex justify-between items-start mb-2">
+                        <div className="flex justify-between items-center mb-1">
                             <div className="flex items-center gap-2">
                                 <alert.icon size={12} className={alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500/60 group-hover/item:text-green-500' : 'text-mas-red/60 group-hover/item:text-mas-red transition-colors'} />
-                                <span className={`text-[8.5px] font-normal uppercase tracking-[0.2em] ${alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500' : 'text-mas-red'}`}>{alert.type}</span>
+                                <span className={`text-[9px] font-bold uppercase tracking-widest ${alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500' : 'text-mas-red'}`}>{alert.type}</span>
                             </div>
-                            <span className="text-[7.5px] font-medium text-gray-400 uppercase tracking-widest">{alert.time}</span>
+                            <span className="text-[8px] font-bold text-gray-600 uppercase tracking-widest">{alert.time}</span>
                         </div>
-                        <p className="text-[9px] text-gray-300 font-normal leading-relaxed uppercase tracking-wider group-hover/item:text-white transition-colors">
+                        <p className="text-[10px] text-gray-500 font-semibold leading-relaxed uppercase tracking-wider group-hover/item:text-gray-300 transition-colors">
                             {alert.msg}
                         </p>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
             
-            <div className="mt-16 pt-8 border-t border-white/[0.05] relative z-10">
-                <div className="p-6 bg-mas-red/5 border border-mas-red/10 rounded-2xl group/notice hover:bg-mas-red/10 transition-all">
-                    <div className="flex items-center gap-3 mb-3">
-                        <ShieldCheck size={14} className="text-mas-red" />
-                        <span className="text-[8px] font-normal text-white uppercase tracking-widest">Notice</span>
-                    </div>
-                    <p className="text-[8px] text-gray-400 font-normal uppercase tracking-widest leading-relaxed">
-                        Interaction within this node is logged and encrypted via <span className="text-white">AES-256-GCM</span> infrastructure.
-                    </p>
-                </div>
+            <div className="mt-8 pt-6 border-t border-white/5">
+                <p className="text-[8px] text-gray-700 font-bold uppercase tracking-widest leading-relaxed">
+                    Interaction Log: <span className="text-gray-600">AES-256-GCM Active</span>
+                </p>
             </div>
         </section>
     );

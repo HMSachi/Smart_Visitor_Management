@@ -31,7 +31,7 @@ const Layout = ({ children }) => {
         component="main"
         className={`flex-1 flex flex-col min-w-0 transition-all duration-500 ease-in-out overflow-x-hidden
                     ${isDashboardPath ? "overflow-y-auto" : ""}
-                    ${!isDashboardPath && !isLoginPage ? "pt-20" : ""}
+                    ${!isDashboardPath && !isLoginPage ? "pt-2" : ""}
                     ${isMobile && isDashboardPath ? "w-full" : ""}`}
       >
         {children}

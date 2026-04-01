@@ -30,18 +30,7 @@ const Panel = ({ iconName, label, value, trend, colorClass }) => {
         </div>
       </div>
 
-      <div className="mt-10 flex items-center justify-between relative z-10">
-        <div className="flex items-center gap-3">
-          <div className={`text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded-lg border ${trend.includes('+') ? 'text-green-500 border-green-500/10 bg-green-500/5' : 'text-gray-300 border-white/5 bg-white/5'}`}>
-            {trend}
-          </div>
-          <span className="text-[9px] font-medium uppercase tracking-widest text-gray-300 opacity-30 group-hover:opacity-90">vs last cycle</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-1 h-1 bg-mas-red rounded-full"></div>
-          <p className="text-gray-300 text-[9px] font-medium uppercase tracking-widest">Protocol Active</p>
-        </div>
-      </div>
+
 
       <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-mas-red group-hover:w-full transition-all duration-700 shadow-[0_0_10px_#C8102E]"></div>
     </motion.div>

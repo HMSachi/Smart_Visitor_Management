@@ -35,17 +35,13 @@ const AccessMain = () => {
   };
 
   return (
-    <div className="min-h-screen bg-charcoal-900 flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Motion Effect */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,#C8102E,transparent_70%)] animate-pulse"></div>
-      </div>
+    <div className="min-h-screen flex items-start justify-center p-6 bg-mas-dark-900 pt-12">
 
-      <div className="max-w-md w-full glass-panel p-12 border-mas-red/10 relative z-10">
-        <div className="text-center mb-12">
-          <div className="w-12 h-12 bg-mas-red mx-auto mb-6 flex items-center justify-center">
+      <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-10 rounded-2xl shadow-xl">
+        <div className="text-center mb-10">
+          <div className="w-10 h-10 bg-mas-red/10 border border-mas-red/20 mx-auto mb-6 flex items-center justify-center text-mas-red rounded-lg">
             <svg
-              className="w-6 h-6 text-white"
+              className="w-5 h-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -58,16 +54,16 @@ const AccessMain = () => {
               />
             </svg>
           </div>
-          <h1 className="text-white uppercase">Access My Visit</h1>
-          <p className="text-gray-300 uppercase mt-4">
-            Secure Verification Node
+          <h2 className="text-xl font-bold text-white uppercase tracking-tight mb-2">Access My Visit</h2>
+          <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">
+            Identity Verification Node
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email Field */}
-          <div className="relative group">
-            <label className="uppercase text-gray-300 mb-2 block transition-colors group-focus-within:text-mas-red">
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
               Email Address
             </label>
             <input
@@ -76,19 +72,18 @@ const AccessMain = () => {
               value={formData.email}
               onChange={handleInputChange}
               placeholder="visitor@company.com"
-              className="w-full bg-transparent border-b border-white/10 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-mas-red transition-all"
+              className="compact-input w-full"
             />
-            <div className="absolute bottom-0 left-0 w-0 h-[1px] bg-mas-red group-focus-within:w-full transition-all duration-500 shadow-[0_0_10px_#C8102E]"></div>
             {errors.email && (
-              <span className="text-mas-red uppercase mt-2 block animate-fade-in">
+              <span className="text-mas-red text-[10px] font-bold uppercase tracking-wider block">
                 {errors.email}
               </span>
             )}
           </div>
 
           {/* Phone Field */}
-          <div className="relative group">
-            <label className="uppercase text-gray-300 mb-2 block transition-colors group-focus-within:text-mas-red">
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
               Phone Number
             </label>
             <input
@@ -97,19 +92,18 @@ const AccessMain = () => {
               value={formData.phone}
               onChange={handleInputChange}
               placeholder="+94 XX XXX XXXX"
-              className="w-full bg-transparent border-b border-white/10 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-mas-red transition-all"
+              className="compact-input w-full"
             />
-            <div className="absolute bottom-0 left-0 w-0 h-[1px] bg-mas-red group-focus-within:w-full transition-all duration-500 shadow-[0_0_10px_#C8102E]"></div>
             {errors.phone && (
-              <span className="text-mas-red uppercase mt-2 block animate-fade-in">
+              <span className="text-mas-red text-[10px] font-bold uppercase tracking-wider block">
                 {errors.phone}
               </span>
             )}
           </div>
 
           {/* Reference ID Field */}
-          <div className="relative group">
-            <label className="uppercase text-gray-300 mb-2 block transition-colors group-focus-within:text-mas-red">
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
               Reference ID
             </label>
             <input
@@ -118,11 +112,10 @@ const AccessMain = () => {
               value={formData.refId}
               onChange={handleInputChange}
               placeholder="MAS-VAS-XXXXX"
-              className="w-full bg-transparent border-b border-white/10 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-mas-red transition-all"
+              className="compact-input w-full"
             />
-            <div className="absolute bottom-0 left-0 w-0 h-[1px] bg-mas-red group-focus-within:w-full transition-all duration-500 shadow-[0_0_10px_#C8102E]"></div>
             {errors.refId && (
-              <span className="text-mas-red uppercase mt-2 block animate-fade-in">
+              <span className="text-mas-red text-[10px] font-bold uppercase tracking-wider block">
                 {errors.refId}
               </span>
             )}
@@ -132,23 +125,18 @@ const AccessMain = () => {
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full py-5 bg-mas-red text-white uppercase hover:bg-[#A60D26] hover:shadow-[0_0_30px_rgba(200,16,46,0.3)] transition-all relative group overflow-hidden"
+              className="compact-btn !w-full !py-4"
             >
-              <span className="relative z-10 transition-transform group-hover:scale-110">
-                Access My Visit
-              </span>
-              <div className="absolute inset-0 bg-white/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
+              Access My Visit
             </button>
           </div>
         </form>
 
-        <div className="mt-12 text-center">
-          <p className="text-gray-500 uppercase">
-            By accessing this portal, you agree to comply with MAS Holdings{" "}
+        <div className="mt-8 text-center">
+          <p className="text-gray-500 text-[9px] font-bold uppercase tracking-widest leading-relaxed">
+            Authorized Personnel Only. 
             <br />
-            <span className="text-mas-red hover:underline cursor-pointer">
-              Security Systems Protocol
-            </span>
+            <span className="text-mas-red/50">MAS Security Node 01</span>
           </p>
         </div>
       </div>
