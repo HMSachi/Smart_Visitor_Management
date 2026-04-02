@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Building2, Briefcase, Factory, Package, Coffee, Map } from 'lucide-react';
 
 const AreasToVisit = ({ selectedAreas, onToggle }) => {
@@ -14,7 +13,7 @@ const AreasToVisit = ({ selectedAreas, onToggle }) => {
     return (
         <section className="animate-fade-in stagger-item">
             <div className="flex items-center gap-3 mb-6">
-                <div className="text-mas-red">
+                <div className="text-primary">
                     <Map size={14} />
                 </div>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0 transition-all">Access Zones</h3>
@@ -27,12 +26,12 @@ const AreasToVisit = ({ selectedAreas, onToggle }) => {
                         onClick={() => onToggle(area.id)}
                         className={`group relative py-4 px-3 rounded-xl border transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-2 ${
                             selectedAreas.includes(area.id) 
-                            ? 'bg-mas-red border-mas-red' 
+                            ? 'bg-primary border-primary' 
                             : 'bg-white/[0.02] border-white/5 hover:border-white/20 hover:bg-white/[0.04]'
                         }`}
                     >
                         <div className={`transition-all duration-300 ${
-                            selectedAreas.includes(area.id) ? 'text-white' : 'text-gray-500 group-hover:text-mas-red'
+                            selectedAreas.includes(area.id) ? 'text-white' : 'text-gray-500 group-hover:text-primary'
                         }`}>
                             <area.icon size={18} />
                         </div>

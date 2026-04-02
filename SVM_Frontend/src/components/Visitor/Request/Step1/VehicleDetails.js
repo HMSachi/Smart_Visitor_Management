@@ -1,11 +1,11 @@
 import React from 'react';
-import { Truck, Hash, Car } from 'lucide-react';
+import { Car } from 'lucide-react';
 
 const VehicleDetails = ({ data, onChange }) => {
     return (
         <section className="animate-fade-in stagger-item">
             <div className="flex items-center gap-3 mb-6">
-                <div className="text-mas-red">
+                <div className="text-primary">
                     <Car size={14} />
                 </div>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0 transition-all">Vehicle Logistics</h3>

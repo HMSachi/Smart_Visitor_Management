@@ -5,7 +5,7 @@ import SecurityMonitoring from '../../../components/Admin/SecurityMonitoring/Sec
 
 const SecurityMonitoringPage = () => {
   return (
-    <div className="flex flex-col min-w-0 bg-[#0A0A0B] min-h-screen">
+    <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
         <Header />
         <SecurityMonitoring />
     </div>

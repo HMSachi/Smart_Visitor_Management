@@ -16,7 +16,7 @@ const NotificationsMain = () => {
 
     const getIcon = (type) => {
         switch(type) {
-            case 'critical': return <ShieldAlert size={18} className="text-mas-red" />;
+            case 'critical': return <ShieldAlert size={18} className="text-primary" />;
             case 'warning': return <AlertTriangle size={18} className="text-yellow-500" />;
             default: return <Info size={18} className="text-gray-300" />;
         }
@@ -27,13 +27,13 @@ const NotificationsMain = () => {
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-mas-border pb-12">
                 <div>
                     <div className="flex items-center gap-4 mb-4">
-                        <Bell size={14} className="text-mas-red" />
-                        <span className="text-mas-red uppercase">Critical Node Feed</span>
-                        <div className="h-[1px] w-12 bg-mas-red"></div>
+                        <Bell size={14} className="text-primary" />
+                        <span className="text-primary uppercase">Critical Node Feed</span>
+                        <div className="h-[1px] w-12 bg-primary"></div>
                     </div>
                     <h1 className="uppercase text-white flex items-center gap-6">
                         Alerts Center
-                        <span className="px-4 py-2 mas-glass border-mas-red/30 text-mas-red inline-flex">
+                        <span className="px-4 py-2 mas-glass border-primary/30 text-primary inline-flex">
                             {notifications.filter(n => n.unread).length} New Alerts
                         </span>
                     </h1>
@@ -44,7 +44,7 @@ const NotificationsMain = () => {
                         <CheckCircle2 size={14} />
                         Clear Alert Buffer
                     </button>
-                    <button className="p-3 mas-glass border-white/5 text-gray-300 hover:text-mas-red hover:border-mas-red transition-all">
+                    <button className="p-3 mas-glass border-white/5 text-gray-300 hover:text-primary hover:border-primary transition-all">
                         <Trash2 size={18} />
                     </button>
                 </div>
@@ -54,9 +54,9 @@ const NotificationsMain = () => {
                 {notifications.map((notif, i) => (
                     <div 
                         key={notif.id}
-                        className={`mas-glass p-8 border-l-4 transition-all hover:bg-white/[0.03] cursor-pointer group flex items-start gap-8 ${notif.unread ? 'border-mas-red bg-mas-red/[0.02]' : 'border-white/10 opacity-70'}`}
+                        className={`mas-glass p-8 border-l-4 transition-all hover:bg-white/[0.03] cursor-pointer group flex items-start gap-8 ${notif.unread ? 'border-primary bg-primary/[0.02]' : 'border-white/10 opacity-70'}`}
                     >
-                        <div className={`p-4 mas-glass border-white/5 ${notif.unread ? 'bg-mas-red/10' : 'bg-white/5'}`}>
+                        <div className={`p-4 mas-glass border-white/5 ${notif.unread ? 'bg-primary/10' : 'bg-white/5'}`}>
                             {getIcon(notif.type)}
                         </div>
                         
@@ -74,11 +74,11 @@ const NotificationsMain = () => {
                             </p>
                             <div className="pt-4 flex items-center gap-6">
                                  <div className="flex items-center gap-2">
-                                     <div className="w-1 h-1 bg-mas-red rounded-full"></div>
+                                     <div className="w-1 h-1 bg-primary rounded-full"></div>
                                      <span className="text-gray-300 uppercase">Source: FRONT-DOOR-SCANNER-02</span>
                                  </div>
                                  <div className="flex items-center gap-2">
-                                     <div className="w-1 h-1 bg-mas-red rounded-full"></div>
+                                     <div className="w-1 h-1 bg-primary rounded-full"></div>
                                      <span className="text-gray-300 uppercase">Verification Logged</span>
                                  </div>
                             </div>

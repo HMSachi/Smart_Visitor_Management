@@ -6,9 +6,6 @@ import Sidebar from "../components/Admin/Layout/Sidebar";
 
 const Layout = ({ children }) => {
   const location = useLocation();
-  const isSidebarCollapsed = useSelector(
-    (state) => state.ui.isSidebarCollapsed,
-  );
   const isMobile = useSelector((state) => state.ui.isMobile);
 
   // Paths that should show the Admin/Staff Sidebar
@@ -23,7 +20,7 @@ const Layout = ({ children }) => {
 
   return (
     <Box
-      className={`${isDashboardPath ? "h-screen overflow-hidden flex-row" : "min-h-screen overflow-x-hidden flex-col"} w-full flex bg-mas-dark-900 relative`}
+      className={`${isDashboardPath ? "h-screen overflow-hidden flex-row" : "min-h-screen overflow-x-hidden flex-col"} w-full flex bg-background relative`}
     >
       {isAdminPath && !isLoginPage && <Sidebar />}
 

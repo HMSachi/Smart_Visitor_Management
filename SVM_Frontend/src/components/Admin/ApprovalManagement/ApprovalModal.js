@@ -39,12 +39,12 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               className="w-full max-w-xl bg-[#161618]/95 backdrop-blur-3xl border border-white/20 shadow-[0_30px_100px_rgba(0,0,0,1)] rounded-[40px] pointer-events-auto overflow-hidden relative"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-mas-red/5 rounded-full blur-[100px] pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
 
               {/* Header */}
               <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-colors ${type === 'Approve' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-mas-red/10 border-mas-red/20 text-mas-red'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-colors ${type === 'Approve' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-primary/10 border-primary/20 text-primary'}`}>
                     {type === 'Approve' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
                   </div>
                   <div>
@@ -64,12 +64,12 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
 
               {/* Content */}
               <form onSubmit={handleSubmit} className="p-8 space-y-8 relative z-10">
-                <div className="p-6 bg-[#121214] border border-white/5 rounded-2xl shadow-inner flex justify-between items-center group/target hover:border-mas-red/20 transition-all duration-500">
+                <div className="p-6 bg-[var(--color-bg-paper)] border border-white/5 rounded-2xl shadow-inner flex justify-between items-center group/target hover:border-primary/20 transition-all duration-500">
                   <div className="flex items-center gap-4">
-                    <div className="w-1.5 h-6 bg-mas-red/40 group-hover:bg-mas-red rounded-full transition-all"></div>
+                    <div className="w-1.5 h-6 bg-primary/40 group-hover:bg-primary rounded-full transition-all"></div>
                     <div>
                       <p className="text-gray-300/80 text-[12px] font-medium uppercase tracking-widest mb-1">Target Subject Identity</p>
-                      <p className="text-white text-sm font-medium uppercase tracking-widest group-hover:text-mas-red transition-colors">{visitor?.name}</p>
+                      <p className="text-white text-sm font-medium uppercase tracking-widest group-hover:text-primary transition-colors">{visitor?.name}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -81,11 +81,11 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-end">
                     <label className="text-gray-300/90 uppercase text-[13px] font-medium tracking-widest flex items-center gap-2">
-                      <Send size={12} className="text-mas-red/40" />
-                      Protocol Feedback {type === 'Reject' && <span className="text-mas-red animate-pulse">*</span>}
+                      <Send size={12} className="text-primary/40" />
+                      Protocol Feedback {type === 'Reject' && <span className="text-primary animate-pulse">*</span>}
                     </label>
                     {error && (
-                      <span className="text-mas-red text-[13px] font-medium uppercase animate-pulse flex items-center gap-1.5 tracking-widest">
+                      <span className="text-primary text-[13px] font-medium uppercase animate-pulse flex items-center gap-1.5 tracking-widest">
                         <AlertCircle size={12} /> Required For Denial
                       </span>
                     )}
@@ -98,7 +98,7 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                       if (e.target.value.trim()) setError(false);
                     }}
                     placeholder={type === 'Approve' ? "Append authorization remarks (optional)..." : "Specify refusal rationale (mandatory field)..."}
-                    className={`w-full bg-[#0A0A0B] border border-white/5 text-white text-sm font-normal tracking-wide p-5 rounded-xl focus:ring-0 focus:border-mas-red/40 focus:bg-[#161618] transition-all duration-500 resize-none shadow-inner placeholder:text-gray-300/80 ${error ? 'border-mas-red/50 bg-mas-red/5' : ''}`}
+                    className={`w-full bg-[var(--color-bg-default)] border border-white/5 text-white text-sm font-normal tracking-wide p-5 rounded-xl focus:ring-0 focus:border-primary/40 focus:bg-[#161618] transition-all duration-500 resize-none shadow-inner placeholder:text-gray-300/80 ${error ? 'border-primary/50 bg-primary/5' : ''}`}
                   />
                 </div>
 
@@ -107,13 +107,13 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-3.5 border border-white/5 text-gray-300/90 text-xs font-medium uppercase tracking-widest hover:text-white hover:border-mas-red/40 hover:bg-white/[0.02] transition-all rounded-xl shadow-xl"
+                    className="flex-1 py-3.5 border border-white/5 text-gray-300/90 text-xs font-medium uppercase tracking-widest hover:text-white hover:border-primary/40 hover:bg-white/[0.02] transition-all rounded-xl shadow-xl"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className={`flex-[1.5] py-3.5 ${type === 'Approve' ? 'bg-[#00B14F] shadow-[0_5px_20px_rgba(0,177,79,0.2)]' : 'bg-mas-red shadow-[0_5px_20px_rgba(200,16,46,0.2)]'} text-white text-xs font-medium uppercase tracking-widest flex items-center justify-center gap-3 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] group`}
+                    className={`flex-[1.5] py-3.5 ${type === 'Approve' ? 'bg-[#00B14F] shadow-[0_5px_20px_rgba(0,177,79,0.2)]' : 'bg-primary shadow-[0_5px_20px_rgba(200,16,46,0.2)]'} text-white text-xs font-medium uppercase tracking-widest flex items-center justify-center gap-3 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] group`}
                   >
                     {type === 'Approve' ? 'Commit Authorization' : 'Commit Denial Protocol'}
                     <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

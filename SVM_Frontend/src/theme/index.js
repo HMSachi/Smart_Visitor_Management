@@ -8,13 +8,13 @@ const theme = createTheme({
       main: themeColors.primary.main,
       light: themeColors.primary.light,
       dark: themeColors.primary.dark,
-      contrastText: '#ffffff',
+      contrastText: 'var(--color-text-primary)',
     },
     secondary: {
       main: themeColors.secondary.main,
       light: themeColors.secondary.light,
       dark: themeColors.secondary.dark,
-      contrastText: '#ffffff',
+      contrastText: 'var(--color-text-primary)',
     },
     background: {
       default: themeColors.background.default,

@@ -8,9 +8,9 @@ const ProfileSettingsMain = () => {
             <div className="flex items-end justify-between border-b border-mas-border pb-8">
                 <div>
                     <div className="flex items-center gap-4 mb-4">
-                        <UserCircle size={14} className="text-mas-red" />
-                        <span className="text-mas-red uppercase">Node Configuration</span>
-                        <div className="h-[1px] w-12 bg-mas-red"></div>
+                        <UserCircle size={14} className="text-primary" />
+                        <span className="text-primary uppercase">Node Configuration</span>
+                        <div className="h-[1px] w-12 bg-primary"></div>
                     </div>
                     <h1 className="uppercase text-white flex items-center gap-6">
                         Profile Settings
@@ -22,7 +22,7 @@ const ProfileSettingsMain = () => {
             </div>
 
             <div className="mas-glass border-mas-border p-12 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-mas-red/5 blur-[120px]"></div>
+                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[120px]"></div>
                 <ProfileForm />
             </div>
         </div>

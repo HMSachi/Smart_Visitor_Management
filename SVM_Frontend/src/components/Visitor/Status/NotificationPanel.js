@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Bell, ShieldAlert, Terminal, Info, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 const NotificationPanel = ({ status }) => {
@@ -42,13 +41,13 @@ const NotificationPanel = ({ status }) => {
         <section className="bg-white/[0.01] border border-white/5 p-6 rounded-xl">
             <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
                 <div className="flex items-center gap-2">
-                    <div className="text-mas-red">
+                    <div className="text-primary">
                         <Terminal size={14} />
                     </div>
                     <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0">Security Log</h3>
                 </div>
                 <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-mas-red/40" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
                     <span className="text-[12px] text-gray-500 font-bold uppercase tracking-widest">Protocol Sync</span>
                 </div>
             </div>
@@ -57,12 +56,12 @@ const NotificationPanel = ({ status }) => {
                 {alerts.map((alert, index) => (
                     <div 
                         key={`${status}-${alert.id}`}
-                        className="pl-4 py-1.5 border-l border-white/5 hover:border-mas-red transition-all cursor-pointer group/item"
+                        className="pl-4 py-1.5 border-l border-white/5 hover:border-primary transition-all cursor-pointer group/item"
                     >
                         <div className="flex justify-between items-center mb-1">
                             <div className="flex items-center gap-2">
-                                <alert.icon size={12} className={alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500/60 group-hover/item:text-green-500' : 'text-mas-red/60 group-hover/item:text-mas-red transition-colors'} />
-                                <span className={`text-[12px] font-bold uppercase tracking-widest ${alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500' : 'text-mas-red'}`}>{alert.type}</span>
+                                <alert.icon size={12} className={alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500/60 group-hover/item:text-green-500' : 'text-primary/60 group-hover/item:text-primary transition-colors'} />
+                                <span className={`text-[12px] font-bold uppercase tracking-widest ${alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500' : 'text-primary'}`}>{alert.type}</span>
                             </div>
                             <span className="text-[14px] font-bold text-gray-600 uppercase tracking-widest">{alert.time}</span>
                         </div>

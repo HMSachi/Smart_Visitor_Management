@@ -8,27 +8,35 @@ module.exports = {
     extend: {
       colors: {
         'primary': {
-          DEFAULT: 'var(--color-primary)',
-          hover: 'var(--color-primary-hover)',
-          glow: 'var(--color-primary-glow)',
+          DEFAULT: '#C8102E', // var(--color-primary)
+          hover: '#A60D26',  // var(--color-primary-hover)
+          glow: 'rgba(200, 16, 46, 0.4)',
+          low: 'rgba(200, 16, 46, 0.1)',
         },
-        'secondary': 'var(--color-secondary)',
-        'bg': {
-          DEFAULT: 'var(--color-bg-default)',
-          paper: 'var(--color-bg-paper)',
+        'secondary': '#000000', // var(--color-secondary)
+        'background': {
+          DEFAULT: '#0A0A0B', // var(--color-bg-default)
+          paper: '#121214',   // var(--color-bg-paper)
+          alt: '#1A1A1C',     // var(--color-bg-alt)
         },
+        'text': {
+          primary: '#FFFFFF',
+          secondary: '#D1D1D1',
+          dim: '#888888',
+        },
+        'status': {
+          success: '#22C55E',
+          warning: '#F59E0B',
+          error: '#C8102E',
+          info: '#3B82F6',
+        },
+        // Mapping MAS names explicitly for full opacity support
         'mas-red': {
           DEFAULT: '#C8102E',
           glow: 'rgba(200, 16, 46, 0.4)',
           hover: '#A60D26',
         },
         'mas-black': '#000000',
-        'mas-dark': {
-          900: '#0A0A0B',
-          800: '#121214',
-          700: '#1A1A1C',
-        },
-        'mas-text-dim': '#888888',
       },
       fontFamily: {
         ans: ['Inter', 'sans-serif'],

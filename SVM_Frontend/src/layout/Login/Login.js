@@ -64,7 +64,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white flex flex-col md:flex-row relative overflow-hidden font-sans selection:bg-mas-red/30">
+    <div className="min-h-screen bg-[var(--color-bg-default)] text-white flex flex-col md:flex-row relative overflow-hidden font-sans selection:bg-primary/30">
       {/* AI Background Particles & Grid */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden circuit-grid opacity-70" />
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -96,7 +96,7 @@ const Login = () => {
       {/* Top/Left Branding Panel */}
       <div className="relative z-10 flex flex-col w-full md:w-[45%] lg:w-[40%] items-center justify-center p-6 md:p-12 py-12 md:py-0 bg-black/40 backdrop-blur-sm border-b md:border-b-0 md:border-r border-white/5">
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] rounded-[0px] blur-[150px] bg-mas-red/10 opacity-30 animate-pulse-glow"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] rounded-[0px] blur-[150px] bg-primary/10 opacity-30 animate-pulse-glow"
           style={{ animationDuration: "8s" }}
         />
 
@@ -112,14 +112,14 @@ const Login = () => {
               alt="MAS Logo"
               className="h-[120px] w-auto filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
             />
-            <div className="absolute -inset-8 border border-mas-red/10 rounded-full animate-ping opacity-10" />
+            <div className="absolute -inset-8 border border-primary/10 rounded-full animate-ping opacity-10" />
           </div>
 
           <h1 className="text-4xl font-bold tracking-[0.2em] mb-4 metallic-text uppercase leading-tight">
             CHANGE IS COURAGE
           </h1>
 
-          <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-mas-red to-transparent mb-6 opacity-90" />
+          <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mb-6 opacity-90" />
 
           <div className="space-y-4">
             <h2 className="text-xl font-bold tracking-[0.4em] text-white/90 uppercase">
@@ -140,7 +140,7 @@ const Login = () => {
             </span>
           </div>
           <div className="flex flex-col gap-1.5 items-end">
-            <div className="h-[1px] w-6 bg-mas-red" />
+            <div className="h-[1px] w-6 bg-primary" />
             <span className="text-[7px] font-medium tracking-[0.25em] uppercase">
               PROTO.4.0.5
             </span>
@@ -149,7 +149,7 @@ const Login = () => {
       </div>
 
       {/* Right Login Panel */}
-      <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative z-10 bg-[#050505]/40 backdrop-blur-md">
+      <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative z-10 bg-[var(--color-bg-default)]/40 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -158,7 +158,7 @@ const Login = () => {
         >
           {/* Floating Glass Card */}
           <div className="glass-card rounded-none p-8 md:p-12 border border-white/5 relative overflow-hidden backdrop-blur-2xl w-full">
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-mas-red/30 to-transparent" />
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
             <div className="mb-10 text-center">
               <h3 className="text-2xl font-bold mb-1 letter-spacing-wide tracking-[0.2em] uppercase">
@@ -198,7 +198,7 @@ const Login = () => {
                       "&:hover fieldset": {
                         borderColor: "rgba(149, 138, 138, 0.1)",
                       },
-                      "&.Mui-focused fieldset": { borderColor: "#C8102E" },
+                      "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" },
                     },
                   }}
                 />
@@ -247,7 +247,7 @@ const Login = () => {
                       "&:hover fieldset": {
                         borderColor: "rgba(255,255,255,0.1)",
                       },
-                      "&.Mui-focused fieldset": { borderColor: "#C8102E" },
+                      "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" },
                     },
                   }}
                 />
@@ -262,7 +262,7 @@ const Login = () => {
                 </button>
                 <button
                   type="button"
-                  className="text-[14px] font-medium tracking-[0.2em] text-mas-red/40 hover:text-mas-red uppercase transition-colors"
+                  className="text-[14px] font-medium tracking-[0.2em] text-primary/40 hover:text-primary uppercase transition-colors"
                 >
                   Visitor Link
                 </button>
@@ -273,7 +273,7 @@ const Login = () => {
                   <motion.p
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-mas-red text-[12px] text-center font-medium tracking-widest uppercase py-2 bg-mas-red/5 rounded-none border border-mas-red/20"
+                    className="text-primary text-[12px] text-center font-medium tracking-widest uppercase py-2 bg-primary/5 rounded-none border border-primary/20"
                   >
                     {localError || reduxError}
                   </motion.p>
@@ -285,7 +285,7 @@ const Login = () => {
                 whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={reduxLoading}
-                className="w-full bg-mas-red hover:bg-[#B0060E] py-5 rounded-[0px] text-[13px] font-medium tracking-[0.3em] uppercase flex items-center justify-center gap-3 transition-all relative overflow-hidden shadow-[0_10px_30px_rgba(200,16,46,0.2)]"
+                className="w-full bg-primary hover:bg-[var(--color-primary-hover)] py-5 rounded-[0px] text-[13px] font-medium tracking-[0.3em] uppercase flex items-center justify-center gap-3 transition-all relative overflow-hidden shadow-[0_10px_30px_rgba(200,16,46,0.2)]"
               >
                 {reduxLoading ? (
                   <CircularProgress size={16} color="inherit" strokeWidth={6} />

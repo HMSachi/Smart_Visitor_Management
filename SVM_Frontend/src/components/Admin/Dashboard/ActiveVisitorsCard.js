@@ -50,11 +50,11 @@ const ActiveVisitorsCard = () => {
               className="text-white flex items-baseline"
             >
               {displayCount}
-              <span className="text-mas-red ml-3 uppercase">Nodes</span>
+              <span className="text-primary ml-3 uppercase">Nodes</span>
             </motion.h2>
           </AnimatePresence>
         </div>
-        <div className="p-4 bg-mas-red/10 text-mas-red border border-mas-red/20 group-hover:bg-mas-red group-hover:text-white group-hover:shadow-[0_0_20px_rgba(200,16,46,0.4)] transition-all duration-500">
+        <div className="p-4 bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white group-hover:shadow-[0_0_20px_rgba(200,16,46,0.4)] transition-all duration-500">
           <Zap size={24} fill="currentColor" />
         </div>
       </div>
@@ -75,7 +75,7 @@ const ActiveVisitorsCard = () => {
                 {data.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={index === data.length - 1 ? '#C8102E' : 'rgba(255,255,255,0.05)'} 
+                    fill={index === data.length - 1 ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)'} 
                   />
                 ))}
               </Bar>

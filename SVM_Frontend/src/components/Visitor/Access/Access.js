@@ -35,11 +35,11 @@ const AccessMain = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-start justify-center p-6 bg-mas-dark-900 pt-12">
+    <div className="min-h-screen flex items-start justify-center p-6 bg-background pt-12">
 
       <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-10 rounded-2xl shadow-xl">
         <div className="text-center mb-10">
-          <div className="w-10 h-10 bg-mas-red/10 border border-mas-red/20 mx-auto mb-6 flex items-center justify-center text-mas-red rounded-lg">
+          <div className="w-10 h-10 bg-primary/10 border border-primary/20 mx-auto mb-6 flex items-center justify-center text-primary rounded-lg">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -75,7 +75,7 @@ const AccessMain = () => {
               className="compact-input w-full"
             />
             {errors.email && (
-              <span className="text-mas-red text-[13px] font-bold uppercase tracking-wider block">
+              <span className="text-primary text-[13px] font-bold uppercase tracking-wider block">
                 {errors.email}
               </span>
             )}
@@ -95,7 +95,7 @@ const AccessMain = () => {
               className="compact-input w-full"
             />
             {errors.phone && (
-              <span className="text-mas-red text-[13px] font-bold uppercase tracking-wider block">
+              <span className="text-primary text-[13px] font-bold uppercase tracking-wider block">
                 {errors.phone}
               </span>
             )}
@@ -115,7 +115,7 @@ const AccessMain = () => {
               className="compact-input w-full"
             />
             {errors.refId && (
-              <span className="text-mas-red text-[13px] font-bold uppercase tracking-wider block">
+              <span className="text-primary text-[13px] font-bold uppercase tracking-wider block">
                 {errors.refId}
               </span>
             )}
@@ -136,7 +136,7 @@ const AccessMain = () => {
           <p className="text-gray-500 text-[12px] font-bold uppercase tracking-widest leading-relaxed">
             Authorized Personnel Only. 
             <br />
-            <span className="text-mas-red/50">MAS Security Node 01</span>
+            <span className="text-primary/50">MAS Security Node 01</span>
           </p>
         </div>
       </div>

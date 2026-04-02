@@ -15,9 +15,9 @@ const SentToAdminMain = () => {
             <div className="flex items-end justify-between border-b border-mas-border pb-8">
                 <div>
                     <div className="flex items-center gap-4 mb-4">
-                        <Send size={14} className="text-mas-red" />
-                        <span className="text-mas-red uppercase">Forwarded Node Tracking</span>
-                        <div className="h-[1px] w-12 bg-mas-red"></div>
+                        <Send size={14} className="text-primary" />
+                        <span className="text-primary uppercase">Forwarded Node Tracking</span>
+                        <div className="h-[1px] w-12 bg-primary"></div>
                     </div>
                     <h1 className="uppercase text-white flex items-center gap-6">
                         Sent to Admin
@@ -29,8 +29,8 @@ const SentToAdminMain = () => {
             </div>
 
             <div className="space-y-6">
-                <div className="flex items-center gap-4 px-8 py-5 bg-white/[0.02] border-l-4 border-mas-red relative overflow-hidden">
-                     <div className="absolute right-0 top-0 h-full w-32 bg-mas-red/5 blur-2xl"></div>
+                <div className="flex items-center gap-4 px-8 py-5 bg-white/[0.02] border-l-4 border-primary relative overflow-hidden">
+                     <div className="absolute right-0 top-0 h-full w-32 bg-primary/5 blur-2xl"></div>
                      <span className="uppercase text-white">Active Forwarding Nodes: 4</span>
                      <div className="h-4 w-px bg-white/10 mx-4"></div>
                      <span className="uppercase text-gray-300">Synchronization Status: Primary</span>

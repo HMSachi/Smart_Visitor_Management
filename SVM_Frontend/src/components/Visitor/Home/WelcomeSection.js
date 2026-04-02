@@ -23,7 +23,7 @@ const WelcomeSection = () => {
             <div className="w-full px-6 md:px-16 lg:px-24 xl:px-32 relative z-10">
                 <div className="max-w-6xl">
                     <div className="mb-8">
-                        <span className="text-mas-red font-black uppercase tracking-[0.4em] text-sm md:text-base">Facility Intelligence</span>
+                        <span className="text-primary font-black uppercase tracking-[0.4em] text-sm md:text-base">Facility Intelligence</span>
                     </div>
 
                     <div className="mb-10">
@@ -31,7 +31,7 @@ const WelcomeSection = () => {
                             Visitor
                         </h1>
                         <h1 className="text-5xl md:text-7xl lg:text-[5vw] font-black leading-tight tracking-[-0.03em] uppercase m-0 p-0 drop-shadow-2xl">
-                            <span className="text-mas-red mr-4">Access</span>
+                            <span className="text-primary mr-4">Access</span>
                             <span className="text-white">Portal</span>
                         </h1>
                     </div>
@@ -41,7 +41,7 @@ const WelcomeSection = () => {
                             <div className="mt-1">
                                 <p className="text-white text-lg md:text-2xl font-medium max-w-4xl leading-relaxed drop-shadow-md">
                                     Secure, streamlined, and enterprise-grade access management <br className="hidden md:block" />
-                                    for <span className="text-mas-red font-black underline underline-offset-4 decoration-2">MAS Holdings</span> world-class manufacturing facilities.
+                                    for <span className="text-primary font-black underline underline-offset-4 decoration-2">MAS Holdings</span> world-class manufacturing facilities.
                                 </p>
                             </div>
                         </div>
@@ -54,7 +54,7 @@ const WelcomeSection = () => {
                     <div className="flex flex-col sm:flex-row items-center gap-6  ">
                         <button
                             onClick={() => navigate('/request-step-1')}
-                            className="w-full sm:w-auto px-12 py-5 bg-mas-red text-white font-black uppercase text-sm md:text-base tracking-[0.2em] border border-mas-red hover:bg-[#A60D26] transition-all rounded-xl shadow-lg shadow-mas-red/20"
+                            className="w-full sm:w-auto px-12 py-5 bg-primary text-white font-black uppercase text-sm md:text-base tracking-[0.2em] border border-primary hover:bg-[var(--color-primary-hover)] transition-all rounded-xl shadow-lg shadow-primary/20"
                         >
                             Request a Visit
                         </button>

@@ -8,26 +8,26 @@ import { motion } from 'framer-motion';
 
 const SectionHeader = ({ title, icon: Icon }) => (
   <div className="flex items-center gap-5 mb-10 group/header">
-    <div className="w-1.5 h-6 bg-mas-red rounded-full shadow-[0_0_10px_#C8102E] group-hover/header:h-10 transition-all duration-500"></div>
+    <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)] group-hover/header:h-10 transition-all duration-500"></div>
     <div className="flex items-center gap-3">
-      {Icon && <Icon size={16} className="text-mas-red/40 group-hover/header:scale-110 transition-transform" />}
+      {Icon && <Icon size={16} className="text-primary/40 group-hover/header:scale-110 transition-transform" />}
       <h3 className="uppercase text-white text-xs tracking-widest font-semibold">{title}</h3>
     </div>
-    <div className="flex-1 h-[1px] bg-white/[0.05] ml-4 group-hover/header:bg-mas-red/20 transition-all"></div>
+    <div className="flex-1 h-[1px] bg-white/[0.05] ml-4 group-hover/header:bg-primary/20 transition-all"></div>
   </div>
 );
 
 const Field = ({ label, value, icon: Icon }) => (
   <div className="group/field relative">
     <div className="flex items-center gap-3 mb-2">
-      {Icon && <Icon size={12} className="text-mas-red/20 group-hover/field:text-mas-red/60 transition-colors" />}
+      {Icon && <Icon size={12} className="text-primary/20 group-hover/field:text-primary/60 transition-colors" />}
       <label className="text-gray-300/80 uppercase text-[13px] font-medium tracking-widest group-hover/field:text-gray-300 transition-colors">{label}</label>
     </div>
     <div className="relative">
-      <p className="text-white text-sm font-normal uppercase tracking-widest bg-[#121214] border border-white/5 py-2.5 px-4 rounded-xl group-hover/field:border-mas-red/30 group-hover/field:bg-[#161618] transition-all duration-500 shadow-xl">
+      <p className="text-white text-sm font-normal uppercase tracking-widest bg-[var(--color-bg-paper)] border border-white/5 py-2.5 px-4 rounded-xl group-hover/field:border-primary/30 group-hover/field:bg-[#161618] transition-all duration-500 shadow-xl">
         {value || 'DATA_NOT_FOUND'}
       </p>
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-mas-red/10 rounded-full group-hover/field:bg-mas-red transition-colors"></div>
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary/10 rounded-full group-hover/field:bg-primary transition-colors"></div>
     </div>
   </div>
 );
@@ -45,8 +45,8 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
       <div className="pt-2 pb-8 border-b border-white/5 relative mb-12 flex justify-between items-end">
         <div>
           <div className="flex items-center gap-3 mb-3">
-            <span className="px-2 py-0.5 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[13px] font-medium tracking-widest rounded-md">LIVE_PROTOCOL</span>
-            <div className="w-1.5 h-1.5 bg-mas-red rounded-full animate-pulse shadow-[0_0_8px_#C8102E]"></div>
+            <span className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary text-[13px] font-medium tracking-widest rounded-md">LIVE_PROTOCOL</span>
+            <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shadow-[0_0_8px_var(--color-primary)]"></div>
           </div>
           <h1 className="text-white text-base font-bold uppercase tracking-widest flex items-center gap-4">
             Personnel Auth. Protocol <span className="text-gray-300/80 font-light">// {visitor.batchId}</span>
@@ -55,7 +55,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
 
         <div className="text-right hidden sm:block">
           <div className="flex items-center justify-end gap-3 mb-1">
-            <span className="text-mas-red text-sm font-medium">01</span>
+            <span className="text-primary text-sm font-medium">01</span>
             <span className="text-white/10 text-lg">/</span>
             <span className="text-gray-300/80 text-xs font-medium uppercase tracking-widest">02_MATRIX</span>
           </div>
@@ -67,20 +67,20 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
             initial={{ width: 0 }}
             animate={{ width: '50%' }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="h-[3px] bg-mas-red -mt-[1px] shadow-[0_0_15px_#C8102E]"
+            className="h-[3px] bg-primary -mt-[1px] shadow-[0_0_15px_var(--color-primary)]"
           ></motion.div>
         </div>
       </div>
 
       {/* Control Navigation */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-16 bg-[#121214] p-5 border border-white/5 rounded-2xl shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-mas-red/5 to-transparent pointer-events-none"></div>
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-16 bg-[var(--color-bg-paper)] p-5 border border-white/5 rounded-2xl shadow-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none"></div>
 
         <button
           onClick={onBack}
-          className="flex items-center gap-3 uppercase text-white text-xs font-medium tracking-widest hover:text-mas-red transition-all group relative z-10"
+          className="flex items-center gap-3 uppercase text-white text-xs font-medium tracking-widest hover:text-primary transition-all group relative z-10"
         >
-          <div className="w-8 h-8 rounded-lg bg-black border border-white/5 flex items-center justify-center group-hover:border-mas-red transition-all">
+          <div className="w-8 h-8 rounded-lg bg-black border border-white/5 flex items-center justify-center group-hover:border-primary transition-all">
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
           </div>
           Return to Registry
@@ -96,7 +96,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
           </button>
           <button
             onClick={() => onAction(visitor, 'Reject')}
-            className="flex-1 lg:flex-none px-6 py-2.5 bg-mas-red hover:bg-[#A00D25] text-white text-xs font-medium tracking-widest uppercase rounded-xl transition-all shadow-[0_5px_15px_rgba(200,16,46,0.2)] flex items-center justify-center gap-2 group"
+            className="flex-1 lg:flex-none px-6 py-2.5 bg-primary hover:bg-[#A00D25] text-white text-xs font-medium tracking-widest uppercase rounded-xl transition-all shadow-[0_5px_15px_rgba(200,16,46,0.2)] flex items-center justify-center gap-2 group"
           >
             <AlertCircle size={16} className="group-hover:scale-110 transition-transform" />
             Protocol Denial
@@ -127,19 +127,19 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
 
         {/* Infrastructure Authorization Grid */}
         <div className="mt-16 bg-black/40 p-10 border border-white/5 rounded-[40px] shadow-inner relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mas-red/20 to-transparent"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
           <div className="flex items-center gap-4 mb-10">
-            <div className="w-1 h-4 bg-mas-red rounded-full"></div>
+            <div className="w-1 h-4 bg-primary rounded-full"></div>
             <p className="text-gray-300/90 text-[13px] font-medium uppercase tracking-widest">Infrastructure Zone Authorization</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {visitor.areas && visitor.areas.length > 0 ? visitor.areas.map((area, idx) => (
               <motion.div
                 key={idx}
-                whileHover={{ scale: 1.05, borderColor: '#C8102E' }}
+                whileHover={{ scale: 1.05, borderColor: 'var(--color-primary)' }}
                 className="p-6 bg-[#0E0E10] border border-white/5 rounded-2xl text-white uppercase text-[13px] font-medium tracking-widest flex flex-col items-center justify-center text-center gap-3 transition-all shadow-xl group/zone"
               >
-                <MapPin size={14} className="text-mas-red/20 group-hover/zone:text-mas-red transition-colors" />
+                <MapPin size={14} className="text-primary/20 group-hover/zone:text-primary transition-colors" />
                 {area}
               </motion.div>
             )) : (
@@ -172,9 +172,9 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-10 bg-[#121214] border border-white/5 rounded-[32px] group/aux shadow-2xl relative overflow-hidden"
+                className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-10 bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] group/aux shadow-2xl relative overflow-hidden"
               >
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-mas-red group-hover:w-2 transition-all"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary group-hover:w-2 transition-all"></div>
                 <Field label={`Unit_${(idx + 2).toString().padStart(2, '0')} Identity`} value={member.name} icon={User} />
                 <Field label="Auth Identifier (NIC)" value={member.nic} icon={Hash} />
                 <Field label="Signal Protocol (Phone)" value={member.contact || 'PROTOCOL_NOT_ESTABLISHED'} icon={Phone} />
@@ -186,7 +186,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
 
       {/* Material Intake Protocol */}
       {visitor.equipment && visitor.equipment.length > 0 && (
-        <div className="mb-20 bg-[#0A0A0B] p-12 border border-white/5 rounded-[40px] shadow-[inset_0_0_60px_rgba(0,0,0,0.5)]">
+        <div className="mb-20 bg-[var(--color-bg-default)] p-12 border border-white/5 rounded-[40px] shadow-[inset_0_0_60px_rgba(0,0,0,0.5)]">
           <SectionHeader title="Material Intake Protocol" icon={Package} />
           <div className="grid grid-cols-1 gap-6 mt-12">
             {visitor.equipment.map((item, idx) => (
@@ -195,7 +195,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className="grid grid-cols-1 md:grid-cols-12 gap-8 p-8 bg-[#121214]/40 border border-white/5 rounded-3xl group/item hover:border-mas-red/20 transition-all shadow-xl"
+                className="grid grid-cols-1 md:grid-cols-12 gap-8 p-8 bg-[var(--color-bg-paper)]/40 border border-white/5 rounded-3xl group/item hover:border-primary/20 transition-all shadow-xl"
               >
                 <div className="md:col-span-5"><Field label="Asset Nomenclature" value={item} icon={Package} /></div>
                 <div className="md:col-span-2"><Field label="Asset Qty" value="01_UNIT" icon={Hash} /></div>

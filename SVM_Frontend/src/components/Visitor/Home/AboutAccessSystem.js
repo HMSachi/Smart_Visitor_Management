@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { UserPlus, ClipboardList, ShieldCheck, ArrowUpRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,35 +10,35 @@ const AboutAccessSystem = () => {
             description: "Secure, digital self-registration for all global visitors and contractors.",
             icon: UserPlus,
             path: "/request-step-1",
-            accent: "from-[#C8102E] to-[#8B0A1E]"
+            accent: "from-[var(--color-primary)] to-[#8B0A1E]"
         },
         {
             title: "Access Control",
             description: "High-security facility clearance protocols powered by MAS intelligence.",
             icon: ShieldCheck,
             path: "/access",
-            accent: "from-[#1A1A1C] to-[#0A0A0B]"
+            accent: "from-[var(--color-bg-alt)] to-[var(--color-bg-default)]"
         },
         {
             title: "Real-time Status",
             description: "Instantly track your approval status and visitor history in real-time.",
             icon: ClipboardList,
             path: "/status",
-            accent: "from-[#1A1A1C] to-[#0A0A0B]"
+            accent: "from-[var(--color-bg-alt)] to-[var(--color-bg-default)]"
         }
     ];
 
     return (
-        <section id="about" className="py-12 md:py-24 bg-mas-dark-900 border-t border-white/5">
+        <section id="about" className="py-12 md:py-24 bg-background border-t border-white/5">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row items-baseline justify-between mb-12 gap-4">
                     <div className="max-w-xl">
                         <div className="flex items-center gap-2 mb-3">
-                            <div className="w-6 h-[1px] bg-mas-red/50"></div>
-                            <span className="text-mas-red uppercase tracking-widest text-[12px] font-bold">Facility Grid</span>
+                            <div className="w-6 h-[1px] bg-primary/50"></div>
+                            <span className="text-primary uppercase tracking-widest text-[12px] font-bold">Facility Grid</span>
                         </div>
                         <h2 className="text-2xl md:text-3xl font-bold text-white uppercase tracking-tight leading-none">
-                            Digital <span className="text-mas-red">Ecosystem</span>
+                            Digital <span className="text-primary">Ecosystem</span>
                         </h2>
                     </div>
                     <p className="max-w-xs text-gray-600 text-[13px] uppercase tracking-widest leading-relaxed font-semibold">
@@ -52,10 +51,10 @@ const AboutAccessSystem = () => {
                         <div 
                             key={index}
                             onClick={() => navigate(feature.path)}
-                            className="group relative p-6 bg-white/[0.02] border border-white/5 rounded-xl cursor-pointer hover:border-mas-red/20 transition-all duration-300"
+                            className="group relative p-6 bg-white/[0.02] border border-white/5 rounded-xl cursor-pointer hover:border-primary/20 transition-all duration-300"
                         >
                             <div className="flex items-start gap-4 h-full">
-                                <div className="w-10 h-10 bg-white/[0.03] border border-white/10 rounded-lg flex items-center justify-center text-mas-red group-hover:bg-mas-red group-hover:text-white transition-all">
+                                <div className="w-10 h-10 bg-white/[0.03] border border-white/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
                                     <feature.icon size={18} />
                                 </div>
                                 <div className="flex-1">
@@ -65,7 +64,7 @@ const AboutAccessSystem = () => {
                                     <p className="text-gray-500 text-[14px] leading-relaxed mb-4 group-hover:text-gray-300">
                                         {feature.description}
                                     </p>
-                                    <div className="flex items-center gap-2 text-mas-red text-[13px] font-bold uppercase tracking-widest">
+                                    <div className="flex items-center gap-2 text-primary text-[13px] font-bold uppercase tracking-widest">
                                         <span>Initialize</span>
                                         <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                     </div>

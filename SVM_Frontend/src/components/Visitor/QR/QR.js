@@ -12,15 +12,15 @@ const QRMain = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto px-6 pt-2 pb-12 bg-mas-dark-900 min-h-screen flex flex-col items-center">
+        <div className="max-w-md mx-auto px-6 pt-2 pb-12 bg-background min-h-screen flex flex-col items-center">
             {/* Header Section */}
             <div className="text-center mb-10">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                    <div className="w-6 h-[1px] bg-mas-red/50" />
-                    <span className="text-mas-red font-bold uppercase tracking-widest text-[12px]">Access Granted</span>
+                    <div className="w-6 h-[1px] bg-primary/50" />
+                    <span className="text-primary font-bold uppercase tracking-widest text-[12px]">Access Granted</span>
                 </div>
                 <h1 className="text-2xl font-bold text-white uppercase tracking-tight">
-                    Digital <span className="text-mas-red">Pass</span>
+                    Digital <span className="text-primary">Pass</span>
                 </h1>
                 <p className="text-gray-600 text-[13px] uppercase font-bold tracking-widest mt-1">ID: {visitorData.refId}</p>
             </div>
@@ -50,7 +50,7 @@ const QRMain = () => {
             {/* Security Notice Footer */}
             <div className="w-full bg-white/[0.02] border border-white/5 p-6 rounded-xl">
                 <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-lg bg-mas-red/5 border border-mas-red/10 flex items-center justify-center text-mas-red shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary shrink-0">
                         <Smartphone size={16} />
                     </div>
                     <div>
@@ -65,7 +65,7 @@ const QRMain = () => {
             {/* Return Button */}
             <button 
                 onClick={() => window.location.href='/status'}
-                className="mt-10 flex items-center gap-2 text-gray-700 hover:text-mas-red text-[13px] font-bold uppercase tracking-widest transition-colors"
+                className="mt-10 flex items-center gap-2 text-gray-700 hover:text-primary text-[13px] font-bold uppercase tracking-widest transition-colors"
             >
                 <ArrowLeft size={14} /> Back to Status
             </button>

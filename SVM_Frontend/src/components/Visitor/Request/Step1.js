@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
-import { CheckCircle2, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
+import { CheckCircle2, ShieldCheck } from 'lucide-react';
 import VisitorOverview from './Step1/VisitorOverview';
 import VisitInformation from './Step1/VisitInformation';
 import VehicleDetails from './Step1/VehicleDetails';
@@ -56,7 +55,7 @@ const Step1Main = () => {
         return (
             <div className="min-h-[80vh] flex items-center justify-center p-6">
                 <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-10 text-center rounded-2xl shadow-xl">
-                    <div className="w-16 h-16 bg-mas-red/10 border border-mas-red/20 rounded-2xl mx-auto mb-8 flex items-center justify-center text-mas-red">
+                    <div className="w-16 h-16 bg-primary/10 border border-primary/20 rounded-2xl mx-auto mb-8 flex items-center justify-center text-primary">
                         <CheckCircle2 size={32} />
                     </div>
                     
@@ -69,7 +68,7 @@ const Step1Main = () => {
                     <div className="flex flex-col gap-3">
                         <button 
                             onClick={() => window.location.href = '/status'}
-                            className="w-full py-4 bg-mas-red text-white font-semibold uppercase text-[14px] tracking-widest rounded-xl hover:bg-mas-red-hover transition-all"
+                            className="w-full py-4 bg-primary text-white font-semibold uppercase text-[14px] tracking-widest rounded-xl hover:bg-primary-hover transition-all"
                         >
                             Track Clearance
                         </button>
@@ -91,10 +90,10 @@ const Step1Main = () => {
             <div className="mb-10 flex items-center justify-between border-b border-white/5 pb-8">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <span className="text-mas-red font-bold text-[13px] uppercase tracking-widest">Phase 01 / 02</span>
+                        <span className="text-primary font-bold text-[13px] uppercase tracking-widest">Phase 01 / 02</span>
                     </div>
                     <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tight mb-1">
-                        Visitor <span className="text-mas-red">Registration</span>
+                        Visitor <span className="text-primary">Registration</span>
                     </h1>
                     <p className="text-gray-500 text-[14px] uppercase font-medium tracking-wider">Facility Access Clearance Request</p>
                 </div>
@@ -103,7 +102,7 @@ const Step1Main = () => {
             {/* Thinner Progress Indicator */}
             <div className="mb-12 px-2">
                 <div className="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-mas-red w-1/2" />
+                    <div className="h-full bg-primary w-1/2" />
                 </div>
             </div>
 

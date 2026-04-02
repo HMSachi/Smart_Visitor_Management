@@ -8,7 +8,7 @@ const AlertsSection = () => {
 
   const getAlertIcon = (type) => {
     switch (type) {
-      case 'critical': return <AlertCircle className="text-mas-red" size={20} />;
+      case 'critical': return <AlertCircle className="text-primary" size={20} />;
       case 'warning': return <AlertTriangle className="text-yellow-500" size={20} />;
       default: return <Info className="text-gray-300" size={20} />;
     }
@@ -16,7 +16,7 @@ const AlertsSection = () => {
 
   const getAlertStyles = (type) => {
     switch (type) {
-      case 'critical': return 'border-l-mas-red bg-mas-red/5';
+      case 'critical': return 'border-l-mas-red bg-primary/5';
       case 'warning': return 'border-l-yellow-500 bg-yellow-500/5';
       default: return 'border-l-mas-text-dim bg-white/5';
     }
@@ -26,10 +26,10 @@ const AlertsSection = () => {
     <div className="mas-glass p-8 flex flex-col border-white/5 h-full min-h-[500px]">
       <div className="flex items-center justify-between mb-10 border-b border-white/5 pb-6">
         <div className="flex items-center space-x-3">
-          <Bell className="text-mas-red" size={20} strokeWidth={2.5} />
+          <Bell className="text-primary" size={20} strokeWidth={2.5} />
           <h2 className="text-white uppercase">Signal Log</h2>
         </div>
-        <span className="bg-mas-red/10 text-mas-red px-3 py-1 uppercase border border-mas-red/20 shadow-[0_0_10px_rgba(200,16,46,0.1)]">
+        <span className="bg-primary/10 text-primary px-3 py-1 uppercase border border-primary/20 shadow-[0_0_10px_rgba(200,16,46,0.1)]">
           LIVE
         </span>
       </div>
@@ -48,7 +48,7 @@ const AlertsSection = () => {
                 <div className="flex space-x-4">
                   <div className="mt-0.5">{getAlertIcon(alert.type)}</div>
                   <div>
-                    <p className="text-white uppercase group-hover:text-mas-red transition-colors">{alert.message}</p>
+                    <p className="text-white uppercase group-hover:text-primary transition-colors">{alert.message}</p>
                     <p className="text-gray-300 mt-2 uppercase">{alert.time}</p>
                   </div>
                 </div>
@@ -59,7 +59,7 @@ const AlertsSection = () => {
         </AnimatePresence>
       </div>
 
-      <button className="mt-10 w-full py-4 uppercase text-gray-300 hover:text-white hover:bg-mas-red/10 border border-white/10 hover:border-mas-red transition-all duration-500">
+      <button className="mt-10 w-full py-4 uppercase text-gray-300 hover:text-white hover:bg-primary/10 border border-white/10 hover:border-primary transition-all duration-500">
         Access Signal Archives
       </button>
     </div>

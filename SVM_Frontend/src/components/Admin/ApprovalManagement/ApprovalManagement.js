@@ -59,9 +59,9 @@ const ApprovalManagementMain = () => {
   };
 
   return (
-    <div className="flex-1 p-10 space-y-12 animate-fade-in-slow overflow-y-auto bg-[#0A0A0B] relative">
+    <div className="flex-1 p-10 space-y-12 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
       {/* Dynamic Operational Aura */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-mas-red/30 to-transparent"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
       <div className="max-w-[1700px] mx-auto relative z-10">
         <div className="space-y-12">
@@ -69,12 +69,12 @@ const ApprovalManagementMain = () => {
             <div className="flex justify-between items-center -mb-8 relative z-20">
               <div className="relative group w-full max-w-md">
                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none opacity-70 group-focus-within:opacity-100 transition-opacity">
-                  <div className="w-1.5 h-[1px] bg-mas-red mr-2"></div>
+                  <div className="w-1.5 h-[1px] bg-primary mr-2"></div>
                 </div>
                 <input
                   type="text"
                   placeholder="SCAN REGISTRY / ENTER IDENTIFIER..."
-                  className="w-full bg-[#121214] border border-white/5 rounded-2xl px-10 py-5 text-white uppercase text-[14px] font-medium tracking-widest focus:border-mas-red/50 focus:bg-[#161618] outline-none transition-all shadow-2xl placeholder:opacity-70"
+                  className="w-full bg-[var(--color-bg-paper)] border border-white/5 rounded-2xl px-10 py-5 text-white uppercase text-[14px] font-medium tracking-widest focus:border-primary/50 focus:bg-[#161618] outline-none transition-all shadow-2xl placeholder:opacity-70"
                   value={searchTerm}
                   onChange={(e) => dispatch(setAdminSearchTerm(e.target.value))}
                 />

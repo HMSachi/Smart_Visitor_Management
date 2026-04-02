@@ -50,22 +50,23 @@ import SecurityDashboard from "./layout/Security_Officer/Dashboard/Dashboard";
 
 import { useEffect } from "react";
 import { updateIsMobile } from "./reducers/uiSlice";
+import themeColors from "./theme/themeColors";
 
 const theme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#C8102E", // MAS Red
-      dark: "#A60D26",
+      main: themeColors.primary.DEFAULT,
+      dark: themeColors.primary.hover,
       light: "#D32F2F",
     },
     background: {
-      default: "#0A0A0B",
-      paper: "#121214",
+      default: themeColors.background.DEFAULT,
+      paper: themeColors.secondary.paper,
     },
     text: {
-      primary: "#FFFFFF",
-      secondary: "#BBBBBB",
+      primary: themeColors.text.primary,
+      secondary: themeColors.text.secondary,
     },
   },
   typography: {
@@ -91,7 +92,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: "none",
-          backgroundColor: "#121214",
+          backgroundColor: themeColors.secondary.paper,
           border: "1px solid rgba(255, 255, 255, 0.05)",
         },
       },

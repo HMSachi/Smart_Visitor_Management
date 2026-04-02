@@ -1,13 +1,13 @@
 import React from 'react';
 import { Users, UserPlus, X, CreditCard, Phone, User } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
     return (
         <section className="stagger-item">
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
-                    <div className="text-mas-red">
+                    <div className="text-primary">
                         <Users size={16} />
                     </div>
                     <div>
@@ -18,7 +18,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                 <button 
                     type="button" 
                     onClick={onAdd} 
-                    className="flex items-center gap-2 px-4 py-2 bg-mas-red/10 border border-mas-red/20 text-mas-red rounded-lg hover:bg-mas-red hover:text-white transition-all text-[12px] font-bold uppercase tracking-widest group"
+                    className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-lg hover:bg-primary hover:text-white transition-all text-[12px] font-bold uppercase tracking-widest group"
                 >
                     <UserPlus size={14} />
                     Add Node
@@ -36,7 +36,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                                 <button 
                                     type="button" 
                                     onClick={() => onRemove(visitor.id)} 
-                                    className="absolute top-2 right-2 p-1 text-gray-700 hover:text-mas-red transition-all"
+                                    className="absolute top-2 right-2 p-1 text-gray-700 hover:text-primary transition-all"
                                 >
                                     <X size={12} />
                                 </button>
@@ -94,7 +94,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                         <button 
                             type="button" 
                             onClick={onAdd}
-                            className="px-6 py-2.5 bg-white/[0.03] border border-white/10 text-white text-[12px] font-bold uppercase tracking-widest rounded-lg hover:bg-mas-red hover:border-mas-red transition-all"
+                            className="px-6 py-2.5 bg-white/[0.03] border border-white/10 text-white text-[12px] font-bold uppercase tracking-widest rounded-lg hover:bg-primary hover:border-primary transition-all"
                         >
                             Declare Member
                         </button>

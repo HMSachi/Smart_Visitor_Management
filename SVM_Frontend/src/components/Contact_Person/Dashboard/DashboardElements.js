@@ -5,8 +5,8 @@ export const PerformanceAnalytics = () => (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 animate-fade-in">
         <div>
             <div className="flex items-center gap-3 mb-1">
-                <div className="w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E]"></div>
-                <span className="text-mas-red text-[13px] font-medium uppercase tracking-[0.3em]">Operational Intel</span>
+                <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
+                <span className="text-primary text-[13px] font-medium uppercase tracking-[0.3em]">Operational Intel</span>
             </div>
             <p className="text-gray-300 text-xs uppercase tracking-widest leading-relaxed">Real-time visitor traffic and authorization metrics</p>
         </div>
@@ -20,7 +20,7 @@ export const PerformanceAnalytics = () => (
             </div>
             <div className="text-right">
                 <p className="text-gray-300 text-[12px] uppercase font-medium tracking-wider mb-0.5">Active Nodes</p>
-                <span className="text-xl font-medium text-mas-red">12</span>
+                <span className="text-xl font-medium text-primary">12</span>
             </div>
         </div>
     </div>
@@ -36,18 +36,18 @@ export const NodeConfiguration = () => (
             </div>
         </div>
 
-        <div className="p-6 bg-[#121214] border border-white/5 rounded-3xl relative group overflow-hidden flex-1 shadow-xl">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-mas-red/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl opacity-50"></div>
+        <div className="p-6 bg-[var(--color-bg-paper)] border border-white/5 rounded-3xl relative group overflow-hidden flex-1 shadow-xl">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl opacity-50"></div>
 
             <div className="relative z-10 flex flex-col h-full">
-                <div className="w-10 h-10 rounded-xl bg-mas-red/10 border border-mas-red/20 flex items-center justify-center text-mas-red mb-5">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-5">
                     <Globe size={20} />
                 </div>
                 <h4 className="text-white text-sm font-medium uppercase tracking-wide mb-2">Encryption: PRIME</h4>
                 <p className="text-gray-300 text-[14px] leading-relaxed mb-6 flex-1">
                     System synchronization with MAS-HQ active. All entry points are secured.
                 </p>
-                <button className="w-full py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white text-[12px] font-medium uppercase tracking-[0.2em] hover:bg-mas-red hover:border-mas-red transition-all duration-300">
+                <button className="w-full py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white text-[12px] font-medium uppercase tracking-[0.2em] hover:bg-primary hover:border-primary transition-all duration-300">
                     Sync Matrix
                 </button>
             </div>
@@ -59,7 +59,7 @@ export const NodeConfiguration = () => (
                 <span className="text-white">85%</span>
             </div>
             <div className="bg-white/5 h-1 w-full rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-mas-red/40 to-mas-red h-full w-[85%] rounded-full"></div>
+                <div className="bg-gradient-to-r from-primary/40 to-primary h-full w-[85%] rounded-full"></div>
             </div>
         </div>
     </div>

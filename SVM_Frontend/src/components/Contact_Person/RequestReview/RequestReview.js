@@ -54,7 +54,7 @@ const RequestReviewMain = () => {
     };
 
     return (
-        <div className="flex-1 flex flex-col min-w-0 bg-[#0A0A0B]/50 relative overflow-x-hidden">
+        <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)]/50 relative overflow-x-hidden">
             <div className="p-10 space-y-8 animate-fade-in relative z-10 max-w-7xl mx-auto w-full">
                 {/* Top Header */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-4">
@@ -67,8 +67,8 @@ const RequestReviewMain = () => {
                             Return to Command Center
                         </button>
                         <div className="flex items-center gap-4">
-                            <div className="w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E] animate-pulse"></div>
-                            <span className="text-mas-red text-[14px] font-medium uppercase tracking-[0.3em]">Personnel Authorization Protocol</span>
+                            <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)] animate-pulse"></div>
+                            <span className="text-primary text-[14px] font-medium uppercase tracking-[0.3em]">Personnel Authorization Protocol</span>
                         </div>
                     </div>
 
@@ -80,7 +80,7 @@ const RequestReviewMain = () => {
                         <div className="h-10 w-[1px] bg-white/10"></div>
                         <div className="text-right">
                             <p className="text-gray-300 text-[12px] uppercase font-medium tracking-widest mb-1 opacity-80">Sync Status</p>
-                            <span className="text-mas-red text-[13px] font-medium uppercase tracking-widest">{requestData?.status || 'PENDING_NODE'}</span>
+                            <span className="text-primary text-[13px] font-medium uppercase tracking-widest">{requestData?.status || 'PENDING_NODE'}</span>
                         </div>
                     </div>
                 </div>

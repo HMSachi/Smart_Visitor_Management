@@ -13,7 +13,7 @@ const ActivityTimeline = () => {
         <div className="space-y-8">
             <div className="flex items-center justify-between border-b border-mas-border pb-4">
                 <h3 className="uppercase flex items-center gap-3">
-                    <Activity size={14} className="text-mas-red" />
+                    <Activity size={14} className="text-primary" />
                     Real-Time Node Activity
                 </h3>
                 <button className="text-gray-300 uppercase hover:text-white transition-colors">View All Streams</button>
@@ -21,11 +21,11 @@ const ActivityTimeline = () => {
 
             <div className="space-y-4">
                 {activities.map((act) => (
-                    <div key={act.id} className="flex items-center justify-between p-6 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-mas-red/20 transition-all group">
+                    <div key={act.id} className="flex items-center justify-between p-6 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-primary/20 transition-all group">
                         <div className="flex items-center gap-6">
                             <div className="relative">
-                                <div className={`w-3 h-3 rounded-full ${act.status === 'priority' || act.status === 'urgent' ? 'bg-mas-red shadow-[0_0_8px_#C8102E]' : 'bg-green-500 shadow-[0_0_8px_#22c55e]'}`}></div>
-                                <div className={`absolute -inset-1 rounded-full animate-ping opacity-70 ${act.status === 'priority' || act.status === 'urgent' ? 'bg-mas-red' : 'bg-green-500'}`}></div>
+                                <div className={`w-3 h-3 rounded-full ${act.status === 'priority' || act.status === 'urgent' ? 'bg-primary shadow-[0_0_8px_var(--color-primary)]' : 'bg-green-500 shadow-[0_0_8px_#22c55e]'}`}></div>
+                                <div className={`absolute -inset-1 rounded-full animate-ping opacity-70 ${act.status === 'priority' || act.status === 'urgent' ? 'bg-primary' : 'bg-green-500'}`}></div>
                             </div>
                             <div>
                                 <h4 className="text-white uppercase mb-1">{act.visitor}</h4>
@@ -34,7 +34,7 @@ const ActivityTimeline = () => {
                         </div>
                         <div className="flex items-center gap-8">
                             <span className="text-gray-300 uppercase">{act.time}</span>
-                            <ArrowUpRight size={14} className="text-gray-300 group-hover:text-mas-red transition-colors cursor-pointer" />
+                            <ArrowUpRight size={14} className="text-gray-300 group-hover:text-primary transition-colors cursor-pointer" />
                         </div>
                     </div>
                 ))}

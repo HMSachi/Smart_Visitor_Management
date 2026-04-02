@@ -23,21 +23,21 @@ const StatusMain = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto px-6 pt-2 pb-8 text-white bg-mas-dark-900 min-h-screen">
+        <div className="max-w-4xl mx-auto px-6 pt-2 pb-8 text-white bg-background min-h-screen">
             {/* Page Header */}
             <header className="mb-8 flex items-center justify-between border-b border-white/5 pb-6">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <span className="text-mas-red font-bold text-[12px] uppercase tracking-widest">System Node 01</span>
+                        <span className="text-primary font-bold text-[12px] uppercase tracking-widest">System Node 01</span>
                     </div>
                     <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight">
-                        Live <span className="text-mas-red">Tracking</span>
+                        Live <span className="text-primary">Tracking</span>
                     </h1>
                     <p className="text-gray-500 text-[13px] uppercase font-semibold tracking-wider mt-0.5">Clearance Monitor V.4.2.1</p>
                 </div>
 
                 <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-white/[0.02] border border-white/5 rounded-lg">
-                    <Activity size={14} className="text-mas-red" />
+                    <Activity size={14} className="text-primary" />
                     <span className="text-gray-400 text-[13px] font-bold uppercase tracking-widest">Protocol Active</span>
                 </div>
             </header>
@@ -50,7 +50,7 @@ const StatusMain = () => {
                     {/* Timeline Card */}
                     <div className="bg-white/[0.01] border border-white/5 p-6 rounded-xl">
                         <div className="flex items-center gap-3 mb-8">
-                            <div className="text-mas-red">
+                            <div className="text-primary">
                                 <FileText size={14} />
                             </div>
                             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0">Clearance Timeline</h3>
@@ -68,7 +68,7 @@ const StatusMain = () => {
                             <div>
                                 <span className="text-[13px] text-gray-500 uppercase font-bold tracking-widest block mb-1">SIM_AUTH_NODE</span>
                                 <div className="flex items-center gap-1.5">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-mas-red/40" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
                                     <span className="text-[12px] text-gray-600 font-bold uppercase tracking-widest">Protocol Override Active</span>
                                 </div>
                             </div>
@@ -76,7 +76,7 @@ const StatusMain = () => {
                         <div className="flex gap-2">
                             <button 
                                 onClick={() => dispatch(setStatus('step1_approved'))}
-                                className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-[12px] font-bold uppercase tracking-widest text-gray-500 hover:text-white hover:bg-mas-red/20 transition-all"
+                                className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-[12px] font-bold uppercase tracking-widest text-gray-500 hover:text-white hover:bg-primary/20 transition-all"
                             >
                                 Simulate Step 1
                             </button>

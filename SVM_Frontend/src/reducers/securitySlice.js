@@ -6,7 +6,7 @@ const initialState = {
     { label: 'Scanned Today', value: '142', iconName: 'QrCode', trend: '+12%', color: 'text-white' },
     { label: 'Inside Facility', value: '28', iconName: 'Users', trend: 'Normal', color: 'text-white' },
     { label: 'Clearance Sync', value: '100%', iconName: 'ShieldCheck', trend: 'Steady', color: 'text-green-500' },
-    { label: 'Pending Alerts', value: '02', iconName: 'AlertTriangle', trend: 'Action Req', color: 'text-mas-red' }
+    { label: 'Pending Alerts', value: '02', iconName: 'AlertTriangle', trend: 'Action Req', color: 'text-primary' }
   ],
   commandStatus: 'NORMAL OPERATIONS',
   stationId: 'NODE-08-MAIN',

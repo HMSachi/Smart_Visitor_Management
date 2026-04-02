@@ -1,11 +1,11 @@
 import React from 'react';
-import { Calendar, Info, Users, Building2, Minus, Plus } from 'lucide-react';
+import { Info, Minus, Plus } from 'lucide-react';
 
 const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
     return (
         <section className="animate-fade-in stagger-item">
             <div className="flex items-center gap-3 mb-6">
-                <div className="text-mas-red">
+                <div className="text-primary">
                     <Info size={14} />
                 </div>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0 transition-all">Visit Logistics</h3>
@@ -77,7 +77,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                     <button 
                         type="button"
                         onClick={() => onToggle('isCompanyRelated')}
-                        className={`w-10 h-5 flex items-center p-0.5 rounded-full transition-all duration-500 ${data.isCompanyRelated ? 'bg-mas-red' : 'bg-white/10'}`}
+                        className={`w-10 h-5 flex items-center p-0.5 rounded-full transition-all duration-500 ${data.isCompanyRelated ? 'bg-primary' : 'bg-white/10'}`}
                     >
                         <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${data.isCompanyRelated ? 'translate-x-5' : 'translate-x-0'}`}></div>
                     </button>

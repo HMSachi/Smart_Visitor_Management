@@ -15,7 +15,7 @@ const TotalVisitsCard = () => {
             {totalVisits.toLocaleString()}
           </h2>
         </div>
-        <div className="p-4 bg-mas-red/10 text-mas-red border border-mas-red/20 group-hover:bg-mas-red group-hover:text-white transition-all duration-500">
+        <div className="p-4 bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all duration-500">
           <Users size={24} strokeWidth={2.5} />
         </div>
       </div>
@@ -34,19 +34,19 @@ const TotalVisitsCard = () => {
           <AreaChart data={history}>
             <defs>
               <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#C8102E" stopOpacity={0.2}/>
-                <stop offset="95%" stopColor="#C8102E" stopOpacity={0}/>
+                <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.2}/>
+                <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
               </linearGradient>
             </defs>
             <Tooltip 
               contentStyle={{ backgroundColor: '#0F0F10', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '0' }}
               itemStyle={{ color: '#fff' }}
-              cursor={{ stroke: '#C8102E', strokeWidth: 1, strokeDasharray: '4 4' }}
+              cursor={{ stroke: 'var(--color-primary)', strokeWidth: 1, strokeDasharray: '4 4' }}
             />
             <Area 
               type="monotone" 
               dataKey="visits" 
-              stroke="#C8102E" 
+              stroke="var(--color-primary)" 
               strokeWidth={3}
               fillOpacity={1} 
               fill="url(#colorVisits)" 
@@ -57,7 +57,7 @@ const TotalVisitsCard = () => {
       </div>
 
       {/* Subtle indicator */}
-      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-mas-red group-hover:w-full transition-all duration-1000" />
+      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-1000" />
     </div>
   );
 };

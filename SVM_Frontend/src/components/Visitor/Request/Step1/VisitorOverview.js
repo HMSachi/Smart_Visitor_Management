@@ -12,7 +12,7 @@ const VisitorOverview = ({ data, onChange }) => {
     return (
         <section className="animate-fade-in">
             <div className="flex items-center gap-3 mb-6">
-                <div className="text-mas-red">
+                <div className="text-primary">
                     <User size={14} />
                 </div>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0 transition-all">Visitor Information</h3>

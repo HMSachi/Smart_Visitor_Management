@@ -5,7 +5,7 @@ const Phase1Summary = ({ summary }) => {
     return (
         <section className="stagger-item">
             <div className="flex items-center gap-3 mb-8">
-                <div className="text-mas-red">
+                <div className="text-primary">
                     <ClipboardCheck size={16} />
                 </div>
                 <div>
@@ -23,7 +23,7 @@ const Phase1Summary = ({ summary }) => {
                     ].map((item) => (
                         <div key={item.label} className="group/item">
                             <div className="flex items-center gap-2 mb-2">
-                                <item.icon size={12} className="text-mas-red/60" />
+                                <item.icon size={12} className="text-primary/60" />
                                 <span className="text-[12px] font-bold uppercase tracking-widest text-gray-600">{item.label}</span>
                             </div>
                             <div className="pl-5">
@@ -34,13 +34,13 @@ const Phase1Summary = ({ summary }) => {
 
                     <div className="md:col-span-2 group/item">
                         <div className="flex items-center gap-2 mb-4">
-                            <MapPin size={12} className="text-mas-red/60" />
+                            <MapPin size={12} className="text-primary/60" />
                             <span className="text-[12px] font-bold uppercase tracking-widest text-gray-600">Authorized Zones</span>
                         </div>
                         <div className="pl-5 flex flex-wrap gap-2">
                             {(summary.areas || []).length > 0 ? (
                                 (summary.areas || []).map((area) => (
-                                    <span key={area} className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[12px] font-bold uppercase tracking-widest rounded-lg">
+                                    <span key={area} className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary text-[12px] font-bold uppercase tracking-widest rounded-lg">
                                         {area}
                                     </span>
                                 ))
@@ -53,7 +53,7 @@ const Phase1Summary = ({ summary }) => {
 
                 <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full bg-mas-red/40" />
+                        <div className="w-1 h-1 rounded-full bg-primary/40" />
                         <span className="text-[14px] font-bold text-gray-700 uppercase tracking-widest">Integrity Check Active</span>
                     </div>
                     <span className="text-[14px] font-bold text-gray-800 uppercase tracking-widest">MAS_ACCESS_PROTOCOL</span>

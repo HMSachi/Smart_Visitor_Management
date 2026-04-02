@@ -1,13 +1,12 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { ShieldCheck, Clock, XCircle, AlertTriangle, Zap } from 'lucide-react';
+import { ShieldCheck, Clock, XCircle, Zap } from 'lucide-react';
 
 const StatusCard = ({ status }) => {
     const config = {
         'step1_pending': { 
-            color: 'text-mas-red', 
-            bg: 'bg-mas-red/10', 
-            border: 'border-mas-red/20', 
+            color: 'text-primary', 
+            bg: 'bg-primary/10', 
+            border: 'border-primary/20', 
             label: 'PHASE 1 REVIEW', 
             icon: Clock,
             desc: 'Primary protocol initialization active.'
@@ -21,9 +20,9 @@ const StatusCard = ({ status }) => {
             desc: 'Secondary documentation required.'
         },
         'step2_pending': { 
-            color: 'text-mas-red', 
-            bg: 'bg-mas-red/10', 
-            border: 'border-mas-red/20', 
+            color: 'text-primary', 
+            bg: 'bg-primary/10', 
+            border: 'border-primary/20', 
             label: 'FINAL CLEARANCE', 
             icon: Zap,
             desc: 'Detailed verification in progress.'
@@ -37,9 +36,9 @@ const StatusCard = ({ status }) => {
             desc: 'Digital pass is now synchronized.'
         },
         'rejected': { 
-            color: 'text-mas-red', 
-            bg: 'bg-mas-red/20', 
-            border: 'border-mas-red/40', 
+            color: 'text-primary', 
+            bg: 'bg-primary/20', 
+            border: 'border-primary/40', 
             label: 'ACCESS DENIED', 
             icon: XCircle,
             desc: 'Security clearance failure detected.'
@@ -68,7 +67,7 @@ const StatusCard = ({ status }) => {
                 <div className="px-5 py-3 border-l border-white/5 text-center md:text-right w-full md:w-auto flex flex-col justify-center items-center md:items-end">
                     <div className="flex items-center gap-2 mb-1">
                         <span className="text-gray-600 text-[12px] font-bold uppercase tracking-widest">Node Node</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-mas-red/40" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
                     </div>
                     <span className="text-white text-[14px] font-bold uppercase tracking-widest tabular-nums">MAS CORE 01</span>
                     
