@@ -11,7 +11,7 @@ const StatusBadge = ({ status }) => {
   };
 
   return (
-    <span className={`px-2.5 py-1 text-[10px] font-medium tracking-widest uppercase border rounded-lg ${styles[status] || styles['Pending']}`}>
+    <span className={`px-2.5 py-1 text-[13px] font-medium tracking-widest uppercase border rounded-lg ${styles[status] || styles['Pending']}`}>
       {status}
     </span>
   );
@@ -29,7 +29,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
           </div>
           <div>
             <h2 className="text-xl font-bold tracking-tight text-white uppercase">Personnel Authorization</h2>
-            <p className="text-gray-300 text-[10px] font-medium uppercase tracking-[0.2em] mt-1 opacity-90">Database Synchronization Active</p>
+            <p className="text-gray-300 text-[13px] font-medium uppercase tracking-[0.2em] mt-1 opacity-90">Database Synchronization Active</p>
           </div>
         </div>
 
@@ -40,7 +40,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             <input
               type="text"
               placeholder="SEARCH MATRIX..."
-              className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-xl text-[10px] text-white placeholder:text-gray-300/30 focus:border-mas-red/30 focus:bg-white/[0.05] outline-none transition-all uppercase tracking-widest"
+              className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-white/5 rounded-xl text-[13px] text-white placeholder:text-gray-300/30 focus:border-mas-red/30 focus:bg-white/[0.05] outline-none transition-all uppercase tracking-widest"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -51,7 +51,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full pl-4 pr-10 py-2.5 bg-white/[0.03] border border-white/5 rounded-xl text-[10px] font-medium text-gray-300 uppercase tracking-widest focus:text-white focus:border-mas-red/30 transition-all cursor-pointer outline-none appearance-none"
+              className="w-full pl-4 pr-10 py-2.5 bg-white/[0.03] border border-white/5 rounded-xl text-[13px] font-medium text-gray-300 uppercase tracking-widest focus:text-white focus:border-mas-red/30 transition-all cursor-pointer outline-none appearance-none"
             >
               <option value="All">ALL STATUS</option>
               <option value="Pending">PENDING</option>
@@ -64,7 +64,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             </div>
           </div>
 
-          <button className="flex items-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-medium uppercase tracking-widest text-gray-300 hover:text-white hover:border-mas-red/30 hover:bg-mas-red/5 transition-all group">
+          <button className="flex items-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[13px] font-medium uppercase tracking-widest text-gray-300 hover:text-white hover:border-mas-red/30 hover:bg-mas-red/5 transition-all group">
             <Download size={14} className="group-hover:translate-y-0.5 transition-transform" /> Export Data
           </button>
         </div>
@@ -73,7 +73,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
       <div className="overflow-x-auto sm:overflow-visible p-4 sm:p-0">
         <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
           <thead className="hidden sm:table-header-group">
-            <tr className="bg-white/[0.02] border-b border-white/5 text-gray-300 text-[10px] font-medium uppercase tracking-[0.2em]">
+            <tr className="bg-white/[0.02] border-b border-white/5 text-gray-300 text-[13px] font-medium uppercase tracking-[0.2em]">
               <th className="px-8 py-4 w-20 text-center">Unit</th>
               <th className="px-8 py-4">Visitor Identity</th>
               <th className="px-8 py-4">Reference Protocol</th>
@@ -86,47 +86,47 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             {requests.map((visitor) => (
               <tr key={visitor.id} className="group transition-all hover:bg-white/[0.01] block sm:table-row bg-[#161618] sm:bg-transparent border border-white/5 sm:border-none rounded-3xl sm:rounded-none mb-6 sm:mb-0 p-6 sm:p-0 shadow-2xl sm:shadow-none">
                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-center border-b border-white/5 sm:border-none last:border-none">
-                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Unit Member Count</span>
-                  <div className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 text-[10px] font-medium text-gray-300 flex items-center justify-center transition-all mx-0 sm:mx-auto group-hover:border-mas-red/20 group-hover:text-white">
+                  <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Unit Member Count</span>
+                  <div className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 text-[13px] font-medium text-gray-300 flex items-center justify-center transition-all mx-0 sm:mx-auto group-hover:border-mas-red/20 group-hover:text-white">
                     {visitor.members.length + 1}
                   </div>
                 </td>
                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b border-white/5 sm:border-none last:border-none">
-                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Visitor Identity</span>
+                  <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Visitor Identity</span>
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-mas-red/20 to-transparent border border-mas-red/20 flex items-center justify-center text-mas-red text-[11px] font-medium group-hover:shadow-[0_0_15px_rgba(200,16,46,0.15)] transition-all">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-mas-red/20 to-transparent border border-mas-red/20 flex items-center justify-center text-mas-red text-[14px] font-medium group-hover:shadow-[0_0_15px_rgba(200,16,46,0.15)] transition-all">
                       {visitor.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium truncate max-w-[200px]">{visitor.name}</p>
-                      <p className="text-gray-300 text-[9px] uppercase tracking-widest font-medium opacity-90">Lead Personnel</p>
+                      <p className="text-gray-300 text-[12px] uppercase tracking-widest font-medium opacity-90">Lead Personnel</p>
                     </div>
                   </div>
                 </td>
                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b border-white/5 sm:border-none last:border-none">
-                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Reference Protocol</span>
-                  <p className="text-white/80 font-mono text-[11px] tracking-tighter mb-1 select-all">{visitor.batchId}</p>
-                  <p className="text-gray-300 text-[10px] uppercase font-medium">{visitor.contactPerson}</p>
+                  <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Reference Protocol</span>
+                  <p className="text-white/80 font-mono text-[14px] tracking-tighter mb-1 select-all">{visitor.batchId}</p>
+                  <p className="text-gray-300 text-[13px] uppercase font-medium">{visitor.contactPerson}</p>
                 </td>
                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b border-white/5 sm:border-none last:border-none">
-                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Schedule Matrix</span>
+                  <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3">Schedule Matrix</span>
                   <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2 text-white/80 text-[11px] font-medium">
+                    <div className="flex items-center gap-2 text-white/80 text-[14px] font-medium">
                       <span className="w-1 h-1 bg-mas-red rounded-full"></span>
                       {visitor.date}
                     </div>
-                    <p className="text-gray-300 text-[10px] uppercase tracking-wider pl-3">{visitor.timeIn} | {visitor.areas[0]}</p>
+                    <p className="text-gray-300 text-[13px] uppercase tracking-wider pl-3">{visitor.timeIn} | {visitor.areas[0]}</p>
                   </div>
                 </td>
                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-center border-b border-white/5 sm:border-none last:border-none">
-                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Authorization</span>
+                  <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Authorization</span>
                   <StatusBadge status={visitor.status} />
                 </td>
                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-right">
-                  <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Actions</span>
+                  <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Actions</span>
                   <button
                     onClick={() => onReview(visitor.id)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/5 text-white text-[10px] font-medium uppercase tracking-widest hover:bg-white hover:text-black hover:border-white transition-all group/btn shadow-lg"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/5 text-white text-[13px] font-medium uppercase tracking-widest hover:bg-white hover:text-black hover:border-white transition-all group/btn shadow-lg"
                   >
                     <Eye size={14} className="group-hover/btn:scale-110 transition-transform" />
                     Review

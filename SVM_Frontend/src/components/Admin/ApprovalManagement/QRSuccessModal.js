@@ -30,7 +30,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData }) => {
                     <CheckSquare size={20} />
                   </div>
                   <div>
-                    <p className="text-gray-300/90 text-[10px] font-medium uppercase tracking-widest mb-1">Security Protocol Concluded</p>
+                    <p className="text-gray-300/90 text-[13px] font-medium uppercase tracking-widest mb-1">Security Protocol Concluded</p>
                     <h2 className="text-white text-lg font-bold uppercase tracking-widest">Clearance Granted</h2>
                   </div>
                 </div>
@@ -49,13 +49,13 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData }) => {
                 </div>
 
                 <div className="space-y-3">
-                  <p className="text-gray-300/80 text-[10px] font-medium uppercase tracking-widest">Authorized Identity</p>
+                  <p className="text-gray-300/80 text-[13px] font-medium uppercase tracking-widest">Authorized Identity</p>
                   <p className="text-white text-lg font-medium uppercase tracking-widest flex items-center justify-center gap-3">
                     <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22C55E]"></div>
                     {visitorData?.name}
                   </p>
                   <div className="h-[1px] w-16 bg-white/10 mx-auto my-4"></div>
-                  <p className="text-gray-300/90 text-[10px] font-medium leading-relaxed uppercase tracking-widest max-w-sm">
+                  <p className="text-gray-300/90 text-[13px] font-medium leading-relaxed uppercase tracking-widest max-w-sm">
                     Digital passport and encrypted auth credentials dispatched to unit controller:
                     <span className="text-gray-300/80 ml-1">({visitorData?.contactPerson})</span>
                   </p>

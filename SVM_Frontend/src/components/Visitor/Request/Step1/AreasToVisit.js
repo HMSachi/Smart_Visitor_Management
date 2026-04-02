@@ -36,7 +36,7 @@ const AreasToVisit = ({ selectedAreas, onToggle }) => {
                         }`}>
                             <area.icon size={18} />
                         </div>
-                        <span className={`text-[10px] font-semibold uppercase tracking-widest transition-colors ${
+                        <span className={`text-[13px] font-semibold uppercase tracking-widest transition-colors ${
                             selectedAreas.includes(area.id) ? 'text-white' : 'text-gray-500 group-hover:text-white'
                         }`}>
                             {area.name}

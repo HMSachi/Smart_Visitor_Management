@@ -18,11 +18,11 @@ const RejectionTable = ({ requests, onSelect }) => {
                     {requests.map((req) => (
                         <tr key={req.id} className="group transition-all hover:bg-white/[0.01] block sm:table-row bg-[#161618] sm:bg-transparent border border-white/5 sm:border-none rounded-3xl sm:rounded-none mb-6 sm:mb-0 p-6 sm:p-0 shadow-2xl sm:shadow-none cursor-pointer" onClick={() => onSelect(req)}>
                             <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Batch ID</span>
+                                <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Batch ID</span>
                                 <span className="text-gray-300">#{req.id}</span>
                             </td>
                             <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Visitor Identity</span>
+                                <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Visitor Identity</span>
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-lg bg-mas-red/10 flex items-center justify-center text-mas-red border border-mas-red/20 group-hover:bg-mas-red group-hover:text-white transition-all">
                                         {req.name[0]}
@@ -31,18 +31,18 @@ const RejectionTable = ({ requests, onSelect }) => {
                                 </div>
                             </td>
                             <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Rejection Date</span>
+                                <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Rejection Date</span>
                                 <span className="uppercase text-gray-500">{req.date}</span>
                             </td>
                             <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Root Cause</span>
+                                <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Root Cause</span>
                                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-mas-red/5 border border-mas-red/20 text-mas-red uppercase break-words">
                                     <Octagon size={10} />
                                     {req.reason}
                                 </div>
                             </td>
                             <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 text-left sm:text-right">
-                                <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Protocol Details</span>
+                                <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Protocol Details</span>
                                 <div className="text-gray-300 group-hover:text-mas-red transition-all inline-block">
                                     <ArrowRight size={14} />
                                 </div>

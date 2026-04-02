@@ -74,7 +74,7 @@ const ApprovalManagementMain = () => {
                 <input
                   type="text"
                   placeholder="SCAN REGISTRY / ENTER IDENTIFIER..."
-                  className="w-full bg-[#121214] border border-white/5 rounded-2xl px-10 py-5 text-white uppercase text-[11px] font-medium tracking-widest focus:border-mas-red/50 focus:bg-[#161618] outline-none transition-all shadow-2xl placeholder:opacity-70"
+                  className="w-full bg-[#121214] border border-white/5 rounded-2xl px-10 py-5 text-white uppercase text-[14px] font-medium tracking-widest focus:border-mas-red/50 focus:bg-[#161618] outline-none transition-all shadow-2xl placeholder:opacity-70"
                   value={searchTerm}
                   onChange={(e) => dispatch(setAdminSearchTerm(e.target.value))}
                 />

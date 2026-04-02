@@ -77,7 +77,7 @@ const StatusTimeline = ({ currentStage }) => {
 
             <div className="flex flex-col">
               <h4
-                className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                className={`text-[13px] font-bold uppercase tracking-widest transition-colors ${
                   status === "upcoming"
                     ? "text-gray-600"
                     : status === "active"
@@ -89,7 +89,7 @@ const StatusTimeline = ({ currentStage }) => {
               </h4>
               <div className="flex items-center gap-3">
                 <span
-                  className={`text-[9px] font-bold uppercase tracking-[0.05em] ${
+                  className={`text-[12px] font-bold uppercase tracking-[0.05em] ${
                     status === "active" ? "text-gray-400" : "text-gray-600"
                   }`}
                 >

@@ -7,6 +7,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'primary': {
+          DEFAULT: 'var(--color-primary)',
+          hover: 'var(--color-primary-hover)',
+          glow: 'var(--color-primary-glow)',
+        },
+        'secondary': 'var(--color-secondary)',
+        'bg': {
+          DEFAULT: 'var(--color-bg-default)',
+          paper: 'var(--color-bg-paper)',
+        },
         'mas-red': {
           DEFAULT: '#C8102E',
           glow: 'rgba(200, 16, 46, 0.4)',

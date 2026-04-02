@@ -25,13 +25,13 @@ const ApprovedRequestsMain = () => {
                     <div>
                         <div className="flex items-center gap-3 mb-1">
                             <div className="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.5)] animate-pulse"></div>
-                            <span className="text-green-500 text-[10px] font-medium uppercase tracking-[0.3em]">Validation Success</span>
+                            <span className="text-green-500 text-[13px] font-medium uppercase tracking-[0.3em]">Validation Success</span>
                         </div>
                         <p className="text-gray-300 text-xs uppercase tracking-widest opacity-90">Verified Personnel Registry & Archive</p>
                     </div>
                     <div className="flex items-center gap-4 bg-white/[0.02] border border-white/5 p-3 px-5 rounded-2xl backdrop-blur-sm">
                         <div className="text-right">
-                            <p className="text-gray-300 text-[9px] uppercase font-medium tracking-wider mb-0.5 opacity-80">Total Verified</p>
+                            <p className="text-gray-300 text-[12px] uppercase font-medium tracking-wider mb-0.5 opacity-80">Total Verified</p>
                             <span className="text-xl font-medium text-white">1,284</span>
                         </div>
                     </div>

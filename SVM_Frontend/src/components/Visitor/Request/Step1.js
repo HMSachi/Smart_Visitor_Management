@@ -61,7 +61,7 @@ const Step1Main = () => {
                     </div>
                     
                     <h2 className="text-xl font-bold text-white uppercase tracking-tight mb-3">Request Dispatched</h2>
-                    <p className="text-gray-500 text-[11px] font-medium uppercase tracking-widest mb-8 leading-relaxed">
+                    <p className="text-gray-500 text-[14px] font-medium uppercase tracking-widest mb-8 leading-relaxed">
                         Your clearance request is being processed.
                         <br /> Ref: <span className="text-white font-semibold">{requestRef}</span>
                     </p>
@@ -69,13 +69,13 @@ const Step1Main = () => {
                     <div className="flex flex-col gap-3">
                         <button 
                             onClick={() => window.location.href = '/status'}
-                            className="w-full py-4 bg-mas-red text-white font-semibold uppercase text-[11px] tracking-widest rounded-xl hover:bg-mas-red-hover transition-all"
+                            className="w-full py-4 bg-mas-red text-white font-semibold uppercase text-[14px] tracking-widest rounded-xl hover:bg-mas-red-hover transition-all"
                         >
                             Track Clearance
                         </button>
                         <button 
                             onClick={() => window.location.href = '/home'}
-                            className="w-full py-4 bg-white/[0.02] border border-white/10 text-white font-semibold uppercase text-[11px] tracking-widest rounded-xl hover:bg-white/[0.05] transition-all"
+                            className="w-full py-4 bg-white/[0.02] border border-white/10 text-white font-semibold uppercase text-[14px] tracking-widest rounded-xl hover:bg-white/[0.05] transition-all"
                         >
                             Return Home
                         </button>
@@ -91,12 +91,12 @@ const Step1Main = () => {
             <div className="mb-10 flex items-center justify-between border-b border-white/5 pb-8">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <span className="text-mas-red font-bold text-[10px] uppercase tracking-widest">Phase 01 / 02</span>
+                        <span className="text-mas-red font-bold text-[13px] uppercase tracking-widest">Phase 01 / 02</span>
                     </div>
                     <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tight mb-1">
                         Visitor <span className="text-mas-red">Registration</span>
                     </h1>
-                    <p className="text-gray-500 text-[11px] uppercase font-medium tracking-wider">Facility Access Clearance Request</p>
+                    <p className="text-gray-500 text-[14px] uppercase font-medium tracking-wider">Facility Access Clearance Request</p>
                 </div>
             </div>
 

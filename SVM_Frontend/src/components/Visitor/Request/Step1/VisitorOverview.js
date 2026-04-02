@@ -21,7 +21,7 @@ const VisitorOverview = ({ data, onChange }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 px-4 py-6 rounded-xl border border-white/5 bg-white/[0.01]">
                 {fields.map((field) => (
                     <div key={field.name} className="space-y-1.5">
-                        <label className="text-[11px] font-medium text-gray-500 uppercase tracking-widest block">
+                        <label className="text-[14px] font-medium text-gray-500 uppercase tracking-widest block">
                             {field.label}
                         </label>
                         <div className="relative">

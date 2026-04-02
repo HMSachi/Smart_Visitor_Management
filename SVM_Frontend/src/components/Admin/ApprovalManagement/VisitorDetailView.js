@@ -21,7 +21,7 @@ const Field = ({ label, value, icon: Icon }) => (
   <div className="group/field relative">
     <div className="flex items-center gap-3 mb-2">
       {Icon && <Icon size={12} className="text-mas-red/20 group-hover/field:text-mas-red/60 transition-colors" />}
-      <label className="text-gray-300/80 uppercase text-[10px] font-medium tracking-widest group-hover/field:text-gray-300 transition-colors">{label}</label>
+      <label className="text-gray-300/80 uppercase text-[13px] font-medium tracking-widest group-hover/field:text-gray-300 transition-colors">{label}</label>
     </div>
     <div className="relative">
       <p className="text-white text-sm font-normal uppercase tracking-widest bg-[#121214] border border-white/5 py-2.5 px-4 rounded-xl group-hover/field:border-mas-red/30 group-hover/field:bg-[#161618] transition-all duration-500 shadow-xl">
@@ -45,7 +45,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
       <div className="pt-2 pb-8 border-b border-white/5 relative mb-12 flex justify-between items-end">
         <div>
           <div className="flex items-center gap-3 mb-3">
-            <span className="px-2 py-0.5 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[10px] font-medium tracking-widest rounded-md">LIVE_PROTOCOL</span>
+            <span className="px-2 py-0.5 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[13px] font-medium tracking-widest rounded-md">LIVE_PROTOCOL</span>
             <div className="w-1.5 h-1.5 bg-mas-red rounded-full animate-pulse shadow-[0_0_8px_#C8102E]"></div>
           </div>
           <h1 className="text-white text-base font-bold uppercase tracking-widest flex items-center gap-4">
@@ -59,7 +59,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
             <span className="text-white/10 text-lg">/</span>
             <span className="text-gray-300/80 text-xs font-medium uppercase tracking-widest">02_MATRIX</span>
           </div>
-          <p className="text-gray-300/80 uppercase text-[10px] font-medium tracking-widest">INTELLIGENCE_LAYER: ALPHA</p>
+          <p className="text-gray-300/80 uppercase text-[13px] font-medium tracking-widest">INTELLIGENCE_LAYER: ALPHA</p>
         </div>
 
         <div className="absolute bottom-0 left-0 w-full h-[1px] bg-white/[0.03]">
@@ -130,21 +130,21 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mas-red/20 to-transparent"></div>
           <div className="flex items-center gap-4 mb-10">
             <div className="w-1 h-4 bg-mas-red rounded-full"></div>
-            <p className="text-gray-300/90 text-[10px] font-medium uppercase tracking-widest">Infrastructure Zone Authorization</p>
+            <p className="text-gray-300/90 text-[13px] font-medium uppercase tracking-widest">Infrastructure Zone Authorization</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {visitor.areas && visitor.areas.length > 0 ? visitor.areas.map((area, idx) => (
               <motion.div
                 key={idx}
                 whileHover={{ scale: 1.05, borderColor: '#C8102E' }}
-                className="p-6 bg-[#0E0E10] border border-white/5 rounded-2xl text-white uppercase text-[10px] font-medium tracking-widest flex flex-col items-center justify-center text-center gap-3 transition-all shadow-xl group/zone"
+                className="p-6 bg-[#0E0E10] border border-white/5 rounded-2xl text-white uppercase text-[13px] font-medium tracking-widest flex flex-col items-center justify-center text-center gap-3 transition-all shadow-xl group/zone"
               >
                 <MapPin size={14} className="text-mas-red/20 group-hover/zone:text-mas-red transition-colors" />
                 {area}
               </motion.div>
             )) : (
               <div className="col-span-full border border-dashed border-white/10 p-10 rounded-3xl text-center">
-                <p className="text-gray-300/80 uppercase text-[11px] font-medium tracking-widest">No specific zones requested</p>
+                <p className="text-gray-300/80 uppercase text-[14px] font-medium tracking-widest">No specific zones requested</p>
               </div>
             )}
           </div>

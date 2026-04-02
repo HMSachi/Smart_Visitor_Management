@@ -30,7 +30,7 @@ const SafetyFeatures = () => {
                     <div className="max-w-xl text-left">
                         <div className="flex items-center gap-2 mb-3">
                             <div className="w-6 h-[1px] bg-mas-red/50"></div>
-                            <span className="text-mas-red uppercase tracking-widest text-[9px] font-bold">Infrastructure</span>
+                            <span className="text-mas-red uppercase tracking-widest text-[12px] font-bold">Infrastructure</span>
                         </div>
                         <h2 className="text-2xl md:text-3xl font-bold text-white uppercase tracking-tight mb-4">
                             Elite <span className="text-mas-red">Compliance</span>
@@ -51,7 +51,7 @@ const SafetyFeatures = () => {
                                 <div className="w-9 h-9 bg-mas-red/5 rounded-lg flex items-center justify-center text-mas-red">
                                     <category.icon size={16} />
                                 </div>
-                                <span className="text-[9px] font-bold text-gray-700 uppercase tracking-widest">LAYER 0{index + 1}</span>
+                                <span className="text-[12px] font-bold text-gray-700 uppercase tracking-widest">LAYER 0{index + 1}</span>
                             </div>
 
                             <h3 className="text-white text-base font-bold mb-6 uppercase tracking-wider">
@@ -62,7 +62,7 @@ const SafetyFeatures = () => {
                                 {category.items.map((item, idx) => (
                                     <li key={idx} className="flex items-center gap-2">
                                         <CheckCircle2 size={12} className="text-mas-red/60" />
-                                        <span className="text-gray-500 text-[11px] font-semibold uppercase tracking-wider group-hover:text-gray-300 transition-colors">
+                                        <span className="text-gray-500 text-[14px] font-semibold uppercase tracking-wider group-hover:text-gray-300 transition-colors">
                                             {item}
                                         </span>
                                     </li>
@@ -79,7 +79,7 @@ const SafetyFeatures = () => {
                             <h3 className="text-xl md:text-2xl font-bold text-white mb-3 uppercase tracking-tight">
                                 Access Protocol Initialized?
                             </h3>
-                            <p className="text-gray-400 uppercase text-[10px] font-bold tracking-widest leading-relaxed max-w-lg">
+                            <p className="text-gray-400 uppercase text-[13px] font-bold tracking-widest leading-relaxed max-w-lg">
                                 Automated high-security authorization for all MAS facilities.
                             </p>
                         </div>

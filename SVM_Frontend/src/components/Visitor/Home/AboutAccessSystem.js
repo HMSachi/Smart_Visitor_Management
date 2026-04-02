@@ -36,13 +36,13 @@ const AboutAccessSystem = () => {
                     <div className="max-w-xl">
                         <div className="flex items-center gap-2 mb-3">
                             <div className="w-6 h-[1px] bg-mas-red/50"></div>
-                            <span className="text-mas-red uppercase tracking-widest text-[9px] font-bold">Facility Grid</span>
+                            <span className="text-mas-red uppercase tracking-widest text-[12px] font-bold">Facility Grid</span>
                         </div>
                         <h2 className="text-2xl md:text-3xl font-bold text-white uppercase tracking-tight leading-none">
                             Digital <span className="text-mas-red">Ecosystem</span>
                         </h2>
                     </div>
-                    <p className="max-w-xs text-gray-600 text-[10px] uppercase tracking-widest leading-relaxed font-semibold">
+                    <p className="max-w-xs text-gray-600 text-[13px] uppercase tracking-widest leading-relaxed font-semibold">
                         Precision Access for MAS Holdings Facilities.
                     </p>
                 </div>
@@ -62,10 +62,10 @@ const AboutAccessSystem = () => {
                                     <h3 className="text-white text-sm font-bold mb-2 uppercase tracking-tight">
                                         {feature.title}
                                     </h3>
-                                    <p className="text-gray-500 text-[11px] leading-relaxed mb-4 group-hover:text-gray-300">
+                                    <p className="text-gray-500 text-[14px] leading-relaxed mb-4 group-hover:text-gray-300">
                                         {feature.description}
                                     </p>
-                                    <div className="flex items-center gap-2 text-mas-red text-[10px] font-bold uppercase tracking-widest">
+                                    <div className="flex items-center gap-2 text-mas-red text-[13px] font-bold uppercase tracking-widest">
                                         <span>Initialize</span>
                                         <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                     </div>

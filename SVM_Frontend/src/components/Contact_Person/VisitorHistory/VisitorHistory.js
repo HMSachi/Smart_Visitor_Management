@@ -17,7 +17,7 @@ const VisitorHistoryMain = () => {
                 <div>
                     <div className="flex items-center gap-3 mb-1">
                         <div className="w-1.5 h-1.5 bg-mas-text-dim rounded-full opacity-80 shadow-[0_0_8px_rgba(255,255,255,0.3)]"></div>
-                        <span className="text-gray-300 text-[10px] font-medium uppercase tracking-[0.3em]">Historical Ledger</span>
+                        <span className="text-gray-300 text-[13px] font-medium uppercase tracking-[0.3em]">Historical Ledger</span>
                     </div>
                     <p className="text-gray-300 text-xs uppercase tracking-widest opacity-90">Verified personnel archive and entry logs</p>
                 </div>
@@ -28,14 +28,14 @@ const VisitorHistoryMain = () => {
                         <input
                             type="text"
                             placeholder="SEARCH ARCHIVES..."
-                            className="bg-white/[0.03] border border-white/5 text-[10px] font-medium uppercase tracking-widest text-white placeholder:text-white/70 w-80 pl-12 py-3 rounded-xl focus:outline-none focus:border-mas-red focus:bg-white/[0.05] transition-all"
+                            className="bg-white/[0.03] border border-white/5 text-[13px] font-medium uppercase tracking-widest text-white placeholder:text-white/70 w-80 pl-12 py-3 rounded-xl focus:outline-none focus:border-mas-red focus:bg-white/[0.05] transition-all"
                         />
                     </div>
                     <div className="flex items-center gap-2 px-5 py-3 bg-white/[0.03] border border-white/5 rounded-xl cursor-pointer hover:border-mas-red group transition-all">
                         <Filter size={14} className="text-gray-300 group-hover:text-mas-red" />
-                        <span className="text-[10px] font-medium uppercase tracking-widest text-gray-300 group-hover:text-white">Filters</span>
+                        <span className="text-[13px] font-medium uppercase tracking-widest text-gray-300 group-hover:text-white">Filters</span>
                     </div>
-                    <button className="flex items-center gap-3 px-6 py-3 bg-mas-red text-white text-[10px] font-medium uppercase tracking-widest rounded-xl hover:bg-mas-red-dark transition-all shadow-[0_4px_20px_rgba(200,16,46,0.2)]">
+                    <button className="flex items-center gap-3 px-6 py-3 bg-mas-red text-white text-[13px] font-medium uppercase tracking-widest rounded-xl hover:bg-mas-red-dark transition-all shadow-[0_4px_20px_rgba(200,16,46,0.2)]">
                         <Download size={14} />
                         Export Ledger
                     </button>
@@ -52,7 +52,7 @@ const VisitorHistoryMain = () => {
                     { label: 'Pending Sync', val: '12', color: 'text-gray-300' }
                 ].map((stat, i) => (
                     <div key={i} className="p-6 rounded-3xl bg-[#121214] border border-white/5 shadow-xl group hover:border-white/10 transition-all">
-                        <p className="text-gray-300 text-[9px] font-medium uppercase tracking-[0.2em] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">{stat.label}</p>
+                        <p className="text-gray-300 text-[12px] font-medium uppercase tracking-[0.2em] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">{stat.label}</p>
                         <p className={`text-2xl font-medium tracking-tight ${stat.color}`}>{stat.val}</p>
                     </div>
                 ))}

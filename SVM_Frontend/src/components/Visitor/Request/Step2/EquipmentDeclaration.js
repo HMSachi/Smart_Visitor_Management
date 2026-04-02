@@ -12,13 +12,13 @@ const EquipmentDeclaration = ({ items, onAdd, onRemove, onChange }) => {
                     </div>
                     <div>
                         <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-0">Asset Declaration</h2>
-                        <p className="text-gray-600 text-[9px] font-bold uppercase tracking-widest">Hardware Inventory</p>
+                        <p className="text-gray-600 text-[12px] font-bold uppercase tracking-widest">Hardware Inventory</p>
                     </div>
                 </div>
                 <button 
                     type="button" 
                     onClick={onAdd} 
-                    className="flex items-center gap-2 px-4 py-2 bg-mas-red/10 border border-mas-red/20 text-mas-red rounded-lg hover:bg-mas-red hover:text-white transition-all text-[9px] font-bold uppercase tracking-widest group"
+                    className="flex items-center gap-2 px-4 py-2 bg-mas-red/10 border border-mas-red/20 text-mas-red rounded-lg hover:bg-mas-red hover:text-white transition-all text-[12px] font-bold uppercase tracking-widest group"
                 >
                     <Plus size={14} />
                     Declare Asset
@@ -42,7 +42,7 @@ const EquipmentDeclaration = ({ items, onAdd, onRemove, onChange }) => {
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[9px] font-bold uppercase tracking-widest text-gray-600 block">Asset Name</label>
+                                    <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600 block">Asset Name</label>
                                     <div className="relative">
                                         <Package size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
                                         <input
@@ -56,7 +56,7 @@ const EquipmentDeclaration = ({ items, onAdd, onRemove, onChange }) => {
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[9px] font-bold uppercase tracking-widest text-gray-600 block">Qty</label>
+                                    <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600 block">Qty</label>
                                     <div className="relative">
                                         <Hash size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
                                         <input
@@ -71,7 +71,7 @@ const EquipmentDeclaration = ({ items, onAdd, onRemove, onChange }) => {
                                 </div>
 
                                 <div className="md:col-span-2 space-y-1.5">
-                                    <label className="text-[9px] font-bold uppercase tracking-widest text-gray-600 block">Description</label>
+                                    <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600 block">Description</label>
                                     <div className="relative">
                                         <PencilLine size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
                                         <input
@@ -91,11 +91,11 @@ const EquipmentDeclaration = ({ items, onAdd, onRemove, onChange }) => {
                 {items.length === 0 && (
                     <div className="p-12 border-2 border-dashed border-white/5 rounded-xl flex flex-col items-center justify-center text-center">
                         <Package size={32} className="text-gray-800 mb-4" />
-                        <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest mb-6 max-w-[200px] leading-relaxed">No hardware assets declared in current protocol.</p>
+                        <p className="text-gray-600 text-[13px] font-bold uppercase tracking-widest mb-6 max-w-[200px] leading-relaxed">No hardware assets declared in current protocol.</p>
                         <button 
                             type="button" 
                             onClick={onAdd}
-                            className="px-6 py-2.5 bg-white/[0.03] border border-white/10 text-white text-[9px] font-bold uppercase tracking-widest rounded-lg hover:bg-mas-red hover:border-mas-red transition-all"
+                            className="px-6 py-2.5 bg-white/[0.03] border border-white/10 text-white text-[12px] font-bold uppercase tracking-widest rounded-lg hover:bg-mas-red hover:border-mas-red transition-all"
                         >
                             Log Asset
                         </button>

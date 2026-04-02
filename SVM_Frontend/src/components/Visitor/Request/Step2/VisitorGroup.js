@@ -12,13 +12,13 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                     </div>
                     <div>
                         <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-0">Visitor Group</h2>
-                        <p className="text-gray-600 text-[9px] font-bold uppercase tracking-widest">Secondary Identification</p>
+                        <p className="text-gray-600 text-[12px] font-bold uppercase tracking-widest">Secondary Identification</p>
                     </div>
                 </div>
                 <button 
                     type="button" 
                     onClick={onAdd} 
-                    className="flex items-center gap-2 px-4 py-2 bg-mas-red/10 border border-mas-red/20 text-mas-red rounded-lg hover:bg-mas-red hover:text-white transition-all text-[9px] font-bold uppercase tracking-widest group"
+                    className="flex items-center gap-2 px-4 py-2 bg-mas-red/10 border border-mas-red/20 text-mas-red rounded-lg hover:bg-mas-red hover:text-white transition-all text-[12px] font-bold uppercase tracking-widest group"
                 >
                     <UserPlus size={14} />
                     Add Node
@@ -43,7 +43,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                             )}
 
                             <div className="space-y-1.5">
-                                <label className="text-[9px] font-bold uppercase tracking-widest text-gray-600">Full Name</label>
+                                <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600">Full Name</label>
                                 <div className="relative">
                                     <User size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
                                     <input
@@ -57,7 +57,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-[9px] font-bold uppercase tracking-widest text-gray-600">NIC / Passport</label>
+                                <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600">NIC / Passport</label>
                                 <div className="relative">
                                     <CreditCard size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
                                     <input
@@ -71,7 +71,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-[9px] font-bold uppercase tracking-widest text-gray-600">Contact</label>
+                                <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600">Contact</label>
                                 <div className="relative">
                                     <Phone size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
                                     <input
@@ -90,11 +90,11 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                 {visitors.length === 0 && (
                     <div className="p-12 border-2 border-dashed border-white/5 rounded-xl flex flex-col items-center justify-center text-center">
                         <Users size={32} className="text-gray-800 mb-4" />
-                        <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest mb-6 max-w-[200px] leading-relaxed">No secondary declarations in current protocol.</p>
+                        <p className="text-gray-600 text-[13px] font-bold uppercase tracking-widest mb-6 max-w-[200px] leading-relaxed">No secondary declarations in current protocol.</p>
                         <button 
                             type="button" 
                             onClick={onAdd}
-                            className="px-6 py-2.5 bg-white/[0.03] border border-white/10 text-white text-[9px] font-bold uppercase tracking-widest rounded-lg hover:bg-mas-red hover:border-mas-red transition-all"
+                            className="px-6 py-2.5 bg-white/[0.03] border border-white/10 text-white text-[12px] font-bold uppercase tracking-widest rounded-lg hover:bg-mas-red hover:border-mas-red transition-all"
                         >
                             Declare Member
                         </button>

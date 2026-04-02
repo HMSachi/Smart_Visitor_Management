@@ -17,12 +17,12 @@ const QRMain = () => {
             <div className="text-center mb-10">
                 <div className="flex items-center justify-center gap-2 mb-3">
                     <div className="w-6 h-[1px] bg-mas-red/50" />
-                    <span className="text-mas-red font-bold uppercase tracking-widest text-[9px]">Access Granted</span>
+                    <span className="text-mas-red font-bold uppercase tracking-widest text-[12px]">Access Granted</span>
                 </div>
                 <h1 className="text-2xl font-bold text-white uppercase tracking-tight">
                     Digital <span className="text-mas-red">Pass</span>
                 </h1>
-                <p className="text-gray-600 text-[10px] uppercase font-bold tracking-widest mt-1">ID: {visitorData.refId}</p>
+                <p className="text-gray-600 text-[13px] uppercase font-bold tracking-widest mt-1">ID: {visitorData.refId}</p>
             </div>
 
             {/* Digital Pass Card Container */}
@@ -41,7 +41,7 @@ const QRMain = () => {
                 </button>
                 <button 
                     onClick={() => window.print()} 
-                    className="px-6 py-3 bg-white/[0.03] border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/[0.07] transition-all flex items-center justify-center gap-2"
+                    className="px-6 py-3 bg-white/[0.03] border border-white/10 text-white text-[13px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/[0.07] transition-all flex items-center justify-center gap-2"
                 >
                     <Printer size={14} /> Print
                 </button>
@@ -54,8 +54,8 @@ const QRMain = () => {
                         <Smartphone size={16} />
                     </div>
                     <div>
-                        <p className="text-white text-[10px] font-bold uppercase tracking-widest mb-1 italic">Instructions</p>
-                        <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
+                        <p className="text-white text-[13px] font-bold uppercase tracking-widest mb-1">Instructions</p>
+                        <p className="text-gray-600 text-[13px] font-bold uppercase tracking-widest leading-relaxed">
                             Present this Pass at the <span className="text-gray-400">Main Security Gate</span>.
                         </p>
                     </div>
@@ -65,7 +65,7 @@ const QRMain = () => {
             {/* Return Button */}
             <button 
                 onClick={() => window.location.href='/status'}
-                className="mt-10 flex items-center gap-2 text-gray-700 hover:text-mas-red text-[10px] font-bold uppercase tracking-widest transition-colors"
+                className="mt-10 flex items-center gap-2 text-gray-700 hover:text-mas-red text-[13px] font-bold uppercase tracking-widest transition-colors"
             >
                 <ArrowLeft size={14} /> Back to Status
             </button>
