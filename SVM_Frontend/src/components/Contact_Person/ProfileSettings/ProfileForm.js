@@ -4,7 +4,7 @@ import { User, Mail, Lock, Save } from "lucide-react";
 const ProfileForm = () => {
   //  ONE PLACE STYLE CONTROL (edit here only)
   const inputClass =
-    "w-full px-4 py-3 border border-white/30 text-gray-400 rounded-md focus:border-mas-red outline-none bg-transparent";
+    "w-full px-4 py-3 border border-white/30 text-gray-400 rounded-md focus:border-primary outline-none bg-transparent";
 
   const inputClassReadonly =
     "w-full px-4 py-3 border border-white/20 text-white rounded-md opacity-50 cursor-not-allowed bg-transparent";
@@ -14,7 +14,7 @@ const ProfileForm = () => {
       {/* Profile Details */}
       <section className="space-y-8">
         <div className="flex items-center gap-4 border-b border-white/5 pb-4">
-          <User size={16} className="text-mas-red" />
+          <User size={16} className="text-primary" />
           <h3 className="uppercase text-white">Identity Configuration</h3>
         </div>
 
@@ -58,7 +58,7 @@ const ProfileForm = () => {
       {/* Security Settings */}
       <section className="space-y-8 pt-8">
         <div className="flex items-center gap-4 border-b border-white/5 pb-4">
-          <Lock size={16} className="text-mas-red" />
+          <Lock size={16} className="text-primary" />
           <h3 className="uppercase text-white">Security Protocol</h3>
         </div>
 
@@ -86,7 +86,7 @@ const ProfileForm = () => {
 
       {/* Actions */}
       <div className="pt-12 border-t border-mas-border">
-        <button className="flex items-center gap-4 px-12 py-4 bg-mas-red text-white uppercase shadow-[0_0_30px_rgba(200,16,46,0.3)] hover:scale-105 transition-all">
+        <button className="flex items-center gap-4 px-12 py-4 bg-primary text-white uppercase shadow-[0_0_30px_rgba(200,16,46,0.3)] hover:scale-105 transition-all">
           <Save size={16} />
           Synchronize Profile
         </button>

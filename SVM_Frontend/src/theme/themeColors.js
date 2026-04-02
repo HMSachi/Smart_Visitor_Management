@@ -1,25 +1,22 @@
 const themeColors = {
   primary: {
-    main: '#C8102E', // MAS Red
-    light: '#E5173A',
-    dark: '#A60D26',
+    DEFAULT: '#C8102E', // MAS Red
+    low: 'rgba(200, 16, 46, 0.1)',
     glow: 'rgba(200, 16, 46, 0.4)',
+    hover: '#A60D26',
   },
   secondary: {
-    main: '#000000', // MAS Black
-    light: '#1A1A1C',
-    dark: '#000000',
+    DEFAULT: '#000000', // MAS Black
+    paper: '#121214',   // Surface
   },
   background: {
-    default: '#0A0A0B', // MAS Dark 900
-    paper: '#121214',   // MAS Dark 800 (Surface)
-    alt: '#1A1A1C',     // MAS Dark 700
+    DEFAULT: '#0A0A0B', // Dark 900
+    alt: '#1A1A1C',     // Dark 700
   },
   text: {
     primary: '#FFFFFF',
     secondary: '#D1D1D1',
     dim: '#888888',
-    inverse: '#000000',
   },
   status: {
     success: '#22C55E',

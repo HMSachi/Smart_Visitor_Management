@@ -51,16 +51,16 @@ const InstructionsMain = () => {
     ];
 
     return (
-        <div className="max-w-5xl mx-auto px-6 pt-2 pb-12 bg-mas-dark-900 min-h-screen">
+        <div className="max-w-5xl mx-auto px-6 pt-2 pb-12 bg-background min-h-screen">
             {/* Header Section */}
             <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-2 mb-3">
-                        <div className="w-6 h-[1px] bg-mas-red/50" />
-                        <span className="text-mas-red font-bold uppercase tracking-widest text-[12px]">Operational Protocol</span>
+                        <div className="w-6 h-[1px] bg-primary/50" />
+                        <span className="text-primary font-bold uppercase tracking-widest text-[12px]">Operational Protocol</span>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-bold text-white uppercase tracking-tight">
-                        Security <span className="text-mas-red">Guidelines</span>
+                        Security <span className="text-primary">Guidelines</span>
                     </h1>
                     <p className="text-gray-600 text-[13px] font-bold uppercase tracking-widest mt-1">Facility Rules [V.2.0]</p>
                 </div>
@@ -76,7 +76,7 @@ const InstructionsMain = () => {
             {/* Agreement Section */}
             <div 
                 className={`p-8 md:p-10 border rounded-xl transition-all duration-300 ${
-                    agreed ? 'bg-white/[0.02] border-mas-red/30' : 'bg-white/[0.01] border-white/5'
+                    agreed ? 'bg-white/[0.02] border-primary/30' : 'bg-white/[0.01] border-white/5'
                 }`}
             >
                 <div className="flex flex-col md:flex-row items-center justify-between gap-8">
@@ -89,7 +89,7 @@ const InstructionsMain = () => {
                                 className="peer opacity-0 absolute w-6 h-6 cursor-pointer z-10"
                             />
                             <div className={`w-6 h-6 border rounded transition-all flex items-center justify-center ${
-                                agreed ? 'bg-mas-red border-mas-red' : 'border-gray-700'
+                                agreed ? 'bg-primary border-primary' : 'border-gray-700'
                             }`}>
                                 <CheckSquare size={12} className={`text-white transform transition-transform ${agreed ? 'scale-100' : 'scale-0'}`} />
                             </div>
@@ -101,7 +101,7 @@ const InstructionsMain = () => {
                                 Acknowledgment of Terms
                             </span>
                             <span className="text-[13px] text-gray-600 font-bold uppercase tracking-widest leading-relaxed block max-w-xl">
-                                I confirm that I have read the <span className="text-mas-red">Security Protocol</span>. I agree to follow guidelines.
+                                I confirm that I have read the <span className="text-primary">Security Protocol</span>. I agree to follow guidelines.
                             </span>
                         </div>
                     </label>

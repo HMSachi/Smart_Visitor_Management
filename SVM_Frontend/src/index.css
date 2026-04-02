@@ -6,14 +6,20 @@
 
 :root {
   --color-primary: #C8102E;
-  --color-primary-hover: #A60D26;
+  --color-primary-low: rgba(200, 16, 46, 0.1);
   --color-primary-glow: rgba(200, 16, 46, 0.4);
+  --color-primary-hover: #A60D26;
   --color-secondary: #000000;
   --color-bg-default: #0A0A0B;
   --color-bg-paper: #121214;
+  --color-bg-alt: #1A1A1C;
   --color-text-primary: #FFFFFF;
   --color-text-secondary: #D1D1D1;
   --color-text-dim: #888888;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-error: #C8102E;
+  --color-info: #3B82F6;
 }
 
 @layer base {
@@ -21,9 +27,9 @@
     font-family: 'Inter', sans-serif !important;
     font-size: 15px !important;
     font-weight: 400 !important;
-    color: #D1D1D1 !important;
+    color: var(--color-text-secondary) !important;
     line-height: 1.6 !important;
-    @apply bg-[#0A0A0B];
+    @apply bg-background;
     margin: 0;
     overflow-x: hidden;
     width: 100%;
@@ -44,7 +50,7 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    color: #FFFFFF;
+    color: var(--color-text-primary);
     letter-spacing: 0.5px;
     text-transform: uppercase;
     line-height: 1.4;
@@ -64,7 +70,7 @@
   label {
     font-family: 'Inter', sans-serif !important;
     font-size: 14px !important;
-    color: #888888 !important;
+    color: var(--color-text-dim) !important;
     font-weight: 500 !important;
   }
 
@@ -88,7 +94,7 @@
   }
 
   .compact-input {
-    @apply bg-white/[0.02] border border-white/5 rounded-lg px-3 py-2 text-white placeholder:text-gray-600 focus:border-mas-red/40 focus:bg-white/[0.04] outline-none transition-all text-sm;
+    @apply bg-white/[0.02] border border-white/5 rounded-lg px-3 py-2 text-white placeholder:text-gray-600 focus:border-primary/40 focus:bg-white/[0.04] outline-none transition-all text-sm;
   }
 
   .compact-btn {
@@ -114,7 +120,7 @@
   }
 
   .metallic-text {
-    color: #ffffff;
+    color: var(--color-text-primary);
     filter: drop-shadow(0 0 2px rgba(255,255,255,0.1));
   }
   
@@ -167,11 +173,11 @@
 }
 
 .sharp-glow {
-  @apply border border-mas-red/20 transition-all duration-300;
+  @apply border border-primary/20 transition-all duration-300;
 }
 
 .sharp-glow:hover {
-  @apply border-mas-red/60 shadow-[0_0_20px_rgba(200,16,46,0.2)];
+  @apply border-primary/60 shadow-[0_0_20px_rgba(200,16,46,0.2)];
 }
 
 .glass-panel {
@@ -184,7 +190,7 @@ code {
 }
 
 .mas-glass {
-  @apply bg-[#0A0A0B]/80 backdrop-blur-2xl border border-white/[0.05];
+  @apply bg-background/80 backdrop-blur-2xl border border-white/[0.05];
 }
 
 .mas-sidebar-item {
@@ -192,15 +198,15 @@ code {
 }
 
 .mas-sidebar-item.active {
-  @apply bg-mas-red/[0.03] border-mas-red;
+  @apply bg-primary/[0.03] border-primary;
 }
 
 .mas-input {
-  @apply bg-mas-black border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-mas-red transition-all;
+  @apply bg-secondary border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-primary transition-all;
 }
 
 .bg-mas-black {
-  background-color: #0A0A0B;
+  background-color: var(--color-bg-default);
 }
 
 @keyframes fade-in {

@@ -15,9 +15,9 @@ const LogsHistoryMain = () => {
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-mas-border pb-12">
                 <div>
                     <div className="flex items-center gap-4 mb-4">
-                        <History size={14} className="text-mas-red" />
-                        <span className="text-mas-red uppercase">Movement Archives</span>
-                        <div className="h-[1px] w-12 bg-mas-red"></div>
+                        <History size={14} className="text-primary" />
+                        <span className="text-primary uppercase">Movement Archives</span>
+                        <div className="h-[1px] w-12 bg-primary"></div>
                     </div>
                     <h1 className="uppercase text-white">Log Registry</h1>
                 </div>
@@ -28,14 +28,14 @@ const LogsHistoryMain = () => {
                         <input 
                             type="text"
                             placeholder="SEARCH LOGS..."
-                            className="mas-input w-80 pl-12 bg-white/[0.02] border-white/5 focus:border-mas-red uppercase"
+                            className="mas-input w-80 pl-12 bg-white/[0.02] border-white/5 focus:border-primary uppercase"
                         />
                     </div>
                     <button className="flex items-center gap-3 px-6 py-3 mas-glass border-white/5 text-gray-300 hover:text-white transition-all uppercase">
                         <Filter size={14} />
                         Filter
                     </button>
-                    <button className="flex items-center gap-3 px-6 py-3 bg-mas-red text-white uppercase shadow-[0_0_20px_rgba(200,16,46,0.2)]">
+                    <button className="flex items-center gap-3 px-6 py-3 bg-primary text-white uppercase shadow-[0_0_20px_rgba(200,16,46,0.2)]">
                         <Download size={14} />
                         Export
                     </button>
@@ -69,12 +69,12 @@ const LogsHistoryMain = () => {
                                     <span className={`${log.exit === '--:--:--' ? 'text-gray-300 opacity-30' : 'text-white'}`}>{log.exit}</span>
                                 </td>
                                 <td className="px-10 py-8">
-                                    <span className={`px-4 py-1.5 border uppercase ${log.status === 'Active' ? 'border-mas-red text-mas-red bg-mas-red/5 animate-pulse' : 'border-mas-text-dim/20 text-gray-300 bg-white/[0.02]'}`}>
+                                    <span className={`px-4 py-1.5 border uppercase ${log.status === 'Active' ? 'border-primary text-primary bg-primary/5 animate-pulse' : 'border-mas-text-dim/20 text-gray-300 bg-white/[0.02]'}`}>
                                         {log.status}
                                     </span>
                                 </td>
                                 <td className="px-10 py-8 text-right">
-                                    <button className="text-gray-300 hover:text-mas-red transition-all">
+                                    <button className="text-gray-300 hover:text-primary transition-all">
                                         <ChevronRight size={18} />
                                     </button>
                                 </td>

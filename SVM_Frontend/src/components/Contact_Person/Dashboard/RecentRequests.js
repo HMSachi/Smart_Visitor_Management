@@ -14,13 +14,13 @@ const RecentRequests = () => {
         switch (status) {
             case 'Approved': return 'text-green-500 bg-green-500/10 border-green-500/20';
             case 'Pending': return 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20';
-            case 'Rejected': return 'text-mas-red bg-mas-red/10 border-mas-red/20';
+            case 'Rejected': return 'text-primary bg-primary/10 border-primary/20';
             default: return 'text-gray-300 bg-white/5 border-white/10';
         }
     };
 
     return (
-        <div className="bg-[#121214] border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="p-6 border-b border-white/5 flex items-center justify-between">
                 <div>
                     <h3 className="text-white font-bold tracking-tight">Recent Authorization Requests</h3>
@@ -28,7 +28,7 @@ const RecentRequests = () => {
                 </div>
                 <button
                     onClick={() => navigate('/contact_person/requests-inbox')}
-                    className="flex items-center gap-2 text-xs font-medium text-mas-red hover:text-white transition-colors group"
+                    className="flex items-center gap-2 text-xs font-medium text-primary hover:text-white transition-colors group"
                 >
                     View All Inbox <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </button>
@@ -50,7 +50,7 @@ const RecentRequests = () => {
                             <tr key={req.id} className="group hover:bg-white/[0.01] transition-all">
                                 <td className="px-4 md:px-6 py-3">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-mas-red/20 to-transparent border border-mas-red/20 flex items-center justify-center text-mas-red text-[13px] font-medium">
+                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-transparent border border-primary/20 flex items-center justify-center text-primary text-[13px] font-medium">
                                             {req.name.split(' ').map(n => n[0]).join('')}
                                         </div>
                                         <div>
@@ -76,7 +76,7 @@ const RecentRequests = () => {
                                 <td className="px-4 md:px-6 py-3 text-right">
                                     <button
                                         onClick={() => navigate('/contact_person/request-review', { state: { requestId: req.id } })}
-                                        className="text-[12px] font-medium text-gray-300 hover:text-mas-red uppercase tracking-[0.1em] transition-all py-1.5 px-3 rounded-lg border border-white/5 hover:border-mas-red/20 hover:bg-mas-red/5"
+                                        className="text-[12px] font-medium text-gray-300 hover:text-primary uppercase tracking-[0.1em] transition-all py-1.5 px-3 rounded-lg border border-white/5 hover:border-primary/20 hover:bg-primary/5"
                                     >
                                         Review
                                     </button>

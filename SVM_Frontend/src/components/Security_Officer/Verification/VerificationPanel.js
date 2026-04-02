@@ -25,7 +25,7 @@ const VerificationPanel = () => {
                     </div>
                     
                     <section className="space-y-6">
-                        <h3 className="text-mas-red uppercase mb-6">Visitor Identity</h3>
+                        <h3 className="text-primary uppercase mb-6">Visitor Identity</h3>
                         <div className="grid grid-cols-2 gap-8">
                             <div className="space-y-2">
                                 <p className="text-gray-300 uppercase">Full Personnel Name</p>
@@ -40,7 +40,7 @@ const VerificationPanel = () => {
 
                     <section className="pt-10 border-t border-white/5 space-y-6">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-mas-red uppercase">Access Protocol</h3>
+                                <h3 className="text-primary uppercase">Access Protocol</h3>
                                 <div className="flex items-center gap-2">
                                     <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                                     <span className="uppercase text-green-500">Pre-Approved</span>
@@ -49,7 +49,7 @@ const VerificationPanel = () => {
                             <div className="flex flex-wrap gap-3">
                                 {visitorData.areas.map((area, i) => (
                                     <div key={i} className="px-5 py-2 bg-white/[0.03] border border-white/10 uppercase text-white flex items-center gap-3">
-                                        <MapPin size={12} className="text-mas-red" />
+                                        <MapPin size={12} className="text-primary" />
                                         {area}
                                     </div>
                                 ))}
@@ -61,12 +61,12 @@ const VerificationPanel = () => {
                     <div className="flex flex-col gap-8 h-full">
                     <div className="mas-glass p-10 border-mas-border relative overflow-hidden group flex-1">
                         <div className="flex items-center gap-4 mb-8">
-                            <Car size={18} className="text-mas-red" />
+                            <Car size={18} className="text-primary" />
                             <h3 className="uppercase text-white">Vehicle Manifest</h3>
                         </div>
                         <div className="space-y-4">
                             <p className="text-gray-300 uppercase">Authorized Record</p>
-                            <div className="p-4 bg-mas-dark border-l-2 border-mas-red flex justify-between items-center">
+                            <div className="p-4 bg-mas-dark border-l-2 border-primary flex justify-between items-center">
                                 <span className="uppercase text-white">{visitorData.vehicle.number}</span>
                                 <span className="text-gray-300 uppercase">{visitorData.vehicle.type}</span>
                             </div>
@@ -75,13 +75,13 @@ const VerificationPanel = () => {
 
                     <div className="mas-glass p-10 border-mas-border relative overflow-hidden group flex-1">
                             <div className="flex items-center gap-4 mb-8">
-                            <Briefcase size={18} className="text-mas-red" />
+                            <Briefcase size={18} className="text-primary" />
                             <h3 className="uppercase text-white">Asset Registry</h3>
                         </div>
                         <div className="space-y-4">
                             {visitorData.equipment.map((item, i) => (
                                 <div key={i} className="p-4 bg-white/[0.02] border border-white/5 flex items-center gap-3">
-                                    <div className="w-1.5 h-1.5 bg-mas-red opacity-30"></div>
+                                    <div className="w-1.5 h-1.5 bg-primary opacity-30"></div>
                                     <span className="uppercase text-white/80">{item}</span>
                                 </div>
                             ))}
@@ -92,14 +92,14 @@ const VerificationPanel = () => {
 
             {/* Validation Status Panel */}
             <div className="h-fit space-y-8">
-                    <div className={`mas-glass p-12 lg:py-24 border-2 relative overflow-hidden ${visitorData.mismatch ? 'border-mas-red shadow-[inset_0_0_50px_rgba(200,16,46,0.1)]' : 'border-green-500/30'}`}>
+                    <div className={`mas-glass p-12 lg:py-24 border-2 relative overflow-hidden ${visitorData.mismatch ? 'border-primary shadow-[inset_0_0_50px_rgba(200,16,46,0.1)]' : 'border-green-500/30'}`}>
                         <div className="flex flex-col items-center text-center space-y-8 max-w-2xl mx-auto">
-                            <div className={`w-24 h-24 flex items-center justify-center rounded-none border-2 p-4 animate-pulse ${visitorData.mismatch ? 'border-mas-red text-mas-red' : 'border-green-500 text-green-500'}`}>
+                            <div className={`w-24 h-24 flex items-center justify-center rounded-none border-2 p-4 animate-pulse ${visitorData.mismatch ? 'border-primary text-primary' : 'border-green-500 text-green-500'}`}>
                                 {visitorData.mismatch ? <AlertTriangle size={48} /> : <CheckCircle2 size={48} />}
                             </div>
                             
                             <div className="space-y-2">
-                                <h3 className={`uppercase text-2xl ${visitorData.mismatch ? 'text-mas-red' : 'text-green-500'}`}>
+                                <h3 className={`uppercase text-2xl ${visitorData.mismatch ? 'text-primary' : 'text-green-500'}`}>
                                     {visitorData.mismatch ? 'PROTOCOL BREACH' : 'AUTHENTICATION SUCCESS'}
                                 </h3>
                                 <p className="text-gray-300 uppercase">
@@ -108,9 +108,9 @@ const VerificationPanel = () => {
                             </div>
 
                             {visitorData.mismatch && (
-                                <div className="w-full p-6 bg-mas-red/5 border border-mas-red/20 space-y-4 text-left">
+                                <div className="w-full p-6 bg-primary/5 border border-primary/20 space-y-4 text-left">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-4 h-4 rounded-full bg-mas-red"></div>
+                                        <div className="w-4 h-4 rounded-full bg-primary"></div>
                                         <span className="uppercase text-white">Manual Counter-Check Required</span>
                                     </div>
                                     <p className="text-gray-300 uppercase leading-6 decoration-white/10 underline underline-offset-4 decoration-dashed">
@@ -121,7 +121,7 @@ const VerificationPanel = () => {
 
                             <button 
                             onClick={() => window.location.href = '/Security_Officer/entry-approval'}
-                            className={`w-full py-5 text-lg uppercase transition-all ${visitorData.mismatch ? 'bg-mas-red text-white shadow-[0_0_30px_rgba(200,16,46,0.2)]' : 'bg-green-600 text-white shadow-[0_0_30px_rgba(34,197,94,0.2)]'}`}
+                            className={`w-full py-5 text-lg uppercase transition-all ${visitorData.mismatch ? 'bg-primary text-white shadow-[0_0_30px_rgba(200,16,46,0.2)]' : 'bg-green-600 text-white shadow-[0_0_30px_rgba(34,197,94,0.2)]'}`}
                             >
                                 Proceed to Final Approval
                             </button>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ShieldCheck, Cpu, Network, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Cpu, Network, CheckCircle2 } from 'lucide-react';
 
 const SafetyFeatures = () => {
     const navigate = useNavigate();
@@ -24,16 +23,16 @@ const SafetyFeatures = () => {
     ];
 
     return (
-        <section id="safety" className="py-12 md:py-24 bg-mas-dark-900 border-t border-white/5">
+        <section id="safety" className="py-12 md:py-24 bg-background border-t border-white/5">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row items-baseline justify-between mb-12 gap-12">
                     <div className="max-w-xl text-left">
                         <div className="flex items-center gap-2 mb-3">
-                            <div className="w-6 h-[1px] bg-mas-red/50"></div>
-                            <span className="text-mas-red uppercase tracking-widest text-[12px] font-bold">Infrastructure</span>
+                            <div className="w-6 h-[1px] bg-primary/50"></div>
+                            <span className="text-primary uppercase tracking-widest text-[12px] font-bold">Infrastructure</span>
                         </div>
                         <h2 className="text-2xl md:text-3xl font-bold text-white uppercase tracking-tight mb-4">
-                            Elite <span className="text-mas-red">Compliance</span>
+                            Elite <span className="text-primary">Compliance</span>
                         </h2>
                         <p className="text-gray-500 text-sm leading-relaxed font-medium">
                             Advanced encryption and real-time telemetry protocols.
@@ -45,10 +44,10 @@ const SafetyFeatures = () => {
                     {categories.map((category, index) => (
                         <div 
                             key={index}
-                            className="p-6 bg-white/[0.02] border border-white/5 rounded-xl hover:border-mas-red/20 transition-all duration-300"
+                            className="p-6 bg-white/[0.02] border border-white/5 rounded-xl hover:border-primary/20 transition-all duration-300"
                         >
                             <div className="flex items-center justify-between mb-6">
-                                <div className="w-9 h-9 bg-mas-red/5 rounded-lg flex items-center justify-center text-mas-red">
+                                <div className="w-9 h-9 bg-primary/5 rounded-lg flex items-center justify-center text-primary">
                                     <category.icon size={16} />
                                 </div>
                                 <span className="text-[12px] font-bold text-gray-700 uppercase tracking-widest">LAYER 0{index + 1}</span>
@@ -61,7 +60,7 @@ const SafetyFeatures = () => {
                             <ul className="space-y-3">
                                 {category.items.map((item, idx) => (
                                     <li key={idx} className="flex items-center gap-2">
-                                        <CheckCircle2 size={12} className="text-mas-red/60" />
+                                        <CheckCircle2 size={12} className="text-primary/60" />
                                         <span className="text-gray-500 text-[14px] font-semibold uppercase tracking-wider group-hover:text-gray-300 transition-colors">
                                             {item}
                                         </span>
@@ -73,7 +72,7 @@ const SafetyFeatures = () => {
                 </div>
                 
                 {/* Minimal CTA Banner */}
-                <div className="mt-16 p-8 md:p-10 rounded-xl bg-gradient-to-br from-mas-red/20 to-mas-dark-800 border border-mas-red/10 group">
+                <div className="mt-16 p-8 md:p-10 rounded-xl bg-gradient-to-br from-primary/20 to-mas-dark-800 border border-primary/10 group">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                         <div className="text-center md:text-left">
                             <h3 className="text-xl md:text-2xl font-bold text-white mb-3 uppercase tracking-tight">

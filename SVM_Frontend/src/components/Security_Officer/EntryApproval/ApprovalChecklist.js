@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Check, X, AlertCircle, Info, ChevronRight, MessageSquare, Shield, Activity, User, Fingerprint, Camera, Package, Car, FileCheck, Zap, Lock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, X, AlertCircle, Info, ChevronRight, MessageSquare, Shield, Activity, Fingerprint, Camera, Package, Car, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ApprovalChecklist = ({ visitor, onBack }) => {
@@ -41,26 +41,26 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
 
             {/* Personnel Authorization Identity Card */}
             <div className="relative group">
-                <div className="mas-glass p-8 md:p-10 border-white/5 bg-[#121214]/60 backdrop-blur-3xl rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/10 overflow-hidden hover:border-mas-red/20 transition-all duration-700">
+                <div className="mas-glass p-8 md:p-10 border-white/5 bg-[var(--color-bg-paper)]/60 backdrop-blur-3xl rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/10 overflow-hidden hover:border-primary/20 transition-all duration-700">
                     <div className="flex flex-col md:flex-row items-center gap-10 md:gap-14">
                         {/* Profile/Biometric Node */}
                         <div className="relative">
-                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-mas-red flex items-center justify-center text-white text-2xl font-medium shadow-[0_0_30px_rgba(200,16,46,0.2)] border border-white/10 relative z-10 group-hover:rotate-6 transition-transform duration-700">
+                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-primary flex items-center justify-center text-white text-2xl font-medium shadow-[0_0_30px_rgba(200,16,46,0.2)] border border-white/10 relative z-10 group-hover:rotate-6 transition-transform duration-700">
                                 {displayVisitor.initials}
                             </div>
                             <div className="absolute -bottom-1 -right-1 p-2 bg-[#0D0D0E] rounded-xl border border-white/10 shadow-xl z-20">
-                                <Fingerprint size={14} className="text-mas-red animate-pulse" />
+                                <Fingerprint size={14} className="text-primary animate-pulse" />
                             </div>
                         </div>
 
                         <div className="flex-1 space-y-6 text-center md:text-left">
                             <div className="space-y-2">
                                 <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
-                                    <div className="px-2 py-0.5 rounded-md bg-mas-red/10 border border-mas-red/20 text-mas-red text-[14px] font-medium tracking-widest uppercase">{displayVisitor.type}</div>
+                                    <div className="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[14px] font-medium tracking-widest uppercase">{displayVisitor.type}</div>
                                     <div className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[14px] font-medium tracking-widest uppercase">Sync: Verified</div>
                                 </div>
-                                <h3 className="text-white text-3xl md:text-4xl font-bold uppercase tracking-widest group-hover:text-mas-red transition-colors duration-500">{displayVisitor.name}</h3>
-                                <p className="text-gray-300/80 uppercase text-[13px] font-medium tracking-[0.4em] mt-1 underline decoration-mas-red/20 underline-offset-4">Ref: {displayVisitor.id}</p>
+                                <h3 className="text-white text-3xl md:text-4xl font-bold uppercase tracking-widest group-hover:text-primary transition-colors duration-500">{displayVisitor.name}</h3>
+                                <p className="text-gray-300/80 uppercase text-[13px] font-medium tracking-[0.4em] mt-1 underline decoration-primary/20 underline-offset-4">Ref: {displayVisitor.id}</p>
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-4 border-t border-white/5">
@@ -75,7 +75,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                                 <div className="hidden md:block space-y-1">
                                     <p className="text-gray-300/80 text-[7px] font-medium uppercase tracking-widest">Encryption</p>
                                     <div className="flex items-center gap-1.5">
-                                        <Lock size={8} className="text-mas-red" />
+                                        <Lock size={8} className="text-primary" />
                                         <span className="text-white text-[12px] font-medium tracking-widest">SECURED</span>
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
             <div className="space-y-8">
                 <div className="flex items-center gap-6 px-4">
                     <div className="flex items-center gap-3">
-                        <Shield size={14} className="text-mas-red" />
+                        <Shield size={14} className="text-primary" />
                         <h4 className="text-gray-300/30 uppercase text-[12px] font-medium tracking-[0.5em]">Verification_Protocol_Matrix</h4>
                     </div>
                     <div className="h-[1px] flex-1 bg-gradient-to-r from-white/5 via-white/10 to-transparent"></div>
@@ -111,31 +111,31 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                                 key={item.id}
                                 whileHover={{ x: 6 }}
                                 onClick={() => toggleCheck(item.id)}
-                                className={`mas-glass p-6 md:p-8 border-white/5 bg-[#121214]/40 flex items-center justify-between cursor-pointer transition-all duration-500 rounded-[28px] group relative overflow-hidden ${isChecked ? 'bg-mas-red/[0.04] border-mas-red/20' : 'hover:border-white/20'}`}
+                                className={`mas-glass p-6 md:p-8 border-white/5 bg-[var(--color-bg-paper)]/40 flex items-center justify-between cursor-pointer transition-all duration-500 rounded-[28px] group relative overflow-hidden ${isChecked ? 'bg-primary/[0.04] border-primary/20' : 'hover:border-white/20'}`}
                             >
                                 <div className="flex gap-8 items-center relative z-10">
                                     <div className="relative">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-700 border ${isChecked ? 'bg-mas-red border-mas-red text-white rotate-12 shadow-[0_0_20px_#C8102E]' : 'bg-[#0D0D0E] border-white/10 text-gray-300 group-hover:border-white'}`}>
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-700 border ${isChecked ? 'bg-primary border-primary text-white rotate-12 shadow-[0_0_20px_var(--color-primary)]' : 'bg-[#0D0D0E] border-white/10 text-gray-300 group-hover:border-white'}`}>
                                             {isAuth ? <Activity size={18} className="animate-spin" /> : isChecked ? <Check size={20} strokeWidth={4} /> : <item.icon size={18} />}
                                         </div>
                                     </div>
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-3">
                                             <p className={`text-[13px] font-medium tracking-widest transition-all duration-500 uppercase ${isChecked ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>{item.label}</p>
-                                            {isAuth && <span className="text-mas-red text-[7px] font-medium animate-pulse tracking-[0.3em]">PROCESSING...</span>}
+                                            {isAuth && <span className="text-primary text-[7px] font-medium animate-pulse tracking-[0.3em]">PROCESSING...</span>}
                                         </div>
                                         <p className="text-gray-300/80 text-[12px] font-medium uppercase tracking-widest">{item.desc}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 relative z-10 px-4">
-                                    <div className={`w-1.5 h-6 rounded-full transition-all duration-700 ${isChecked ? 'bg-mas-red shadow-[0_0_8px_#C8102E]' : 'bg-white/5'}`}></div>
+                                    <div className={`w-1.5 h-6 rounded-full transition-all duration-700 ${isChecked ? 'bg-primary shadow-[0_0_8px_var(--color-primary)]' : 'bg-white/5'}`}></div>
                                     <Info size={14} className="text-gray-300/10 group-hover:text-gray-300 transition-colors" />
                                 </div>
 
                                 {/* Internal Scanning Visualizer */}
                                 {isAuth && (
                                     <motion.div
-                                        className="absolute top-0 left-0 h-full bg-mas-red/10 group-hover:bg-mas-red/20 pointer-events-none"
+                                        className="absolute top-0 left-0 h-full bg-primary/10 group-hover:bg-primary/20 pointer-events-none"
                                         animate={{ width: ['0%', '100%'] }}
                                         transition={{ duration: 1, ease: "easeInOut" }}
                                     />
@@ -150,14 +150,14 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
             <div className="pt-12 grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-white/5">
                 <button
                     onClick={() => setShowRejectModal(true)}
-                    className="group relative overflow-hidden w-full py-5 rounded-xl border border-mas-red text-mas-red bg-transparent font-medium uppercase text-[14px] tracking-[0.4em] hover:bg-mas-red hover:text-white transition-all duration-700 flex items-center justify-center gap-4 shadow-xl active:scale-95"
+                    className="group relative overflow-hidden w-full py-5 rounded-xl border border-primary text-primary bg-transparent font-medium uppercase text-[14px] tracking-[0.4em] hover:bg-primary hover:text-white transition-all duration-700 flex items-center justify-center gap-4 shadow-xl active:scale-95"
                 >
                     <X size={16} strokeWidth={4} className="group-hover:rotate-90 transition-transform duration-500" />
                     Protocol_Refusal
                 </button>
                 <button
                     disabled={!allChecked}
-                    className={`group relative overflow-hidden w-full py-5 rounded-xl font-medium uppercase text-[14px] tracking-[0.4em] flex items-center justify-center gap-4 transition-all duration-700 shadow-2xl active:scale-95 ${allChecked ? 'bg-mas-red text-white shadow-[0_0_50px_rgba(200,16,46,0.3)] cursor-pointer' : 'bg-white/5 text-white/10 border border-white/5 cursor-not-allowed opacity-70 grayscale'}`}
+                    className={`group relative overflow-hidden w-full py-5 rounded-xl font-medium uppercase text-[14px] tracking-[0.4em] flex items-center justify-center gap-4 transition-all duration-700 shadow-2xl active:scale-95 ${allChecked ? 'bg-primary text-white shadow-[0_0_50px_rgba(200,16,46,0.3)] cursor-pointer' : 'bg-white/5 text-white/10 border border-white/5 cursor-not-allowed opacity-70 grayscale'}`}
                 >
                     <Check size={16} strokeWidth={4} />
                     Grant_Authorization
@@ -180,35 +180,35 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                             animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 50, rotateX: 20 }}
                             transition={{ type: "spring", damping: 20 }}
-                            className="relative mas-glass max-w-2xl w-full p-12 md:p-16 border-mas-red bg-[#0D0D0E]/95 backdrop-blur-3xl rounded-[40px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.8)] border border-mas-red/40"
+                            className="relative mas-glass max-w-2xl w-full p-12 md:p-16 border-primary bg-[#0D0D0E]/95 backdrop-blur-3xl rounded-[40px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.8)] border border-primary/40"
                         >
                             {/* Terminal Scanline */}
-                            <div className="absolute top-0 left-0 w-full h-[1px] bg-mas-red animate-scan z-20 opacity-80"></div>
+                            <div className="absolute top-0 left-0 w-full h-[1px] bg-primary animate-scan z-20 opacity-80"></div>
 
                             <div className="space-y-12 relative z-10">
                                 <div className="flex items-center gap-8">
-                                    <div className="p-5 rounded-2xl bg-mas-red text-white shadow-[0_0_30px_rgba(200,16,46,0.4)] rotate-3">
+                                    <div className="p-5 rounded-2xl bg-primary text-white shadow-[0_0_30px_rgba(200,16,46,0.4)] rotate-3">
                                         <AlertCircle size={28} strokeWidth={2.5} />
                                     </div>
                                     <div>
                                         <h3 className="text-white text-3xl font-bold uppercase tracking-[0.3em]">Protocol_Refusal</h3>
-                                        <p className="text-mas-red uppercase text-[13px] font-medium tracking-[0.5em] mt-2 animate-pulse">Initializing_Refusal_Circuit...</p>
+                                        <p className="text-primary uppercase text-[13px] font-medium tracking-[0.5em] mt-2 animate-pulse">Initializing_Refusal_Circuit...</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between px-4">
                                         <label className="text-gray-300/80 uppercase text-[12px] font-medium tracking-[0.4em]">Breach_Description_Input</label>
-                                        <MessageSquare size={14} className="text-mas-red opacity-50" />
+                                        <MessageSquare size={14} className="text-primary opacity-50" />
                                     </div>
                                     <div className="relative group">
                                         <textarea
                                             value={rejectionReason}
                                             onChange={(e) => setRejectionReason(e.target.value)}
                                             placeholder="ENTER_PROTOCOL_BREACH_DETAILS_HERE..."
-                                            className="w-full min-h-[200px] bg-white/[0.02] border-2 border-white/10 rounded-3xl p-8 text-white uppercase font-mono text-sm tracking-widest placeholder:text-white/5 focus:border-mas-red/50 focus:bg-mas-red/[0.02] outline-none transition-all duration-500 resize-none"
+                                            className="w-full min-h-[200px] bg-white/[0.02] border-2 border-white/10 rounded-3xl p-8 text-white uppercase font-mono text-sm tracking-widest placeholder:text-white/5 focus:border-primary/50 focus:bg-primary/[0.02] outline-none transition-all duration-500 resize-none"
                                         ></textarea>
-                                        <div className="absolute bottom-4 right-6 text-gray-300/10 text-[14px] font-medium tracking-widest group-hover:text-mas-red/40 transition-colors">TERMINAL_REF: ERR_PROT_404</div>
+                                        <div className="absolute bottom-4 right-6 text-gray-300/10 text-[14px] font-medium tracking-widest group-hover:text-primary/40 transition-colors">TERMINAL_REF: ERR_PROT_404</div>
                                     </div>
                                 </div>
 
@@ -221,7 +221,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                                     </button>
                                     <button
                                         disabled={!rejectionReason}
-                                        className="flex-[2] py-5 rounded-2xl bg-mas-red text-white uppercase text-[14px] font-medium tracking-[0.4em] shadow-[0_0_40px_rgba(200,16,46,0.4)] disabled:opacity-30 disabled:grayscale transition-all duration-500 hover:scale-[1.02] active:scale-95"
+                                        className="flex-[2] py-5 rounded-2xl bg-primary text-white uppercase text-[14px] font-medium tracking-[0.4em] shadow-[0_0_40px_rgba(200,16,46,0.4)] disabled:opacity-30 disabled:grayscale transition-all duration-500 hover:scale-[1.02] active:scale-95"
                                     >
                                         Confirm_System_Refusal
                                     </button>
@@ -229,7 +229,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                             </div>
 
                             {/* Background decoration */}
-                            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-mas-red/5 rounded-full blur-[60px] pointer-events-none"></div>
+                            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-[60px] pointer-events-none"></div>
                         </motion.div>
                     </div>
                 )}

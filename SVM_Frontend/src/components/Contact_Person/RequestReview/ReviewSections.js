@@ -18,10 +18,10 @@ const readablePurpose = (purpose, purposeOther) => {
 };
 
 const SectionWrapper = ({ icon: Icon, title, subtitle, children }) => (
-    <div className="bg-[#121214] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl transition-all hover:border-white/10 group">
+    <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl transition-all hover:border-white/10 group">
         <div className="px-8 py-6 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-mas-red/10 border border-mas-red/20 flex items-center justify-center text-mas-red group-hover:bg-mas-red group-hover:text-white transition-all duration-500 shadow-lg">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-lg">
                     <Icon size={20} />
                 </div>
                 <div>
@@ -40,9 +40,9 @@ const SectionWrapper = ({ icon: Icon, title, subtitle, children }) => (
 );
 
 const Field = ({ label, value, icon: Icon }) => (
-    <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5 group/field hover:border-mas-red/20 transition-all">
+    <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5 group/field hover:border-primary/20 transition-all">
         <div className="flex items-center gap-2 opacity-80 group-hover/field:opacity-90 transition-opacity">
-            {Icon && <Icon size={10} className="text-mas-red" />}
+            {Icon && <Icon size={10} className="text-primary" />}
             <label className="text-gray-300 text-[12px] font-medium uppercase tracking-widest">{label}</label>
         </div>
         <p className="text-white text-[13px] font-medium tracking-wide uppercase leading-tight">{value}</p>
@@ -79,12 +79,12 @@ export const VisitParameters = ({ request }) => (
 
         <div className="space-y-4">
             <div className="flex items-center gap-2 opacity-80">
-                <MapPin size={12} className="text-mas-red" />
+                <MapPin size={12} className="text-primary" />
                 <span className="text-[12px] font-medium uppercase tracking-widest text-gray-300">Authorized Access Zones</span>
             </div>
             <div className="flex flex-wrap gap-3">
                 {(request?.selectedAreas?.length ? request.selectedAreas : ['N/A']).map((area) => (
-                    <div key={area} className="px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl text-white text-[13px] font-medium uppercase tracking-widest hover:border-mas-red transition-all shadow-lg active:scale-95">
+                    <div key={area} className="px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl text-white text-[13px] font-medium uppercase tracking-widest hover:border-primary transition-all shadow-lg active:scale-95">
                         {area}
                     </div>
                 ))}
@@ -157,18 +157,18 @@ export const DocumentReview = ({ request }) => (
         title="Document Registry"
         subtitle="Verified Identification Credentials"
     >
-        <div className="flex items-center gap-6 p-6 rounded-2xl bg-mas-red/[0.02] border border-mas-red/10 group-hover:bg-mas-red/[0.04] transition-colors">
-            <div className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-mas-red shadow-inner">
+        <div className="flex items-center gap-6 p-6 rounded-2xl bg-primary/[0.02] border border-primary/10 group-hover:bg-primary/[0.04] transition-colors">
+            <div className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-primary shadow-inner">
                 <FileText size={28} />
             </div>
             <div className="flex-1">
                 <p className="text-[12px] font-medium text-white uppercase tracking-widest mb-1">{request?.uploadedFile || 'PENDING_UPLOAD.PDF'}</p>
                 <div className="flex items-center gap-2">
-                    <Info size={10} className="text-mas-red" />
+                    <Info size={10} className="text-primary" />
                     <p className="text-[12px] font-medium text-gray-300 uppercase tracking-widest opacity-80">Primary Identity Documentation Secured</p>
                 </div>
             </div>
-            <button className="px-5 py-2.5 bg-white/[0.05] border border-white/10 text-[13px] font-medium text-white uppercase tracking-widest rounded-xl hover:bg-mas-red hover:border-mas-red transition-all">
+            <button className="px-5 py-2.5 bg-white/[0.05] border border-white/10 text-[13px] font-medium text-white uppercase tracking-widest rounded-xl hover:bg-primary hover:border-primary transition-all">
                 Analyze
             </button>
         </div>

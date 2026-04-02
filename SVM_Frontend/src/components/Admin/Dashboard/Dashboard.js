@@ -30,7 +30,7 @@ const DashboardMain = () => {
         <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <div className="w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E] animate-pulse"></div>
+              <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)] animate-pulse"></div>
               <span className="text-gray-300 text-[13px] font-medium uppercase tracking-[0.3em]">Command Center</span>
             </div>
             <p className="text-gray-300 text-xs uppercase tracking-widest opacity-90">Global security node and administrative oversight</p>

@@ -5,7 +5,7 @@ import UserManagementMain from '../../../components/Admin/UserManagement/UserMan
 
 const UserManagement = () => {
   return (
-    <div className="flex flex-col min-w-0 bg-[#0A0A0B] min-h-screen">
+    <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
         <Header />
         <UserManagementMain />
     </div>

@@ -7,9 +7,9 @@ const BlacklistManagementMain = () => {
 
 
   return (
-    <div className="flex-1 p-10 overflow-y-auto w-full bg-[#0A0A0B] relative">
+    <div className="flex-1 p-10 overflow-y-auto w-full bg-[var(--color-bg-default)] relative">
       {/* Global Operational Background */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-mas-red/5 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
 
       <div className="max-w-[1600px] mx-auto relative z-10">
 

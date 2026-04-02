@@ -35,9 +35,9 @@ const RejectedRequestsMain = () => {
             <div className="flex items-end justify-between border-b border-mas-border pb-8">
                 <div>
                     <div className="flex items-center gap-4 mb-4">
-                        <XCircle size={14} className="text-mas-red" />
-                        <span className="text-mas-red uppercase">Protocol Breach Log</span>
-                        <div className="h-[1px] w-12 bg-mas-red"></div>
+                        <XCircle size={14} className="text-primary" />
+                        <span className="text-primary uppercase">Protocol Breach Log</span>
+                        <div className="h-[1px] w-12 bg-primary"></div>
                     </div>
                     <h1 className="uppercase text-white">Rejection Tracking</h1>
                 </div>

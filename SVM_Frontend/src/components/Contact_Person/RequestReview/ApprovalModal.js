@@ -6,12 +6,12 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <div className="absolute inset-0 bg-[#070708]/95 backdrop-blur-md" onClick={onClose}></div>
-            <div className="w-full max-w-xl bg-[#121214] border border-white/5 rounded-[40px] p-12 relative z-10 animate-fade-in shadow-2xl overflow-hidden group">
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-mas-red/10 rounded-full blur-[100px] group-hover:bg-mas-red/20 transition-all duration-700"></div>
+            <div className="w-full max-w-xl bg-[var(--color-bg-paper)] border border-white/5 rounded-[40px] p-12 relative z-10 animate-fade-in shadow-2xl overflow-hidden group">
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-700"></div>
 
                 <div className="mb-10 relative z-10">
                     <div className="flex items-center gap-4 mb-2">
-                        <div className="w-2 h-2 bg-mas-red rounded-full shadow-[0_0_10px_#C8102E]"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
                         <h2 className="text-white text-xs font-bold uppercase tracking-[0.3em]">Protocol Approval</h2>
                     </div>
                     <p className="text-gray-300 text-[13px] font-medium uppercase tracking-widest opacity-80">Dispatch authorization to administrative nodes</p>
@@ -23,7 +23,7 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
                         <textarea
                             rows="4"
                             placeholder="INPUT ADMINISTRATIVE COMMENTS OR SECURITY NOTES..."
-                            className="w-full bg-white/[0.02] border border-white/5 rounded-2xl p-5 text-white text-xs font-medium uppercase tracking-widest placeholder:opacity-70 focus:outline-none focus:border-mas-red focus:bg-white/[0.04] transition-all resize-none"
+                            className="w-full bg-white/[0.02] border border-white/5 rounded-2xl p-5 text-white text-xs font-medium uppercase tracking-widest placeholder:opacity-70 focus:outline-none focus:border-primary focus:bg-white/[0.04] transition-all resize-none"
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                         ></textarea>
@@ -33,7 +33,7 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
                 <div className="flex flex-col sm:flex-row gap-4 relative z-10">
                     <button
                         onClick={onConfirm}
-                        className="flex-1 py-5 bg-mas-red text-white text-[14px] font-medium uppercase tracking-[0.2em] rounded-2xl shadow-[0_4px_30px_rgba(200,16,46,0.3)] hover:bg-mas-red-dark transition-all transform active:scale-95"
+                        className="flex-1 py-5 bg-primary text-white text-[14px] font-medium uppercase tracking-[0.2em] rounded-2xl shadow-[0_4px_30px_rgba(200,16,46,0.3)] hover:bg-primary-dark transition-all transform active:scale-95"
                     >
                         Confirm Dispatch
                     </button>

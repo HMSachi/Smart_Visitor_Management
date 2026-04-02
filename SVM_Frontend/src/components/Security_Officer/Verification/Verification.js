@@ -7,8 +7,8 @@ const VerificationMain = () => {
             <div className="flex items-end justify-between border-b border-mas-border pb-8">
                 <div className="space-y-4">
                     <div className="flex items-center gap-4">
-                        <div className="h-[2px] w-12 bg-mas-red"></div>
-                        <span className="text-mas-red uppercase">Identity Validation Node</span>
+                        <div className="h-[2px] w-12 bg-primary"></div>
+                        <span className="text-primary uppercase">Identity Validation Node</span>
                     </div>
                     <h1 className="uppercase">Verification Log</h1>
                 </div>

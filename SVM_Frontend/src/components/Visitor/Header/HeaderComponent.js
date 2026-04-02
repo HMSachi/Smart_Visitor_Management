@@ -84,7 +84,7 @@ const HeaderComponent = () => {
                     sx: {
                         width: '85%',
                         maxWidth: '320px',
-                        backgroundColor: '#0A0A0B',
+                        backgroundColor: 'var(--color-bg-default)',
                         borderLeft: '1px solid rgba(255, 255, 255, 0.03)'
                     }
                 }}

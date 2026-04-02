@@ -1,6 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { Check, Clock, Circle } from "lucide-react";
+import { Check } from "lucide-react";
 
 const StatusTimeline = ({ currentStage }) => {
   // Logic to determine status based on currentStage
@@ -19,8 +18,6 @@ const StatusTimeline = ({ currentStage }) => {
     if (stageIndex === currentIndex) return "active";
     return "upcoming";
   };
-
-  const stages = [];
 
   // Helper for missing icons in previous thought, using standard lucide
   const stagesFixed = [
@@ -62,10 +59,10 @@ const StatusTimeline = ({ currentStage }) => {
             <div
               className={`absolute left-0 top-1 w-3 h-3 rounded-full border transition-all duration-300 z-10 ${
                 status === "completed"
-                  ? "bg-mas-red border-mas-red"
+                  ? "bg-primary border-primary"
                   : status === "active"
-                    ? "bg-mas-dark-800 border-mas-red"
-                    : "bg-mas-dark-900 border-white/10"
+                    ? "bg-background-paper border-primary"
+                    : "bg-background border-white/10"
               }`}
             >
               {status === "completed" && (
@@ -81,7 +78,7 @@ const StatusTimeline = ({ currentStage }) => {
                   status === "upcoming"
                     ? "text-gray-600"
                     : status === "active"
-                      ? "text-mas-red"
+                      ? "text-primary"
                       : "text-white"
                 }`}
               >

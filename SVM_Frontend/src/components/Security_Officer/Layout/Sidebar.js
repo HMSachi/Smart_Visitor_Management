@@ -21,11 +21,11 @@ import { toggleSidebar, setMobileMenu } from '../../../reducers/uiSlice';
 const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
   <div 
     className={`flex items-center gap-4 px-4 py-3.5 cursor-pointer transition-all duration-500 rounded-xl mb-2 group relative
-      ${active ? 'bg-mas-red shadow-[0_0_20px_rgba(200,16,46,0.2)]' : 'hover:bg-white/[0.03]'}
+      ${active ? 'bg-primary shadow-[0_0_20px_rgba(200,16,46,0.2)]' : 'hover:bg-white/[0.03]'}
       ${collapsed ? 'justify-center px-2' : ''}`}
     onClick={onClick}
   >
-    <div className={`transition-transform duration-500 ${active ? 'text-white' : 'text-gray-500 group-hover:text-mas-red group-hover:scale-110'}`}>
+    <div className={`transition-transform duration-500 ${active ? 'text-white' : 'text-gray-500 group-hover:text-primary group-hover:scale-110'}`}>
       <Icon size={20} strokeWidth={active ? 2.5 : 2} />
     </div>
     
@@ -36,7 +36,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
     )}
 
     {collapsed && (
-       <div className="absolute left-[120%] px-3 py-2 bg-mas-dark-800 border border-white/10 rounded-lg text-[12px] font-medium text-white uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none z-50 shadow-2xl">
+       <div className="absolute left-[120%] px-3 py-2 bg-background-paper border border-white/10 rounded-lg text-[12px] font-medium text-white uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none z-50 shadow-2xl">
          {label}
        </div>
     )}
@@ -55,7 +55,7 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
       {/* Sidebar Top: Logo */}
       <div className={`mb-12 flex items-center ${isCollapsed ? 'justify-center' : 'px-4 gap-3'}`}>
          <img src="/logo_mas.png" alt="Logo" className={`${isCollapsed ? 'h-5' : 'h-5'} w-auto transition-all duration-500`} />
-         {!isCollapsed && <span className="text-white font-medium tracking-tighter text-sm flex-none uppercase animate-fade-in">Security <span className="text-mas-red">Portal</span></span>}
+         {!isCollapsed && <span className="text-white font-medium tracking-tighter text-sm flex-none uppercase animate-fade-in">Security <span className="text-primary">Portal</span></span>}
       </div>
 
       <nav className="flex-1 overflow-y-auto custom-scrollbar pb-10">
@@ -75,7 +75,7 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
       <div className={`mt-auto pt-6 border-t border-white/5`}>
         <div className={`flex items-center gap-4 ${isCollapsed ? 'justify-center' : 'px-2'}`}>
             <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0">
-                <span className="text-mas-red font-medium text-xs">SO</span>
+                <span className="text-primary font-medium text-xs">SO</span>
             </div>
             {!isCollapsed && (
                 <div className="animate-fade-in overflow-hidden">
@@ -138,7 +138,7 @@ const Sidebar = () => {
       {/* Floating Toggle Button */}
       <IconButton 
         onClick={() => dispatch(toggleSidebar())}
-        className="absolute -right-4 top-24 bg-mas-dark-800 border border-white/10 text-mas-red hover:bg-mas-red hover:text-white transition-all shadow-xl z-50 p-1 rounded-full"
+        className="absolute -right-4 top-24 bg-background-paper border border-white/10 text-primary hover:bg-primary hover:text-white transition-all shadow-xl z-50 p-1 rounded-full"
         size="small"
       >
         {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}

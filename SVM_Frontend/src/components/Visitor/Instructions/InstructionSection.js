@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { AlertTriangle, Info } from "lucide-react";
 
 const InstructionSection = ({
@@ -18,7 +17,7 @@ const InstructionSection = ({
     <div
       className={`p-6 rounded-xl transition-all duration-300 border ${
         isWarning
-          ? "bg-mas-red/10 border-mas-red/20"
+          ? "bg-primary/10 border-primary/20"
           : "bg-white/[0.01] border-white/5"
       }`}
     >
@@ -27,7 +26,7 @@ const InstructionSection = ({
         <div
           className={`w-8 h-8 rounded-lg flex items-center justify-center ${
             isWarning
-              ? "bg-mas-red text-white"
+              ? "bg-primary text-white"
               : "bg-white/10 text-white"
           }`}
         >
@@ -36,7 +35,7 @@ const InstructionSection = ({
         <div>
           <h3
             className={`text-sm font-bold uppercase tracking-wider ${
-              isWarning ? "text-mas-red" : "text-white"
+              isWarning ? "text-primary" : "text-white"
             }`}
           >
             {title}
@@ -53,7 +52,7 @@ const InstructionSection = ({
             <div
               className={`mt-1.5 mr-3 shrink-0 flex items-center justify-center text-[13px] ${
                 isWarning
-                  ? "text-mas-red"
+                  ? "text-primary"
                   : "text-gray-700"
               }`}
             >
@@ -62,7 +61,7 @@ const InstructionSection = ({
             <span
               className={`text-[13px] font-bold leading-relaxed uppercase tracking-widest ${
                 isWarning
-                  ? "text-mas-red/80"
+                  ? "text-primary/80"
                   : "text-gray-500"
               }`}
             >

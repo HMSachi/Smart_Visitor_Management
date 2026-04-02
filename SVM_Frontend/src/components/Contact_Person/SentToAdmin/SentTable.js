@@ -14,7 +14,7 @@ const ProgressionTimeline = ({ status }) => {
             {steps.map((step, i) => (
                 <React.Fragment key={i}>
                     <div className="flex flex-col items-center gap-2">
-                        <div className={`w-3 h-3 rounded-full border-2 ${step.done ? 'bg-green-500 border-green-500 shadow-[0_0_10px_#22c55e]' : step.current ? 'bg-mas-red border-mas-red animate-pulse shadow-[0_0_10px_#C8102E]' : 'bg-transparent border-white/20'}`}></div>
+                        <div className={`w-3 h-3 rounded-full border-2 ${step.done ? 'bg-green-500 border-green-500 shadow-[0_0_10px_#22c55e]' : step.current ? 'bg-primary border-primary animate-pulse shadow-[0_0_10px_var(--color-primary)]' : 'bg-transparent border-white/20'}`}></div>
                         <span className={`uppercase ${step.done ? 'text-green-500' : step.current ? 'text-white' : 'text-gray-300'}`}>{step.label}</span>
                     </div>
                     {i < steps.length - 1 && (
@@ -54,7 +54,7 @@ const SentTable = ({ requests }) => {
                                 <ProgressionTimeline status={req.status} />
                             </td>
                             <td className="px-6 py-6 whitespace-nowrap">
-                                <div className={`inline-flex items-center gap-3 px-4 py-1.5 border uppercase ${req.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5' : req.status === 'Rejected' ? 'text-mas-red border-mas-red/20 bg-mas-red/5' : 'text-blue-400 border-blue-400/20 bg-blue-400/5 animate-pulse'}`}>
+                                <div className={`inline-flex items-center gap-3 px-4 py-1.5 border uppercase ${req.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5' : req.status === 'Rejected' ? 'text-primary border-primary/20 bg-primary/5' : 'text-blue-400 border-blue-400/20 bg-blue-400/5 animate-pulse'}`}>
                                     {req.status === 'Approved' ? <CheckCircle size={12} /> : req.status === 'Rejected' ? <XCircle size={12} /> : <Activity size={12} />}
                                     {req.status}
                                 </div>
