@@ -14,12 +14,12 @@ const RejectionModal = ({ isOpen, onClose, onConfirm, reason, setReason, comment
                         <div className="w-2 h-2 bg-mas-red rounded-full shadow-[0_0_10px_#C8102E]"></div>
                         <h2 className="text-white text-xs font-bold uppercase tracking-[0.3em]">Protocol Rejection</h2>
                     </div>
-                    <p className="text-gray-300 text-[10px] font-medium uppercase tracking-widest opacity-80">System-wide data invalidation and denial</p>
+                    <p className="text-gray-300 text-[13px] font-medium uppercase tracking-widest opacity-80">System-wide data invalidation and denial</p>
                 </div>
 
                 <div className="space-y-6 mb-12 relative z-10">
                     <div className="space-y-3">
-                        <label className="text-gray-300 text-[9px] font-medium uppercase tracking-widest">Primary Rejection Delta</label>
+                        <label className="text-gray-300 text-[12px] font-medium uppercase tracking-widest">Primary Rejection Delta</label>
                         <select
                             className="w-full bg-white/[0.02] border border-white/5 rounded-2xl p-5 text-white text-xs font-medium uppercase tracking-widest focus:outline-none focus:border-mas-red focus:bg-white/[0.04] transition-all appearance-none cursor-pointer"
                             value={reason}
@@ -34,7 +34,7 @@ const RejectionModal = ({ isOpen, onClose, onConfirm, reason, setReason, comment
                     </div>
 
                     <div className="space-y-3">
-                        <label className="text-gray-300 text-[9px] font-medium uppercase tracking-widest">Encrypted Observations (Required)</label>
+                        <label className="text-gray-300 text-[12px] font-medium uppercase tracking-widest">Encrypted Observations (Required)</label>
                         <textarea
                             rows="4"
                             placeholder="INPUT DETAILED REJECTION OBSERVATIONS..."
@@ -48,13 +48,13 @@ const RejectionModal = ({ isOpen, onClose, onConfirm, reason, setReason, comment
                 <div className="flex flex-col sm:flex-row gap-4 relative z-10">
                     <button
                         onClick={onConfirm}
-                        className="flex-1 py-5 bg-mas-red text-white text-[11px] font-medium uppercase tracking-[0.2em] rounded-2xl shadow-[0_4px_30px_rgba(200,16,46,0.3)] hover:bg-mas-red-dark transition-all transform active:scale-95"
+                        className="flex-1 py-5 bg-mas-red text-white text-[14px] font-medium uppercase tracking-[0.2em] rounded-2xl shadow-[0_4px_30px_rgba(200,16,46,0.3)] hover:bg-mas-red-dark transition-all transform active:scale-95"
                     >
                         Confirm Rejection
                     </button>
                     <button
                         onClick={onClose}
-                        className="flex-1 py-5 bg-white/[0.03] border border-white/5 text-gray-300 text-[11px] font-medium uppercase tracking-[0.2em] rounded-2xl hover:text-white hover:border-white/20 transition-all"
+                        className="flex-1 py-5 bg-white/[0.03] border border-white/5 text-gray-300 text-[14px] font-medium uppercase tracking-[0.2em] rounded-2xl hover:text-white hover:border-white/20 transition-all"
                     >
                         Abort Protocol
                     </button>

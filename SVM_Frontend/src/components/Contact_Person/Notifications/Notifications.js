@@ -23,15 +23,15 @@ const NotificationsMain = () => {
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 bg-mas-red rounded-full shadow-[0_0_8px_#C8102E] animate-pulse"></div>
-                            <span className="text-gray-300 text-[9px] font-medium uppercase tracking-[0.3em] opacity-90">Operational Alerts</span>
+                            <span className="text-gray-300 text-[12px] font-medium uppercase tracking-[0.3em] opacity-90">Operational Alerts</span>
                         </div>
-                        <span className="px-2.5 py-0.5 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[8px] font-medium uppercase tracking-widest rounded-lg">
+                        <span className="px-2.5 py-0.5 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[14px] font-medium uppercase tracking-widest rounded-lg">
                             {notifications.filter(n => n.unread).length} New
                         </span>
                     </div>
 
                     <div className="flex items-center gap-4 w-full sm:w-auto">
-                        <button onClick={markAllRead} className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-medium uppercase tracking-widest text-gray-300 hover:text-white hover:border-mas-red/30 hover:bg-mas-red/5 transition-all group">
+                        <button onClick={markAllRead} className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[13px] font-medium uppercase tracking-widest text-gray-300 hover:text-white hover:border-mas-red/30 hover:bg-mas-red/5 transition-all group">
                             <CheckSquare size={14} className="group-hover:text-mas-red transition-colors" /> Acknowledge All
                         </button>
                         <button className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-gray-300 hover:text-mas-red hover:border-mas-red transition-all shadow-lg shrink-0">

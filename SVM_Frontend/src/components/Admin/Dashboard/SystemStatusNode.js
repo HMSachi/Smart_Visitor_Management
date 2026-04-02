@@ -14,19 +14,19 @@ const SystemStatusNode = () => {
 
       <div className="text-center space-y-4">
         <h3 className="text-white text-[12px] font-bold uppercase tracking-[0.3em]">Operational Integrity</h3>
-        <p className="text-gray-300 text-[10px] font-medium uppercase tracking-widest leading-relaxed opacity-80 max-w-xs mx-auto">
+        <p className="text-gray-300 text-[13px] font-medium uppercase tracking-widest leading-relaxed opacity-80 max-w-xs mx-auto">
           All security protocols are active. Synchronization with MAS-HQ nodes is complete. No critical anomalies detected in the current cycle.
         </p>
       </div>
 
       <div className="mt-8 pt-8 border-t border-white/5 w-full flex justify-around">
         <div className="text-center">
-          <p className="text-gray-300 text-[8px] font-medium uppercase tracking-widest opacity-30 mb-1">Node 01</p>
-          <p className="text-green-500 text-[9px] font-medium uppercase tracking-widest">ACTIVE</p>
+          <p className="text-gray-300 text-[14px] font-medium uppercase tracking-widest opacity-30 mb-1">Node 01</p>
+          <p className="text-green-500 text-[12px] font-medium uppercase tracking-widest">ACTIVE</p>
         </div>
         <div className="text-center">
-          <p className="text-gray-300 text-[8px] font-medium uppercase tracking-widest opacity-30 mb-1">Sync Hub</p>
-          <p className="text-green-500 text-[9px] font-medium uppercase tracking-widest">STABLE</p>
+          <p className="text-gray-300 text-[14px] font-medium uppercase tracking-widest opacity-30 mb-1">Sync Hub</p>
+          <p className="text-green-500 text-[12px] font-medium uppercase tracking-widest">STABLE</p>
         </div>
       </div>
     </div>

@@ -51,7 +51,7 @@ const InstructionSection = ({
             className="flex items-start"
           >
             <div
-              className={`mt-1.5 mr-3 shrink-0 flex items-center justify-center text-[10px] ${
+              className={`mt-1.5 mr-3 shrink-0 flex items-center justify-center text-[13px] ${
                 isWarning
                   ? "text-mas-red"
                   : "text-gray-700"
@@ -60,7 +60,7 @@ const InstructionSection = ({
               •
             </div>
             <span
-              className={`text-[10px] font-bold leading-relaxed uppercase tracking-widest ${
+              className={`text-[13px] font-bold leading-relaxed uppercase tracking-widest ${
                 isWarning
                   ? "text-mas-red/80"
                   : "text-gray-500"

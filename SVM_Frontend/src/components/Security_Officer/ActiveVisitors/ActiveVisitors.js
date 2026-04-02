@@ -43,14 +43,14 @@ const ActiveVisitorsMain = () => {
                         <div className="p-2 rounded-lg bg-mas-red/10 border border-mas-red/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
                             <Activity size={16} className="text-mas-red animate-pulse" />
                         </div>
-                        <span className="text-mas-red font-medium uppercase text-[10px] tracking-[0.4em] italic">Real-Time_Operational_Monitor</span>
+                        <span className="text-mas-red font-medium uppercase text-[13px] tracking-[0.4em]">Real-Time_Operational_Monitor</span>
                         <div className="h-[1px] w-12 bg-gradient-to-r from-mas-red/50 to-transparent"></div>
                     </div>
                     <div className="flex items-center gap-8">
-                        <h1 className="text-5xl font-bold text-white italic tracking-tighter uppercase">
+                        <h1 className="text-5xl font-bold text-white tracking-tighter uppercase">
                             Active_Visitors
                         </h1>
-                        <div className="px-5 py-2 mas-glass border-mas-red/30 bg-mas-red/5 text-mas-red text-xs font-medium italic shadow-[0_0_30px_rgba(200,16,46,0.1)] rounded-xl border flex items-center gap-3">
+                        <div className="px-5 py-2 mas-glass border-mas-red/30 bg-mas-red/5 text-mas-red text-xs font-medium shadow-[0_0_30px_rgba(200,16,46,0.1)] rounded-xl border flex items-center gap-3">
                             <Users size={14} />
                             {activeVisitors.length} SENSORS_ACTIVE
                         </div>
@@ -65,7 +65,7 @@ const ActiveVisitorsMain = () => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="FILTER_SENSORS (NAME/REF)..."
-                            className="w-full pl-14 pr-6 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-[10px] uppercase font-medium tracking-widest text-white placeholder:text-white/80 focus:border-mas-red/40 outline-none transition-all duration-500 italic"
+                            className="w-full pl-14 pr-6 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-[13px] uppercase font-medium tracking-widest text-white placeholder:text-white/80 focus:border-mas-red/40 outline-none transition-all duration-500"
                         />
                     </div>
                     <button
@@ -75,7 +75,7 @@ const ActiveVisitorsMain = () => {
                         <RefreshCw size={18} className={`${isSyncing ? 'animate-spin' : 'group-hover:scale-110'} transition-transform duration-700`} />
                     </button>
                     <div className="hidden lg:flex flex-col text-right">
-                        <p className="text-gray-300/80 text-[8px] font-medium uppercase tracking-widest">Global_Sync_Time</p>
+                        <p className="text-gray-300/80 text-[14px] font-medium uppercase tracking-widest">Global_Sync_Time</p>
                         <p className="text-white text-sm font-mono font-medium tracking-widest">{currentTime}</p>
                     </div>
                 </div>
@@ -91,11 +91,11 @@ const ActiveVisitorsMain = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-white/[0.02] border-b border-white/5">
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[9px] font-medium tracking-[0.4em] italic">Unit_Identification</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[9px] font-medium tracking-[0.4em] italic">Node_Sync_Entry</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[9px] font-medium tracking-[0.4em] italic">Operational_Grid</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[9px] font-medium tracking-[0.4em] italic text-center">Live_Pulse</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[9px] font-medium tracking-[0.4em] italic text-right">Control</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em]">Unit_Identification</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em]">Node_Sync_Entry</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em]">Operational_Grid</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em] text-center">Live_Pulse</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em] text-right">Control</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/[0.03]">
@@ -113,16 +113,16 @@ const ActiveVisitorsMain = () => {
                                                 <td className="px-10 py-8">
                                                     <div className="flex items-center gap-6">
                                                         <div className="relative overflow-visible">
-                                                            <div className="w-12 h-12 rounded-xl bg-mas-dark border border-white/10 flex items-center justify-center text-mas-red text-sm font-medium italic group-hover:border-mas-red group-hover:shadow-[0_0_20px_rgba(200,16,46,0.2)] transition-all duration-500">
+                                                            <div className="w-12 h-12 rounded-xl bg-mas-dark border border-white/10 flex items-center justify-center text-mas-red text-sm font-medium group-hover:border-mas-red group-hover:shadow-[0_0_20px_rgba(200,16,46,0.2)] transition-all duration-500">
                                                                 {v.name.split(' ').map(n => n[0]).join('')}
                                                             </div>
                                                             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-mas-dark shadow-[0_0_8px_#22c55e]"></div>
                                                         </div>
                                                         <div>
-                                                            <p className="text-[13px] font-medium text-white italic uppercase tracking-wider group-hover:text-mas-red transition-colors duration-300">{v.name}</p>
+                                                            <p className="text-[13px] font-medium text-white uppercase tracking-wider group-hover:text-mas-red transition-colors duration-300">{v.name}</p>
                                                             <div className="flex items-center gap-2 mt-1">
                                                                 <Target size={10} className="text-mas-red opacity-90" />
-                                                                <p className="text-white/90 text-[9px] font-medium tracking-widest uppercase">{v.ref}</p>
+                                                                <p className="text-white/90 text-[12px] font-medium tracking-widest uppercase">{v.ref}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -131,19 +131,19 @@ const ActiveVisitorsMain = () => {
                                                     <div className="space-y-1.5">
                                                         <div className="flex items-center gap-2.5">
                                                             <Calendar size={12} className="text-mas-red opacity-70" />
-                                                            <span className="text-white text-[11px] font-mono font-medium tracking-widest">{v.date}</span>
+                                                            <span className="text-white text-[14px] font-mono font-medium tracking-widest">{v.date}</span>
                                                         </div>
                                                         <div className="flex items-center gap-2.5 ml-2">
                                                             <Clock size={10} className="text-mas-red opacity-50" />
-                                                            <span className="text-white/70 text-[10px] font-mono font-medium tracking-widest">{v.entryTime}</span>
+                                                            <span className="text-white/70 text-[13px] font-mono font-medium tracking-widest">{v.entryTime}</span>
                                                         </div>
-                                                        <p className="text-white/80 text-[8px] font-medium uppercase tracking-widest italic ml-5">via_{v.node}</p>
+                                                        <p className="text-white/80 text-[14px] font-medium uppercase tracking-widest ml-5">via_{v.node}</p>
                                                     </div>
                                                 </td>
                                                 <td className="px-10 py-8">
                                                     <div className="flex flex-wrap gap-2.5 max-w-[280px]">
                                                         {v.areas.map((area, i) => (
-                                                            <span key={i} className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-white/70 text-[8px] font-medium uppercase tracking-widest group-hover:border-mas-red/40 group-hover:text-white transition-all duration-300">
+                                                            <span key={i} className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-white/70 text-[14px] font-medium uppercase tracking-widest group-hover:border-mas-red/40 group-hover:text-white transition-all duration-300">
                                                                 {area}
                                                             </span>
                                                         ))}
@@ -155,7 +155,7 @@ const ActiveVisitorsMain = () => {
                                                             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_12px_#22c55e]"></div>
                                                             <div className="absolute inset-x-[-8px] inset-y-[-8px] border border-green-500/20 rounded-full scale-150 animate-ping opacity-30"></div>
                                                         </div>
-                                                        <span className="text-green-500/80 text-[8px] font-medium uppercase tracking-widest italic">INSIDE_DOME</span>
+                                                        <span className="text-green-500/80 text-[14px] font-medium uppercase tracking-widest">INSIDE_DOME</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-10 py-8 text-right">
@@ -181,28 +181,28 @@ const ActiveVisitorsMain = () => {
                                                                 <div className="space-y-2">
                                                                     <div className="flex items-center gap-2 text-gray-300/90 mb-2">
                                                                         <Car size={14} className="text-mas-red/80" />
-                                                                        <span className="text-[9px] font-medium uppercase tracking-[0.3em]">Vehicle Details</span>
+                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Vehicle Details</span>
                                                                     </div>
                                                                     <p className="text-white text-sm font-medium tracking-widest">{v.vehicle}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
                                                                     <div className="flex items-center gap-2 text-gray-300/90 mb-2">
                                                                         <Phone size={14} className="text-mas-red/80" />
-                                                                        <span className="text-[9px] font-medium uppercase tracking-[0.3em]">Contact Protocol</span>
+                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Contact Protocol</span>
                                                                     </div>
                                                                     <p className="text-white text-sm font-mono tracking-widest">{v.phone}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
                                                                     <div className="flex items-center gap-2 text-gray-300/90 mb-2">
                                                                         <Building size={14} className="text-mas-red/80" />
-                                                                        <span className="text-[9px] font-medium uppercase tracking-[0.3em]">Organization</span>
+                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Organization</span>
                                                                     </div>
                                                                     <p className="text-white text-sm font-medium tracking-widest">{v.company}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
                                                                     <div className="flex items-center gap-2 text-gray-300/90 mb-2">
                                                                         <FileText size={14} className="text-mas-red/80" />
-                                                                        <span className="text-[9px] font-medium uppercase tracking-[0.3em]">Mission/Purpose</span>
+                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Mission/Purpose</span>
                                                                     </div>
                                                                     <p className="text-white text-sm font-medium tracking-widest">{v.purpose}</p>
                                                                 </div>
@@ -234,12 +234,12 @@ const ActiveVisitorsMain = () => {
                         className="p-8 mas-glass border-white/5 bg-[#121214]/40 rounded-[28px] space-y-5 group hover:border-mas-red/20 transition-all duration-500"
                     >
                         <div className="flex items-center justify-between">
-                            <p className="text-gray-300/80 text-[9px] font-medium uppercase tracking-[0.3em] italic">{stat.label}</p>
+                            <p className="text-gray-300/80 text-[12px] font-medium uppercase tracking-[0.3em]">{stat.label}</p>
                             <stat.icon size={16} className={stat.color === 'mas-red' ? 'text-mas-red' : 'text-gray-300/80'} />
                         </div>
                         <div className="space-y-1">
-                            <p className="text-white text-sm font-medium italic uppercase tracking-wider">{stat.val}</p>
-                            <p className="text-gray-300/80 text-[9px] font-medium tracking-widest uppercase">{stat.detail}</p>
+                            <p className="text-white text-sm font-medium uppercase tracking-wider">{stat.val}</p>
+                            <p className="text-gray-300/80 text-[12px] font-medium tracking-widest uppercase">{stat.detail}</p>
                         </div>
                     </motion.div>
                 ))}

@@ -22,7 +22,7 @@ const Panel = ({ icon, label, value, trend }) => {
 
       <div className="flex justify-between items-start relative z-10">
         <div>
-          <p className="text-white/80 text-[10px] font-medium uppercase tracking-[0.2em] mb-4 group-hover:text-white transition-opacity">{label}</p>
+          <p className="text-white/80 text-[13px] font-medium uppercase tracking-[0.2em] mb-4 group-hover:text-white transition-opacity">{label}</p>
           <h3 className="text-white text-3xl font-bold tracking-tighter group-hover:text-mas-red transition-colors">{value}</h3>
         </div>
         <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 group-hover:border-mas-red/40 group-hover:bg-mas-red/10 transition-all duration-500 shadow-lg">

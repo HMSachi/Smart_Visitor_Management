@@ -57,20 +57,20 @@ const StatusCard = ({ status }) => {
                         <Icon size={18} />
                     </div>
                     <div>
-                        <span className={`text-[9px] font-bold uppercase tracking-widest ${current.color} mb-1 block`}>Clearance Status</span>
+                        <span className={`text-[12px] font-bold uppercase tracking-widest ${current.color} mb-1 block`}>Clearance Status</span>
                         <h2 className="text-base font-bold text-white uppercase tracking-tight mb-0.5">
                             {current.label}
                         </h2>
-                        <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">{current.desc}</p>
+                        <p className="text-gray-500 text-[13px] font-bold uppercase tracking-wider">{current.desc}</p>
                     </div>
                 </div>
 
                 <div className="px-5 py-3 border-l border-white/5 text-center md:text-right w-full md:w-auto flex flex-col justify-center items-center md:items-end">
                     <div className="flex items-center gap-2 mb-1">
-                        <span className="text-gray-600 text-[9px] font-bold uppercase tracking-widest">Node Node</span>
+                        <span className="text-gray-600 text-[12px] font-bold uppercase tracking-widest">Node Node</span>
                         <div className="w-1.5 h-1.5 rounded-full bg-mas-red/40" />
                     </div>
-                    <span className="text-white text-[11px] font-bold uppercase tracking-widest tabular-nums italic">MAS CORE 01</span>
+                    <span className="text-white text-[14px] font-bold uppercase tracking-widest tabular-nums">MAS CORE 01</span>
                     
                     {status === 'step1_approved' ? (
                         <button 
@@ -80,7 +80,7 @@ const StatusCard = ({ status }) => {
                             Complete Phase 2
                         </button>
                     ) : (
-                        <p className="mt-2 text-[9px] text-gray-700 font-bold uppercase tracking-widest">Facility: MAS HOLDINGS</p>
+                        <p className="mt-2 text-[12px] text-gray-700 font-bold uppercase tracking-widest">Facility: MAS HOLDINGS</p>
                     )}
                 </div>
             </div>

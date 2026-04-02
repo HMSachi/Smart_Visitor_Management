@@ -86,7 +86,7 @@ const Step2Main = () => {
                     </div>
                     
                     <h2 className="text-xl font-bold text-white uppercase tracking-tight mb-3">Under Final Review</h2>
-                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-10 leading-relaxed">
+                    <p className="text-gray-500 text-[13px] font-bold uppercase tracking-widest mb-10 leading-relaxed">
                         Detailed documentation synchronized. <br />
                         <span className="text-mas-red/80">Clearance protocol active</span>
                     </p>
@@ -95,9 +95,9 @@ const Step2Main = () => {
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-2">
                                 <Clock size={14} className="text-mas-red" />
-                                <span className="text-gray-500 text-[9px] font-bold uppercase tracking-widest">Protocol Priority</span>
+                                <span className="text-gray-500 text-[12px] font-bold uppercase tracking-widest">Protocol Priority</span>
                             </div>
-                            <span className="text-white text-[9px] font-bold uppercase tracking-widest bg-mas-red/20 border border-mas-red/20 px-2 py-0.5 rounded italic">High Node</span>
+                            <span className="text-white text-[12px] font-bold uppercase tracking-widest bg-mas-red/20 border border-mas-red/20 px-2 py-0.5 rounded">High Node</span>
                         </div>
                         <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                             <motion.div 
@@ -118,7 +118,7 @@ const Step2Main = () => {
                         </button>
                         <button 
                             onClick={() => window.location.href = '/home'}
-                            className="px-6 py-3 bg-white/[0.03] border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/[0.07] transition-all"
+                            className="px-6 py-3 bg-white/[0.03] border border-white/10 text-white text-[13px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/[0.07] transition-all"
                         >
                             Return to Hub
                         </button>
@@ -135,19 +135,19 @@ const Step2Main = () => {
                 <div>
                     <div className="flex items-center gap-2 mb-3 justify-center md:justify-start">
                         <div className="w-6 h-[1px] bg-mas-red/50" />
-                        <span className="text-mas-red font-bold uppercase tracking-widest text-[9px]">PHASE 02 [DETAILED]</span>
+                        <span className="text-mas-red font-bold uppercase tracking-widest text-[12px]">PHASE 02 [DETAILED]</span>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-tight">
                         Detailed <span className="text-mas-red">Clearance</span>
                     </h1>
-                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mt-1">Personnel & Asset Declaration Node</p>
+                    <p className="text-gray-500 text-[13px] font-bold uppercase tracking-widest mt-1">Personnel & Asset Declaration Node</p>
                 </div>
 
                 <div className="hidden md:flex items-center gap-4 px-5 py-3 bg-white/[0.02] border border-white/5 rounded-xl">
                     <ClipboardCheck size={20} className="text-mas-red" />
                     <div>
-                        <p className="text-white text-[10px] font-bold uppercase tracking-widest">Protocol Sync</p>
-                        <p className="text-gray-600 text-[9px] uppercase font-bold tracking-widest italic">Node Secured</p>
+                        <p className="text-white text-[13px] font-bold uppercase tracking-widest">Protocol Sync</p>
+                        <p className="text-gray-600 text-[12px] uppercase font-bold tracking-widest">Node Secured</p>
                     </div>
                 </div>
             </div>
@@ -189,10 +189,10 @@ const Step2Main = () => {
                         }`}>
                             {isConfirmed && <CheckCircle2 size={12} className="text-white" />}
                         </div>
-                        <p className="text-[11px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">
-                            I verify that all group details and declarations provided above are <span className="text-white italic underline underline-offset-4 decoration-mas-red/40">accurate and authentic</span>. 
+                        <p className="text-[14px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">
+                            I verify that all group details and declarations provided above are <span className="text-white underline underline-offset-4 decoration-mas-red/40">accurate and authentic</span>. 
                             <br />
-                            <span className="text-gray-700 text-[9px]">Unauthorized equipment or undisclosed personnel may result in blacklist.</span>
+                            <span className="text-gray-700 text-[12px]">Unauthorized equipment or undisclosed personnel may result in blacklist.</span>
                         </p>
                     </div>
 

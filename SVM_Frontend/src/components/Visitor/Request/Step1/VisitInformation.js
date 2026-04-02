@@ -14,7 +14,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 px-4 py-6 rounded-xl border border-white/5 bg-white/[0.01]">
                 {/* Visit Date */}
                 <div className="space-y-1.5">
-                    <label className="text-[11px] font-medium text-gray-500 uppercase tracking-widest block">
+                    <label className="text-[14px] font-medium text-gray-500 uppercase tracking-widest block">
                         Planned Date
                     </label>
                     <div className="relative">
@@ -31,7 +31,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
 
                 {/* Purpose of Visit */}
                 <div className="space-y-1.5">
-                    <label className="text-[11px] font-medium text-gray-500 uppercase tracking-widest block">
+                    <label className="text-[14px] font-medium text-gray-500 uppercase tracking-widest block">
                         Nature of Visit
                     </label>
                     <div className="relative">
@@ -53,7 +53,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
 
                 {/* Person to Visit (New) */}
                 <div className="space-y-1.5">
-                    <label className="text-[11px] font-medium text-gray-500 uppercase tracking-widest block">
+                    <label className="text-[14px] font-medium text-gray-500 uppercase tracking-widest block">
                         Person to Visit / Host
                     </label>
                     <div className="relative">
@@ -71,8 +71,8 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                 {/* Company Related Toggle */}
                 <div className="flex items-center justify-between px-5 py-3 rounded-xl border border-white/5 bg-white/[0.01]">
                     <div className="flex flex-col">
-                        <label className="text-[11px] font-medium text-gray-400 uppercase tracking-widest">Corporate Business?</label>
-                        <span className="text-[10px] text-gray-600 font-medium tracking-tight">MAS Holdings Related</span>
+                        <label className="text-[14px] font-medium text-gray-400 uppercase tracking-widest">Corporate Business?</label>
+                        <span className="text-[13px] text-gray-600 font-medium tracking-tight">MAS Holdings Related</span>
                     </div>
                     <button 
                         type="button"
@@ -86,8 +86,8 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                 {/* Visitor Count */}
                 <div className="flex items-center justify-between px-5 py-3 rounded-xl border border-white/5 bg-white/[0.01]">
                     <div className="flex flex-col">
-                        <label className="text-[11px] font-medium text-gray-400 uppercase tracking-widest">Delegation Size</label>
-                        <span className="text-[10px] text-gray-600 font-medium tracking-tight">Total persons entering</span>
+                        <label className="text-[14px] font-medium text-gray-400 uppercase tracking-widest">Delegation Size</label>
+                        <span className="text-[13px] text-gray-600 font-medium tracking-tight">Total persons entering</span>
                     </div>
                     <div className="flex items-center gap-4">
                         <button 

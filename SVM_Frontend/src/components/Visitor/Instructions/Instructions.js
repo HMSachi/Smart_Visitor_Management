@@ -57,12 +57,12 @@ const InstructionsMain = () => {
                 <div>
                     <div className="flex items-center gap-2 mb-3">
                         <div className="w-6 h-[1px] bg-mas-red/50" />
-                        <span className="text-mas-red font-bold uppercase tracking-widest text-[9px]">Operational Protocol</span>
+                        <span className="text-mas-red font-bold uppercase tracking-widest text-[12px]">Operational Protocol</span>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-bold text-white uppercase tracking-tight">
                         Security <span className="text-mas-red">Guidelines</span>
                     </h1>
-                    <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest mt-1">Facility Rules [V.2.0]</p>
+                    <p className="text-gray-600 text-[13px] font-bold uppercase tracking-widest mt-1">Facility Rules [V.2.0]</p>
                 </div>
             </header>
 
@@ -95,12 +95,12 @@ const InstructionsMain = () => {
                             </div>
                         </div>
                         <div>
-                            <span className={`text-[10px] font-bold uppercase tracking-widest block mb-1 ${
+                            <span className={`text-[13px] font-bold uppercase tracking-widest block mb-1 ${
                                 agreed ? 'text-white' : 'text-gray-500'
                             }`}>
                                 Acknowledgment of Terms
                             </span>
-                            <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest leading-relaxed block max-w-xl">
+                            <span className="text-[13px] text-gray-600 font-bold uppercase tracking-widest leading-relaxed block max-w-xl">
                                 I confirm that I have read the <span className="text-mas-red">Security Protocol</span>. I agree to follow guidelines.
                             </span>
                         </div>

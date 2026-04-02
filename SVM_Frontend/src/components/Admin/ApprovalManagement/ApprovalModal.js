@@ -48,7 +48,7 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                     {type === 'Approve' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
                   </div>
                   <div>
-                    <p className="text-gray-300/90 text-[10px] font-medium uppercase tracking-widest mb-1">Administrative Final Review</p>
+                    <p className="text-gray-300/90 text-[13px] font-medium uppercase tracking-widest mb-1">Administrative Final Review</p>
                     <h2 className="text-white text-lg font-bold uppercase tracking-widest">
                       {type === 'Approve' ? 'Confirm Authorization' : 'Deny Access Protocol'}
                     </h2>
@@ -68,24 +68,24 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                   <div className="flex items-center gap-4">
                     <div className="w-1.5 h-6 bg-mas-red/40 group-hover:bg-mas-red rounded-full transition-all"></div>
                     <div>
-                      <p className="text-gray-300/80 text-[9px] font-medium uppercase tracking-widest mb-1">Target Subject Identity</p>
+                      <p className="text-gray-300/80 text-[12px] font-medium uppercase tracking-widest mb-1">Target Subject Identity</p>
                       <p className="text-white text-sm font-medium uppercase tracking-widest group-hover:text-mas-red transition-colors">{visitor?.name}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-gray-300/80 text-[9px] font-medium uppercase tracking-widest mb-1">Reg Batch ID</p>
-                    <p className="text-gray-300/90 text-[11px] font-mono tracking-wider">{visitor?.id || visitor?.batchId}</p>
+                    <p className="text-gray-300/80 text-[12px] font-medium uppercase tracking-widest mb-1">Reg Batch ID</p>
+                    <p className="text-gray-300/90 text-[14px] font-mono tracking-wider">{visitor?.id || visitor?.batchId}</p>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-end">
-                    <label className="text-gray-300/90 uppercase text-[10px] font-medium tracking-widest flex items-center gap-2">
+                    <label className="text-gray-300/90 uppercase text-[13px] font-medium tracking-widest flex items-center gap-2">
                       <Send size={12} className="text-mas-red/40" />
                       Protocol Feedback {type === 'Reject' && <span className="text-mas-red animate-pulse">*</span>}
                     </label>
                     {error && (
-                      <span className="text-mas-red text-[10px] font-medium uppercase animate-pulse flex items-center gap-1.5 tracking-widest">
+                      <span className="text-mas-red text-[13px] font-medium uppercase animate-pulse flex items-center gap-1.5 tracking-widest">
                         <AlertCircle size={12} /> Required For Denial
                       </span>
                     )}

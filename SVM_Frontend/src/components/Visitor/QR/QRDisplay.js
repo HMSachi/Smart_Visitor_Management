@@ -12,12 +12,12 @@ const QRDisplay = ({ visitorData }) => {
                         <Shield size={14} />
                     </div>
                     <div>
-                        <p className="text-[9px] font-bold text-white uppercase tracking-widest leading-tight">MAS HOLDINGS</p>
-                        <p className="text-[8px] font-bold text-gray-700 uppercase tracking-widest">ACCESS NODE 01</p>
+                        <p className="text-[12px] font-bold text-white uppercase tracking-widest leading-tight">MAS HOLDINGS</p>
+                        <p className="text-[14px] font-bold text-gray-700 uppercase tracking-widest">ACCESS NODE 01</p>
                     </div>
                 </div>
                 <div className="text-right">
-                    <p className="text-[8px] font-bold text-mas-red uppercase tracking-widest">SECURITY_ACTIVE</p>
+                    <p className="text-[14px] font-bold text-mas-red uppercase tracking-widest">SECURITY_ACTIVE</p>
                 </div>
             </div>
 
@@ -45,7 +45,7 @@ const QRDisplay = ({ visitorData }) => {
                         </div>
                     </div>
                 </div>
-                <p className="mt-4 text-[8px] font-bold text-gray-400 uppercase tracking-widest">SCAN AT TERMINAL</p>
+                <p className="mt-4 text-[14px] font-bold text-gray-400 uppercase tracking-widest">SCAN AT TERMINAL</p>
             </div>
 
             {/* Holder Information */}
@@ -54,14 +54,14 @@ const QRDisplay = ({ visitorData }) => {
                     <div className="space-y-0.5">
                         <div className="flex items-center gap-1.5 mb-1">
                             <User size={10} className="text-mas-red" />
-                            <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Holder</span>
+                            <span className="text-[14px] font-bold text-gray-400 uppercase tracking-widest">Holder</span>
                         </div>
                         <p className="text-[12px] font-bold text-black uppercase tracking-tight truncate">{visitorData.name}</p>
                     </div>
                     <div className="space-y-0.5 text-right">
                         <div className="flex items-center gap-1.5 mb-1 justify-end">
                             <Calendar size={10} className="text-mas-red" />
-                            <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Date</span>
+                            <span className="text-[14px] font-bold text-gray-400 uppercase tracking-widest">Date</span>
                         </div>
                         <p className="text-[12px] font-bold text-black uppercase tracking-tight">{visitorData.date}</p>
                     </div>
@@ -71,16 +71,16 @@ const QRDisplay = ({ visitorData }) => {
                     <div className="space-y-0.5">
                         <div className="flex items-center gap-1.5 mb-1">
                             <QrCode size={10} className="text-mas-red" />
-                            <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Clearance</span>
+                            <span className="text-[14px] font-bold text-gray-400 uppercase tracking-widest">Clearance</span>
                         </div>
-                        <p className="text-[10px] font-bold text-gray-700 font-mono tracking-tight">{visitorData.refId}</p>
+                        <p className="text-[13px] font-bold text-gray-700 font-mono tracking-tight">{visitorData.refId}</p>
                     </div>
                     <div className="space-y-0.5 text-right">
                         <div className="flex items-center gap-1.5 mb-1 justify-end">
                             <MapPin size={10} className="text-mas-red" />
-                            <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Zone</span>
+                            <span className="text-[14px] font-bold text-gray-400 uppercase tracking-widest">Zone</span>
                         </div>
-                        <p className="text-[10px] font-bold text-mas-red uppercase bg-mas-red/5 px-2 py-0.5 rounded tracking-tighter">
+                        <p className="text-[13px] font-bold text-mas-red uppercase bg-mas-red/5 px-2 py-0.5 rounded tracking-tighter">
                             {visitorData.zone}
                         </p>
                     </div>

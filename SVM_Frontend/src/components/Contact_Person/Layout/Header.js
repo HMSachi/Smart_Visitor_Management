@@ -38,7 +38,7 @@ const Header = ({ title }) => {
                     <input
                         type="text"
                         placeholder="Search matrix..."
-                        className="w-full pl-10 pr-4 py-2.5 bg-white/[0.02] border border-white/5 focus:border-mas-red/30 focus:bg-white/[0.04] rounded-xl text-[11px] transition-all outline-none text-white placeholder:text-gray-300/30 uppercase tracking-widest"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white/[0.02] border border-white/5 focus:border-mas-red/30 focus:bg-white/[0.04] rounded-xl text-[14px] transition-all outline-none text-white placeholder:text-gray-300/30 uppercase tracking-widest"
                     />
                 </div>
             </div>
@@ -48,11 +48,11 @@ const Header = ({ title }) => {
                     <div className="flex flex-col items-end">
                         <div className="flex items-center gap-2 text-mas-red/80 mb-0.5">
                             <Globe size={10} className="animate-pulse" />
-                            <span className="text-[9px] font-medium tracking-widest uppercase">NODE: 08_COL</span>
+                            <span className="text-[12px] font-medium tracking-widest uppercase">NODE: 08_COL</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-300/80">
                             <Clock size={10} />
-                            <span className="text-[9px] font-medium tracking-widest uppercase">14:18 GMT</span>
+                            <span className="text-[12px] font-medium tracking-widest uppercase">14:18 GMT</span>
                         </div>
                     </div>
                 </div>

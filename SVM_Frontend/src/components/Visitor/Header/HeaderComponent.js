@@ -22,7 +22,7 @@ const HeaderComponent = () => {
     };
 
     return (
-        <header className="fixed top-0 left-0 w-full z-[100] h-16 bg-mas-dark-900 border-b border-white/[0.03] flex items-center">
+        <header className="fixed top-0 left-0 w-full z-[100] h-16 bg-bg border-b border-white/[0.03] flex items-center">
             <div className="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
                 {/* Logo and Back */}
                 <div className="flex items-center gap-4 md:gap-8">
@@ -41,7 +41,7 @@ const HeaderComponent = () => {
                         />
                         <div className="hidden sm:block ml-3 h-4 w-px bg-white/10"></div>
                         <span className="hidden sm:block ml-3 text-white font-medium tracking-tighter text-sm uppercase">
-                            Access <span className="text-mas-red">Portal</span>
+                            Access <span className="text-primary">Portal</span>
                         </span>
                     </Link>
                 </div>
@@ -52,7 +52,7 @@ const HeaderComponent = () => {
                         <Link 
                             key={item.path}
                             to={item.path} 
-                            className="text-[10px] font-bold text-gray-500 hover:text-white transition-all uppercase tracking-widest"
+                            className="text-[13px] font-bold text-gray-500 hover:text-white transition-all uppercase tracking-widest"
                         >
                             {item.label}
                         </Link>
@@ -60,7 +60,7 @@ const HeaderComponent = () => {
                     
                     <button 
                         onClick={() => navigate('/request-step-1')}
-                        className="compact-btn !px-5 !py-2"
+                        className="compact-btn !px-5 !py-2 !bg-primary hover:!bg-primary-hover"
                     >
                         Request Visit
                     </button>
@@ -91,7 +91,7 @@ const HeaderComponent = () => {
             >
                 <Box className="p-8 h-full flex flex-col">
                     <div className="flex justify-between items-center mb-12">
-                        <span className="text-mas-red font-medium tracking-widest text-xl">MENU</span>
+                        <span className="text-primary font-medium tracking-widest text-xl">MENU</span>
                         <IconButton onClick={() => dispatch(setMobileMenu(false))} className="text-white bg-white/5">
                             <X size={20} />
                         </IconButton>
@@ -106,11 +106,11 @@ const HeaderComponent = () => {
                                 className="rounded-lg bg-white/[0.01] border border-white/5 p-4"
                             >
                                 <ListItemIcon className="min-w-0 mr-3">
-                                    <item.icon className="text-mas-red" size={18} />
+                                    <item.icon className="text-primary" size={18} />
                                 </ListItemIcon>
                                 <ListItemText 
                                     primary={item.label} 
-                                    primaryTypographyProps={{ style: { fontWeight: 800, fontSize: '9px', letterSpacing: '0.15em', color: '#fff', textTransform: 'uppercase' } }}
+                                    primaryTypographyProps={{ style: { fontWeight: 800, fontSize: '12px', letterSpacing: '0.15em', color: '#fff', textTransform: 'uppercase' } }}
                                 />
                             </ListItem>
                         ))}

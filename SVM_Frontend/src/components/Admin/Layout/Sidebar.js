@@ -27,13 +27,13 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
     </div>
     
     {!collapsed && (
-      <span className={`uppercase text-[10px] font-medium tracking-[0.2em] transition-all duration-500 ${active ? 'text-white' : 'text-gray-500 group-hover:text-white'}`}>
+      <span className={`uppercase text-[13px] font-medium tracking-[0.2em] transition-all duration-500 ${active ? 'text-white' : 'text-gray-500 group-hover:text-white'}`}>
         {label}
       </span>
     )}
 
     {collapsed && (
-       <div className="absolute left-[120%] px-3 py-2 bg-mas-dark-800 border border-white/10 rounded-lg text-[9px] font-medium text-white uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none z-50 shadow-2xl">
+       <div className="absolute left-[120%] px-3 py-2 bg-mas-dark-800 border border-white/10 rounded-lg text-[12px] font-medium text-white uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none z-50 shadow-2xl">
          {label}
        </div>
     )}
@@ -79,8 +79,8 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
             </div>
             {!isCollapsed && (
                 <div className="animate-fade-in overflow-hidden">
-                    <p className="text-white text-[10px] font-medium uppercase tracking-wider truncate">Samith</p>
-                    <p className="text-gray-500 text-[8px] uppercase tracking-widest truncate">System Admin</p>
+                    <p className="text-white text-[13px] font-medium uppercase tracking-wider truncate">Samith</p>
+                    <p className="text-gray-500 text-[14px] uppercase tracking-widest truncate">System Admin</p>
                 </div>
             )}
         </div>

@@ -4,13 +4,25 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-primary: #C8102E;
+  --color-primary-hover: #A60D26;
+  --color-primary-glow: rgba(200, 16, 46, 0.4);
+  --color-secondary: #000000;
+  --color-bg-default: #0A0A0B;
+  --color-bg-paper: #121214;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #D1D1D1;
+  --color-text-dim: #888888;
+}
+
 @layer base {
   body {
     font-family: 'Inter', sans-serif !important;
-    font-size: 13px !important;
+    font-size: 15px !important;
     font-weight: 400 !important;
     color: #D1D1D1 !important;
-    line-height: 1.5 !important;
+    line-height: 1.6 !important;
     @apply bg-[#0A0A0B];
     margin: 0;
     overflow-x: hidden;
@@ -22,11 +34,11 @@
   }
 
   h2, h3 {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   h4, h5, h6 {
-    font-size: 13px !important;
+    font-size: 15px !important;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -51,7 +63,7 @@
 
   label {
     font-family: 'Inter', sans-serif !important;
-    font-size: 12px !important;
+    font-size: 14px !important;
     color: #888888 !important;
     font-weight: 500 !important;
   }
@@ -80,7 +92,7 @@
   }
 
   .compact-btn {
-    @apply px-4 py-2 bg-mas-red text-white text-[11px] font-semibold uppercase tracking-wider rounded-lg hover:bg-mas-red-hover active:scale-95 transition-all;
+    @apply px-4 py-2 bg-mas-red text-white text-[13px] font-semibold uppercase tracking-wider rounded-lg hover:bg-mas-red-hover active:scale-95 transition-all;
   }
 
   /* Pulse removed; using subtle transitions instead */
@@ -142,7 +154,7 @@
 @layer components {
   .subheading {
     font-family: 'Inter', sans-serif !important;
-    font-size: 13px !important;
+    font-size: 15px !important;
     font-weight: 400 !important;
     color: #A1A1A1 !important;
     letter-spacing: 0.3px !important;

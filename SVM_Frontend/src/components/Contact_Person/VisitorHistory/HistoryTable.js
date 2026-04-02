@@ -8,7 +8,7 @@ const HistoryTable = ({ history }) => {
         <div className="bg-[#121214] border border-white/5 rounded-3xl overflow-hidden shadow-2xl animate-fade-in sm:overflow-visible p-4 sm:p-0">
             <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
                 <thead className="hidden sm:table-header-group">
-                    <tr className="bg-white/[0.02] border-b border-white/5 text-gray-300 text-[10px] font-medium uppercase tracking-[0.2em]">
+                    <tr className="bg-white/[0.02] border-b border-white/5 text-gray-300 text-[13px] font-medium uppercase tracking-[0.2em]">
                         <th className="px-8 py-5 w-16"></th>
                         <th className="px-8 py-5">Personnel Identity</th>
                         <th className="px-8 py-5">History Timestamp</th>
@@ -25,35 +25,35 @@ const HistoryTable = ({ history }) => {
                             >
                                 <td className="block sm:table-cell px-2 sm:px-8 py-2 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
                                     <div className="flex sm:block justify-between items-center sm:justify-start">
-                                        <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden">Expansion Hub</span>
+                                        <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden">Expansion Hub</span>
                                         <div className={`transition-transform duration-300 ${expandedRow === item.id ? 'rotate-180' : ''}`}>
                                             <ChevronDown size={14} className={expandedRow === item.id ? 'text-mas-red' : 'text-gray-300 opacity-80 group-hover:opacity-100'} />
                                         </div>
                                     </div>
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                    <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Personnel Identity</span>
+                                    <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Personnel Identity</span>
                                     <div className="flex items-center gap-4">
-                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 flex items-center justify-center text-white text-[11px] font-medium group-hover:border-mas-red/40 group-hover:text-mas-red transition-all duration-500">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 flex items-center justify-center text-white text-[14px] font-medium group-hover:border-mas-red/40 group-hover:text-mas-red transition-all duration-500">
                                             {item.visitor[0]}
                                         </div>
                                         <div>
                                             <p className="text-white text-sm font-medium uppercase tracking-wide group-hover:text-mas-red transition-colors">{item.visitor}</p>
-                                            <p className="text-gray-300 text-[9px] uppercase tracking-widest font-medium opacity-80">Entry Authenticated</p>
+                                            <p className="text-gray-300 text-[12px] uppercase tracking-widest font-medium opacity-80">Entry Authenticated</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                    <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">History Timestamp</span>
-                                    <span className="text-white/90 text-[11px] font-medium tracking-wide uppercase break-words">{item.date}</span>
+                                    <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">History Timestamp</span>
+                                    <span className="text-white/90 text-[14px] font-medium tracking-wide uppercase break-words">{item.date}</span>
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                    <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Access Protocol</span>
-                                    <span className="text-[10px] font-medium uppercase tracking-widest px-3 py-1 bg-white/[0.02] border border-white/5 rounded-lg text-gray-300 break-words flex w-fit">{item.category}</span>
+                                    <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Access Protocol</span>
+                                    <span className="text-[13px] font-medium uppercase tracking-widest px-3 py-1 bg-white/[0.02] border border-white/5 rounded-lg text-gray-300 break-words flex w-fit">{item.category}</span>
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 text-left sm:text-right">
-                                    <span className="text-[8px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Archived Status</span>
-                                    <span className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-[9px] font-medium uppercase tracking-widest border shadow-lg ${item.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5 shadow-green-500/5' : 'text-mas-red border-mas-red/20 bg-mas-red/5 shadow-mas-red/5'}`}>
+                                    <span className="text-[14px] font-bold tracking-[0.2em] text-mas-red/60 uppercase block sm:hidden mb-3 text-left">Archived Status</span>
+                                    <span className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-medium uppercase tracking-widest border shadow-lg ${item.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5 shadow-green-500/5' : 'text-mas-red border-mas-red/20 bg-mas-red/5 shadow-mas-red/5'}`}>
                                         {item.status === 'Approved' ? 'Validated' : 'Denied'}
                                     </span>
                                 </td>
@@ -69,11 +69,11 @@ const HistoryTable = ({ history }) => {
                                                 </div>
                                                 <div className="space-y-4">
                                                     <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1 group hover:border-mas-red/20 transition-colors">
-                                                        <p className="text-gray-300 text-[9px] uppercase font-medium tracking-widest opacity-80">NIC Registry</p>
+                                                        <p className="text-gray-300 text-[12px] uppercase font-medium tracking-widest opacity-80">NIC Registry</p>
                                                         <p className="text-white text-xs font-medium tracking-widest">N-9428103X</p>
                                                     </div>
                                                     <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1 group hover:border-mas-red/20 transition-colors">
-                                                        <p className="text-gray-300 text-[9px] uppercase font-medium tracking-widest opacity-80">Protocol Sync</p>
+                                                        <p className="text-gray-300 text-[12px] uppercase font-medium tracking-widest opacity-80">Protocol Sync</p>
                                                         <p className="text-white text-xs font-medium tracking-widest">#SYNC-4281-ALPHA</p>
                                                     </div>
                                                 </div>
@@ -85,11 +85,11 @@ const HistoryTable = ({ history }) => {
                                                 </div>
                                                 <div className="space-y-4">
                                                     <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1 group hover:border-mas-red/20 transition-colors">
-                                                        <p className="text-gray-300 text-[9px] uppercase font-medium tracking-widest opacity-80">Designated Host</p>
+                                                        <p className="text-gray-300 text-[12px] uppercase font-medium tracking-widest opacity-80">Designated Host</p>
                                                         <p className="text-white text-xs font-medium tracking-widest uppercase">Sachi (HR-04)</p>
                                                     </div>
                                                     <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1 group hover:border-mas-red/20 transition-colors">
-                                                        <p className="text-gray-300 text-[9px] uppercase font-medium tracking-widest opacity-80">Total Session</p>
+                                                        <p className="text-gray-300 text-[12px] uppercase font-medium tracking-widest opacity-80">Total Session</p>
                                                         <p className="text-white text-xs font-medium tracking-widest">02H 15M 42S</p>
                                                     </div>
                                                 </div>
@@ -103,7 +103,7 @@ const HistoryTable = ({ history }) => {
                                                     <div className="absolute top-0 right-0 p-2 opacity-10">
                                                         <FileText size={40} className="text-mas-red" />
                                                     </div>
-                                                    <p className="text-white/70 text-[11px] leading-relaxed font-medium uppercase tracking-wide relative z-10">
+                                                    <p className="text-white/70 text-[14px] leading-relaxed font-medium uppercase tracking-wide relative z-10">
                                                         "Entry verified through primary biometric point. All assets cleared by security node 04. No protocol anomalies detected during visitation window."
                                                     </p>
                                                 </div>

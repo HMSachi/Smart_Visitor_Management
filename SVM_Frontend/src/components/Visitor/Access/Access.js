@@ -55,7 +55,7 @@ const AccessMain = () => {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-white uppercase tracking-tight mb-2">Access My Visit</h2>
-          <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">
+          <p className="text-gray-500 text-[13px] font-bold uppercase tracking-widest">
             Identity Verification Node
           </p>
         </div>
@@ -63,7 +63,7 @@ const AccessMain = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email Field */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+            <label className="text-[14px] font-bold uppercase tracking-widest text-gray-500">
               Email Address
             </label>
             <input
@@ -75,7 +75,7 @@ const AccessMain = () => {
               className="compact-input w-full"
             />
             {errors.email && (
-              <span className="text-mas-red text-[10px] font-bold uppercase tracking-wider block">
+              <span className="text-mas-red text-[13px] font-bold uppercase tracking-wider block">
                 {errors.email}
               </span>
             )}
@@ -83,7 +83,7 @@ const AccessMain = () => {
 
           {/* Phone Field */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+            <label className="text-[14px] font-bold uppercase tracking-widest text-gray-500">
               Phone Number
             </label>
             <input
@@ -95,7 +95,7 @@ const AccessMain = () => {
               className="compact-input w-full"
             />
             {errors.phone && (
-              <span className="text-mas-red text-[10px] font-bold uppercase tracking-wider block">
+              <span className="text-mas-red text-[13px] font-bold uppercase tracking-wider block">
                 {errors.phone}
               </span>
             )}
@@ -103,7 +103,7 @@ const AccessMain = () => {
 
           {/* Reference ID Field */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+            <label className="text-[14px] font-bold uppercase tracking-widest text-gray-500">
               Reference ID
             </label>
             <input
@@ -115,7 +115,7 @@ const AccessMain = () => {
               className="compact-input w-full"
             />
             {errors.refId && (
-              <span className="text-mas-red text-[10px] font-bold uppercase tracking-wider block">
+              <span className="text-mas-red text-[13px] font-bold uppercase tracking-wider block">
                 {errors.refId}
               </span>
             )}
@@ -133,7 +133,7 @@ const AccessMain = () => {
         </form>
 
         <div className="mt-8 text-center">
-          <p className="text-gray-500 text-[9px] font-bold uppercase tracking-widest leading-relaxed">
+          <p className="text-gray-500 text-[12px] font-bold uppercase tracking-widest leading-relaxed">
             Authorized Personnel Only. 
             <br />
             <span className="text-mas-red/50">MAS Security Node 01</span>

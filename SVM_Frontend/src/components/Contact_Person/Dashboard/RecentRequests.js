@@ -37,7 +37,7 @@ const RecentRequests = () => {
             <div className="overflow-x-auto">
                 <table className="w-full text-left">
                     <thead>
-                        <tr className="bg-white/[0.02] text-gray-300 text-[9px] uppercase tracking-[0.2em] font-medium">
+                        <tr className="bg-white/[0.02] text-gray-300 text-[12px] uppercase tracking-[0.2em] font-medium">
                             <th className="px-4 md:px-6 py-3">Visitor Identity</th>
                             <th className="px-4 md:px-6 py-3">Reference ID</th>
                             <th className="px-4 md:px-6 py-3">Protocol Schedule</th>
@@ -50,33 +50,33 @@ const RecentRequests = () => {
                             <tr key={req.id} className="group hover:bg-white/[0.01] transition-all">
                                 <td className="px-4 md:px-6 py-3">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-mas-red/20 to-transparent border border-mas-red/20 flex items-center justify-center text-mas-red text-[10px] font-medium">
+                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-mas-red/20 to-transparent border border-mas-red/20 flex items-center justify-center text-mas-red text-[13px] font-medium">
                                             {req.name.split(' ').map(n => n[0]).join('')}
                                         </div>
                                         <div>
                                             <p className="text-white text-xs font-medium">{req.name}</p>
-                                            <p className="text-gray-300 text-[9px] uppercase tracking-wider opacity-90">Lead Personnel</p>
+                                            <p className="text-gray-300 text-[12px] uppercase tracking-wider opacity-90">Lead Personnel</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td className="px-4 md:px-6 py-3">
-                                    <span className="text-white/90 text-[10px] font-mono tracking-tighter uppercase">{req.batchId}</span>
+                                    <span className="text-white/90 text-[13px] font-mono tracking-tighter uppercase">{req.batchId}</span>
                                 </td>
                                 <td className="px-4 md:px-6 py-3">
                                     <div className="flex flex-col">
-                                        <span className="text-white/80 text-[10px] font-medium">{req.date}</span>
-                                        <span className="text-gray-300 text-[9px] uppercase opacity-50">{req.timeIn}</span>
+                                        <span className="text-white/80 text-[13px] font-medium">{req.date}</span>
+                                        <span className="text-gray-300 text-[12px] uppercase opacity-50">{req.timeIn}</span>
                                     </div>
                                 </td>
                                 <td className="px-4 md:px-6 py-3">
-                                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-medium uppercase tracking-wider border ${getStatusColor(req.status)}`}>
+                                    <span className={`px-2 py-0.5 rounded-md text-[12px] font-medium uppercase tracking-wider border ${getStatusColor(req.status)}`}>
                                         {req.status}
                                     </span>
                                 </td>
                                 <td className="px-4 md:px-6 py-3 text-right">
                                     <button
                                         onClick={() => navigate('/contact_person/request-review', { state: { requestId: req.id } })}
-                                        className="text-[9px] font-medium text-gray-300 hover:text-mas-red uppercase tracking-[0.1em] transition-all py-1.5 px-3 rounded-lg border border-white/5 hover:border-mas-red/20 hover:bg-mas-red/5"
+                                        className="text-[12px] font-medium text-gray-300 hover:text-mas-red uppercase tracking-[0.1em] transition-all py-1.5 px-3 rounded-lg border border-white/5 hover:border-mas-red/20 hover:bg-mas-red/5"
                                     >
                                         Review
                                     </button>

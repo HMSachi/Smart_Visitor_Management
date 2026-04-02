@@ -22,14 +22,14 @@ const NotificationList = ({ notifications }) => {
 
                         <div className="flex-1 min-w-0">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
-                                <h4 className={`text-[10px] font-bold tracking-widest uppercase ${notif.unread ? 'text-white' : 'text-gray-300 opacity-90'}`}>
+                                <h4 className={`text-[13px] font-bold tracking-widest uppercase ${notif.unread ? 'text-white' : 'text-gray-300 opacity-90'}`}>
                                     {notif.title}
                                 </h4>
-                                <span className="text-gray-300 text-[8px] font-medium uppercase tracking-[0.2em] opacity-70">
+                                <span className="text-gray-300 text-[14px] font-medium uppercase tracking-[0.2em] opacity-70">
                                     {notif.time}
                                 </span>
                             </div>
-                            <p className="text-gray-300 text-[11px] font-medium leading-relaxed truncate opacity-80 group-hover:opacity-100 transition-opacity">
+                            <p className="text-gray-300 text-[14px] font-medium leading-relaxed truncate opacity-80 group-hover:opacity-100 transition-opacity">
                                 {notif.message}
                             </p>
                         </div>

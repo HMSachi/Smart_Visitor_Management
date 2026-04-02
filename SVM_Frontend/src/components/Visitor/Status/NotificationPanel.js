@@ -49,7 +49,7 @@ const NotificationPanel = ({ status }) => {
                 </div>
                 <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-mas-red/40" />
-                    <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Protocol Sync</span>
+                    <span className="text-[12px] text-gray-500 font-bold uppercase tracking-widest">Protocol Sync</span>
                 </div>
             </div>
 
@@ -62,11 +62,11 @@ const NotificationPanel = ({ status }) => {
                         <div className="flex justify-between items-center mb-1">
                             <div className="flex items-center gap-2">
                                 <alert.icon size={12} className={alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500/60 group-hover/item:text-green-500' : 'text-mas-red/60 group-hover/item:text-mas-red transition-colors'} />
-                                <span className={`text-[9px] font-bold uppercase tracking-widest ${alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500' : 'text-mas-red'}`}>{alert.type}</span>
+                                <span className={`text-[12px] font-bold uppercase tracking-widest ${alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500' : 'text-mas-red'}`}>{alert.type}</span>
                             </div>
-                            <span className="text-[8px] font-bold text-gray-600 uppercase tracking-widest">{alert.time}</span>
+                            <span className="text-[14px] font-bold text-gray-600 uppercase tracking-widest">{alert.time}</span>
                         </div>
-                        <p className="text-[10px] text-gray-500 font-semibold leading-relaxed uppercase tracking-wider group-hover/item:text-gray-300 transition-colors">
+                        <p className="text-[13px] text-gray-500 font-semibold leading-relaxed uppercase tracking-wider group-hover/item:text-gray-300 transition-colors">
                             {alert.msg}
                         </p>
                     </div>
@@ -74,7 +74,7 @@ const NotificationPanel = ({ status }) => {
             </div>
             
             <div className="mt-8 pt-6 border-t border-white/5">
-                <p className="text-[8px] text-gray-700 font-bold uppercase tracking-widest leading-relaxed">
+                <p className="text-[14px] text-gray-700 font-bold uppercase tracking-widest leading-relaxed">
                     Interaction Log: <span className="text-gray-600">AES-256-GCM Active</span>
                 </p>
             </div>

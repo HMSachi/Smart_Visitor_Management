@@ -72,9 +72,9 @@ const EntryApprovalMain = () => {
                                         <div className="p-1.5 sm:p-2 rounded-lg bg-mas-red/10 border border-mas-red/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
                                             <Activity size={12} className="text-mas-red animate-pulse sm:w-4 sm:h-4" />
                                         </div>
-                                        <span className="text-mas-red font-medium uppercase text-[8px] sm:text-[10px] tracking-[0.4em] italic">Access_Control_Queue</span>
+                                        <span className="text-mas-red font-medium uppercase text-[14px] sm:text-[13px] tracking-[0.4em]">Access_Control_Queue</span>
                                     </div>
-                                    <h1 className="text-base sm:text-lg md:text-xl font-bold text-white italic tracking-tighter uppercase break-words max-w-[280px] sm:max-w-none">
+                                    <h1 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tighter uppercase break-words max-w-[280px] sm:max-w-none">
                                         Pending Verification
                                     </h1>
                                 </div>
@@ -85,7 +85,7 @@ const EntryApprovalMain = () => {
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder="FILTER_QUEUE..."
-                                        className="w-full pl-14 pr-6 py-3 sm:py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-[9px] sm:text-[10px] uppercase font-medium tracking-widest text-white placeholder:text-white/60 focus:border-mas-red/40 outline-none transition-all duration-500 italic shadow-xl"
+                                        className="w-full pl-14 pr-6 py-3 sm:py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-[12px] sm:text-[13px] uppercase font-medium tracking-widest text-white placeholder:text-white/60 focus:border-mas-red/40 outline-none transition-all duration-500 shadow-xl"
                                     />
                                 </div>
                             </div>
@@ -99,18 +99,18 @@ const EntryApprovalMain = () => {
                                     >
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-mas-red/5 rounded-full blur-[60px] pointer-events-none group-hover:bg-mas-red/20 transition-all"></div>
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 relative z-10">
-                                            <div className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-gray-300/80 text-[8px] font-medium uppercase tracking-widest italic w-fit">{v.time} via {v.nodeOrigin.split('_')[0]}</div>
-                                            <div className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[8px] font-medium uppercase tracking-widest italic animate-pulse w-fit">Waiting</div>
+                                            <div className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-gray-300/80 text-[14px] font-medium uppercase tracking-widest w-fit">{v.time} via {v.nodeOrigin.split('_')[0]}</div>
+                                            <div className="px-3 py-1 bg-mas-red/10 border border-mas-red/20 text-mas-red text-[14px] font-medium uppercase tracking-widest animate-pulse w-fit">Waiting</div>
                                         </div>
                                         <div className="flex items-center gap-4 sm:gap-5 relative z-10">
-                                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-mas-dark border border-white/10 flex items-center justify-center text-mas-red font-semibold text-sm italic group-hover:scale-110 group-hover:bg-mas-red group-hover:text-white transition-all shadow-[0_0_15px_rgba(200,16,46,0.1)] shrink-0">
+                                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-mas-dark border border-white/10 flex items-center justify-center text-mas-red font-semibold text-sm group-hover:scale-110 group-hover:bg-mas-red group-hover:text-white transition-all shadow-[0_0_15px_rgba(200,16,46,0.1)] shrink-0">
                                                 {v.initials}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-white text-lg sm:text-2xl font-bold uppercase tracking-widest italic group-hover:text-mas-red transition-colors truncate break-words">{v.name}</h3>
+                                                <h3 className="text-white text-lg sm:text-2xl font-bold uppercase tracking-widest group-hover:text-mas-red transition-colors truncate break-words">{v.name}</h3>
                                                 <div className="flex items-center gap-2 mt-1">
                                                     <Shield size={10} className="text-gray-300/90 sm:w-3 sm:h-3" />
-                                                    <span className="text-gray-300/90 text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.2em] truncate">{v.id}</span>
+                                                    <span className="text-gray-300/90 text-[12px] sm:text-[13px] font-medium uppercase tracking-[0.2em] truncate">{v.id}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -121,7 +121,7 @@ const EntryApprovalMain = () => {
                                         <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
                                             <CheckCircle2 size={24} className="text-gray-300/80" />
                                         </div>
-                                        <p className="text-white/80 font-medium uppercase tracking-widest text-xs italic">No pending verifications</p>
+                                        <p className="text-white/80 font-medium uppercase tracking-widest text-xs">No pending verifications</p>
                                     </div>
                                 )}
                             </div>
@@ -139,13 +139,13 @@ const EntryApprovalMain = () => {
                             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                                 <button 
                                     onClick={() => setView('list')}
-                                    className="px-6 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-gray-300 hover:text-white hover:border-white/30 transition-all flex items-center gap-3 text-[10px] font-medium uppercase tracking-widest group"
+                                    className="px-6 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-gray-300 hover:text-white hover:border-white/30 transition-all flex items-center gap-3 text-[13px] font-medium uppercase tracking-widest group"
                                 >
                                     <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Access Queue
                                 </button>
                                 <div className="px-5 py-2.5 bg-mas-red/10 border border-mas-red/20 rounded-xl flex items-center gap-3 shadow-[0_0_20px_rgba(200,16,46,0.1)]">
                                     <Lock size={14} className="text-mas-red" />
-                                    <span className="text-mas-red text-[10px] font-medium uppercase tracking-widest italic">Encrypted_Profile_Sync</span>
+                                    <span className="text-mas-red text-[13px] font-medium uppercase tracking-widest">Encrypted_Profile_Sync</span>
                                 </div>
                             </div>
 
@@ -155,12 +155,12 @@ const EntryApprovalMain = () => {
 
                                 <div className="flex flex-col lg:flex-row gap-12 relative z-10 w-full">
                                     <div className="w-full lg:w-1/3 space-y-6 flex flex-col items-center lg:items-start text-center lg:text-left">
-                                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-mas-red border border-white/10 shadow-[0_0_30px_rgba(200,16,46,0.3)] flex items-center justify-center text-white font-medium text-3xl md:text-4xl italic">
+                                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-mas-red border border-white/10 shadow-[0_0_30px_rgba(200,16,46,0.3)] flex items-center justify-center text-white font-medium text-3xl md:text-4xl">
                                             {selectedVisitor?.initials}
                                         </div>
                                         <div className="space-y-1.5">
-                                            <h2 className="text-white text-2xl font-bold uppercase tracking-widest italic">{selectedVisitor?.name}</h2>
-                                            <div className="flex items-center justify-center lg:justify-start gap-3 mt-1 text-mas-red text-[9px] font-medium uppercase tracking-[0.2em]">
+                                            <h2 className="text-white text-2xl font-bold uppercase tracking-widest">{selectedVisitor?.name}</h2>
+                                            <div className="flex items-center justify-center lg:justify-start gap-3 mt-1 text-mas-red text-[12px] font-medium uppercase tracking-[0.2em]">
                                                 <span>{selectedVisitor?.type}</span>
                                                 <div className="w-1 h-1 rounded-full bg-mas-red"></div>
                                                 <span>{selectedVisitor?.nodeOrigin}</span>
@@ -171,45 +171,45 @@ const EntryApprovalMain = () => {
                                     <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-10">
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-2 text-gray-300/50 mb-1">
-                                                <User size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Identity / NIC</span>
+                                                <User size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Identity / NIC</span>
                                             </div>
                                             <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-3 px-4 rounded-xl">{selectedVisitor?.nic}</p>
                                         </div>
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-2 text-gray-300/50 mb-1">
-                                                <Activity size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Company / Org</span>
+                                                <Activity size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Company / Org</span>
                                             </div>
                                             <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-3 px-4 rounded-xl">{selectedVisitor?.company}</p>
                                         </div>
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-2 text-gray-300/50 mb-1">
-                                                <FileText size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Mission Purpose</span>
+                                                <FileText size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Mission Purpose</span>
                                             </div>
                                             <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-3 px-4 rounded-xl">{selectedVisitor?.purpose}</p>
                                         </div>
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-2 text-gray-300/50 mb-1">
-                                                <Car size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Vehicle Profile</span>
+                                                <Car size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Vehicle Profile</span>
                                             </div>
                                             <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-3 px-4 rounded-xl">{selectedVisitor?.vehicle}</p>
                                         </div>
                                         <div className="sm:col-span-2 space-y-4">
                                             <div className="flex items-center gap-2 text-gray-300/50 mb-1">
-                                                <Package size={14} /> <span className="text-[9px] font-medium uppercase tracking-[0.3em] italic">Declared Assets</span>
+                                                <Package size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Declared Assets</span>
                                             </div>
                                             {selectedVisitor?.equipment.length > 0 ? (
                                                 <div className="flex flex-wrap gap-4">
                                                     {selectedVisitor.equipment.map((eq, i) => (
                                                         <div key={i} className="px-5 py-3 bg-[#0A0A0B] border border-white/10 rounded-xl flex items-center gap-4">
-                                                            <span className="text-white text-[11px] font-medium uppercase tracking-widest">{eq.name}</span>
+                                                            <span className="text-white text-[14px] font-medium uppercase tracking-widest">{eq.name}</span>
                                                             <div className="h-3 w-[1px] bg-white/10"></div>
-                                                            <span className="text-gray-300/90 text-[9px] font-mono tracking-widest opacity-90">S/N: {eq.serial}</span>
+                                                            <span className="text-gray-300/90 text-[12px] font-mono tracking-widest opacity-90">S/N: {eq.serial}</span>
                                                         </div>
                                                     ))}
                                                 </div>
                                             ) : (
                                                 <div className="px-5 py-4 bg-white/5 border border-white/10 rounded-xl">
-                                                    <p className="text-gray-300/90 text-[10px] italic font-medium uppercase tracking-widest">No assets declared</p>
+                                                    <p className="text-gray-300/90 text-[13px] font-medium uppercase tracking-widest">No assets declared</p>
                                                 </div>
                                             )}
                                         </div>
@@ -218,12 +218,12 @@ const EntryApprovalMain = () => {
                                 
                                 <div className="mt-14 pt-10 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 w-full">
                                     <div className="text-center md:text-left">
-                                        <p className="text-[8px] font-medium uppercase tracking-[0.4em] text-gray-300/80 mb-1">Next Protocol Stage</p>
-                                        <p className="text-white text-[10px] uppercase font-medium tracking-widest italic">Awaiting Matrix Validation</p>
+                                        <p className="text-[14px] font-medium uppercase tracking-[0.4em] text-gray-300/80 mb-1">Next Protocol Stage</p>
+                                        <p className="text-white text-[13px] uppercase font-medium tracking-widest">Awaiting Matrix Validation</p>
                                     </div>
                                     <button 
                                         onClick={() => setView('verification')}
-                                        className="w-full md:w-auto px-10 py-5 bg-mas-red text-white uppercase font-medium tracking-[0.3em] text-[11px] rounded-2xl shadow-[0_15px_30px_rgba(200,16,46,0.3)] hover:shadow-[0_20px_40px_rgba(200,16,46,0.5)] transition-all hover:-translate-y-1 flex items-center justify-center gap-4 italic group"
+                                        className="w-full md:w-auto px-10 py-5 bg-mas-red text-white uppercase font-medium tracking-[0.3em] text-[14px] rounded-2xl shadow-[0_15px_30px_rgba(200,16,46,0.3)] hover:shadow-[0_20px_40px_rgba(200,16,46,0.5)] transition-all hover:-translate-y-1 flex items-center justify-center gap-4 group"
                                     >
                                         Initiate Verification Matrix <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                                     </button>

@@ -125,7 +125,7 @@ const Login = () => {
             <h2 className="text-xl font-bold tracking-[0.4em] text-white/90 uppercase">
               MAS ACCESS
             </h2>
-            <p className="text-[10px] text-blue-400/50 tracking-[0.4em] font-medium uppercase glow-text-blue">
+            <p className="text-[13px] text-blue-400/50 tracking-[0.4em] font-medium uppercase glow-text-blue">
               Secure Intelligent Access System
             </p>
           </div>
@@ -164,14 +164,14 @@ const Login = () => {
               <h3 className="text-2xl font-bold mb-1 letter-spacing-wide tracking-[0.2em] uppercase">
                 LOGIN PORTAL
               </h3>
-              <p className="text-gray-300 text-[9px] tracking-[0.3em] uppercase opacity-90">
+              <p className="text-gray-300 text-[12px] tracking-[0.3em] uppercase opacity-90">
                 SECURE ENTERPRISE AUTHENTICATION
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="group space-y-2">
-                <label className="text-[8px] font-medium tracking-[0.25em] text-white/30 uppercase ml-1">
+                <label className="text-[14px] font-medium tracking-[0.25em] text-white/30 uppercase ml-1">
                   IDENTIFIER PROTOCOL
                 </label>
                 <TextField
@@ -205,7 +205,7 @@ const Login = () => {
               </div>
 
               <div className="group space-y-2">
-                <label className="text-[8px] font-medium tracking-[0.25em] text-white/30 uppercase ml-1">
+                <label className="text-[14px] font-medium tracking-[0.25em] text-white/30 uppercase ml-1">
                   SECURITY ACCESS CODE
                 </label>
                 <TextField
@@ -256,13 +256,13 @@ const Login = () => {
               <div className="flex justify-between items-center px-1">
                 <button
                   type="button"
-                  className="text-[8px] font-medium tracking-[0.2em] text-blue-500/40 hover:text-blue-400 uppercase transition-colors"
+                  className="text-[14px] font-medium tracking-[0.2em] text-blue-500/40 hover:text-blue-400 uppercase transition-colors"
                 >
                   Recover Keys
                 </button>
                 <button
                   type="button"
-                  className="text-[8px] font-medium tracking-[0.2em] text-mas-red/40 hover:text-mas-red uppercase transition-colors"
+                  className="text-[14px] font-medium tracking-[0.2em] text-mas-red/40 hover:text-mas-red uppercase transition-colors"
                 >
                   Visitor Link
                 </button>
@@ -273,7 +273,7 @@ const Login = () => {
                   <motion.p
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-mas-red text-[9px] text-center font-medium tracking-widest uppercase py-2 bg-mas-red/5 rounded-none border border-mas-red/20"
+                    className="text-mas-red text-[12px] text-center font-medium tracking-widest uppercase py-2 bg-mas-red/5 rounded-none border border-mas-red/20"
                   >
                     {localError || reduxError}
                   </motion.p>
@@ -285,7 +285,7 @@ const Login = () => {
                 whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={reduxLoading}
-                className="w-full bg-mas-red hover:bg-[#B0060E] py-5 rounded-[0px] text-[10px] font-medium tracking-[0.3em] uppercase flex items-center justify-center gap-3 transition-all relative overflow-hidden shadow-[0_10px_30px_rgba(200,16,46,0.2)]"
+                className="w-full bg-mas-red hover:bg-[#B0060E] py-5 rounded-[0px] text-[13px] font-medium tracking-[0.3em] uppercase flex items-center justify-center gap-3 transition-all relative overflow-hidden shadow-[0_10px_30px_rgba(200,16,46,0.2)]"
               >
                 {reduxLoading ? (
                   <CircularProgress size={16} color="inherit" strokeWidth={6} />
@@ -300,7 +300,7 @@ const Login = () => {
           </div>
 
           <div className="mt-8 text-center">
-            <span className="text-[8px] font-medium tracking-[0.4em] text-white/10 uppercase">
+            <span className="text-[14px] font-medium tracking-[0.4em] text-white/10 uppercase">
               Global Data Security Encrypted • v4.2.1
             </span>
           </div>
