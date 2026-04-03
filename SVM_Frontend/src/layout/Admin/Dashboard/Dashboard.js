@@ -7,7 +7,7 @@ const Dashboard = () => {
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header />
       
-      <div className="flex-1 p-4 sm:p-8 lg:p-10 space-y-6 md:space-y-10 animate-fade-in-slow overflow-y-auto">
+      <div className="flex-1 p-4 sm:p-8 lg:p-4 md:p-10 space-y-6 md:space-y-10 animate-fade-in-slow overflow-y-auto">
         <div className="max-w-[1600px] mx-auto space-y-10">
           <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-4">
             <div>

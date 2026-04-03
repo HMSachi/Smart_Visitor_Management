@@ -2,7 +2,7 @@ import React from 'react';
 
 const SystemStatusNode = () => {
   return (
-    <div className="bg-[var(--color-bg-paper)] border border-white/5 p-10 h-full rounded-[32px] flex flex-col items-center justify-center relative overflow-hidden group shadow-2xl animate-fade-in-slow">
+    <div className="bg-[var(--color-bg-paper)] border border-white/5 p-4 md:p-10 h-full rounded-[32px] flex flex-col items-center justify-center relative overflow-hidden group shadow-2xl animate-fade-in-slow">
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
       <div className="relative mb-8">

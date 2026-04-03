@@ -4,7 +4,7 @@ import { UserCircle, ShieldCheck } from 'lucide-react';
 
 const ProfileSettingsMain = () => {
     return (
-        <div className="p-12 space-y-12 animate-fade-in">
+        <div className="p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in">
             <div className="flex items-end justify-between border-b border-mas-border pb-8">
                 <div>
                     <div className="flex items-center gap-4 mb-4">
@@ -21,7 +21,7 @@ const ProfileSettingsMain = () => {
                 </div>
             </div>
 
-            <div className="mas-glass border-mas-border p-12 relative overflow-hidden">
+            <div className="mas-glass border-mas-border p-6 md:p-12 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[120px]"></div>
                 <ProfileForm />
             </div>

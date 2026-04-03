@@ -9,7 +9,8 @@ import {
   Users,
   ChevronLeft,
   ChevronRight,
-  LogOut
+  LogOut,
+  UserPlus
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Drawer, Box, IconButton, Tooltip } from '@mui/material';
@@ -48,6 +49,7 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
     { id: 'blacklist', label: 'Blacklist', icon: UserX, path: '/admin/blacklist-management' },
     { id: 'reports', label: 'Reports', icon: FileText, path: '/admin/reports-logs' },
     { id: 'users', label: 'System Users', icon: Users, path: '/admin/user-management' },
+    { id: 'all-users', label: 'All Users', icon: UserPlus, path: '/admin/all-users' },
   ];
 
   return (

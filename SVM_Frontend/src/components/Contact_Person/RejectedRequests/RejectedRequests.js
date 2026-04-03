@@ -31,7 +31,7 @@ const RejectedRequestsMain = () => {
     ];
 
     return (
-        <div className="p-12 space-y-12 animate-fade-in">
+        <div className="p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in">
             <div className="flex items-end justify-between border-b border-mas-border pb-8">
                 <div>
                     <div className="flex items-center gap-4 mb-4">
@@ -43,7 +43,7 @@ const RejectedRequestsMain = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 items-start">
+            <div className="grid grid-cols-1 xl:grid-cols-1 md:grid-cols-3 gap-12 items-start">
                 <div className="xl:col-span-2">
                      <RejectionTable requests={requests} onSelect={setSelectedVisitor} />
                 </div>

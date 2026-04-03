@@ -30,7 +30,7 @@ const QRCodeManagement = () => {
         <p className="mt-2 text-gray-300 uppercase">Valid for next 12 hours</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <button className="mas-button-primary flex items-center justify-center gap-3">
           <Scan size={16} strokeWidth={3} /> Re-Gen
         </button>

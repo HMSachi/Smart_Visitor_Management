@@ -33,7 +33,7 @@ const QRMain = () => {
             </div>
 
             {/* Action Grid */}
-            <div className="grid grid-cols-2 gap-3 w-full mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full mb-10">
                 <button 
                     className="compact-btn !w-full"
                 >

@@ -37,7 +37,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction }) => {
   }, []);
 
   if (loading) return (
-    <div className="bg-[var(--color-bg-paper)] border border-white/5 p-12 rounded-[40px] animate-pulse shadow-2xl">
+    <div className="bg-[var(--color-bg-paper)] border border-white/5 p-6 md:p-12 rounded-[40px] animate-pulse shadow-2xl">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-8">
         <div className="h-10 w-64 bg-white/[0.03] rounded-2xl"></div>
         <div className="flex gap-4 w-full md:w-auto">
@@ -217,7 +217,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction }) => {
                       className="bg-[var(--color-bg-default)] border-b border-primary/10"
                     >
                       <td colSpan="6" className="px-0 py-0 overflow-hidden">
-                        <div className="p-10 pl-32 space-y-6 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
+                        <div className="p-4 md:p-10 pl-32 space-y-6 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
                           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
 
                           <div className="flex items-center gap-4 mb-8">

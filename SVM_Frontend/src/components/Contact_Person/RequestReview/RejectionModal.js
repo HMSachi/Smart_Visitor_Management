@@ -6,7 +6,7 @@ const RejectionModal = ({ isOpen, onClose, onConfirm, reason, setReason, comment
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
             <div className="absolute inset-0 bg-[#070708]/95 backdrop-blur-md" onClick={onClose}></div>
-            <div className="w-full max-w-xl bg-[var(--color-bg-paper)] border border-primary/20 rounded-[40px] p-12 relative z-10 animate-fade-in shadow-2xl overflow-hidden group">
+            <div className="w-full max-w-xl bg-[var(--color-bg-paper)] border border-primary/20 rounded-[40px] p-6 md:p-12 relative z-10 animate-fade-in shadow-2xl overflow-hidden group">
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-700"></div>
 
                 <div className="mb-10 relative z-10">

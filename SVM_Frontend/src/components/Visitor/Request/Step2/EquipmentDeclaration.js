@@ -89,7 +89,7 @@ const EquipmentDeclaration = ({ items, onAdd, onRemove, onChange }) => {
                 </AnimatePresence>
 
                 {items.length === 0 && (
-                    <div className="p-12 border-2 border-dashed border-white/5 rounded-xl flex flex-col items-center justify-center text-center">
+                    <div className="p-6 md:p-12 border-2 border-dashed border-white/5 rounded-xl flex flex-col items-center justify-center text-center">
                         <Package size={32} className="text-gray-800 mb-4" />
                         <p className="text-gray-600 text-[13px] font-bold uppercase tracking-widest mb-6 max-w-[200px] leading-relaxed">No hardware assets declared in current protocol.</p>
                         <button 

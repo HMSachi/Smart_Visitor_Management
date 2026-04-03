@@ -60,7 +60,7 @@ const HistoryTable = ({ history }) => {
                             </tr>
                             {expandedRow === item.id && (
                                 <tr className="block sm:table-row bg-[#0D0D0E] sm:bg-transparent border border-white/5 border-t-0 sm:border-none p-4 sm:p-0 rounded-bl-[24px] rounded-br-[24px] mb-6 sm:mb-0">
-                                    <td colSpan="5" className="block sm:table-cell p-4 sm:p-10 sm:px-16 border-y-0 sm:border-y border-white/5">
+                                    <td colSpan="5" className="block sm:table-cell p-4 sm:p-4 md:p-10 sm:px-16 border-y-0 sm:border-y border-white/5">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 animate-fade-in">
                                             <div className="space-y-6">
                                                 <div className="flex items-center gap-3">

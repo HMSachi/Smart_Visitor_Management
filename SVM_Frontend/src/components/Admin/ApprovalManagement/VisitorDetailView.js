@@ -107,7 +107,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
       {/* Visitor Profile Matrix */}
       <div className="mb-20">
         <SectionHeader title="Personnel Profile Intelligence" icon={User} />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 md:grid-cols-4 gap-8">
           <Field label="Full Identity Name" value={visitor.name} icon={User} />
           <Field label="Auth Identifier (NIC)" value={visitor.nic} icon={Hash} />
           <Field label="Signal Protocol (Phone)" value={visitor.contact} icon={Phone} />
@@ -126,13 +126,13 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
         </div>
 
         {/* Infrastructure Authorization Grid */}
-        <div className="mt-16 bg-black/40 p-10 border border-white/5 rounded-[40px] shadow-inner relative overflow-hidden">
+        <div className="mt-16 bg-black/40 p-4 md:p-10 border border-white/5 rounded-[40px] shadow-inner relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
           <div className="flex items-center gap-4 mb-10">
             <div className="w-1 h-4 bg-primary rounded-full"></div>
             <p className="text-gray-300/90 text-[13px] font-medium uppercase tracking-widest">Infrastructure Zone Authorization</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {visitor.areas && visitor.areas.length > 0 ? visitor.areas.map((area, idx) => (
               <motion.div
                 key={idx}
@@ -143,7 +143,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
                 {area}
               </motion.div>
             )) : (
-              <div className="col-span-full border border-dashed border-white/10 p-10 rounded-3xl text-center">
+              <div className="col-span-full border border-dashed border-white/10 p-4 md:p-10 rounded-3xl text-center">
                 <p className="text-gray-300/80 uppercase text-[14px] font-medium tracking-widest">No specific zones requested</p>
               </div>
             )}
@@ -154,7 +154,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
       {/* Logistics & Vehicle Registry */}
       <div className="mb-20">
         <SectionHeader title="Logistics & Vehicle Registry" icon={Car} />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 md:grid-cols-3 gap-8">
           <Field label="Transport Identifier" value={visitor.vehicle !== 'None' ? visitor.vehicle : 'NO_TRANSPORT_DECLARED'} icon={Car} />
           <Field label="Registry Type" value={visitor.vehicle !== 'None' ? 'CIVILIAN_TRANSPORT' : 'N/A'} icon={Hash} />
           <Field label="Zone Clearance" value={visitor.vehicle !== 'None' ? 'PERMITTED_ZONE_A' : 'NOT_APPLICABLE'} icon={Shield} />
@@ -172,7 +172,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-10 bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] group/aux shadow-2xl relative overflow-hidden"
+                className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-4 md:p-10 bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] group/aux shadow-2xl relative overflow-hidden"
               >
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary group-hover:w-2 transition-all"></div>
                 <Field label={`Unit_${(idx + 2).toString().padStart(2, '0')} Identity`} value={member.name} icon={User} />
@@ -186,7 +186,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
 
       {/* Material Intake Protocol */}
       {visitor.equipment && visitor.equipment.length > 0 && (
-        <div className="mb-20 bg-[var(--color-bg-default)] p-12 border border-white/5 rounded-[40px] shadow-[inset_0_0_60px_rgba(0,0,0,0.5)]">
+        <div className="mb-20 bg-[var(--color-bg-default)] p-6 md:p-12 border border-white/5 rounded-[40px] shadow-[inset_0_0_60px_rgba(0,0,0,0.5)]">
           <SectionHeader title="Material Intake Protocol" icon={Package} />
           <div className="grid grid-cols-1 gap-6 mt-12">
             {visitor.equipment.map((item, idx) => (

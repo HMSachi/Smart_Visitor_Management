@@ -10,7 +10,7 @@ const ActivityTimeline = () => {
     ];
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-4 md:space-y-8">
             <div className="flex items-center justify-between border-b border-mas-border pb-4">
                 <h3 className="uppercase flex items-center gap-3">
                     <Activity size={14} className="text-primary" />

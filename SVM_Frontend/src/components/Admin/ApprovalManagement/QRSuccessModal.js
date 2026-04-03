@@ -36,7 +36,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData }) => {
                 </div>
               </div>
 
-              <div className="p-10 flex flex-col items-center justify-center text-center relative z-10">
+              <div className="p-4 md:p-10 flex flex-col items-center justify-center text-center relative z-10">
                 <div className="relative group/qr">
                   <div className="absolute inset-0 bg-green-500/20 blur-[30px] rounded-full opacity-0 group-hover/qr:opacity-100 transition-opacity duration-1000"></div>
                   <div className="relative w-40 h-40 bg-white p-4 mb-8 shadow-[0_0_40px_rgba(0,177,79,0.1)] rounded-2xl group-hover/qr:scale-105 transition-transform duration-700">

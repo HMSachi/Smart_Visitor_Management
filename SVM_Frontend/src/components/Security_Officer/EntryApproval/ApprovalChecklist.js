@@ -28,7 +28,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
     const allChecked = Object.values(checks).every(v => v);
 
     return (
-        <div className="max-w-4xl mx-auto w-full py-12 space-y-12">
+        <div className="max-w-4xl mx-auto w-full py-12 space-y-6 md:space-y-12">
             {/* Back Button */}
             <div className="mb-2 flex justify-start">
                 <button 
@@ -63,7 +63,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                                 <p className="text-gray-300/80 uppercase text-[13px] font-medium tracking-[0.4em] mt-1 underline decoration-primary/20 underline-offset-4">Ref: {displayVisitor.id}</p>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-4 border-t border-white/5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-3 gap-6 pt-4 border-t border-white/5">
                                 <div className="space-y-1">
                                     <p className="text-gray-300/80 text-[7px] font-medium uppercase tracking-widest">Access_Log</p>
                                     <p className="text-white text-[14px] font-mono font-medium">{displayVisitor.time}</p>
@@ -89,7 +89,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
             </div>
 
             {/* Authorization Matrix Protocol */}
-            <div className="space-y-8">
+            <div className="space-y-4 md:space-y-8">
                 <div className="flex items-center gap-6 px-4">
                     <div className="flex items-center gap-3">
                         <Shield size={14} className="text-primary" />
@@ -180,12 +180,12 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                             animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 50, rotateX: 20 }}
                             transition={{ type: "spring", damping: 20 }}
-                            className="relative mas-glass max-w-2xl w-full p-12 md:p-16 border-primary bg-[#0D0D0E]/95 backdrop-blur-3xl rounded-[40px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.8)] border border-primary/40"
+                            className="relative mas-glass max-w-2xl w-full p-6 md:p-12 md:p-16 border-primary bg-[#0D0D0E]/95 backdrop-blur-3xl rounded-[40px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.8)] border border-primary/40"
                         >
                             {/* Terminal Scanline */}
                             <div className="absolute top-0 left-0 w-full h-[1px] bg-primary animate-scan z-20 opacity-80"></div>
 
-                            <div className="space-y-12 relative z-10">
+                            <div className="space-y-6 md:space-y-12 relative z-10">
                                 <div className="flex items-center gap-8">
                                     <div className="p-5 rounded-2xl bg-primary text-white shadow-[0_0_30px_rgba(200,16,46,0.4)] rotate-3">
                                         <AlertCircle size={28} strokeWidth={2.5} />

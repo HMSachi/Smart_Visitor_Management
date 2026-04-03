@@ -172,7 +172,7 @@ const ActiveVisitorsMain = () => {
                                                     className="bg-[var(--color-bg-default)] border-b border-primary/20"
                                                 >
                                                     <td colSpan="5" className="px-0 py-0">
-                                                        <div className="p-10 pl-24 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
+                                                        <div className="p-4 md:p-10 pl-24 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
                                                             {/* Detailed View Decorations */}
                                                             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
                                                             <div className="w-1 h-12 bg-primary rounded-full absolute left-10 top-10 shadow-[0_0_10px_var(--color-primary)]"></div>

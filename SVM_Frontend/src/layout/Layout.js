@@ -20,7 +20,7 @@ const Layout = ({ children }) => {
 
   return (
     <Box
-      className={`${isDashboardPath ? "h-screen overflow-hidden flex-row" : "min-h-screen overflow-x-hidden flex-col"} w-full flex bg-background relative`}
+      className={`${isDashboardPath ? "h-screen overflow-hidden flex-col md:flex-row" : "min-h-screen overflow-x-hidden flex-col"} w-full flex bg-background relative`}
     >
       {isAdminPath && !isLoginPage && <Sidebar />}
 

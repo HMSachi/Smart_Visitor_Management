@@ -51,12 +51,12 @@ const ApprovalManagement = () => {
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header />
       
-      <div className="flex-1 p-10 space-y-12 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
+      <div className="flex-1 p-4 md:p-10 space-y-6 md:space-y-12 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
         {/* Dynamic Operational Aura */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
         <div className="max-w-[1700px] mx-auto relative z-10">
-          <div className="space-y-12">
+          <div className="space-y-6 md:space-y-12">
             {viewMode === "list" && (
               <div className="flex justify-between items-center -mb-8 relative z-20">
                 <div className="relative group w-full max-w-md">

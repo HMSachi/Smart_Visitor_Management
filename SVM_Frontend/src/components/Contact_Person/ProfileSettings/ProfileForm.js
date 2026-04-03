@@ -10,9 +10,9 @@ const ProfileForm = () => {
     "w-full px-4 py-3 border border-white/20 text-white rounded-md opacity-50 cursor-not-allowed bg-transparent";
 
   return (
-    <div className="space-y-12 max-w-2xl">
+    <div className="space-y-6 md:space-y-12 max-w-2xl">
       {/* Profile Details */}
-      <section className="space-y-8">
+      <section className="space-y-4 md:space-y-8">
         <div className="flex items-center gap-4 border-b border-white/5 pb-4">
           <User size={16} className="text-primary" />
           <h3 className="uppercase text-white">Identity Configuration</h3>
@@ -56,7 +56,7 @@ const ProfileForm = () => {
       </section>
 
       {/* Security Settings */}
-      <section className="space-y-8 pt-8">
+      <section className="space-y-4 md:space-y-8 pt-8">
         <div className="flex items-center gap-4 border-b border-white/5 pb-4">
           <Lock size={16} className="text-primary" />
           <h3 className="uppercase text-white">Security Protocol</h3>
@@ -68,7 +68,7 @@ const ProfileForm = () => {
             <input type="password" className={inputClass} />
           </div>
 
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
               <label className="text-gray-300 uppercase">New Password</label>
               <input type="password" className={inputClass} />
