@@ -25,6 +25,7 @@ import BlacklistManagement from "./layout/Admin/BlacklistManagement/BlacklistMan
 import ReportsAndLogs from "./layout/Admin/ReportsAndLogs/ReportsAndLogs";
 import UserManagement from "./layout/Admin/UserManagement/UserManagement";
 import AllUsers from "./layout/Admin/AllUsers/AllUsers";
+import VisitorManagement from "./layout/Admin/VisitorManagement/VisitorManagement";
 
 import Login from "./layout/Login/Login";
 
@@ -153,6 +154,7 @@ const AppContent = () => {
           <Route path="/admin/reports-logs" element={<ReportsAndLogs />} />
           <Route path="/admin/user-management" element={<UserManagement />} />
           <Route path="/admin/all-users" element={<AllUsers />} />
+          <Route path="/admin/visitor-management" element={<VisitorManagement />} />
           <Route
             path="/admin-dashboard"
             element={<Navigate to="/admin/dashboard" replace />}

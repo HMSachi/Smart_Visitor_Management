@@ -84,9 +84,9 @@ export const DeleteAdministrator = (id, status) => {
             const response = await AdministratorService.DeleteAdministrator(id, status);
             // Even more permissive check for success
             const isSuccess = response.data && (
-                response.data.ResultSet || 
-                response.data.Status === "Success" || 
-                response.data.Status === "OK" || 
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
                 response.status === 200
             );
 
