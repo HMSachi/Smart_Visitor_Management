@@ -11,7 +11,8 @@ import Header from '../../../components/Admin/Layout/Header';
 import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
-  if (status === 'Active' || status === 'A') {
+  const s = (status || '').toString().trim().toUpperCase();
+  if (s === 'ACTIVE' || s === 'A') {
     return (
       <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex items-center gap-2 w-max">
         <CheckCircle2 size={12} /> Active

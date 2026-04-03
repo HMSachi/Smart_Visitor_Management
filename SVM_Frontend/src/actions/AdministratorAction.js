@@ -36,7 +36,9 @@ export const AddAdministrator = (adminData) => {
         try {
             const response = await AdministratorService.AddAdministrator(adminData);
             dispatch({ type: ADD_ADMINISTRATOR_SUCCESS, payload: response.data });
-            dispatch(GetAllAdministrator()); // Re-fetch list
+            setTimeout(() => {
+                dispatch(GetAllAdministrator());
+            }, 500);
         } catch (error) {
             dispatch({ type: ADD_ADMINISTRATOR_FAILURE, payload: error.message });
         }
@@ -49,7 +51,9 @@ export const UpdateAdministrator = (adminData) => {
         try {
             const response = await AdministratorService.UpdateAdministrator(adminData);
             dispatch({ type: UPDATE_ADMINISTRATOR_SUCCESS, payload: response.data });
-            dispatch(GetAllAdministrator()); // Re-fetch list
+            setTimeout(() => {
+                dispatch(GetAllAdministrator());
+            }, 500);
         } catch (error) {
             dispatch({ type: UPDATE_ADMINISTRATOR_FAILURE, payload: error.message });
         }
@@ -75,7 +79,10 @@ export const DeleteAdministrator = (id, status) => {
         try {
             const response = await AdministratorService.DeleteAdministrator(id, status);
             dispatch({ type: DELETE_ADMINISTRATOR_SUCCESS, payload: response.data });
-            dispatch(GetAllAdministrator()); // Re-fetch list to reflect changes
+            // Add a small delay to ensure server-side commitment before re-fetching
+            setTimeout(() => {
+                dispatch(GetAllAdministrator());
+            }, 500);
         } catch (error) {
             dispatch({ type: DELETE_ADMINISTRATOR_FAILURE, payload: error.message });
         }
