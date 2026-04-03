@@ -50,12 +50,56 @@ const GetContactPersonByPhone = async (id, phone) => {
     });
 }
 
+const UpdateContactPersonStatus = async (id, status) => {
+    let config = {
+        method: 'post',
+        url: `https://visitormanagement.dockyardsoftware.com/ContactPerson/UpdateContactPersonStatus?VCP_Contact_person_id=${encodeURIComponent(id)}&VCP_Status=${encodeURIComponent(status)}`
+    };
+    return axios.request(config).then((response) => {
+        return response;
+    });
+}
+
+const GetContactPersonByEmail = async (email) => {
+    let config = {
+        method: 'get',
+        url: `https://visitormanagement.dockyardsoftware.com/ContactPerson/GetContactPersonByEmail?VCP_Email=${encodeURIComponent(email)}`
+    };
+    return axios.request(config).then((response) => {
+        return response;
+    });
+}
+
+const GetActiveContactPersons = async () => {
+    let config = {
+        method: 'get',
+        url: 'https://visitormanagement.dockyardsoftware.com/ContactPerson/GetActiveContactPersons'
+    };
+    return axios.request(config).then((response) => {
+        return response;
+    });
+}
+
+const SearchContactPersons = async (name) => {
+    let config = {
+        method: 'get',
+        url: `https://visitormanagement.dockyardsoftware.com/ContactPerson/SearchContactPersons?VCP_Name=${encodeURIComponent(name)}`
+    };
+    return axios.request(config).then((response) => {
+        return response;
+    });
+}
+
 const contactPersonService = {
     AddContactPerson,
     UpdateContactPerson,
     GetAllContactPersons,
     GetContactPersonById,
-    GetContactPersonByPhone
+    GetContactPersonByPhone,
+    UpdateContactPersonStatus,
+    GetContactPersonByEmail,
+    GetActiveContactPersons,
+    SearchContactPersons
 };
 
 export default contactPersonService;

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, CircularProgress, Alert, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
-import { Edit2, Plus, X } from 'lucide-react';
+import { TextField, Button, CircularProgress, Alert, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, InputBase } from '@mui/material';
+import { Edit2, Plus, X, Search } from 'lucide-react';
 import Header from '../../../components/Admin/Layout/Header';
 import contactPersonService from '../../../services/ContactPersonService';
 
 const UserManagement = () => {
   const [contactPersons, setContactPersons] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [showActiveOnly, setShowActiveOnly] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -23,15 +25,28 @@ const UserManagement = () => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [phoneError, setPhoneError] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   useEffect(() => {
-    fetchContactPersons();
-  }, []);
+    const delayDebounceFn = setTimeout(() => {
+      fetchContactPersons();
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [showActiveOnly, searchTerm]);
 
   const fetchContactPersons = async () => {
     setLoadingData(true);
     try {
-      const response = await contactPersonService.GetAllContactPersons();
+      let response;
+      if (searchTerm.trim()) {
+        response = await contactPersonService.SearchContactPersons(searchTerm);
+      } else if (showActiveOnly) {
+        response = await contactPersonService.GetActiveContactPersons();
+      } else {
+        response = await contactPersonService.GetAllContactPersons();
+      }
+      
       if (response.data && response.data.ResultSet) {
         setContactPersons(response.data.ResultSet);
       }
@@ -46,6 +61,7 @@ const UserManagement = () => {
     setMessage(null);
     setError(null);
     setPhoneError('');
+    setEmailError('');
     if (person) {
       setLoading(true);
       try {
@@ -77,6 +93,7 @@ const UserManagement = () => {
   const handleCloseForm = () => {
     setIsFormVisible(false);
     setPhoneError('');
+    setEmailError('');
     setFormData({ id: '', name: '', department: '', email: '', phone: '' });
   };
 
@@ -85,6 +102,9 @@ const UserManagement = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (name === 'phone') {
       setPhoneError('');
+    }
+    if (name === 'email') {
+      setEmailError('');
     }
   };
 
@@ -101,9 +121,37 @@ const UserManagement = () => {
     }
   };
 
+  const handleEmailBlur = async () => {
+    if (!formData.email.trim()) return;
+    try {
+      const response = await contactPersonService.GetContactPersonByEmail(formData.email);
+      if (response.data && response.data.ResultSet && response.data.ResultSet.length > 0) {
+        const existingPerson = response.data.ResultSet[0];
+        if (String(existingPerson.VCP_Contact_person_id) !== String(formData.id)) {
+          setEmailError('This email is already registered to another contact person.');
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to validate email uniquely", err);
+    }
+  };
+
+  const handleToggleStatus = async (person) => {
+    const newStatus = person.VCP_Status === 'A' ? 'I' : 'A'; // Assuming 'I' is inactive
+    setLoadingData(true);
+    try {
+      await contactPersonService.UpdateContactPersonStatus(person.VCP_Contact_person_id, newStatus);
+      await fetchContactPersons();
+    } catch (err) {
+      console.error("Failed to update status", err);
+      setError("Failed to update Contact Person status.");
+      setLoadingData(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (phoneError) return;
+    if (phoneError || emailError) return;
 
     setLoading(true);
     setMessage(null);
@@ -155,15 +203,49 @@ const UserManagement = () => {
               </h1>
             </div>
             {!isFormVisible && (
-              <Button
-                onClick={() => handleOpenForm()}
-                variant="contained"
-                startIcon={<Plus size={18} />}
-                className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]"
-                sx={{ borderRadius: 0 }}
-              >
-                ADD CONTACT PERSON
-              </Button>
+              <div className="flex gap-4 items-center">
+                <div className="flex items-center bg-black/40 border border-white/10 px-3 py-1 group focus-within:border-primary transition-all">
+                  <Search size={16} className="text-white/20 group-focus-within:text-primary" />
+                  <InputBase
+                    placeholder="SEARCH BY NAME..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    sx={{
+                      ml: 1,
+                      flex: 1,
+                      color: 'white',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                      letterSpacing: '0.1em',
+                      '& input::placeholder': {
+                        color: 'rgba(255,255,255,0.2)',
+                        opacity: 1,
+                      },
+                    }}
+                  />
+                </div>
+                <Button
+                  onClick={() => setShowActiveOnly(!showActiveOnly)}
+                  variant="outlined"
+                  className={`rounded-none px-4 py-2 text-xs font-bold tracking-widest transition-all ${
+                    showActiveOnly 
+                    ? "border-primary text-primary bg-primary/10 hover:bg-primary/20" 
+                    : "border-white/10 text-white/40 hover:text-white/60 hover:border-white/20"
+                  }`}
+                  sx={{ borderRadius: 0 }}
+                >
+                  {showActiveOnly ? "SHOWING ACTIVE" : "SHOWING ALL"}
+                </Button>
+                <Button
+                  onClick={() => handleOpenForm()}
+                  variant="contained"
+                  startIcon={<Plus size={18} />}
+                  className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]"
+                  sx={{ borderRadius: 0 }}
+                >
+                  ADD CONTACT PERSON
+                </Button>
+              </div>
             )}
           </header>
 
@@ -194,7 +276,21 @@ const UserManagement = () => {
                 </div>
                 <div className="group space-y-2">
                   <label className="text-[12px] font-medium tracking-[0.2em] text-white/40 uppercase ml-1 block">Email Address</label>
-                  <TextField fullWidth name="email" type="email" value={formData.email} onChange={handleChange} required variant="outlined" size="small" InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }} sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} />
+                  <TextField 
+                    fullWidth 
+                    name="email" 
+                    type="email" 
+                    value={formData.email} 
+                    onChange={handleChange} 
+                    onBlur={handleEmailBlur}
+                    required 
+                    error={!!emailError}
+                    helperText={emailError}
+                    variant="outlined" 
+                    size="small" 
+                    InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }} 
+                    sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: emailError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: emailError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} 
+                  />
                 </div>
                 <div className="group space-y-2">
                   <label className="text-[12px] font-medium tracking-[0.2em] text-white/40 uppercase ml-1 block">Phone Number</label>
@@ -219,7 +315,7 @@ const UserManagement = () => {
                 <Button onClick={handleCloseForm} type="button" variant="outlined" className="border-white/10 text-white/70 hover:bg-white/5 rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]" sx={{ borderRadius: 0 }}>
                   CANCEL
                 </Button>
-                <Button disabled={loading || !!phoneError} type="submit" variant="contained" className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]" sx={{ borderRadius: 0 }}>
+                <Button disabled={loading || !!phoneError || !!emailError} type="submit" variant="contained" className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]" sx={{ borderRadius: 0 }}>
                   {loading ? <CircularProgress size={20} color="inherit" /> : isEditing ? 'SAVE CHANGES' : 'CREATE PERSON'}
                 </Button>
               </div>
@@ -255,14 +351,19 @@ const UserManagement = () => {
                     contactPersons.map((person) => (
                       <TableRow key={person.VCP_Contact_person_id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: 'rgba(255,255,255,0.02)' } }}>
                         <TableCell className="text-white/70 font-medium border-b-white/5">{person.VCP_Contact_person_id}</TableCell>
-                        <TableCell className="text-white font-medium border-b-white/5">{person.VCP_Name || '-'}</TableCell>
-                        <TableCell className="text-white/70 border-b-white/5">{person.VCP_Department || '-'}</TableCell>
-                        <TableCell className="text-white/70 border-b-white/5">{person.VCP_Email || '-'}</TableCell>
-                        <TableCell className="text-white/70 border-b-white/5">{person.VCP_Phone || '-'}</TableCell>
+                        <TableCell className={`font-medium border-b-white/5 transition-colors ${person.VCP_Status === 'A' ? 'text-white' : 'text-white/30 line-through'}`}>{person.VCP_Name || '-'}</TableCell>
+                        <TableCell className={`border-b-white/5 transition-colors ${person.VCP_Status === 'A' ? 'text-white/70' : 'text-white/20'}`}>{person.VCP_Department || '-'}</TableCell>
+                        <TableCell className={`border-b-white/5 transition-colors ${person.VCP_Status === 'A' ? 'text-white/70' : 'text-white/20'}`}>{person.VCP_Email || '-'}</TableCell>
+                        <TableCell className={`border-b-white/5 transition-colors ${person.VCP_Status === 'A' ? 'text-white/70' : 'text-white/20'}`}>{person.VCP_Phone || '-'}</TableCell>
                         <TableCell className="border-b-white/5">
-                           <span className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold ${person.VCP_Status === 'A' || person.VCP_Status === 'Active' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-                             {person.VCP_Status === 'A' ? 'Active' : (person.VCP_Status || 'Unknown')}
-                           </span>
+                           <button 
+                             onClick={() => handleToggleStatus(person)}
+                             disabled={loadingData}
+                             title="Click to toggle status"
+                             className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${person.VCP_Status === 'A' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'}`}
+                           >
+                             {person.VCP_Status === 'A' ? 'ACTIVE' : 'INACTIVE'}
+                           </button>
                         </TableCell>
                         <TableCell align="right" className="border-b-white/5">
                           <IconButton onClick={() => handleOpenForm(person)} size="small" className="text-white/40 hover:text-white">
