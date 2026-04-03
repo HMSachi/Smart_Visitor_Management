@@ -57,8 +57,10 @@ const AllUsers = () => {
   };
 
   const handleToggleStatus = (admin) => {
-      // Robust check for active status (handles both 'A' and 'Active' strings)
-      const isActive = admin.VA_Status === 'Active' || admin.VA_Status === 'A';
+      // Robust check for active status (case-insensitive and handles full words)
+      const statusValue = (admin.VA_Status || '').toString().trim().toUpperCase();
+      const isActive = statusValue === 'ACTIVE' || statusValue === 'A';
+      
       const newStatus = isActive ? 'I' : 'A';
       dispatch(DeleteAdministrator(admin.VA_Admin_id, newStatus));
   };
@@ -220,7 +222,10 @@ const AllUsers = () => {
                                 <button 
                                   title="Toggle Status (Delete/Restore)"
                                   onClick={() => handleToggleStatus(admin)}
-                                  className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${admin.VA_Status === 'A' ? 'bg-primary/10 hover:bg-primary/20 border-primary/30 text-primary hover:text-primary' : 'bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-500 hover:text-green-500'}`}
+                                  className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${
+                                    (admin.VA_Status || '').toString().trim().toUpperCase() === 'A' || (admin.VA_Status || '').toString().trim().toUpperCase() === 'ACTIVE'
+                                      ? 'bg-primary/10 hover:bg-primary/20 border-primary/30 text-primary hover:text-primary' 
+                                      : 'bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-500 hover:text-green-500'}`}
                                 >
                                     <RefreshCw size={14} />
                                 </button>
