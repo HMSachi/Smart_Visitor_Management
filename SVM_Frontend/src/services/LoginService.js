@@ -1,15 +1,14 @@
 import axios from 'axios';
 
  
-const GetLogin = async () => {
-
+const GetLogin = async (email, password) => {
     let config = {
-        method: 'get',
-        url: 'login/login' 
-};
-return axios.request(config).then((response) =>{
-    return response;
-});
+        method: 'post',
+        url: `https://visitormanagement.dockyardsoftware.com/Administrator/LoginAdministrator?VA_Email=${email}&VA_Password=${password}` 
+    };
+    return axios.request(config).then((response) =>{
+        return response;
+    });
 }
 
 const loginService = {

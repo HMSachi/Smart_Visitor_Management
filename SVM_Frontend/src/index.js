@@ -4,7 +4,10 @@ import "./index.css";
 import App from "./App";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://BASE_URL.com";
+
+const BACKEND_BASE_URL = 'https://visitormanagement.dockyardsoftware.com';
+axios.defaults.baseURL = BACKEND_BASE_URL;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

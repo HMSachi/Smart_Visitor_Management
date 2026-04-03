@@ -26,9 +26,18 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      // Success logic remains same
+      if (user.ResultSet && user.ResultSet.length > 0) {
+        const role = user.ResultSet[0].VA_Role;
+        if (role === "Admin") navigate("/admin-dashboard");
+        else if (role === "ContactPerson") navigate("/contact_person/dashboard");
+        else if (role === "Security") navigate("/security-dashboard");
+        else if (role === "Visitor") navigate("/home");
+        else setLocalError("Access denied. Unknown role.");
+      } else {
+        setLocalError("Invalid security access code. Authentication failed.");
+      }
     }
-  }, [user]);
+  }, [user, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,28 +48,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLocalError("");
-    dispatch(GetLogin());
-
-    setTimeout(() => {
-      const { email, password } = formData;
-
-      // In a real scenario, the backend would return the user role
-      // Mocking logic for different users
-      if (password === "123456") {
-        if (email === "admin@company.com") navigate("/admin-dashboard");
-        else if (email === "contact@company.com")
-          navigate("/contact_person/dashboard");
-        else if (email === "security@company.com")
-          navigate("/security-dashboard");
-        else if (email === "visitor@company.com") navigate("/home");
-        else
-          setLocalError(
-            "Access denied. No role profile found for this identifier.",
-          );
-      } else {
-        setLocalError("Invalid security access code. Authentication failed.");
-      }
-    }, 1500);
+    dispatch(GetLogin(formData.email, formData.password));
   };
 
   return (

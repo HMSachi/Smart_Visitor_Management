@@ -5,11 +5,11 @@ import {
 } from '../constants/LoginConstants';
 import loginService from '../services/LoginService';
 
-export const GetLogin = () => {
+export const GetLogin = (email, password) => {
     return async (dispatch) => {
         dispatch({ type: LOGIN_REQUEST });
         try {
-            const response = await loginService.GetLogin();
+            const response = await loginService.GetLogin(email, password);
             dispatch({ type: LOGIN_SUCCESS, payload: response.data });
         } catch (error) {
             dispatch({ type: LOGIN_FAILURE, payload: error.message });
