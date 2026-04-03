@@ -3,7 +3,7 @@ import { thunk } from "redux-thunk";
 import loginReducer from './reducers/LoginReducer';
 import adminReducer from "./reducers/adminSlice";
 import visitorReducer from "./reducers/visitorSlice";
-import contactPersonReducer from "./reducers/contactPersonSlice";
+import contactPersonReducer from './reducers/ContactPersonReducer';
 import securityReducer from "./reducers/securitySlice";
 import dashboardReducer from "./reducers/dashboardSlice";
 import uiReducer from "./reducers/uiSlice";
