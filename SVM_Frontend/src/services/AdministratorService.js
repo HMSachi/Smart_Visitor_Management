@@ -5,15 +5,13 @@ const GetAllAdministrator = async () => {
         method: 'get',
         url: 'https://visitormanagement.dockyardsoftware.com/Administrator/GetAllAdministrator'
     };
-    return axios.request(config).then((response) => {
-        return response;
-    });
+    return axios.request(config).then((response) => response);
 }
 
 const AddAdministrator = async (adminData) => {
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/Administrator/AddAdministrator?VA_Name=${adminData.VA_Name}&VA_Role=${adminData.VA_Role}&VA_Email=${adminData.VA_Email}&VA_Password=${adminData.VA_Password}`
+        url: `https://visitormanagement.dockyardsoftware.com/Administrator/AddAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}`
     };
     return axios.request(config).then((response) => response);
 }
@@ -21,7 +19,7 @@ const AddAdministrator = async (adminData) => {
 const UpdateAdministrator = async (adminData) => {
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/Administrator/UpdateAdministrator?VA_Name=${adminData.VA_Name}&VA_Role=${adminData.VA_Role}&VA_Email=${adminData.VA_Email}&VA_Password=${adminData.VA_Password}&VA_Admin_id=${adminData.VA_Admin_id}`
+        url: `https://visitormanagement.dockyardsoftware.com/Administrator/UpdateAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}&VA_Admin_id=${encodeURIComponent(adminData.VA_Admin_id)}`
     };
     return axios.request(config).then((response) => response);
 }
@@ -29,7 +27,7 @@ const UpdateAdministrator = async (adminData) => {
 const GetAdministratorById = async (id) => {
     let config = {
         method: 'get',
-        url: `https://visitormanagement.dockyardsoftware.com/Administrator/GetAdministratorById?VA_Admin_id=${id}`
+        url: `https://visitormanagement.dockyardsoftware.com/Administrator/GetAdministratorById?VA_Admin_id=${encodeURIComponent(id)}`
     };
     return axios.request(config).then((response) => response);
 }
@@ -37,7 +35,7 @@ const GetAdministratorById = async (id) => {
 const DeleteAdministrator = async (id, status) => {
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/Administrator/DeleteAdministrator?VA_Admin_id=${id}&VA_Status=${status}`
+        url: `https://visitormanagement.dockyardsoftware.com/Administrator/DeleteAdministrator?VA_Admin_id=${encodeURIComponent(id)}&VA_Status=${encodeURIComponent(status)}`
     };
     return axios.request(config).then((response) => response);
 }
