@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { TextField, Button, CircularProgress, Alert, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, InputBase } from '@mui/material';
 import { Edit2, Plus, X, Search } from 'lucide-react';
 import Header from '../../../components/Admin/Layout/Header';
+import { 
+  GetAllContactPersons, 
+  GetActiveContactPersons, 
+  AddContactPerson, 
+  UpdateContactPerson, 
+  UpdateContactPersonStatus, 
+  SearchContactPersons, 
+  GetContactPersonById 
+} from '../../../actions/ContactPersonAction';
 import contactPersonService from '../../../services/ContactPersonService';
 
 const UserManagement = () => {
-  const [contactPersons, setContactPersons] = useState([]);
-  const [loadingData, setLoadingData] = useState(true);
+  const dispatch = useDispatch();
+  const { contactPersons, loading: reduxLoading, contactPerson: selectedPerson, success: reduxSuccess, error: reduxError } = useSelector((state) => state.contactPerson);
+
   const [showActiveOnly, setShowActiveOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -21,7 +32,6 @@ const UserManagement = () => {
     phone: '',
   });
 
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [phoneError, setPhoneError] = useState('');
@@ -35,25 +45,27 @@ const UserManagement = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [showActiveOnly, searchTerm]);
 
-  const fetchContactPersons = async () => {
-    setLoadingData(true);
-    try {
-      let response;
-      if (searchTerm.trim()) {
-        response = await contactPersonService.SearchContactPersons(searchTerm);
-      } else if (showActiveOnly) {
-        response = await contactPersonService.GetActiveContactPersons();
-      } else {
-        response = await contactPersonService.GetAllContactPersons();
-      }
-      
-      if (response.data && response.data.ResultSet) {
-        setContactPersons(response.data.ResultSet);
-      }
-    } catch (err) {
-      console.error("Failed to fetch contact persons", err);
-    } finally {
-      setLoadingData(false);
+  useEffect(() => {
+    if (reduxSuccess) {
+      setMessage(isEditing ? "Contact Person updated successfully!" : "Contact Person added successfully!");
+      setTimeout(() => handleCloseForm(), 1500);
+      fetchContactPersons();
+    }
+  }, [reduxSuccess]);
+
+  useEffect(() => {
+    if (reduxError) {
+      setError(reduxError);
+    }
+  }, [reduxError]);
+
+  const fetchContactPersons = () => {
+    if (searchTerm.trim()) {
+      dispatch(SearchContactPersons(searchTerm));
+    } else if (showActiveOnly) {
+      dispatch(GetActiveContactPersons());
+    } else {
+      dispatch(GetAllContactPersons());
     }
   };
 
@@ -63,32 +75,28 @@ const UserManagement = () => {
     setPhoneError('');
     setEmailError('');
     if (person) {
-      setLoading(true);
-      try {
-        const response = await contactPersonService.GetContactPersonById(person.VCP_Contact_person_id);
-        const fetchedPerson = response.data?.ResultSet?.[0] || person;
-        
-        setIsEditing(true);
-        setFormData({
-          id: fetchedPerson.VCP_Contact_person_id,
-          name: fetchedPerson.VCP_Name || '',
-          department: fetchedPerson.VCP_Department || '',
-          email: fetchedPerson.VCP_Email || '',
-          phone: fetchedPerson.VCP_Phone || '',
-        });
-        setIsFormVisible(true);
-      } catch (err) {
-        console.error("Failed to fetch contact person by ID", err);
-        setError("Failed to fetch the latest Contact Person details. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+      setIsEditing(true);
+      dispatch(GetContactPersonById(person.VCP_Contact_person_id));
+      setIsFormVisible(true);
     } else {
       setIsEditing(false);
       setFormData({ id: '', name: '', department: '', email: '', phone: '' });
       setIsFormVisible(true);
     }
   };
+
+  // Sync formData when selectedPerson is fetched via Redux
+  useEffect(() => {
+    if (isEditing && selectedPerson && isFormVisible) {
+      setFormData({
+        id: selectedPerson.VCP_Contact_person_id,
+        name: selectedPerson.VCP_Name || '',
+        department: selectedPerson.VCP_Department || '',
+        email: selectedPerson.VCP_Email || '',
+        phone: selectedPerson.VCP_Phone || '',
+      });
+    }
+  }, [selectedPerson, isEditing, isFormVisible]);
 
   const handleCloseForm = () => {
     setIsFormVisible(false);
@@ -100,12 +108,8 @@ const UserManagement = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (name === 'phone') {
-      setPhoneError('');
-    }
-    if (name === 'email') {
-      setEmailError('');
-    }
+    if (name === 'phone') setPhoneError('');
+    if (name === 'email') setEmailError('');
   };
 
   const handlePhoneBlur = async () => {
@@ -136,53 +140,20 @@ const UserManagement = () => {
     }
   };
 
-  const handleToggleStatus = async (person) => {
-    const newStatus = person.VCP_Status === 'A' ? 'I' : 'A'; // Assuming 'I' is inactive
-    setLoadingData(true);
-    try {
-      await contactPersonService.UpdateContactPersonStatus(person.VCP_Contact_person_id, newStatus);
-      await fetchContactPersons();
-    } catch (err) {
-      console.error("Failed to update status", err);
-      setError("Failed to update Contact Person status.");
-      setLoadingData(false);
-    }
+  const handleToggleStatus = (person) => {
+    const newStatus = person.VCP_Status === 'A' ? 'I' : 'A';
+    dispatch(UpdateContactPersonStatus(person.VCP_Contact_person_id, newStatus));
+    // The successful API call will trigger reduxSuccess which re-fetches
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (phoneError || emailError) return;
 
-    setLoading(true);
-    setMessage(null);
-    setError(null);
-
-    try {
-      if (isEditing) {
-        await contactPersonService.UpdateContactPerson(
-          formData.id,
-          formData.name,
-          formData.department,
-          formData.email,
-          formData.phone
-        );
-        setMessage("Contact Person updated successfully!");
-      } else {
-        await contactPersonService.AddContactPerson(
-          formData.name,
-          formData.department,
-          formData.email,
-          formData.phone
-        );
-        setMessage("Contact Person added successfully!");
-      }
-      
-      fetchContactPersons();
-      setTimeout(() => handleCloseForm(), 1500);
-    } catch (err) {
-      setError(`Failed to ${isEditing ? 'update' : 'add'} Contact Person. Please try again.`);
-    } finally {
-      setLoading(false);
+    if (isEditing) {
+      dispatch(UpdateContactPerson(formData.id, formData.name, formData.department, formData.email, formData.phone));
+    } else {
+      dispatch(AddContactPerson(formData.name, formData.department, formData.email, formData.phone));
     }
   };
 
@@ -211,16 +182,8 @@ const UserManagement = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     sx={{
-                      ml: 1,
-                      flex: 1,
-                      color: 'white',
-                      fontSize: '0.75rem',
-                      fontWeight: 'bold',
-                      letterSpacing: '0.1em',
-                      '& input::placeholder': {
-                        color: 'rgba(255,255,255,0.2)',
-                        opacity: 1,
-                      },
+                      ml: 1, flex: 1, color: 'white', fontSize: '0.75rem', fontWeight: 'bold', letterSpacing: '0.1em',
+                      '& input::placeholder': { color: 'rgba(255,255,255,0.2)', opacity: 1 },
                     }}
                   />
                 </div>
@@ -251,10 +214,7 @@ const UserManagement = () => {
 
           {isFormVisible ? (
              <form onSubmit={handleSubmit} className="p-8 bg-[#0F0F10] border border-white/5 space-y-6 mb-8 relative">
-              <IconButton 
-                onClick={handleCloseForm} 
-                className="absolute top-4 right-4 text-white/40 hover:text-white"
-              >
+              <IconButton onClick={handleCloseForm} className="absolute top-4 right-4 text-white/40 hover:text-white">
                 <X size={20} />
               </IconButton>
               
@@ -277,17 +237,8 @@ const UserManagement = () => {
                 <div className="group space-y-2">
                   <label className="text-[12px] font-medium tracking-[0.2em] text-white/40 uppercase ml-1 block">Email Address</label>
                   <TextField 
-                    fullWidth 
-                    name="email" 
-                    type="email" 
-                    value={formData.email} 
-                    onChange={handleChange} 
-                    onBlur={handleEmailBlur}
-                    required 
-                    error={!!emailError}
-                    helperText={emailError}
-                    variant="outlined" 
-                    size="small" 
+                    fullWidth name="email" type="email" value={formData.email} onChange={handleChange} onBlur={handleEmailBlur} required 
+                    error={!!emailError} helperText={emailError} variant="outlined" size="small" 
                     InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }} 
                     sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: emailError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: emailError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} 
                   />
@@ -295,16 +246,8 @@ const UserManagement = () => {
                 <div className="group space-y-2">
                   <label className="text-[12px] font-medium tracking-[0.2em] text-white/40 uppercase ml-1 block">Phone Number</label>
                   <TextField 
-                    fullWidth 
-                    name="phone" 
-                    value={formData.phone} 
-                    onChange={handleChange} 
-                    onBlur={handlePhoneBlur}
-                    required 
-                    error={!!phoneError}
-                    helperText={phoneError}
-                    variant="outlined" 
-                    size="small" 
+                    fullWidth name="phone" value={formData.phone} onChange={handleChange} onBlur={handlePhoneBlur} required 
+                    error={!!phoneError} helperText={phoneError} variant="outlined" size="small" 
                     InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }} 
                     sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} 
                   />
@@ -315,8 +258,8 @@ const UserManagement = () => {
                 <Button onClick={handleCloseForm} type="button" variant="outlined" className="border-white/10 text-white/70 hover:bg-white/5 rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]" sx={{ borderRadius: 0 }}>
                   CANCEL
                 </Button>
-                <Button disabled={loading || !!phoneError || !!emailError} type="submit" variant="contained" className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]" sx={{ borderRadius: 0 }}>
-                  {loading ? <CircularProgress size={20} color="inherit" /> : isEditing ? 'SAVE CHANGES' : 'CREATE PERSON'}
+                <Button disabled={reduxLoading || !!phoneError || !!emailError} type="submit" variant="contained" className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]" sx={{ borderRadius: 0 }}>
+                  {reduxLoading ? <CircularProgress size={20} color="inherit" /> : isEditing ? 'SAVE CHANGES' : 'CREATE PERSON'}
                 </Button>
               </div>
             </form>
@@ -335,7 +278,7 @@ const UserManagement = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {loadingData ? (
+                  {reduxLoading && contactPersons.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} align="center" className="py-12 border-b-white/5">
                         <CircularProgress size={30} className="text-primary" />
@@ -358,9 +301,9 @@ const UserManagement = () => {
                         <TableCell className="border-b-white/5">
                            <button 
                              onClick={() => handleToggleStatus(person)}
-                             disabled={loadingData}
+                             disabled={reduxLoading}
                              title="Click to toggle status"
-                             className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${person.VCP_Status === 'A' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'}`}
+                             className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${person.VCP_Status === 'A' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
                            >
                              {person.VCP_Status === 'A' ? 'ACTIVE' : 'INACTIVE'}
                            </button>
