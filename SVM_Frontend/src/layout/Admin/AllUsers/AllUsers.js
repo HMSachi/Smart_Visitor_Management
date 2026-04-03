@@ -11,7 +11,8 @@ import Header from '../../../components/Admin/Layout/Header';
 import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
-  if (status === 'Active' || status === 'A') {
+  const s = (status || '').toString().trim().toUpperCase();
+  if (s === 'ACTIVE' || s === 'A') {
     return (
       <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex items-center gap-2 w-max">
         <CheckCircle2 size={12} /> Active
@@ -57,7 +58,11 @@ const AllUsers = () => {
   };
 
   const handleToggleStatus = (admin) => {
-      const newStatus = admin.VA_Status === 'A' ? 'I' : 'A';
+      // Robust check for active status (case-insensitive and handles full words)
+      const statusValue = (admin.VA_Status || '').toString().trim().toUpperCase();
+      const isActive = statusValue === 'ACTIVE' || statusValue === 'A';
+      
+      const newStatus = isActive ? 'I' : 'A';
       dispatch(DeleteAdministrator(admin.VA_Admin_id, newStatus));
   };
 
@@ -218,7 +223,10 @@ const AllUsers = () => {
                                 <button 
                                   title="Toggle Status (Delete/Restore)"
                                   onClick={() => handleToggleStatus(admin)}
-                                  className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${admin.VA_Status === 'A' ? 'bg-primary/10 hover:bg-primary/20 border-primary/30 text-primary hover:text-primary' : 'bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-500 hover:text-green-500'}`}
+                                  className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${
+                                    (admin.VA_Status || '').toString().trim().toUpperCase() === 'A' || (admin.VA_Status || '').toString().trim().toUpperCase() === 'ACTIVE'
+                                      ? 'bg-primary/10 hover:bg-primary/20 border-primary/30 text-primary hover:text-primary' 
+                                      : 'bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-500 hover:text-green-500'}`}
                                 >
                                     <RefreshCw size={14} />
                                 </button>
