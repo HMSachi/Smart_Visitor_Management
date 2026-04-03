@@ -21,7 +21,7 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed right-0 top-0 h-full w-full max-w-lg bg-[#0F0F10] border-l border-primary/30 z-[101] shadow-2xl p-12 overflow-y-auto"
+                        className="fixed right-0 top-0 h-full w-full max-w-lg bg-[#0F0F10] border-l border-primary/30 z-[101] shadow-2xl p-6 md:p-12 overflow-y-auto"
                     >
                         <div className="flex justify-between items-center mb-12">
                             <div className="flex items-center gap-4">
@@ -38,7 +38,7 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                             </button>
                         </div>
 
-                        <div className="space-y-12">
+                        <div className="space-y-6 md:space-y-12">
                             <section>
                                 <label className="text-primary uppercase mb-6 block">Visitor Credentials</label>
                                 <div className="space-y-6">
@@ -51,7 +51,7 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                                             <p className="uppercase text-white">{visitor.name}</p>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="p-6 bg-white/[0.02] border border-white/5">
                                             <p className="text-gray-300 uppercase mb-2">Visit Date</p>
                                             <div className="flex items-center gap-2 text-white">

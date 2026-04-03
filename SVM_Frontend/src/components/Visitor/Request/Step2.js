@@ -79,7 +79,7 @@ const Step2Main = () => {
     if (status === 'step2_pending') {
         return (
             <div className="min-h-[80vh] flex items-center justify-center p-6 bg-background border-t border-white/5">
-                <div className="max-w-xl w-full bg-white/[0.02] border border-white/5 p-12 text-center rounded-2xl shadow-xl">
+                <div className="max-w-xl w-full bg-white/[0.02] border border-white/5 p-6 md:p-12 text-center rounded-2xl shadow-xl">
                     <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-xl mx-auto mb-8 flex items-center justify-center text-primary">
                         <ShieldCheck size={24} />
                     </div>
@@ -162,7 +162,7 @@ const Step2Main = () => {
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-12">
+            <form onSubmit={handleSubmit} className="space-y-6 md:space-y-12">
                 <div className="relative group">
                     <VisitorGroup visitors={visitors} onAdd={handleAddVisitor} onRemove={handleRemoveVisitor} onChange={handleUpdateVisitor} />
                 </div>

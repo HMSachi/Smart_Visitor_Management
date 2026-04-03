@@ -63,7 +63,7 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
               </div>
 
               {/* Content */}
-              <form onSubmit={handleSubmit} className="p-8 space-y-8 relative z-10">
+              <form onSubmit={handleSubmit} className="p-8 space-y-4 md:space-y-8 relative z-10">
                 <div className="p-6 bg-[var(--color-bg-paper)] border border-white/5 rounded-2xl shadow-inner flex justify-between items-center group/target hover:border-primary/20 transition-all duration-500">
                   <div className="flex items-center gap-4">
                     <div className="w-1.5 h-6 bg-primary/40 group-hover:bg-primary rounded-full transition-all"></div>

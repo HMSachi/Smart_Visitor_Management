@@ -19,7 +19,7 @@ const AreasToVisit = ({ selectedAreas, onToggle }) => {
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0 transition-all">Access Zones</h3>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                 {areasList.map((area) => (
                     <div 
                         key={area.id}

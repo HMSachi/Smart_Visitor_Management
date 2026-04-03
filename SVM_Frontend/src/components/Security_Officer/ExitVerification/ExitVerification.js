@@ -38,7 +38,7 @@ const ExitVerificationMain = () => {
     const allChecked = Object.values(checks).every(v => v);
 
     return (
-        <div className="p-8 md:p-12 space-y-12 bg-[var(--color-bg-default)] min-h-full">
+        <div className="p-8 md:p-12 space-y-6 md:space-y-12 bg-[var(--color-bg-default)] min-h-full">
             {/* Tactical Protocol Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 border-b border-white/5 pb-10">
                 <div className="space-y-4">
@@ -73,9 +73,9 @@ const ExitVerificationMain = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 xl:grid-cols-1 md:grid-cols-2 gap-12">
                 {/* Declared Asset Matrix */}
-                <div className="space-y-8">
+                <div className="space-y-4 md:space-y-8">
                     <div className="flex items-center gap-6 px-4">
                         <div className="flex items-center gap-3">
                             <Briefcase size={14} className="text-primary" />
@@ -85,9 +85,9 @@ const ExitVerificationMain = () => {
                     </div>
 
                     <div className="mas-glass border-white/5 bg-[var(--color-bg-paper)]/60 backdrop-blur-3xl rounded-[32px] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.4)] border border-white/10 relative">
-                        <div className="absolute top-0 right-0 p-10 opacity-[0.02] pointer-events-none font-mono text-[100px] font-medium select-none">ASSET_MTRX</div>
+                        <div className="absolute top-0 right-0 p-4 md:p-10 opacity-[0.02] pointer-events-none font-mono text-[100px] font-medium select-none">ASSET_MTRX</div>
 
-                        <div className="p-10 space-y-6">
+                        <div className="p-4 md:p-10 space-y-6">
                             {equipmentList.map((item) => (
                                 <motion.div
                                     key={item.id}
@@ -139,7 +139,7 @@ const ExitVerificationMain = () => {
                 </div>
 
                 {/* Exit Integrity Protocol Matrix */}
-                <div className="space-y-8">
+                <div className="space-y-4 md:space-y-8">
                     <div className="flex items-center gap-6 px-4">
                         <div className="flex items-center gap-3">
                             <Activity size={14} className="text-primary" />
@@ -148,7 +148,7 @@ const ExitVerificationMain = () => {
                         <div className="h-[1px] flex-1 bg-gradient-to-r from-white/5 via-white/10 to-transparent"></div>
                     </div>
 
-                    <div className="mas-glass p-10 border-white/5 bg-[var(--color-bg-paper)]/40 backdrop-blur-3xl rounded-[32px] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.4)] border border-white/10 space-y-6">
+                    <div className="mas-glass p-4 md:p-10 border-white/5 bg-[var(--color-bg-paper)]/40 backdrop-blur-3xl rounded-[32px] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.4)] border border-white/10 space-y-6">
                         {[
                             { id: 'equipment', label: 'Registered_Assets_Sync', desc: 'Secure physical audit match for all declared personnel units.' },
                             { id: 'noItems', label: 'Prohibited_Material_Sanitized', desc: 'Cross-check for unauthorized digital or physical company assets.' },

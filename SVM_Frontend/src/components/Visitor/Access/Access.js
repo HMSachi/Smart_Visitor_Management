@@ -37,7 +37,7 @@ const AccessMain = () => {
   return (
     <div className="min-h-screen flex items-start justify-center p-6 bg-background pt-12">
 
-      <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-10 rounded-2xl shadow-xl">
+      <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-4 md:p-10 rounded-2xl shadow-xl">
         <div className="text-center mb-10">
           <div className="w-10 h-10 bg-primary/10 border border-primary/20 mx-auto mb-6 flex items-center justify-center text-primary rounded-lg">
             <svg

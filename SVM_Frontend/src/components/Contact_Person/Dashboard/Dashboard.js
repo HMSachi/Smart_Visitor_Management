@@ -3,7 +3,7 @@ import MetricsGrid from './MetricsGrid';
 
 const DashboardMain = () => {
     return (
-        <div className="flex-1 p-4 sm:p-8 lg:p-10 space-y-6 md:space-y-10 animate-fade-in-slow overflow-y-auto min-h-full bg-[var(--color-bg-default)]">
+        <div className="flex-1 p-4 sm:p-8 lg:p-4 md:p-10 space-y-6 md:space-y-10 animate-fade-in-slow overflow-y-auto min-h-full bg-[var(--color-bg-default)]">
             <div className="max-w-[1600px] mx-auto space-y-10">
                 <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-4">
                     <div>

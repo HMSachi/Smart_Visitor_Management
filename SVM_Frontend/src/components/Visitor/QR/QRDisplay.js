@@ -50,7 +50,7 @@ const QRDisplay = ({ visitorData }) => {
 
             {/* Holder Information */}
             <div className="w-full px-8 pb-8 space-y-4">
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-0.5">
                         <div className="flex items-center gap-1.5 mb-1">
                             <User size={10} className="text-primary" />
@@ -67,7 +67,7 @@ const QRDisplay = ({ visitorData }) => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 pt-4 border-t border-gray-100">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-100">
                     <div className="space-y-0.5">
                         <div className="flex items-center gap-1.5 mb-1">
                             <QrCode size={10} className="text-primary" />

@@ -90,7 +90,7 @@ const EntryApprovalMain = () => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-1 md:grid-cols-3 gap-6">
                                 {filteredVisitors.map(v => (
                                     <div 
                                         key={v.id}
@@ -134,7 +134,7 @@ const EntryApprovalMain = () => {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
-                            className="space-y-8"
+                            className="space-y-4 md:space-y-8"
                         >
                             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                                 <button 
@@ -149,7 +149,7 @@ const EntryApprovalMain = () => {
                                 </div>
                             </div>
 
-                            <div className="mas-glass p-10 md:p-14 border-primary/20 bg-[var(--color-bg-paper)]/80 backdrop-blur-3xl rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] relative overflow-hidden">
+                            <div className="mas-glass p-4 md:p-10 md:p-14 border-primary/20 bg-[var(--color-bg-paper)]/80 backdrop-blur-3xl rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
                                 <div className="absolute top-0 right-0 p-8 opacity-[0.02] font-mono text-7xl md:text-8xl font-medium pointer-events-none">{selectedVisitor?.id.split('-').pop()}</div>
 

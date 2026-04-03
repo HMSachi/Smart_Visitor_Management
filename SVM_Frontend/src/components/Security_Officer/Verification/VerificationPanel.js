@@ -19,14 +19,14 @@ const VerificationPanel = () => {
             {/* Details Panel */}
             <div className="flex flex-col gap-12">
                     {/* Visitor Main */}
-                    <div className="mas-glass p-10 border-mas-border space-y-10 relative overflow-hidden h-full">
+                    <div className="mas-glass p-4 md:p-10 border-mas-border space-y-10 relative overflow-hidden h-full">
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                         <User size={120} />
                     </div>
                     
                     <section className="space-y-6">
                         <h3 className="text-primary uppercase mb-6">Visitor Identity</h3>
-                        <div className="grid grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="space-y-2">
                                 <p className="text-gray-300 uppercase">Full Personnel Name</p>
                                 <p className="uppercase text-white">{visitorData.name}</p>
@@ -59,7 +59,7 @@ const VerificationPanel = () => {
 
                     {/* Equipment & Vehicle */}
                     <div className="flex flex-col gap-8 h-full">
-                    <div className="mas-glass p-10 border-mas-border relative overflow-hidden group flex-1">
+                    <div className="mas-glass p-4 md:p-10 border-mas-border relative overflow-hidden group flex-1">
                         <div className="flex items-center gap-4 mb-8">
                             <Car size={18} className="text-primary" />
                             <h3 className="uppercase text-white">Vehicle Manifest</h3>
@@ -73,7 +73,7 @@ const VerificationPanel = () => {
                         </div>
                     </div>
 
-                    <div className="mas-glass p-10 border-mas-border relative overflow-hidden group flex-1">
+                    <div className="mas-glass p-4 md:p-10 border-mas-border relative overflow-hidden group flex-1">
                             <div className="flex items-center gap-4 mb-8">
                             <Briefcase size={18} className="text-primary" />
                             <h3 className="uppercase text-white">Asset Registry</h3>
@@ -91,9 +91,9 @@ const VerificationPanel = () => {
             </div>
 
             {/* Validation Status Panel */}
-            <div className="h-fit space-y-8">
-                    <div className={`mas-glass p-12 lg:py-24 border-2 relative overflow-hidden ${visitorData.mismatch ? 'border-primary shadow-[inset_0_0_50px_rgba(200,16,46,0.1)]' : 'border-green-500/30'}`}>
-                        <div className="flex flex-col items-center text-center space-y-8 max-w-2xl mx-auto">
+            <div className="h-fit space-y-4 md:space-y-8">
+                    <div className={`mas-glass p-6 md:p-12 lg:py-24 border-2 relative overflow-hidden ${visitorData.mismatch ? 'border-primary shadow-[inset_0_0_50px_rgba(200,16,46,0.1)]' : 'border-green-500/30'}`}>
+                        <div className="flex flex-col items-center text-center space-y-4 md:space-y-8 max-w-2xl mx-auto">
                             <div className={`w-24 h-24 flex items-center justify-center rounded-none border-2 p-4 animate-pulse ${visitorData.mismatch ? 'border-primary text-primary' : 'border-green-500 text-green-500'}`}>
                                 {visitorData.mismatch ? <AlertTriangle size={48} /> : <CheckCircle2 size={48} />}
                             </div>

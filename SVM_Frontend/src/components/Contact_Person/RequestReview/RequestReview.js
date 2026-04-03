@@ -55,7 +55,7 @@ const RequestReviewMain = () => {
 
     return (
         <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)]/50 relative overflow-x-hidden">
-            <div className="p-10 space-y-8 animate-fade-in relative z-10 max-w-7xl mx-auto w-full">
+            <div className="p-4 md:p-10 space-y-4 md:space-y-8 animate-fade-in relative z-10 max-w-7xl mx-auto w-full">
                 {/* Top Header */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-4">
                     <div>

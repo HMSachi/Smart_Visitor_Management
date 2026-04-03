@@ -163,6 +163,13 @@ const initialState = {
       },
     ],
   },
+
+  // User Management
+  users: {
+    administrators: [],
+    loading: false,
+    error: null,
+  },
 };
 
 const adminSlice = createSlice({
@@ -191,6 +198,7 @@ const adminSlice = createSlice({
       state.monitoring.alerts.unshift(action.payload);
     },
   },
+  extraReducers: (builder) => {},
 });
 
 export const {

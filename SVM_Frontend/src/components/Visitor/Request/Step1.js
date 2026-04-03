@@ -54,7 +54,7 @@ const Step1Main = () => {
     if (status === 'step1_pending') {
         return (
             <div className="min-h-[80vh] flex items-center justify-center p-6">
-                <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-10 text-center rounded-2xl shadow-xl">
+                <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-4 md:p-10 text-center rounded-2xl shadow-xl">
                     <div className="w-16 h-16 bg-primary/10 border border-primary/20 rounded-2xl mx-auto mb-8 flex items-center justify-center text-primary">
                         <CheckCircle2 size={32} />
                     </div>

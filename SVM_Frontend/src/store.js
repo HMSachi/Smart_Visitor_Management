@@ -7,6 +7,7 @@ import contactPersonReducer from "./reducers/contactPersonSlice";
 import securityReducer from "./reducers/securitySlice";
 import dashboardReducer from "./reducers/dashboardSlice";
 import uiReducer from "./reducers/uiSlice";
+import administratorReducer from "./reducers/AdministratorReducer";
 
 const composeEnhancers =
     typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -21,6 +22,7 @@ const composeEnhancers =
     security: securityReducer,
     dashboard: dashboardReducer,
     ui: uiReducer,
+    administrator: administratorReducer,
 });
 
 const store = createStore(

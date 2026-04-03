@@ -11,7 +11,7 @@ const LogsHistoryMain = () => {
     ];
 
     return (
-        <div className="p-12 space-y-12 animate-fade-in">
+        <div className="p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-mas-border pb-12">
                 <div>
                     <div className="flex items-center gap-4 mb-4">

@@ -12,7 +12,7 @@ const LiveFeed = () => {
     };
 
     return (
-        <div className="max-w-2xl w-full space-y-12 relative z-10 mx-auto">
+        <div className="max-w-2xl w-full space-y-6 md:space-y-12 relative z-10 mx-auto">
             <div className="text-center space-y-4">
                 <div className="flex items-center justify-center gap-4 mb-2">
                     <Zap size={14} className="text-primary animate-pulse" />

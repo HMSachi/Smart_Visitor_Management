@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const RejectionAlertPanel = ({ visitor }) => {
     if (!visitor) return (
-        <div className="h-full mas-glass border-mas-border border-dashed p-12 flex flex-col items-center justify-center gap-4 text-center">
+        <div className="h-full mas-glass border-mas-border border-dashed p-6 md:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <Info size={32} className="text-white/10" />
             <p className="text-gray-300 uppercase opacity-30">Select a record to view rejection audit log</p>
         </div>
@@ -14,9 +14,9 @@ const RejectionAlertPanel = ({ visitor }) => {
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
+            className="space-y-4 md:space-y-8"
         >
-             <div className="mas-glass border-primary/30 p-10 bg-primary/[0.02] relative overflow-hidden">
+             <div className="mas-glass border-primary/30 p-4 md:p-10 bg-primary/[0.02] relative overflow-hidden">
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"></div>
                 
                 <div className="flex items-center gap-4 mb-8">

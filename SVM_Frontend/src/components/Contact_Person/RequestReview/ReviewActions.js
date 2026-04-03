@@ -3,7 +3,7 @@ import { Send, ShieldAlert, Check } from 'lucide-react';
 
 const ReviewActions = ({ onApprove, onReject }) => {
     return (
-        <div className="bg-[var(--color-bg-paper)] border border-white/5 p-10 rounded-[32px] shadow-2xl animate-fade-in-slow">
+        <div className="bg-[var(--color-bg-paper)] border border-white/5 p-4 md:p-10 rounded-[32px] shadow-2xl animate-fade-in-slow">
             <div className="flex flex-col md:flex-row items-center justify-between gap-10">
                 <div className="flex-1">
                     <h4 className="text-white text-[14px] font-medium tracking-[0.2em] uppercase mb-1">Authorization Finalization</h4>
