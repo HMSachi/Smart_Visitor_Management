@@ -57,7 +57,9 @@ const AllUsers = () => {
   };
 
   const handleToggleStatus = (admin) => {
-      const newStatus = admin.VA_Status === 'A' ? 'I' : 'A';
+      // Robust check for active status (handles both 'A' and 'Active' strings)
+      const isActive = admin.VA_Status === 'Active' || admin.VA_Status === 'A';
+      const newStatus = isActive ? 'I' : 'A';
       dispatch(DeleteAdministrator(admin.VA_Admin_id, newStatus));
   };
 
