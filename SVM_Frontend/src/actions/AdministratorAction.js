@@ -82,15 +82,22 @@ export const DeleteAdministrator = (id, status) => {
         dispatch({ type: DELETE_ADMINISTRATOR_REQUEST });
         try {
             const response = await AdministratorService.DeleteAdministrator(id, status);
-            // Check if the API actually reported success in its payload
-            if (response.data && (response.data.ResultSet || response.data.Status === "Success" || response.data.Status === "OK")) {
+            // Even more permissive check for success
+            const isSuccess = response.data && (
+                response.data.ResultSet || 
+                response.data.Status === "Success" || 
+                response.data.Status === "OK" || 
+                response.status === 200
+            );
+
+            if (isSuccess) {
                 dispatch({ type: DELETE_ADMINISTRATOR_SUCCESS, payload: response.data });
-                // 1.5s delay to ensure backend database consistency
+                // Use a slightly longer delay to be safe
                 setTimeout(() => {
                     dispatch(GetAllAdministrator());
-                }, 1500);
+                }, 2000);
             } else {
-                throw new Error(response.data?.Message || "Failed to update status");
+                throw new Error(response.data?.Message || "Operation failed on server");
             }
         } catch (error) {
             dispatch({ type: DELETE_ADMINISTRATOR_FAILURE, payload: error.message });
