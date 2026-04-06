@@ -11,7 +11,7 @@ import Header from '../../../components/Contact_Person/Layout/Header';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import {
   User, Mail, Phone, MapPin, Building,
-  Search, Plus, RefreshCw, X, Hash, Briefcase, AlertCircle
+  Search, Plus, RefreshCw, X, Hash, Briefcase, AlertCircle, Car
 } from 'lucide-react';
 
 const ContactAllVisitors = () => {
