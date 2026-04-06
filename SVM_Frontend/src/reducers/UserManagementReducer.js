@@ -18,6 +18,7 @@ import {
     USER_MANAGEMENT_VALIDATE_FIELD_SUCCESS,
     USER_MANAGEMENT_VALIDATE_FIELD_FAILURE,
     USER_MANAGEMENT_CLEAR_ERRORS,
+    USER_MANAGEMENT_RESET_SUCCESS,
 } from "../constants/UserManagementConstants";
 
 const initialState = {
@@ -109,6 +110,12 @@ const userManagementReducer = (state = initialState, action) => {
                     isValidating: false,
                     error: action.payload
                 }
+            };
+
+        case USER_MANAGEMENT_RESET_SUCCESS:
+            return {
+                ...state,
+                success: false
             };
 
         case USER_MANAGEMENT_CLEAR_ERRORS:

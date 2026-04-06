@@ -53,7 +53,8 @@ const GetContactPersonByPhone = async (id, phone) => {
 const UpdateContactPersonStatus = async (id, status) => {
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/ContactPerson/UpdateContactPersonStatus?VCP_Contact_person_id=${encodeURIComponent(id)}&VCP_Status=${encodeURIComponent(status)}`
+        url: `https://visitormanagement.dockyardsoftware.com/ContactPerson/UpdateContactPersonStatus?VCP_Contact_person_id=${encodeURIComponent(id)}&VCP_Status=${encodeURIComponent(status)}`,
+        data: ''
     };
     return axios.request(config).then((response) => {
         return response;

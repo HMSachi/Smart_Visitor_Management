@@ -10,8 +10,10 @@ import {
   UpdateContactPerson,
   UpdateContactPersonStatus,
   ValidateUniqueness,
-  ClearUserManagementErrors
+  ClearUserManagementErrors,
+  ResetUserManagementSuccess
 } from '../../../actions/UserManagementAction';
+import { DeleteAdministrator } from '../../../actions/AdministratorAction';
 
 const UserManagement = () => {
   const dispatch = useDispatch();
@@ -56,11 +58,15 @@ const UserManagement = () => {
 
   useEffect(() => {
     if (success) {
-      setMessage(isEditing ? "Contact Person updated successfully!" : "Contact Person added successfully!");
-      setTimeout(() => handleCloseForm(), 1500);
+      if (isFormVisible) {
+        setMessage(isEditing ? "Contact Person updated successfully!" : "Contact Person added successfully!");
+        setTimeout(() => handleCloseForm(), 1500);
+      }
       fetchUsers();
+      // Reset success state so subsequent actions can trigger this effect
+      setTimeout(() => dispatch(ResetUserManagementSuccess()), 2000);
     }
-  }, [success, isEditing]);
+  }, [success, isEditing, isFormVisible, dispatch]);
 
   useEffect(() => {
     if (reduxError) {
@@ -122,10 +128,17 @@ const UserManagement = () => {
     dispatch(ValidateUniqueness('email', formData.email, formData.id || '0'));
   };
 
-  const handleToggleStatus = (person) => {
+  const handleToggleStatus = (item) => {
+    // Robust check for active status (handles both 'A' and 'ACTIVE')
+    const statusValue = (item.VCP_Status || item.VA_Status || '').toString().trim().toUpperCase();
+    const isActive = statusValue === 'A' || statusValue === 'ACTIVE';
+    const newStatus = isActive ? 'I' : 'A';
+
     if (activeTab === 'CONTACT') {
-      const newStatus = person.VCP_Status === 'A' ? 'I' : 'A';
-      dispatch(UpdateContactPersonStatus(person.VCP_Contact_person_id, newStatus));
+      dispatch(UpdateContactPersonStatus(item.VCP_Contact_person_id, newStatus));
+    } else {
+      // SECURITY and VISITOR roles are handled via Administrator actions
+      dispatch(DeleteAdministrator(item, newStatus));
     }
   };
 
@@ -315,16 +328,16 @@ const UserManagement = () => {
                         <TableCell className={`border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'text-white/70' : 'text-white/20'}`}>{item.VCP_Department || item.VA_Role || '-'}</TableCell>
                         <TableCell className={`border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'text-white/70' : 'text-white/20'}`}>{item.VCP_Email || item.VA_Email || '-'}</TableCell>
                         {activeTab === 'CONTACT' && <TableCell className={`border-b-white/5 transition-colors ${item.VCP_Status === 'A' ? 'text-white/70' : 'text-white/20'}`}>{item.VCP_Phone || '-'}</TableCell>}
-                        <TableCell className="border-b-white/5">
-                           <button 
-                             onClick={() => handleToggleStatus(item)}
-                             disabled={isLoading || activeTab !== 'CONTACT'}
-                             title={activeTab === 'CONTACT' ? "Click to toggle status" : "Managed in All Users"}
-                             className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all ${activeTab === 'CONTACT' ? 'cursor-pointer' : 'cursor-default opacity-50'} ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
-                           >
-                             {(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
-                           </button>
-                        </TableCell>
+                         <TableCell className="border-b-white/5">
+                            <button 
+                              onClick={() => handleToggleStatus(item)}
+                              disabled={isLoading}
+                              title="Click to toggle status"
+                              className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                            >
+                              {(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
+                            </button>
+                         </TableCell>
                         <TableCell align="right" className="border-b-white/5">
                           {activeTab === 'CONTACT' ? (
                             <IconButton onClick={() => handleOpenForm(item)} size="small" className="text-white/40 hover:text-white">

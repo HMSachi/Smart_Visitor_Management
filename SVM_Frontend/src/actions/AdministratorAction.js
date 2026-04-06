@@ -44,7 +44,7 @@ export const AddAdministrator = (adminData) => {
             );
             if (isSuccess) {
                 dispatch({ type: ADD_ADMINISTRATOR_SUCCESS, payload: response.data });
-                setTimeout(() => dispatch(GetAllAdministrator()), 1500);
+                setTimeout(() => dispatch(GetAllAdministrator()), 2500);
             } else {
                 throw new Error(response.data?.Message || "Failed to add administrator");
             }
@@ -52,7 +52,7 @@ export const AddAdministrator = (adminData) => {
             // Backend bug: Successful Add triggers CORS Network Error because response is missing ACAO headers
             if (error.message === "Network Error") {
                 dispatch({ type: ADD_ADMINISTRATOR_SUCCESS });
-                setTimeout(() => dispatch(GetAllAdministrator()), 1500);
+                setTimeout(() => dispatch(GetAllAdministrator()), 2500);
             } else {
                 dispatch({ type: ADD_ADMINISTRATOR_FAILURE, payload: error.message });
             }
@@ -74,14 +74,14 @@ export const UpdateAdministrator = (adminData) => {
             );
             if (isSuccess) {
                 dispatch({ type: UPDATE_ADMINISTRATOR_SUCCESS, payload: response.data });
-                setTimeout(() => dispatch(GetAllAdministrator()), 1500);
+                setTimeout(() => dispatch(GetAllAdministrator()), 2500);
             } else {
                 throw new Error(response.data?.Message || "Failed to update administrator");
             }
         } catch (error) {
             if (error.message === "Network Error") {
                 dispatch({ type: UPDATE_ADMINISTRATOR_SUCCESS });
-                setTimeout(() => dispatch(GetAllAdministrator()), 1500);
+                setTimeout(() => dispatch(GetAllAdministrator()), 2500);
             } else {
                 dispatch({ type: UPDATE_ADMINISTRATOR_FAILURE, payload: error.message });
             }
@@ -102,11 +102,15 @@ export const GetAdministratorById = (id) => {
     };
 };
 
-export const DeleteAdministrator = (id, status) => {
+export const DeleteAdministrator = (adminData, status) => {
     return async (dispatch) => {
         dispatch({ type: DELETE_ADMINISTRATOR_REQUEST });
         try {
-            const response = await AdministratorService.DeleteAdministrator(id, status);
+            // Activation ('A') often requires an Update call if Delete is one-way.
+            const response = status === 'A' 
+                ? await AdministratorService.UpdateAdministrator({ ...adminData, VA_Status: status })
+                : await AdministratorService.DeleteAdministrator(adminData.VA_Admin_id, status);
+
             // Even more permissive check for success
             const isSuccess = response.data && (
                 response.data.ResultSet ||
@@ -117,17 +121,16 @@ export const DeleteAdministrator = (id, status) => {
 
             if (isSuccess) {
                 dispatch({ type: DELETE_ADMINISTRATOR_SUCCESS, payload: response.data });
-                // Use a slightly longer delay to be safe
                 setTimeout(() => {
                     dispatch(GetAllAdministrator());
-                }, 2000);
+                }, 2500);
             } else {
                 throw new Error(response.data?.Message || "Operation failed on server");
             }
         } catch (error) {
              if (error.message === "Network Error") {
                 dispatch({ type: DELETE_ADMINISTRATOR_SUCCESS });
-                setTimeout(() => dispatch(GetAllAdministrator()), 2000);
+                setTimeout(() => dispatch(GetAllAdministrator()), 2500);
             } else {
                 dispatch({ type: DELETE_ADMINISTRATOR_FAILURE, payload: error.message });
             }

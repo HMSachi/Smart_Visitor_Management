@@ -8,7 +8,7 @@ import {
   AddAdministrator,
   UpdateAdministrator
 } from '../../../actions/AdministratorAction';
-import { GetAllContactPersons } from '../../../actions/ContactPersonAction';
+import { GetAllContactPersons, UpdateContactPersonStatus } from '../../../actions/ContactPersonAction';
 import Header from '../../../components/Admin/Layout/Header';
 import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User, Users, ShieldAlert, UserCheck } from 'lucide-react';
 
@@ -61,13 +61,17 @@ const AllUsers = () => {
     }
   };
 
-  const handleToggleStatus = (admin) => {
+  const handleToggleStatus = (item) => {
     // Robust check for active status (case-insensitive and handles full words)
-    const statusValue = (admin.VA_Status || '').toString().trim().toUpperCase();
+    const statusValue = (item.VA_Status || item.VCP_Status || '').toString().trim().toUpperCase();
     const isActive = statusValue === 'ACTIVE' || statusValue === 'A';
-
     const newStatus = isActive ? 'I' : 'A';
-    dispatch(DeleteAdministrator(admin.VA_Admin_id, newStatus));
+
+    if (item.VCP_Contact_person_id) {
+      dispatch(UpdateContactPersonStatus(item.VCP_Contact_person_id, newStatus));
+    } else {
+      dispatch(DeleteAdministrator(item, newStatus));
+    }
   };
 
   const openModal = (mode, admin = null) => {
@@ -236,10 +240,10 @@ const AllUsers = () => {
                                 </TableCell>
                                 <TableCell className="border-b-white/5">
                                   <button 
-                                    onClick={cat.id !== 'CONTACT' ? () => handleToggleStatus(item) : undefined}
-                                    disabled={cat.id === 'CONTACT' || loading}
-                                    title={cat.id === 'CONTACT' ? "Modify disabled for Contacts" : "Click to toggle status"}
-                                    className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all ${cat.id !== 'CONTACT' ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'} ${isActive ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                                    onClick={() => handleToggleStatus(item)}
+                                    disabled={loading}
+                                    title="Click to toggle status"
+                                    className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
                                   >
                                     {isActive ? 'ACTIVE' : 'INACTIVE'}
                                   </button>

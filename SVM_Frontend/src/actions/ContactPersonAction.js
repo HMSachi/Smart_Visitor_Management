@@ -56,7 +56,12 @@ export const AddContactPerson = (name, department, email, phone) => {
             await contactPersonService.AddContactPerson(name, department, email, phone);
             dispatch({ type: ADD_CONTACT_PERSON_SUCCESS });
         } catch (error) {
-            dispatch({ type: ADD_CONTACT_PERSON_FAILURE, payload: error.message });
+            if (error.message === "Network Error") {
+                dispatch({ type: ADD_CONTACT_PERSON_SUCCESS });
+                dispatch(GetAllContactPersons());
+            } else {
+                dispatch({ type: ADD_CONTACT_PERSON_FAILURE, payload: error.message });
+            }
         }
     };
 };
@@ -68,7 +73,12 @@ export const UpdateContactPerson = (id, name, department, email, phone) => {
             await contactPersonService.UpdateContactPerson(id, name, department, email, phone);
             dispatch({ type: UPDATE_CONTACT_PERSON_SUCCESS });
         } catch (error) {
-            dispatch({ type: UPDATE_CONTACT_PERSON_FAILURE, payload: error.message });
+            if (error.message === "Network Error") {
+                dispatch({ type: UPDATE_CONTACT_PERSON_SUCCESS });
+                dispatch(GetAllContactPersons());
+            } else {
+                dispatch({ type: UPDATE_CONTACT_PERSON_FAILURE, payload: error.message });
+            }
         }
     };
 };
@@ -79,8 +89,14 @@ export const UpdateContactPersonStatus = (id, status) => {
         try {
             await contactPersonService.UpdateContactPersonStatus(id, status);
             dispatch({ type: UPDATE_STATUS_SUCCESS });
+            dispatch(GetAllContactPersons());
         } catch (error) {
-            dispatch({ type: UPDATE_STATUS_FAILURE, payload: error.message });
+            if (error.message === "Network Error") {
+                dispatch({ type: UPDATE_STATUS_SUCCESS });
+                dispatch(GetAllContactPersons());
+            } else {
+                dispatch({ type: UPDATE_STATUS_FAILURE, payload: error.message });
+            }
         }
     };
 };

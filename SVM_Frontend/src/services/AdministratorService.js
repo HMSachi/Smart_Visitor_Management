@@ -20,7 +20,7 @@ const AddAdministrator = async (adminData) => {
 const UpdateAdministrator = async (adminData) => {
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/Administrator/UpdateAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}&VA_Admin_id=${encodeURIComponent(adminData.VA_Admin_id)}`,
+        url: `https://visitormanagement.dockyardsoftware.com/Administrator/UpdateAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}&VA_Admin_id=${encodeURIComponent(adminData.VA_Admin_id)}&VA_Status=${encodeURIComponent(adminData.VA_Status || '')}`,
         data: ''
     };
     return axios.request(config).then((response) => response);
