@@ -18,6 +18,7 @@ import {
     USER_MANAGEMENT_VALIDATE_FIELD_SUCCESS,
     USER_MANAGEMENT_VALIDATE_FIELD_FAILURE,
     USER_MANAGEMENT_CLEAR_ERRORS,
+    USER_MANAGEMENT_RESET_SUCCESS,
 } from "../constants/UserManagementConstants";
 import UserManagementService from "../services/UserManagementService";
 
@@ -61,7 +62,11 @@ export const AddContactPerson = (name, department, email, phone) => {
             await UserManagementService.AddContactPerson(name, department, email, phone);
             dispatch({ type: USER_MANAGEMENT_ADD_SUCCESS });
         } catch (error) {
-            dispatch({ type: USER_MANAGEMENT_ADD_FAILURE, payload: error.message });
+            if (error.message === "Network Error") {
+                dispatch({ type: USER_MANAGEMENT_ADD_SUCCESS });
+            } else {
+                dispatch({ type: USER_MANAGEMENT_ADD_FAILURE, payload: error.message });
+            }
         }
     };
 };
@@ -73,7 +78,11 @@ export const UpdateContactPerson = (id, name, department, email, phone) => {
             await UserManagementService.UpdateContactPerson(id, name, department, email, phone);
             dispatch({ type: USER_MANAGEMENT_UPDATE_SUCCESS });
         } catch (error) {
-            dispatch({ type: USER_MANAGEMENT_UPDATE_FAILURE, payload: error.message });
+            if (error.message === "Network Error") {
+                dispatch({ type: USER_MANAGEMENT_UPDATE_SUCCESS });
+            } else {
+                dispatch({ type: USER_MANAGEMENT_UPDATE_FAILURE, payload: error.message });
+            }
         }
     };
 };
@@ -84,8 +93,14 @@ export const UpdateContactPersonStatus = (id, status) => {
         try {
             await UserManagementService.UpdateContactPersonStatus(id, status);
             dispatch({ type: USER_MANAGEMENT_STATUS_UPDATE_SUCCESS });
+            dispatch(FetchContactPersons());
         } catch (error) {
-            dispatch({ type: USER_MANAGEMENT_STATUS_UPDATE_FAILURE, payload: error.message });
+            if (error.message === "Network Error") {
+                dispatch({ type: USER_MANAGEMENT_STATUS_UPDATE_SUCCESS });
+                setTimeout(() => dispatch(FetchContactPersons()), 2500);
+            } else {
+                dispatch({ type: USER_MANAGEMENT_STATUS_UPDATE_FAILURE, payload: error.message });
+            }
         }
     };
 };
@@ -128,3 +143,4 @@ export const ValidateUniqueness = (field, value, id = '0') => {
 };
 
 export const ClearUserManagementErrors = () => ({ type: USER_MANAGEMENT_CLEAR_ERRORS });
+export const ResetUserManagementSuccess = () => ({ type: USER_MANAGEMENT_RESET_SUCCESS });

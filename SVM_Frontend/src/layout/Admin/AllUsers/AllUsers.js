@@ -69,18 +69,20 @@ const AllUsers = () => {
   };
 
   const handleToggleStatus = (item, type) => {
+    // Robust check for active status (case-insensitive and handles full words)
+    const statusValue = (item.VA_Status || item.VCP_Status || '').toString().trim().toUpperCase();
+    const isActive = statusValue === 'ACTIVE' || statusValue === 'A';
+    const newStatus = isActive ? 'I' : 'A';
+
     if (type === 'CONTACT') {
-      const statusValue = (item.VCP_Status || '').toString().trim().toUpperCase();
-      const isActive = statusValue === 'ACTIVE' || statusValue === 'A';
-      const newStatus = isActive ? 'I' : 'A';
       dispatch(UpdateContactPersonStatus(item.VCP_Contact_person_id, newStatus));
-      setTimeout(() => dispatch(GetAllContactPersons()), 1000);
+      // Use the 2.5s delay to ensure DB consistency
+      setTimeout(() => dispatch(GetAllContactPersons()), 2500);
     } else {
-      const statusValue = (item.VA_Status || '').toString().trim().toUpperCase();
-      const isActive = statusValue === 'ACTIVE' || statusValue === 'A';
-      const newStatus = isActive ? 'I' : 'A';
-      dispatch(DeleteAdministrator(item.VA_Admin_id, newStatus));
-      setTimeout(() => dispatch(GetAllAdministrator()), 1000);
+      // Use the robust DeleteAdministrator (which handles Activation via Update if newStatus is 'A')
+      dispatch(DeleteAdministrator(item, newStatus));
+      // Use the 2.5s delay to ensure DB consistency
+      setTimeout(() => dispatch(GetAllAdministrator()), 2500);
     }
   };
 
@@ -134,7 +136,7 @@ const AllUsers = () => {
     if (formData.type === 'CONTACT') {
         // Update Contact Person specifically
         dispatch(UpdateContactPerson(formData.id, formData.name, formData.department, formData.email, formData.phone));
-        setTimeout(() => dispatch(GetAllContactPersons()), 1000);
+        setTimeout(() => dispatch(GetAllContactPersons()), 2500);
     } else {
         // Administator Flow
         const adminData = {
@@ -149,7 +151,7 @@ const AllUsers = () => {
         } else {
             dispatch(UpdateAdministrator(adminData));
         }
-        setTimeout(() => dispatch(GetAllAdministrator()), 1000);
+        setTimeout(() => dispatch(GetAllAdministrator()), 2500);
     }
     closeModal();
   };
