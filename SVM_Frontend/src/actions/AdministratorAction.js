@@ -35,7 +35,14 @@ export const AddAdministrator = (adminData) => {
         dispatch({ type: ADD_ADMINISTRATOR_REQUEST });
         try {
             const response = await AdministratorService.AddAdministrator(adminData);
-            if (response.data && (response.data.ResultSet || response.data.Status === "Success" || response.data.Status === "OK")) {
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.data.Result === "Success!!" ||
+                response.status === 200
+            );
+            if (isSuccess) {
                 dispatch({ type: ADD_ADMINISTRATOR_SUCCESS, payload: response.data });
                 setTimeout(() => dispatch(GetAllAdministrator()), 1500);
             } else {
@@ -52,7 +59,14 @@ export const UpdateAdministrator = (adminData) => {
         dispatch({ type: UPDATE_ADMINISTRATOR_REQUEST });
         try {
             const response = await AdministratorService.UpdateAdministrator(adminData);
-            if (response.data && (response.data.ResultSet || response.data.Status === "Success" || response.data.Status === "OK")) {
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.data.Result === "Success!!" ||
+                response.status === 200
+            );
+            if (isSuccess) {
                 dispatch({ type: UPDATE_ADMINISTRATOR_SUCCESS, payload: response.data });
                 setTimeout(() => dispatch(GetAllAdministrator()), 1500);
             } else {

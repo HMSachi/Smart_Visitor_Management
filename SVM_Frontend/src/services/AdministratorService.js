@@ -11,7 +11,8 @@ const GetAllAdministrator = async () => {
 const AddAdministrator = async (adminData) => {
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/Administrator/AddAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}`
+        url: `https://visitormanagement.dockyardsoftware.com/Administrator/AddAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}`,
+        data: ''
     };
     return axios.request(config).then((response) => response);
 }
@@ -19,7 +20,8 @@ const AddAdministrator = async (adminData) => {
 const UpdateAdministrator = async (adminData) => {
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/Administrator/UpdateAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}&VA_Admin_id=${encodeURIComponent(adminData.VA_Admin_id)}`
+        url: `https://visitormanagement.dockyardsoftware.com/Administrator/UpdateAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}&VA_Admin_id=${encodeURIComponent(adminData.VA_Admin_id)}`,
+        data: ''
     };
     return axios.request(config).then((response) => response);
 }
@@ -35,7 +37,8 @@ const GetAdministratorById = async (id) => {
 const DeleteAdministrator = async (id, status) => {
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/Administrator/DeleteAdministrator?VA_Admin_id=${encodeURIComponent(id)}&VA_Status=${encodeURIComponent(status)}`
+        url: `https://visitormanagement.dockyardsoftware.com/Administrator/DeleteAdministrator?VA_Admin_id=${encodeURIComponent(id)}&VA_Status=${encodeURIComponent(status)}`,
+        data: ''
     };
     return axios.request(config).then((response) => response);
 }

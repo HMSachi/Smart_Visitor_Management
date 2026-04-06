@@ -4,13 +4,12 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import {
   GetAllVisitors,
   GetVisitorById,
-  ToggleVisitorStatus,
-  AddVisitor
+  ToggleVisitorStatus
 } from '../../../actions/VisitorAction';
 import Header from '../../../components/Admin/Layout/Header';
 import {
   User, Mail, Phone, MapPin, Building, Shield,
-  Search, Plus, RefreshCw, X, Hash, CheckCircle2,
+  Search, RefreshCw, X, Hash, CheckCircle2,
   AlertCircle, Briefcase
 } from 'lucide-react';
 
@@ -36,19 +35,6 @@ const VisitorManagement = () => {
 
   const [searchId, setSearchId] = useState('');
 
-  // Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    VV_Contact_person_id: '',
-    VV_Name: '',
-    VV_NIC_Passport_NO: '',
-    VV_Visiting_places: '',
-    VV_Visitor_Type: '',
-    VV_Phone: '',
-    VV_Email: '',
-    VV_Company: ''
-  });
-
   useEffect(() => {
     dispatch(GetAllVisitors());
   }, [dispatch]);
@@ -69,32 +55,6 @@ const VisitorManagement = () => {
 
     const newStatus = isActive ? 'I' : 'A';
     dispatch(ToggleVisitorStatus(visitor.VV_Visitor_id, newStatus));
-  };
-
-  const openModal = () => {
-    setFormData({
-      VV_Contact_person_id: '',
-      VV_Name: '',
-      VV_NIC_Passport_NO: '',
-      VV_Visiting_places: '',
-      VV_Visitor_Type: '',
-      VV_Phone: '',
-      VV_Email: '',
-      VV_Company: ''
-    });
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => setIsModalOpen(false);
-
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    dispatch(AddVisitor(formData));
-    closeModal();
   };
 
   return (
@@ -134,11 +94,6 @@ const VisitorManagement = () => {
                   </button>
                 )}
               </form>
-
-              {/* Add Visitor Button */}
-              <button onClick={openModal} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20">
-                <Plus size={16} /> Add Visitor
-              </button>
 
             </div>
           </header>
@@ -210,94 +165,7 @@ const VisitorManagement = () => {
         </div>
       </div>
 
-      {/* Modal for Add Visitor */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto">
-          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden relative my-auto">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
-
-            <div className="flex justify-between items-center p-6 border-b border-white/5 relative z-10 bg-black/20">
-              <div className="flex items-center gap-3">
-                <div className="w-1.5 h-6 bg-primary rounded-full"></div>
-                <h2 className="text-lg font-bold text-white uppercase tracking-[0.2em]">Add New Entry</h2>
-              </div>
-              <button onClick={closeModal} className="text-gray-400 hover:text-white transition-colors bg-white/5 p-2 rounded-lg">
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleFormSubmit} className="p-8 space-y-6 relative z-10 max-h-[80vh] overflow-y-auto custom-scrollbar">
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                    <User size={12} className="text-primary/60" /> Full Name
-                  </label>
-                  <input required type="text" name="VV_Name" value={formData.VV_Name} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5" placeholder="JOHN SMITH" />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                    <Hash size={12} className="text-primary/60" /> NIC / Passport NO
-                  </label>
-                  <input required type="text" name="VV_NIC_Passport_NO" value={formData.VV_NIC_Passport_NO} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5" placeholder="Enter identification" />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                    <Mail size={12} className="text-primary/60" /> Email Address
-                  </label>
-                  <input required type="email" name="VV_Email" value={formData.VV_Email} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5" placeholder="EMAIL@EXAMPLE.COM" />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                    <Phone size={12} className="text-primary/60" /> Phone Number
-                  </label>
-                  <input required type="text" name="VV_Phone" value={formData.VV_Phone} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5" placeholder="+94 7X XXX XXXX" />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                    <Building size={12} className="text-primary/60" /> Representing Company
-                  </label>
-                  <input required type="text" name="VV_Company" value={formData.VV_Company} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5" placeholder="COMPANY NAME" />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                    <Briefcase size={12} className="text-primary/60" /> Visitor Classification
-                  </label>
-                  <input required type="text" name="VV_Visitor_Type" value={formData.VV_Visitor_Type} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5" placeholder="E.G. CONTRACTOR, GUEST" />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                    <MapPin size={12} className="text-primary/60" /> Visiting Area
-                  </label>
-                  <input required type="text" name="VV_Visiting_places" value={formData.VV_Visiting_places} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5" placeholder="E.G. PRODUCTION FLOOR" />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                    <Hash size={12} className="text-primary/60" /> Contact Person ID
-                  </label>
-                  <input required type="number" name="VV_Contact_person_id" value={formData.VV_Contact_person_id} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5" placeholder="ENTER CP ID" />
-                </div>
-              </div>
-
-              <div className="pt-8 flex justify-end gap-3 border-t border-white/5">
-                <button type="button" onClick={closeModal} className="px-8 py-3.5 rounded-xl text-[13px] font-bold text-gray-400 hover:bg-white/5 uppercase tracking-widest transition-all">
-                  Cancel
-                </button>
-                <button type="submit" className="px-10 py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-[13px] font-bold uppercase tracking-[0.2em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black">
-                  Authorize Entry
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Removed Modal for Add Visitor */}
 
     </div>
   );

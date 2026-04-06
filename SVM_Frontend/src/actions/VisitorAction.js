@@ -36,7 +36,14 @@ export const AddVisitor = (visitorData) => {
         try {
             const response = await VisitorService.AddVisitor(visitorData);
             // Check for success in the response payload
-            if (response.data && (response.data.ResultSet || response.data.Status === "Success" || response.data.Status === "OK")) {
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.data.Result === "Success!!" ||
+                response.status === 200
+            );
+            if (isSuccess) {
                 dispatch({ type: ADD_VISITOR_SUCCESS, payload: response.data });
                 // Use a delay to ensure server-side consistency before re-fetching
                 setTimeout(() => {

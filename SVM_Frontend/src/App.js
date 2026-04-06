@@ -38,6 +38,7 @@ import SentToAdmin from "./layout/Contact_Person/SentToAdmin/SentToAdmin";
 import VisitorHistory from "./layout/Contact_Person/VisitorHistory/VisitorHistory";
 import Notifications from "./layout/Contact_Person/Notifications/Notifications";
 import ProfileSettings from "./layout/Contact_Person/ProfileSettings/ProfileSettings";
+import ContactAllVisitors from "./layout/Contact_Person/AllVisitors/AllVisitors";
 
 // Security Officer Layouts
 import Scanner from "./layout/Security_Officer/Scanner/Scanner";
@@ -196,6 +197,10 @@ const AppContent = () => {
           <Route
             path="/contact_person/profile-settings"
             element={<ProfileSettings />}
+          />
+          <Route
+            path="/contact_person/all-visitors"
+            element={<ContactAllVisitors />}
           />
 
           {/* Security Officer Routes */}
