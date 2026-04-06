@@ -8,6 +8,9 @@ const Header = () => {
   const dispatch = useDispatch();
   const isMobile = useSelector(state => state.ui.isMobile);
   const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
+  const user = useSelector(state => state.login.user);
+  
+  const userEmail = user?.ResultSet?.[0]?.VA_Email || user?.ResultSet?.[0]?.VCP_Email || 'ROOT.ADMIN';
 
   return (
     <header className="h-16 md:h-20 bg-secondary/95 backdrop-blur sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between border-b border-white/10 shadow-2xl">
@@ -56,7 +59,7 @@ const Header = () => {
 
         <button className="flex items-center gap-4 group text-left">
           <div className="hidden md:block">
-            <p className="text-white uppercase mb-0.5">Samith</p>
+            <p className="text-white uppercase mb-0.5 max-w-[150px] truncate">{userEmail}</p>
             <p className="text-primary uppercase text-right">ROOT ADMIN</p>
           </div>
           <div className="w-10 h-10 bg-primary/10 flex items-center justify-center border border-primary/30 group-hover:bg-primary group-hover:text-white transition-all text-primary">

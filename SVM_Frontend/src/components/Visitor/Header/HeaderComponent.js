@@ -9,6 +9,10 @@ const HeaderComponent = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
+    const { user } = useSelector(state => state.login);
+    
+    // Dynamic extraction for the visitor
+    const userEmail = user?.ResultSet?.[0]?.VA_Email || user?.ResultSet?.[0]?.VV_Email || (user?.ResultSet?.[0]?.VA_Role === 'Visitor' ? user?.ResultSet?.[0]?.VA_Email : null);
     
     const menuItems = [
         { label: 'Home', path: '/home', icon: Home },
@@ -64,6 +68,18 @@ const HeaderComponent = () => {
                     >
                         Request Visit
                     </button>
+
+                    {userEmail && (
+                        <div className="flex items-center gap-3 pl-6 border-l border-white/10 group cursor-default">
+                            <div className="flex flex-col items-end">
+                                <span className="text-[10px] text-gray-500 uppercase font-black tracking-[0.2em]">IDENTIFIED</span>
+                                <span className="text-[11px] text-white/80 font-bold uppercase tracking-widest max-w-[120px] truncate">{userEmail}</span>
+                            </div>
+                            <div className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-primary/40 group-hover:text-primary transition-all">
+                                <Activity size={14} />
+                            </div>
+                        </div>
+                    )}
                 </nav>
 
                 {/* Mobile Menu Trigger */}
@@ -96,6 +112,13 @@ const HeaderComponent = () => {
                             <X size={20} />
                         </IconButton>
                     </div>
+
+                    {userEmail && (
+                        <div className="mb-10 p-6 bg-white/[0.02] border border-white/5 rounded-2xl">
+                            <span className="text-[10px] text-primary font-black uppercase tracking-[0.3em] block mb-1">Authenticated As</span>
+                            <span className="text-sm text-white/90 font-bold uppercase tracking-widest truncate block">{userEmail}</span>
+                        </div>
+                    )}
 
                     <List className="space-y-2">
                         {menuItems.map((item) => (

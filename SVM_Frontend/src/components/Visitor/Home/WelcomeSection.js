@@ -58,7 +58,7 @@ const WelcomeSection = () => {
                         {isVisitor ? (
                             <button
                                 onClick={() => navigate('/visitor/my-requests')}
-                                className="w-full sm:w-auto px-12 py-5 bg-blue-600 text-white font-black uppercase text-sm md:text-base tracking-[0.2em] border border-blue-600 hover:bg-blue-700 transition-all rounded-xl shadow-lg shadow-blue-600/20 flex items-center justify-center gap-3 group"
+                                className="w-full sm:w-auto px-12 py-5 bg-primary text-white font-black uppercase text-sm md:text-base tracking-[0.2em] border border-primary hover:bg-[var(--color-primary-hover)] transition-all rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-3 group"
                             >
                                 <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
                                 My Visit Requests

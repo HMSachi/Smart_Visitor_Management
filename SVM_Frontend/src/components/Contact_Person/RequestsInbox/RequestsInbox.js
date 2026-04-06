@@ -9,7 +9,7 @@ const RequestsInboxMain = () => {
     const dispatch = useDispatch();
     
     // Get state from Redux
-    const { requests, searchTerm, statusFilter } = useSelector(state => state.contactPerson);
+    const { requests, searchTerm, statusFilter } = useSelector(state => state.contactPortal);
 
     // Derived filtered requests
     const filteredRequests = requests.filter(req => {
