@@ -7,6 +7,7 @@ import VehicleDetails from './Step1/VehicleDetails';
 import AreasToVisit from './Step1/AreasToVisit';
 import { createVisitorRequest } from '../../../services/visitorRequestService';
 import { GetAdministratorById } from '../../../actions/AdministratorAction';
+import { GetAllVisitors } from '../../../actions/VisitorAction';
 import { 
     updateField, 
     toggleArea, 
@@ -20,27 +21,50 @@ const Step1Main = () => {
     const formData = useSelector(state => state.visitor);
     const { status, requestRef } = formData;
     const user = useSelector(state => state.login.user);
-    const { administrators, isLoading: adminLoading } = useSelector(state => state.administrator);
-    const cpId = user?.ResultSet?.[0]?.VA_Admin_id;
+    const { administrators } = useSelector(state => state.administrator);
+    const { visitorsByCP: visitorList } = useSelector(state => state.visitorManagement);
+    
+    // Authenticated credentials
+    const authUser = user?.ResultSet?.[0];
+    const userEmail = authUser?.VA_Email;
+    const adminId = authUser?.VA_Admin_id;
 
-    // Fetch Visitor details on mount if logged in as Visitor
+    // Fetch both Administrator and Global Visitor records to join data
     useEffect(() => {
-        if (user?.ResultSet?.[0]?.VA_Role === 'Visitor' && cpId) {
-            dispatch(GetAdministratorById(cpId));
+        if (authUser?.VA_Role === 'Visitor' && adminId) {
+            dispatch(GetAdministratorById(adminId));
+            dispatch(GetAllVisitors());
         }
-    }, [dispatch, user, cpId]);
+    }, [dispatch, authUser, adminId]);
 
-    // Pre-fill form when administrator data is loaded
+    // Comprehensive Pre-fill Mapping
     useEffect(() => {
+        // 1. First priority: The detailed Visitor Record (mapped by Email)
+        if (visitorList && visitorList.length > 0 && userEmail) {
+            const visitorRecord = visitorList.find(v => (v.VV_Email || '').toLowerCase() === userEmail.toLowerCase());
+            
+            if (visitorRecord) {
+                // Map every details field from the Visitor Management table
+                if (!formData.fullName) dispatch(updateField({ name: 'fullName', value: visitorRecord.VV_Name }));
+                if (!formData.nic) dispatch(updateField({ name: 'nic', value: visitorRecord.VV_NIC_Passport_NO }));
+                if (!formData.contact) dispatch(updateField({ name: 'contact', value: visitorRecord.VV_Phone }));
+                if (!formData.email) dispatch(updateField({ name: 'email', value: visitorRecord.VV_Email }));
+                
+                // Set Corporate toggle if company details exist
+                if (visitorRecord.VV_Company && !formData.isCompanyRelated) {
+                    dispatch(updateField({ name: 'isCompanyRelated', value: true }));
+                }
+                return; // Prioritize Visitor record over Admin record if both exist
+            }
+        }
+
+        // 2. Second priority/Fallback: The Login Administrator Record
         if (administrators && administrators.length > 0) {
             const admin = administrators[0];
-            // Only pre-fill if fields are currently empty to avoid overwriting user edits
             if (!formData.fullName) dispatch(updateField({ name: 'fullName', value: admin.VA_Name }));
             if (!formData.email) dispatch(updateField({ name: 'email', value: admin.VA_Email }));
-            // Note: NIC might not be in Administrator table directly in some schemas, 
-            // but we'll map it if it exists or use standard placeholders
         }
-    }, [dispatch, administrators, formData.fullName, formData.email]);
+    }, [dispatch, visitorList, administrators, userEmail, formData.fullName, formData.nic, formData.contact, formData.email, formData.isCompanyRelated]);
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
