@@ -8,13 +8,14 @@ import securityReducer from "./reducers/securitySlice";
 import dashboardReducer from "./reducers/dashboardSlice";
 import uiReducer from "./reducers/uiSlice";
 import administratorReducer from "./reducers/AdministratorReducer";
+import visitorManagementReducer from "./reducers/VisitorReducer";
 
 const composeEnhancers =
     typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
         ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
         : compose;
 
- const reducer = combineReducers({
+const reducer = combineReducers({
     login: loginReducer,
     admin: adminReducer,
     visitor: visitorReducer,
@@ -23,6 +24,7 @@ const composeEnhancers =
     dashboard: dashboardReducer,
     ui: uiReducer,
     administrator: administratorReducer,
+    visitorManagement: visitorManagementReducer,
 });
 
 const store = createStore(

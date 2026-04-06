@@ -35,10 +35,19 @@ export const AddAdministrator = (adminData) => {
         dispatch({ type: ADD_ADMINISTRATOR_REQUEST });
         try {
             const response = await AdministratorService.AddAdministrator(adminData);
-            dispatch({ type: ADD_ADMINISTRATOR_SUCCESS, payload: response.data });
-            setTimeout(() => {
-                dispatch(GetAllAdministrator());
-            }, 500);
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.data.Result === "Success!!" ||
+                response.status === 200
+            );
+            if (isSuccess) {
+                dispatch({ type: ADD_ADMINISTRATOR_SUCCESS, payload: response.data });
+                setTimeout(() => dispatch(GetAllAdministrator()), 1500);
+            } else {
+                throw new Error(response.data?.Message || "Failed to add administrator");
+            }
         } catch (error) {
             dispatch({ type: ADD_ADMINISTRATOR_FAILURE, payload: error.message });
         }
@@ -50,10 +59,19 @@ export const UpdateAdministrator = (adminData) => {
         dispatch({ type: UPDATE_ADMINISTRATOR_REQUEST });
         try {
             const response = await AdministratorService.UpdateAdministrator(adminData);
-            dispatch({ type: UPDATE_ADMINISTRATOR_SUCCESS, payload: response.data });
-            setTimeout(() => {
-                dispatch(GetAllAdministrator());
-            }, 500);
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.data.Result === "Success!!" ||
+                response.status === 200
+            );
+            if (isSuccess) {
+                dispatch({ type: UPDATE_ADMINISTRATOR_SUCCESS, payload: response.data });
+                setTimeout(() => dispatch(GetAllAdministrator()), 1500);
+            } else {
+                throw new Error(response.data?.Message || "Failed to update administrator");
+            }
         } catch (error) {
             dispatch({ type: UPDATE_ADMINISTRATOR_FAILURE, payload: error.message });
         }
@@ -78,11 +96,23 @@ export const DeleteAdministrator = (id, status) => {
         dispatch({ type: DELETE_ADMINISTRATOR_REQUEST });
         try {
             const response = await AdministratorService.DeleteAdministrator(id, status);
-            dispatch({ type: DELETE_ADMINISTRATOR_SUCCESS, payload: response.data });
-            // Add a small delay to ensure server-side commitment before re-fetching
-            setTimeout(() => {
-                dispatch(GetAllAdministrator());
-            }, 500);
+            // Even more permissive check for success
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.status === 200
+            );
+
+            if (isSuccess) {
+                dispatch({ type: DELETE_ADMINISTRATOR_SUCCESS, payload: response.data });
+                // Use a slightly longer delay to be safe
+                setTimeout(() => {
+                    dispatch(GetAllAdministrator());
+                }, 2000);
+            } else {
+                throw new Error(response.data?.Message || "Operation failed on server");
+            }
         } catch (error) {
             dispatch({ type: DELETE_ADMINISTRATOR_FAILURE, payload: error.message });
         }

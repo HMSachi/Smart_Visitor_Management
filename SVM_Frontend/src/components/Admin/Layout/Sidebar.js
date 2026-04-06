@@ -48,6 +48,7 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
     { id: 'security', label: 'Monitor', icon: ShieldAlert, path: '/admin/security-monitoring' },
     { id: 'blacklist', label: 'Blacklist', icon: UserX, path: '/admin/blacklist-management' },
     { id: 'reports', label: 'Reports', icon: FileText, path: '/admin/reports-logs' },
+    { id: 'visitors', label: 'Visitors', icon: Users, path: '/admin/visitor-management' },
     { id: 'users', label: 'System Users', icon: Users, path: '/admin/user-management' },
     { id: 'all-users', label: 'All Users', icon: UserPlus, path: '/admin/all-users' },
   ];

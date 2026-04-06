@@ -25,6 +25,7 @@ import BlacklistManagement from "./layout/Admin/BlacklistManagement/BlacklistMan
 import ReportsAndLogs from "./layout/Admin/ReportsAndLogs/ReportsAndLogs";
 import UserManagement from "./layout/Admin/UserManagement/UserManagement";
 import AllUsers from "./layout/Admin/AllUsers/AllUsers";
+import VisitorManagement from "./layout/Admin/VisitorManagement/VisitorManagement";
 
 import Login from "./layout/Login/Login";
 
@@ -37,6 +38,7 @@ import SentToAdmin from "./layout/Contact_Person/SentToAdmin/SentToAdmin";
 import VisitorHistory from "./layout/Contact_Person/VisitorHistory/VisitorHistory";
 import Notifications from "./layout/Contact_Person/Notifications/Notifications";
 import ProfileSettings from "./layout/Contact_Person/ProfileSettings/ProfileSettings";
+import ContactAllVisitors from "./layout/Contact_Person/AllVisitors/AllVisitors";
 
 // Security Officer Layouts
 import Scanner from "./layout/Security_Officer/Scanner/Scanner";
@@ -153,6 +155,7 @@ const AppContent = () => {
           <Route path="/admin/reports-logs" element={<ReportsAndLogs />} />
           <Route path="/admin/user-management" element={<UserManagement />} />
           <Route path="/admin/all-users" element={<AllUsers />} />
+          <Route path="/admin/visitor-management" element={<VisitorManagement />} />
           <Route
             path="/admin-dashboard"
             element={<Navigate to="/admin/dashboard" replace />}
@@ -194,6 +197,10 @@ const AppContent = () => {
           <Route
             path="/contact_person/profile-settings"
             element={<ProfileSettings />}
+          />
+          <Route
+            path="/contact_person/all-visitors"
+            element={<ContactAllVisitors />}
           />
 
           {/* Security Officer Routes */}
