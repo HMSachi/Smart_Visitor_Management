@@ -8,12 +8,13 @@ import {
   ApproveVisitRequest
 } from '../../../actions/VisitRequestAction';
 import { GetVisitorsByCP } from '../../../actions/VisitorAction';
+import { AddVehicle } from '../../../actions/VehicleAction';
 import Header from '../../../components/Contact_Person/Layout/Header';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import {
   Search, Plus, X, Calendar, MapPin, ClipboardList, 
   Send, Edit, CheckCircle2, XCircle, Clock, Hash, User,
-  AlertCircle, Filter, ChevronDown
+  AlertCircle, Filter, ChevronDown, Car
 } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
@@ -61,7 +62,9 @@ const VisitRequests = () => {
     VVR_Contact_person_id: cpId,
     VVR_Visit_Date: '',
     VVR_Places_to_Visit: '',
-    VVR_Purpose: ''
+    VVR_Purpose: '',
+    VV_Vehicle_Type: '',
+    VV_Vehicle_Number: ''
   });
 
   useEffect(() => {
@@ -78,7 +81,9 @@ const VisitRequests = () => {
         VVR_Contact_person_id: cpId,
         VVR_Visit_Date: request.VVR_Visit_Date ? request.VVR_Visit_Date.split('T')[0] : '',
         VVR_Places_to_Visit: request.VVR_Places_to_Visit,
-        VVR_Purpose: request.VVR_Purpose
+        VVR_Purpose: request.VVR_Purpose,
+        VV_Vehicle_Type: '',  // Reset for edit mode unless we fetch existing vehicle
+        VV_Vehicle_Number: ''
       });
     } else {
       setFormData({
@@ -87,7 +92,9 @@ const VisitRequests = () => {
         VVR_Contact_person_id: cpId,
         VVR_Visit_Date: '',
         VVR_Places_to_Visit: '',
-        VVR_Purpose: ''
+        VVR_Purpose: '',
+        VV_Vehicle_Type: '',
+        VV_Vehicle_Number: ''
       });
     }
     setIsModalOpen(true);
@@ -99,12 +106,29 @@ const VisitRequests = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (modalMode === 'add') {
-      dispatch(AddVisitRequest(formData));
-    } else {
-      dispatch(UpdateVisitRequest(formData));
+    try {
+        let response;
+        if (modalMode === 'add') {
+            response = await dispatch(AddVisitRequest(formData));
+            
+            // Extract Request ID for vehicle registration
+            const requestId = response?.ResultSet?.[0]?.VVR_Request_id || response?.VVR_Request_id || 0;
+            
+            // If vehicle details provided, add them
+            if (requestId && (formData.VV_Vehicle_Number || formData.VV_Vehicle_Type)) {
+                dispatch(AddVehicle({
+                    VV_Vehicle_Type: formData.VV_Vehicle_Type || 'N/A',
+                    VV_Vehicle_Number: formData.VV_Vehicle_Number || 'N/A',
+                    VVR_Request_id: requestId
+                }));
+            }
+        } else {
+            dispatch(UpdateVisitRequest(formData));
+        }
+    } catch (err) {
+        console.error("Submission failed:", err);
     }
     closeModal();
   };
@@ -316,6 +340,39 @@ const VisitRequests = () => {
                       className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 resize-none"
                       placeholder="Specify the reason for the visit..."
                     ></textarea>
+                  </div>
+
+                  {/* NEW: Vehicle Section */}
+                  <div className="pt-4 border-t border-white/5 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Car size={14} className="text-primary" />
+                      <h3 className="text-xs font-bold text-white uppercase tracking-[0.2em]">Vehicle Logistics (Optional)</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold px-1">Vehicle Type</label>
+                        <input
+                          type="text"
+                          name="VV_Vehicle_Type"
+                          value={formData.VV_Vehicle_Type}
+                          onChange={handleInputChange}
+                          className="w-full bg-black/60 border border-white/5 rounded-xl px-4 py-3 text-[12px] text-white focus:outline-none focus:border-primary/40"
+                          placeholder="e.g. Car, Van, Truck"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold px-1">Registration No</label>
+                        <input
+                          type="text"
+                          name="VV_Vehicle_Number"
+                          value={formData.VV_Vehicle_Number}
+                          onChange={handleInputChange}
+                          className="w-full bg-black/60 border border-white/5 rounded-xl px-4 py-3 text-[12px] text-white focus:outline-none focus:border-primary/40"
+                          placeholder="e.g. WP-CAD-1234"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 

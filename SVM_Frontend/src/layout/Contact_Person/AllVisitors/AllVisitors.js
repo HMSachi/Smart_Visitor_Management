@@ -35,7 +35,9 @@ const ContactAllVisitors = () => {
     VV_Phone: '',
     VV_Email: '',
     VV_Company: '',
-    VA_Password: ''
+    VA_Password: '',
+    VV_Vehicle_Type: '',
+    VV_Vehicle_Number: ''
   });
 
   useEffect(() => {
@@ -69,7 +71,9 @@ const ContactAllVisitors = () => {
       VV_Phone: '',
       VV_Email: '',
       VV_Company: '',
-      VA_Password: ''
+      VA_Password: '',
+      VV_Vehicle_Type: '',
+      VV_Vehicle_Number: ''
     });
     setIsModalOpen(true);
   };
@@ -292,6 +296,39 @@ const ContactAllVisitors = () => {
                         <input required type="password" name="VA_Password" value={formData.VA_Password} onChange={handleInputChange} className="w-full bg-black/60 border border-primary/20 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10" placeholder="••••••••" />
                         <p className="text-[9px] text-white/30 uppercase tracking-widest px-1 mt-1">Visitor will use this to log in</p>
                         </div>
+                    </div>
+
+                    {/* NEW: Vehicle Section */}
+                    <div className="pt-6 border-t border-white/5 space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Car size={14} className="text-primary" />
+                        <h3 className="text-xs font-bold text-white uppercase tracking-[0.2em] mb-0">Vehicle Logistics</h3>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold px-1">Vehicle Type</label>
+                          <input
+                            type="text"
+                            name="VV_Vehicle_Type"
+                            value={formData.VV_Vehicle_Type}
+                            onChange={handleInputChange}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50"
+                            placeholder="E.G. CAR, VAN"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold px-1">Plate Number</label>
+                          <input
+                            type="text"
+                            name="VV_Vehicle_Number"
+                            value={formData.VV_Vehicle_Number}
+                            onChange={handleInputChange}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50"
+                            placeholder="E.G. WP-CAD-1234"
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     <div className="pt-8 flex justify-end gap-3 border-t border-white/5">
