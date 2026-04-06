@@ -7,6 +7,8 @@ import {
   AddVisitor
 } from '../../../actions/VisitorAction';
 import { AddAdministrator } from '../../../actions/AdministratorAction';
+import { AddVisitRequest } from '../../../actions/VisitRequestAction';
+import { AddVehicle } from '../../../actions/VehicleAction';
 import Header from '../../../components/Contact_Person/Layout/Header';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import {
@@ -84,20 +86,47 @@ const ContactAllVisitors = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    dispatch(AddVisitor(formData));
-    
-    // Create the visitor's login account (role: Visitor)
-    dispatch(AddAdministrator({
-        VA_Name: formData.VV_Name,
-        VA_Role: 'Visitor',
-        VA_Email: formData.VV_Email,
-        VA_Password: formData.VA_Password
-    }));
+    try {
+        // 1. Add Visitor
+        const visitorResponse = await dispatch(AddVisitor(formData));
+        const visitorId = visitorResponse?.ResultSet?.[0]?.VV_Visitor_id || visitorResponse?.VV_Visitor_id;
+
+        // 2. Add Administrator
+        dispatch(AddAdministrator({
+            VA_Name: formData.VV_Name,
+            VA_Role: 'Visitor',
+            VA_Email: formData.VV_Email,
+            VA_Password: formData.VA_Password
+        }));
+
+        // 3. Create a default Visit Request for the "Visiting Area"
+        if (visitorId) {
+            const requestResponse = await dispatch(AddVisitRequest({
+                VVR_Visitor_id: visitorId,
+                VVR_Contact_person_id: cpId,
+                VVR_Visit_Date: new Date().toISOString().split('T')[0],
+                VVR_Places_to_Visit: formData.VV_Visiting_places || 'MAIN OFFICE',
+                VVR_Purpose: 'PRE-APPROVED ACCESS'
+            }));
+            
+            const requestId = requestResponse?.ResultSet?.[0]?.VVR_Request_id || requestResponse?.VVR_Request_id;
+
+            // 4. Add Vehicle if details provided
+            if (requestId && (formData.VV_Vehicle_Number || formData.VV_Vehicle_Type)) {
+                dispatch(AddVehicle({
+                    VV_Vehicle_Type: formData.VV_Vehicle_Type || 'N/A',
+                    VV_Vehicle_Number: formData.VV_Vehicle_Number || 'N/A',
+                    VVR_Request_id: requestId
+                }));
+            }
+        }
+    } catch (err) {
+        console.error("Master enrollment failed:", err);
+    }
 
     closeModal();
-    // Force CP Sync after global add visitor hook finishes
     setTimeout(() => {
         dispatch(GetVisitorsByCP(cpId));
     }, 1600);

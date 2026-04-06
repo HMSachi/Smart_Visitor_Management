@@ -4,9 +4,10 @@ import {
   LOGIN_FAILURE, 
 } from "../constants/LoginConstants";
 
+const persistedUser = localStorage.getItem('user_session');
 const initialState = {
   isLoading: false,
-  user: null,
+  user: persistedUser ? JSON.parse(persistedUser) : null,
   error: null,
 };
 

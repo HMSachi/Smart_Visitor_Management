@@ -10,8 +10,25 @@ const Header = ({ title }) => {
     const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
     const user = useSelector(state => state.login.user);
     
-    // Attempt to extract the correct email node dynamically
-    const userEmail = user?.ResultSet?.[0]?.VCP_Email || user?.ResultSet?.[0]?.VA_Email || user?.data?.ResultSet?.[0]?.VCP_Email || 'ACCOUNT.ACTIVE';
+    // Improved detection to ensure userEmail survives a page refresh via direct session check fallback
+    const getIdentity = () => {
+        const currentUser = user?.ResultSet?.[0] || user?.data?.ResultSet?.[0];
+        if (currentUser?.VCP_Email) return currentUser.VCP_Email;
+        if (currentUser?.VA_Email) return currentUser.VA_Email;
+        
+        // Fallback to direct session parsing
+        const persisted = localStorage.getItem('user_session');
+        if (persisted) {
+            try {
+                const sessionData = JSON.parse(persisted);
+                const sessionUser = sessionData?.ResultSet?.[0] || sessionData?.data?.ResultSet?.[0];
+                return sessionUser?.VCP_Email || sessionUser?.VA_Email || 'ACCOUNT.ACTIVE';
+            } catch (e) { return 'ACCOUNT.ACTIVE'; }
+        }
+        return 'ACCOUNT.ACTIVE';
+    };
+
+    const userEmail = getIdentity();
 
     return (
         <header className="h-24 pt-6 bg-[var(--color-bg-default)]/90 backdrop-blur-xl sticky top-0 z-40 px-4 md:px-10 flex items-center justify-between border-b border-white/[0.05] shadow-2xl">

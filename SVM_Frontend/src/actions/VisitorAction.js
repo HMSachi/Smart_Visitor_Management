@@ -45,20 +45,19 @@ export const AddVisitor = (visitorData) => {
             );
             if (isSuccess) {
                 dispatch({ type: ADD_VISITOR_SUCCESS, payload: response.data });
-                // Use a delay to ensure server-side consistency before re-fetching
-                setTimeout(() => {
-                    dispatch(GetAllVisitors());
-                }, 1500);
+                setTimeout(() => dispatch(GetAllVisitors()), 1500);
+                return response.data; // Return for component use
             } else {
                 throw new Error(response.data?.Message || "Failed to add visitor");
             }
         } catch (error) {
-            // Backend bug workaround: successful POST returns 200 OK but omits ACAO headers
             if (error.message === "Network Error") {
                 dispatch({ type: ADD_VISITOR_SUCCESS });
                 setTimeout(() => dispatch(GetAllVisitors()), 1500);
+                return { Status: "Success" }; // Return mock success for CORS issues
             } else {
                 dispatch({ type: ADD_VISITOR_FAILURE, payload: error.message });
+                throw error;
             }
         }
     };
