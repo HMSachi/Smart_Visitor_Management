@@ -8,7 +8,11 @@ import {
   AddAdministrator,
   UpdateAdministrator
 } from '../../../actions/AdministratorAction';
-import { GetAllContactPersons } from '../../../actions/ContactPersonAction';
+import { 
+  GetAllContactPersons, 
+  UpdateContactPerson, 
+  UpdateContactPersonStatus 
+} from '../../../actions/ContactPersonAction';
 import Header from '../../../components/Admin/Layout/Header';
 import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User, Users, ShieldAlert, UserCheck } from 'lucide-react';
 
@@ -39,11 +43,14 @@ const AllUsers = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add');
   const [formData, setFormData] = useState({
-    VA_Admin_id: '',
-    VA_Name: '',
-    VA_Email: '',
-    VA_Role: '',
-    VA_Password: ''
+    id: '',
+    name: '',
+    email: '',
+    role: '',
+    password: '',
+    phone: '',
+    department: '',
+    type: 'ADMIN' // Current being edited type
   });
 
   useEffect(() => {
@@ -61,32 +68,56 @@ const AllUsers = () => {
     }
   };
 
-  const handleToggleStatus = (admin) => {
-    // Robust check for active status (case-insensitive and handles full words)
-    const statusValue = (admin.VA_Status || '').toString().trim().toUpperCase();
-    const isActive = statusValue === 'ACTIVE' || statusValue === 'A';
-
-    const newStatus = isActive ? 'I' : 'A';
-    dispatch(DeleteAdministrator(admin.VA_Admin_id, newStatus));
+  const handleToggleStatus = (item, type) => {
+    if (type === 'CONTACT') {
+      const statusValue = (item.VCP_Status || '').toString().trim().toUpperCase();
+      const isActive = statusValue === 'ACTIVE' || statusValue === 'A';
+      const newStatus = isActive ? 'I' : 'A';
+      dispatch(UpdateContactPersonStatus(item.VCP_Contact_person_id, newStatus));
+      setTimeout(() => dispatch(GetAllContactPersons()), 1000);
+    } else {
+      const statusValue = (item.VA_Status || '').toString().trim().toUpperCase();
+      const isActive = statusValue === 'ACTIVE' || statusValue === 'A';
+      const newStatus = isActive ? 'I' : 'A';
+      dispatch(DeleteAdministrator(item.VA_Admin_id, newStatus));
+      setTimeout(() => dispatch(GetAllAdministrator()), 1000);
+    }
   };
 
-  const openModal = (mode, admin = null) => {
+  const openModal = (mode, item = null, type = 'ADMIN') => {
     setModalMode(mode);
-    if (admin) {
-      setFormData({
-        VA_Admin_id: admin.VA_Admin_id || '',
-        VA_Name: admin.VA_Name || '',
-        VA_Email: admin.VA_Email || '',
-        VA_Role: admin.VA_Role || '',
-        VA_Password: admin.VA_Password || ''
-      });
+    if (item) {
+      if (type === 'CONTACT') {
+        setFormData({
+            id: item.VCP_Contact_person_id || '',
+            name: item.VCP_Name || '',
+            email: item.VCP_Email || '',
+            role: 'CONTACT',
+            password: '',
+            phone: item.VCP_Phone || '',
+            department: item.VCP_Department || '',
+            type: 'CONTACT'
+        });
+      } else {
+        setFormData({
+            id: item.VA_Admin_id || '',
+            name: item.VA_Name || '',
+            email: item.VA_Email || '',
+            role: item.VA_Role || '',
+            password: item.VA_Password || '',
+            type: 'ADMIN'
+        });
+      }
     } else {
       setFormData({
-        VA_Admin_id: '',
-        VA_Name: '',
-        VA_Email: '',
-        VA_Role: '',
-        VA_Password: ''
+        id: '',
+        name: '',
+        email: '',
+        role: '',
+        password: '',
+        phone: '',
+        department: '',
+        type: 'ADMIN'
       });
     }
     setIsModalOpen(true);
@@ -100,10 +131,25 @@ const AllUsers = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (modalMode === 'add') {
-      dispatch(AddAdministrator(formData));
+    if (formData.type === 'CONTACT') {
+        // Update Contact Person specifically
+        dispatch(UpdateContactPerson(formData.id, formData.name, formData.department, formData.email, formData.phone));
+        setTimeout(() => dispatch(GetAllContactPersons()), 1000);
     } else {
-      dispatch(UpdateAdministrator(formData));
+        // Administator Flow
+        const adminData = {
+          VA_Admin_id: formData.id,
+          VA_Name: formData.name,
+          VA_Email: formData.email,
+          VA_Password: formData.password,
+          VA_Role: formData.role
+        };
+        if (modalMode === 'add') {
+            dispatch(AddAdministrator(adminData));
+        } else {
+            dispatch(UpdateAdministrator(adminData));
+        }
+        setTimeout(() => dispatch(GetAllAdministrator()), 1000);
     }
     closeModal();
   };
@@ -236,20 +282,18 @@ const AllUsers = () => {
                                 </TableCell>
                                 <TableCell className="border-b-white/5">
                                   <button 
-                                    onClick={cat.id !== 'CONTACT' ? () => handleToggleStatus(item) : undefined}
-                                    disabled={cat.id === 'CONTACT' || loading}
-                                    title={cat.id === 'CONTACT' ? "Modify disabled for Contacts" : "Click to toggle status"}
-                                    className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all ${cat.id !== 'CONTACT' ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'} ${isActive ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                                    onClick={() => handleToggleStatus(item, cat.id)}
+                                    disabled={loading}
+                                    title="Click to toggle status"
+                                    className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
                                   >
                                     {isActive ? 'ACTIVE' : 'INACTIVE'}
                                   </button>
                                 </TableCell>
                                 <TableCell align="right" className="border-b-white/5">
-                                  {cat.id !== 'CONTACT' && (
-                                    <IconButton onClick={() => openModal('edit', item)} size="small" className="text-white/40 hover:text-white">
-                                      <Edit size={16} />
-                                    </IconButton>
-                                  )}
+                                  <IconButton onClick={() => openModal('edit', item, cat.id)} size="small" className="text-white/40 hover:text-white">
+                                    <Edit size={16} />
+                                  </IconButton>
                                 </TableCell>
                               </TableRow>
                               );
@@ -284,23 +328,38 @@ const AllUsers = () => {
             <form onSubmit={handleFormSubmit} className="p-6 space-y-4 relative z-10">
               <div className="space-y-1">
                 <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><User size={12} /> Name</label>
-                <input required type="text" name="VA_Name" value={formData.VA_Name} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. John Doe" />
+                <input required type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. John Doe" />
               </div>
 
               <div className="space-y-1">
                 <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Mail size={12} /> Email</label>
-                <input required type="email" name="VA_Email" value={formData.VA_Email} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="example@mas.com" />
+                <input required type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="example@mas.com" />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Shield size={12} /> Role</label>
-                <input required type="text" name="VA_Role" value={formData.VA_Role} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. Admin, Security" />
-              </div>
+              {formData.type === 'CONTACT' ? (
+                <>
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Users size={12} /> Department</label>
+                    <input required type="text" name="department" value={formData.department} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. Human Resources" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><X size={12} /> Phone Connection</label>
+                    <input required type="text" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. +94 123 4567" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Shield size={12} /> Role</label>
+                    <input required type="text" name="role" value={formData.role} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. Admin, Security" />
+                  </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Hash size={12} /> Password</label>
-                <input required type="password" name="VA_Password" value={formData.VA_Password} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="Enter secure password" />
-              </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Hash size={12} /> Password</label>
+                    <input required={modalMode === 'add'} type="password" name="password" value={formData.password} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder={modalMode === 'add' ? "Enter secure password" : "Leave blank to keep current"} />
+                  </div>
+                </>
+              )}
 
               <div className="pt-6 flex justify-end gap-3 mt-4">
                 <button type="button" onClick={closeModal} className="px-6 py-3 rounded-xl text-[13px] font-bold text-gray-400 hover:bg-white/5 uppercase tracking-wider transition-all">
