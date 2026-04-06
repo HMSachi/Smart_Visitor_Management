@@ -9,6 +9,7 @@ import dashboardReducer from "./reducers/dashboardSlice";
 import uiReducer from "./reducers/uiSlice";
 import administratorReducer from "./reducers/AdministratorReducer";
 import visitorManagementReducer from "./reducers/VisitorReducer";
+import userManagementReducer from "./reducers/UserManagementReducer";
 
 const composeEnhancers =
     typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -25,6 +26,7 @@ const reducer = combineReducers({
     ui: uiReducer,
     administrator: administratorReducer,
     visitorManagement: visitorManagementReducer,
+    userManagement: userManagementReducer,
 });
 
 const store = createStore(

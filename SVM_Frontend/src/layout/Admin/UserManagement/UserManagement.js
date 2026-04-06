@@ -4,25 +4,33 @@ import { TextField, Button, CircularProgress, Alert, Table, TableBody, TableCell
 import { Edit2, Plus, X, Search } from 'lucide-react';
 import Header from '../../../components/Admin/Layout/Header';
 import { 
-  GetAllContactPersons, 
-  GetActiveContactPersons, 
-  AddContactPerson, 
-  UpdateContactPerson, 
-  UpdateContactPersonStatus, 
-  SearchContactPersons, 
-  GetContactPersonById 
-} from '../../../actions/ContactPersonAction';
-import contactPersonService from '../../../services/ContactPersonService';
+  FetchContactPersons,
+  FetchAdministrators,
+  AddContactPerson,
+  UpdateContactPerson,
+  UpdateContactPersonStatus,
+  ValidateUniqueness,
+  ClearUserManagementErrors
+} from '../../../actions/UserManagementAction';
 
 const UserManagement = () => {
   const dispatch = useDispatch();
-  const { contactPersons, loading: reduxLoading, contactPerson: selectedPerson, success: reduxSuccess, error: reduxError } = useSelector((state) => state.contactPerson);
+  const { 
+    contactPersons, 
+    administrators, 
+    isLoading, 
+    success, 
+    error: reduxError,
+    validation
+  } = useSelector((state) => state.userManagement);
 
+  const [activeTab, setActiveTab] = useState('CONTACT'); // 'CONTACT', 'SECURITY', 'VISITOR'
   const [showActiveOnly, setShowActiveOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedPerson, setSelectedPerson] = useState(null);
   
   const [formData, setFormData] = useState({
     id: '',
@@ -34,24 +42,25 @@ const UserManagement = () => {
 
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
-  const [phoneError, setPhoneError] = useState('');
-  const [emailError, setEmailError] = useState('');
 
   useEffect(() => {
+    dispatch(FetchAdministrators());
     const delayDebounceFn = setTimeout(() => {
-      fetchContactPersons();
+      if (activeTab === 'CONTACT') {
+        fetchUsers();
+      }
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [showActiveOnly, searchTerm]);
+  }, [showActiveOnly, searchTerm, activeTab, dispatch]);
 
   useEffect(() => {
-    if (reduxSuccess) {
+    if (success) {
       setMessage(isEditing ? "Contact Person updated successfully!" : "Contact Person added successfully!");
       setTimeout(() => handleCloseForm(), 1500);
-      fetchContactPersons();
+      fetchUsers();
     }
-  }, [reduxSuccess]);
+  }, [success, isEditing]);
 
   useEffect(() => {
     if (reduxError) {
@@ -59,96 +68,78 @@ const UserManagement = () => {
     }
   }, [reduxError]);
 
-  const fetchContactPersons = () => {
-    if (searchTerm.trim()) {
-      dispatch(SearchContactPersons(searchTerm));
-    } else if (showActiveOnly) {
-      dispatch(GetActiveContactPersons());
+  const fetchUsers = () => {
+    if (activeTab === 'CONTACT') {
+      dispatch(FetchContactPersons({ searchTerm, showActiveOnly }));
     } else {
-      dispatch(GetAllContactPersons());
+      dispatch(FetchAdministrators());
     }
   };
 
-  const handleOpenForm = async (person = null) => {
+  const handleOpenForm = (person = null) => {
     setMessage(null);
     setError(null);
-    setPhoneError('');
-    setEmailError('');
+    dispatch(ClearUserManagementErrors());
+    
     if (person) {
       setIsEditing(true);
-      dispatch(GetContactPersonById(person.VCP_Contact_person_id));
+      setSelectedPerson(person);
+      setFormData({
+        id: person.VCP_Contact_person_id,
+        name: person.VCP_Name || '',
+        department: person.VCP_Department || '',
+        email: person.VCP_Email || '',
+        phone: person.VCP_Phone || '',
+      });
       setIsFormVisible(true);
     } else {
       setIsEditing(false);
+      setSelectedPerson(null);
       setFormData({ id: '', name: '', department: '', email: '', phone: '' });
       setIsFormVisible(true);
     }
   };
 
-  // Sync formData when selectedPerson is fetched via Redux
-  useEffect(() => {
-    if (isEditing && selectedPerson && isFormVisible) {
-      setFormData({
-        id: selectedPerson.VCP_Contact_person_id,
-        name: selectedPerson.VCP_Name || '',
-        department: selectedPerson.VCP_Department || '',
-        email: selectedPerson.VCP_Email || '',
-        phone: selectedPerson.VCP_Phone || '',
-      });
-    }
-  }, [selectedPerson, isEditing, isFormVisible]);
-
   const handleCloseForm = () => {
     setIsFormVisible(false);
-    setPhoneError('');
-    setEmailError('');
     setFormData({ id: '', name: '', department: '', email: '', phone: '' });
+    dispatch(ClearUserManagementErrors());
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (name === 'phone') setPhoneError('');
-    if (name === 'email') setEmailError('');
+    dispatch(ClearUserManagementErrors());
   };
 
-  const handlePhoneBlur = async () => {
+  const handlePhoneBlur = () => {
     if (!formData.phone.trim()) return;
-    try {
-      const idToCheck = formData.id || '0';
-      const response = await contactPersonService.GetContactPersonByPhone(idToCheck, formData.phone);
-      if (response.data && response.data.ResultSet && response.data.ResultSet.length > 0) {
-        setPhoneError('This phone number is already registered to another contact person.');
-      }
-    } catch (err) {
-      console.warn("Failed to validate phone number uniquely", err);
-    }
+    dispatch(ValidateUniqueness('phone', formData.phone, formData.id || '0'));
   };
 
-  const handleEmailBlur = async () => {
+  const handleEmailBlur = () => {
     if (!formData.email.trim()) return;
-    try {
-      const response = await contactPersonService.GetContactPersonByEmail(formData.email);
-      if (response.data && response.data.ResultSet && response.data.ResultSet.length > 0) {
-        const existingPerson = response.data.ResultSet[0];
-        if (String(existingPerson.VCP_Contact_person_id) !== String(formData.id)) {
-          setEmailError('This email is already registered to another contact person.');
-        }
-      }
-    } catch (err) {
-      console.warn("Failed to validate email uniquely", err);
-    }
+    dispatch(ValidateUniqueness('email', formData.email, formData.id || '0'));
   };
 
   const handleToggleStatus = (person) => {
-    const newStatus = person.VCP_Status === 'A' ? 'I' : 'A';
-    dispatch(UpdateContactPersonStatus(person.VCP_Contact_person_id, newStatus));
-    // The successful API call will trigger reduxSuccess which re-fetches
+    if (activeTab === 'CONTACT') {
+      const newStatus = person.VCP_Status === 'A' ? 'I' : 'A';
+      dispatch(UpdateContactPersonStatus(person.VCP_Contact_person_id, newStatus));
+    }
+  };
+
+  const getFilteredAdmins = () => {
+    const role = activeTab === 'SECURITY' ? 'Security' : 'Visitor';
+    return administrators.filter(admin => 
+      admin.VA_Role === role && 
+      (!searchTerm || admin.VA_Name?.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (phoneError || emailError) return;
+    if (validation.phoneError || validation.emailError) return;
 
     if (isEditing) {
       dispatch(UpdateContactPerson(formData.id, formData.name, formData.department, formData.email, formData.phone));
@@ -170,8 +161,30 @@ const UserManagement = () => {
                 <span className="text-primary uppercase tracking-wider text-xs font-semibold">User Administration</span>
               </div>
               <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
-                Contact Persons
+                {activeTab === 'CONTACT' ? 'Contact Persons' : activeTab === 'SECURITY' ? 'Security Officers' : 'Visitor Accounts'}
               </h1>
+              
+              {/* Tab Switcher */}
+              <div className="flex gap-4 mt-6">
+                <button 
+                  onClick={() => { setActiveTab('CONTACT'); setSearchTerm(''); }}
+                  className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${activeTab === 'CONTACT' ? 'border-primary text-white' : 'border-transparent text-white/30 hover:text-white/60'}`}
+                >
+                  Contact Persons
+                </button>
+                <button 
+                  onClick={() => { setActiveTab('SECURITY'); setSearchTerm(''); }}
+                  className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${activeTab === 'SECURITY' ? 'border-primary text-white' : 'border-transparent text-white/30 hover:text-white/60'}`}
+                >
+                  Security Officers
+                </button>
+                <button 
+                  onClick={() => { setActiveTab('VISITOR'); setSearchTerm(''); }}
+                  className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${activeTab === 'VISITOR' ? 'border-primary text-white' : 'border-transparent text-white/30 hover:text-white/60'}`}
+                >
+                  Visitor Accounts
+                </button>
+              </div>
             </div>
             {!isFormVisible && (
               <div className="flex gap-4 items-center">
@@ -187,27 +200,31 @@ const UserManagement = () => {
                     }}
                   />
                 </div>
-                <Button
-                  onClick={() => setShowActiveOnly(!showActiveOnly)}
-                  variant="outlined"
-                  className={`rounded-none px-4 py-2 text-xs font-bold tracking-widest transition-all ${
-                    showActiveOnly 
-                    ? "border-primary text-primary bg-primary/10 hover:bg-primary/20" 
-                    : "border-white/10 text-white/40 hover:text-white/60 hover:border-white/20"
-                  }`}
-                  sx={{ borderRadius: 0 }}
-                >
-                  {showActiveOnly ? "SHOWING ACTIVE" : "SHOWING ALL"}
-                </Button>
-                <Button
-                  onClick={() => handleOpenForm()}
-                  variant="contained"
-                  startIcon={<Plus size={18} />}
-                  className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]"
-                  sx={{ borderRadius: 0 }}
-                >
-                  ADD CONTACT PERSON
-                </Button>
+                {activeTab === 'CONTACT' && (
+                  <Button
+                    onClick={() => setShowActiveOnly(!showActiveOnly)}
+                    variant="outlined"
+                    className={`rounded-none px-4 py-2 text-xs font-bold tracking-widest transition-all ${
+                      showActiveOnly 
+                      ? "border-primary text-primary bg-primary/10 hover:bg-primary/20" 
+                      : "border-white/10 text-white/40 hover:text-white/60 hover:border-white/20"
+                    }`}
+                    sx={{ borderRadius: 0 }}
+                  >
+                    {showActiveOnly ? "SHOWING ACTIVE" : "SHOWING ALL"}
+                  </Button>
+                )}
+                {activeTab === 'CONTACT' && (
+                  <Button
+                    onClick={() => handleOpenForm()}
+                    variant="contained"
+                    startIcon={<Plus size={18} />}
+                    className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]"
+                    sx={{ borderRadius: 0 }}
+                  >
+                    ADD {activeTab}
+                  </Button>
+                )}
               </div>
             )}
           </header>
@@ -219,7 +236,7 @@ const UserManagement = () => {
               </IconButton>
               
               <h2 className="text-lg font-bold uppercase tracking-wider mb-6 text-white/90">
-                {isEditing ? 'UPDATE CONTACT PERSON' : 'ADD NEW CONTACT PERSON'}
+                {isEditing ? `UPDATE ${activeTab}` : `ADD NEW ${activeTab}`}
               </h2>
 
               {message && <Alert severity="success" className="rounded-none bg-green-500/10 border border-green-500/50 text-green-400">{message}</Alert>}
@@ -238,18 +255,18 @@ const UserManagement = () => {
                   <label className="text-[12px] font-medium tracking-[0.2em] text-white/40 uppercase ml-1 block">Email Address</label>
                   <TextField 
                     fullWidth name="email" type="email" value={formData.email} onChange={handleChange} onBlur={handleEmailBlur} required 
-                    error={!!emailError} helperText={emailError} variant="outlined" size="small" 
+                    error={!!validation.emailError} helperText={validation.emailError} variant="outlined" size="small" 
                     InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }} 
-                    sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: emailError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: emailError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} 
+                    sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: validation.emailError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: validation.emailError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} 
                   />
                 </div>
                 <div className="group space-y-2">
                   <label className="text-[12px] font-medium tracking-[0.2em] text-white/40 uppercase ml-1 block">Phone Number</label>
                   <TextField 
                     fullWidth name="phone" value={formData.phone} onChange={handleChange} onBlur={handlePhoneBlur} required 
-                    error={!!phoneError} helperText={phoneError} variant="outlined" size="small" 
+                    error={!!validation.phoneError} helperText={validation.phoneError} variant="outlined" size="small" 
                     InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }} 
-                    sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} 
+                    sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} 
                   />
                 </div>
               </div>
@@ -258,60 +275,64 @@ const UserManagement = () => {
                 <Button onClick={handleCloseForm} type="button" variant="outlined" className="border-white/10 text-white/70 hover:bg-white/5 rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]" sx={{ borderRadius: 0 }}>
                   CANCEL
                 </Button>
-                <Button disabled={reduxLoading || !!phoneError || !!emailError} type="submit" variant="contained" className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]" sx={{ borderRadius: 0 }}>
-                  {reduxLoading ? <CircularProgress size={20} color="inherit" /> : isEditing ? 'SAVE CHANGES' : 'CREATE PERSON'}
+                <Button disabled={isLoading || !!validation.phoneError || !!validation.emailError} type="submit" variant="contained" className="bg-primary hover:bg-[var(--color-primary-hover)] rounded-none px-6 py-2.5 text-xs font-bold tracking-[0.2em]" sx={{ borderRadius: 0 }}>
+                  {isLoading ? <CircularProgress size={20} color="inherit" /> : isEditing ? 'SAVE CHANGES' : 'CREATE PERSON'}
                 </Button>
               </div>
             </form>
           ) : (
             <TableContainer component={Paper} className="bg-[#0F0F10] border border-white/5 rounded-none">
-              <Table sx={{ minWidth: 650 }} aria-label="contact persons table">
+              <Table sx={{ minWidth: 650 }} aria-label="user management table">
                 <TableHead className="bg-black/40">
                   <TableRow>
-                    <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">ID</TableCell>
-                    <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Name</TableCell>
-                    <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Department</TableCell>
-                    <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Email</TableCell>
-                    <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Phone</TableCell>
-                    <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Status</TableCell>
-                    <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5" align="right">Actions</TableCell>
+                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">ID</th>
+                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">Name</th>
+                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">{activeTab === 'CONTACT' ? 'Department' : 'System Role'}</th>
+                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">{activeTab === 'CONTACT' ? 'Email' : 'Authentication Origin'}</th>
+                    {activeTab === 'CONTACT' && <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">Phone</th>}
+                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">Status</th>
+                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-right">Actions</th>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {reduxLoading && contactPersons.length === 0 ? (
+                  {isLoading && (activeTab === 'CONTACT' ? contactPersons : getFilteredAdmins()).length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} align="center" className="py-12 border-b-white/5">
                         <CircularProgress size={30} className="text-primary" />
                       </TableCell>
                     </TableRow>
-                  ) : contactPersons.length === 0 ? (
+                  ) : (activeTab === 'CONTACT' ? contactPersons : getFilteredAdmins()).length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} align="center" className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5">
-                        No Contact Persons found
+                        No {activeTab} accounts found
                       </TableCell>
                     </TableRow>
                   ) : (
-                    contactPersons.map((person) => (
-                      <TableRow key={person.VCP_Contact_person_id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: 'rgba(255,255,255,0.02)' } }}>
-                        <TableCell className="text-white/70 font-medium border-b-white/5">{person.VCP_Contact_person_id}</TableCell>
-                        <TableCell className={`font-medium border-b-white/5 transition-colors ${person.VCP_Status === 'A' ? 'text-white' : 'text-white/30 line-through'}`}>{person.VCP_Name || '-'}</TableCell>
-                        <TableCell className={`border-b-white/5 transition-colors ${person.VCP_Status === 'A' ? 'text-white/70' : 'text-white/20'}`}>{person.VCP_Department || '-'}</TableCell>
-                        <TableCell className={`border-b-white/5 transition-colors ${person.VCP_Status === 'A' ? 'text-white/70' : 'text-white/20'}`}>{person.VCP_Email || '-'}</TableCell>
-                        <TableCell className={`border-b-white/5 transition-colors ${person.VCP_Status === 'A' ? 'text-white/70' : 'text-white/20'}`}>{person.VCP_Phone || '-'}</TableCell>
+                    (activeTab === 'CONTACT' ? contactPersons : getFilteredAdmins()).map((item) => (
+                      <TableRow key={item.VCP_Contact_person_id || item.VA_Admin_id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: 'rgba(255,255,255,0.02)' } }}>
+                        <TableCell className="text-white/70 font-medium border-b-white/5">{item.VCP_Contact_person_id || item.VA_Admin_id}</TableCell>
+                        <TableCell className={`font-medium border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'text-white' : 'text-white/30 line-through'}`}>{item.VCP_Name || item.VA_Name || '-'}</TableCell>
+                        <TableCell className={`border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'text-white/70' : 'text-white/20'}`}>{item.VCP_Department || item.VA_Role || '-'}</TableCell>
+                        <TableCell className={`border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'text-white/70' : 'text-white/20'}`}>{item.VCP_Email || item.VA_Email || '-'}</TableCell>
+                        {activeTab === 'CONTACT' && <TableCell className={`border-b-white/5 transition-colors ${item.VCP_Status === 'A' ? 'text-white/70' : 'text-white/20'}`}>{item.VCP_Phone || '-'}</TableCell>}
                         <TableCell className="border-b-white/5">
                            <button 
-                             onClick={() => handleToggleStatus(person)}
-                             disabled={reduxLoading}
-                             title="Click to toggle status"
-                             className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${person.VCP_Status === 'A' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                             onClick={() => handleToggleStatus(item)}
+                             disabled={isLoading || activeTab !== 'CONTACT'}
+                             title={activeTab === 'CONTACT' ? "Click to toggle status" : "Managed in All Users"}
+                             className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all ${activeTab === 'CONTACT' ? 'cursor-pointer' : 'cursor-default opacity-50'} ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
                            >
-                             {person.VCP_Status === 'A' ? 'ACTIVE' : 'INACTIVE'}
+                             {(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
                            </button>
                         </TableCell>
                         <TableCell align="right" className="border-b-white/5">
-                          <IconButton onClick={() => handleOpenForm(person)} size="small" className="text-white/40 hover:text-white">
-                            <Edit2 size={16} />
-                          </IconButton>
+                          {activeTab === 'CONTACT' ? (
+                            <IconButton onClick={() => handleOpenForm(item)} size="small" className="text-white/40 hover:text-white">
+                              <Edit2 size={16} />
+                            </IconButton>
+                          ) : (
+                            <span className="text-[10px] text-white/20 uppercase tracking-widest italic">Read Only</span>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))
