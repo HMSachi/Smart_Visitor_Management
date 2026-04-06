@@ -29,7 +29,7 @@ const Login = () => {
       if (user.ResultSet && user.ResultSet.length > 0) {
         const role = user.ResultSet[0].VA_Role;
         if (role === "Admin") navigate("/admin-dashboard");
-        else if (role === "ContactPerson") navigate("/contact_person/dashboard");
+        else if (role === "Contact_Person") navigate("/contact_person/dashboard");
         else if (role === "Security") navigate("/security-dashboard");
         else if (role === "Visitor") navigate("/home");
         else setLocalError("Access denied. Unknown role.");
