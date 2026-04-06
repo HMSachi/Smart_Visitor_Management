@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 import {
   GetAllVisitors,
   GetVisitorById,
@@ -158,94 +159,52 @@ const VisitorManagement = () => {
                 <p className="text-primary text-[14px] uppercase tracking-widest">{error}</p>
               </div>
             ) : (
-              <div className="w-full overflow-x-auto relative z-10">
-                <table className="w-full text-left border-collapse min-w-[1200px]">
-                  <thead>
-                    <tr className="bg-black/40 border-b border-white/5">
-                      <th className="px-6 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70 text-center">ID</th>
-                      <th className="px-6 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">Visitor</th>
-                      <th className="px-6 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">Credentials</th>
-                      <th className="px-6 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">Company</th>
-                      <th className="px-6 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">Destination</th>
-                      <th className="px-6 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">Status</th>
-                      <th className="px-6 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70 text-center">Raw</th>
-                      <th className="px-6 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/[0.02]">
+              <TableContainer component={Paper} className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative">
+                <Table sx={{ minWidth: 650 }} aria-label="visitors table">
+                  <TableHead className="bg-black/40">
+                    <TableRow>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">ID</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Visitor</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Credentials</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Company</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Destination</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Status</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
                     {visitors && visitors.length > 0 ? (
-                      visitors.map((visitor) => (
-                        <tr key={visitor.VV_Visitor_id} className="hover:bg-white/[0.02] transition-colors group">
-                          <td className="px-6 py-6 text-center">
-                            <span className="text-[13px] font-mono tracking-widest text-primary/80 group-hover:text-primary">{visitor.VV_Visitor_id}</span>
-                          </td>
-                          <td className="px-6 py-6">
-                            <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-xl bg-black/40 border border-white/5 flex items-center justify-center text-primary font-medium text-sm group-hover:border-primary/30 transition-all">
-                                {visitor.VV_Name ? visitor.VV_Name.substring(0, 2).toUpperCase() : 'NA'}
-                              </div>
-                              <div className="min-w-0">
-                                <p className="text-white text-[13px] font-medium uppercase tracking-widest mb-1 truncate">{visitor.VV_Name}</p>
-                                <p className="text-gray-400 text-[11px] font-medium tracking-[0.1em] flex items-center gap-1.5">
-                                  <Briefcase size={10} className="shrink-0" /> {visitor.VV_Visitor_Type || 'Regular'}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-6">
-                            <div className="space-y-1.5">
-                              <p className="text-gray-300 text-[11px] flex items-center gap-2 tracking-widest font-mono uppercase">
-                                <Hash size={10} className="text-primary/40" /> {visitor.VV_NIC_Passport_NO}
-                              </p>
-                              <p className="text-gray-400 text-[11px] flex items-center gap-2 tracking-tight">
-                                <Mail size={10} className="text-primary/20" /> {visitor.VV_Email}
-                              </p>
-                              <p className="text-gray-400 text-[11px] flex items-center gap-2 tracking-tight">
-                                <Phone size={10} className="text-primary/20" /> {visitor.VV_Phone}
-                              </p>
-                            </div>
-                          </td>
-                          <td className="px-6 py-6">
-                            <div className="flex items-center gap-2 text-gray-300/80">
-                              <Building size={12} className="text-primary/40" />
-                              <span className="text-[12px] font-medium uppercase tracking-widest truncate max-w-[120px]">{visitor.VV_Company || 'N/A'}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-6">
-                            <div className="flex items-center gap-2 text-gray-400">
-                              <MapPin size={12} className="text-primary/40" />
-                              <span className="text-[11px] uppercase tracking-wider truncate max-w-[150px]">{visitor.VV_Visiting_places}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-6">
-                            <StatusBadge status={visitor.VV_Status} />
-                          </td>
-                          <td className="px-6 py-6 text-center">
-                            <span className="text-[10px] text-white/20 font-mono italic">{JSON.stringify(visitor.VV_Status)}</span>
-                          </td>
-                          <td className="px-6 py-6 text-right">
-                            <button
-                              title="Toggle Access Authorization"
-                              onClick={() => handleToggleStatus(visitor)}
-                              className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${(visitor.VV_Status || '').toString().trim().toUpperCase() === 'A' || (visitor.VV_Status || '').toString().trim().toUpperCase() === 'ACTIVE'
-                                  ? 'bg-primary/10 hover:bg-primary/20 border-primary/30 text-primary hover:text-primary'
-                                  : 'bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-500 hover:text-green-500'}`}
-                            >
-                              <RefreshCw size={14} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))
+                      visitors.map((visitor) => {
+                        const isActive = (visitor.VV_Status || '').toString().trim().toUpperCase() === 'A' || (visitor.VV_Status || '').toString().trim().toUpperCase() === 'ACTIVE';
+                        return (
+                          <TableRow key={visitor.VV_Visitor_id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: 'rgba(255,255,255,0.02)' } }}>
+                            <TableCell className="text-white/70 font-medium border-b-white/5">{visitor.VV_Visitor_id}</TableCell>
+                            <TableCell className={`font-medium border-b-white/5 transition-colors ${isActive ? 'text-white' : 'text-white/30 line-through'}`}>{visitor.VV_Name || '-'}</TableCell>
+                            <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>{visitor.VV_NIC_Passport_NO || '-'}</TableCell>
+                            <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>{visitor.VV_Company || '-'}</TableCell>
+                            <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>{visitor.VV_Visiting_places || '-'}</TableCell>
+                            <TableCell className="border-b-white/5">
+                               <button 
+                                 onClick={() => handleToggleStatus(visitor)}
+                                 disabled={isLoading}
+                                 title="Click to toggle status"
+                                 className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                               >
+                                 {isActive ? 'ACTIVE' : 'INACTIVE'}
+                               </button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
                     ) : (
-                      <tr>
-                        <td colSpan="8" className="px-8 py-20 text-center text-gray-400 text-[13px] uppercase tracking-widest">
+                      <TableRow>
+                        <TableCell colSpan={6} align="center" className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5">
                           No Visitors detected in registry
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     )}
-                  </tbody>
-                </table>
-              </div>
+                  </TableBody>
+                </Table>
+              </TableContainer>
             )}
           </div>
         </div>

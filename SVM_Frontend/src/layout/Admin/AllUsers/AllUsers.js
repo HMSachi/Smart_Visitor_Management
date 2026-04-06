@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, CircularProgress } from '@mui/material';
 import {
   GetAllAdministrator,
   GetAdministratorById,
@@ -166,87 +167,56 @@ const AllUsers = () => {
                 <p className="text-primary text-[14px] uppercase tracking-widest">{error}</p>
               </div>
             ) : (
-              <div className="w-full overflow-x-auto relative z-10">
-                <table className="w-full text-left border-collapse min-w-[900px]">
-                  <thead>
-                    <tr className="bg-black/40 border-b border-white/5">
-                      <th className="px-8 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">ID Node</th>
-                      <th className="px-8 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">Personnel Entity</th>
-                      <th className="px-8 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">System Role</th>
-                      <th className="px-8 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">Created Origin</th>
-                      <th className="px-8 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">Status</th>
-                      <th className="px-8 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70 tracking-widest text-[10px]">Raw Data</th>
-                      <th className="px-8 py-6 text-[12px] font-medium tracking-[0.3em] uppercase text-white/70">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/[0.02]">
-                    {administrators.map((admin) => (
-                      <tr key={admin.VA_Admin_id} className="hover:bg-white/[0.02] transition-colors group">
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-2 text-gray-300">
-                            <Hash size={12} className="text-primary/40 group-hover:text-primary transition-colors" />
-                            <span className="text-[13px] font-mono tracking-widest">{admin.VA_Admin_id}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-[var(--color-bg-default)] border border-white/5 flex items-center justify-center text-primary font-medium text-sm shadow-inner group-hover:border-primary/30 transition-all">
-                              {admin.VA_Name ? admin.VA_Name.substring(0, 2).toUpperCase() : 'NA'}
-                            </div>
-                            <div>
-                              <p className="text-white text-[13px] font-medium uppercase tracking-widest mb-1">{admin.VA_Name}</p>
-                              <p className="text-gray-400 text-[11px] font-medium tracking-[0.1em] flex items-center gap-1.5 hover:text-white transition-colors">
-                                <Mail size={10} /> {admin.VA_Email}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-2">
-                            <Shield size={12} className="text-primary/60" />
-                            <span className="text-white/90 text-[13px] font-medium uppercase tracking-[0.1em]">{admin.VA_Role}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-2 text-gray-300/80">
-                            <Calendar size={12} className="text-primary/40" />
-                            <span className="text-[12px] font-medium uppercase tracking-widest">{admin.VA_Created_Date ? admin.VA_Created_Date.split(' ')[0] : 'N/A'}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6">
-                          <StatusBadge status={admin.VA_Status} />
-                        </td>
-                        <td className="px-8 py-6">
-                          <span className="text-[10px] text-white/30 font-mono italic">{JSON.stringify(admin.VA_Status)}</span>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-3">
-                            <button title="Edit Employee" onClick={() => openModal('edit', admin)} className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white transition-all">
-                              <Edit size={14} />
-                            </button>
-                            <button
-                              title="Toggle Status (Delete/Restore)"
-                              onClick={() => handleToggleStatus(admin)}
-                              className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${(admin.VA_Status || '').toString().trim().toUpperCase() === 'A' || (admin.VA_Status || '').toString().trim().toUpperCase() === 'ACTIVE'
-                                  ? 'bg-primary/10 hover:bg-primary/20 border-primary/30 text-primary hover:text-primary'
-                                  : 'bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-500 hover:text-green-500'}`}
-                            >
-                              <RefreshCw size={14} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {!administrators || administrators.length === 0 ? (
-                      <tr>
-                        <td colSpan="6" className="px-8 py-20 text-center text-gray-400 text-[13px] uppercase tracking-widest">
+              <TableContainer component={Paper} className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative">
+                <Table sx={{ minWidth: 650 }} aria-label="admin table">
+                  <TableHead className="bg-black/40">
+                    <TableRow>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">ID Node</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Personnel Entity</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">System Role</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Created Origin</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Status</TableCell>
+                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5" align="right">Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {administrators && administrators.length > 0 ? (
+                      administrators.map((admin) => {
+                        const isActive = (admin.VA_Status || '').toString().trim().toUpperCase() === 'A' || (admin.VA_Status || '').toString().trim().toUpperCase() === 'ACTIVE';
+                        return (
+                          <TableRow key={admin.VA_Admin_id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: 'rgba(255,255,255,0.02)' } }}>
+                            <TableCell className="text-white/70 font-medium border-b-white/5">{admin.VA_Admin_id}</TableCell>
+                            <TableCell className={`font-medium border-b-white/5 transition-colors ${isActive ? 'text-white' : 'text-white/30 line-through'}`}>{admin.VA_Name || '-'}</TableCell>
+                            <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>{admin.VA_Role || '-'}</TableCell>
+                            <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>{admin.VA_Created_Date ? admin.VA_Created_Date.split(' ')[0] : '-'}</TableCell>
+                            <TableCell className="border-b-white/5">
+                               <button 
+                                 onClick={() => handleToggleStatus(admin)}
+                                 disabled={loading}
+                                 title="Click to toggle status"
+                                 className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                               >
+                                 {isActive ? 'ACTIVE' : 'INACTIVE'}
+                               </button>
+                            </TableCell>
+                            <TableCell align="right" className="border-b-white/5">
+                              <IconButton onClick={() => openModal('edit', admin)} size="small" className="text-white/40 hover:text-white">
+                                <Edit size={16} />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} align="center" className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5">
                           No System Administrators found
-                        </td>
-                      </tr>
-                    ) : null}
-                  </tbody>
-                </table>
-              </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             )}
           </div>
         </div>
