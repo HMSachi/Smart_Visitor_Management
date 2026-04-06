@@ -7,7 +7,8 @@ import {
   Bell,
   ChevronLeft,
   ChevronRight,
-  LogOut
+  LogOut,
+  CalendarDays
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Drawer, Box, IconButton, Tooltip } from '@mui/material';
@@ -41,6 +42,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
 const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
   const menuItems = [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/contact_person/dashboard' },
+      { id: 'visit-requests', label: 'Visit Requests', icon: CalendarDays, path: '/contact_person/visit-requests' },
       { id: 'inbox', label: 'Requests Inbox', icon: Inbox, path: '/contact_person/requests-inbox' },
       { id: 'approved', label: 'Approved Forms', icon: CheckCircle, path: '/contact_person/approved-requests' },
       { id: 'all-visitors', label: 'All Visitors', icon: Inbox, path: '/contact_person/all-visitors' },

@@ -1,8 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const WelcomeSection = () => {
     const navigate = useNavigate();
+    const { user } = useSelector(state => state.login);
+    const isVisitor = user?.ResultSet?.[0]?.VA_Role === 'Visitor';
 
     return (
         <section className="relative min-h-screen flex items-center overflow-hidden pt-24 md:pt-0">
@@ -51,13 +54,23 @@ const WelcomeSection = () => {
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-center gap-6  ">
-                        <button
-                            onClick={() => navigate('/request-step-1')}
-                            className="w-full sm:w-auto px-12 py-5 bg-primary text-white font-black uppercase text-sm md:text-base tracking-[0.2em] border border-primary hover:bg-[var(--color-primary-hover)] transition-all rounded-xl shadow-lg shadow-primary/20"
-                        >
-                            Request a Visit
-                        </button>
+                    <div className="flex flex-col sm:flex-row items-center gap-6">
+                        {isVisitor ? (
+                            <button
+                                onClick={() => navigate('/visitor/my-requests')}
+                                className="w-full sm:w-auto px-12 py-5 bg-blue-600 text-white font-black uppercase text-sm md:text-base tracking-[0.2em] border border-blue-600 hover:bg-blue-700 transition-all rounded-xl shadow-lg shadow-blue-600/20 flex items-center justify-center gap-3 group"
+                            >
+                                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                                My Visit Requests
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => navigate('/request-step-1')}
+                                className="w-full sm:w-auto px-12 py-5 bg-primary text-white font-black uppercase text-sm md:text-base tracking-[0.2em] border border-primary hover:bg-[var(--color-primary-hover)] transition-all rounded-xl shadow-lg shadow-primary/20"
+                            >
+                                Request a Visit
+                            </button>
+                        )}
 
                         <button
                             onClick={() => navigate('/access')}

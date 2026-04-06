@@ -8,6 +8,10 @@ const Header = ({ title }) => {
     const dispatch = useDispatch();
     const isMobile = useSelector(state => state.ui.isMobile);
     const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
+    const user = useSelector(state => state.login.user);
+    
+    // Attempt to extract the correct email node dynamically
+    const userEmail = user?.ResultSet?.[0]?.VCP_Email || user?.ResultSet?.[0]?.VA_Email || user?.data?.ResultSet?.[0]?.VCP_Email || 'ACCOUNT.ACTIVE';
 
     return (
         <header className="h-24 pt-6 bg-[var(--color-bg-default)]/90 backdrop-blur-xl sticky top-0 z-40 px-4 md:px-10 flex items-center justify-between border-b border-white/[0.05] shadow-2xl">
@@ -47,12 +51,11 @@ const Header = ({ title }) => {
                 <div className="hidden md:flex items-center gap-6 pr-8 border-r border-white/10">
                     <div className="flex flex-col items-end">
                         <div className="flex items-center gap-2 text-primary/80 mb-0.5">
-                            <Globe size={10} className="animate-pulse" />
-                            <span className="text-[12px] font-medium tracking-widest uppercase">NODE: 08_COL</span>
+                            <span className="text-[12px] font-medium tracking-widest uppercase">{userEmail}</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-300/80">
-                            <Clock size={10} />
-                            <span className="text-[12px] font-medium tracking-widest uppercase">14:18 GMT</span>
+                            <Globe size={10} className="animate-pulse" />
+                            <span className="text-[10px] font-medium tracking-[0.1em] uppercase">SYSTEM CONNECTED</span>
                         </div>
                     </div>
                 </div>

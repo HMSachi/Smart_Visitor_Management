@@ -18,6 +18,7 @@ import Step2Request from "./layout/Visitor/Request/Step2";
 import StatusPage from "./layout/Visitor/Status/Status";
 import QRPage from "./layout/Visitor/QR/QR";
 import InstructionsPage from "./layout/Visitor/Instructions/Instructions";
+import MyRequests from "./layout/Visitor/MyRequests/MyRequests";
 import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
 import ApprovalManagement from "./layout/Admin/ApprovalManagement/ApprovalManagement";
 import SecurityMonitoringPage from "./layout/Admin/SecurityMonitoring/SecurityMonitoring";
@@ -39,6 +40,7 @@ import VisitorHistory from "./layout/Contact_Person/VisitorHistory/VisitorHistor
 import Notifications from "./layout/Contact_Person/Notifications/Notifications";
 import ProfileSettings from "./layout/Contact_Person/ProfileSettings/ProfileSettings";
 import ContactAllVisitors from "./layout/Contact_Person/AllVisitors/AllVisitors";
+import ContactVisitRequests from "./layout/Contact_Person/VisitRequests/VisitRequests";
 
 // Security Officer Layouts
 import Scanner from "./layout/Security_Officer/Scanner/Scanner";
@@ -137,6 +139,7 @@ const AppContent = () => {
           <Route path="/status" element={<StatusPage />} />
           <Route path="/qr" element={<QRPage />} />
           <Route path="/instructions" element={<InstructionsPage />} />
+          <Route path="/visitor/my-requests" element={<MyRequests />} />
 
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -201,6 +204,10 @@ const AppContent = () => {
           <Route
             path="/contact_person/all-visitors"
             element={<ContactAllVisitors />}
+          />
+          <Route
+            path="/contact_person/visit-requests"
+            element={<ContactVisitRequests />}
           />
 
           {/* Security Officer Routes */}
