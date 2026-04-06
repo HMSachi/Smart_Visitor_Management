@@ -190,82 +190,74 @@ const AllUsers = () => {
                   </div>
 
                   <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
-                    <div className="w-full overflow-x-auto relative z-10">
-                      <table className="w-full text-left border-collapse min-w-[900px]">
-                        <thead>
-                          <tr className="bg-black/40 border-b border-white/5 text-[11px] font-medium tracking-[0.3em] uppercase text-white/50">
-                            <th className="px-8 py-6">ID</th>
-                            <th className="px-8 py-6">Identity</th>
-                            <th className="px-8 py-6">{cat.id === 'CONTACT' ? 'Department' : 'Assigned Role'}</th>
-                            <th className="px-8 py-6">{cat.id === 'CONTACT' ? 'Phone Connection' : 'Authentication Origin'}</th>
-                            <th className="px-8 py-6">Status</th>
-                            <th className="px-8 py-6">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/[0.02]">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
+                    <TableContainer component={Paper} className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative">
+                      <Table sx={{ minWidth: 650 }} aria-label={`${cat.title} table`}>
+                        <TableHead className="bg-black/40">
+                          <TableRow>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">ID Node</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Personnel Entity</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">{cat.id === 'CONTACT' ? 'Department' : 'System Role'}</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">{cat.id === 'CONTACT' ? 'Phone Connection' : 'Authentication Origin'}</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Status</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5" align="right">Actions</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
                           {cat.data.length === 0 ? (
-                            <tr>
-                              <td colSpan="6" className="px-8 py-16 text-center text-white/20 italic tracking-widest text-[13px]">
+                            <TableRow>
+                              <TableCell colSpan={6} align="center" className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5">
                                 No {cat.title.toLowerCase()} configured in the system
-                              </td>
-                            </tr>
+                              </TableCell>
+                            </TableRow>
                           ) : (
-                            cat.data.map((item) => (
-                              <tr key={item.VA_Admin_id || item.VCP_Contact_person_id} className="hover:bg-white/[0.02] transition-colors group">
-                                <td className="px-8 py-6">
-                                  <div className="flex items-center gap-2 text-gray-300">
+                            cat.data.map((item) => {
+                              const isActive = (item.VA_Status || item.VCP_Status || '').toString().trim().toUpperCase() === 'A' || (item.VA_Status || item.VCP_Status || '').toString().trim().toUpperCase() === 'ACTIVE';
+
+                              return (
+                              <TableRow key={item.VA_Admin_id || item.VCP_Contact_person_id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: 'rgba(255,255,255,0.02)' } }}>
+                                <TableCell className="text-white/70 font-medium border-b-white/5">
+                                  <div className="flex items-center gap-2">
                                     <Hash size={12} className="text-primary/40" />
-                                    <span className="text-[13px] font-mono tracking-widest">{item.VA_Admin_id || item.VCP_Contact_person_id}</span>
+                                    <span>{item.VA_Admin_id || item.VCP_Contact_person_id}</span>
                                   </div>
-                                </td>
-                                <td className="px-8 py-6">
-                                  <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-[var(--color-bg-default)] border border-white/5 flex items-center justify-center text-primary font-medium text-sm shadow-inner group-hover:border-primary/30 transition-all uppercase">
-                                      {(item.VA_Name || item.VCP_Name || 'NA').substring(0, 2)}
-                                    </div>
-                                    <div>
-                                      <p className="text-white text-[13px] font-medium uppercase tracking-widest mb-1">{item.VA_Name || item.VCP_Name}</p>
-                                      <p className="text-gray-400 text-[11px] font-medium tracking-[0.1em] flex items-center gap-1.5 hover:text-white transition-colors">
-                                        <Mail size={10} /> {item.VA_Email || item.VCP_Email}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-8 py-6 text-[13px] text-white/90 uppercase tracking-widest">
-                                  {item.VA_Role || item.VCP_Department || 'N/A'}
-                                </td>
-                                <td className="px-8 py-6 text-[12px] text-white/50 tracking-widest font-mono">
-                                  {item.VA_Created_Date ? item.VA_Created_Date.split(' ')[0] : item.VCP_Phone || 'AUTHEN.SYSTEM'}
-                                </td>
-                                <td className="px-8 py-6">
-                                  <StatusBadge status={item.VA_Status || item.VCP_Status} />
-                                </td>
-                                <td className="px-8 py-6">
-                                  <div className="flex items-center gap-3">
-                                    {cat.id !== 'CONTACT' && (
-                                      <button title="Modify Security Node" onClick={() => openModal('edit', item)} className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white transition-all">
-                                        <Edit size={14} />
-                                      </button>
-                                    )}
-                                    <button
-                                      title="Toggle Status"
-                                      onClick={cat.id !== 'CONTACT' ? () => handleToggleStatus(item) : undefined}
-                                      disabled={cat.id === 'CONTACT'}
-                                      className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${cat.id === 'CONTACT' ? 'opacity-20 cursor-not-allowed' : ''} ${
-                                        (item.VA_Status || item.VCP_Status || '').toString().trim().toUpperCase() === 'A' || (item.VA_Status || item.VCP_Status || '').toString().trim().toUpperCase() === 'ACTIVE'
-                                          ? 'bg-primary/10 hover:bg-primary/20 border-primary/30 text-primary hover:text-primary'
-                                          : 'bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-500 hover:text-green-500'}`}
-                                    >
-                                      <RefreshCw size={14} />
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))
+                                </TableCell>
+                                <TableCell className={`font-medium border-b-white/5 transition-colors ${isActive ? 'text-white' : 'text-white/30 line-through'}`}>
+                                  {item.VA_Name || item.VCP_Name || '-'}
+                                  <p className="text-gray-400 text-[10px] tracking-[0.1em] lowercase mt-1 opacity-70">
+                                    {item.VA_Email || item.VCP_Email}
+                                  </p>
+                                </TableCell>
+                                <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>
+                                  {item.VA_Role || item.VCP_Department || '-'}
+                                </TableCell>
+                                <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>
+                                  {item.VA_Created_Date ? item.VA_Created_Date.split(' ')[0] : (item.VCP_Phone || 'AUTHEN.SYSTEM')}
+                                </TableCell>
+                                <TableCell className="border-b-white/5">
+                                  <button 
+                                    onClick={cat.id !== 'CONTACT' ? () => handleToggleStatus(item) : undefined}
+                                    disabled={cat.id === 'CONTACT' || loading}
+                                    title={cat.id === 'CONTACT' ? "Modify disabled for Contacts" : "Click to toggle status"}
+                                    className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all ${cat.id !== 'CONTACT' ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'} ${isActive ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                                  >
+                                    {isActive ? 'ACTIVE' : 'INACTIVE'}
+                                  </button>
+                                </TableCell>
+                                <TableCell align="right" className="border-b-white/5">
+                                  {cat.id !== 'CONTACT' && (
+                                    <IconButton onClick={() => openModal('edit', item)} size="small" className="text-white/40 hover:text-white">
+                                      <Edit size={16} />
+                                    </IconButton>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                              );
+                            })
                           )}
-                        </tbody>
-                      </table>
-                    </div>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
                   </div>
                 </section>
               ))
