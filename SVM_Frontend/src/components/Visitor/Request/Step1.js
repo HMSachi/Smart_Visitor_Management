@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckCircle2, ShieldCheck } from 'lucide-react';
 import VisitorOverview from './Step1/VisitorOverview';
@@ -6,6 +6,7 @@ import VisitInformation from './Step1/VisitInformation';
 import VehicleDetails from './Step1/VehicleDetails';
 import AreasToVisit from './Step1/AreasToVisit';
 import { createVisitorRequest } from '../../../services/visitorRequestService';
+import { GetAdministratorById } from '../../../actions/AdministratorAction';
 import { 
     updateField, 
     toggleArea, 
@@ -18,6 +19,28 @@ const Step1Main = () => {
     const dispatch = useDispatch();
     const formData = useSelector(state => state.visitor);
     const { status, requestRef } = formData;
+    const user = useSelector(state => state.login.user);
+    const { administrators, isLoading: adminLoading } = useSelector(state => state.administrator);
+    const cpId = user?.ResultSet?.[0]?.VA_Admin_id;
+
+    // Fetch Visitor details on mount if logged in as Visitor
+    useEffect(() => {
+        if (user?.ResultSet?.[0]?.VA_Role === 'Visitor' && cpId) {
+            dispatch(GetAdministratorById(cpId));
+        }
+    }, [dispatch, user, cpId]);
+
+    // Pre-fill form when administrator data is loaded
+    useEffect(() => {
+        if (administrators && administrators.length > 0) {
+            const admin = administrators[0];
+            // Only pre-fill if fields are currently empty to avoid overwriting user edits
+            if (!formData.fullName) dispatch(updateField({ name: 'fullName', value: admin.VA_Name }));
+            if (!formData.email) dispatch(updateField({ name: 'email', value: admin.VA_Email }));
+            // Note: NIC might not be in Administrator table directly in some schemas, 
+            // but we'll map it if it exists or use standard placeholders
+        }
+    }, [dispatch, administrators, formData.fullName, formData.email]);
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;

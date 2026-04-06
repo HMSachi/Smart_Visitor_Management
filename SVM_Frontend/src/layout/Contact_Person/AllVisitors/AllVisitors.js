@@ -6,6 +6,7 @@ import {
   ToggleVisitorStatus,
   AddVisitor
 } from '../../../actions/VisitorAction';
+import { AddAdministrator } from '../../../actions/AdministratorAction';
 import Header from '../../../components/Contact_Person/Layout/Header';
 import Sidebar from '../../../components/Contact_Person/Layout/Sidebar';
 import {
@@ -33,7 +34,8 @@ const ContactAllVisitors = () => {
     VV_Visitor_Type: '',
     VV_Phone: '',
     VV_Email: '',
-    VV_Company: ''
+    VV_Company: '',
+    VA_Password: ''
   });
 
   useEffect(() => {
@@ -66,7 +68,8 @@ const ContactAllVisitors = () => {
       VV_Visitor_Type: '',
       VV_Phone: '',
       VV_Email: '',
-      VV_Company: ''
+      VV_Company: '',
+      VA_Password: ''
     });
     setIsModalOpen(true);
   };
@@ -80,6 +83,15 @@ const ContactAllVisitors = () => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     dispatch(AddVisitor(formData));
+    
+    // Create the visitor's login account (role: Visitor)
+    dispatch(AddAdministrator({
+        VA_Name: formData.VV_Name,
+        VA_Role: 'Visitor',
+        VA_Email: formData.VV_Email,
+        VA_Password: formData.VA_Password
+    }));
+
     closeModal();
     // Force CP Sync after global add visitor hook finishes
     setTimeout(() => {
@@ -271,6 +283,14 @@ const ContactAllVisitors = () => {
                             <MapPin size={12} className="text-primary/60" /> Visiting Area
                         </label>
                         <input required type="text" name="VV_Visiting_places" value={formData.VV_Visiting_places} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5" placeholder="E.G. PRODUCTION FLOOR" />
+                        </div>
+
+                        <div className="space-y-2">
+                        <label className="text-[11px] text-primary uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
+                            <AlertCircle size={12} className="text-primary/60" /> Login Security Password
+                        </label>
+                        <input required type="password" name="VA_Password" value={formData.VA_Password} onChange={handleInputChange} className="w-full bg-black/60 border border-primary/20 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10" placeholder="••••••••" />
+                        <p className="text-[9px] text-white/30 uppercase tracking-widest px-1 mt-1">Visitor will use this to log in</p>
                         </div>
                     </div>
 
