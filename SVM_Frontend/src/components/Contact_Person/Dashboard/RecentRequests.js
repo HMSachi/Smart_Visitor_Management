@@ -5,7 +5,7 @@ import { ArrowUpRight, User, Calendar, Clock as ClockIcon } from 'lucide-react';
 
 const RecentRequests = () => {
     const navigate = useNavigate();
-    const { requests } = useSelector(state => state.contactPerson);
+    const { requests } = useSelector(state => state.contactPortal);
 
     // Get latest 5 requests
     const recentRequests = [...requests].reverse().slice(0, 5);

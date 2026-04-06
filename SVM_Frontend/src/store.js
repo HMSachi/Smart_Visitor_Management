@@ -11,6 +11,7 @@ import administratorReducer from "./reducers/AdministratorReducer";
 import visitorManagementReducer from "./reducers/VisitorReducer";
 import userManagementReducer from "./reducers/UserManagementReducer";
 import visitRequestReducer from "./reducers/VisitRequestReducer";
+import contactPersonPortalReducer from "./reducers/contactPersonSlice";
 
 const composeEnhancers =
     typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -29,6 +30,7 @@ const reducer = combineReducers({
     visitorManagement: visitorManagementReducer,
     userManagement: userManagementReducer,
     visitRequestsState: visitRequestReducer,
+    contactPortal: contactPersonPortalReducer,
 });
 
 const store = createStore(
