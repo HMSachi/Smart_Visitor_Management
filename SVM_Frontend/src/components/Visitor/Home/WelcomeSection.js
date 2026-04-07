@@ -22,10 +22,10 @@ const WelcomeSection = () => {
                     backgroundRepeat: 'no-repeat'
                 }}
             >
-                <div className={`absolute inset-0 ${isLightMode ? 'bg-white/68' : 'bg-black/65'}`}></div>
+                <div className={`absolute inset-0 ${isLightMode ? 'bg-white/30' : 'bg-black/65'}`}></div>
                 <div
                     className={`absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r ${
-                        isLightMode ? 'from-white via-white/45 to-transparent' : 'from-black via-black/40 to-transparent'
+                        isLightMode ? 'from-white/80 via-white/30 to-transparent' : 'from-black via-black/40 to-transparent'
                     }`}
                 ></div>
             </div>
@@ -49,14 +49,14 @@ const WelcomeSection = () => {
                     <div className="space-y-10 mb-14">
                         <div className="relative">
                             <div className="mt-1">
-                                <p className={`${isLightMode ? 'text-[var(--color-text-secondary)]' : 'text-white'} text-lg md:text-2xl font-medium max-w-4xl leading-relaxed ${isLightMode ? '' : 'drop-shadow-md'}`}>
+                                <p className={`${isLightMode ? 'text-[var(--color-text-primary)]' : 'text-white'} text-lg md:text-2xl font-medium max-w-4xl leading-relaxed ${isLightMode ? '' : 'drop-shadow-md'}`}>
                                     Secure, streamlined, and enterprise-grade access management <br className="hidden md:block" />
                                     for <span className="text-primary font-black underline underline-offset-4 decoration-2">MAS Holdings</span> world-class manufacturing facilities.
                                 </p>
                             </div>
                         </div>
 
-                        <p className={`${isLightMode ? 'text-[var(--color-text-secondary)]' : 'text-white/90'} text-lg md:text-2xl font-medium max-w-3xl leading-relaxed ${isLightMode ? '' : 'drop-shadow-md'}`}>
+                        <p className={`${isLightMode ? 'text-[var(--color-text-primary)]' : 'text-white/90'} text-lg md:text-2xl font-medium max-w-3xl leading-relaxed ${isLightMode ? '' : 'drop-shadow-md'}`}>
                             Experience the next generation of facility access. A seamless, high-security digital gateway designed for the modern enterprise.
                         </p>
                     </div>
