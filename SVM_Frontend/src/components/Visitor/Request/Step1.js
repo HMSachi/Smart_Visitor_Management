@@ -1,17 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CheckCircle2, ShieldCheck } from 'lucide-react';
+import { ShieldCheck, ArrowRight } from 'lucide-react';
 import VisitorOverview from './Step1/VisitorOverview';
-import VisitInformation from './Step1/VisitInformation';
 import VehicleDetails from './Step1/VehicleDetails';
-import AreasToVisit from './Step1/AreasToVisit';
 import { createVisitorRequest } from '../../../services/visitorRequestService';
 import { GetAdministratorById } from '../../../actions/AdministratorAction';
 import { GetAllVisitors } from '../../../actions/VisitorAction';
 import { 
     updateField, 
-    toggleArea, 
-    updateVisitorCount, 
     setStatus, 
     setRequestRef 
 } from '../../../reducers/visitorSlice';
@@ -37,34 +33,27 @@ const Step1Main = () => {
         }
     }, [dispatch, authUser, adminId]);
 
-    // Comprehensive Pre-fill Mapping
+    // Pre-fill logic for new field names
     useEffect(() => {
-        // 1. First priority: The detailed Visitor Record (mapped by Email)
         if (visitorList && visitorList.length > 0 && userEmail) {
             const visitorRecord = visitorList.find(v => (v.VV_Email || '').toLowerCase() === userEmail.toLowerCase());
             
             if (visitorRecord) {
-                // Map every details field from the Visitor Management table
                 if (!formData.fullName) dispatch(updateField({ name: 'fullName', value: visitorRecord.VV_Name }));
                 if (!formData.nic) dispatch(updateField({ name: 'nic', value: visitorRecord.VV_NIC_Passport_NO }));
-                if (!formData.contact) dispatch(updateField({ name: 'contact', value: visitorRecord.VV_Phone }));
-                if (!formData.email) dispatch(updateField({ name: 'email', value: visitorRecord.VV_Email }));
-                
-                // Set Corporate toggle if company details exist
-                if (visitorRecord.VV_Company && !formData.isCompanyRelated) {
-                    dispatch(updateField({ name: 'isCompanyRelated', value: true }));
-                }
-                return; // Prioritize Visitor record over Admin record if both exist
+                if (!formData.phoneNumber) dispatch(updateField({ name: 'phoneNumber', value: visitorRecord.VV_Phone }));
+                if (!formData.emailAddress) dispatch(updateField({ name: 'emailAddress', value: visitorRecord.VV_Email }));
+                if (!formData.representingCompany) dispatch(updateField({ name: 'representingCompany', value: visitorRecord.VV_Company }));
+                return;
             }
         }
 
-        // 2. Second priority/Fallback: The Login Administrator Record
         if (administrators && administrators.length > 0) {
             const admin = administrators[0];
             if (!formData.fullName) dispatch(updateField({ name: 'fullName', value: admin.VA_Name }));
-            if (!formData.email) dispatch(updateField({ name: 'email', value: admin.VA_Email }));
+            if (!formData.emailAddress) dispatch(updateField({ name: 'emailAddress', value: admin.VA_Email }));
         }
-    }, [dispatch, visitorList, administrators, userEmail, formData.fullName, formData.nic, formData.contact, formData.email, formData.isCompanyRelated]);
+    }, [dispatch, visitorList, administrators, userEmail, formData.fullName, formData.nic, formData.phoneNumber, formData.emailAddress, formData.representingCompany]);
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -72,18 +61,6 @@ const Step1Main = () => {
             name, 
             value: type === 'checkbox' ? checked : value 
         }));
-    };
-
-    const handleToggle = (name) => {
-        dispatch(updateField({ name, value: !formData[name] }));
-    };
-
-    const handleCountChange = (delta) => {
-        dispatch(updateVisitorCount(delta));
-    };
-
-    const handleToggleArea = (areaId) => {
-        dispatch(toggleArea(areaId));
     };
 
     const handleSubmit = (e) => {
@@ -100,30 +77,24 @@ const Step1Main = () => {
 
     if (status === 'step1_pending') {
         return (
-            <div className="min-h-[80vh] flex items-center justify-center p-6">
-                <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-4 md:p-10 text-center rounded-2xl shadow-xl">
-                    <div className="w-16 h-16 bg-primary/10 border border-primary/20 rounded-2xl mx-auto mb-8 flex items-center justify-center text-primary">
-                        <CheckCircle2 size={32} />
+            <div className="min-h-[60vh] flex items-center justify-center p-6">
+                <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-10 text-center rounded-none shadow-2xl relative">
+                    <div className="absolute top-0 left-0 w-[2px] h-full bg-primary" />
+                    <div className="w-16 h-16 bg-primary/10 border border-primary/20 rounded-none mx-auto mb-8 flex items-center justify-center text-primary">
+                        <ShieldCheck size={32} />
                     </div>
                     
-                    <h2 className="text-xl font-bold text-white uppercase tracking-tight mb-3">Request Dispatched</h2>
-                    <p className="text-gray-500 text-[14px] font-medium uppercase tracking-widest mb-8 leading-relaxed">
-                        Your clearance request is being processed.
-                        <br /> Ref: <span className="text-white font-semibold">{requestRef}</span>
+                    <h2 className="text-xl font-bold text-white uppercase tracking-[0.2em] mb-3">Identity Verified</h2>
+                    <p className="text-gray-500 text-[12px] font-medium uppercase tracking-[0.3em] mb-10 leading-relaxed">
+                        Access record established for <span className="text-white font-semibold">{requestRef}</span>
                     </p>
 
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-4">
                         <button 
                             onClick={() => window.location.href = '/status'}
-                            className="w-full py-4 bg-primary text-white font-semibold uppercase text-[14px] tracking-widest rounded-xl hover:bg-primary-hover transition-all"
+                            className="w-full py-4 bg-primary text-white font-bold uppercase text-[12px] tracking-[0.3em] hover:bg-primary/90 transition-all flex items-center justify-center gap-3"
                         >
-                            Track Clearance
-                        </button>
-                        <button 
-                            onClick={() => window.location.href = '/home'}
-                            className="w-full py-4 bg-white/[0.02] border border-white/10 text-white font-semibold uppercase text-[14px] tracking-widest rounded-xl hover:bg-white/[0.05] transition-all"
-                        >
-                            Return Home
+                            Track Status <ArrowRight size={16} />
                         </button>
                     </div>
                 </div>
@@ -132,63 +103,48 @@ const Step1Main = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto px-6 pt-2 pb-12 text-white">
+        <div className="max-w-7xl mx-auto px-6 py-2 pb-12 text-white bg-black">
             {/* Header Section */}
-            <div className="mb-10 flex items-center justify-between border-b border-white/5 pb-8">
+            <div className="mb-14 flex items-center justify-between border-b border-white/5 pb-10">
                 <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className="text-primary font-bold text-[13px] uppercase tracking-widest">Phase 01 / 02</span>
+                    <div className="flex items-center gap-2 mb-3">
+                        <span className="text-primary font-black text-[11px] uppercase tracking-[0.4em] opacity-70">Phase 01 / 02</span>
                     </div>
-                    <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tight mb-1">
-                        Visitor <span className="text-primary">Registration</span>
+                    <h1 className="text-4xl font-black uppercase tracking-tight mb-2 leading-none">
+                        Visitor Registration
                     </h1>
-                    <p className="text-gray-500 text-[14px] uppercase font-medium tracking-wider">Facility Access Clearance Request</p>
+                    <p className="text-gray-500 text-[12px] uppercase font-bold tracking-[0.4em] opacity-80">Facility Access Clearance Request</p>
                 </div>
             </div>
 
-            {/* Thinner Progress Indicator */}
-            <div className="mb-12 px-2">
-                <div className="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary w-1/2" />
-                </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-10">
+            <form onSubmit={handleSubmit} className="space-y-24">
                 <VisitorOverview data={formData} onChange={handleInputChange} />
                 
-                <div className="border-t border-white/5 pt-10">
-                    <VisitInformation 
-                        data={formData} 
-                        onChange={handleInputChange} 
-                        onToggle={handleToggle} 
-                        onCountChange={handleCountChange} 
-                    />
-                </div>
-
-                <div className="border-t border-white/5 pt-10">
+                <div className="border-t border-white/5 pt-16">
                     <VehicleDetails data={formData} onChange={handleInputChange} />
                 </div>
 
-                <div className="border-t border-white/5 pt-10">
-                    <AreasToVisit selectedAreas={formData.selectedAreas} onToggle={handleToggleArea} />
-                </div>
-
-                {/* Minimal Submit Action */}
-                <div className="pt-12 pb-24 border-t border-white/5">
+                {/* Action Footer */}
+                <div className="pt-16 border-t border-white/5 flex flex-col sm:flex-row gap-6 items-center justify-center">
+                    <button 
+                        type="button"
+                        onClick={() => window.location.href = '/home'}
+                        className="w-full sm:w-auto px-16 h-16 bg-white/[0.03] border border-white/10 text-gray-400 font-black uppercase text-[12px] tracking-[0.3em] hover:bg-white/5 hover:text-white transition-all transition-all"
+                    >
+                        SUBMIT ACCESS REQUEST
+                    </button>
+                    
                     <button 
                         type="submit"
                         disabled={status === 'submitting'}
-                        className="compact-btn !w-full md:!w-auto !px-16 !py-4 flex items-center justify-center gap-3 mx-auto"
+                        className="w-full sm:w-auto px-20 h-16 bg-primary hover:bg-primary-hover text-white font-black uppercase text-[12px] tracking-[0.3em] shadow-2xl shadow-primary/20 transition-all flex items-center justify-center gap-4 group disabled:opacity-50"
                     >
                         {status === 'submitting' ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                <span>Verifying...</span>
-                            </>
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         ) : (
                             <>
-                                <ShieldCheck size={16} />
-                                <span>Submit Access Request</span>
+                                <ShieldCheck size={18} className="group-hover:scale-110 transition-transform" />
+                                ACCEPT
                             </>
                         )}
                     </button>

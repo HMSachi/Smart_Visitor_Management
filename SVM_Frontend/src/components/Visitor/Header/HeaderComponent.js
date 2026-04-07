@@ -26,57 +26,59 @@ const HeaderComponent = () => {
     };
 
     return (
-        <header className="fixed top-0 left-0 w-full z-[100] h-16 bg-bg border-b border-white/[0.03] flex items-center">
-            <div className="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
+        <header className="fixed top-0 left-0 w-full z-[100] h-20 bg-black border-b border-white/[0.05] flex items-center shadow-2xl">
+            <div className="px-8 md:px-16 w-full flex justify-between items-center">
                 {/* Logo and Back */}
-                <div className="flex items-center gap-4 md:gap-8">
+                <div className="flex items-center gap-6 md:gap-12">
                     <button 
                         onClick={() => navigate(-1)} 
-                        className="w-8 h-8 rounded-lg bg-white/[0.02] border border-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all active:scale-95"
+                        className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all active:scale-95"
                     >
-                        <ArrowLeft size={16} />
+                        <ArrowLeft size={18} />
                     </button>
                     
                     <Link to="/home" className="flex items-center group">
                         <img 
                             src="/logo_mas.png" 
                             alt="MAS Logo" 
-                            className="h-6 w-auto brightness-90 group-hover:brightness-100 transition-all"
+                            className="h-7 w-auto brightness-90 group-hover:brightness-100 transition-all"
                         />
-                        <div className="hidden sm:block ml-3 h-4 w-px bg-white/10"></div>
-                        <span className="hidden sm:block ml-3 text-white font-medium tracking-tighter text-sm uppercase">
+                        <div className="hidden sm:block ml-4 h-5 w-px bg-white/10"></div>
+                        <span className="hidden sm:block ml-4 text-white font-bold tracking-tighter text-base uppercase">
                             Access <span className="text-primary">Portal</span>
                         </span>
                     </Link>
                 </div>
 
                 {/* Desktop Nav */}
-                <nav className="hidden md:flex items-center space-x-6">
-                    {menuItems.map((item) => (
-                        <Link 
-                            key={item.path}
-                            to={item.path} 
-                            className="text-[13px] font-bold text-gray-500 hover:text-white transition-all uppercase tracking-widest"
-                        >
-                            {item.label}
-                        </Link>
-                    ))}
+                <nav className="hidden md:flex items-center gap-10">
+                    <div className="flex items-center gap-8 mr-6">
+                        {menuItems.map((item) => (
+                            <Link 
+                                key={item.path}
+                                to={item.path} 
+                                className="text-[12px] font-black text-gray-500 hover:text-white transition-all uppercase tracking-[0.2em]"
+                            >
+                                {item.label}
+                            </Link>
+                        ))}
+                    </div>
                     
                     <button 
                         onClick={() => navigate('/request-step-1')}
-                        className="compact-btn !px-5 !py-2 !bg-primary hover:!bg-primary-hover"
+                        className="px-8 h-11 bg-primary hover:bg-primary-hover text-white text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-lg shadow-primary/20"
                     >
                         Request Visit
                     </button>
 
                     {userEmail && (
-                        <div className="flex items-center gap-3 pl-6 border-l border-white/10 group cursor-default">
+                        <div className="flex items-center gap-4 pl-10 border-l border-white/10 group cursor-default">
                             <div className="flex flex-col items-end">
-                                <span className="text-[10px] text-gray-500 uppercase font-black tracking-[0.2em]">IDENTIFIED</span>
-                                <span className="text-[11px] text-white/80 font-bold uppercase tracking-widest max-w-[120px] truncate">{userEmail}</span>
+                                <span className="text-[9px] text-gray-600 uppercase font-black tracking-[0.3em]">IDENTIFIED</span>
+                                <span className="text-[11px] text-white/90 font-bold uppercase tracking-widest max-w-[150px] truncate">{userEmail}</span>
                             </div>
-                            <div className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-primary/40 group-hover:text-primary transition-all">
-                                <Activity size={14} />
+                            <div className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-primary/40 group-hover:text-primary transition-all">
+                                <Activity size={16} />
                             </div>
                         </div>
                     )}

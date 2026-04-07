@@ -1,51 +1,48 @@
 import React from 'react';
-import { Car } from 'lucide-react';
+import { Car, Hash } from 'lucide-react';
 
 const VehicleDetails = ({ data, onChange }) => {
     return (
         <section className="animate-fade-in stagger-item">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-8">
                 <div className="text-primary">
-                    <Car size={14} />
+                    <Car size={16} />
                 </div>
-                <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0 transition-all">Vehicle Logistics</h3>
+                <h3 className="text-sm font-bold text-white uppercase tracking-[0.2em] mb-0">Vehicle Logistics</h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 px-4 py-6 rounded-xl border border-white/5 bg-white/[0.01]">
-                {/* Vehicle Number */}
-                <div className="space-y-1.5">
-                    <label className="text-[14px] font-medium text-gray-500 uppercase tracking-widest block">
-                        Registration Number
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                {/* Vehicle Type */}
+                <div className="space-y-2">
+                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2 px-1">
+                        VEHICLE TYPE
                     </label>
                     <div className="relative">
                         <input 
                             type="text"
-                            name="vehicleNumber"
-                            value={data.vehicleNumber}
+                            name="vehicleType"
+                            value={data.vehicleType}
                             onChange={onChange}
-                            placeholder="WP ABC-0000"
-                            className="compact-input w-full uppercase tracking-widest"
+                            placeholder="E.G. CAR, VAN"
+                            className="w-full bg-white/[0.03] border border-white/20 rounded-none px-4 py-4 text-[13px] text-white/90 focus:outline-none focus:border-primary/60 transition-all placeholder:text-gray-600 font-medium"
                         />
                     </div>
                 </div>
 
-                {/* Vehicle Type */}
-                <div className="space-y-1.5">
-                    <label className="text-[14px] font-medium text-gray-500 uppercase tracking-widest block">
-                        Vehicle Category
+                {/* Plate Number */}
+                <div className="space-y-2">
+                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2 px-1">
+                        PLATE NUMBER
                     </label>
                     <div className="relative">
-                        <select 
-                            name="vehicleType"
-                            value={data.vehicleType}
+                        <input 
+                            type="text"
+                            name="plateNumber"
+                            value={data.plateNumber}
                             onChange={onChange}
-                            className="compact-input w-full cursor-pointer"
-                        >
-                            <option value="Car">Car / Sedan</option>
-                            <option value="Van">Van / SUV</option>
-                            <option value="Truck">Heavy Truck</option>
-                            <option value="Other">Other Category</option>
-                        </select>
+                            placeholder="E.G. WP-CAD-1234"
+                            className="w-full bg-white/[0.03] border border-white/20 rounded-none px-4 py-4 text-[13px] text-white/90 focus:outline-none focus:border-primary/60 transition-all placeholder:text-gray-600 font-medium"
+                        />
                     </div>
                 </div>
             </div>
