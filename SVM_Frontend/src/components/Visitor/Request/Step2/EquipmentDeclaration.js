@@ -40,8 +40,8 @@ const EquipmentDeclaration = ({ items, onAdd, onRemove, onChange }) => {
                                 <Trash2 size={12} />
                             </button>
 
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div className="space-y-1.5">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-5 md:gap-6">
+                                <div className="space-y-2">
                                     <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600 block">Asset Name</label>
                                     <div className="relative">
                                         <Package size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
@@ -50,12 +50,12 @@ const EquipmentDeclaration = ({ items, onAdd, onRemove, onChange }) => {
                                             placeholder="Item"
                                             value={item.itemName}
                                             onChange={(event) => onChange(item.id, 'itemName', event.target.value)}
-                                            className="compact-input pl-9"
+                                            className="compact-input w-full h-11 pl-9"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="space-y-1.5">
+                                <div className="space-y-2">
                                     <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600 block">Qty</label>
                                     <div className="relative">
                                         <Hash size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
@@ -65,21 +65,21 @@ const EquipmentDeclaration = ({ items, onAdd, onRemove, onChange }) => {
                                             min="1"
                                             value={item.quantity}
                                             onChange={(event) => onChange(item.id, 'quantity', event.target.value)}
-                                            className="compact-input pl-9"
+                                            className="compact-input w-full h-11 pl-9"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="md:col-span-2 space-y-1.5">
+                                <div className="md:col-span-2 space-y-2">
                                     <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600 block">Description</label>
                                     <div className="relative">
                                         <PencilLine size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
                                         <input
                                             type="text"
-                                            placeholder="Details / Serials"
+                                            placeholder="Description"
                                             value={item.description}
                                             onChange={(event) => onChange(item.id, 'description', event.target.value)}
-                                            className="compact-input pl-9"
+                                            className="compact-input w-full h-11 pl-9"
                                         />
                                     </div>
                                 </div>
