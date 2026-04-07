@@ -13,7 +13,7 @@ const Header = ({ title }) => {
     const isMobile = useSelector(state => state.ui.isMobile);
     const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
     return (
-        <header className="flex-none h-20 md:h-28 border-b border-white/5 bg-[#0D0D0E]/95 backdrop-blur-3xl flex items-center justify-between px-4 md:px-16 transition-all duration-500 shadow-2xl relative">
+        <header className="flex-none h-20 md:h-28 border-b border-white/5 bg-[var(--color-bg-paper)]/95 backdrop-blur-3xl flex items-center justify-between px-4 md:px-16 transition-all duration-500 shadow-2xl relative">
             {/* Global Node Aura */}
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-50"></div>
 
@@ -28,7 +28,7 @@ const Header = ({ title }) => {
                 ) : (
                     <button
                         onClick={() => navigate(-1)}
-                        className="p-3.5 text-gray-300/90 hover:text-white transition-all bg-[var(--color-bg-paper)] border border-white/5 group rounded-2xl hover:border-primary/40 hover:bg-primary/10 shadow-xl"
+                        className="p-3.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-all bg-[var(--color-bg-paper)] border border-white/5 group rounded-2xl hover:border-primary/40 hover:bg-primary/10 shadow-xl"
                         title="BACK_TO_PREVIOUS_NODE"
                     >
                         <ArrowLeft size={20} className="group-hover:-translate-x-1.5 transition-transform" />
@@ -47,9 +47,9 @@ const Header = ({ title }) => {
                     <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-[1px] bg-primary/60"></div>
-                            <span className="text-gray-300/80 uppercase text-[12px] font-medium tracking-[0.4em]">Operational_Interface</span>
+                            <span className="text-[var(--color-text-secondary)] uppercase text-[12px] font-medium tracking-[0.4em]">Operational_Interface</span>
                         </div>
-                        <h2 className="uppercase text-white text-base md:text-lg font-bold tracking-[0.2em] truncate group-hover:text-primary transition-colors">{title}</h2>
+                        <h2 className="uppercase text-[var(--color-text-primary)] text-base md:text-lg font-bold tracking-[0.2em] truncate group-hover:text-primary transition-colors">{title}</h2>
                     </div>
                 </div>
             </div>

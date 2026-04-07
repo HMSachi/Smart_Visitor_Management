@@ -46,7 +46,7 @@
 }
 
 [data-theme='light'] [class*='bg-white/'] {
-  background-color: rgba(17, 24, 39, 0.04) !important;
+  background-color: rgba(255, 255, 255, 0.72) !important;
 }
 
 [data-theme='light'] [class*='text-white'],
@@ -68,6 +68,19 @@
 [data-theme='light'] [class*='shadow-xl'],
 [data-theme='light'] [class*='shadow-lg'] {
   box-shadow: 0 6px 20px rgba(17, 24, 39, 0.08) !important;
+}
+
+[data-theme='light'] .security-theme-root [class*='bg-[#0D0D0E]'] {
+  background-color: var(--color-bg-alt) !important;
+}
+
+[data-theme='light'] .security-theme-root [class*='text-white/10'] {
+  color: rgba(31, 41, 55, 0.4) !important;
+}
+
+[data-theme='light'] .security-theme-root .mas-glass {
+  background: rgba(255, 255, 255, 0.86) !important;
+  border-color: var(--color-border-soft) !important;
 }
 
 [data-theme='light'] [class*='color-scheme:dark'] {

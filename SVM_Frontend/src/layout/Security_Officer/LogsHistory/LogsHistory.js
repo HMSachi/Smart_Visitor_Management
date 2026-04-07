@@ -5,7 +5,7 @@ import LogsHistoryComponent from '../../../components/Security_Officer/LogsHisto
 
 const LogsHistory = () => {
     return (
-        <div className="flex bg-secondary overflow-hidden text-white h-screen w-full">
+        <div className="security-theme-root flex bg-secondary overflow-hidden text-white h-screen w-full">
             <Sidebar />
             <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)] overflow-hidden">
                 <Header title="Movement Logs History" />
