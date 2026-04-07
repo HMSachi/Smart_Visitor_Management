@@ -1,15 +1,78 @@
-import React, { useState } from 'react';
-import { QrCode, Camera, Zap } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { BrowserMultiFormatReader } from '@zxing/browser';
+import { QrCode, Zap, RefreshCw } from 'lucide-react';
 
 const LiveFeed = () => {
+    const videoRef = useRef(null);
+    const controlsRef = useRef(null);
+    const scannerRef = useRef(null);
     const [scanStatus, setScanStatus] = useState('idle'); // idle, scanning, success, error
+    const [scanMessage, setScanMessage] = useState('Point the camera at a QR code to begin verification.');
+    const [scanResult, setScanResult] = useState('');
 
-    const simulateScan = () => {
-        setScanStatus('scanning');
-        setTimeout(() => {
-            setScanStatus('success');
-        }, 3000);
+    const stopScanner = () => {
+        if (controlsRef.current) {
+            controlsRef.current.stop();
+            controlsRef.current = null;
+        }
     };
+
+    const startScanner = async () => {
+        if (!videoRef.current) {
+            return;
+        }
+
+        stopScanner();
+        setScanResult('');
+        setScanStatus('scanning');
+        setScanMessage('Opening camera feed...');
+
+        try {
+            if (!scannerRef.current) {
+                scannerRef.current = new BrowserMultiFormatReader();
+            }
+
+            controlsRef.current = await scannerRef.current.decodeFromVideoDevice(
+                undefined,
+                videoRef.current,
+                (result, error) => {
+                    if (result) {
+                        setScanResult(result.getText());
+                        setScanStatus('success');
+                        setScanMessage('Credential verified from live QR scan.');
+                        stopScanner();
+                        return;
+                    }
+
+                    // Many frames will produce NotFound-like errors while scanning — ignore those.
+                    // Only surface unexpected errors (permissions, device lost, etc.).
+                    if (error) {
+                        const name = error.name || error.constructor?.name || '';
+                        if (name === 'NotFoundException' || name === 'ChecksumException' || name === 'FormatException') {
+                            // expected while no QR is present — ignore
+                            return;
+                        }
+
+                        setScanStatus('error');
+                        setScanMessage('Scan failed. Check camera permission and try again.');
+                    }
+                }
+            );
+
+            setScanMessage('Camera active. Hold QR code steady inside the frame.');
+        } catch (error) {
+            setScanStatus('error');
+            setScanMessage('Unable to access camera. Allow camera permission and retry.');
+        }
+    };
+
+    useEffect(() => {
+        startScanner();
+
+        return () => {
+            stopScanner();
+        };
+    }, []);
 
     return (
         <div className="max-w-2xl w-full space-y-6 md:space-y-12 relative z-10 mx-auto">
@@ -42,9 +105,20 @@ const LiveFeed = () => {
                              </div>
                              <p className="mt-6 text-green-500 uppercase">Credential Verified</p>
                          </div>
+                    ) : scanStatus === 'error' ? (
+                        <div className="absolute inset-0 z-30 bg-red-500/10 flex flex-col items-center justify-center animate-fade-in px-6 text-center">
+                            <p className="text-red-400 uppercase text-sm tracking-wider">Camera Access Failed</p>
+                            <p className="mt-3 text-red-200/80 text-xs uppercase tracking-widest">Allow permission and retry scan</p>
+                        </div>
                     ) : null}
 
-                    <Camera size={64} className="text-white/5" />
+                    <video
+                        ref={videoRef}
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        playsInline
+                        muted
+                    />
                     
                     {/* Overlay Grid */}
                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
@@ -53,12 +127,18 @@ const LiveFeed = () => {
 
             <div className="flex flex-col items-center gap-8">
                 <button 
-                    onClick={simulateScan}
+                    onClick={startScanner}
                     disabled={scanStatus === 'scanning'}
                     className={`px-16 py-5 bg-primary text-white uppercase shadow-[0_0_40px_rgba(200,16,46,0.3)] transition-all flex items-center gap-4 ${scanStatus === 'scanning' ? 'opacity-50 grayscale' : 'hover:scale-105 active:scale-95'}`}
                 >
-                    {scanStatus === 'scanning' ? 'Accessing Camera Feed...' : 'Initiate QR Scan'}
+                    <RefreshCw size={16} className={scanStatus === 'scanning' ? 'animate-spin' : ''} />
+                    {scanStatus === 'scanning' ? 'Scanning Live Feed...' : 'Restart QR Scan'}
                 </button>
+
+                <p className="text-gray-300/90 uppercase text-[11px] tracking-[0.22em] text-center max-w-2xl">{scanMessage}</p>
+                {scanResult && (
+                    <p className="text-green-400 uppercase text-[11px] tracking-[0.2em] break-all text-center max-w-2xl">Payload: {scanResult}</p>
+                )}
 
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
