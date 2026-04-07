@@ -2,6 +2,7 @@ import { Search, Bell, Settings, User, ArrowLeft, Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleMobileMenu } from '../../../reducers/uiSlice';
+import ThemeToggleButton from '../../common/ThemeToggleButton';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -46,6 +47,7 @@ const Header = () => {
 
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-4">
+          <ThemeToggleButton />
           <button className="relative p-2 text-gray-300 hover:text-white transition-all group">
             <Bell size={18} strokeWidth={2} />
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary animate-pulse shadow-[0_0_5px_var(--color-primary)]"></span>

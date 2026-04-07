@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Shield, Clock, Wifi, ArrowLeft, Zap, Activity } from 'lucide-react';
+import React from 'react';
+import { Shield, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleMobileMenu } from '../../../reducers/uiSlice';
 import { Menu, X } from 'lucide-react';
+import ThemeToggleButton from '../../common/ThemeToggleButton';
 
 const Header = ({ title }) => {
     const navigate = useNavigate();
@@ -53,6 +54,9 @@ const Header = ({ title }) => {
                 </div>
             </div>
 
+            <div className="relative z-10">
+                <ThemeToggleButton />
+            </div>
 
         </header>
     );

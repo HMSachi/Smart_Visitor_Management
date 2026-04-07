@@ -16,10 +16,56 @@
   --color-text-primary: #FFFFFF;
   --color-text-secondary: #D1D1D1;
   --color-text-dim: #888888;
+  --color-border-soft: rgba(255, 255, 255, 0.08);
+  --color-surface-1: rgba(255, 255, 255, 0.02);
+  --color-surface-2: rgba(255, 255, 255, 0.04);
   --color-success: #22C55E;
   --color-warning: #F59E0B;
   --color-error: #C8102E;
   --color-info: #3B82F6;
+}
+
+[data-theme='light'] {
+  --color-secondary: #FFFFFF;
+  --color-bg-default: #F4F6F8;
+  --color-bg-paper: #FFFFFF;
+  --color-bg-alt: #E8ECF1;
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #4B5563;
+  --color-text-dim: #6B7280;
+  --color-border-soft: rgba(17, 24, 39, 0.14);
+  --color-surface-1: rgba(17, 24, 39, 0.03);
+  --color-surface-2: rgba(17, 24, 39, 0.06);
+}
+
+[data-theme='light'] [class*='bg-black'],
+[data-theme='light'] [class*='bg-secondary'],
+[data-theme='light'] [class*='bg-mas-dark'],
+[data-theme='light'] [class*='bg-background'] {
+  background-color: var(--color-bg-paper) !important;
+}
+
+[data-theme='light'] [class*='bg-white/'] {
+  background-color: rgba(17, 24, 39, 0.04) !important;
+}
+
+[data-theme='light'] [class*='text-white'],
+[data-theme='light'] [class*='text-gray-'] {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme='light'] [class*='border-white'] {
+  border-color: var(--color-border-soft) !important;
+}
+
+[data-theme='light'] [class*='shadow-2xl'],
+[data-theme='light'] [class*='shadow-xl'],
+[data-theme='light'] [class*='shadow-lg'] {
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.08) !important;
+}
+
+[data-theme='light'] [class*='color-scheme:dark'] {
+  color-scheme: light !important;
 }
 
 @layer base {
@@ -27,9 +73,9 @@
     font-family: 'Inter', sans-serif !important;
     font-size: 13px !important;
     font-weight: 400 !important;
-    color: #FFFFFF !important;
+    color: var(--color-text-primary) !important;
     line-height: 1.6 !important;
-    @apply bg-background;
+    background-color: var(--color-bg-default);
     margin: 0;
     overflow-x: hidden;
     width: 100%;
@@ -50,7 +96,7 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    color: #FFFFFF !important;
+    color: var(--color-text-primary) !important;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     line-height: 1.4;
@@ -70,7 +116,7 @@
   label {
     font-family: 'Inter', sans-serif !important;
     font-size: 12px !important;
-    color: #FFFFFF !important;
+    color: var(--color-text-primary) !important;
     font-weight: 500 !important;
   }
 
@@ -78,24 +124,40 @@
     font-family: 'Inter', sans-serif !important;
     font-size: 13px !important;
     font-weight: 500 !important;
-    color: #FFFFFF !important;
+    color: var(--color-text-primary) !important;
   }
   
   /* Flat & Minimal Utilities */
   .glass-card {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--color-surface-1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-border-soft);
     transition: background 0.3s ease;
   }
 
   .glass-card:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--color-surface-2);
   }
 
   .compact-input {
-    @apply bg-white/[0.02] border border-white/5 rounded-lg px-3 py-2 text-white placeholder:text-gray-600 focus:border-primary/40 focus:bg-white/[0.04] outline-none transition-all text-sm;
+    background-color: var(--color-surface-1);
+    border: 1px solid var(--color-border-soft);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .compact-input::placeholder {
+    color: var(--color-text-dim);
+  }
+
+  .compact-input:focus {
+    outline: none;
+    border-color: rgba(200, 16, 46, 0.4);
+    background-color: var(--color-surface-2);
   }
 
   .compact-btn {
@@ -130,8 +192,8 @@
   input:-webkit-autofill:hover, 
   input:-webkit-autofill:focus, 
   input:-webkit-autofill:active{
-      -webkit-box-shadow: 0 0 0 30px #000000 inset !important;
-      -webkit-text-fill-color: white !important;
+      -webkit-box-shadow: 0 0 0 30px var(--color-bg-paper) inset !important;
+      -webkit-text-fill-color: var(--color-text-primary) !important;
       transition: background-color 5000s ease-in-out 0s;
   }
 
@@ -163,7 +225,7 @@
     font-family: 'Inter', sans-serif !important;
     font-size: 13px !important;
     font-weight: 400 !important;
-    color: #FFFFFF !important;
+    color: var(--color-text-primary) !important;
     letter-spacing: 0.3px !important;
     text-transform: uppercase !important;
     line-height: 1.5 !important;
@@ -182,7 +244,10 @@
 }
 
 .glass-panel {
-  @apply bg-[#121212]/80 backdrop-blur-xl border border-white/5;
+  background: var(--color-bg-paper);
+  backdrop-filter: blur(1rem);
+  -webkit-backdrop-filter: blur(1rem);
+  border: 1px solid var(--color-border-soft);
 }
 
 code {
@@ -203,7 +268,16 @@ code {
 }
 
 .mas-input {
-  @apply bg-secondary border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-primary transition-all;
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border-soft);
+  padding: 0.75rem 1rem;
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
+}
+
+.mas-input:focus {
+  outline: none;
+  border-color: rgba(200, 16, 46, 0.5);
 }
 
 .bg-mas-black {

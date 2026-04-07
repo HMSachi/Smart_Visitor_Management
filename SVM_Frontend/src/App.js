@@ -53,57 +53,79 @@ import LogsHistory from "./layout/Security_Officer/LogsHistory/LogsHistory";
 import SecurityNotifications from "./layout/Security_Officer/Notifications/Notifications";
 import SecurityDashboard from "./layout/Security_Officer/Dashboard/Dashboard";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { updateIsMobile } from "./reducers/uiSlice";
 import themeColors from "./theme/themeColors";
+import { ThemeModeProvider, useThemeMode } from "./theme/ThemeModeContext";
 
-const theme = createTheme({
-  palette: {
-    mode: "dark",
-    primary: {
-      main: themeColors.primary.DEFAULT,
-      dark: themeColors.primary.hover,
-      light: "#D32F2F",
-    },
-    background: {
-      default: themeColors.background.DEFAULT,
-      paper: themeColors.secondary.paper,
-    },
-    text: {
-      primary: themeColors.text.primary,
-      secondary: themeColors.text.secondary,
-    },
+const paletteByMode = {
+  dark: {
+    backgroundDefault: themeColors.background.DEFAULT,
+    backgroundPaper: themeColors.secondary.paper,
+    textPrimary: themeColors.text.primary,
+    textSecondary: themeColors.text.secondary,
+    paperBorder: "rgba(255, 255, 255, 0.05)",
   },
-  typography: {
-    fontFamily: '"Inter", sans-serif',
-    h1: { fontWeight: 700, letterSpacing: "-0.02em" },
-    h2: { fontWeight: 700, letterSpacing: "-0.01em" },
-    button: { textTransform: "none", fontWeight: 600 },
+  light: {
+    backgroundDefault: "#F4F6F8",
+    backgroundPaper: "#FFFFFF",
+    textPrimary: "#1F2937",
+    textSecondary: "#4B5563",
+    paperBorder: "rgba(17, 24, 39, 0.1)",
   },
-  shape: {
-    borderRadius: 0, // Sharp edges (MAS standard)
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 0,
-          padding: "10px 24px",
-          textTransform: "uppercase", // Corporate style
+};
+
+const createAppTheme = (mode) => {
+  const palette = paletteByMode[mode] || paletteByMode.dark;
+
+  return createTheme({
+    palette: {
+      mode,
+      primary: {
+        main: themeColors.primary.DEFAULT,
+        dark: themeColors.primary.hover,
+        light: "#D32F2F",
+      },
+      background: {
+        default: palette.backgroundDefault,
+        paper: palette.backgroundPaper,
+      },
+      text: {
+        primary: palette.textPrimary,
+        secondary: palette.textSecondary,
+      },
+    },
+    typography: {
+      fontFamily: '"Inter", sans-serif',
+      h1: { fontWeight: 700, letterSpacing: "-0.02em" },
+      h2: { fontWeight: 700, letterSpacing: "-0.01em" },
+      button: { textTransform: "none", fontWeight: 600 },
+    },
+    shape: {
+      borderRadius: 0,
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 0,
+            padding: "10px 24px",
+            textTransform: "uppercase",
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundImage: "none",
+            backgroundColor: palette.backgroundPaper,
+            border: `1px solid ${palette.paperBorder}`,
+          },
         },
       },
     },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundImage: "none",
-          backgroundColor: themeColors.secondary.paper,
-          border: "1px solid rgba(255, 255, 255, 0.05)",
-        },
-      },
-    },
-  },
-});
+  });
+};
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -261,14 +283,26 @@ const AppContent = () => {
 function App() {
   return (
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router>
-          <AppContent />
-        </Router>
-      </ThemeProvider>
+      <ThemeModeProvider>
+        <AppShell />
+      </ThemeModeProvider>
     </Provider>
   );
 }
+
+const AppShell = () => {
+  const { themeMode } = useThemeMode();
+
+  const theme = useMemo(() => createAppTheme(themeMode), [themeMode]);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <AppContent />
+      </Router>
+    </ThemeProvider>
+  );
+};
 
 export default App;

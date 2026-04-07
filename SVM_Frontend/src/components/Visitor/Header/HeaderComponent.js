@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ArrowLeft, Menu, X, Home, Shield, Activity, Plus } from "lucide-react";
 import { Drawer, IconButton, Box, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { toggleMobileMenu, setMobileMenu } from '../../../reducers/uiSlice';
+import ThemeToggleButton from '../../common/ThemeToggleButton';
 
 const HeaderComponent = () => {
     const navigate = useNavigate();
@@ -71,6 +72,8 @@ const HeaderComponent = () => {
                         Request Visit
                     </button>
 
+                    <ThemeToggleButton className="!ml-2" />
+
                     {userEmail && (
                         <div className="flex items-center gap-4 pl-10 border-l border-white/10 group cursor-default">
                             <div className="flex flex-col items-end">
@@ -91,6 +94,9 @@ const HeaderComponent = () => {
                 >
                     <Menu size={24} />
                 </IconButton>
+                <div className="md:hidden ml-2">
+                    <ThemeToggleButton />
+                </div>
             </div>
 
             {/* Premium Mobile Drawer */}
@@ -155,4 +161,4 @@ const HeaderComponent = () => {
     );
 };
 
-export default HeaderComponent;
+export default HeaderComponent;
