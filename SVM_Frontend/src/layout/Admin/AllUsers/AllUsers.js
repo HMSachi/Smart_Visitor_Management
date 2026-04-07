@@ -14,7 +14,7 @@ import {
 } from '../../../actions/ContactPersonAction';
 import Header from '../../../components/Admin/Layout/Header';
 import { useThemeMode } from '../../../theme/ThemeModeContext';
-import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User, Users, ShieldAlert, UserCheck } from 'lucide-react';
+import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User, Users, ShieldAlert, UserCheck, Phone } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
   const s = (status || '').toString().trim().toUpperCase();
@@ -134,6 +134,8 @@ const AllUsers = () => {
             email: item.VA_Email || '',
             role: item.VA_Role || '',
             password: item.VA_Password || '',
+            phone: item.VA_Phone || '',
+            department: item.VA_Department || '',
             type: 'ADMIN'
         });
       }
@@ -398,6 +400,16 @@ const AllUsers = () => {
                 </>
               ) : (
                 <>
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Users size={12} /> Department</label>
+                    <input type="text" name="department" value={formData.department} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. Human Resources" />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Phone size={12} /> Phone</label>
+                    <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. +94 123 4567" />
+                  </div>
+
                   <div className="space-y-1">
                     <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Shield size={12} /> Role</label>
                     <input required type="text" name="role" value={formData.role} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. Admin, Security" />
