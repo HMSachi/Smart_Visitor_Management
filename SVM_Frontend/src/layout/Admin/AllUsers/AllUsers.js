@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, CircularProgress } from '@mui/material';
 import {
   GetAllAdministrator,
-  GetAdministratorById,
   DeleteAdministrator,
   AddAdministrator,
   UpdateAdministrator
@@ -14,6 +13,7 @@ import {
   UpdateContactPersonStatus 
 } from '../../../actions/ContactPersonAction';
 import Header from '../../../components/Admin/Layout/Header';
+import { useThemeMode } from '../../../theme/ThemeModeContext';
 import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User, Users, ShieldAlert, UserCheck } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
@@ -37,7 +37,9 @@ const AllUsers = () => {
   const { administrators, isLoading: adminLoading, error: adminError } = useSelector((state) => state.administrator);
   const { contactPersons, loading: contactLoading, error: contactError } = useSelector((state) => state.contactPerson);
   
-  const [searchId, setSearchId] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const { themeMode } = useThemeMode();
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,12 +62,37 @@ const AllUsers = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchId.trim() !== '') {
-      dispatch(GetAdministratorById(searchId));
-    } else {
-      dispatch(GetAllAdministrator());
-      dispatch(GetAllContactPersons());
-    }
+  };
+
+  const normalizeStatus = (status) => {
+    const value = (status || '').toString().trim().toUpperCase();
+    return value === 'ACTIVE' || value === 'A' ? 'ACTIVE' : 'INACTIVE';
+  };
+
+  const matchesStatus = (item) => {
+    if (statusFilter === 'ALL') return true;
+    const itemStatus = normalizeStatus(item.VA_Status || item.VCP_Status);
+    return itemStatus === statusFilter;
+  };
+
+  const matchesSearch = (item) => {
+    if (!searchTerm.trim()) return true;
+
+    const query = searchTerm.trim().toLowerCase();
+    const searchValues = [
+      item.VA_Admin_id,
+      item.VCP_Contact_person_id,
+      item.VA_Name,
+      item.VCP_Name,
+      item.VA_Email,
+      item.VCP_Email,
+      item.VA_Role,
+      item.VCP_Department,
+      item.VCP_Phone,
+      normalizeStatus(item.VA_Status || item.VCP_Status)
+    ];
+
+    return searchValues.some((value) => (value || '').toString().toLowerCase().includes(query));
   };
 
   const handleToggleStatus = (item, type) => {
@@ -163,6 +190,14 @@ const AllUsers = () => {
     { id: 'VISITOR', title: 'Visitor Accounts', icon: UserCheck, data: administrators.filter(a => a.VA_Role === 'Visitor') },
   ];
 
+  const filteredCategories = useMemo(
+    () => categories.map((cat) => ({
+      ...cat,
+      data: cat.data.filter((item) => matchesSearch(item) && matchesStatus(item))
+    })),
+    [categories, searchTerm, statusFilter]
+  );
+
   const loading = adminLoading || contactLoading;
   const error = adminError || contactError;
 
@@ -192,17 +227,29 @@ const AllUsers = () => {
                 <Search size={16} className="text-gray-400 mr-3" />
                 <input
                   type="text"
-                  value={searchId}
-                  onChange={(e) => setSearchId(e.target.value)}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search across all roles..."
                   className="bg-transparent text-[13px] text-white focus:outline-none w-full"
                 />
-                {searchId && (
-                  <button type="button" onClick={() => { setSearchId(''); dispatch(GetAllAdministrator()); dispatch(GetAllContactPersons()); }} className="text-gray-500 hover:text-white">
+                {searchTerm && (
+                  <button type="button" onClick={() => setSearchTerm('')} className="text-gray-500 hover:text-white">
                     <RefreshCw size={14} />
                   </button>
                 )}
               </form>
+
+              <div className="flex items-center transition-colors rounded-xl px-3 py-2 min-w-[180px]"
+                style={{ background: themeMode === 'light' ? '#ffffff' : undefined }}>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className={`text-[13px] focus:outline-none w-full ${themeMode === 'light' ? 'text-black bg-white border border-gray-200' : 'bg-black/40 text-white border border-white/10 hover:border-white/20'}`}>
+                  <option value="ALL" className={themeMode === 'light' ? 'bg-white text-black' : 'bg-[#0f0f10]'}>All Statuses</option>
+                  <option value="ACTIVE" className={themeMode === 'light' ? 'bg-white text-black' : 'bg-[#0f0f10]'}>Active</option>
+                  <option value="INACTIVE" className={themeMode === 'light' ? 'bg-white text-black' : 'bg-[#0f0f10]'}>Inactive</option>
+                </select>
+              </div>
 
               <button onClick={() => openModal('add')} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20">
                 <Plus size={16} /> New System node
@@ -224,7 +271,7 @@ const AllUsers = () => {
                 <p className="text-primary text-[14px] uppercase tracking-widest">{error}</p>
               </div>
             ) : (
-              categories.map((cat) => (
+              filteredCategories.map((cat) => (
                 <section key={cat.id} className="relative">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
