@@ -13,6 +13,7 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Drawer, Box, IconButton, Tooltip } from '@mui/material';
 import { toggleSidebar, setMobileMenu } from '../../../reducers/uiSlice';
+import { LOGOUT } from '../../../constants/LoginConstants';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
   <div 
@@ -39,7 +40,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
   </div>
 );
 
-const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
+const SidebarContent = ({ isCollapsed, currentPath, onNavigate, onLogout }) => {
   const menuItems = [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/contact_person/dashboard' },
       { id: 'visit-requests', label: 'Visit Requests', icon: CalendarDays, path: '/contact_person/visit-requests' },
@@ -72,6 +73,15 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate }) => {
 
       {/* Sidebar Bottom: User & Logout */}
       <div className={`mt-auto pt-6 border-t border-white/5`}>
+        <button
+          onClick={onLogout}
+          className={`w-full mb-4 flex items-center gap-3 px-3 py-2.5 rounded-xl border border-white/10 text-gray-300 hover:text-white hover:border-primary/40 hover:bg-white/[0.03] transition-all ${isCollapsed ? 'justify-center' : ''}`}
+          title="Logout"
+        >
+          <LogOut size={16} />
+          {!isCollapsed && <span className="uppercase text-[12px] tracking-[0.2em] font-medium">Logout</span>}
+        </button>
+
         <div className={`flex items-center gap-4 ${isCollapsed ? 'justify-center' : 'px-2'}`}>
             <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0">
                 <span className="text-primary font-medium text-xs">SA</span>
@@ -104,6 +114,15 @@ const Sidebar = () => {
     }
   };
 
+  const handleLogout = () => {
+    const shouldLogout = window.confirm('Are you sure you want to logout?');
+    if (!shouldLogout) return;
+
+    localStorage.removeItem('user_session');
+    dispatch({ type: LOGOUT });
+    navigate('/login');
+  };
+
   // Mobile Version stays as a drawer
   if (isMobile) {
     return (
@@ -116,7 +135,8 @@ const Sidebar = () => {
         <SidebarContent 
           isCollapsed={false} 
           currentPath={location.pathname} 
-          onNavigate={handleNavigate} 
+          onNavigate={handleNavigate}
+          onLogout={handleLogout}
         />
       </Drawer>
     );
@@ -131,7 +151,8 @@ const Sidebar = () => {
       <SidebarContent 
         isCollapsed={isCollapsed} 
         currentPath={location.pathname} 
-        onNavigate={handleNavigate} 
+        onNavigate={handleNavigate}
+        onLogout={handleLogout}
       />
 
       {/* Floating Toggle Button */}
