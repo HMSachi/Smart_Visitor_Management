@@ -13,7 +13,7 @@ const Header = ({ title }) => {
     const isMobile = useSelector(state => state.ui.isMobile);
     const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
     return (
-        <header className="flex-none h-20 md:h-28 border-b border-white/5 bg-[var(--color-bg-paper)]/95 backdrop-blur-3xl flex items-center justify-between px-4 md:px-16 transition-all duration-500 shadow-2xl relative">
+        <header className="flex-none h-14 md:h-16 border-b border-white/5 bg-mas-dark/95 backdrop-blur-sm flex items-center justify-between px-4 md:px-8 transition-all duration-300 relative">
             {/* Global Node Aura */}
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-50"></div>
 
@@ -21,35 +21,31 @@ const Header = ({ title }) => {
                 {isMobile ? (
                     <button
                         onClick={() => dispatch(toggleMobileMenu())}
-                        className="p-3 text-primary transition-all bg-[var(--color-bg-paper)] border border-primary/20 rounded-xl hover:bg-primary/10 active:scale-95 shadow-lg"
+                        className="p-2 text-primary transition-all bg-mas-dark/90 border border-primary/20 rounded-lg hover:bg-primary/10 active:scale-95"
                     >
                         {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                     </button>
                 ) : (
                     <button
                         onClick={() => navigate(-1)}
-                        className="p-3.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-all bg-[var(--color-bg-paper)] border border-white/5 group rounded-2xl hover:border-primary/40 hover:bg-primary/10 shadow-xl"
+                        className="p-2.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-all bg-mas-dark/90 border border-white/5 group rounded-lg hover:border-primary/40 hover:bg-primary/10"
                         title="BACK_TO_PREVIOUS_NODE"
                     >
-                        <ArrowLeft size={20} className="group-hover:-translate-x-1.5 transition-transform" />
+                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                     </button>
                 )}
 
                 <div className="flex items-center gap-6">
-                    <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 shadow-[0_0_30px_rgba(200,16,46,0.1)] relative group cursor-pointer">
-                        <Shield size={22} className="text-primary group-hover:rotate-12 transition-transform duration-500" />
+                    <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 relative group cursor-pointer">
+                        <Shield size={18} className="text-primary group-hover:rotate-12 transition-transform duration-500" />
                         <motion.div
                             animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
                             transition={{ repeat: Infinity, duration: 2 }}
-                            className="absolute inset-0 rounded-2xl border-2 border-primary/40 blur-[4px]"
+                            className="absolute inset-0 rounded-xl border-2 border-primary/40 blur-[3px]"
                         />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-[1px] bg-primary/60"></div>
-                            <span className="text-[var(--color-text-secondary)] uppercase text-[12px] font-medium tracking-[0.4em]">Operational_Interface</span>
-                        </div>
-                        <h2 className="uppercase text-[var(--color-text-primary)] text-base md:text-lg font-bold tracking-[0.2em] truncate group-hover:text-primary transition-colors">{title}</h2>
+                        <h2 className="uppercase text-[var(--color-text-primary)] text-sm md:text-sm font-semibold tracking-[0.18em] truncate group-hover:text-primary transition-colors">{title}</h2>
                     </div>
                 </div>
             </div>
