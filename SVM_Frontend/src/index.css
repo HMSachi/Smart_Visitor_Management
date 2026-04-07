@@ -50,8 +50,14 @@
 }
 
 [data-theme='light'] [class*='text-white'],
-[data-theme='light'] [class*='text-gray-'] {
+[data-theme='light'] [class*='text-zinc-900'],
+[data-theme='light'] [class*='text-zinc-800'],
+[data-theme='light'] [class*='text-zinc-700'] {
   color: var(--color-text-primary) !important;
+}
+
+[data-theme='light'] [class*='text-gray-'] {
+  color: var(--color-text-secondary) !important;
 }
 
 [data-theme='light'] [class*='border-white'] {
