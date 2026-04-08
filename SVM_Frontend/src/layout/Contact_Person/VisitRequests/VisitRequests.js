@@ -18,6 +18,7 @@ import {
 } from "../../../actions/VisitRequestAction";
 import { GetVisitorsByCP } from "../../../actions/VisitorAction";
 import { AddVehicle } from "../../../actions/VehicleAction";
+import ContactPersonService from "../../../services/ContactPersonService";
 import Header from "../../../components/Contact_Person/Layout/Header";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
 import {
@@ -76,10 +77,8 @@ const VisitRequests = () => {
   const { visitorsByCP } = useSelector((state) => state.visitorManagement);
 
   const user = useSelector((state) => state.login.user);
-  const cpId =
-    user?.ResultSet?.[0]?.VA_Admin_id ||
-    user?.ResultSet?.[0]?.VCP_Contact_person_id ||
-    2;
+  const userEmail = user?.ResultSet?.[0]?.VA_Email;
+  const [cpId, setCpId] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,7 +86,7 @@ const VisitRequests = () => {
   const [formData, setFormData] = useState({
     VVR_Request_id: "",
     VVR_Visitor_id: "",
-    VVR_Contact_person_id: cpId,
+    VVR_Contact_person_id: "",
     VVR_Visit_Date: "",
     VVR_Places_to_Visit: "",
     VVR_Purpose: "",
@@ -96,8 +95,40 @@ const VisitRequests = () => {
   });
 
   useEffect(() => {
+    const loadContactPersonId = async () => {
+      try {
+        const response = await ContactPersonService.GetAllContactPersons();
+        const contactPersons = response?.data?.ResultSet || [];
+        const match = contactPersons.find(
+          (cp) =>
+            cp?.VCP_Email?.trim().toLowerCase() ===
+            userEmail?.trim().toLowerCase(),
+        );
+
+        if (match?.VCP_Contact_person_id) {
+          setCpId(match.VCP_Contact_person_id);
+          return;
+        }
+
+        setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
+      } catch (err) {
+        console.error("Error loading contact person:", err);
+        setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
+      }
+    };
+
+    if (userEmail) {
+      loadContactPersonId();
+    } else {
+      setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
+    }
+  }, [userEmail, user]);
+
+  useEffect(() => {
+    if (!cpId) return;
     dispatch(GetVisitRequestsByCP(cpId));
     dispatch(GetVisitorsByCP(cpId));
+    setFormData((prev) => ({ ...prev, VVR_Contact_person_id: cpId }));
   }, [dispatch, cpId]);
 
   const openModal = (mode, request = null) => {
@@ -183,6 +214,11 @@ const VisitRequests = () => {
           req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
+
+  const activeVisitors = (visitorsByCP || []).filter((visitor) => {
+    const status = (visitor?.VV_Status || "").toString().trim().toUpperCase();
+    return status === "A" || status === "ACTIVE";
+  });
 
   return (
     <div className="flex bg-secondary overflow-hidden text-white h-screen w-full">
@@ -402,8 +438,7 @@ const VisitRequests = () => {
                         className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 appearance-none cursor-pointer"
                       >
                         <option value="">SELECT AUTHORIZED VISITOR</option>
-                        {visitorsByCP &&
-                          visitorsByCP.map((v) => (
+                        {activeVisitors.map((v) => (
                             <option
                               key={v.VV_Visitor_id}
                               value={v.VV_Visitor_id}
