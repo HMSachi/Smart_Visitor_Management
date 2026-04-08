@@ -1,10 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
-import { ArrowLeft, Menu, X, Home, Shield, Activity, Plus } from "lucide-react";
+import { ArrowLeft, Menu, X, Home, Shield, Activity, Plus, LogOut } from "lucide-react";
 import { Drawer, IconButton, Box, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { toggleMobileMenu, setMobileMenu } from '../../../reducers/uiSlice';
 import ThemeToggleButton from '../../common/ThemeToggleButton';
+import { LOGOUT } from '../../../constants/LoginConstants';
 
 const HeaderComponent = () => {
     const navigate = useNavigate();
@@ -24,6 +25,16 @@ const HeaderComponent = () => {
     const handleNavigate = (path) => {
         navigate(path);
         dispatch(setMobileMenu(false));
+    };
+
+    const handleLogout = () => {
+        const shouldLogout = window.confirm('Are you sure you want to logout?');
+        if (!shouldLogout) return;
+
+        localStorage.removeItem('user_session');
+        dispatch({ type: LOGOUT });
+        dispatch(setMobileMenu(false));
+        navigate('/login');
     };
 
     return (
@@ -73,6 +84,15 @@ const HeaderComponent = () => {
                     </button>
 
                     <ThemeToggleButton className="!ml-2" />
+
+                    <button
+                        onClick={handleLogout}
+                        className="h-11 px-4 border border-white/10 text-gray-300 hover:text-white hover:border-white/25 transition-all uppercase tracking-[0.18em] text-[10px] font-black flex items-center gap-2"
+                        title="Logout"
+                    >
+                        <LogOut size={14} />
+                        Logout
+                    </button>
 
                     {userEmail && (
                         <div className="flex items-center gap-4 pl-10 border-l border-white/10 group cursor-default">
@@ -145,6 +165,20 @@ const HeaderComponent = () => {
                                 />
                             </ListItem>
                         ))}
+
+                        <ListItem
+                            button
+                            onClick={handleLogout}
+                            className="rounded-lg bg-white/[0.01] border border-white/5 p-4"
+                        >
+                            <ListItemIcon className="min-w-0 mr-3">
+                                <LogOut className="text-primary" size={18} />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary="Logout"
+                                primaryTypographyProps={{ style: { fontWeight: 800, fontSize: '12px', letterSpacing: '0.15em', color: '#fff', textTransform: 'uppercase' } }}
+                            />
+                        </ListItem>
                     </List>
 
                     <div className="mt-auto">
