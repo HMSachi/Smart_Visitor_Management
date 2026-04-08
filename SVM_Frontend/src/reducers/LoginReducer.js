@@ -1,7 +1,8 @@
 import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
-  LOGIN_FAILURE, 
+  LOGIN_FAILURE,
+  LOGOUT,
 } from "../constants/LoginConstants";
 
 const persistedUser = localStorage.getItem('user_session');
@@ -32,6 +33,13 @@ const loginReducer = (state = initialState, action) => {
         isLoading: false,
         user: null,
         error: action.payload,
+      };
+    case LOGOUT:
+      return {
+        ...state,
+        isLoading: false,
+        user: null,
+        error: null,
       };
     default:
       return state;

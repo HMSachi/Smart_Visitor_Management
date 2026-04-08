@@ -83,53 +83,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction }) => {
         </div>
       </div>
 
-      {/* Filter Hub */}
-      <div className="p-8 border-b border-white/5 bg-[#161618] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 shadow-inner relative z-10">
-        <div className="flex items-center gap-6">
-          <div className="w-1.5 h-10 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
-          <div>
-            <h2 className="uppercase text-white text-[14px] font-bold tracking-[0.4em]">Auth Protocol Hub</h2>
-            <p className="text-white/90 uppercase text-[12px] font-medium tracking-widest mt-1">Global Clearance Management System</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-6 w-full xl:w-auto">
-          <div className="relative group flex-1 xl:w-96">
-            <input
-              type="text"
-              placeholder="SEARCH PROTOCOL IDENTIFIER..."
-              className="w-full pl-12 pr-6 py-4 bg-[var(--color-bg-default)] border border-white/5 rounded-2xl uppercase text-[13px] font-medium tracking-[0.2em] text-white placeholder:text-white/80 focus:border-primary/40 outline-none transition-all shadow-xl group-hover:border-white/10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Search size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors" />
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative group min-w-[200px]">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full pl-6 pr-12 py-4 bg-[var(--color-bg-default)] border border-white/5 rounded-2xl uppercase text-[13px] font-medium tracking-[0.2em] text-gray-300 focus:text-white focus:border-primary/40 transition-all cursor-pointer outline-none appearance-none shadow-xl"
-              >
-                <option value="All">ALL_STATUS</option>
-                <option value="Pending">PENDING_REVIEW</option>
-                <option value="Approved">STABLE_AUTH</option>
-                <option value="Rejected">DENIED_NODE</option>
-                <option value="Checked In">PROTOCOL_ENGAGED</option>
-              </select>
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity">
-                <ChevronDown size={14} />
-              </div>
-            </div>
-
-            <button className="flex items-center justify-center gap-3 px-8 py-4 bg-white/[0.02] border border-white/5 rounded-2xl uppercase text-[13px] font-medium tracking-[0.3em] text-white hover:bg-white hover:text-black transition-all group shrink-0 shadow-xl">
-              <Download size={14} className="group-hover:scale-125 transition-transform" />
-              <span>Export</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Filter Hub removed per design request */}
 
       <div className="flex-1 overflow-auto bg-[var(--color-bg-default)]">
         {/* DESKTOP TABLE VIEW */}

@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { ShieldAlert, MapPin, Eye, CheckCircle, Navigation } from 'lucide-react';
+import { ShieldAlert, MapPin, Eye, CheckCircle } from 'lucide-react';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
 const AlertItem = ({ type, location, time, severity }) => (
   <div className="p-4 border border-mas-border bg-mas-dark hover:border-primary transition-all group">
@@ -28,38 +38,67 @@ const AlertItem = ({ type, location, time, severity }) => (
 
 const SecurityMonitoring = () => {
   const alerts = useSelector(state => state.admin.monitoring.alerts);
+  const zoneCoordinates = useMemo(
+    () => ({
+      'SERVER ROOM - LEVEL 2': [6.9273, 79.8612],
+      'MAIN ENTRANCE GATE': [6.9282, 79.8623],
+      'PRODUCTION BLOCK B': [6.9264, 79.8601],
+    }),
+    []
+  );
+
+  const alertPoints = useMemo(
+    () =>
+      (alerts || []).map((alert, index) => ({
+        ...alert,
+        position: zoneCoordinates[alert.location] || [6.9271 + index * 0.0007, 79.8615 + index * 0.0007],
+      })),
+    [alerts, zoneCoordinates]
+  );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 mas-panel min-h-[400px] relative overflow-hidden group border-white/[0.05]">
-        <div className="absolute inset-0 bg-secondary/20 z-10 pointer-events-none"></div>
-        <div className="absolute top-6 left-6 z-20">
+        <div className="absolute inset-0 bg-secondary/10 z-10 pointer-events-none"></div>
+        <div className="absolute top-6 left-6 z-[500] pointer-events-none">
           <h2 className="uppercase text-white">Zone Tracking Map</h2>
           <p className="text-gray-300 uppercase mt-1">Real-time visitor location monitoring</p>
         </div>
-        
-        {/* Mock Map Placeholder */}
-        <div className="absolute inset-0 flex items-center justify-center bg-[#0d0d0e]">
-          <div className="w-full h-full opacity-70 pointer-events-none">
-             <div className="grid grid-cols-12 h-full w-full">
-                {[...Array(144)].map((_, i) => (
-                   <div key={i} className="border-[0.5px] border-primary/20"></div>
-                ))}
-             </div>
+
+        <div className="absolute inset-0">
+          <MapContainer
+            center={[6.9275, 79.8614]}
+            zoom={16}
+            className="h-full w-full"
+            scrollWheelZoom
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {alertPoints.map((alert, idx) => (
+              <Marker key={`${alert.location}-${idx}`} position={alert.position}>
+                <Popup>
+                  <div>
+                    <strong>{alert.type}</strong>
+                    <br />
+                    {alert.location}
+                    <br />
+                    Time: {alert.time}
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+            <div className="px-3 py-1.5 rounded-lg bg-black/30 border border-white/10 text-gray-200 uppercase tracking-widest text-[11px]">
+              Scanning live zones...
+            </div>
           </div>
-          <div className="absolute inset-0 flex items-center justify-center">
-             <div className="relative w-[200px] h-[200px] border border-primary/10 transform rotate-45 flex items-center justify-center">
-                <div className="absolute w-2 h-2 bg-primary animate-ping rounded-full"></div>
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <div className="absolute -top-4 -left-4 text-primary">
-                  <Navigation size={24} className="-rotate-45" />
-                </div>
-             </div>
-          </div>
-          <p className="z-20 text-gray-300 uppercase animate-pulse">Scanning live zones...</p>
         </div>
 
-        <div className="absolute bottom-6 right-6 z-20 flex gap-2">
+        <div className="absolute bottom-6 right-6 z-[500] flex gap-2">
           <button className="p-2 mas-glass hover:text-primary transition-all border border-mas-border">
             <Eye size={16} />
           </button>

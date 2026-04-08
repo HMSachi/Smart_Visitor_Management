@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, CircularProgress } from '@mui/material';
 import {
   GetAllAdministrator,
-  GetAdministratorById,
   DeleteAdministrator,
   AddAdministrator,
   UpdateAdministrator
@@ -14,7 +13,8 @@ import {
   UpdateContactPersonStatus 
 } from '../../../actions/ContactPersonAction';
 import Header from '../../../components/Admin/Layout/Header';
-import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User, Users, ShieldAlert, UserCheck } from 'lucide-react';
+import { useThemeMode } from '../../../theme/ThemeModeContext';
+import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User, Users, ShieldAlert, UserCheck, Phone, Trash, ChevronRight } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
   const s = (status || '').toString().trim().toUpperCase();
@@ -37,7 +37,9 @@ const AllUsers = () => {
   const { administrators, isLoading: adminLoading, error: adminError } = useSelector((state) => state.administrator);
   const { contactPersons, loading: contactLoading, error: contactError } = useSelector((state) => state.contactPerson);
   
-  const [searchId, setSearchId] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const { themeMode } = useThemeMode();
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,12 +62,37 @@ const AllUsers = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchId.trim() !== '') {
-      dispatch(GetAdministratorById(searchId));
-    } else {
-      dispatch(GetAllAdministrator());
-      dispatch(GetAllContactPersons());
-    }
+  };
+
+  const normalizeStatus = (status) => {
+    const value = (status || '').toString().trim().toUpperCase();
+    return value === 'ACTIVE' || value === 'A' ? 'ACTIVE' : 'INACTIVE';
+  };
+
+  const matchesStatus = (item) => {
+    if (statusFilter === 'ALL') return true;
+    const itemStatus = normalizeStatus(item.VA_Status || item.VCP_Status);
+    return itemStatus === statusFilter;
+  };
+
+  const matchesSearch = (item) => {
+    if (!searchTerm.trim()) return true;
+
+    const query = searchTerm.trim().toLowerCase();
+    const searchValues = [
+      item.VA_Admin_id,
+      item.VCP_Contact_person_id,
+      item.VA_Name,
+      item.VCP_Name,
+      item.VA_Email,
+      item.VCP_Email,
+      item.VA_Role,
+      item.VCP_Department,
+      item.VCP_Phone,
+      normalizeStatus(item.VA_Status || item.VCP_Status)
+    ];
+
+    return searchValues.some((value) => (value || '').toString().toLowerCase().includes(query));
   };
 
   const handleToggleStatus = (item, type) => {
@@ -107,6 +134,8 @@ const AllUsers = () => {
             email: item.VA_Email || '',
             role: item.VA_Role || '',
             password: item.VA_Password || '',
+            phone: item.VA_Phone || '',
+            department: item.VA_Department || '',
             type: 'ADMIN'
         });
       }
@@ -163,6 +192,14 @@ const AllUsers = () => {
     { id: 'VISITOR', title: 'Visitor Accounts', icon: UserCheck, data: administrators.filter(a => a.VA_Role === 'Visitor') },
   ];
 
+  const filteredCategories = useMemo(
+    () => categories.map((cat) => ({
+      ...cat,
+      data: cat.data.filter((item) => matchesSearch(item) && matchesStatus(item))
+    })),
+    [categories, searchTerm, statusFilter]
+  );
+
   const loading = adminLoading || contactLoading;
   const error = adminError || contactError;
 
@@ -192,17 +229,29 @@ const AllUsers = () => {
                 <Search size={16} className="text-gray-400 mr-3" />
                 <input
                   type="text"
-                  value={searchId}
-                  onChange={(e) => setSearchId(e.target.value)}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search across all roles..."
                   className="bg-transparent text-[13px] text-white focus:outline-none w-full"
                 />
-                {searchId && (
-                  <button type="button" onClick={() => { setSearchId(''); dispatch(GetAllAdministrator()); dispatch(GetAllContactPersons()); }} className="text-gray-500 hover:text-white">
+                {searchTerm && (
+                  <button type="button" onClick={() => setSearchTerm('')} className="text-gray-500 hover:text-white">
                     <RefreshCw size={14} />
                   </button>
                 )}
               </form>
+
+              <div className="flex items-center transition-colors rounded-xl px-3 py-2 min-w-[180px]"
+                style={{ background: themeMode === 'light' ? '#ffffff' : undefined }}>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className={`text-[13px] focus:outline-none w-full ${themeMode === 'light' ? 'text-black bg-white border border-gray-200' : 'bg-black/40 text-white border border-white/10 hover:border-white/20'}`}>
+                  <option value="ALL" className={themeMode === 'light' ? 'bg-white text-black' : 'bg-[#0f0f10]'}>All Statuses</option>
+                  <option value="ACTIVE" className={themeMode === 'light' ? 'bg-white text-black' : 'bg-[#0f0f10]'}>Active</option>
+                  <option value="INACTIVE" className={themeMode === 'light' ? 'bg-white text-black' : 'bg-[#0f0f10]'}>Inactive</option>
+                </select>
+              </div>
 
               <button onClick={() => openModal('add')} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20">
                 <Plus size={16} /> New System node
@@ -224,7 +273,7 @@ const AllUsers = () => {
                 <p className="text-primary text-[14px] uppercase tracking-widest">{error}</p>
               </div>
             ) : (
-              categories.map((cat) => (
+              filteredCategories.map((cat) => (
                 <section key={cat.id} className="relative">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
@@ -237,24 +286,24 @@ const AllUsers = () => {
                     <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent ml-4"></div>
                   </div>
 
-                  <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
+                  <div className="bg-[var(--color-bg-paper)] rounded-none overflow-hidden shadow-2xl relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
-                    <TableContainer component={Paper} className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative">
+                    <TableContainer component={Paper} className="bg-[#0F0F10] rounded-none z-10 relative">
                       <Table sx={{ minWidth: 650 }} aria-label={`${cat.title} table`}>
                         <TableHead className="bg-black/40">
                           <TableRow>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">ID Node</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Personnel Entity</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">{cat.id === 'CONTACT' ? 'Department' : 'System Role'}</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">{cat.id === 'CONTACT' ? 'Phone Connection' : 'Authentication Origin'}</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Status</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5" align="right">Actions</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">ID Node</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">Personnel Entity</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">{cat.id === 'CONTACT' ? 'Department' : 'System Role'}</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">{cat.id === 'CONTACT' ? 'Phone Connection' : 'Authentication Origin'}</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">Status</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]" align="right">Actions</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {cat.data.length === 0 ? (
                             <TableRow>
-                              <TableCell colSpan={6} align="center" className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5">
+                              <TableCell colSpan={6} align="center" className="py-12 text-white/40 uppercase tracking-widest text-sm">
                                 No {cat.title.toLowerCase()} configured in the system
                               </TableCell>
                             </TableRow>
@@ -264,38 +313,55 @@ const AllUsers = () => {
 
                               return (
                               <TableRow key={item.VA_Admin_id || item.VCP_Contact_person_id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: 'rgba(255,255,255,0.02)' } }}>
-                                <TableCell className="text-white/70 font-medium border-b-white/5">
+                                <TableCell className="text-white/70 font-medium">
                                   <div className="flex items-center gap-2">
                                     <Hash size={12} className="text-primary/40" />
                                     <span>{item.VA_Admin_id || item.VCP_Contact_person_id}</span>
                                   </div>
                                 </TableCell>
-                                <TableCell className={`font-medium border-b-white/5 transition-colors ${isActive ? 'text-white' : 'text-white/30 line-through'}`}>
-                                  {item.VA_Name || item.VCP_Name || '-'}
-                                  <p className="text-gray-400 text-[10px] tracking-[0.1em] lowercase mt-1 opacity-70">
-                                    {item.VA_Email || item.VCP_Email}
-                                  </p>
+                                <TableCell className={`font-medium transition-colors ${isActive ? 'text-white' : 'text-white/30'}`}>
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-md bg-white/5 flex items-center justify-center text-primary font-bold text-sm">
+                                      {(() => {
+                                        const name = item.VA_Name || item.VCP_Name || '';
+                                        const parts = name.split(' ').filter(Boolean);
+                                        if (parts.length === 0) return '--';
+                                        if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+                                        return (parts[0][0] + parts[1][0]).toUpperCase();
+                                      })()}
+                                    </div>
+                                    <div className="leading-tight">
+                                      <div className={`${isActive ? 'text-white' : 'text-white/30'} font-medium text-sm`}>{item.VA_Name || item.VCP_Name || '-'}</div>
+                                      <div className="text-gray-400 text-[11px] tracking-[0.2em] lowercase mt-0">{item.VA_Email || item.VCP_Email || (item.VA_Admin_id || item.VCP_Contact_person_id)}</div>
+                                    </div>
+                                  </div>
                                 </TableCell>
+
                                 <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>
-                                  {item.VA_Role || item.VCP_Department || '-'}
+                                  <div className="uppercase tracking-wider text-[13px] font-semibold">{item.VA_Role || item.VCP_Department || '-'}</div>
+                                  <div className="text-gray-400 text-[11px] mt-1">{item.VA_Created_Date ? item.VA_Created_Date.split(' ')[0] : (item.VCP_Phone || 'AUTHEN.SYSTEM')}</div>
                                 </TableCell>
-                                <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>
-                                  {item.VA_Created_Date ? item.VA_Created_Date.split(' ')[0] : (item.VCP_Phone || 'AUTHEN.SYSTEM')}
-                                </TableCell>
+
                                 <TableCell className="border-b-white/5">
                                   <button 
                                     onClick={() => handleToggleStatus(item, cat.id)}
                                     disabled={loading}
                                     title="Click to toggle status"
-                                    className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                                    className={`status-badge ${isActive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}
                                   >
                                     {isActive ? 'ACTIVE' : 'INACTIVE'}
                                   </button>
                                 </TableCell>
+
                                 <TableCell align="right" className="border-b-white/5">
-                                  <IconButton onClick={() => openModal('edit', item, cat.id)} size="small" className="text-white/40 hover:text-white">
-                                    <Edit size={16} />
-                                  </IconButton>
+                                  <div className="flex items-center justify-end gap-2">
+                                    <IconButton onClick={() => { /* delete placeholder */ }} size="small" className="compact-action bg-white/5 text-white/40 hover:bg-white/10">
+                                      <Trash size={14} />
+                                    </IconButton>
+                                    <IconButton onClick={() => openModal('edit', item, cat.id)} size="small" className="compact-action bg-white/5 text-white/40 hover:bg-white/10">
+                                      <ChevronRight size={16} />
+                                    </IconButton>
+                                  </div>
                                 </TableCell>
                               </TableRow>
                               );
@@ -351,6 +417,16 @@ const AllUsers = () => {
                 </>
               ) : (
                 <>
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Users size={12} /> Department</label>
+                    <input type="text" name="department" value={formData.department} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. Human Resources" />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Phone size={12} /> Phone</label>
+                    <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. +94 123 4567" />
+                  </div>
+
                   <div className="space-y-1">
                     <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2"><Shield size={12} /> Role</label>
                     <input required type="text" name="role" value={formData.role} onChange={handleInputChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors" placeholder="e.g. Admin, Security" />
