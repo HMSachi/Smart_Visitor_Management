@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Calendar, MapPin, Truck, Users, Package, FileText, Info } from 'lucide-react';
+import { User, Calendar, MapPin, Truck, Users, Package } from 'lucide-react';
 
 const formatDate = (value) => {
     if (!value) return 'N/A';
@@ -150,28 +150,4 @@ export const EquipmentManifest = ({ request }) => {
         </SectionWrapper>
     );
 };
-
-export const DocumentReview = ({ request }) => (
-    <SectionWrapper
-        icon={FileText}
-        title="Document Registry"
-        subtitle="Verified Identification Credentials"
-    >
-        <div className="flex items-center gap-6 p-6 rounded-2xl bg-primary/[0.02] border border-primary/10 group-hover:bg-primary/[0.04] transition-colors">
-            <div className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-primary shadow-inner">
-                <FileText size={28} />
-            </div>
-            <div className="flex-1">
-                <p className="text-[12px] font-medium text-white uppercase tracking-widest mb-1">{request?.uploadedFile || 'PENDING_UPLOAD.PDF'}</p>
-                <div className="flex items-center gap-2">
-                    <Info size={10} className="text-primary" />
-                    <p className="text-[12px] font-medium text-gray-300 uppercase tracking-widest opacity-80">Primary Identity Documentation Secured</p>
-                </div>
-            </div>
-            <button className="px-5 py-2.5 bg-white/[0.05] border border-white/10 text-[13px] font-medium text-white uppercase tracking-widest rounded-xl hover:bg-primary hover:border-primary transition-all">
-                Analyze
-            </button>
-        </div>
-    </SectionWrapper>
-);
 

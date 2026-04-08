@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { VisitorIdentification, VisitParameters, VehicleConfiguration, GroupMembers, EquipmentManifest, DocumentReview } from './ReviewSections';
+import { VisitorIdentification, VisitParameters, VehicleConfiguration, GroupMembers, EquipmentManifest } from './ReviewSections';
 import ReviewActions from './ReviewActions';
 import RejectionModal from './RejectionModal';
 import ApprovalModal from './ApprovalModal';
@@ -160,7 +160,6 @@ const RequestReviewMain = () => {
                     <VehicleConfiguration request={requestData} />
                     <GroupMembers request={requestData} />
                     <EquipmentManifest request={requestData} />
-                    <DocumentReview request={requestData} />
                 </div>
 
                 <div className="pt-6">
