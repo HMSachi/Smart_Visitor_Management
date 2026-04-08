@@ -5,7 +5,10 @@ import VisitorOverview from "./Step1/VisitorOverview";
 import VehicleDetails from "./Step1/VehicleDetails";
 import { createVisitorRequest } from "../../../services/visitorRequestService";
 import { GetAdministratorById } from "../../../actions/AdministratorAction";
-import { GetVisitRequestsByVisitor } from "../../../actions/VisitRequestAction";
+import {
+  GetVisitRequestsByVisitor,
+  UpdateVisitRequest,
+} from "../../../actions/VisitRequestAction";
 import VisitorService from "../../../services/VisitorService";
 import { GetAllVehicles } from "../../../actions/VehicleAction";
 import {
@@ -237,16 +240,43 @@ const Step1Main = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setStatus("submitting"));
-    setTimeout(() => {
-      const createdRequest = createVisitorRequest(formData);
-      if (createdRequest?.id) {
-        dispatch(setRequestRef(createdRequest.id));
+
+    try {
+      const latestRequest = visitRequestsByVis?.[0];
+
+      if (latestRequest?.VVR_Request_id) {
+        const payload = {
+          VVR_Request_id: latestRequest.VVR_Request_id,
+          VVR_Visit_Date:
+            formData.proposedVisitDate ||
+            formatDateForInput(latestRequest.VVR_Visit_Date),
+          VVR_Places_to_Visit:
+            formData.visitingArea || latestRequest.VVR_Places_to_Visit || "",
+          VVR_Purpose:
+            formData.purposeOfVisitation || latestRequest.VVR_Purpose || "",
+          VVR_Visitor_id:
+            visitorRecord?.VV_Visitor_id || latestRequest.VVR_Visitor_id,
+          VVR_Contact_person_id: latestRequest.VVR_Contact_person_id,
+        };
+
+        await dispatch(UpdateVisitRequest(payload));
+        dispatch(setRequestRef(String(latestRequest.VVR_Request_id)));
+      } else {
+        const createdRequest = createVisitorRequest(formData);
+        if (createdRequest?.id) {
+          dispatch(setRequestRef(createdRequest.id));
+        }
       }
+
       dispatch(setStatus("step1_pending"));
-    }, 2000);
+    } catch (error) {
+      console.error("Failed to submit Step 1 request:", error);
+      alert("Failed to submit request. Please try again.");
+      dispatch(setStatus(null));
+    }
   };
 
   if (status === "step1_pending") {

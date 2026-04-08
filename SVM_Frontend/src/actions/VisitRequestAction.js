@@ -84,14 +84,30 @@ export const UpdateVisitRequest = (requestData) => {
 
             if (isSuccess) {
                 dispatch({ type: UPDATE_VISIT_REQUEST_SUCCESS, payload: response.data });
-                setTimeout(() => dispatch(GetAllVisitRequests()), 1500);
+                setTimeout(() => {
+                    if (requestData?.VVR_Contact_person_id) {
+                        dispatch(GetVisitRequestsByCP(requestData.VVR_Contact_person_id));
+                    } else if (requestData?.VVR_Visitor_id) {
+                        dispatch(GetVisitRequestsByVisitor(requestData.VVR_Visitor_id));
+                    } else {
+                        dispatch(GetAllVisitRequests());
+                    }
+                }, 1500);
             } else {
                 throw new Error(response.data?.Message || "Failed to update visit request");
             }
         } catch (error) {
             if (error.message === "Network Error") {
                 dispatch({ type: UPDATE_VISIT_REQUEST_SUCCESS });
-                setTimeout(() => dispatch(GetAllVisitRequests()), 1500);
+                setTimeout(() => {
+                    if (requestData?.VVR_Contact_person_id) {
+                        dispatch(GetVisitRequestsByCP(requestData.VVR_Contact_person_id));
+                    } else if (requestData?.VVR_Visitor_id) {
+                        dispatch(GetVisitRequestsByVisitor(requestData.VVR_Visitor_id));
+                    } else {
+                        dispatch(GetAllVisitRequests());
+                    }
+                }, 1500);
             } else {
                 dispatch({ type: UPDATE_VISIT_REQUEST_FAILURE, payload: error.message });
             }
