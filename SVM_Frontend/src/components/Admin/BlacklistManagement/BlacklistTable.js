@@ -32,7 +32,7 @@ const BlacklistTable = () => {
   );
 
   return (
-    <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[40px] overflow-hidden flex flex-col shadow-3xl animate-fade-in-slow relative">
+    <div className="bg-[var(--color-bg-paper)] rounded-none overflow-hidden flex flex-col shadow-3xl animate-fade-in-slow relative">
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
       {/* Header Hub */}

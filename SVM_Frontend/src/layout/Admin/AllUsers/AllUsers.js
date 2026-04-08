@@ -14,7 +14,7 @@ import {
 } from '../../../actions/ContactPersonAction';
 import Header from '../../../components/Admin/Layout/Header';
 import { useThemeMode } from '../../../theme/ThemeModeContext';
-import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User, Users, ShieldAlert, UserCheck, Phone } from 'lucide-react';
+import { Shield, Mail, Calendar, Hash, CheckCircle2, AlertCircle, Search, Plus, Edit, RefreshCw, X, User, Users, ShieldAlert, UserCheck, Phone, Trash, ChevronRight } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
   const s = (status || '').toString().trim().toUpperCase();
@@ -286,24 +286,24 @@ const AllUsers = () => {
                     <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent ml-4"></div>
                   </div>
 
-                  <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
+                  <div className="bg-[var(--color-bg-paper)] rounded-none overflow-hidden shadow-2xl relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
-                    <TableContainer component={Paper} className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative">
+                    <TableContainer component={Paper} className="bg-[#0F0F10] rounded-none z-10 relative">
                       <Table sx={{ minWidth: 650 }} aria-label={`${cat.title} table`}>
                         <TableHead className="bg-black/40">
                           <TableRow>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">ID Node</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Personnel Entity</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">{cat.id === 'CONTACT' ? 'Department' : 'System Role'}</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">{cat.id === 'CONTACT' ? 'Phone Connection' : 'Authentication Origin'}</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">Status</TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5" align="right">Actions</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">ID Node</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">Personnel Entity</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">{cat.id === 'CONTACT' ? 'Department' : 'System Role'}</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">{cat.id === 'CONTACT' ? 'Phone Connection' : 'Authentication Origin'}</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]">Status</TableCell>
+                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px]" align="right">Actions</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {cat.data.length === 0 ? (
                             <TableRow>
-                              <TableCell colSpan={6} align="center" className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5">
+                              <TableCell colSpan={6} align="center" className="py-12 text-white/40 uppercase tracking-widest text-sm">
                                 No {cat.title.toLowerCase()} configured in the system
                               </TableCell>
                             </TableRow>
@@ -313,38 +313,55 @@ const AllUsers = () => {
 
                               return (
                               <TableRow key={item.VA_Admin_id || item.VCP_Contact_person_id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: 'rgba(255,255,255,0.02)' } }}>
-                                <TableCell className="text-white/70 font-medium border-b-white/5">
+                                <TableCell className="text-white/70 font-medium">
                                   <div className="flex items-center gap-2">
                                     <Hash size={12} className="text-primary/40" />
                                     <span>{item.VA_Admin_id || item.VCP_Contact_person_id}</span>
                                   </div>
                                 </TableCell>
-                                <TableCell className={`font-medium border-b-white/5 transition-colors ${isActive ? 'text-white' : 'text-white/30 line-through'}`}>
-                                  {item.VA_Name || item.VCP_Name || '-'}
-                                  <p className="text-gray-400 text-[10px] tracking-[0.1em] lowercase mt-1 opacity-70">
-                                    {item.VA_Email || item.VCP_Email}
-                                  </p>
+                                <TableCell className={`font-medium transition-colors ${isActive ? 'text-white' : 'text-white/30'}`}>
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-md bg-white/5 flex items-center justify-center text-primary font-bold text-sm">
+                                      {(() => {
+                                        const name = item.VA_Name || item.VCP_Name || '';
+                                        const parts = name.split(' ').filter(Boolean);
+                                        if (parts.length === 0) return '--';
+                                        if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+                                        return (parts[0][0] + parts[1][0]).toUpperCase();
+                                      })()}
+                                    </div>
+                                    <div className="leading-tight">
+                                      <div className={`${isActive ? 'text-white' : 'text-white/30'} font-medium text-sm`}>{item.VA_Name || item.VCP_Name || '-'}</div>
+                                      <div className="text-gray-400 text-[11px] tracking-[0.2em] lowercase mt-0">{item.VA_Email || item.VCP_Email || (item.VA_Admin_id || item.VCP_Contact_person_id)}</div>
+                                    </div>
+                                  </div>
                                 </TableCell>
+
                                 <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>
-                                  {item.VA_Role || item.VCP_Department || '-'}
+                                  <div className="uppercase tracking-wider text-[13px] font-semibold">{item.VA_Role || item.VCP_Department || '-'}</div>
+                                  <div className="text-gray-400 text-[11px] mt-1">{item.VA_Created_Date ? item.VA_Created_Date.split(' ')[0] : (item.VCP_Phone || 'AUTHEN.SYSTEM')}</div>
                                 </TableCell>
-                                <TableCell className={`border-b-white/5 transition-colors ${isActive ? 'text-white/70' : 'text-white/20'}`}>
-                                  {item.VA_Created_Date ? item.VA_Created_Date.split(' ')[0] : (item.VCP_Phone || 'AUTHEN.SYSTEM')}
-                                </TableCell>
+
                                 <TableCell className="border-b-white/5">
                                   <button 
                                     onClick={() => handleToggleStatus(item, cat.id)}
                                     disabled={loading}
                                     title="Click to toggle status"
-                                    className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                                    className={`status-badge ${isActive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}
                                   >
                                     {isActive ? 'ACTIVE' : 'INACTIVE'}
                                   </button>
                                 </TableCell>
+
                                 <TableCell align="right" className="border-b-white/5">
-                                  <IconButton onClick={() => openModal('edit', item, cat.id)} size="small" className="text-white/40 hover:text-white">
-                                    <Edit size={16} />
-                                  </IconButton>
+                                  <div className="flex items-center justify-end gap-2">
+                                    <IconButton onClick={() => { /* delete placeholder */ }} size="small" className="compact-action bg-white/5 text-white/40 hover:bg-white/10">
+                                      <Trash size={14} />
+                                    </IconButton>
+                                    <IconButton onClick={() => openModal('edit', item, cat.id)} size="small" className="compact-action bg-white/5 text-white/40 hover:bg-white/10">
+                                      <ChevronRight size={16} />
+                                    </IconButton>
+                                  </div>
                                 </TableCell>
                               </TableRow>
                               );

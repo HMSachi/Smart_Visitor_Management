@@ -351,3 +351,77 @@ code {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* --- Project-wide compact UI overrides --- */
+/* Make buttons smaller and remove heavy border radius as requested */
+button, .MuiButton-root, .MuiIconButton-root {
+  border-radius: 4px !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+}
+
+/* Compact icon buttons */
+.MuiIconButton-root {
+  padding: 6px !important;
+}
+
+/* Make MUI table cells more compact */
+.MuiTableCell-root {
+  padding: 10px 12px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.03) !important;
+}
+
+/* Smaller header labels */
+.MuiTableHead-root .MuiTableCell-root {
+  padding: 8px 12px !important;
+  font-size: 11px !important;
+}
+
+/* Compact action button inside table */
+table button, table .compact-action {
+  padding: 6px 8px !important;
+  font-size: 11px !important;
+}
+
+/* Responsive: convert table rows into stacked cards on narrow screens */
+@media (max-width: 880px) {
+  .MuiTableContainer-root, .MuiTable-root {
+    display: block !important;
+  }
+  .MuiTableHead-root {
+    display: none !important;
+  }
+  .MuiTableBody-root .MuiTableRow-root {
+    display: block !important;
+    margin-bottom: 12px !important;
+    background: var(--color-bg-paper) !important;
+    border-radius: 8px !important;
+    padding: 8px !important;
+  }
+  .MuiTableCell-root {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 8px 12px !important;
+  }
+  .MuiTableCell-root p, .MuiTableCell-root span {
+    white-space: normal !important;
+  }
+}
+
+/* Reduce oversized rounded classes used across the app for buttons and panels */
+.rounded-xl, .rounded-2xl, .rounded-3xl, .rounded-[32px] {
+  border-radius: 6px !important;
+}
+
+/* Tighter modal controls */
+.fixed .rounded-3xl {
+  border-radius: 10px !important;
+}
+
+/* Make small badges / status compact */
+.status-badge, .px-3.py-1 {
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  font-size: 11px !important;
+}
