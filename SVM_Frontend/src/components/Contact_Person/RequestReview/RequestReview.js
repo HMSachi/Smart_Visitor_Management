@@ -7,6 +7,8 @@ import RejectionModal from './RejectionModal';
 import ApprovalModal from './ApprovalModal';
 import { ArrowLeft } from 'lucide-react';
 import { ApproveVisitRequest, GetVisitRequestById, GetVisitRequestsByCP, UpdateVisitRequest } from '../../../actions/VisitRequestAction';
+import VisitorService from '../../../services/VisitorService';
+import VehicleService from '../../../services/VehicleService';
 
 const normalizeStatus = (status) => {
     const s = (status || '').toString().trim().toUpperCase();
@@ -16,26 +18,28 @@ const normalizeStatus = (status) => {
     return 'PENDING';
 };
 
-const toReviewModel = (request) => {
+const toReviewModel = (request, visitorRecord, vehicleRecord) => {
     if (!request) return null;
+
+    const visitor = visitorRecord || request;
+    const vehicle = vehicleRecord || request;
 
     return {
         id: request.VVR_Request_id,
         status: normalizeStatus(request.VVR_Status),
-        fullName: request.VV_Name || request.VVR_Visitor_Name || `Visitor ${request.VVR_Visitor_id || ''}`,
-        nic: request.VV_NIC_Passport_NO || 'N/A',
-        contact: request.VV_Phone || 'N/A',
-        email: request.VV_Email || 'N/A',
-        visitDate: request.VVR_Visit_Date,
-        purpose: request.VVR_Purpose,
-        purposeOther: '',
-        isCompanyRelated: false,
+        fullName: visitor?.VV_Name || request.VVR_Visitor_Name || `Visitor ${request.VVR_Visitor_id || ''}`,
+        nic: visitor?.VV_NIC_Passport_NO || 'N/A',
+        phoneNumber: visitor?.VV_Phone || 'N/A',
+        emailAddress: visitor?.VV_Email || 'N/A',
+        representingCompany: visitor?.VV_Company || 'N/A',
+        visitorClassification: visitor?.VV_Visitor_Type || 'N/A',
+        proposedVisitDate: request.VVR_Visit_Date || '',
+        purposeOfVisitation: request.VVR_Purpose || 'N/A',
+        visitingArea: request.VVR_Places_to_Visit || 'N/A',
+        plateNumber: vehicle?.VV_Vehicle_Number || '',
+        vehicleType: vehicle?.VV_Vehicle_Type || '',
         additionalVisitors: [],
-        selectedAreas: request.VVR_Places_to_Visit ? [request.VVR_Places_to_Visit] : [],
-        vehicleNumber: request.VV_Vehicle_Number || '',
-        vehicleType: request.VV_Vehicle_Type || '',
         equipment: [],
-        uploadedFile: '',
     };
 };
 
@@ -44,9 +48,12 @@ const RequestReviewMain = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const selectedId = location.state?.requestId;
+    const selectedRequestData = location.state?.requestData;
 
     const { visitRequestsByCP, visitRequests } = useSelector((state) => state.visitRequestsState);
     const [requestData, setRequestData] = useState(null);
+    const [visitorRecord, setVisitorRecord] = useState(null);
+    const [vehicleRecord, setVehicleRecord] = useState(null);
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectionReason, setRejectionReason] = useState('');
     const [rejectionComment, setRejectionComment] = useState('');
@@ -59,6 +66,7 @@ const RequestReviewMain = () => {
     }, [dispatch, selectedId]);
 
     const apiRequest = useMemo(() => {
+        if (selectedRequestData) return selectedRequestData;
         if (!selectedId) return null;
 
         const fromCpList = (visitRequestsByCP || []).find(
@@ -71,11 +79,58 @@ const RequestReviewMain = () => {
             : null;
 
         return fromById || null;
-    }, [selectedId, visitRequestsByCP, visitRequests]);
+    }, [selectedId, selectedRequestData, visitRequestsByCP, visitRequests]);
 
     useEffect(() => {
-        setRequestData(toReviewModel(apiRequest));
+        let cancelled = false;
+
+        const loadRelatedRecords = async () => {
+            if (!apiRequest) {
+                setVisitorRecord(null);
+                setVehicleRecord(null);
+                return;
+            }
+
+            try {
+                if (apiRequest?.VVR_Visitor_id) {
+                    const visitorResponse = await VisitorService.GetVisitorById(apiRequest.VVR_Visitor_id);
+                    const visitorPayload = visitorResponse?.data?.ResultSet || visitorResponse?.data || null;
+                    const visitor = Array.isArray(visitorPayload) ? visitorPayload[0] : visitorPayload;
+                    if (!cancelled) {
+                        setVisitorRecord(visitor || null);
+                    }
+                } else if (!cancelled) {
+                    setVisitorRecord(null);
+                }
+
+                const vehicleResponse = await VehicleService.GetAllVehicles();
+                const allVehicles = vehicleResponse?.data?.ResultSet || vehicleResponse?.data || [];
+                const matchedVehicle = (Array.isArray(allVehicles) ? allVehicles : []).find(
+                    (item) => String(item?.VVR_Request_id) === String(apiRequest?.VVR_Request_id),
+                );
+
+                if (!cancelled) {
+                    setVehicleRecord(matchedVehicle || null);
+                }
+            } catch (error) {
+                if (!cancelled) {
+                    setVisitorRecord(null);
+                    setVehicleRecord(null);
+                }
+                console.error('Error loading related request review data:', error);
+            }
+        };
+
+        loadRelatedRecords();
+
+        return () => {
+            cancelled = true;
+        };
     }, [apiRequest]);
+
+    useEffect(() => {
+        setRequestData(toReviewModel(apiRequest, visitorRecord, vehicleRecord));
+    }, [apiRequest, visitorRecord, vehicleRecord]);
 
     const confirmApprove = async () => {
         if (!apiRequest?.VVR_Request_id) {

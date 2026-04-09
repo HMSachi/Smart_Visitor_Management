@@ -82,6 +82,7 @@ const RequestsInboxMain = () => {
                 areas: [req?.VVR_Places_to_Visit || 'N/A'],
                 status: mapStatus(req?.VVR_Status),
                 members: [],
+                rawRequest: req,
             };
         });
     }, [visitRequestsByCP, user]);
@@ -104,10 +105,14 @@ const RequestsInboxMain = () => {
         dispatch(setStatusFilter(status));
     };
 
-    const handleReview = (requestId) => {
+    const handleReview = (requestItem) => {
+        const requestId = requestItem?.id;
         dispatch(setSelectedRequest(requestId));
         navigate('/contact_person/request-review', {
-            state: { requestId },
+            state: {
+                requestId,
+                requestData: requestItem?.rawRequest || null,
+            },
         });
     };
 
