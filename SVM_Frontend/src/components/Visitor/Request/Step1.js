@@ -6,11 +6,12 @@ import VehicleDetails from "./Step1/VehicleDetails";
 import { createVisitorRequest } from "../../../services/visitorRequestService";
 import { GetAdministratorById } from "../../../actions/AdministratorAction";
 import {
+  AddVisitRequest,
   GetVisitRequestsByVisitor,
   UpdateVisitRequest,
 } from "../../../actions/VisitRequestAction";
 import VisitorService from "../../../services/VisitorService";
-import { GetAllVehicles } from "../../../actions/VehicleAction";
+import { AddVehicle, GetAllVehicles, UpdateVehicle } from "../../../actions/VehicleAction";
 import {
   updateField,
   setStatus,
@@ -263,11 +264,62 @@ const Step1Main = () => {
         };
 
         await dispatch(UpdateVisitRequest(payload));
+        const matchedVehicle = (vehicles || []).find(
+          (v) => String(v?.VVR_Request_id) === String(latestRequest.VVR_Request_id),
+        );
+
+        if (formData.plateNumber || formData.vehicleType) {
+          if (matchedVehicle?.VV_Vehicle_id) {
+            await dispatch(
+              UpdateVehicle({
+                VV_Vehicle_id: matchedVehicle.VV_Vehicle_id,
+                VV_Vehicle_Number: formData.plateNumber || matchedVehicle.VV_Vehicle_Number || "N/A",
+              }),
+            );
+          } else {
+            await dispatch(
+              AddVehicle({
+                VV_Vehicle_Type: formData.vehicleType || "N/A",
+                VV_Vehicle_Number: formData.plateNumber || "N/A",
+                VVR_Request_id: latestRequest.VVR_Request_id,
+              }),
+            );
+          }
+        }
+
         dispatch(setRequestRef(String(latestRequest.VVR_Request_id)));
       } else {
-        const createdRequest = createVisitorRequest(formData);
-        if (createdRequest?.id) {
-          dispatch(setRequestRef(createdRequest.id));
+        const createPayload = {
+          VVR_Visitor_id: visitorRecord?.VV_Visitor_id,
+          VVR_Contact_person_id: visitorRecord?.VV_Contact_person_id,
+          VVR_Visit_Date: formData.proposedVisitDate,
+          VVR_Places_to_Visit: formData.visitingArea,
+          VVR_Purpose: formData.purposeOfVisitation,
+        };
+
+        const createResponse = await dispatch(AddVisitRequest(createPayload));
+        const createdRequestId =
+          createResponse?.ResultSet?.[0]?.VVR_Request_id ||
+          createResponse?.VVR_Request_id ||
+          null;
+
+        if (createdRequestId && (formData.plateNumber || formData.vehicleType)) {
+          await dispatch(
+            AddVehicle({
+              VV_Vehicle_Type: formData.vehicleType || "N/A",
+              VV_Vehicle_Number: formData.plateNumber || "N/A",
+              VVR_Request_id: createdRequestId,
+            }),
+          );
+        }
+
+        if (createdRequestId) {
+          dispatch(setRequestRef(String(createdRequestId)));
+        } else {
+          const fallbackRequest = createVisitorRequest(formData);
+          if (fallbackRequest?.id) {
+            dispatch(setRequestRef(fallbackRequest.id));
+          }
         }
       }
 

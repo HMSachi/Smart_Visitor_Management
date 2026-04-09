@@ -52,14 +52,16 @@ const Field = ({ label, value, icon: Icon }) => (
 export const VisitorIdentification = ({ request }) => (
     <SectionWrapper
         icon={User}
-        title="Personnel Identity"
-        subtitle="Primary Visitor Authentication Data"
+        title="Visitor Information"
+        subtitle="User Registration Data"
     >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Field label="Full Legal Name" value={request?.fullName || 'N/A'} />
-            <Field label="NIC / ID Registry" value={request?.nic || 'N/A'} />
-            <Field label="Communication Line" value={request?.contact || 'N/A'} />
-            <Field label="Electronic Mail" value={request?.email || 'N/A'} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Field label="Full Name" value={request?.fullName || 'N/A'} />
+            <Field label="NIC / Passport No" value={request?.nic || 'N/A'} />
+            <Field label="Email Address" value={request?.emailAddress || 'N/A'} />
+            <Field label="Phone Number" value={request?.phoneNumber || 'N/A'} />
+            <Field label="Representing Company" value={request?.representingCompany || 'N/A'} />
+            <Field label="Visitor Classification" value={request?.visitorClassification || 'N/A'} />
         </div>
     </SectionWrapper>
 );
@@ -67,43 +69,28 @@ export const VisitorIdentification = ({ request }) => (
 export const VisitParameters = ({ request }) => (
     <SectionWrapper
         icon={Calendar}
-        title="Mission Protocol"
-        subtitle="Schedule and Operational Parameters"
+        title="Visit Details"
+        subtitle="Request Information"
     >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Field label="Authorized Date" value={formatDate(request?.visitDate)} />
-            <Field label="Primary Purpose" value={readablePurpose(request?.purpose, request?.purposeOther)} />
-            <Field label="Corporate Relation" value={request?.isCompanyRelated ? 'VERIFIED' : 'EXTERNAL'} />
-            <Field label="Group Magnitude" value={`${(request?.additionalVisitors?.length || 0) + 1} PERSONNEL`} />
-        </div>
-
-        <div className="space-y-4">
-            <div className="flex items-center gap-2 opacity-80">
-                <MapPin size={12} className="text-primary" />
-                <span className="text-[12px] font-medium uppercase tracking-widest text-gray-300">Authorized Access Zones</span>
-            </div>
-            <div className="flex flex-wrap gap-3">
-                {(request?.selectedAreas?.length ? request.selectedAreas : ['N/A']).map((area) => (
-                    <div key={area} className="px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl text-white text-[13px] font-medium uppercase tracking-widest hover:border-primary transition-all shadow-lg active:scale-95">
-                        {area}
-                    </div>
-                ))}
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Field label="Proposed Visit Date" value={formatDate(request?.proposedVisitDate)} />
+            <Field label="Purpose of Visitation" value={readablePurpose(request?.purposeOfVisitation)} />
+            <Field label="Visiting Area" value={request?.visitingArea || 'N/A'} icon={MapPin} />
         </div>
     </SectionWrapper>
 );
 
 export const VehicleConfiguration = ({ request }) => {
-    if (!request?.vehicleNumber) return null;
+    if (!request?.plateNumber && !request?.vehicleType) return null;
     return (
         <SectionWrapper
             icon={Truck}
-            title="Logistics Profile"
-            subtitle="Vehicle and Transport Configuration"
+            title="Vehicle Details"
+            subtitle="Registration Transport Data"
         >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Field label="Registry Number" value={request?.vehicleNumber || 'N/A'} />
-                <Field label="Transport Type" value={request?.vehicleType || 'N/A'} />
+                <Field label="Vehicle Type" value={request?.vehicleType || 'N/A'} />
+                <Field label="Plate Number" value={request?.plateNumber || 'N/A'} />
             </div>
         </SectionWrapper>
     );

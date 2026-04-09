@@ -125,7 +125,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-right">
                   <span className="text-[14px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Actions</span>
                   <button
-                    onClick={() => onReview(visitor.id)}
+                    onClick={() => onReview(visitor)}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/5 text-white text-[13px] font-medium uppercase tracking-widest hover:bg-white hover:text-black hover:border-white transition-all group/btn shadow-lg"
                   >
                     <Eye size={14} className="group-hover/btn:scale-110 transition-transform" />
