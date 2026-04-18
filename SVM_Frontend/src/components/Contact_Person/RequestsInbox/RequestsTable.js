@@ -8,6 +8,7 @@ const StatusBadge = ({ status }) => {
     'Rejected': 'text-primary bg-primary/10 border-primary/20',
     'Checked In': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
     'Checked Out': 'text-gray-300/90 bg-white/5 border-white/10',
+    'Accepted': 'text-purple-500 bg-purple-500/10 border-purple-500/20',
   };
 
   return (

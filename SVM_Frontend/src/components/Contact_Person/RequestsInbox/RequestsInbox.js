@@ -11,6 +11,7 @@ const mapStatus = (status) => {
     if (normalized === 'A' || normalized === 'APPROVED') return 'Approved';
     if (normalized === 'R' || normalized === 'REJECTED') return 'Rejected';
     if (normalized === 'C' || normalized === 'CHECKED OUT' || normalized === 'CHECKED_OUT') return 'Checked Out';
+    if (normalized === 'ACCEPTED') return 'Accepted and Sent to Contact Person';
     return 'Pending';
 };
 
@@ -25,7 +26,7 @@ const RequestsInboxMain = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [cpId, setCpId] = useState(null);
-    
+
     const { requests, searchTerm, statusFilter } = useSelector(state => state.contactPortal);
     const { visitRequestsByCP, isLoading, error } = useSelector((state) => state.visitRequestsState);
     const user = useSelector((state) => state.login.user);
@@ -91,8 +92,8 @@ const RequestsInboxMain = () => {
 
     const filteredRequests = sourceRequests.filter(req => {
         const matchesSearch = req.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             req.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             req.id.toLowerCase().includes(searchTerm.toLowerCase());
+            req.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            req.id.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'All' || req.status === statusFilter;
         return matchesSearch && matchesStatus;
     });
@@ -120,13 +121,13 @@ const RequestsInboxMain = () => {
         <div className="p-4 sm:p-8 animate-fade-in space-y-4">
             {isLoading && <p className="text-xs tracking-[0.2em] text-gray-300 uppercase">Loading requests...</p>}
             {!!error && <p className="text-xs tracking-[0.2em] text-primary uppercase">{error}</p>}
-            <RequestsTable 
-                requests={filteredRequests} 
-                searchTerm={searchTerm} 
-                setSearchTerm={handleSearchChange} 
+            <RequestsTable
+                requests={filteredRequests}
+                searchTerm={searchTerm}
+                setSearchTerm={handleSearchChange}
                 statusFilter={statusFilter}
                 setStatusFilter={handleFilterChange}
-                onReview={handleReview} 
+                onReview={handleReview}
             />
         </div>
     );

@@ -9,6 +9,8 @@ import {
   TableRow,
   Paper,
   IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   AddVisitRequest,
@@ -39,6 +41,7 @@ import {
   Filter,
   ChevronDown,
   Car,
+  MoreVertical,
 } from "lucide-react";
 
 const StatusBadge = ({ status }) => {
@@ -56,6 +59,18 @@ const StatusBadge = ({ status }) => {
       return (
         <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
           <XCircle size={12} /> Rejected
+        </div>
+      );
+    case "ACCEPTED":
+      return (
+        <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
+          <Clock size={12} /> Accepted by Visitor
+        </div>
+      );
+    case "SENT":
+      return (
+        <div className="px-3 py-1 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
+          <Send size={12} /> Sent to Admin for Approve
         </div>
       );
     case "P":
@@ -93,6 +108,51 @@ const VisitRequests = () => {
     VV_Vehicle_Type: "",
     VV_Vehicle_Number: "",
   });
+
+  // Action Menu State
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedReq, setSelectedReq] = useState(null);
+
+  const handleMenuOpen = (event, req) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedReq(req);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedReq(null);
+  };
+
+  const handleDisableRequest = async () => {
+    if (selectedReq) {
+      const payload = {
+        VVR_Request_id: selectedReq.VVR_Request_id,
+        VVR_Visit_Date: selectedReq.VVR_Visit_Date ? selectedReq.VVR_Visit_Date.split("T")[0] : "",
+        VVR_Places_to_Visit: selectedReq.VVR_Places_to_Visit || "",
+        VVR_Purpose: selectedReq.VVR_Purpose || "",
+        VVR_Status: "R",
+        VVR_Contact_person_id: cpId
+      };
+      await dispatch(UpdateVisitRequest(payload));
+    }
+    handleMenuClose();
+  };
+
+  const handleSendToAdmin = async () => {
+    if (selectedReq) {
+      const payload = {
+        VVR_Request_id: selectedReq.VVR_Request_id,
+        VVR_Visit_Date: selectedReq.VVR_Visit_Date ? selectedReq.VVR_Visit_Date.split("T")[0] : "",
+        VVR_Places_to_Visit: selectedReq.VVR_Places_to_Visit || "",
+        VVR_Purpose: selectedReq.VVR_Purpose || "",
+        VVR_Status: "SENT",
+        VVR_Contact_person_id: cpId
+      };
+      await dispatch(UpdateVisitRequest(payload));
+      alert("Request protocol initiated. Sent to Cloud Admin for final approval.");
+    }
+    handleMenuClose();
+  };
 
   useEffect(() => {
     const loadContactPersonId = async () => {
@@ -209,10 +269,10 @@ const VisitRequests = () => {
 
   const filteredRequests = visitRequestsByCP
     ? visitRequestsByCP.filter(
-        (req) =>
-          String(req.VVR_Request_id).includes(searchTerm) ||
-          req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+      (req) =>
+        String(req.VVR_Request_id).includes(searchTerm) ||
+        req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
     : [];
 
   const activeVisitors = (visitorsByCP || []).filter((visitor) => {
@@ -361,18 +421,17 @@ const VisitRequests = () => {
                                 size="small"
                                 onClick={() => openModal("edit", req)}
                                 className="text-blue-400 hover:bg-blue-400/10"
+                                title="Edit Request"
                               >
                                 <Edit size={16} />
                               </IconButton>
                               <IconButton
                                 size="small"
-                                onClick={() =>
-                                  handleAction(req.VVR_Request_id, "C")
-                                }
-                                title="Cancel Request"
-                                className="text-primary hover:bg-primary/10"
+                                onClick={(e) => handleMenuOpen(e, req)}
+                                className="text-gray-400 hover:bg-white/10"
+                                title="More Actions"
                               >
-                                <X size={16} />
+                                <MoreVertical size={16} />
                               </IconButton>
                             </div>
                           </TableCell>
@@ -439,13 +498,13 @@ const VisitRequests = () => {
                       >
                         <option value="">SELECT AUTHORIZED VISITOR</option>
                         {activeVisitors.map((v) => (
-                            <option
-                              key={v.VV_Visitor_id}
-                              value={v.VV_Visitor_id}
-                            >
-                              {v.VV_Name} (ID: {v.VV_Visitor_id})
-                            </option>
-                          ))}
+                          <option
+                            key={v.VV_Visitor_id}
+                            value={v.VV_Visitor_id}
+                          >
+                            {v.VV_Name} (ID: {v.VV_Visitor_id})
+                          </option>
+                        ))}
                       </select>
                     </div>
                   )}
@@ -557,6 +616,36 @@ const VisitRequests = () => {
             </div>
           </div>
         )}
+
+        {/* Actions Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          PaperProps={{
+            className: "bg-[#18181B] border border-white/10 text-white shadow-2xl min-w-[200px] overflow-hidden rounded-xl py-1"
+          }}
+          MenuListProps={{
+            className: "py-0"
+          }}
+        >
+          <MenuItem
+            onClick={handleDisableRequest}
+            className="px-4 py-3 text-[12px] uppercase font-bold tracking-widest text-primary hover:bg-primary/5 transition-colors border-b border-white/5"
+          >
+            <div className="flex items-center gap-3">
+              <XCircle size={14} /> Disable Visit Request
+            </div>
+          </MenuItem>
+          <MenuItem
+            onClick={handleSendToAdmin}
+            className="px-4 py-3 text-[12px] uppercase font-bold tracking-widest text-green-500 hover:bg-green-500/5 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <CheckCircle2 size={14} /> Send to Admin for Approve
+            </div>
+          </MenuItem>
+        </Menu>
       </div>
     </div>
   );
