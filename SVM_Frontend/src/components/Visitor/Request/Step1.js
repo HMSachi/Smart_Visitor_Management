@@ -340,8 +340,6 @@ const Step1Main = () => {
             dispatch(GetVisitRequestsByVisitor(visitorRecord.VV_Visitor_id));
           }
         } else {
-
-        } else {
           const fallbackRequest = createVisitorRequest(formData);
           if (fallbackRequest?.id) {
             dispatch(setRequestRef(fallbackRequest.id));

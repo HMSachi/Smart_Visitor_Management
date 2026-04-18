@@ -11,7 +11,8 @@ const mapStatus = (status) => {
     if (normalized === 'A' || normalized === 'APPROVED') return 'Approved';
     if (normalized === 'R' || normalized === 'REJECTED') return 'Rejected';
     if (normalized === 'C' || normalized === 'CHECKED OUT' || normalized === 'CHECKED_OUT') return 'Checked Out';
-    if (normalized === 'ACCEPTED') return 'Accepted and Sent to Contact Person';
+    if (normalized === 'ACCEPTED') return 'Accepted';
+    if (normalized === 'SENT' || normalized === 'SENT_TO_ADMIN') return 'Sent to Admin';
     return 'Pending';
 };
 

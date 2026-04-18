@@ -143,6 +143,7 @@ const RequestReviewMain = () => {
             VVR_Visit_Date: apiRequest.VVR_Visit_Date,
             VVR_Places_to_Visit: apiRequest.VVR_Places_to_Visit,
             VVR_Purpose: apiRequest.VVR_Purpose,
+            VVR_Status: 'SENT',
             VVR_Contact_person_id: apiRequest.VVR_Contact_person_id,
             approvalComment,
         }));

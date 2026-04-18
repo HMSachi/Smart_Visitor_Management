@@ -9,6 +9,7 @@ const StatusBadge = ({ status }) => {
     'Checked In': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
     'Checked Out': 'text-gray-300/90 bg-white/5 border-white/10',
     'Accepted': 'text-purple-500 bg-purple-500/10 border-purple-500/20',
+    'Sent to Admin': 'text-orange-500 bg-orange-500/10 border-orange-500/20',
   };
 
   return (
