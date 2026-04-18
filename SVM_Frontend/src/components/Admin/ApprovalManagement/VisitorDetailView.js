@@ -87,27 +87,31 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
         </button>
 
         <div className="flex gap-4 w-full lg:w-auto relative z-10">
-          <button
-            onClick={() => onAction(visitor, 'Approve')}
-            className="flex-1 lg:flex-none px-6 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-xs font-medium tracking-widest uppercase rounded-xl transition-all shadow-[0_5px_15px_rgba(0,177,79,0.2)] flex items-center justify-center gap-2 group"
-          >
-            <CheckCircle2 size={16} className="group-hover:scale-110 transition-transform" />
-            Authorize Access
-          </button>
-          <button
-            onClick={() => onAction(visitor, 'Reject')}
-            className="flex-1 lg:flex-none px-6 py-2.5 bg-primary hover:bg-[#A00D25] text-white text-xs font-medium tracking-widest uppercase rounded-xl transition-all shadow-[0_5px_15px_rgba(200,16,46,0.2)] flex items-center justify-center gap-2 group"
-          >
-            <AlertCircle size={16} className="group-hover:scale-110 transition-transform" />
-            Protocol Denial
-          </button>
+          {(visitor.status === "Pending" || visitor.status === "Sent to Admin") && (
+            <>
+              <button
+                onClick={() => onAction(visitor, 'Approve')}
+                className="flex-1 lg:flex-none px-6 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-xs font-medium tracking-widest uppercase rounded-xl transition-all shadow-[0_5px_15px_rgba(0,177,79,0.2)] flex items-center justify-center gap-2 group"
+              >
+                <CheckCircle2 size={16} className="group-hover:scale-110 transition-transform" />
+                Authorize Access
+              </button>
+              <button
+                onClick={() => onAction(visitor, 'Reject')}
+                className="flex-1 lg:flex-none px-6 py-2.5 bg-primary hover:bg-[#A00D25] text-white text-xs font-medium tracking-widest uppercase rounded-xl transition-all shadow-[0_5px_15px_rgba(200,16,46,0.2)] flex items-center justify-center gap-2 group"
+              >
+                <AlertCircle size={16} className="group-hover:scale-110 transition-transform" />
+                Protocol Denial
+              </button>
+            </>
+          )}
         </div>
       </div>
 
       {/* Visitor Profile Matrix */}
       <div className="mb-20">
         <SectionHeader title="Personnel Profile Intelligence" icon={User} />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
           <Field label="Full Identity Name" value={visitor.name} icon={User} />
           <Field label="Auth Identifier (NIC)" value={visitor.nic} icon={Hash} />
           <Field label="Signal Protocol (Phone)" value={visitor.contact} icon={Phone} />
@@ -132,7 +136,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
             <div className="w-1 h-4 bg-primary rounded-full"></div>
             <p className="text-gray-300/90 text-[13px] font-medium uppercase tracking-widest">Infrastructure Zone Authorization</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6">
             {visitor.areas && visitor.areas.length > 0 ? visitor.areas.map((area, idx) => (
               <motion.div
                 key={idx}
@@ -154,7 +158,7 @@ const VisitorDetailView = ({ visitor, onBack, onAction }) => {
       {/* Logistics & Vehicle Registry */}
       <div className="mb-20">
         <SectionHeader title="Logistics & Vehicle Registry" icon={Car} />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <Field label="Transport Identifier" value={visitor.vehicle !== 'None' ? visitor.vehicle : 'NO_TRANSPORT_DECLARED'} icon={Car} />
           <Field label="Registry Type" value={visitor.vehicle !== 'None' ? 'CIVILIAN_TRANSPORT' : 'N/A'} icon={Hash} />
           <Field label="Zone Clearance" value={visitor.vehicle !== 'None' ? 'PERMITTED_ZONE_A' : 'NOT_APPLICABLE'} icon={Shield} />

@@ -14,7 +14,9 @@ import {
   GetVisitRequestsByVisitor,
   UpdateVisitRequest,
 } from "../../../actions/VisitRequestAction";
+import { GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
+import QRSuccessModal from "../../../components/Admin/ApprovalManagement/QRSuccessModal";
 import {
   Search,
   X,
@@ -28,6 +30,7 @@ import {
   Clock,
   Hash,
   AlertCircle,
+  QrCode,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -37,7 +40,7 @@ const StatusBadge = ({ status }) => {
     case "A":
     case "APPROVED":
       return (
-        <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
+        <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max shadow-[0_0_15px_rgba(34,197,94,0.1)]">
           <CheckCircle2 size={12} /> Approved
         </div>
       );
@@ -46,6 +49,12 @@ const StatusBadge = ({ status }) => {
       return (
         <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
           <XCircle size={12} /> Rejected
+        </div>
+      );
+    case "ACCEPTED":
+      return (
+        <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
+          <CheckCircle2 size={12} /> Accepted
         </div>
       );
     case "P":
@@ -64,14 +73,18 @@ const MyRequests = () => {
   const { visitRequestsByVis, isLoading, error } = useSelector(
     (state) => state.visitRequestsState,
   );
+  const { gatePasses } = useSelector((state) => state.gatePassState || { gatePasses: [] });
 
   // Extract Visitor ID from login session
   const user = useSelector((state) => state.login.user);
   const userEmail = user?.ResultSet?.[0]?.VA_Email;
   const [visitorId, setVisitorId] = useState(null);
+  const [visitorName, setVisitorName] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [approvedVisitorData, setApprovedVisitorData] = useState(null);
   const [formData, setFormData] = useState({
     VVR_Request_id: "",
     VVR_Visit_Date: "",
@@ -85,9 +98,6 @@ const MyRequests = () => {
         const response = await VisitorService.GetAllVisitors();
 
         const visitors = response?.data?.ResultSet || [];
-        console.log("All Visitors:", visitors);
-        console.log("Logged user email:", userEmail);
-
         const match = visitors.find(
           (v) =>
             v?.VV_Email?.trim().toLowerCase() ===
@@ -95,28 +105,43 @@ const MyRequests = () => {
         );
 
         if (match) {
-          console.log("Matched Visitor:", match);
           setVisitorId(match.VV_Visitor_id);
-        } else {
-          console.error("No visitor found for:", userEmail);
-          setVisitorId(null);
+          setVisitorName(match.VV_Name);
         }
       } catch (err) {
         console.error("Error loading visitor:", err);
-        setVisitorId(null);
       }
     };
 
     if (userEmail) {
       loadVisitorId();
     }
-  }, [userEmail]);
+    dispatch(GetAllGatePasses());
+  }, [userEmail, dispatch]);
 
   useEffect(() => {
     if (visitorId) {
       dispatch(GetVisitRequestsByVisitor(visitorId));
     }
   }, [dispatch, visitorId]);
+
+  const handleViewGatePass = (req) => {
+    setApprovedVisitorData({
+      id: req.VVR_Request_id,
+      name: visitorName || "Visitor",
+      raw: { VVR_Visitor_id: req.VVR_Visitor_id }
+    });
+    setShowQRModal(true);
+  };
+
+  const hasGatePass = (requestId) => {
+    if (!requestId) return false;
+    const list = Array.isArray(gatePasses) ? gatePasses : (gatePasses?.gatePasses || gatePasses?.ResultSet || []);
+    return list.some(gp => {
+      const gpRequestId = gp.VVR_Request_id || gp.VGP_Request_id || gp.vvr_Request_id || gp.vgp_Request_id;
+      return String(gpRequestId) === String(requestId);
+    });
+  };
 
   const openEditModal = (request) => {
     setFormData({
@@ -156,10 +181,10 @@ const MyRequests = () => {
 
   const filteredRequests = visitRequestsByVis
     ? visitRequestsByVis.filter(
-        (req) =>
-          String(req.VVR_Request_id).includes(searchTerm) ||
-          req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+      (req) =>
+        String(req.VVR_Request_id).includes(searchTerm) ||
+        req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
     : [];
 
   return (
@@ -281,7 +306,18 @@ const MyRequests = () => {
                           </p>
                         </TableCell>
                         <TableCell className="px-10 py-8 border-b-white/5">
-                          <StatusBadge status={req.VVR_Status} />
+                          <div className="flex flex-col gap-2">
+                            <StatusBadge status={req.VVR_Status} />
+                            {hasGatePass(req.VVR_Request_id) && (
+                              <button
+                                onClick={() => handleViewGatePass(req)}
+                                className="flex items-center gap-2 text-[10px] items-center justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"
+                              >
+                                <QrCode size={12} className="group-hover/gp:scale-110 transition-transform" />
+                                View Gate Pass
+                              </button>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell
                           className="px-10 py-8 border-b-white/5"
@@ -425,6 +461,12 @@ const MyRequests = () => {
           </motion.div>
         </div>
       )}
+      <QRSuccessModal
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
+        visitorData={approvedVisitorData}
+        gatePasses={gatePasses}
+      />
     </div>
   );
 };

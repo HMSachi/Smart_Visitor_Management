@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Navigate } from "react-router-dom";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 import VisitorOverview from "./Step1/VisitorOverview";
 import VehicleDetails from "./Step1/VehicleDetails";
@@ -9,6 +10,7 @@ import {
   AddVisitRequest,
   GetVisitRequestsByVisitor,
   UpdateVisitRequest,
+  ApproveVisitRequest
 } from "../../../actions/VisitRequestAction";
 import VisitorService from "../../../services/VisitorService";
 import { AddVehicle, GetAllVehicles, UpdateVehicle } from "../../../actions/VehicleAction";
@@ -19,6 +21,7 @@ import {
 } from "../../../reducers/visitorSlice";
 
 const Step1Main = () => {
+  const navigate = useNavigate();
   const formatDateForInput = (dateValue) => {
     if (!dateValue) return "";
 
@@ -39,7 +42,7 @@ const Step1Main = () => {
   const { status, requestRef } = formData;
   const user = useSelector((state) => state.login.user);
   const { administrators } = useSelector((state) => state.administrator);
-  const { visitRequestsByVis } = useSelector(
+  const { visitRequestsByVis, isLoading: isRequestsLoading } = useSelector(
     (state) => state.visitRequestsState,
   );
   const { vehicles } = useSelector((state) => state.vehicleState || {});
@@ -169,6 +172,14 @@ const Step1Main = () => {
       const latestRequest = visitRequestsByVis[0];
       console.log("Matched latestRequest:", latestRequest);
 
+      // Block access if already accepted
+      const normalizedStatus = (latestRequest.VVR_Status || "").toString().trim().toUpperCase();
+      if (normalizedStatus === "ACCEPTED" || normalizedStatus === "A" || normalizedStatus === "APPROVED") {
+        alert("This visit request has already been accepted and sent to the contact person.");
+        navigate("/home", { replace: true });
+        return;
+      }
+
       if (!formData.proposedVisitDate)
         dispatch(
           updateField({
@@ -261,9 +272,16 @@ const Step1Main = () => {
           VVR_Visitor_id:
             visitorRecord?.VV_Visitor_id || latestRequest.VVR_Visitor_id,
           VVR_Contact_person_id: latestRequest.VVR_Contact_person_id,
+          VVR_Status: "ACCEPTED",
         };
 
         await dispatch(UpdateVisitRequest(payload));
+
+        // Refresh local requests to ensure state is up to date
+        if (visitorRecord?.VV_Visitor_id) {
+          dispatch(GetVisitRequestsByVisitor(visitorRecord.VV_Visitor_id));
+        }
+
         const matchedVehicle = (vehicles || []).find(
           (v) => String(v?.VVR_Request_id) === String(latestRequest.VVR_Request_id),
         );
@@ -295,6 +313,7 @@ const Step1Main = () => {
           VVR_Visit_Date: formData.proposedVisitDate,
           VVR_Places_to_Visit: formData.visitingArea,
           VVR_Purpose: formData.purposeOfVisitation,
+          VVR_Status: "ACCEPTED",
         };
 
         const createResponse = await dispatch(AddVisitRequest(createPayload));
@@ -315,7 +334,13 @@ const Step1Main = () => {
 
         if (createdRequestId) {
           dispatch(setRequestRef(String(createdRequestId)));
+
+          // Refresh local requests
+          if (visitorRecord?.VV_Visitor_id) {
+            dispatch(GetVisitRequestsByVisitor(visitorRecord.VV_Visitor_id));
+          }
         } else {
+
           const fallbackRequest = createVisitorRequest(formData);
           if (fallbackRequest?.id) {
             dispatch(setRequestRef(fallbackRequest.id));
@@ -323,13 +348,29 @@ const Step1Main = () => {
         }
       }
 
-      dispatch(setStatus("step1_pending"));
+      navigate("/visitor/my-requests");
     } catch (error) {
       console.error("Failed to submit Step 1 request:", error);
       alert("Failed to submit request. Please try again.");
       dispatch(setStatus(null));
     }
   };
+
+  const latestRequest = visitRequestsByVis?.[0];
+  const normalizedStatus = (latestRequest?.VVR_Status || "").toString().trim().toUpperCase();
+  const isBlocked = ["ACCEPTED", "A", "APPROVED"].includes(normalizedStatus);
+
+  if (isRequestsLoading && !visitRequestsByVis.length) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (isBlocked && status !== "submitting") {
+    return null;
+  }
 
   if (status === "step1_pending") {
     return (

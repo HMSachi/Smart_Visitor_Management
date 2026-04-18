@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Check, X, Download, Search, Eye, ChevronUp, ChevronDown, User, Calendar, MapPin, Hash, Shield } from 'lucide-react';
+import { Check, X, Download, Search, Eye, ChevronUp, ChevronDown, User, Calendar, MapPin, Hash, Shield, QrCode } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const StatusBadge = ({ status }) => {
   const styles = {
     'Approved': 'border-green-500/20 text-green-500 bg-green-500/5',
+    'Accepted by Admin': 'border-green-500/20 text-green-500 bg-green-500/5',
     'Pending': 'border-primary/20 text-primary bg-primary/5',
+    'Sent to Admin': 'border-orange-500/20 text-orange-500 bg-orange-500/5',
+    'Accepted': 'border-purple-500/20 text-purple-500 bg-purple-500/5',
     'Rejected': 'border-white/10 text-gray-300 bg-white/5',
     'Checked In': 'border-blue-500/20 text-blue-500 bg-blue-500/5',
     'Checked Out': 'border-white/5 text-gray-300/80 bg-transparent',
@@ -13,13 +16,21 @@ const StatusBadge = ({ status }) => {
 
   return (
     <div className={`px-4 py-1.5 rounded-full text-[12px] font-medium tracking-[0.2em] uppercase border flex items-center gap-2 w-fit mx-auto ${styles[status] || styles['Pending']}`}>
-      <div className={`w-1 h-1 rounded-full ${status === 'Approved' || status === 'Checked In' ? 'bg-green-500 shadow-[0_0_5px_#22c55e]' : status === 'Pending' ? 'bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse' : 'bg-mas-text-dim opacity-80'}`}></div>
+      <div className={`w-1 h-1 rounded-full ${status === 'Approved' || status === 'Accepted by Admin' || status === 'Checked In' ? 'bg-green-500 shadow-[0_0_5px_#22c55e]' : status === 'Accepted' ? 'bg-purple-500 shadow-[0_0_5px_#a855f7]' : status === 'Sent to Admin' ? 'bg-orange-500 shadow-[0_0_5px_#f97316] animate-pulse' : status === 'Pending' ? 'bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse' : 'bg-mas-text-dim opacity-80'}`}></div>
       {status}
     </div>
   );
 };
 
-const VisitorTable = ({ visitors, onViewDetails, onAction }) => {
+const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) => {
+  const hasGatePass = (requestId) => {
+    if (!requestId) return false;
+    const list = Array.isArray(gatePasses) ? gatePasses : (gatePasses?.gatePasses || gatePasses?.ResultSet || []);
+    return list.some(gp => {
+      const gpRequestId = gp.VVR_Request_id || gp.VGP_Request_id || gp.vvr_Request_id || gp.vgp_Request_id;
+      return String(gpRequestId) === String(requestId);
+    });
+  };
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -187,11 +198,22 @@ const VisitorTable = ({ visitors, onViewDetails, onAction }) => {
                     </div>
                   </td>
                   <td className="px-8 py-8 text-center">
-                    <StatusBadge status={visitor.status} />
+                    <div className="flex flex-col items-center gap-2">
+                      <StatusBadge status={visitor.status} />
+                      {hasGatePass(visitor.id) && (
+                        <button
+                          onClick={() => onAction(visitor, 'ViewGatePass')}
+                          className="flex items-center gap-2 text-[10px] items-center justify-center font-bold uppercase tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
+                        >
+                          <QrCode size={12} className="group-hover/gp:scale-110 transition-transform" />
+                          View Gate Pass
+                        </button>
+                      )}
+                    </div>
                   </td>
                   <td className="px-8 py-8 text-right pr-10">
                     <div className="flex justify-end gap-3">
-                      {visitor.status === 'Pending' && (
+                      {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin') && (
                         <>
                           <button onClick={() => onAction(visitor, 'Approve')} title="AUTHORIZE BATCH" className="w-10 h-10 rounded-xl flex items-center justify-center bg-green-500/5 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-500 shadow-xl group/btn">
                             <Check size={16} strokeWidth={3} className="group-hover/btn:scale-110 transition-transform" />
@@ -277,7 +299,18 @@ const VisitorTable = ({ visitors, onViewDetails, onAction }) => {
                     <p className="text-gray-300/80 uppercase text-[12px] font-medium tracking-widest font-mono">{visitor.batchId}</p>
                   </div>
                 </div>
-                <StatusBadge status={visitor.status} />
+                <div className="flex flex-col items-end gap-2">
+                  <StatusBadge status={visitor.status} />
+                  {hasGatePass(visitor.id) && (
+                    <button
+                      onClick={() => onAction(visitor, 'ViewGatePass')}
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
+                    >
+                      <QrCode size={12} className="group-hover/gp:scale-110 transition-transform" />
+                      View Pass
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Mobile Card Body */}
@@ -341,7 +374,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction }) => {
 
               {/* Mobile Card Actions */}
               <div className="p-6 border-t border-white/5 bg-black/40 flex gap-4 relative z-10">
-                {visitor.status === 'Pending' && (
+                {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin') && (
                   <>
                     <button onClick={() => onAction(visitor, 'Approve')} className="flex-1 h-14 flex justify-center items-center gap-3 bg-green-500/5 border border-green-500/20 text-green-500 text-[13px] font-medium uppercase tracking-[0.2em] rounded-2xl hover:bg-green-500 hover:text-white transition-all shadow-xl">
                       <Check size={16} strokeWidth={3} /> <span>Approve</span>

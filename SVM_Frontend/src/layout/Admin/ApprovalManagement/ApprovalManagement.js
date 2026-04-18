@@ -10,12 +10,18 @@ import {
   setSearchTerm as setAdminSearchTerm,
   updateVisitorStatus,
 } from "../../../reducers/adminSlice";
+import { GetAllVisitRequests, ApproveVisitRequest } from "../../../actions/VisitRequestAction";
+import { GetAllVisitors } from "../../../actions/VisitorAction";
+import { GetAllVehicles } from "../../../actions/VehicleAction";
+import { GetAllGatePasses } from "../../../actions/GatePassAction";
 
 const ApprovalManagement = () => {
   const dispatch = useDispatch();
-  const { visitorList, searchTerm } = useSelector(
-    (state) => state.admin.approvals,
-  );
+  const searchTerm = useSelector(state => state.admin.approvals.searchTerm);
+  const { visitRequests, isLoading: isVrLoading } = useSelector((state) => state.visitRequestsState);
+  const { allVisitors } = useSelector((state) => state.visitorManagement);
+  const { vehicles } = useSelector((state) => state.vehicleState || { vehicles: [] });
+  const { gatePasses } = useSelector((state) => state.gatePassState || { gatePasses: [] });
 
   const [selectedVisitor, setSelectedVisitor] = useState(null);
   const [viewMode, setViewMode] = useState("list"); // 'list' or 'details'
@@ -24,11 +30,58 @@ const ApprovalManagement = () => {
   const [showQRModal, setShowQRModal] = useState(false);
   const [approvedVisitorData, setApprovedVisitorData] = useState(null);
 
+  React.useEffect(() => {
+    dispatch(GetAllVisitRequests());
+    dispatch(GetAllVisitors());
+    dispatch(GetAllVehicles());
+    dispatch(GetAllGatePasses());
+  }, [dispatch]);
+
+  // Combine and map data for the table
+  const mappedRequests = React.useMemo(() => {
+    return (visitRequests || [])
+      .filter(req => {
+        const status = (req.VVR_Status || "").toString().trim().toUpperCase();
+        // Include PENDING, SENT, APPROVED (A), REJECTED (R)
+        return status === "SENT" || status === "A" || status === "R" || status === "ACCEPTED" || status === "P" || status === "PENDING" || status === "SENT_TO_ADMIN";
+      })
+      .map(req => {
+        const visitor = (allVisitors || []).find(v => String(v.VV_Visitor_id) === String(req.VVR_Visitor_id));
+        const vehicle = (vehicles || []).find(veh => String(veh.VVR_Request_id) === String(req.VVR_Request_id));
+        const s = (req.VVR_Status || "").toString().trim().toUpperCase();
+
+        let displayStatus = "Pending";
+        if (s === "SENT" || s === "SENT_TO_ADMIN") displayStatus = "Sent to Admin";
+        else if (s === "A" || s === "APPROVED") displayStatus = "Accepted by Admin";
+        else if (s === "R" || s === "REJECTED") displayStatus = "Rejected";
+        else if (s === "ACCEPTED") displayStatus = "Accepted";
+
+        return {
+          id: req.VVR_Request_id?.toString() || "",
+          batchId: `BATCH-${new Date(req.VVR_Visit_Date).getFullYear()}-${req.VVR_Request_id?.toString().padStart(3, '0')}`,
+          name: visitor?.VV_Name || `Visitor #${req.VVR_Visitor_id}`,
+          contactPerson: `Admin Node`,
+          date: req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0] : "N/A",
+          timeIn: "08:30 AM",
+          areas: req.VVR_Places_to_Visit ? req.VVR_Places_to_Visit.split("|") : ["MAIN RECEPTION"],
+          status: displayStatus,
+          nic: visitor?.VV_NIC_Passport_NO || "N/A",
+          contact: visitor?.VV_Phone || "N/A",
+          email: visitor?.VV_Email || "N/A",
+          purpose: req.VVR_Purpose || "GENERAL VISIT",
+          vehicle: vehicle ? `${vehicle.VV_Vehicle_Number} (${vehicle.VV_Vehicle_Type})` : "None",
+          members: [], // Members logic might need additional API if they are separate
+          raw: req
+        };
+      });
+  }, [visitRequests, allVisitors, vehicles]);
+
   // Filtered list based on Redux searchTerm
-  const filteredVisitors = visitorList.filter(
+  const filteredVisitors = mappedRequests.filter(
     (v) =>
       v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      v.batchId.toLowerCase().includes(searchTerm.toLowerCase()),
+      v.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      v.id.includes(searchTerm),
   );
 
   const handleViewDetails = (visitor) => {
@@ -43,14 +96,19 @@ const ApprovalManagement = () => {
 
   const handleAction = (visitor, type) => {
     setSelectedVisitor(visitor);
-    setModalType(type);
-    setIsModalOpen(true);
+    if (type === 'ViewGatePass') {
+      setApprovedVisitorData(visitor);
+      setShowQRModal(true);
+    } else {
+      setModalType(type);
+      setIsModalOpen(true);
+    }
   };
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header />
-      
+
       <div className="flex-1 p-4 md:p-10 space-y-6 md:space-y-12 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
         {/* Dynamic Operational Aura */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
@@ -87,6 +145,7 @@ const ApprovalManagement = () => {
                     visitors={filteredVisitors}
                     onViewDetails={handleViewDetails}
                     onAction={handleAction}
+                    gatePasses={gatePasses}
                   />
                 </motion.div>
               ) : (
@@ -111,17 +170,15 @@ const ApprovalManagement = () => {
               onClose={() => setIsModalOpen(false)}
               visitor={selectedVisitor}
               type={modalType}
-              onConfirm={(id, type, comment) => {
-                dispatch(
-                  updateVisitorStatus({
-                    id,
-                    status: type === "Approve" ? "Approved" : "Rejected",
-                  }),
-                );
+              onConfirm={async (id, type) => {
+                const status = type === "Approve" ? "A" : "R";
+                await dispatch(ApproveVisitRequest(id, status));
+                dispatch(GetAllVisitRequests()); // Refresh
+                dispatch(GetAllGatePasses()); // Refresh gate passes
 
                 if (type === "Approve") {
                   setApprovedVisitorData(
-                    visitorList.find((v) => v.id === id) || selectedVisitor,
+                    mappedRequests.find((v) => v.id === id) || selectedVisitor,
                   );
                   setShowQRModal(true);
                 }
@@ -134,6 +191,7 @@ const ApprovalManagement = () => {
               isOpen={showQRModal}
               onClose={() => setShowQRModal(false)}
               visitorData={approvedVisitorData}
+              gatePasses={gatePasses}
             />
           </div>
         </div>
