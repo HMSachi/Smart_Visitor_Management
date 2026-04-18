@@ -341,6 +341,7 @@ const Step1Main = () => {
           }
         } else {
 
+        } else {
           const fallbackRequest = createVisitorRequest(formData);
           if (fallbackRequest?.id) {
             dispatch(setRequestRef(fallbackRequest.id));
