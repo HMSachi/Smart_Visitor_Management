@@ -23,23 +23,23 @@ const StatusTimeline = ({ currentStage }) => {
   const stagesFixed = [
     {
       id: "submitted",
-      label: "Initialized",
-      time: "MAR 24, 10:45 AM",
+      label: "Request Submitted",
+      time: "Awaiting primary review",
     },
     {
       id: "step1_pending",
-      label: "Primary Review",
-      time: "Under Review",
+      label: "Reviewing by Contact Person",
+      time: "In progress",
     },
     {
       id: "step2_pending",
-      label: "Clearance Phase",
-      time: "Verification",
+      label: "Final approval",
+      time: "Under review",
     },
     {
       id: "fully_approved",
-      label: "Access Active",
-      time: "Pass Ready",
+      label: "Access Ready",
+      time: "Pass active",
     },
   ];
 
@@ -90,7 +90,7 @@ const StatusTimeline = ({ currentStage }) => {
                     status === "active" ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
-                  {status === "active" ? "PROTCOL_ACTIVE" : stage.time}
+                  {stage.time}
                 </span>
               </div>
             </div>

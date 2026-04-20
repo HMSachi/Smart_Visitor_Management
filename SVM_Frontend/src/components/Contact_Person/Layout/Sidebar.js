@@ -47,7 +47,6 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate, onLogout }) => {
       { id: 'inbox', label: 'Requests Inbox', icon: Inbox, path: '/contact_person/requests-inbox' },
       { id: 'approved', label: 'Approved Forms', icon: CheckCircle, path: '/contact_person/approved-requests' },
       { id: 'all-visitors', label: 'All Visitors', icon: Inbox, path: '/contact_person/all-visitors' },
-      { id: 'notifications', label: 'Notifications', icon: Bell, path: '/contact_person/notifications' },
   ];
 
   return (
