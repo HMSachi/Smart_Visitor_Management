@@ -91,11 +91,11 @@ const ActiveVisitorsMain = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-white/[0.02] border-b border-white/5">
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em]">Unit_Identification</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em]">Node_Sync_Entry</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em]">Operational_Grid</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em] text-center">Live_Pulse</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[12px] font-medium tracking-[0.4em] text-right">Control</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Unit_Identification</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Node_Sync_Entry</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Operational_Grid</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em] text-center">Live_Pulse</th>
+                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em] text-right">Control</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/[0.03]">
@@ -131,19 +131,19 @@ const ActiveVisitorsMain = () => {
                                                     <div className="space-y-1.5">
                                                         <div className="flex items-center gap-2.5">
                                                             <Calendar size={12} className="text-primary opacity-70" />
-                                                            <span className="text-white text-[14px] font-mono font-medium tracking-widest">{v.date}</span>
+                                                            <span className="text-white text-[13px] font-mono font-medium tracking-widest">{v.date}</span>
                                                         </div>
                                                         <div className="flex items-center gap-2.5 ml-2">
                                                             <Clock size={10} className="text-primary opacity-50" />
                                                             <span className="text-white/70 text-[13px] font-mono font-medium tracking-widest">{v.entryTime}</span>
                                                         </div>
-                                                        <p className="text-white/80 text-[14px] font-medium uppercase tracking-widest ml-5">via_{v.node}</p>
+                                                        <p className="text-white/80 text-[13px] font-medium uppercase tracking-widest ml-5">via_{v.node}</p>
                                                     </div>
                                                 </td>
                                                 <td className="px-10 py-8">
                                                     <div className="flex flex-wrap gap-2.5 max-w-[280px]">
                                                         {v.areas.map((area, i) => (
-                                                            <span key={i} className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-white/70 text-[14px] font-medium uppercase tracking-widest group-hover:border-primary/40 group-hover:text-white transition-all duration-300">
+                                                            <span key={i} className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-white/70 text-[13px] font-medium uppercase tracking-widest group-hover:border-primary/40 group-hover:text-white transition-all duration-300">
                                                                 {area}
                                                             </span>
                                                         ))}
@@ -155,7 +155,7 @@ const ActiveVisitorsMain = () => {
                                                             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_12px_#22c55e]"></div>
                                                             <div className="absolute inset-x-[-8px] inset-y-[-8px] border border-green-500/20 rounded-full scale-150 animate-ping opacity-30"></div>
                                                         </div>
-                                                        <span className="text-green-500/80 text-[14px] font-medium uppercase tracking-widest">INSIDE_DOME</span>
+                                                        <span className="text-green-500/80 text-[13px] font-medium uppercase tracking-widest">INSIDE_DOME</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-10 py-8 text-right">

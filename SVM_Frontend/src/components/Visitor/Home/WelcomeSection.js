@@ -79,12 +79,6 @@ const WelcomeSection = () => {
                             </button>
                         )}
 
-                        <button
-                            onClick={() => navigate('/access')}
-                            className={`w-full sm:w-auto px-12 py-5 bg-transparent ${isLightMode ? 'text-[var(--color-text-primary)] border-[var(--color-border-soft)] hover:bg-black/[0.03]' : 'text-white border-white/20 hover:bg-white/5'} font-black uppercase text-sm md:text-base tracking-[0.2em] border transition-all text-center rounded-xl`}
-                        >
-                            About Access
-                        </button>
                     </div>
                 </div>
             </div>

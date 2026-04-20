@@ -11,30 +11,30 @@ const ActivityTimeline = () => {
 
     return (
         <div className="space-y-4 md:space-y-8">
-            <div className="flex items-center justify-between border-b border-mas-border pb-4">
-                <h3 className="uppercase flex items-center gap-3">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                <h3 className="uppercase flex items-center gap-3 text-[#1A1A1A] text-xs font-bold tracking-widest">
                     <Activity size={14} className="text-primary" />
                     Real-Time Node Activity
                 </h3>
-                <button className="text-gray-300 uppercase hover:text-white transition-colors">View All Streams</button>
+                <button className="text-gray-400 text-[10px] font-bold uppercase tracking-widest hover:text-primary transition-colors">View All Streams</button>
             </div>
 
             <div className="space-y-4">
                 {activities.map((act) => (
-                    <div key={act.id} className="flex items-center justify-between p-6 bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-primary/20 transition-all group">
-                        <div className="flex items-center gap-6">
+                    <div key={act.id} className="flex items-center justify-between p-5 bg-white border border-gray-200 rounded-2xl hover:border-primary/20 transition-all group shadow-sm">
+                        <div className="flex items-center gap-5">
                             <div className="relative">
-                                <div className={`w-3 h-3 rounded-full ${act.status === 'priority' || act.status === 'urgent' ? 'bg-primary shadow-[0_0_8px_var(--color-primary)]' : 'bg-green-500 shadow-[0_0_8px_#22c55e]'}`}></div>
+                                <div className={`w-2.5 h-2.5 rounded-full ${act.status === 'priority' || act.status === 'urgent' ? 'bg-primary shadow-[0_0_8px_var(--color-primary)]' : 'bg-green-500 shadow-[0_0_8px_#22c55e]'}`}></div>
                                 <div className={`absolute -inset-1 rounded-full animate-ping opacity-70 ${act.status === 'priority' || act.status === 'urgent' ? 'bg-primary' : 'bg-green-500'}`}></div>
                             </div>
                             <div>
-                                <h4 className="text-white uppercase mb-1">{act.visitor}</h4>
-                                <p className="text-gray-300 uppercase">{act.action}</p>
+                                <h4 className="text-[#1A1A1A] text-[11px] font-bold uppercase tracking-wider mb-1">{act.visitor}</h4>
+                                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{act.action}</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-8">
-                            <span className="text-gray-300 uppercase">{act.time}</span>
-                            <ArrowUpRight size={14} className="text-gray-300 group-hover:text-primary transition-colors cursor-pointer" />
+                        <div className="flex items-center gap-6">
+                            <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{act.time}</span>
+                            <ArrowUpRight size={14} className="text-gray-400 group-hover:text-primary transition-colors cursor-pointer" />
                         </div>
                     </div>
                 ))}

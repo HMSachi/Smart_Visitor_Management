@@ -10,7 +10,7 @@ const TotalVisitsCard = () => {
     <div className="mas-glass p-8 group relative overflow-hidden animate-shine cursor-pointer border-white/[0.05] shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-all duration-500">
       <div className="flex justify-between items-start mb-6 relative z-10">
         <div>
-          <p className="text-gray-300 uppercase mb-2">Total Visits</p>
+          <p className="text-gray-300 capitalize mb-2">Total Visits</p>
           <h2 className="text-white">
             {totalVisits.toLocaleString()}
           </h2>
@@ -21,11 +21,11 @@ const TotalVisitsCard = () => {
       </div>
 
       <div className="flex items-center space-x-3 mb-8 relative z-10">
-        <div className="flex items-center text-green-500 bg-green-500/10 px-2 py-1 border border-green-500/20 uppercase">
+        <div className="flex items-center text-green-500 bg-green-500/10 px-2 py-1 border border-green-500/20 capitalize">
           <TrendingUp size={14} className="mr-1.5" />
           +12.5%
         </div>
-        <span className="text-gray-300 uppercase">vs last month</span>
+        <span className="text-gray-300 capitalize">vs last month</span>
       </div>
 
       {/* Chart */}

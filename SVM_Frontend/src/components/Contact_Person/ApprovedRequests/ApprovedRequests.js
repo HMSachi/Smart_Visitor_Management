@@ -7,11 +7,7 @@ const ApprovedRequestsMain = () => {
     const [selectedVisitor, setSelectedVisitor] = useState(null);
     const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-    const requests = [
-        { id: 'VR-2026-001', name: 'ADITHYA BANDARA', date: 'Mar 25, 2026', adminStatus: 'Pending Dispatch' },
-        { id: 'VR-2026-002', name: 'KASUN PERERA', date: 'Mar 25, 2026', adminStatus: 'Pending Dispatch' },
-        { id: 'VR-2026-003', name: 'SARAH JENKINS', date: 'Mar 24, 2026', adminStatus: 'Dispatched to Visitor' },
-    ];
+    const requests = [];
 
     const handleQuickView = (visitor) => {
         setSelectedVisitor(visitor);
@@ -32,7 +28,7 @@ const ApprovedRequestsMain = () => {
                     <div className="flex items-center gap-4 bg-white/[0.02] border border-white/5 p-3 px-5 rounded-2xl backdrop-blur-sm">
                         <div className="text-right">
                             <p className="text-gray-300 text-[12px] uppercase font-medium tracking-wider mb-0.5 opacity-80">Total Verified</p>
-                            <span className="text-xl font-medium text-white">1,284</span>
+                            <span className="text-xl font-medium text-white">{requests.length}</span>
                         </div>
                     </div>
                 </div>

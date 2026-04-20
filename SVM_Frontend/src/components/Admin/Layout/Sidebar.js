@@ -29,13 +29,13 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
     </div>
     
     {!collapsed && (
-      <span className={`uppercase text-[13px] font-medium tracking-[0.2em] transition-all duration-500 ${active ? 'text-white' : 'text-gray-500 group-hover:text-white'}`}>
+      <span className={`capitalize text-[13px] font-medium tracking-[0.2em] transition-all duration-500 ${active ? 'text-white' : 'text-gray-500 group-hover:text-white'}`}>
         {label}
       </span>
     )}
 
     {collapsed && (
-       <div className="absolute left-[120%] px-3 py-2 bg-background-paper border border-white/10 rounded-lg text-[12px] font-medium text-white uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none z-50 shadow-2xl">
+       <div className="absolute left-[120%] px-3 py-2 bg-background-paper border border-white/10 rounded-lg text-[12px] font-medium text-white capitalize tracking-widest opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none z-50 shadow-2xl">
          {label}
        </div>
     )}
@@ -57,7 +57,7 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate, onLogout }) => {
       {/* Sidebar Top: Logo */}
       <div className={`mb-12 flex items-center ${isCollapsed ? 'justify-center' : 'px-4 gap-3'}`}>
          <img src="/logo_mas.png" alt="Logo" className={`${isCollapsed ? 'h-5' : 'h-5'} w-auto transition-all duration-500`} />
-         {!isCollapsed && <span className="text-white font-medium tracking-tighter text-sm flex-none uppercase animate-fade-in">Admin <span className="text-primary">Panel</span></span>}
+         {!isCollapsed && <span className="text-white font-medium tracking-tighter text-sm flex-none capitalize animate-fade-in">Admin <span className="text-primary">Panel</span></span>}
       </div>
 
       <nav className="flex-1">
@@ -81,7 +81,7 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate, onLogout }) => {
           title="Logout"
         >
           <LogOut size={16} />
-          {!isCollapsed && <span className="uppercase text-[12px] tracking-[0.2em] font-medium">Logout</span>}
+          {!isCollapsed && <span className="capitalize text-[12px] tracking-[0.2em] font-medium">Logout</span>}
         </button>
 
         <div className={`flex items-center gap-4 ${isCollapsed ? 'justify-center' : 'px-2'}`}>
@@ -90,8 +90,8 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate, onLogout }) => {
             </div>
             {!isCollapsed && (
                 <div className="animate-fade-in overflow-hidden">
-                    <p className="text-white text-[13px] font-medium uppercase tracking-wider truncate">Samith</p>
-                    <p className="text-gray-500 text-[14px] uppercase tracking-widest truncate">System Admin</p>
+                    <p className="text-white text-[13px] font-medium capitalize tracking-wider truncate">Samith</p>
+                    <p className="text-gray-500 text-[14px] capitalize tracking-widest truncate">System Admin</p>
                 </div>
             )}
         </div>

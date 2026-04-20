@@ -1,13 +1,19 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Navigate } from "react-router-dom";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 import VisitorOverview from "./Step1/VisitorOverview";
 import VehicleDetails from "./Step1/VehicleDetails";
 import { createVisitorRequest } from "../../../services/visitorRequestService";
 import { GetAdministratorById } from "../../../actions/AdministratorAction";
-import { GetVisitRequestsByVisitor } from "../../../actions/VisitRequestAction";
+import {
+  AddVisitRequest,
+  GetVisitRequestsByVisitor,
+  UpdateVisitRequest,
+  ApproveVisitRequest
+} from "../../../actions/VisitRequestAction";
 import VisitorService from "../../../services/VisitorService";
-import { GetAllVehicles } from "../../../actions/VehicleAction";
+import { AddVehicle, GetAllVehicles, UpdateVehicle } from "../../../actions/VehicleAction";
 import {
   updateField,
   setStatus,
@@ -15,6 +21,7 @@ import {
 } from "../../../reducers/visitorSlice";
 
 const Step1Main = () => {
+  const navigate = useNavigate();
   const formatDateForInput = (dateValue) => {
     if (!dateValue) return "";
 
@@ -35,7 +42,7 @@ const Step1Main = () => {
   const { status, requestRef } = formData;
   const user = useSelector((state) => state.login.user);
   const { administrators } = useSelector((state) => state.administrator);
-  const { visitRequestsByVis } = useSelector(
+  const { visitRequestsByVis, isLoading: isRequestsLoading } = useSelector(
     (state) => state.visitRequestsState,
   );
   const { vehicles } = useSelector((state) => state.vehicleState || {});
@@ -74,7 +81,7 @@ const Step1Main = () => {
       }
     };
 
-    if (authUser?.VA_Role === "Visitor" && adminId) {
+    if (authUser && adminId) {
       dispatch(GetAdministratorById(adminId));
       dispatch(GetAllVehicles());
     }
@@ -165,6 +172,14 @@ const Step1Main = () => {
       const latestRequest = visitRequestsByVis[0];
       console.log("Matched latestRequest:", latestRequest);
 
+      // Block access if already accepted
+      const normalizedStatus = (latestRequest.VVR_Status || "").toString().trim().toUpperCase();
+      if (normalizedStatus === "ACCEPTED" || normalizedStatus === "A" || normalizedStatus === "APPROVED") {
+        alert("This visit request has already been accepted and sent to the contact person.");
+        navigate("/home", { replace: true });
+        return;
+      }
+
       if (!formData.proposedVisitDate)
         dispatch(
           updateField({
@@ -189,32 +204,39 @@ const Step1Main = () => {
           }),
         );
 
-      if (vehicles && vehicles.length > 0) {
-        const matchedVehicle = vehicles.find(
-          (v) =>
-            String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id),
-        );
+        const visitorRequestIds = (visitRequestsByVis || []).map(r => String(r.VVR_Request_id));
+        
+        // Priority 1: Vehicle linked to THIS request (if it has a valid plate)
+        // Priority 2: Most recent vehicle from ANY of this visitor's requests (that isn't "N/A")
+        // Priority 3: Fallback to current request's record even if "N/A"
+        const matchedVehicle = 
+          vehicles.find(v => String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id) && v.VV_Vehicle_Number && v.VV_Vehicle_Number !== "N/A") ||
+          vehicles.find(v => visitorRequestIds.includes(String(v.VVR_Request_id)) && v.VV_Vehicle_Number && v.VV_Vehicle_Number !== "N/A") ||
+          vehicles.find(v => String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id));
 
-        console.log("Matched vehicle:", matchedVehicle);
+        console.log("Improved matched vehicle lookup:", matchedVehicle);
 
         if (matchedVehicle) {
-          if (!formData.vehicleType)
+          if (!formData.vehicleType || formData.vehicleType === "Car")
             dispatch(
               updateField({
                 name: "vehicleType",
-                value: matchedVehicle.VV_Vehicle_Type || "",
+                value: matchedVehicle.VV_Vehicle_Type && matchedVehicle.VV_Vehicle_Type !== "N/A" 
+                  ? matchedVehicle.VV_Vehicle_Type 
+                  : formData.vehicleType || "Car",
               }),
             );
 
-          if (!formData.plateNumber)
+          if (!formData.plateNumber || formData.plateNumber === "N/A")
             dispatch(
               updateField({
                 name: "plateNumber",
-                value: matchedVehicle.VV_Vehicle_Number || "",
+                value: matchedVehicle.VV_Vehicle_Number && matchedVehicle.VV_Vehicle_Number !== "N/A" 
+                  ? matchedVehicle.VV_Vehicle_Number 
+                  : "",
               }),
             );
         }
-      }
     }
   }, [
     dispatch,
@@ -237,17 +259,124 @@ const Step1Main = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setStatus("submitting"));
-    setTimeout(() => {
-      const createdRequest = createVisitorRequest(formData);
-      if (createdRequest?.id) {
-        dispatch(setRequestRef(createdRequest.id));
+
+    try {
+      const latestRequest = visitRequestsByVis?.[0];
+
+      if (latestRequest?.VVR_Request_id) {
+        const payload = {
+          VVR_Request_id: latestRequest.VVR_Request_id,
+          VVR_Visit_Date:
+            formData.proposedVisitDate ||
+            formatDateForInput(latestRequest.VVR_Visit_Date),
+          VVR_Places_to_Visit:
+            formData.visitingArea || latestRequest.VVR_Places_to_Visit || "",
+          VVR_Purpose:
+            formData.purposeOfVisitation || latestRequest.VVR_Purpose || "",
+          VVR_Visitor_id:
+            visitorRecord?.VV_Visitor_id || latestRequest.VVR_Visitor_id,
+          VVR_Contact_person_id: latestRequest.VVR_Contact_person_id,
+          VVR_Status: "ACCEPTED",
+        };
+
+        await dispatch(UpdateVisitRequest(payload));
+
+        // Refresh local requests to ensure state is up to date
+        if (visitorRecord?.VV_Visitor_id) {
+          dispatch(GetVisitRequestsByVisitor(visitorRecord.VV_Visitor_id));
+        }
+
+        const matchedVehicle = (vehicles || []).find(
+          (v) => String(v?.VVR_Request_id) === String(latestRequest.VVR_Request_id),
+        );
+
+        if (formData.plateNumber || formData.vehicleType) {
+          if (matchedVehicle?.VV_Vehicle_id) {
+            await dispatch(
+              UpdateVehicle({
+                VV_Vehicle_id: matchedVehicle.VV_Vehicle_id,
+                VV_Vehicle_Number: formData.plateNumber || matchedVehicle.VV_Vehicle_Number || "N/A",
+              }),
+            );
+          } else {
+            await dispatch(
+              AddVehicle({
+                VV_Vehicle_Type: formData.vehicleType || "N/A",
+                VV_Vehicle_Number: formData.plateNumber || "N/A",
+                VVR_Request_id: latestRequest.VVR_Request_id,
+              }),
+            );
+          }
+        }
+
+        dispatch(setRequestRef(String(latestRequest.VVR_Request_id)));
+      } else {
+        const createPayload = {
+          VVR_Visitor_id: visitorRecord?.VV_Visitor_id,
+          VVR_Contact_person_id: visitorRecord?.VV_Contact_person_id,
+          VVR_Visit_Date: formData.proposedVisitDate,
+          VVR_Places_to_Visit: formData.visitingArea,
+          VVR_Purpose: formData.purposeOfVisitation,
+          VVR_Status: "ACCEPTED",
+        };
+
+        const createResponse = await dispatch(AddVisitRequest(createPayload));
+        const createdRequestId =
+          createResponse?.ResultSet?.[0]?.VVR_Request_id ||
+          createResponse?.VVR_Request_id ||
+          null;
+
+        if (createdRequestId && (formData.plateNumber || formData.vehicleType)) {
+          await dispatch(
+            AddVehicle({
+              VV_Vehicle_Type: formData.vehicleType || "N/A",
+              VV_Vehicle_Number: formData.plateNumber || "N/A",
+              VVR_Request_id: createdRequestId,
+            }),
+          );
+        }
+
+        if (createdRequestId) {
+          dispatch(setRequestRef(String(createdRequestId)));
+
+          // Refresh local requests
+          if (visitorRecord?.VV_Visitor_id) {
+            dispatch(GetVisitRequestsByVisitor(visitorRecord.VV_Visitor_id));
+          }
+        } else {
+          const fallbackRequest = createVisitorRequest(formData);
+          if (fallbackRequest?.id) {
+            dispatch(setRequestRef(fallbackRequest.id));
+          }
+        }
       }
-      dispatch(setStatus("step1_pending"));
-    }, 2000);
+
+      navigate("/visitor/my-requests");
+    } catch (error) {
+      console.error("Failed to submit Step 1 request:", error);
+      alert("Failed to submit request. Please try again.");
+      dispatch(setStatus(null));
+    }
   };
+
+  const latestRequest = visitRequestsByVis?.[0];
+  const normalizedStatus = (latestRequest?.VVR_Status || "").toString().trim().toUpperCase();
+  const isBlocked = ["ACCEPTED", "A", "APPROVED"].includes(normalizedStatus);
+
+  if (isRequestsLoading && !visitRequestsByVis.length) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (isBlocked && status !== "submitting") {
+    return null;
+  }
 
   if (status === "step1_pending") {
     return (

@@ -20,15 +20,15 @@ const RecentRequests = () => {
     };
 
     return (
-        <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <div className="p-6 border-b border-white/5 flex items-center justify-between">
+        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xl shadow-gray-200/50 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                 <div>
-                    <h3 className="text-white font-bold tracking-tight">Recent Authorization Requests</h3>
-                    <p className="text-gray-300 text-xs uppercase tracking-widest mt-1">Latest synchronization with MAS nodes</p>
+                    <h3 className="text-[#1A1A1A] font-bold tracking-tight text-sm">Recent Authorization Requests</h3>
+                    <p className="text-gray-400 text-[10px] uppercase tracking-widest mt-1">Latest synchronization with MAS nodes</p>
                 </div>
                 <button
                     onClick={() => navigate('/contact_person/requests-inbox')}
-                    className="flex items-center gap-2 text-xs font-medium text-primary hover:text-white transition-colors group"
+                    className="flex items-center gap-2 text-[11px] font-bold text-primary hover:text-[#A00D25] uppercase tracking-widest transition-colors group"
                 >
                     View All Inbox <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </button>
@@ -37,11 +37,10 @@ const RecentRequests = () => {
             <div className="overflow-x-auto">
                 <table className="w-full text-left">
                     <thead>
-                        <tr className="bg-white/[0.02] text-gray-300 text-[12px] uppercase tracking-[0.2em] font-medium">
+                        <tr className="bg-[#F8F9FA] text-gray-400 text-[13px] uppercase tracking-[0.2em] font-bold border-b border-gray-100">
                             <th className="px-4 md:px-6 py-3">Visitor Identity</th>
-                            <th className="px-4 md:px-6 py-3">Reference ID</th>
-                            <th className="px-4 md:px-6 py-3">Protocol Schedule</th>
-                            <th className="px-4 md:px-6 py-3">Status</th>
+                            <th className="px-4 md:px-6 py-3 text-center">Date to Visit</th>
+                            <th className="px-4 md:px-6 py-3 text-center">Status</th>
                             <th className="px-4 md:px-6 py-3 text-right">Action</th>
                         </tr>
                     </thead>
@@ -49,34 +48,25 @@ const RecentRequests = () => {
                         {recentRequests.map((req) => (
                             <tr key={req.id} className="group hover:bg-white/[0.01] transition-all">
                                 <td className="px-4 md:px-6 py-3">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-transparent border border-primary/20 flex items-center justify-center text-primary text-[13px] font-medium">
-                                            {req.name.split(' ').map(n => n[0]).join('')}
-                                        </div>
-                                        <div>
-                                            <p className="text-white text-xs font-medium">{req.name}</p>
-                                            <p className="text-gray-300 text-[12px] uppercase tracking-wider opacity-90">Lead Personnel</p>
-                                        </div>
+                                    <div>
+                                        <p className="text-[#1A1A1A] text-[13px] font-bold uppercase tracking-wider">{req.name}</p>
                                     </div>
                                 </td>
-                                <td className="px-4 md:px-6 py-3">
-                                    <span className="text-white/90 text-[13px] font-mono tracking-tighter uppercase">{req.batchId}</span>
-                                </td>
-                                <td className="px-4 md:px-6 py-3">
-                                    <div className="flex flex-col">
-                                        <span className="text-white/80 text-[13px] font-medium">{req.date}</span>
-                                        <span className="text-gray-300 text-[12px] uppercase opacity-50">{req.timeIn}</span>
+                                <td className="px-4 md:px-6 py-3 text-center">
+                                    <div className="flex flex-col items-center justify-center">
+                                        <span className="text-[#1A1A1A] text-[13px] font-bold">{req.date}</span>
+                                        <span className="text-gray-400 text-[12px] uppercase tracking-widest">{req.timeIn}</span>
                                     </div>
                                 </td>
-                                <td className="px-4 md:px-6 py-3">
-                                    <span className={`px-2 py-0.5 rounded-md text-[12px] font-medium uppercase tracking-wider border ${getStatusColor(req.status)}`}>
+                                <td className="px-4 md:px-6 py-3 text-center">
+                                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border shadow-sm ${getStatusColor(req.status)}`}>
                                         {req.status}
                                     </span>
                                 </td>
                                 <td className="px-4 md:px-6 py-3 text-right">
                                     <button
                                         onClick={() => navigate('/contact_person/request-review', { state: { requestId: req.id } })}
-                                        className="text-[12px] font-medium text-gray-300 hover:text-primary uppercase tracking-[0.1em] transition-all py-1.5 px-3 rounded-lg border border-white/5 hover:border-primary/20 hover:bg-primary/5"
+                                        className="text-[11px] font-bold text-gray-500 hover:text-primary uppercase tracking-widest transition-all py-1.5 px-3 rounded-lg border border-gray-100 hover:border-primary/20 hover:bg-primary/5"
                                     >
                                         Review
                                     </button>

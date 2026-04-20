@@ -12,7 +12,6 @@ import store from "./store";
 import Layout from "./layout/Layout";
 import HeaderComponent from "./components/Visitor/Header/HeaderComponent";
 import Home from "./layout/Visitor/Home/Home";
-import AccessPage from "./layout/Visitor/Access/Access";
 import Step1Request from "./layout/Visitor/Request/Step1";
 import Step2Request from "./layout/Visitor/Request/Step2";
 import StatusPage from "./layout/Visitor/Status/Status";
@@ -155,7 +154,6 @@ const AppContent = () => {
 
           {/* Visitor Routes */}
           <Route path="/home" element={<Home />} />
-          <Route path="/access" element={<AccessPage />} />
           <Route path="/request-step-1" element={<Step1Request />} />
           <Route path="/request-step-2" element={<Step2Request />} />
           <Route path="/status" element={<StatusPage />} />

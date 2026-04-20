@@ -27,10 +27,10 @@ const AlertsSection = () => {
       <div className="flex items-center justify-between mb-10 border-b border-white/5 pb-6">
         <div className="flex items-center space-x-3">
           <Bell className="text-primary" size={20} strokeWidth={2.5} />
-          <h2 className="text-white uppercase">Signal Log</h2>
+          <h2 className="text-white capitalize">Signal Log</h2>
         </div>
-        <span className="bg-primary/10 text-primary px-3 py-1 uppercase border border-primary/20 shadow-[0_0_10px_rgba(200,16,46,0.1)]">
-          LIVE
+        <span className="bg-primary/10 text-primary px-3 py-1 capitalize border border-primary/20 shadow-[0_0_10px_rgba(200,16,46,0.1)]">
+          Live
         </span>
       </div>
 
@@ -48,8 +48,8 @@ const AlertsSection = () => {
                 <div className="flex space-x-4">
                   <div className="mt-0.5">{getAlertIcon(alert.type)}</div>
                   <div>
-                    <p className="text-white uppercase group-hover:text-primary transition-colors">{alert.message}</p>
-                    <p className="text-gray-300 mt-2 uppercase">{alert.time}</p>
+                    <p className="text-white capitalize group-hover:text-primary transition-colors">{alert.message}</p>
+                    <p className="text-gray-300 mt-2 capitalize">{alert.time}</p>
                   </div>
                 </div>
                 <ChevronRight size={16} className="text-gray-300 group-hover:text-white transition-colors" />
@@ -59,7 +59,7 @@ const AlertsSection = () => {
         </AnimatePresence>
       </div>
 
-      <button className="mt-10 w-full py-4 uppercase text-gray-300 hover:text-white hover:bg-primary/10 border border-white/10 hover:border-primary transition-all duration-500">
+      <button className="mt-10 w-full py-4 capitalize text-gray-300 hover:text-white hover:bg-primary/10 border border-white/10 hover:border-primary transition-all duration-500">
         Access Signal Archives
       </button>
     </div>

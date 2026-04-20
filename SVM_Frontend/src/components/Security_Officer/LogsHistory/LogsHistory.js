@@ -45,7 +45,7 @@ const LogsHistoryMain = () => {
             <div className="mas-glass border-mas-border overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-white/[0.02] border-b border-white/5">
+                        <tr className="bg-white/[0.02] border-b border-white/5 text-[13px]">
                             <th className="px-10 py-6 uppercase text-gray-300"> personnel</th>
                             <th className="px-10 py-6 uppercase text-gray-300">entry protocol</th>
                             <th className="px-10 py-6 uppercase text-gray-300">exit protocol</th>
@@ -57,19 +57,19 @@ const LogsHistoryMain = () => {
                         {logs.map((log) => (
                             <tr key={log.id} className="group hover:bg-white/[0.01] transition-all">
                                 <td className="px-10 py-8">
-                                    <div>
+                                    <div className="text-[13px]">
                                         <p className="uppercase text-white mb-1">{log.name}</p>
                                         <p className="text-gray-300 uppercase">{log.date}</p>
                                     </div>
                                 </td>
-                                <td className="px-10 py-8">
+                                <td className="px-10 py-8 text-[13px]">
                                     <span className="text-white">{log.entry}</span>
                                 </td>
-                                <td className="px-10 py-8">
+                                <td className="px-10 py-8 text-[13px]">
                                     <span className={`${log.exit === '--:--:--' ? 'text-gray-300 opacity-30' : 'text-white'}`}>{log.exit}</span>
                                 </td>
                                 <td className="px-10 py-8">
-                                    <span className={`px-4 py-1.5 border uppercase ${log.status === 'Active' ? 'border-primary text-primary bg-primary/5 animate-pulse' : 'border-mas-text-dim/20 text-gray-300 bg-white/[0.02]'}`}>
+                                    <span className={`px-4 py-1.5 border uppercase text-[12px] ${log.status === 'Active' ? 'border-primary text-primary bg-primary/5 animate-pulse' : 'border-mas-text-dim/20 text-gray-300 bg-white/[0.02]'}`}>
                                         {log.status}
                                     </span>
                                 </td>

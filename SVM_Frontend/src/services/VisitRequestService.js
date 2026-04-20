@@ -9,18 +9,30 @@ const GetAllVisitRequests = async () => {
 };
 
 const AddVisitRequest = async (requestData) => {
+    let url = `https://visitormanagement.dockyardsoftware.com/VisitRequest/AddVisitRequest?VVR_Visitor_id=${encodeURIComponent(requestData.VVR_Visitor_id)}&VVR_Contact_person_id=${encodeURIComponent(requestData.VVR_Contact_person_id)}&VVR_Visit_Date=${encodeURIComponent(requestData.VVR_Visit_Date)}&VVR_Places_to_Visit=${encodeURIComponent(requestData.VVR_Places_to_Visit)}&VVR_Purpose=${encodeURIComponent(requestData.VVR_Purpose)}`;
+
+    if (requestData.VVR_Status) {
+        url += `&VVR_Status=${encodeURIComponent(requestData.VVR_Status)}`;
+    }
+
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/VisitRequest/AddVisitRequest?VVR_Visitor_id=${encodeURIComponent(requestData.VVR_Visitor_id)}&VVR_Contact_person_id=${encodeURIComponent(requestData.VVR_Contact_person_id)}&VVR_Visit_Date=${encodeURIComponent(requestData.VVR_Visit_Date)}&VVR_Places_to_Visit=${encodeURIComponent(requestData.VVR_Places_to_Visit)}&VVR_Purpose=${encodeURIComponent(requestData.VVR_Purpose)}`,
+        url: url,
         data: ''
     };
     return axios.request(config).then((response) => response);
 };
 
 const UpdateVisitRequest = async (requestData) => {
+    let url = `https://visitormanagement.dockyardsoftware.com/VisitRequest/UpdateVisitRequest?VVR_Visit_Date=${encodeURIComponent(requestData.VVR_Visit_Date)}&VVR_Places_to_Visit=${encodeURIComponent(requestData.VVR_Places_to_Visit)}&VVR_Purpose=${encodeURIComponent(requestData.VVR_Purpose)}&VVR_Request_id=${encodeURIComponent(requestData.VVR_Request_id)}`;
+
+    if (requestData.VVR_Status) {
+        url += `&VVR_Status=${encodeURIComponent(requestData.VVR_Status)}`;
+    }
+
     let config = {
         method: 'post',
-        url: `https://visitormanagement.dockyardsoftware.com/VisitRequest/UpdateVisitRequest?VVR_Visit_Date=${encodeURIComponent(requestData.VVR_Visit_Date)}&VVR_Places_to_Visit=${encodeURIComponent(requestData.VVR_Places_to_Visit)}&VVR_Purpose=${encodeURIComponent(requestData.VVR_Purpose)}&VVR_Request_id=${encodeURIComponent(requestData.VVR_Request_id)}`,
+        url: url,
         data: ''
     };
     return axios.request(config).then((response) => response);

@@ -4,10 +4,10 @@ import { CheckSquare, ShieldAlert, UserX } from 'lucide-react';
 
 const QuickAccessHub = ({ setActiveTab }) => {
   const links = [
-    { id: 'approvals', label: 'AUTHORIZATION NODES', desc: 'PROCESS PENDING REQUESTS', icon: CheckSquare, color: 'mas-red' },
-    { id: 'security', label: 'SECURITY MONITORING', desc: 'SITE ACTIVITY & LOGS', icon: ShieldAlert, color: 'white' },
-    { id: 'blacklist', label: 'RESTRICTED REGISTRY', desc: 'MANAGE BLOCKED PERSONNEL', icon: UserX, color: 'white' },
-    { id: 'reports', label: 'INTELLIGENCE SUMMARY', desc: 'SYSTEM ANALYTICS & REPORTS', icon: CheckSquare, color: 'white' },
+    { id: 'approvals', label: 'Authorization Nodes', desc: 'Process Pending Requests', icon: CheckSquare, color: 'mas-red' },
+    { id: 'security', label: 'Security Monitoring', desc: 'Site Activity & Logs', icon: ShieldAlert, color: 'white' },
+    { id: 'blacklist', label: 'Restricted Registry', desc: 'Manage Blocked Personnel', icon: UserX, color: 'white' },
+    { id: 'reports', label: 'Intelligence Summary', desc: 'System Analytics & Reports', icon: CheckSquare, color: 'white' },
   ];
 
   return (
@@ -24,8 +24,8 @@ const QuickAccessHub = ({ setActiveTab }) => {
             <link.icon size={24} className={link.id === 'approvals' ? 'text-primary group-hover:text-white' : 'text-gray-300 group-hover:text-white'} strokeWidth={2} />
           </div>
 
-          <h3 className="text-white text-[14px] font-bold uppercase tracking-[0.2em] mb-2 relative z-10 group-hover:text-primary transition-colors">{link.label}</h3>
-          <p className="text-gray-300 text-[12px] font-medium uppercase tracking-widest opacity-0 group-hover:opacity-90 transition-all duration-500 translate-y-2 group-hover:translate-y-0 relative z-10">
+          <h3 className="text-white text-[14px] font-bold capitalize tracking-[0.2em] mb-2 relative z-10 group-hover:text-primary transition-colors">{link.label}</h3>
+          <p className="text-gray-300 text-[12px] font-medium capitalize tracking-widest opacity-0 group-hover:opacity-90 transition-all duration-500 translate-y-2 group-hover:translate-y-0 relative z-10">
             {link.desc}
           </p>
         </div>

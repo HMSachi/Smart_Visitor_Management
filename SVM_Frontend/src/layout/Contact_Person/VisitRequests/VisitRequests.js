@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   AddVisitRequest,
@@ -18,6 +12,7 @@ import {
 } from "../../../actions/VisitRequestAction";
 import { GetVisitorsByCP } from "../../../actions/VisitorAction";
 import { AddVehicle } from "../../../actions/VehicleAction";
+import ContactPersonService from "../../../services/ContactPersonService";
 import Header from "../../../components/Contact_Person/Layout/Header";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
 import {
@@ -38,6 +33,7 @@ import {
   Filter,
   ChevronDown,
   Car,
+  MoreVertical,
 } from "lucide-react";
 
 const StatusBadge = ({ status }) => {
@@ -46,23 +42,35 @@ const StatusBadge = ({ status }) => {
     case "A":
     case "APPROVED":
       return (
-        <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
-          <CheckCircle2 size={12} /> Approved
+        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+          Approved
         </div>
       );
     case "R":
     case "REJECTED":
       return (
-        <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
-          <XCircle size={12} /> Rejected
+        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+          Rejected
+        </div>
+      );
+    case "ACCEPTED":
+      return (
+        <div className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max">
+          Accepted
+        </div>
+      );
+    case "SENT":
+      return (
+        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max">
+          Syncing
         </div>
       );
     case "P":
     case "PENDING":
     default:
       return (
-        <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
-          <Clock size={12} /> Pending
+        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+          Pending
         </div>
       );
   }
@@ -76,10 +84,8 @@ const VisitRequests = () => {
   const { visitorsByCP } = useSelector((state) => state.visitorManagement);
 
   const user = useSelector((state) => state.login.user);
-  const cpId =
-    user?.ResultSet?.[0]?.VA_Admin_id ||
-    user?.ResultSet?.[0]?.VCP_Contact_person_id ||
-    2;
+  const userEmail = user?.ResultSet?.[0]?.VA_Email;
+  const [cpId, setCpId] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,7 +93,7 @@ const VisitRequests = () => {
   const [formData, setFormData] = useState({
     VVR_Request_id: "",
     VVR_Visitor_id: "",
-    VVR_Contact_person_id: cpId,
+    VVR_Contact_person_id: "",
     VVR_Visit_Date: "",
     VVR_Places_to_Visit: "",
     VVR_Purpose: "",
@@ -95,9 +101,86 @@ const VisitRequests = () => {
     VV_Vehicle_Number: "",
   });
 
+  // Action Menu State
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedReq, setSelectedReq] = useState(null);
+
+  const handleMenuOpen = (event, req) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedReq(req);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedReq(null);
+  };
+
+  const handleDisableRequest = async () => {
+    if (selectedReq) {
+      const payload = {
+        VVR_Request_id: selectedReq.VVR_Request_id,
+        VVR_Visit_Date: selectedReq.VVR_Visit_Date ? selectedReq.VVR_Visit_Date.split("T")[0] : "",
+        VVR_Places_to_Visit: selectedReq.VVR_Places_to_Visit || "",
+        VVR_Purpose: selectedReq.VVR_Purpose || "",
+        VVR_Status: "R",
+        VVR_Contact_person_id: cpId
+      };
+      await dispatch(UpdateVisitRequest(payload));
+    }
+    handleMenuClose();
+  };
+
+  const handleSendToAdmin = async () => {
+    if (selectedReq) {
+      const payload = {
+        VVR_Request_id: selectedReq.VVR_Request_id,
+        VVR_Visit_Date: selectedReq.VVR_Visit_Date ? selectedReq.VVR_Visit_Date.split("T")[0] : "",
+        VVR_Places_to_Visit: selectedReq.VVR_Places_to_Visit || "",
+        VVR_Purpose: selectedReq.VVR_Purpose || "",
+        VVR_Status: "SENT",
+        VVR_Contact_person_id: cpId
+      };
+      await dispatch(UpdateVisitRequest(payload));
+      alert("Request protocol initiated. Sent to Cloud Admin for final approval.");
+    }
+    handleMenuClose();
+  };
+
   useEffect(() => {
+    const loadContactPersonId = async () => {
+      try {
+        const response = await ContactPersonService.GetAllContactPersons();
+        const contactPersons = response?.data?.ResultSet || [];
+        const match = contactPersons.find(
+          (cp) =>
+            cp?.VCP_Email?.trim().toLowerCase() ===
+            userEmail?.trim().toLowerCase(),
+        );
+
+        if (match?.VCP_Contact_person_id) {
+          setCpId(match.VCP_Contact_person_id);
+          return;
+        }
+
+        setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
+      } catch (err) {
+        console.error("Error loading contact person:", err);
+        setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
+      }
+    };
+
+    if (userEmail) {
+      loadContactPersonId();
+    } else {
+      setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
+    }
+  }, [userEmail, user]);
+
+  useEffect(() => {
+    if (!cpId) return;
     dispatch(GetVisitRequestsByCP(cpId));
     dispatch(GetVisitorsByCP(cpId));
+    setFormData((prev) => ({ ...prev, VVR_Contact_person_id: cpId }));
   }, [dispatch, cpId]);
 
   const openModal = (mode, request = null) => {
@@ -178,206 +261,206 @@ const VisitRequests = () => {
 
   const filteredRequests = visitRequestsByCP
     ? visitRequestsByCP.filter(
-        (req) =>
-          String(req.VVR_Request_id).includes(searchTerm) ||
-          req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+      (req) =>
+        String(req.VVR_Request_id).includes(searchTerm) ||
+        req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
     : [];
 
+  const activeVisitors = (visitorsByCP || []).filter((visitor) => {
+    const status = (visitor?.VV_Status || "").toString().trim().toUpperCase();
+    return status === "A" || status === "ACTIVE";
+  });
+
   return (
-    <div className="flex bg-secondary overflow-hidden text-white h-screen w-full">
+    <div className="flex bg-[#F8F9FA] overflow-hidden text-[#1A1A1A] h-screen w-full transition-colors duration-500">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)] overflow-y-auto">
-        <Header title="Visit Requests Management" />
+      <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-y-auto relative">
+        <Header title="Visitation Node Management" />
 
-        <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full">
-          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
+        <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
+          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.05] pb-8 gap-6 relative">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-[2px] bg-primary"></div>
-                <span className="text-primary uppercase tracking-wider text-xs font-semibold">
-                  Visitation Protocol
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-[2px] bg-primary"></div>
+                <span className="text-primary uppercase tracking-[0.3em] text-[10px] font-bold">
+                  Administrative Visitation Details
                 </span>
               </div>
-              <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
+              <h1 className="text-[#1A1A1A] uppercase px-1 text-3xl font-bold tracking-tight">
                 Active Visit Requests
               </h1>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
-              <div className="flex items-center bg-black/40 border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[300px]">
-                <Search size={16} className="text-gray-400 mr-3" />
+            <div className="flex flex-col sm:flex-row gap-5 w-full md:w-auto items-center">
+              <div className="flex items-center bg-white border border-gray-200 hover:border-primary/20 focus-within:border-primary/40 transition-all rounded-xl px-5 py-3.5 min-w-[340px] group shadow-sm">
+                <Search size={14} className="text-gray-400 group-focus-within:text-primary transition-colors mr-4" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search Request (ID/Purpose)..."
-                  className="bg-transparent text-[13px] text-white focus:outline-none w-full"
+                  placeholder="SEARCH PROTOCOL (ID/PURPOSE)..."
+                  className="bg-transparent text-[12px] text-[#1A1A1A] focus:outline-none w-full uppercase tracking-widest placeholder:text-gray-400"
                 />
               </div>
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg"
+                className="flex items-center gap-3 bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-xl text-[12px] font-bold uppercase tracking-[0.2em] transition-all shadow-[0_8px_20px_rgba(200,16,46,0.3)] active:scale-95 group"
               >
-                <Plus size={16} /> Create Visit Request
+                <Plus size={16} className="group-hover:rotate-90 transition-transform" /> Create Visit Request
               </button>
             </div>
           </header>
 
-          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
+          <div className="bg-white border border-gray-200 rounded-[24px] overflow-hidden shadow-xl shadow-gray-200/50 relative">
 
             {isLoading ? (
-              <div className="p-20 flex flex-col items-center justify-center text-center">
-                <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
-                <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
-                  Fetching Protocol Data...
+              <div className="p-24 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 border-2 border-white/5 border-t-primary rounded-full animate-spin mb-8 shadow-[0_0_15px_var(--color-primary)]"></div>
+                <p className="text-gray-400 text-[11px] uppercase tracking-[0.4em] font-bold animate-pulse">
+                  Initializing Security Protocol...
                 </p>
               </div>
             ) : error ? (
-              <div className="p-20 text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 text-primary">
-                  <AlertCircle size={24} />
+              <div className="p-24 text-center">
+                <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-primary/20 text-primary shadow-2xl">
+                  <AlertCircle size={32} />
                 </div>
-                <p className="text-primary text-[14px] uppercase tracking-widest">
+                <p className="text-primary text-[13px] font-bold uppercase tracking-[0.3em]">
                   {error}
                 </p>
               </div>
             ) : (
-              <TableContainer
-                component={Paper}
-                className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative"
-              >
-                <Table sx={{ minWidth: 650 }} aria-label="visit requests table">
-                  <TableHead className="bg-black/40">
-                    <TableRow>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+              <div className="overflow-x-auto custom-scrollbar relative z-10">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-[#F8F9FA] border-b border-gray-100">
+                      <th className="px-6 py-4 text-left text-primary/60 font-bold uppercase tracking-[0.2em] text-[13px]">
                         ID
-                      </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        Visitor ID
-                      </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        Date
-                      </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        Purpose
-                      </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        Destination
-                      </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      </th>
+                      <th className="px-6 py-4 text-left text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                        Visitor Node
+                      </th>
+                      <th className="px-6 py-4 text-center text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                        Date to Visit
+                      </th>
+                      <th className="px-6 py-4 text-left text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                        Objective
+                      </th>
+                      <th className="px-6 py-4 text-left text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                        Clearance Area
+                      </th>
+                      <th className="px-6 py-4 text-left text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
                         Status
-                      </TableCell>
-                      <TableCell
-                        className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5"
-                        align="right"
-                      >
-                        Actions
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
+                      </th>
+                      <th className="px-6 py-4 text-right text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                        Operations
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
                     {filteredRequests && filteredRequests.length > 0 ? (
                       filteredRequests.map((req) => (
-                        <TableRow
+                        <tr
                           key={req.VVR_Request_id}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                            "&:hover": {
-                              backgroundColor: "rgba(255,255,255,0.02)",
-                            },
-                          }}
+                          className="group hover:bg-[#F8F9FA] border-b border-gray-50 transition-all duration-300 relative overflow-hidden"
                         >
-                          <TableCell className="text-white/70 font-mono border-b-white/5">
+                          <td className="px-6 py-5 text-primary font-mono text-[13px] tracking-widest font-bold">
                             #{req.VVR_Request_id}
-                          </TableCell>
-                          <TableCell className="text-white/70 font-medium border-b-white/5">
-                            <div className="flex items-center gap-2">
-                              <User size={12} className="text-primary/50" />
-                              <span>{req.VVR_Visitor_id}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-white/70 border-b-white/5">
-                            <div className="flex items-center gap-2">
-                              <Calendar size={12} className="text-primary/50" />
-                              <span>
-                                {req.VVR_Visit_Date
-                                  ? req.VVR_Visit_Date.split("T")[0]
-                                  : "N/A"}
+                          </td>
+                          <td className="px-6 py-5">
+                            <div className="flex items-center gap-3">
+                              <span className="text-[#1A1A1A] font-bold text-[13px] uppercase tracking-wider">
+                                {req.VVR_Visitor_Name || req.VVR_Visitor_id}
                               </span>
                             </div>
-                          </TableCell>
-                          <TableCell className="text-white border-b-white/5 uppercase tracking-wider text-[12px] font-medium">
-                            {req.VVR_Purpose || "-"}
-                          </TableCell>
-                          <TableCell className="text-white/70 border-b-white/5">
-                            {req.VVR_Places_to_Visit || "-"}
-                          </TableCell>
-                          <TableCell className="border-b-white/5">
-                            <StatusBadge status={req.VVR_Status} />
-                          </TableCell>
-                          <TableCell align="right" className="border-b-white/5">
-                            <div className="flex items-center justify-end gap-2">
-                              <IconButton
-                                size="small"
-                                onClick={() => openModal("edit", req)}
-                                className="text-blue-400 hover:bg-blue-400/10"
-                              >
-                                <Edit size={16} />
-                              </IconButton>
-                              <IconButton
-                                size="small"
-                                onClick={() =>
-                                  handleAction(req.VVR_Request_id, "C")
-                                }
-                                title="Cancel Request"
-                                className="text-primary hover:bg-primary/10"
-                              >
-                                <X size={16} />
-                              </IconButton>
+                          </td>
+                          <td className="px-6 py-5">
+                            <div className="flex flex-col items-center justify-center gap-2.5 text-gray-500 text-[13px]">
+                              <span className="font-bold tracking-wide">
+                                {req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0].split(" ")[0] : "N/A"}
+                              </span>
                             </div>
-                          </TableCell>
-                        </TableRow>
+                          </td>
+                          <td className="px-6 py-5">
+                            <div className="max-w-[200px]">
+                              <p className="text-[#1A1A1A] font-bold uppercase tracking-wider text-[13px] truncate">
+                                {req.VVR_Purpose || "-"}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5">
+                            <div className="flex items-center gap-2 text-gray-400 text-[13px] font-bold tracking-wide">
+                              <MapPin size={13} className="opacity-40" />
+                              <span>{req.VVR_Places_to_Visit || "-"}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5">
+                            <StatusBadge status={req.VVR_Status} />
+                          </td>
+                          <td className="px-6 py-5 text-right">
+                            <div className="flex items-center justify-end gap-3 opacity-40 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={() => openModal("edit", req)}
+                                className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-400/10 border border-transparent hover:border-blue-400/20 transition-all"
+                                title="Modify Protocol"
+                              >
+                                <Edit size={13} />
+                              </button>
+                              <button
+                                onClick={(e) => handleMenuOpen(e, req)}
+                                className="p-2 rounded-lg text-gray-400 hover:bg-white/5 border border-transparent hover:border-white/10 transition-all"
+                                title="Operational Menu"
+                              >
+                                <MoreVertical size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
                       ))
                     ) : (
-                      <TableRow>
-                        <TableCell
+                      <tr>
+                        <td
                           colSpan={7}
-                          align="center"
-                          className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5"
+                          className="py-24 text-center"
                         >
-                          No Visitation Requests Found
-                        </TableCell>
-                      </TableRow>
+                           <div className="flex flex-col items-center justify-center opacity-20">
+                             <ClipboardList size={48} className="mb-4" />
+                             <p className="uppercase tracking-[0.4em] text-[10px] font-bold">
+                               No Active Visit Requests Detected
+                             </p>
+                           </div>
+                        </td>
+                      </tr>
                     )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>
 
         {/* Modal for Add/Update Visit Request */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto">
-            <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden relative my-auto">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in overflow-y-auto">
+            <div className="bg-[#0A0A0B] border border-white/10 rounded-[32px] shadow-[0_0_100px_rgba(0,0,0,0.8)] w-full max-w-lg overflow-hidden relative my-auto border-t-primary/20">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none opacity-50"></div>
 
-              <div className="flex justify-between items-center p-6 border-b border-white/5 relative z-10 bg-black/20">
-                <div className="flex items-center gap-3">
-                  <div className="w-1.5 h-6 bg-primary rounded-full"></div>
-                  <h2 className="text-lg font-bold text-white uppercase tracking-[0.2em]">
-                    {modalMode === "add"
-                      ? "Dispatch Visit Request"
-                      : "Modify Visit Request"}
-                  </h2>
+              <div className="flex justify-between items-center p-8 border-b border-white/5 relative z-10 bg-white/[0.01]">
+                <div className="flex items-center gap-4">
+                  <div className="w-1.5 h-8 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
+                  <div>
+                    <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em] mb-1">Authorization Layer</p>
+                    <h2 className="text-lg font-bold text-white uppercase tracking-[0.1em]">
+                        {modalMode === "add" ? "Initialize Request" : "Modify Request"}
+                    </h2>
+                  </div>
                 </div>
                 <button
                   onClick={closeModal}
-                  className="text-gray-400 hover:text-white transition-colors bg-white/5 p-2 rounded-lg"
+                  className="text-gray-500 hover:text-white transition-all bg-white/5 p-2.5 rounded-xl border border-white/5 hover:border-white/20"
                 >
                   <X size={20} />
                 </button>
@@ -385,40 +468,38 @@ const VisitRequests = () => {
 
               <form
                 onSubmit={handleSubmit}
-                className="p-8 space-y-6 relative z-10"
+                className="p-8 space-y-7 relative z-10"
               >
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {modalMode === "add" && (
                     <div className="space-y-2">
-                      <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                        <User size={12} className="text-primary/60" /> Select
-                        Visitor
+                      <label className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold px-1 opacity-70">
+                         Target Visitor Node
                       </label>
                       <select
                         required
                         name="VVR_Visitor_id"
                         value={formData.VVR_Visitor_id}
                         onChange={handleInputChange}
-                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 appearance-none cursor-pointer"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-[13px] text-white focus:outline-none focus:border-primary/50 appearance-none cursor-pointer hover:bg-white/[0.05] transition-all"
                       >
-                        <option value="">SELECT AUTHORIZED VISITOR</option>
-                        {visitorsByCP &&
-                          visitorsByCP.map((v) => (
-                            <option
-                              key={v.VV_Visitor_id}
-                              value={v.VV_Visitor_id}
-                            >
-                              {v.VV_Name} (ID: {v.VV_Visitor_id})
-                            </option>
-                          ))}
+                        <option value="" className="bg-[#0A0A0B]">SELECT AUTHORIZED VISITOR</option>
+                        {activeVisitors.map((v) => (
+                          <option
+                            key={v.VV_Visitor_id}
+                            value={v.VV_Visitor_id}
+                            className="bg-[#0A0A0B]"
+                          >
+                            {v.VV_Name} (ID: {v.VV_Visitor_id})
+                          </option>
+                        ))}
                       </select>
                     </div>
                   )}
 
-                  <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                      <Calendar size={12} className="text-primary/60" />{" "}
-                      Proposed Visit Date
+                  <div className="space-y-2 text-white">
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold px-1 opacity-70">
+                       Proposed Synchronization Date
                     </label>
                     <input
                       required
@@ -426,14 +507,14 @@ const VisitRequests = () => {
                       name="VVR_Visit_Date"
                       value={formData.VVR_Visit_Date}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50"
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-all hover:bg-white/[0.05]"
+                      style={{ colorScheme: 'dark' }}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                      <MapPin size={12} className="text-primary/60" />{" "}
-                      Destination Areas
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold px-1 opacity-70">
+                       Designated Clearance Area
                     </label>
                     <input
                       required
@@ -441,15 +522,14 @@ const VisitRequests = () => {
                       name="VVR_Places_to_Visit"
                       value={formData.VVR_Places_to_Visit}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50"
-                      placeholder="e.g. Conference Room B, Factory Floor"
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-all hover:bg-white/[0.05]"
+                      placeholder="ENTER CLEARANCE ZONE..."
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
-                      <ClipboardList size={12} className="text-primary/60" />{" "}
-                      Purpose of Visitation
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold px-1 opacity-70">
+                       Protocol Objective
                     </label>
                     <textarea
                       required
@@ -457,71 +537,83 @@ const VisitRequests = () => {
                       value={formData.VVR_Purpose}
                       onChange={handleInputChange}
                       rows="3"
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 resize-none"
-                      placeholder="Specify the reason for the visit..."
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-[13px] text-white focus:outline-none focus:border-primary/50 resize-none transition-all hover:bg-white/[0.05]"
+                      placeholder="SPECIFY CLEARANCE REASON..."
                     ></textarea>
                   </div>
 
-                  {/* NEW: Vehicle Section */}
                   <div className="pt-4 border-t border-white/5 space-y-4">
-                    <div className="flex items-center gap-3">
-                      <Car size={14} className="text-primary" />
-                      <h3 className="text-xs font-bold text-white uppercase tracking-[0.2em]">
-                        Vehicle Logistics (Optional)
-                      </h3>
-                    </div>
-
+                    <p className="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">Logistic Assets</p>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold px-1">
-                          Vehicle Type
-                        </label>
-                        <input
-                          type="text"
-                          name="VV_Vehicle_Type"
-                          value={formData.VV_Vehicle_Type}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/60 border border-white/5 rounded-xl px-4 py-3 text-[12px] text-white focus:outline-none focus:border-primary/40"
-                          placeholder="e.g. Car, Van, Truck"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold px-1">
-                          Registration No
-                        </label>
-                        <input
-                          type="text"
-                          name="VV_Vehicle_Number"
-                          value={formData.VV_Vehicle_Number}
-                          onChange={handleInputChange}
-                          className="w-full bg-black/60 border border-white/5 rounded-xl px-4 py-3 text-[12px] text-white focus:outline-none focus:border-primary/40"
-                          placeholder="e.g. WP-CAD-1234"
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        name="VV_Vehicle_Type"
+                        value={formData.VV_Vehicle_Type}
+                        onChange={handleInputChange}
+                        className="w-full bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3.5 text-[12px] text-white focus:outline-none focus:border-primary/40 placeholder:text-gray-600"
+                        placeholder="VEHICLE CLASS"
+                      />
+                      <input
+                        type="text"
+                        name="VV_Vehicle_Number"
+                        value={formData.VV_Vehicle_Number}
+                        onChange={handleInputChange}
+                        className="w-full bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3.5 text-[12px] text-white focus:outline-none focus:border-primary/40 placeholder:text-gray-600"
+                        placeholder="PLATE ID"
+                      />
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-6 flex justify-end gap-3 border-t border-white/5">
+                <div className="pt-6 flex justify-end gap-4 border-t border-white/5">
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-8 py-3.5 rounded-xl text-[13px] font-bold text-gray-400 hover:bg-white/5 uppercase tracking-widest transition-all"
+                    className="px-6 py-4 rounded-xl text-[11px] font-bold text-gray-500 hover:text-white hover:bg-white/5 uppercase tracking-[0.2em] transition-all"
                   >
-                    Discard
+                    Abort
                   </button>
                   <button
                     type="submit"
-                    className="px-10 py-3.5 rounded-xl bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[13px] font-bold uppercase tracking-[0.2em] shadow-lg shadow-primary/20 transition-all flex items-center gap-2"
+                    className="px-10 py-4 rounded-xl bg-primary hover:bg-primary-hover text-white text-[11px] font-bold uppercase tracking-[0.2em] shadow-[0_8px_25px_rgba(200,16,46,0.3)] transition-all"
                   >
-                    <Send size={16} />{" "}
-                    {modalMode === "add" ? "Send Protocol" : "Update Protocol"}
+                     {modalMode === "add" ? "Confirm Request" : "Update Records"}
                   </button>
                 </div>
               </form>
             </div>
           </div>
         )}
+
+        {/* Actions Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          PaperProps={{
+            className: "bg-[#18181B] border border-white/10 text-white shadow-2xl min-w-[200px] overflow-hidden rounded-xl py-1"
+          }}
+          MenuListProps={{
+            className: "py-0"
+          }}
+        >
+          <MenuItem
+            onClick={handleDisableRequest}
+            className="px-4 py-3 text-[12px] uppercase font-bold tracking-widest text-primary hover:bg-primary/5 transition-colors border-b border-white/5"
+          >
+            <div className="flex items-center gap-3">
+              <XCircle size={14} /> Disable Visit Request
+            </div>
+          </MenuItem>
+          <MenuItem
+            onClick={handleSendToAdmin}
+            className="px-4 py-3 text-[12px] uppercase font-bold tracking-widest text-green-500 hover:bg-green-500/5 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <CheckCircle2 size={14} /> Send to Admin for Approve
+            </div>
+          </MenuItem>
+        </Menu>
       </div>
     </div>
   );

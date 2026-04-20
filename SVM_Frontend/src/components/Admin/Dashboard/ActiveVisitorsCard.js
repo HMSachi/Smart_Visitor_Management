@@ -40,7 +40,7 @@ const ActiveVisitorsCard = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
-            <p className="text-gray-300 uppercase">Protocols Active</p>
+            <p className="text-gray-300 capitalize">Protocols Active</p>
           </div>
           <AnimatePresence mode="wait">
             <motion.h2 
@@ -50,7 +50,7 @@ const ActiveVisitorsCard = () => {
               className="text-white flex items-baseline"
             >
               {displayCount}
-              <span className="text-primary ml-3 uppercase">Nodes</span>
+              <span className="text-primary ml-3 capitalize">Nodes</span>
             </motion.h2>
           </AnimatePresence>
         </div>
@@ -61,10 +61,10 @@ const ActiveVisitorsCard = () => {
 
       <div className="space-y-6 relative z-10">
         <div className="flex justify-between items-end border-b border-white/5 pb-2">
-          <p className="text-white/80 uppercase">Traffic Density</p>
-          <div className="flex items-center text-green-500 uppercase">
+          <p className="text-white/80 capitalize">Traffic Density</p>
+          <div className="flex items-center text-green-500 capitalize">
             <Activity size={12} className="mr-1.5" />
-            STABLE
+            Stable
           </div>
         </div>
         

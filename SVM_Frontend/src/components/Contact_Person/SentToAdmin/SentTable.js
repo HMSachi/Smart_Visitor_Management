@@ -29,9 +29,9 @@ const ProgressionTimeline = ({ status }) => {
 const SentTable = ({ requests }) => {
     return (
         <div className="mas-glass border-mas-border overflow-x-auto overflow-y-hidden custom-scrollbar">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse text-[13px]">
                 <thead>
-                    <tr className="border-b border-mas-border bg-white/[0.02]">
+                    <tr className="border-b border-mas-border bg-white/[0.02] text-[13px]">
                         <th className="px-6 py-6 uppercase text-gray-300 whitespace-nowrap">Forward ID</th>
                         <th className="px-6 py-6 uppercase text-gray-300 whitespace-nowrap">Visitor Node</th>
                         <th className="px-6 py-6 uppercase text-gray-300 whitespace-nowrap">Progression Matrix</th>
@@ -47,7 +47,7 @@ const SentTable = ({ requests }) => {
                             <td className="px-6 py-6 whitespace-nowrap">
                                 <div className="flex flex-col">
                                     <span className="uppercase text-white mb-1">{req.name}</span>
-                                    <span className="text-gray-300 uppercase text-xs">Target: Unit 08A</span>
+                                    <span className="text-gray-300 uppercase text-[12px]">Target: Unit 08A</span>
                                 </div>
                             </td>
                             <td className="px-6 py-6 whitespace-nowrap">
