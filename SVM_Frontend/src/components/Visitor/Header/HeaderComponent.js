@@ -18,7 +18,6 @@ const HeaderComponent = () => {
     
     const menuItems = [
         { label: 'Home', path: '/home', icon: Home },
-        { label: 'Status Check', path: '/status', icon: Activity },
     ];
 
     const handleNavigate = (path) => {

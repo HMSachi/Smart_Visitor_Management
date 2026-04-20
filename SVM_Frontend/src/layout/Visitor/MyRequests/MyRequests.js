@@ -188,35 +188,21 @@ const MyRequests = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-default)] text-white p-6 md:p-12 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--color-bg-default)] text-white px-4 md:px-8 pt-24 md:pt-28 pb-6 md:pb-8 font-sans relative overflow-hidden">
       {/* Background Gradients */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none"></div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
-        <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <header className="mb-8">
           <div>
-            <span className="text-primary font-black uppercase tracking-[0.4em] text-xs">
-              Security Clearance
-            </span>
-            <h1 className="text-4xl md:text-5xl font-black text-white mt-2 uppercase tracking-tighter">
-              My Visit <span className="text-primary italic">Requests</span>
+            <h1 className="text-[24px] md:text-[24px] font-semibold text-white mt-2 tracking-[0.02em]">
+              My Visit Requests
             </h1>
-          </div>
-
-          <div className="flex items-center bg-black/40 border border-white/10 rounded-2xl px-5 py-4 w-full md:w-[400px]">
-            <Search size={18} className="text-gray-400 mr-3" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search IDs or Purpose..."
-              className="bg-transparent border-none outline-none text-white text-sm tracking-widest uppercase w-full placeholder:text-gray-600"
-            />
           </div>
         </header>
 
-        <div className="bg-black/20 border border-white/5 rounded-[40px] overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div className="bg-black/20 border border-white/5 rounded-[28px] overflow-hidden backdrop-blur-xl shadow-2xl">
           {isLoading ? (
             <div className="p-24 flex flex-col items-center justify-center">
               <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
@@ -241,23 +227,23 @@ const MyRequests = () => {
               <Table sx={{ minWidth: 650 }}>
                 <TableHead className="bg-white/[0.02]">
                   <TableRow>
-                    <TableCell className="text-gray-500 font-black uppercase tracking-widest text-[10px] border-b-white/5 py-8 px-10">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
                       Protocol ID
                     </TableCell>
-                    <TableCell className="text-gray-500 font-black uppercase tracking-widest text-[10px] border-b-white/5 py-8 px-10">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
                       Date
                     </TableCell>
-                    <TableCell className="text-gray-500 font-black uppercase tracking-widest text-[10px] border-b-white/5 py-8 px-10">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
                       Destination
                     </TableCell>
-                    <TableCell className="text-gray-500 font-black uppercase tracking-widest text-[10px] border-b-white/5 py-8 px-10">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
                       Purpose
                     </TableCell>
-                    <TableCell className="text-gray-500 font-black uppercase tracking-widest text-[10px] border-b-white/5 py-8 px-10">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
                       Status
                     </TableCell>
                     <TableCell
-                      className="text-gray-500 font-black uppercase tracking-widest text-[10px] border-b-white/5 py-8 px-10"
+                      className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6"
                       align="right"
                     >
                       Controls
@@ -272,40 +258,40 @@ const MyRequests = () => {
                         hover
                         className="hover:bg-white/[0.02] transition-all"
                       >
-                        <TableCell className="px-10 py-8 border-b-white/5">
+                        <TableCell className="px-6 py-5 border-b-white/5">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                               <Hash size={14} />
                             </div>
-                            <span className="text-white font-mono tracking-tighter text-lg">
+                            <span className="text-white font-mono tracking-normal text-base">
                               #{req.VVR_Request_id}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell className="px-10 py-8 border-b-white/5">
+                        <TableCell className="px-6 py-5 border-b-white/5">
                           <div className="flex items-center gap-3 text-gray-300">
                             <Calendar size={14} className="text-primary/50" />
-                            <span className="text-[13px] font-bold tracking-widest uppercase">
+                            <span className="text-sm font-medium tracking-normal">
                               {req.VVR_Visit_Date
                                 ? req.VVR_Visit_Date.split("T")[0]
                                 : "N/A"}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell className="px-10 py-8 border-b-white/5">
+                        <TableCell className="px-6 py-5 border-b-white/5">
                           <div className="flex items-center gap-3 text-gray-300">
                             <MapPin size={14} className="text-primary/50" />
-                            <span className="text-[13px] font-bold tracking-widest uppercase">
+                            <span className="text-sm font-medium tracking-normal">
                               {req.VVR_Places_to_Visit || "-"}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell className="px-10 py-8 border-b-white/5">
+                        <TableCell className="px-6 py-5 border-b-white/5">
                           <p className="text-white font-medium tracking-wide text-sm opacity-80 line-clamp-1">
                             {req.VVR_Purpose || "-"}
                           </p>
                         </TableCell>
-                        <TableCell className="px-10 py-8 border-b-white/5">
+                        <TableCell className="px-6 py-5 border-b-white/5">
                           <div className="flex flex-col gap-2">
                             <StatusBadge status={req.VVR_Status} />
                             {hasGatePass(req.VVR_Request_id) && (
@@ -320,7 +306,7 @@ const MyRequests = () => {
                           </div>
                         </TableCell>
                         <TableCell
-                          className="px-10 py-8 border-b-white/5"
+                          className="px-6 py-5 border-b-white/5"
                           align="right"
                         >
                           <button
