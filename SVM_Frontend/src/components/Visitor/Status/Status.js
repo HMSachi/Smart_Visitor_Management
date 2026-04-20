@@ -28,17 +28,17 @@ const StatusMain = () => {
             <header className="mb-8 flex items-center justify-between border-b border-white/5 pb-6">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <span className="text-primary font-bold text-[12px] uppercase tracking-widest">System Node 01</span>
+                        <span className="text-primary font-bold text-[12px] uppercase tracking-widest">Facility Access</span>
                     </div>
                     <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight">
-                        Live <span className="text-primary">Tracking</span>
+                        Request <span className="text-primary">Status</span>
                     </h1>
-                    <p className="text-gray-500 text-[13px] uppercase font-semibold tracking-wider mt-0.5">Clearance Monitor V.4.2.1</p>
+                    <p className="text-gray-500 text-[13px] uppercase font-semibold tracking-wider mt-0.5">Track your visitation progress</p>
                 </div>
 
                 <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-white/[0.02] border border-white/5 rounded-lg">
                     <Activity size={14} className="text-primary" />
-                    <span className="text-gray-400 text-[13px] font-bold uppercase tracking-widest">Protocol Active</span>
+                    <span className="text-gray-400 text-[13px] font-bold uppercase tracking-widest">In Progress</span>
                 </div>
             </header>
 
@@ -53,60 +53,17 @@ const StatusMain = () => {
                             <div className="text-primary">
                                 <FileText size={14} />
                             </div>
-                            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0">Clearance Timeline</h3>
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0">Pass Progress</h3>
                         </div>
 
                         <StatusTimeline currentStage={currentStatus} />
                     </div>
 
-                    {/* Admin Actions (New Compact style) */}
-                    <div className="bg-white/[0.01] border border-white/5 p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="flex items-center gap-4">
-                            <div className="p-2 bg-white/[0.03] rounded-lg text-gray-600">
-                                <Terminal size={14} />
-                            </div>
-                            <div>
-                                <span className="text-[13px] text-gray-500 uppercase font-bold tracking-widest block mb-1">SIM_AUTH_NODE</span>
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
-                                    <span className="text-[12px] text-gray-600 font-bold uppercase tracking-widest">Protocol Override Active</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex gap-2">
-                            <button 
-                                onClick={() => dispatch(setStatus('step1_approved'))}
-                                className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-[12px] font-bold uppercase tracking-widest text-gray-500 hover:text-white hover:bg-primary/20 transition-all"
-                            >
-                                Simulate Step 1
-                            </button>
-                            <button 
-                                onClick={() => dispatch(setStatus('fully_approved'))}
-                                className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-[12px] font-bold uppercase tracking-widest text-gray-500 hover:text-white hover:bg-green-500/20 transition-all"
-                            >
-                                Simulate Final
-                            </button>
-                        </div>
-                    </div>
                 </main>
-
-                <section className="w-full">
-                    <NotificationPanel status={currentStatus} />
-                </section>
             </div>
 
             {/* Footer Summary Actions */}
             <div className="mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-12">
-                <div className="flex gap-6 items-center flex-1">
-                    <div className="hidden md:flex flex-col items-end border-r border-white/10 pr-6">
-                        <span className="text-[12px] text-gray-600 font-bold uppercase tracking-widest">Status Code</span>
-                        <span className="text-[14px] text-white font-mono">{currentStatus.toUpperCase()}</span>
-                    </div>
-                    <div className="max-w-md">
-                        <p className="text-gray-600 text-[13px] font-bold uppercase tracking-widest mb-1">Protocol Insight</p>
-                        <p className="text-white/80 text-[14px] font-semibold uppercase tracking-wider leading-relaxed">"{getStatusMessage()}"</p>
-                    </div>
-                </div>
 
                 <div className="flex gap-3 w-full md:w-auto">
                     {currentStatus !== 'fully_approved' && (
