@@ -353,39 +353,39 @@ const MyRequests = () => {
 
       {/* Edit Modal (Visitor side) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm animate-fade-in">
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-[#0A0A0A] border border-white/10 rounded-[40px] shadow-2xl w-full max-w-xl overflow-hidden relative"
+            className="bg-white border border-gray-100 rounded-[40px] shadow-2xl w-full max-w-xl overflow-hidden relative"
           >
-            <div className="p-10 border-b border-white/5 bg-white/[0.01] flex justify-between items-center">
+            <div className="p-8 md:p-10 border-b border-gray-100 bg-[#F8F9FA] flex justify-between items-center">
               <div>
-                <span className="text-primary font-black uppercase tracking-[0.4em] text-[10px]">
-                  Correction Protocol
+                <span className="text-primary font-bold uppercase tracking-[0.3em] text-[10px]">
+                  Edit Request
                 </span>
-                <h2 className="text-2xl font-black text-white mt-1 uppercase tracking-tight">
-                  Review & Edit{" "}
-                  <span className="text-primary italic">Request</span>
+                <h2 className="text-2xl font-black text-[#1A1A1A] mt-1 uppercase tracking-tight">
+                  Review &amp; Update
                 </h2>
               </div>
               <button
+                type="button"
                 onClick={closeModal}
-                className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all"
+                className="p-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-400 hover:text-primary rounded-2xl transition-all shadow-sm"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-10 space-y-8">
+            <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-8">
               <div className="grid grid-cols-1 gap-8">
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.3em] ml-1">
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
                     Visit Date
                   </label>
                   <div className="relative group">
                     <Calendar
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
                       size={18}
                     />
                     <input
@@ -394,18 +394,18 @@ const MyRequests = () => {
                       name="VVR_Visit_Date"
                       value={formData.VVR_Visit_Date}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm font-bold uppercase tracking-widest focus:outline-none focus:border-primary/50 transition-all"
+                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest focus:outline-none focus:border-primary/50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.3em] ml-1">
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
                     Visiting Areas
                   </label>
                   <div className="relative group">
                     <MapPin
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
                       size={18}
                     />
                     <input
@@ -414,19 +414,19 @@ const MyRequests = () => {
                       name="VVR_Places_to_Visit"
                       value={formData.VVR_Places_to_Visit}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm font-bold uppercase tracking-widest focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-700"
+                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest focus:outline-none focus:border-primary/50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-gray-400"
                       placeholder="E.G. MAIN PRODUCTION FLOOR"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.3em] ml-1">
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
                     Updated Purpose
                   </label>
                   <div className="relative group">
                     <ClipboardList
-                      className="absolute left-4 top-5 text-primary/40 group-focus-within:text-primary transition-colors"
+                      className="absolute left-4 top-5 text-gray-400 group-focus-within:text-primary transition-colors"
                       size={18}
                     />
                     <textarea
@@ -435,7 +435,7 @@ const MyRequests = () => {
                       value={formData.VVR_Purpose}
                       onChange={handleInputChange}
                       rows="4"
-                      className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm font-bold tracking-wide focus:outline-none focus:border-primary/50 transition-all resize-none placeholder:text-gray-700"
+                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-[13px] font-medium tracking-wide focus:outline-none focus:border-primary/50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all resize-none placeholder:text-gray-400"
                       placeholder="Clarify the purpose of your visit..."
                     />
                   </div>
@@ -446,7 +446,7 @@ const MyRequests = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 py-5 bg-white/5 border border-white/10 rounded-2xl text-gray-400 font-bold uppercase tracking-widest hover:bg-white/10 transition-all"
+                  className="flex-1 py-4 bg-white border border-gray-200 rounded-2xl text-gray-500 font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-gray-700 hover:border-gray-300 transition-all shadow-sm"
                 >
                   Cancel
                 </button>
