@@ -15,7 +15,7 @@ import {
     DELETE_ADMINISTRATOR_SUCCESS,
     DELETE_ADMINISTRATOR_FAILURE
 } from "../constants/AdministratorConstants";
-
+////
 const initialState = {
     isLoading: false,
     administrators: [],
