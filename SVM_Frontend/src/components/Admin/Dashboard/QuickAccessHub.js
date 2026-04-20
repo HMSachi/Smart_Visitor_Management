@@ -7,7 +7,6 @@ const QuickAccessHub = ({ setActiveTab }) => {
     { id: 'approvals', label: 'Authorization Nodes', desc: 'Process Pending Requests', icon: CheckSquare, color: 'mas-red' },
     { id: 'security', label: 'Security Monitoring', desc: 'Site Activity & Logs', icon: ShieldAlert, color: 'white' },
     { id: 'blacklist', label: 'Restricted Registry', desc: 'Manage Blocked Personnel', icon: UserX, color: 'white' },
-    { id: 'reports', label: 'Intelligence Summary', desc: 'System Analytics & Reports', icon: CheckSquare, color: 'white' },
   ];
 
   return (
