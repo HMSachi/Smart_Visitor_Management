@@ -717,7 +717,6 @@ const AllUsers = () => {
                       <option value="Admin">Admin</option>
                       <option value="Security">Security</option>
                       <option value="Contact_Person">Contact Person</option>
-                      <option value="Visitor">Visitor</option>
                     </select>
                   </div>
 
