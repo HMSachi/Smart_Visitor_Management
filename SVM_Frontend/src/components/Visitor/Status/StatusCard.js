@@ -7,41 +7,41 @@ const StatusCard = ({ status }) => {
             color: 'text-primary', 
             bg: 'bg-primary/10', 
             border: 'border-primary/20', 
-            label: 'PHASE 1 REVIEW', 
+            label: 'Reviewing by Contact Person', 
             icon: Clock,
-            desc: 'Primary protocol initialization active.'
+            desc: 'Sent to Contact Person for initial verification.'
         },
         'step1_approved': { 
             color: 'text-blue-500', 
             bg: 'bg-blue-500/10', 
             border: 'border-blue-500/20', 
-            label: 'PHASE 1 AUTHORIZED', 
+            label: 'Approved by Contact Person', 
             icon: ShieldCheck,
-            desc: 'Secondary documentation required.'
+            desc: 'Secondary verification needed.'
         },
         'step2_pending': { 
             color: 'text-primary', 
             bg: 'bg-primary/10', 
             border: 'border-primary/20', 
-            label: 'FINAL CLEARANCE', 
+            label: 'Pending Admin Approval', 
             icon: Zap,
-            desc: 'Detailed verification in progress.'
+            desc: 'Sent to Administrator for final authorization.'
         },
         'fully_approved': { 
             color: 'text-green-500', 
             bg: 'bg-green-500/10', 
             border: 'border-green-500/20', 
-            label: 'FACILITY AUTHORIZED', 
+            label: 'Access Approved', 
             icon: ShieldCheck,
-            desc: 'Digital pass is now synchronized.'
+            desc: 'Your visitor pass is ready.'
         },
         'rejected': { 
             color: 'text-primary', 
             bg: 'bg-primary/20', 
             border: 'border-primary/40', 
-            label: 'ACCESS DENIED', 
+            label: 'Request Rejected', 
             icon: XCircle,
-            desc: 'Security clearance failure detected.'
+            desc: 'Access authorization failed.'
         }
     };
 
@@ -56,7 +56,7 @@ const StatusCard = ({ status }) => {
                         <Icon size={18} />
                     </div>
                     <div>
-                        <span className={`text-[12px] font-bold uppercase tracking-widest ${current.color} mb-1 block`}>Clearance Status</span>
+                        <span className={`text-[12px] font-bold uppercase tracking-widest ${current.color} mb-1 block`}>Current Status</span>
                         <h2 className="text-base font-bold text-white uppercase tracking-tight mb-0.5">
                             {current.label}
                         </h2>
@@ -64,24 +64,6 @@ const StatusCard = ({ status }) => {
                     </div>
                 </div>
 
-                <div className="px-5 py-3 border-l border-white/5 text-center md:text-right w-full md:w-auto flex flex-col justify-center items-center md:items-end">
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="text-gray-600 text-[12px] font-bold uppercase tracking-widest">Node Node</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
-                    </div>
-                    <span className="text-white text-[14px] font-bold uppercase tracking-widest tabular-nums">MAS CORE 01</span>
-                    
-                    {status === 'step1_approved' ? (
-                        <button 
-                            onClick={() => window.location.href='/request-step-2'}
-                            className="compact-btn mt-4 !w-full md:!w-auto"
-                        >
-                            Complete Phase 2
-                        </button>
-                    ) : (
-                        <p className="mt-2 text-[12px] text-gray-700 font-bold uppercase tracking-widest">Facility: MAS HOLDINGS</p>
-                    )}
-                </div>
             </div>
         </div>
     );

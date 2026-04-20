@@ -35,6 +35,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [expandedBatches, setExpandedBatches] = useState([]);
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' or 'desc'
 
   const toggleBatch = (batchId) => {
     setExpandedBatches(prev =>
@@ -64,14 +65,20 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
     </div>
   );
 
-  const filteredVisitors = (visitors || []).filter(visitor => {
-    const matchesSearch = visitor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      visitor.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (visitor.batchId && visitor.batchId.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (visitor.nic && visitor.nic.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesStatus = statusFilter === 'All' || visitor.status === statusFilter;
-    return matchesStatus;
-  });
+  const filteredVisitors = (visitors || [])
+    .filter(visitor => {
+      const matchesSearch = visitor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        visitor.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (visitor.batchId && visitor.batchId.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (visitor.nic && visitor.nic.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesStatus = statusFilter === 'All' || visitor.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+    });
 
   return (
     <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[40px] overflow-hidden flex flex-col shadow-2xl animate-fade-in-slow relative">
@@ -86,7 +93,27 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
             <p className="text-white/90 capitalize text-[12px] font-medium tracking-widest mt-1">Monitor and manage visitor requests</p>
           </div>
         </div>
-
+        <div className="flex flex-wrap gap-3 mt-4 xl:mt-0">
+          {[
+            { id: 'All', label: 'All Forms' },
+            { id: 'Pending', label: 'Pending' },
+            { id: 'Sent to Admin', label: 'Sent to Admin' },
+            { id: 'Accepted by Admin', label: 'Accepted by Admin' },
+            { id: 'Rejected', label: 'Rejected' },
+          ].map((btn) => (
+            <button
+              key={btn.id}
+              onClick={() => setStatusFilter(btn.id)}
+              className={`px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[0.2em] transition-all duration-300 border ${
+                statusFilter === btn.id
+                  ? 'bg-primary border-primary text-white shadow-[0_0_15px_rgba(200,16,46,0.2)]'
+                  : 'bg-white/[0.03] border-white/5 text-gray-400 hover:text-white hover:border-white/20'
+              }`}
+            >
+              {btn.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto bg-[var(--color-bg-default)]">
@@ -96,7 +123,17 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
             <tr className="bg-[var(--color-bg-paper)] border-b border-white/5">
               <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 text-center w-24">No.</th>
               <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70">Visitor</th>
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70">Visit Details</th>
+              <th 
+                className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 cursor-pointer hover:text-primary transition-colors group"
+                onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+              >
+                <div className="flex items-center gap-2">
+                  Visit Details
+                  <div className={`transition-transform duration-300 ${sortOrder === 'asc' ? 'rotate-180' : ''}`}>
+                    <ChevronDown size={14} className={sortOrder ? 'text-primary' : 'text-gray-500'} />
+                  </div>
+                </div>
+              </th>
               <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 text-center">Status</th>
               <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-primary text-right pr-12">Action</th>
             </tr>
@@ -320,26 +357,6 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
         </div>
       </div>
 
-      {/* Pagination Hub */}
-      <div className="p-8 border-t border-white/5 flex flex-col xl:flex-row justify-between items-center bg-[var(--color-bg-paper)] gap-8 relative z-10">
-        <div className="flex items-center gap-4">
-          <div className="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_8px_var(--color-primary)]"></div>
-          <p className="text-gray-300 capitalize text-[13px] font-medium tracking-[0.3em] opacity-80">
-            Showing {filteredVisitors.length} <span className="text-white/70 mx-1">/</span> 28 synchronized entries
-          </p>
-        </div>
-
-        <div className="flex items-center gap-4 w-full xl:w-auto">
-          <button className="flex-1 xl:flex-none px-10 py-4 bg-white/[0.02] border border-white/5 text-gray-300/80 text-[13px] font-medium capitalize tracking-[0.4em] hover:text-white hover:border-primary/40 transition-all rounded-2xl shadow-xl">Prev</button>
-
-          <div className="hidden xl:flex gap-3">
-            <button className="w-12 h-12 flex items-center justify-center bg-primary text-white text-[13px] font-medium rounded-xl shadow-[0_0_20px_rgba(200,16,46,0.3)]">1</button>
-            <button className="w-12 h-12 flex items-center justify-center bg-white/[0.02] border border-white/5 text-gray-300/80 text-[13px] font-medium rounded-xl hover:text-white hover:border-primary/40 transition-all">2</button>
-          </div>
-
-          <button className="flex-1 xl:flex-none px-10 py-4 bg-white/[0.02] border border-white/5 text-gray-300/80 text-[13px] font-medium capitalize tracking-[0.4em] hover:text-white hover:border-primary/40 transition-all rounded-2xl shadow-xl">Next</button>
-        </div>
-      </div>
     </div>
   );
 };

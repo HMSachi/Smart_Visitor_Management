@@ -66,9 +66,6 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             </div>
           </div>
 
-          <button className="flex items-center gap-3 px-6 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-[13px] font-medium uppercase tracking-widest text-gray-500 hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all group">
-            <Download size={14} className="group-hover:translate-y-0.5 transition-transform" /> Export Data
-          </button>
         </div>
       </div>
 

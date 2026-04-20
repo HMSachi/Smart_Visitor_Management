@@ -15,6 +15,7 @@ import { AddVehicle } from "../../../actions/VehicleAction";
 import ContactPersonService from "../../../services/ContactPersonService";
 import Header from "../../../components/Contact_Person/Layout/Header";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
+import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
   Search,
   Plus,
@@ -82,6 +83,8 @@ const VisitRequests = () => {
     (state) => state.visitRequestsState,
   );
   const { visitorsByCP } = useSelector((state) => state.visitorManagement);
+  const { themeMode } = useThemeMode();
+  const isLight = themeMode === "light";
 
   const user = useSelector((state) => state.login.user);
   const userEmail = user?.ResultSet?.[0]?.VA_Email;
@@ -444,16 +447,16 @@ const VisitRequests = () => {
 
         {/* Modal for Add/Update Visit Request */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in overflow-y-auto">
-            <div className="bg-[#0A0A0B] border border-white/10 rounded-[32px] shadow-[0_0_100px_rgba(0,0,0,0.8)] w-full max-w-lg overflow-hidden relative my-auto border-t-primary/20">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none opacity-50"></div>
+          <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in overflow-y-auto ${isLight ? "bg-black/40 backdrop-blur-sm" : "bg-black/90 backdrop-blur-md"}`}>
+            <div className={`${isLight ? "bg-white border-gray-200 shadow-2xl shadow-gray-200/50" : "bg-[#0A0A0B] border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)]"} border rounded-[32px] w-full max-w-lg overflow-hidden relative my-auto border-t-primary/20`}>
+              <div className={`absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none opacity-50`}></div>
 
               <div className="flex justify-between items-center p-8 border-b border-white/5 relative z-10 bg-white/[0.01]">
                 <div className="flex items-center gap-4">
                   <div className="w-1.5 h-8 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
                   <div>
                     <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em] mb-1">Authorization Layer</p>
-                    <h2 className="text-lg font-bold text-white uppercase tracking-[0.1em]">
+                    <h2 className={`text-lg font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
                         {modalMode === "add" ? "Initialize Request" : "Modify Request"}
                     </h2>
                   </div>
@@ -481,14 +484,18 @@ const VisitRequests = () => {
                         name="VVR_Visitor_id"
                         value={formData.VVR_Visitor_id}
                         onChange={handleInputChange}
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-[13px] text-white focus:outline-none focus:border-primary/50 appearance-none cursor-pointer hover:bg-white/[0.05] transition-all"
+                        className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 appearance-none cursor-pointer transition-all ${
+                          isLight 
+                            ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100" 
+                            : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                        }`}
                       >
-                        <option value="" className="bg-[#0A0A0B]">SELECT AUTHORIZED VISITOR</option>
+                        <option value="" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>SELECT AUTHORIZED VISITOR</option>
                         {activeVisitors.map((v) => (
                           <option
                             key={v.VV_Visitor_id}
                             value={v.VV_Visitor_id}
-                            className="bg-[#0A0A0B]"
+                            className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}
                           >
                             {v.VV_Name} (ID: {v.VV_Visitor_id})
                           </option>
@@ -507,8 +514,12 @@ const VisitRequests = () => {
                       name="VVR_Visit_Date"
                       value={formData.VVR_Visit_Date}
                       onChange={handleInputChange}
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-all hover:bg-white/[0.05]"
-                      style={{ colorScheme: 'dark' }}
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${
+                        isLight 
+                          ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100" 
+                          : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                      }`}
+                      style={{ colorScheme: isLight ? 'light' : 'dark' }}
                     />
                   </div>
 
@@ -522,7 +533,11 @@ const VisitRequests = () => {
                       name="VVR_Places_to_Visit"
                       value={formData.VVR_Places_to_Visit}
                       onChange={handleInputChange}
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-all hover:bg-white/[0.05]"
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${
+                        isLight 
+                          ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100" 
+                          : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                      }`}
                       placeholder="ENTER CLEARANCE ZONE..."
                     />
                   </div>
@@ -537,7 +552,11 @@ const VisitRequests = () => {
                       value={formData.VVR_Purpose}
                       onChange={handleInputChange}
                       rows="3"
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-[13px] text-white focus:outline-none focus:border-primary/50 resize-none transition-all hover:bg-white/[0.05]"
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 resize-none transition-all ${
+                        isLight 
+                          ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100" 
+                          : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                      }`}
                       placeholder="SPECIFY CLEARANCE REASON..."
                     ></textarea>
                   </div>
@@ -550,7 +569,11 @@ const VisitRequests = () => {
                         name="VV_Vehicle_Type"
                         value={formData.VV_Vehicle_Type}
                         onChange={handleInputChange}
-                        className="w-full bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3.5 text-[12px] text-white focus:outline-none focus:border-primary/40 placeholder:text-gray-600"
+                        className={`w-full border rounded-xl px-4 py-3.5 text-[12px] focus:outline-none focus:border-primary/40 placeholder:text-gray-400 ${
+                          isLight 
+                            ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100" 
+                            : "bg-white/[0.03] border-white/5 text-white hover:bg-white/[0.05]"
+                        }`}
                         placeholder="VEHICLE CLASS"
                       />
                       <input
@@ -558,7 +581,11 @@ const VisitRequests = () => {
                         name="VV_Vehicle_Number"
                         value={formData.VV_Vehicle_Number}
                         onChange={handleInputChange}
-                        className="w-full bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3.5 text-[12px] text-white focus:outline-none focus:border-primary/40 placeholder:text-gray-600"
+                        className={`w-full border rounded-xl px-4 py-3.5 text-[12px] focus:outline-none focus:border-primary/40 placeholder:text-gray-400 ${
+                          isLight 
+                            ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100" 
+                            : "bg-white/[0.03] border-white/5 text-white hover:bg-white/[0.05]"
+                        }`}
                         placeholder="PLATE ID"
                       />
                     </div>
@@ -591,7 +618,7 @@ const VisitRequests = () => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
           PaperProps={{
-            className: "bg-[#18181B] border border-white/10 text-white shadow-2xl min-w-[200px] overflow-hidden rounded-xl py-1"
+            className: `${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-xl" : "bg-[#18181B] border-white/10 text-white shadow-2xl"} border min-w-[200px] overflow-hidden rounded-xl py-1`
           }}
           MenuListProps={{
             className: "py-0"
