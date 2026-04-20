@@ -36,7 +36,6 @@ import ApprovedRequests from "./layout/Contact_Person/ApprovedRequests/ApprovedR
 import RejectedRequests from "./layout/Contact_Person/RejectedRequests/RejectedRequests";
 import SentToAdmin from "./layout/Contact_Person/SentToAdmin/SentToAdmin";
 import VisitorHistory from "./layout/Contact_Person/VisitorHistory/VisitorHistory";
-import Notifications from "./layout/Contact_Person/Notifications/Notifications";
 import ProfileSettings from "./layout/Contact_Person/ProfileSettings/ProfileSettings";
 import ContactAllVisitors from "./layout/Contact_Person/AllVisitors/AllVisitors";
 import ContactVisitRequests from "./layout/Contact_Person/VisitRequests/VisitRequests";
@@ -212,10 +211,6 @@ const AppContent = () => {
           <Route
             path="/contact_person/visitor-history"
             element={<VisitorHistory />}
-          />
-          <Route
-            path="/contact_person/notifications"
-            element={<Notifications />}
           />
           <Route
             path="/contact_person/profile-settings"
