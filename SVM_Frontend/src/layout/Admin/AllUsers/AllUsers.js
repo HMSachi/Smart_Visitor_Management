@@ -458,9 +458,7 @@ const AllUsers = () => {
                               Name
                             </TableCell>
                             <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              {cat.id === "CONTACT"
-                                ? "Department"
-                                : "Role"}
+                              {cat.id === "CONTACT" ? "Department" : "Role"}
                             </TableCell>
                             <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
                               {cat.id === "CONTACT"
@@ -708,15 +706,19 @@ const AllUsers = () => {
                     <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
                       <Shield size={12} /> Role
                     </label>
-                    <input
+                    <select
                       required
-                      type="text"
                       name="role"
                       value={formData.role}
                       onChange={handleInputChange}
                       className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
-                      placeholder="e.g. Admin, Security"
-                    />
+                    >
+                      <option value="">Select a role</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Security">Security</option>
+                      <option value="Contact_Person">Contact Person</option>
+                      <option value="Visitor">Visitor</option>
+                    </select>
                   </div>
 
                   <div className="space-y-1">
