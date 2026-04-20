@@ -318,11 +318,11 @@ const AllUsers = () => {
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-8 h-[2px] bg-primary"></div>
                 <span className="text-primary uppercase tracking-wider text-xs font-semibold">
-                  Master User Hub
+                  User Directory
                 </span>
               </div>
               <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
-                Global Identity Directory
+                All System Users
               </h1>
             </div>
 
@@ -399,7 +399,7 @@ const AllUsers = () => {
                 onClick={() => openModal("add")}
                 className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
               >
-                <Plus size={16} /> New System node
+                <Plus size={16} /> Add New User
               </button>
             </div>
           </header>
@@ -409,7 +409,7 @@ const AllUsers = () => {
               <div className="p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
                 <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
-                  Synchronizing Identity Nodes...
+                  Loading Users...
                 </p>
               </div>
             ) : error ? (
@@ -433,7 +433,7 @@ const AllUsers = () => {
                         {cat.title}
                       </h2>
                       <p className="text-white/30 text-[10px] tracking-[0.3em] uppercase font-medium">
-                        {cat.data.length} Registered entities
+                        {cat.data.length} Total Users
                       </p>
                     </div>
                     <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent ml-4"></div>
@@ -452,20 +452,20 @@ const AllUsers = () => {
                         <TableHead className="bg-black/40">
                           <TableRow>
                             <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              ID Node
+                              User ID
                             </TableCell>
                             <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              Personnel Entity
+                              Name
                             </TableCell>
                             <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
                               {cat.id === "CONTACT"
                                 ? "Department"
-                                : "System Role"}
+                                : "Role"}
                             </TableCell>
                             <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
                               {cat.id === "CONTACT"
-                                ? "Phone Connection"
-                                : "Authentication Origin"}
+                                ? "Phone Number"
+                                : "Date Joined"}
                             </TableCell>
                             <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
                               Status
@@ -474,7 +474,7 @@ const AllUsers = () => {
                               className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5"
                               align="right"
                             >
-                              Actions
+                              Action
                             </TableCell>
                           </TableRow>
                         </TableHead>
@@ -486,8 +486,7 @@ const AllUsers = () => {
                                 align="center"
                                 className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5"
                               >
-                                No {cat.title.toLowerCase()} configured in the
-                                system
+                                No users found in this category
                               </TableCell>
                             </TableRow>
                           ) : (

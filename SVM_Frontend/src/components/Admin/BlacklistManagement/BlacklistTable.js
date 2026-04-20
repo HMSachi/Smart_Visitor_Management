@@ -20,11 +20,7 @@ const RestrictionLevel = ({ level }) => {
 const BlacklistTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const blacklist = [
-    { id: 1, name: 'Malith Gunawardena', docId: '199234567V', reason: 'UNAUTHORIZED_ENTRY_ATTEMPT_NODE_04', addedBy: 'SUJITH_COMMANDER', date: '2026-03-22', level: 'Level 03' },
-    { id: 2, name: 'James Wilson', docId: 'P9876543', reason: 'ABUSIVE_BEHAVIOR_REPORTED_AT_PERIMETER', addedBy: 'ADMIN_PORTAL_AUTO', date: '2026-03-15', level: 'Level 02' },
-    { id: 3, name: 'Sarah Chen', docId: 'NIC1223344V', reason: 'PROTOCOL_VIOLATION_RECURRING', addedBy: 'SECURITY_NODE_01', date: '2026-03-28', level: 'Level 01' },
-  ];
+  const blacklist = [];
 
   const filtered = blacklist.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -35,125 +31,93 @@ const BlacklistTable = () => {
     <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[40px] overflow-hidden flex flex-col shadow-3xl animate-fade-in-slow relative">
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
-      {/* Header Hub */}
-      <div className="px-10 py-10 border-b border-white/5 bg-[#161618] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 shadow-inner relative z-10">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          <div className="w-1.5 h-10 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)] hidden sm:block"></div>
-          <div className="w-10 h-1.5 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)] sm:hidden mb-2"></div>
-          <div>
-            <h2 className="capitalize text-white text-[14px] font-bold tracking-[0.4em]">Enforcement Registry</h2>
-            <p className="text-gray-300 capitalize text-[12px] font-medium tracking-widest mt-1 opacity-80">Global Restriction Database Node 08</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full xl:w-auto">
-          <div className="relative group flex-1 xl:w-96 w-full">
-            <input
-              type="text"
-              placeholder="Search Restricted Identities..."
-              className="w-full pl-12 pr-6 py-4 bg-[var(--color-bg-default)] border border-white/5 rounded-2xl capitalize text-[13px] font-medium tracking-[0.2em] text-white placeholder:opacity-70 focus:border-primary/40 outline-none transition-all shadow-xl group-hover:border-white/10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Search size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors" />
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-            <button className="w-full sm:w-auto flex-1 items-center justify-center gap-3 px-8 py-4 bg-white/[0.02] border border-white/5 rounded-2xl capitalize text-[13px] font-medium tracking-[0.3em] text-white hover:bg-white hover:text-black transition-all group shrink-0 shadow-xl flex">
-              <Download size={14} className="group-hover:scale-125 transition-transform" />
-              <span>Export</span>
-            </button>
-            <button className="w-full sm:w-auto flex-1 items-center justify-center gap-3 px-8 py-4 bg-primary text-white border border-transparent rounded-2xl capitalize text-[13px] font-medium tracking-[0.3em] hover:bg-red-500 transition-all group shrink-0 shadow-[0_10px_20px_rgba(200,16,46,0.2)] flex">
-              <UserX size={14} className="group-hover:scale-110 transition-transform" />
-              <span>Enforce Protocol</span>
-            </button>
-          </div>
-        </div>
-      </div>
 
       <div className="flex-1 overflow-x-auto sm:overflow-visible bg-[var(--color-bg-default)] p-4 sm:p-0">
         <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
           <thead className="hidden sm:table-header-group">
             <tr className="bg-[var(--color-bg-paper)] border-b border-white/5">
-              <th className="px-6 md:px-10 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-gray-300 opacity-80 whitespace-nowrap">Identity Identifier</th>
-              <th className="px-6 md:px-10 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-gray-300 opacity-80 whitespace-nowrap">Operational Restriction</th>
-              <th className="px-6 md:px-10 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-gray-300 opacity-80 text-center whitespace-nowrap">Threat Level</th>
-              <th className="px-6 md:px-10 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-primary text-right pr-6 md:pr-12 whitespace-nowrap">Control</th>
+              <th className="px-6 md:px-10 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-gray-300 opacity-80 whitespace-nowrap">Visitor</th>
+              <th className="px-6 md:px-10 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-gray-300 opacity-80 whitespace-nowrap">Blacklist Reason</th>
+              <th className="px-6 md:px-10 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-gray-300 opacity-80 text-center whitespace-nowrap">Risk Level</th>
+              <th className="px-6 md:px-10 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-primary text-right pr-6 md:pr-12 whitespace-nowrap">Action</th>
             </tr>
           </thead>
           <tbody className="block sm:table-row-group">
             <AnimatePresence>
-              {filtered.map((item, idx) => (
+              {filtered.length > 0 ? (
+                filtered.map((item, idx) => (
+                  <motion.tr
+                    key={item.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="group hover:bg-primary/[0.02] transition-all duration-500 block sm:table-row bg-[#161618] sm:bg-transparent border border-white/5 sm:border-none rounded-[24px] sm:rounded-none mb-4 sm:mb-0 p-4 sm:p-0"
+                  >
+                    <td className="block sm:table-cell px-2 sm:px-6 md:px-10 py-4 sm:py-8 border-b border-white/5 sm:border-none">
+                      <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 capitalize block sm:hidden mb-4">Visitor</span>
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                        <div>
+                          <p className="text-white capitalize text-[13px] font-medium tracking-widest mb-1.5 group-hover:text-primary transition-colors break-words">{item.name}</p>
+                          <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.2em] font-mono">{item.docId}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="block sm:table-cell px-2 sm:px-10 py-4 sm:py-8 border-b border-white/5 sm:border-none">
+                      <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 capitalize block sm:hidden mb-4">Blacklist Reason</span>
+                      <div className="flex flex-col gap-2">
+                        <p className="text-white/80 capitalize text-[13px] font-medium tracking-widest leading-relaxed max-w-full sm:max-w-md break-words">{item.reason}</p>
+                        <div className="flex items-center gap-4">
+                          <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.3em] flex items-center gap-2">
+                            <User size={10} className="text-primary/40" /> {item.addedBy}
+                          </p>
+                          <span className="text-white/5 text-[13px]">|</span>
+                          <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.3em] flex items-center gap-2">
+                            <Clock size={10} className="text-primary/40" /> {item.date}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="block sm:table-cell px-2 sm:px-10 py-4 sm:py-8 border-b border-white/5 sm:border-none">
+                      <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 capitalize block sm:hidden mb-4">Risk Level</span>
+                      <RestrictionLevel level={item.level} />
+                    </td>
+                    <td className="block sm:table-cell px-2 sm:px-10 py-4 sm:py-8 text-right sm:pr-12">
+                      <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 capitalize block sm:hidden mb-4 text-left">Action</span>
+                      <div className="flex justify-start sm:justify-end gap-3">
+                        <button className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/[0.02] border border-white/5 text-gray-300 hover:text-white hover:bg-primary hover:border-primary transition-all duration-500 shadow-xl group/btn">
+                          <Trash2 size={16} className="group-hover/btn:scale-110 transition-transform" />
+                        </button>
+                        <button className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/[0.02] border border-white/5 text-gray-300 hover:text-white hover:bg-[var(--color-bg-paper)] hover:border-white/20 transition-all duration-500 shadow-xl group/btn">
+                          <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                        </button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))
+              ) : (
                 <motion.tr
-                  key={item.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  className="group hover:bg-primary/[0.02] transition-all duration-500 block sm:table-row bg-[#161618] sm:bg-transparent border border-white/5 sm:border-none rounded-[24px] sm:rounded-none mb-4 sm:mb-0 p-4 sm:p-0"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="block sm:table-row"
                 >
-                  <td className="block sm:table-cell px-2 sm:px-6 md:px-10 py-4 sm:py-8 border-b border-white/5 sm:border-none">
-                    <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 capitalize block sm:hidden mb-4">Identity Identifier</span>
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                      <div className="w-14 h-14 bg-[var(--color-bg-paper)] border border-white/5 rounded-2xl flex items-center justify-center text-primary text-lg font-medium group-hover:border-primary/50 group-hover:scale-110 transition-all duration-500 shadow-xl relative overflow-hidden shrink-0 mb-3 sm:mb-0">
-                        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        {item.name.split(' ').map(n => n[0]).join('')}
+                  <td colSpan="4" className="px-10 py-20 text-center block sm:table-cell">
+                    <div className="flex flex-col items-center gap-6">
+                      <div className="w-20 h-20 bg-primary/5 rounded-[32px] flex items-center justify-center border border-primary/10 shadow-inner">
+                        <Shield size={32} className="text-primary/40" />
                       </div>
                       <div>
-                        <p className="text-white capitalize text-[13px] font-medium tracking-widest mb-1.5 group-hover:text-primary transition-colors break-words">{item.name}</p>
-                        <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.2em] font-mono">{item.docId}</p>
+                        <h3 className="text-white text-lg font-bold capitalize tracking-[0.2em] mb-2">No Restricted Identities</h3>
+                        <p className="text-gray-300/60 text-sm capitalize tracking-widest">Enforcement registry is currently clear.</p>
                       </div>
-                    </div>
-                  </td>
-                  <td className="block sm:table-cell px-2 sm:px-10 py-4 sm:py-8 border-b border-white/5 sm:border-none">
-                    <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 capitalize block sm:hidden mb-4">Operational Restriction</span>
-                    <div className="flex flex-col gap-2">
-                      <p className="text-white/80 capitalize text-[13px] font-medium tracking-widest leading-relaxed max-w-full sm:max-w-md break-words">{item.reason}</p>
-                      <div className="flex items-center gap-4">
-                        <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.3em] flex items-center gap-2">
-                          <User size={10} className="text-primary/40" /> {item.addedBy}
-                        </p>
-                        <span className="text-white/5 text-[13px]">|</span>
-                        <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.3em] flex items-center gap-2">
-                          <Clock size={10} className="text-primary/40" /> {item.date}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="block sm:table-cell px-2 sm:px-10 py-4 sm:py-8 border-b border-white/5 sm:border-none">
-                    <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 capitalize block sm:hidden mb-4">Threat Level</span>
-                    <RestrictionLevel level={item.level} />
-                  </td>
-                  <td className="block sm:table-cell px-2 sm:px-10 py-4 sm:py-8 text-right sm:pr-12">
-                    <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 capitalize block sm:hidden mb-4 text-left">Control Options</span>
-                    <div className="flex justify-start sm:justify-end gap-3">
-                      <button className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/[0.02] border border-white/5 text-gray-300 hover:text-white hover:bg-primary hover:border-primary transition-all duration-500 shadow-xl group/btn">
-                        <Trash2 size={16} className="group-hover/btn:scale-110 transition-transform" />
-                      </button>
-                      <button className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/[0.02] border border-white/5 text-gray-300 hover:text-white hover:bg-[var(--color-bg-paper)] hover:border-white/20 transition-all duration-500 shadow-xl group/btn">
-                        <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                      </button>
                     </div>
                   </td>
                 </motion.tr>
-              ))}
+              )}
             </AnimatePresence>
           </tbody>
         </table>
       </div>
 
-      {/* Protocol Summary Footer */}
-      <div className="px-10 py-6 border-t border-white/5 bg-[var(--color-bg-paper)]/50 flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-0 relative">
-        <div className="flex items-center gap-4 text-primary">
-          <div className="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_10px_var(--color-primary)]"></div>
-          <span className="text-[13px] font-medium capitalize tracking-[0.3em]">{filtered.length} Restricted Nodes In Current Matrix</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-gray-300/80 text-[12px] font-medium capitalize tracking-[0.4em]">Node Health: Operational</span>
-          <div className="w-10 h-1 bg-green-500/20 rounded-full overflow-hidden">
-            <div className="w-full h-full bg-green-500 shadow-[0_0_5px_#22C55E]"></div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

@@ -61,8 +61,8 @@ const SecurityMonitoring = () => {
       <div className="lg:col-span-2 mas-panel min-h-[400px] relative overflow-hidden group border-white/[0.05]">
         <div className="absolute inset-0 bg-secondary/10 z-10 pointer-events-none"></div>
         <div className="absolute top-6 left-6 z-[500] pointer-events-none">
-          <h2 className="capitalize text-white">Zone Tracking Map</h2>
-          <p className="text-gray-300 capitalize mt-1">Real-time visitor location monitoring</p>
+          <h2 className="capitalize text-white">Monitoring Map</h2>
+          <p className="text-gray-300 capitalize mt-1">Track visitors in real-time</p>
         </div>
 
         <div className="absolute inset-0">

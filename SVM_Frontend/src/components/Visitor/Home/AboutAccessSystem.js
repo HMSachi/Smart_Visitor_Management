@@ -13,13 +13,6 @@ const AboutAccessSystem = () => {
             accent: "from-[var(--color-primary)] to-[#8B0A1E]"
         },
         {
-            title: "Access Control",
-            description: "High-security facility clearance protocols powered by MAS intelligence.",
-            icon: ShieldCheck,
-            path: "/access",
-            accent: "from-[var(--color-bg-alt)] to-[var(--color-bg-default)]"
-        },
-        {
             title: "Real-time Status",
             description: "Instantly track your approval status and visitor history in real-time.",
             icon: ClipboardList,
@@ -46,7 +39,7 @@ const AboutAccessSystem = () => {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {features.map((feature, index) => (
                         <div 
                             key={index}

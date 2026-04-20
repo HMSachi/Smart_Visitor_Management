@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, X, Download, Search, Eye, ChevronUp, ChevronDown, User, Calendar, MapPin, Hash, Shield, QrCode } from 'lucide-react';
+import { Check, X, Eye, ChevronUp, ChevronDown, User, Calendar, MapPin, Hash, Shield, QrCode } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const StatusBadge = ({ status }) => {
@@ -82,36 +82,11 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
         <div className="flex items-center gap-6">
           <div className="w-1.5 h-10 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
           <div>
-            <h2 className="capitalize text-white text-[14px] font-bold tracking-[0.4em]">Auth Protocol Hub</h2>
-            <p className="text-white/90 capitalize text-[12px] font-medium tracking-widest mt-1">Global Clearance Management System</p>
+            <h2 className="capitalize text-white text-[14px] font-bold tracking-[0.4em]">Approval List</h2>
+            <p className="text-white/90 capitalize text-[12px] font-medium tracking-widest mt-1">Monitor and manage visitor requests</p>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 w-full xl:w-auto">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative group min-w-[200px]">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full pl-6 pr-12 py-4 bg-[var(--color-bg-default)] border border-white/5 rounded-2xl capitalize text-[13px] font-medium tracking-[0.2em] text-gray-300 focus:text-white focus:border-primary/40 transition-all cursor-pointer outline-none appearance-none shadow-xl"
-              >
-                <option value="All">All Status</option>
-                <option value="Pending">Pending Review</option>
-                <option value="Approved">Stable Auth</option>
-                <option value="Rejected">Denied Node</option>
-                <option value="Checked In">Protocol Engaged</option>
-              </select>
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity">
-                <ChevronDown size={14} />
-              </div>
-            </div>
-
-            <button className="flex items-center justify-center gap-3 px-8 py-4 bg-white/[0.02] border border-white/5 rounded-2xl capitalize text-[13px] font-medium tracking-[0.3em] text-white hover:bg-white hover:text-black transition-all group shrink-0 shadow-xl">
-              <Download size={14} className="group-hover:scale-125 transition-transform" />
-              <span>Export</span>
-            </button>
-          </div>
-        </div>
       </div>
 
       <div className="flex-1 overflow-auto bg-[var(--color-bg-default)]">
@@ -119,11 +94,11 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
         <table className="w-full text-left border-collapse hidden md:table">
           <thead>
             <tr className="bg-[var(--color-bg-paper)] border-b border-white/5">
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 text-center w-24">Node</th>
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70">Personnel Identity</th>
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70">Schedule Matrix</th>
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 text-center">Auth Status</th>
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-primary text-right pr-10">Control</th>
+              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 text-center w-24">No.</th>
+              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70">Visitor</th>
+              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70">Visit Details</th>
+              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 text-center">Status</th>
+              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-primary text-right pr-12">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/[0.02]">
@@ -139,15 +114,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                     </button>
                   </td>
                   <td className="px-8 py-8">
-                    <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 bg-[var(--color-bg-paper)] border border-white/5 rounded-2xl flex items-center justify-center text-primary text-sm font-medium group-hover:border-primary/50 group-hover:scale-110 transition-all duration-500 shadow-xl overflow-hidden relative">
-                        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        {visitor.name.split(' ').map(n => n[0]).join('')}
-                      </div>
-                      <div>
-                        <p className="text-white capitalize text-[13px] font-medium tracking-widest mb-1">{visitor.name}</p>
-                      </div>
-                    </div>
+                    <p className="text-white capitalize text-[13px] font-medium tracking-widest mb-1">{visitor.name}</p>
                   </td>
                   <td className="px-8 py-8">
                     <div className="flex flex-col gap-1.5">
@@ -251,14 +218,9 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
 
               {/* Mobile Card Header */}
               <div className="p-6 border-b border-white/5 flex justify-between items-start bg-black/20 relative z-10">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[var(--color-bg-default)] border border-white/5 flex items-center justify-center text-primary text-[13px] font-medium rounded-2xl shrink-0 shadow-lg">
-                    {visitor.name.split(' ').map(n => n[0]).join('')}
-                  </div>
-                  <div>
-                    <p className="text-white capitalize text-[13px] font-medium tracking-widest mb-1 leading-tight">{visitor.name}</p>
-                    <p className="text-gray-300/80 capitalize text-[12px] font-medium tracking-widest font-mono">{visitor.batchId}</p>
-                  </div>
+                <div>
+                  <p className="text-white capitalize text-[13px] font-medium tracking-widest mb-1 leading-tight">{visitor.name}</p>
+                  <p className="text-gray-300/80 capitalize text-[12px] font-medium tracking-widest font-mono">{visitor.batchId}</p>
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <StatusBadge status={visitor.status} />
