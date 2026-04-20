@@ -30,8 +30,8 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             <Download size={22} className="opacity-80" />
           </div>
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-white uppercase">Personnel Authorization</h2>
-            <p className="text-gray-300 text-[13px] font-medium uppercase tracking-[0.2em] mt-1 opacity-90">Database Synchronization Active</p>
+            <h2 className="text-lg font-bold tracking-tight text-[#1A1A1A] uppercase">All Visit Requests</h2>
+            <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90">Manage visitor applications</p>
           </div>
         </div>
 
@@ -41,7 +41,7 @@ const RequestsTable = ({ requests, searchTerm, setSearchTerm, statusFilter, setS
             <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300/80 group-focus-within:text-primary transition-colors" />
             <input
               type="text"
-              placeholder="SEARCH MATRIX..."
+              placeholder="SEARCH VISITOR..."
               className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] text-[#1A1A1A] placeholder:text-gray-400 focus:border-primary focus:bg-white outline-none transition-all uppercase tracking-widest"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

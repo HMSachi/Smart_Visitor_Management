@@ -34,7 +34,7 @@ const Login = () => {
         else if (role === "Visitor") navigate("/home");
         else setLocalError("Access denied. Unknown role.");
       } else {
-        setLocalError("Invalid security access code. Authentication failed.");
+        setLocalError("Invalid email or password.");
       }
     }
   }, [user, navigate]);
@@ -119,21 +119,6 @@ const Login = () => {
           </div>
         </motion.div>
 
-        {/* Bottom Status Info */}
-        <div className="absolute bottom-12 left-12 right-12 flex justify-between items-center opacity-30">
-          <div className="flex flex-col gap-1.5">
-            <div className="h-[1px] w-6 bg-blue-500" />
-            <span className="text-[7px] font-medium tracking-[0.25em] uppercase">
-              SYSTEM.ACTIVE
-            </span>
-          </div>
-          <div className="flex flex-col gap-1.5 items-end">
-            <div className="h-[1px] w-6 bg-primary" />
-            <span className="text-[7px] font-medium tracking-[0.25em] uppercase">
-              PROTO.4.0.5
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* Right Login Panel */}
@@ -149,18 +134,18 @@ const Login = () => {
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
             <div className="mb-10 text-center">
-              <h3 className="text-2xl font-bold mb-1 letter-spacing-wide tracking-[0.2em] uppercase">
-                LOGIN PORTAL
+              <h3 className="text-3xl font-semibold mb-2 tracking-[0.06em] text-white/90 uppercase">
+                LOGIN
               </h3>
-              <p className="text-gray-300 text-[12px] tracking-[0.3em] uppercase opacity-90">
-                SECURE ENTERPRISE AUTHENTICATION
+              <p className="text-sm text-white/55 tracking-[0.02em]">
+                Use your email and password to continue.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="group space-y-2">
-                <label className="text-[14px] font-medium tracking-[0.25em] text-white/30 uppercase ml-1">
-                  IDENTIFIER PROTOCOL
+                <label className="text-[14px] font-medium tracking-[0.03em] text-white/70 ml-1">
+                  Email address
                 </label>
                 <TextField
                   fullWidth
@@ -170,7 +155,8 @@ const Login = () => {
                   variant="outlined"
                   value={formData.email}
                   onChange={handleInputChange}
-                  autoComplete="new-email"
+                  autoComplete="email"
+                  placeholder="name@company.com"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -178,7 +164,7 @@ const Login = () => {
                       </InputAdornment>
                     ),
                     className:
-                      "rounded-none bg-black/60 border-white/5 text-xs text-white uppercase font-medium tracking-widest transition-all focus-within:bg-black group-hover:border-white/10",
+                      "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black group-hover:border-white/10",
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
@@ -193,8 +179,8 @@ const Login = () => {
               </div>
 
               <div className="group space-y-2">
-                <label className="text-[14px] font-medium tracking-[0.25em] text-white/30 uppercase ml-1">
-                  SECURITY ACCESS CODE
+                <label className="text-[14px] font-medium tracking-[0.03em] text-white/70 ml-1">
+                  Password
                 </label>
                 <TextField
                   fullWidth
@@ -204,7 +190,8 @@ const Login = () => {
                   variant="outlined"
                   value={formData.password}
                   onChange={handleInputChange}
-                  autoComplete="new-password"
+                  autoComplete="current-password"
+                  placeholder="Enter your password"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -227,7 +214,7 @@ const Login = () => {
                       </InputAdornment>
                     ),
                     className:
-                      "rounded-none bg-black/60 border-white/5 text-xs text-white tracking-widest transition-all focus-within:bg-black group-hover:border-white/10",
+                      "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black group-hover:border-white/10",
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
@@ -239,21 +226,6 @@ const Login = () => {
                     },
                   }}
                 />
-              </div>
-
-              <div className="flex justify-between items-center px-1">
-                <button
-                  type="button"
-                  className="text-[14px] font-medium tracking-[0.2em] text-blue-500/40 hover:text-blue-400 uppercase transition-colors"
-                >
-                  Recover Keys
-                </button>
-                <button
-                  type="button"
-                  className="text-[14px] font-medium tracking-[0.2em] text-primary/40 hover:text-primary uppercase transition-colors"
-                >
-                  Visitor Link
-                </button>
               </div>
 
               <AnimatePresence>
@@ -273,24 +245,18 @@ const Login = () => {
                 whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={reduxLoading}
-                className="w-full bg-primary hover:bg-[var(--color-primary-hover)] py-5 rounded-[0px] text-[13px] font-medium tracking-[0.3em] uppercase flex items-center justify-center gap-3 transition-all relative overflow-hidden shadow-[0_10px_30px_rgba(200,16,46,0.2)]"
+                className="w-full bg-primary hover:bg-[var(--color-primary-hover)] py-5 rounded-[0px] text-sm font-semibold tracking-[0.08em] flex items-center justify-center gap-3 transition-all relative overflow-hidden shadow-[0_10px_30px_rgba(200,16,46,0.2)]"
               >
                 {reduxLoading ? (
                   <CircularProgress size={16} color="inherit" strokeWidth={6} />
                 ) : (
                   <>
-                    AUTHENTICATE ACCESS
+                    LOGIN
                     <div className="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white animate-pulse" />
                   </>
                 )}
               </motion.button>
             </form>
-          </div>
-
-          <div className="mt-8 text-center">
-            <span className="text-[14px] font-medium tracking-[0.4em] text-white/10 uppercase">
-              Global Data Security Encrypted • v4.2.1
-            </span>
           </div>
         </motion.div>
       </div>

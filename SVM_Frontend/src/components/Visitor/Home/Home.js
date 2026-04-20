@@ -1,17 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import WelcomeSection from './WelcomeSection';
-import AboutAccessSystem from './AboutAccessSystem';
-import SafetyFeatures from './SafetyFeatures';
 
 const HomeMain = () => {
     return (
         <div className="bg-background">
             <WelcomeSection />
-            <div className="space-y-0">
-                <AboutAccessSystem />
-                <SafetyFeatures />
-            </div>
 
             {/* Premium Footer */}
             <footer className="bg-background border-t border-white/5 py-10">

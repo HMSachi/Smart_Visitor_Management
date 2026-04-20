@@ -55,14 +55,6 @@ const Header = ({ title }) => {
                     <h2 className="text-sm md:text-base font-bold tracking-tight text-white uppercase truncate">{title}</h2>
                 </div>
 
-                <div className="hidden lg:flex max-w-sm w-full relative group ml-2">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300/80 group-focus-within:text-primary transition-colors" size={14} />
-                    <input
-                        type="text"
-                        placeholder="Search matrix..."
-                        className="w-full pl-10 pr-4 py-2.5 bg-white/[0.02] border border-white/5 focus:border-primary/30 focus:bg-white/[0.04] rounded-xl text-[14px] transition-all outline-none text-white placeholder:text-gray-300/30 uppercase tracking-widest"
-                    />
-                </div>
             </div>
 
             <div className="flex items-center gap-8">

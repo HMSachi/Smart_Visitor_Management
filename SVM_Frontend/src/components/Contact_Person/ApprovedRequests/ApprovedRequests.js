@@ -17,21 +17,18 @@ const ApprovedRequestsMain = () => {
     return (
         <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)]/50">
             <div className="p-4 md:p-10 space-y-10 animate-fade-in-slow">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
+                <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-100 pb-6 gap-6 relative">
                     <div>
-                        <div className="flex items-center gap-3 mb-1">
-                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.5)] animate-pulse"></div>
-                            <span className="text-green-500 text-[13px] font-medium uppercase tracking-[0.3em]">Validation Success</span>
-                        </div>
-                        <p className="text-gray-300 text-xs uppercase tracking-widest opacity-90">Verified Personnel Registry & Archive</p>
+                      <h2 className="text-lg font-bold tracking-tight text-[#1A1A1A] uppercase">Approved Forms</h2>
+                      <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90">View cleared visitor applications</p>
                     </div>
-                    <div className="flex items-center gap-4 bg-white/[0.02] border border-white/5 p-3 px-5 rounded-2xl backdrop-blur-sm">
+                    <div className="flex items-center gap-4 bg-white border border-gray-200 p-3 px-5 rounded-xl shadow-sm">
                         <div className="text-right">
-                            <p className="text-gray-300 text-[12px] uppercase font-medium tracking-wider mb-0.5 opacity-80">Total Verified</p>
-                            <span className="text-xl font-medium text-white">{requests.length}</span>
+                            <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest mb-0.5">Total Verified</p>
+                            <span className="text-base font-black text-[#1A1A1A]">{requests.length}</span>
                         </div>
                     </div>
-                </div>
+                </header>
 
                 <ApprovedTable requests={requests} onQuickView={handleQuickView} />
             </div>

@@ -22,7 +22,7 @@ import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
 import ApprovalManagement from "./layout/Admin/ApprovalManagement/ApprovalManagement";
 import SecurityMonitoringPage from "./layout/Admin/SecurityMonitoring/SecurityMonitoring";
 import BlacklistManagement from "./layout/Admin/BlacklistManagement/BlacklistManagement";
-import ReportsAndLogs from "./layout/Admin/ReportsAndLogs/ReportsAndLogs";
+
 import UserManagement from "./layout/Admin/UserManagement/UserManagement";
 import AllUsers from "./layout/Admin/AllUsers/AllUsers";
 import VisitorManagement from "./layout/Admin/VisitorManagement/VisitorManagement";
@@ -174,7 +174,7 @@ const AppContent = () => {
             path="/admin/blacklist-management"
             element={<BlacklistManagement />}
           />
-          <Route path="/admin/reports-logs" element={<ReportsAndLogs />} />
+
           <Route path="/admin/user-management" element={<UserManagement />} />
           <Route path="/admin/all-users" element={<AllUsers />} />
           <Route path="/admin/visitor-management" element={<VisitorManagement />} />
