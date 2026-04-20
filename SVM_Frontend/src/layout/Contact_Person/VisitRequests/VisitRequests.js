@@ -283,17 +283,10 @@ const VisitRequests = () => {
         <Header title="Visitation Node Management" />
 
         <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
-          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.05] pb-8 gap-6 relative">
+          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-100 pb-8 gap-6 relative">
             <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-[2px] bg-primary"></div>
-                <span className="text-primary uppercase tracking-[0.3em] text-[10px] font-bold">
-                  Administrative Visitation Details
-                </span>
-              </div>
-              <h1 className="text-[#1A1A1A] uppercase px-1 text-3xl font-bold tracking-tight">
-                Active Visit Requests
-              </h1>
+              <h2 className="text-lg font-bold tracking-tight text-[#1A1A1A] uppercase">Active Visit Requests</h2>
+              <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90">Manage visitor applications</p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-5 w-full md:w-auto items-center">
@@ -303,7 +296,7 @@ const VisitRequests = () => {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="SEARCH PROTOCOL (ID/PURPOSE)..."
+                  placeholder="SEARCH VISITOR..."
                   className="bg-transparent text-[12px] text-[#1A1A1A] focus:outline-none w-full uppercase tracking-widest placeholder:text-gray-400"
                 />
               </div>

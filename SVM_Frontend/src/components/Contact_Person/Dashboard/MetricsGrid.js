@@ -1,13 +1,10 @@
-import React from 'react';
-import { Layers, Clock, CheckSquare, Send } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Clock, CheckSquare, XCircle, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetVisitRequestsByCP } from '../../../actions/VisitRequestAction';
+import ContactPersonService from '../../../services/ContactPersonService';
 
-const iconMap = {
-    Layers,
-    Clock,
-    CheckSquare,
-    Send
-};
 
 const Panel = ({ icon, label, value, trend }) => {
   const Icon = icon;
@@ -38,12 +35,75 @@ const Panel = ({ icon, label, value, trend }) => {
 };
 
 const MetricsGrid = () => {
-    const stats = [
-        { label: 'Total Syncs', value: '1,284', icon: Layers, trend: '+12.5%' },
-        { label: 'Awaiting Action', value: '42', icon: Clock, trend: 'Priority' },
-        { label: 'Authorization Success', value: '892', icon: CheckSquare, trend: '+8.2%' },
-        { label: 'Admin Escalations', value: '350', icon: Send, trend: 'Finalized' },
-    ];
+    const dispatch = useDispatch();
+    const { visitRequestsByCP } = useSelector(state => state.visitRequestsState);
+    const user = useSelector(state => state.login.user);
+    const userEmail = user?.ResultSet?.[0]?.VA_Email;
+    const [cpId, setCpId] = useState(null);
+
+    // Dynamic ID Resolution
+    useEffect(() => {
+        const loadContactPersonId = async () => {
+            try {
+                const response = await ContactPersonService.GetAllContactPersons();
+                const contactPersons = response?.data?.ResultSet || [];
+                const match = contactPersons.find(
+                    (cp) => cp?.VCP_Email?.trim().toLowerCase() === userEmail?.trim().toLowerCase()
+                );
+                if (match?.VCP_Contact_person_id) {
+                    setCpId(match.VCP_Contact_person_id);
+                } else {
+                    setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
+                }
+            } catch (err) {
+                setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
+            }
+        };
+
+        if (userEmail) loadContactPersonId();
+        else setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
+    }, [userEmail, user]);
+
+    // Fetch Latest Data
+    useEffect(() => {
+        if (cpId) {
+            dispatch(GetVisitRequestsByCP(cpId));
+        }
+    }, [dispatch, cpId]);
+
+    // Calculate Dynamic Stats
+    const calculateStats = () => {
+        if (!visitRequestsByCP) return [];
+
+        const pending = visitRequestsByCP.filter(req => {
+            const s = (req.VVR_Status || "").toString().trim().toUpperCase();
+            return s === 'P' || s === 'PENDING';
+        }).length;
+
+        const accepted = visitRequestsByCP.filter(req => {
+            const s = (req.VVR_Status || "").toString().trim().toUpperCase();
+            return s === 'A' || s === 'APPROVED' || s === 'ACCEPTED' || s === 'SUCCESS';
+        }).length;
+
+        const rejected = visitRequestsByCP.filter(req => {
+            const s = (req.VVR_Status || "").toString().trim().toUpperCase();
+            return s === 'R' || s === 'REJECTED';
+        }).length;
+
+        const sent = visitRequestsByCP.filter(req => {
+            const s = (req.VVR_Status || "").toString().trim().toUpperCase();
+            return s === 'SENT' || s === 'ESCALATED';
+        }).length;
+
+        return [
+            { label: 'Pending Requests', value: pending.toString(), icon: Clock, trend: 'Awaiting Action' },
+            { label: 'Accepted Forms', value: accepted.toString(), icon: CheckSquare, trend: 'Clearance Granted' },
+            { label: 'Rejected Forms', value: rejected.toString(), icon: XCircle, trend: 'Access Denied' },
+            { label: 'Sent to Admin', value: sent.toString(), icon: Send, trend: 'Escalated' },
+        ];
+    };
+
+    const stats = calculateStats();
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

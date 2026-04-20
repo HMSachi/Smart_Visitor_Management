@@ -32,16 +32,12 @@ const RejectedRequestsMain = () => {
 
     return (
         <div className="p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in">
-            <div className="flex items-end justify-between border-b border-mas-border pb-8">
+            <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-100 pb-6 gap-6 relative">
                 <div>
-                    <div className="flex items-center gap-4 mb-4">
-                        <XCircle size={14} className="text-primary" />
-                        <span className="text-primary uppercase">Protocol Breach Log</span>
-                        <div className="h-[1px] w-12 bg-primary"></div>
-                    </div>
-                    <h1 className="uppercase text-white">Rejection Tracking</h1>
+                  <h2 className="text-lg font-bold tracking-tight text-[#1A1A1A] uppercase">Rejected Requests</h2>
+                  <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90">View denied visitor applications</p>
                 </div>
-            </div>
+            </header>
 
             <div className="grid grid-cols-1 xl:grid-cols-1 md:grid-cols-3 gap-12 items-start">
                 <div className="xl:col-span-2">

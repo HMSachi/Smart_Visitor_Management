@@ -12,28 +12,16 @@ const SentToAdminMain = () => {
 
     return (
         <div className="p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in">
-            <div className="flex items-end justify-between border-b border-mas-border pb-8">
+            <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-100 pb-6 gap-6 relative">
                 <div>
-                    <div className="flex items-center gap-4 mb-4">
-                        <Send size={14} className="text-primary" />
-                        <span className="text-primary uppercase">Forwarded Node Tracking</span>
-                        <div className="h-[1px] w-12 bg-primary"></div>
-                    </div>
-                    <h1 className="uppercase text-white flex items-center gap-6">
-                        Sent to Admin
-                        <div className="p-3 mas-glass border-white/10 bg-white/5 inline-flex">
-                            <Target size={24} className="text-gray-300" />
-                        </div>
-                    </h1>
+                  <h2 className="text-lg font-bold tracking-tight text-[#1A1A1A] uppercase">Sent to Admin</h2>
+                  <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90">View requests escalated for final authorization</p>
                 </div>
-            </div>
+            </header>
 
             <div className="space-y-6">
-                <div className="flex items-center gap-4 px-8 py-5 bg-white/[0.02] border-l-4 border-primary relative overflow-hidden">
-                     <div className="absolute right-0 top-0 h-full w-32 bg-primary/5 blur-2xl"></div>
-                     <span className="uppercase text-white">Active Forwarding Nodes: 4</span>
-                     <div className="h-4 w-px bg-white/10 mx-4"></div>
-                     <span className="uppercase text-gray-300">Synchronization Status: Primary</span>
+                <div className="flex items-center gap-4 px-6 py-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+                     <span className="uppercase text-[#1A1A1A] text-[11px] font-bold tracking-[0.15em]">Total Escalated: {requests.length}</span>
                 </div>
                 <SentTable requests={requests} />
             </div>

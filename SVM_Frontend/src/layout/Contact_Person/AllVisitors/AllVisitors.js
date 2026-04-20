@@ -215,41 +215,38 @@ const ContactAllVisitors = () => {
     : [];
 
   return (
-    <div className="flex bg-secondary overflow-hidden text-white h-screen w-full">
+    <div className="flex bg-[#F8F9FA] overflow-hidden text-[#1A1A1A] h-screen w-full">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)] overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-y-auto">
         <Header title="All Visitors" />
 
         <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full">
-          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
+          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-100 pb-6 gap-6 relative z-10">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-[2px] bg-primary"></div>
-                <span className="text-primary uppercase tracking-wider text-xs font-semibold">
-                  Access Control
-                </span>
-              </div>
-              <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
-                My Authorized Visitors
-              </h1>
+              <h2 className="text-lg font-bold tracking-tight text-[#1A1A1A] uppercase">
+                All Authorized Visitors
+              </h2>
+              <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90">
+                Manage personal visitor registry
+              </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
-              <div className="flex items-center bg-black/40 border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[250px]">
+              <div className="flex items-center bg-white border border-gray-200 transition-colors rounded-xl px-4 py-3 min-w-[250px] shadow-sm">
                 <Search size={16} className="text-gray-400 mr-3" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search Visior (ID/Name)..."
-                  className="bg-transparent text-[13px] text-white focus:outline-none w-full"
+                  placeholder="SEARCH VISITOR..."
+                  className="bg-transparent text-[12px] text-[#1A1A1A] font-bold tracking-widest uppercase focus:outline-none w-full placeholder-gray-400"
                 />
                 {searchTerm && (
                   <button
                     type="button"
                     onClick={() => setSearchTerm("")}
-                    className="text-gray-500 hover:text-white"
+                    className="text-gray-400 hover:text-primary"
                   >
                     <X size={14} />
                   </button>
@@ -265,13 +262,12 @@ const ContactAllVisitors = () => {
             </div>
           </header>
 
-          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
+          <div className="bg-white border border-gray-200 rounded-[32px] overflow-hidden shadow-xl shadow-gray-200/50 relative">
 
             {isLoading ? (
               <div className="p-20 flex flex-col items-center justify-center text-center">
-                <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
-                <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
+                <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin mb-6"></div>
+                <p className="text-gray-500 text-[13px] uppercase tracking-[0.3em] font-medium">
                   Scanning Entries...
                 </p>
               </div>
@@ -280,34 +276,34 @@ const ContactAllVisitors = () => {
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 text-primary">
                   <AlertCircle size={24} />
                 </div>
-                <p className="text-primary text-[14px] uppercase tracking-widest">
+                <p className="text-primary text-[14px] uppercase tracking-widest font-bold">
                   {error}
                 </p>
               </div>
             ) : (
               <TableContainer
                 component={Paper}
-                className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative"
+                className="bg-white border-none rounded-none shadow-none z-10 relative"
               >
                 <Table sx={{ minWidth: 650 }} aria-label="visitors table">
-                  <TableHead className="bg-black/40">
+                  <TableHead className="bg-[#F8F9FA]">
                     <TableRow>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className="text-gray-500 font-bold uppercase tracking-widest text-[11px] border-b-gray-100">
                         ID
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className="text-gray-500 font-bold uppercase tracking-widest text-[11px] border-b-gray-100">
                         Visitor
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className="text-gray-500 font-bold uppercase tracking-widest text-[11px] border-b-gray-100">
                         Credentials
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className="text-gray-500 font-bold uppercase tracking-widest text-[11px] border-b-gray-100">
                         Company
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className="text-gray-500 font-bold uppercase tracking-widest text-[11px] border-b-gray-100">
                         Destination
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className="text-gray-500 font-bold uppercase tracking-widest text-[11px] border-b-gray-100">
                         Status
                       </TableCell>
                     </TableRow>
@@ -330,39 +326,39 @@ const ContactAllVisitors = () => {
                             sx={{
                               "&:last-child td, &:last-child th": { border: 0 },
                               "&:hover": {
-                                backgroundColor: "rgba(255,255,255,0.02)",
+                                backgroundColor: "#F8F9FA",
                               },
                             }}
                           >
-                            <TableCell className="text-white/70 font-medium border-b-white/5">
+                            <TableCell className="text-gray-600 font-bold border-b-gray-50">
                               {visitor.VV_Visitor_id}
                             </TableCell>
                             <TableCell
-                              className={`font-medium border-b-white/5 transition-colors ${isActive ? "text-white" : "text-white/30 line-through"}`}
+                              className={`font-bold border-b-gray-50 transition-colors ${isActive ? "text-[#1A1A1A]" : "text-gray-400 line-through"}`}
                             >
                               {visitor.VV_Name || "-"}
                             </TableCell>
                             <TableCell
-                              className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={`font-medium border-b-gray-50 transition-colors ${isActive ? "text-gray-500" : "text-gray-400"}`}
                             >
                               {visitor.VV_NIC_Passport_NO || "-"}
                             </TableCell>
                             <TableCell
-                              className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={`font-medium border-b-gray-50 transition-colors ${isActive ? "text-gray-500" : "text-gray-400"}`}
                             >
                               {visitor.VV_Company || "-"}
                             </TableCell>
                             <TableCell
-                              className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={`font-medium border-b-gray-50 transition-colors ${isActive ? "text-gray-500" : "text-gray-400"}`}
                             >
                               {visitor.VV_Visiting_places || "-"}
                             </TableCell>
-                            <TableCell className="border-b-white/5">
+                            <TableCell className="border-b-gray-50">
                               <button
                                 onClick={() => handleToggleStatus(visitor)}
                                 disabled={isLoading}
                                 title="Click to toggle status"
-                                className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                className={`px-2 py-1 rounded text-[10px] uppercase tracking-widest font-bold transition-all cursor-pointer ${isActive ? "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200" : "bg-red-50 text-primary hover:bg-red-100 border border-red-200"}`}
                               >
                                 {isActive ? "ACTIVE" : "INACTIVE"}
                               </button>
