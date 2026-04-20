@@ -40,7 +40,7 @@ const Header = () => {
           <input
             type="text"
             placeholder="Search system nodes..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-white/10 focus:border-primary/40 focus:bg-white/[0.05] rounded-xl text-[14px] text-white placeholder:text-gray-500 outline-none transition-all uppercase tracking-widest"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/[0.03] border border-white/10 focus:border-primary/40 focus:bg-white/[0.05] rounded-xl text-[14px] text-white placeholder:text-gray-500 outline-none transition-all capitalize tracking-widest"
           />
         </div>
       </div>
@@ -48,21 +48,14 @@ const Header = () => {
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-4">
           <ThemeToggleButton />
-          <button className="relative p-2 text-gray-300 hover:text-white transition-all group">
-            <Bell size={18} strokeWidth={2} />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary animate-pulse shadow-[0_0_5px_var(--color-primary)]"></span>
-          </button>
-          <button className="p-2 text-gray-300 hover:text-white transition-all">
-            <Settings size={18} strokeWidth={2} />
-          </button>
         </div>
 
         <div className="h-6 w-[1px] bg-white/10 hidden sm:block"></div>
 
         <button className="flex items-center gap-4 group text-left">
           <div className="hidden md:block">
-            <p className="text-white uppercase mb-0.5 max-w-[150px] truncate">{userEmail}</p>
-            <p className="text-primary uppercase text-right">ROOT ADMIN</p>
+            <p className="text-white capitalize mb-0.5 max-w-[150px] truncate">{userEmail}</p>
+            <p className="text-primary capitalize text-right">Root Admin</p>
           </div>
           <div className="w-10 h-10 bg-primary/10 flex items-center justify-center border border-primary/30 group-hover:bg-primary group-hover:text-white transition-all text-primary">
             <User size={20} strokeWidth={2.5} />

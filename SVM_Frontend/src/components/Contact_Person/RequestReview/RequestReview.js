@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { VisitorIdentification, VisitParameters, VehicleConfiguration, GroupMembers, EquipmentManifest } from './ReviewSections';
-import ReviewActions from './ReviewActions';
+import PersonnelAuthProtocol from '../../../components/common/PersonnelAuthProtocol';
 import RejectionModal from './RejectionModal';
 import ApprovalModal from './ApprovalModal';
 import { ArrowLeft } from 'lucide-react';
@@ -33,13 +32,13 @@ const toReviewModel = (request, visitorRecord, vehicleRecord) => {
         emailAddress: visitor?.VV_Email || 'N/A',
         representingCompany: visitor?.VV_Company || 'N/A',
         visitorClassification: visitor?.VV_Visitor_Type || 'N/A',
-        proposedVisitDate: request.VVR_Visit_Date || '',
+        proposedVisitDate: request.VVR_Visit_Date ? request.VVR_Visit_Date.split("T")[0] : '',
         purposeOfVisitation: request.VVR_Purpose || 'N/A',
-        visitingArea: request.VVR_Places_to_Visit || 'N/A',
+        selectedAreas: request.VVR_Places_to_Visit ? request.VVR_Places_to_Visit.split("|") : [],
         plateNumber: vehicle?.VV_Vehicle_Number || '',
         vehicleType: vehicle?.VV_Vehicle_Type || '',
-        additionalVisitors: [],
-        equipment: [],
+        additionalVisitors: [], // Currently not linked in CP view state
+        equipment: [], // Currently not linked in CP view state
     };
 };
 
@@ -179,47 +178,36 @@ const RequestReviewMain = () => {
     };
 
     return (
-        <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)]/50 relative overflow-x-hidden">
-            <div className="p-4 md:p-10 space-y-4 md:space-y-8 animate-fade-in relative z-10 max-w-7xl mx-auto w-full">
-                {/* Top Header */}
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-4">
-                    <div>
-                        <button
-                            onClick={() => navigate('/contact_person/requests-inbox')}
-                            className="flex items-center gap-3 text-gray-300 text-[13px] font-medium uppercase tracking-[0.2em] hover:text-white transition-colors group mb-4"
-                        >
-                            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                            Return to Command Center
-                        </button>
-                        <div className="flex items-center gap-4">
-                            <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)] animate-pulse"></div>
-                            <span className="text-primary text-[14px] font-medium uppercase tracking-[0.3em]">Personnel Authorization Protocol</span>
+        <div className="flex-1 p-4 md:p-6 space-y-4 animate-fade-in-slow overflow-y-auto bg-[#F8F9FA] relative">
+            <div className="max-w-[1700px] mx-auto relative z-10 w-full">
+                <div className="flex flex-row items-center justify-between pb-6 animate-fade-in transition-all">
+                    <div className="flex items-center gap-4">
+                        <div className="w-1.5 h-8 bg-primary rounded-full"></div>
+                        <div>
+                            <p className="text-gray-400 text-[10px] uppercase font-bold tracking-[0.3em] mb-0.5 opacity-80">Identity Node</p>
+                            <h2 className="text-[#1A1A1A] text-lg font-bold uppercase tracking-tight">
+                                Reference <span className="text-primary font-mono ml-2">#{requestData?.id || selectedId || 'ALPHA-000'}</span>
+                            </h2>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-6 bg-white/[0.02] border border-white/5 p-4 px-6 rounded-2xl backdrop-blur-md shadow-2xl">
-                        <div className="text-right">
-                            <p className="text-gray-300 text-[12px] uppercase font-medium tracking-widest mb-1 opacity-80">Entry Reference</p>
-                            <span className="text-white font-mono text-sm tracking-widest font-medium">#{requestData?.id || selectedId || 'ALPHA-000'}</span>
-                        </div>
-                        <div className="h-10 w-[1px] bg-white/10"></div>
-                        <div className="text-right">
-                            <p className="text-gray-300 text-[12px] uppercase font-medium tracking-widest mb-1 opacity-80">Sync Status</p>
-                            <span className="text-primary text-[13px] font-medium uppercase tracking-widest">{requestData?.status || 'PENDING_NODE'}</span>
+                    <div className="flex items-center gap-4">
+                        <div className="bg-white border border-gray-200 px-5 py-3 rounded-2xl shadow-sm text-right">
+                            <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest mb-0.5">Sync Status</p>
+                            <span className="text-primary text-[12px] font-black uppercase tracking-widest">{requestData?.status || 'PENDING'}</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="space-y-6">
-                    <VisitorIdentification request={requestData} />
-                    <VisitParameters request={requestData} />
-                    <VehicleConfiguration request={requestData} />
-                    <GroupMembers request={requestData} />
-                    <EquipmentManifest request={requestData} />
-                </div>
-
-                <div className="pt-6">
-                    <ReviewActions onApprove={() => setShowApproveModal(true)} onReject={() => setShowRejectModal(true)} />
+                    <PersonnelAuthProtocol 
+                        visitor={requestData} 
+                        onBack={() => navigate('/contact_person/requests-inbox')}
+                        onAction={(visitor, type) => {
+                            if (type === 'Approve') setShowApproveModal(true);
+                            if (type === 'Reject') setShowRejectModal(true);
+                        }}
+                    />
                 </div>
             </div>
 
@@ -239,13 +227,6 @@ const RequestReviewMain = () => {
                 setReason={setRejectionReason}
                 comment={rejectionComment}
                 setComment={setRejectionComment}
-            />
-
-            {/* Decorative background logo */}
-            <img
-                src="/logo_mas.png"
-                alt=""
-                className="fixed -bottom-20 -right-20 h-96 w-auto opacity-[0.02] pointer-events-none select-none z-0"
             />
         </div>
     );

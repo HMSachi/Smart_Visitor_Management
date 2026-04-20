@@ -6,8 +6,8 @@ const QRCodeManagement = () => {
     <div className="mas-glass h-full p-8 flex flex-col border-white/5">
       <div className="flex justify-between items-start mb-10">
         <div>
-          <h2 className="uppercase text-white">QR Clearance Node</h2>
-          <p className="text-gray-300 uppercase mt-2">Secure Token Generation & Verification</p>
+          <h2 className="capitalize text-white">QR Clearance Node</h2>
+          <p className="text-gray-300 capitalize mt-2">Secure Token Generation & Verification</p>
         </div>
         <div className="w-12 h-12 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
           <Shield size={24} strokeWidth={2.5} />
@@ -26,8 +26,8 @@ const QRCodeManagement = () => {
           <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-primary"></div>
         </div>
         
-        <p className="mt-8 text-white uppercase">Node: MAS-HQ-SEC-01</p>
-        <p className="mt-2 text-gray-300 uppercase">Valid for next 12 hours</p>
+        <p className="mt-8 text-white capitalize">Node: MAS-HQ-SEC-01</p>
+        <p className="mt-2 text-gray-300 capitalize">Valid for next 12 hours</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -42,9 +42,9 @@ const QRCodeManagement = () => {
       <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between text-gray-300">
         <div className="flex items-center gap-3">
           <Database size={14} />
-          <span className="uppercase">Logs Syncing...</span>
+          <span className="capitalize">Logs Syncing...</span>
         </div>
-        <span className="uppercase text-green-500">SECURE</span>
+        <span className="capitalize text-green-500">Secure</span>
       </div>
     </div>
   );

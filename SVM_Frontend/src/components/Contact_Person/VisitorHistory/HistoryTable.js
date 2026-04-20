@@ -25,34 +25,34 @@ const HistoryTable = ({ history }) => {
                             >
                                 <td className="block sm:table-cell px-2 sm:px-8 py-2 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
                                     <div className="flex sm:block justify-between items-center sm:justify-start">
-                                        <span className="text-[14px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden">Expansion Hub</span>
+                                        <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden">Expansion Hub</span>
                                         <div className={`transition-transform duration-300 ${expandedRow === item.id ? 'rotate-180' : ''}`}>
                                             <ChevronDown size={14} className={expandedRow === item.id ? 'text-primary' : 'text-gray-300 opacity-80 group-hover:opacity-100'} />
                                         </div>
                                     </div>
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                    <span className="text-[14px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Personnel Identity</span>
+                                    <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Personnel Identity</span>
                                     <div className="flex items-center gap-4">
-                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 flex items-center justify-center text-white text-[14px] font-medium group-hover:border-primary/40 group-hover:text-primary transition-all duration-500">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 flex items-center justify-center text-white text-[13px] font-medium group-hover:border-primary/40 group-hover:text-primary transition-all duration-500">
                                             {item.visitor[0]}
                                         </div>
                                         <div>
-                                            <p className="text-white text-sm font-medium uppercase tracking-wide group-hover:text-primary transition-colors">{item.visitor}</p>
+                                            <p className="text-white text-[13px] font-medium uppercase tracking-wide group-hover:text-primary transition-colors">{item.visitor}</p>
                                             <p className="text-gray-300 text-[12px] uppercase tracking-widest font-medium opacity-80">Entry Authenticated</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                    <span className="text-[14px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">History Timestamp</span>
-                                    <span className="text-white/90 text-[14px] font-medium tracking-wide uppercase break-words">{item.date}</span>
+                                    <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">History Timestamp</span>
+                                    <span className="text-white/90 text-[13px] font-medium tracking-wide uppercase break-words">{item.date}</span>
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 border-b border-white/5 sm:border-none last:border-none">
-                                    <span className="text-[14px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Access Protocol</span>
+                                    <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Access Protocol</span>
                                     <span className="text-[13px] font-medium uppercase tracking-widest px-3 py-1 bg-white/[0.02] border border-white/5 rounded-lg text-gray-300 break-words flex w-fit">{item.category}</span>
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-6 text-left sm:text-right">
-                                    <span className="text-[14px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Archived Status</span>
+                                    <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Archived Status</span>
                                     <span className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-medium uppercase tracking-widest border shadow-lg ${item.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5 shadow-green-500/5' : 'text-primary border-primary/20 bg-primary/5 shadow-primary/5'}`}>
                                         {item.status === 'Approved' ? 'Validated' : 'Denied'}
                                     </span>
@@ -103,7 +103,7 @@ const HistoryTable = ({ history }) => {
                                                     <div className="absolute top-0 right-0 p-2 opacity-10">
                                                         <FileText size={40} className="text-primary" />
                                                     </div>
-                                                    <p className="text-white/70 text-[14px] leading-relaxed font-medium uppercase tracking-wide relative z-10">
+                                                    <p className="text-white/70 text-[13px] leading-relaxed font-medium uppercase tracking-wide relative z-10">
                                                         "Entry verified through primary biometric point. All assets cleared by security node 04. No protocol anomalies detected during visitation window."
                                                     </p>
                                                 </div>

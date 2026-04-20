@@ -48,8 +48,8 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                     {type === 'Approve' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
                   </div>
                   <div>
-                    <p className="text-gray-300/90 text-[13px] font-medium uppercase tracking-widest mb-1">Administrative Final Review</p>
-                    <h2 className="text-white text-lg font-bold uppercase tracking-widest">
+                    <p className="text-gray-300/90 text-[13px] font-medium capitalize tracking-widest mb-1">Administrative Final Review</p>
+                    <h2 className="text-white text-lg font-bold capitalize tracking-widest">
                       {type === 'Approve' ? 'Confirm Authorization' : 'Deny Access Protocol'}
                     </h2>
                   </div>
@@ -68,24 +68,24 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                   <div className="flex items-center gap-4">
                     <div className="w-1.5 h-6 bg-primary/40 group-hover:bg-primary rounded-full transition-all"></div>
                     <div>
-                      <p className="text-gray-300/80 text-[12px] font-medium uppercase tracking-widest mb-1">Target Subject Identity</p>
-                      <p className="text-white text-sm font-medium uppercase tracking-widest group-hover:text-primary transition-colors">{visitor?.name}</p>
+                      <p className="text-gray-300/80 text-[12px] font-medium capitalize tracking-widest mb-1">Target Subject Identity</p>
+                      <p className="text-white text-sm font-medium capitalize tracking-widest group-hover:text-primary transition-colors">{visitor?.name}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-gray-300/80 text-[12px] font-medium uppercase tracking-widest mb-1">Reg Batch ID</p>
+                    <p className="text-gray-300/80 text-[12px] font-medium capitalize tracking-widest mb-1">Reg Batch ID</p>
                     <p className="text-gray-300/90 text-[14px] font-mono tracking-wider">{visitor?.id || visitor?.batchId}</p>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-end">
-                    <label className="text-gray-300/90 uppercase text-[13px] font-medium tracking-widest flex items-center gap-2">
+                    <label className="text-gray-300/90 capitalize text-[13px] font-medium tracking-widest flex items-center gap-2">
                       <Send size={12} className="text-primary/40" />
                       Protocol Feedback {type === 'Reject' && <span className="text-primary animate-pulse">*</span>}
                     </label>
                     {error && (
-                      <span className="text-primary text-[13px] font-medium uppercase animate-pulse flex items-center gap-1.5 tracking-widest">
+                      <span className="text-primary text-[13px] font-medium capitalize animate-pulse flex items-center gap-1.5 tracking-widest">
                         <AlertCircle size={12} /> Required For Denial
                       </span>
                     )}
@@ -107,13 +107,13 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-3.5 border border-white/5 text-gray-300/90 text-xs font-medium uppercase tracking-widest hover:text-white hover:border-primary/40 hover:bg-white/[0.02] transition-all rounded-xl shadow-xl"
+                    className="flex-1 py-3.5 border border-white/5 text-gray-300/90 text-xs font-medium capitalize tracking-widest hover:text-white hover:border-primary/40 hover:bg-white/[0.02] transition-all rounded-xl shadow-xl"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className={`flex-[1.5] py-3.5 ${type === 'Approve' ? 'bg-[#00B14F] shadow-[0_5px_20px_rgba(0,177,79,0.2)]' : 'bg-primary shadow-[0_5px_20px_rgba(200,16,46,0.2)]'} text-white text-xs font-medium uppercase tracking-widest flex items-center justify-center gap-3 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] group`}
+                    className={`flex-[1.5] py-3.5 ${type === 'Approve' ? 'bg-[#00B14F] shadow-[0_5px_20px_rgba(0,177,79,0.2)]' : 'bg-primary shadow-[0_5px_20px_rgba(200,16,46,0.2)]'} text-white text-xs font-medium capitalize tracking-widest flex items-center justify-center gap-3 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] group`}
                   >
                     {type === 'Approve' ? 'Commit Authorization' : 'Commit Denial Protocol'}
                     <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

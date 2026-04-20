@@ -17,16 +17,16 @@ const AlertItem = ({ type, location, time, severity }) => (
     <div className="flex justify-between items-start mb-2">
       <div className="flex items-center gap-2">
         <ShieldAlert size={16} className={severity === 'high' ? 'text-primary animate-pulse' : 'text-yellow-500'} />
-        <span className="uppercase text-white">{type}</span>
+        <span className="capitalize text-white">{type}</span>
       </div>
-      <span className="text-gray-300 uppercase">{time}</span>
+      <span className="text-gray-300 capitalize">{time}</span>
     </div>
     <div className="flex items-center gap-2 mb-3">
       <MapPin size={12} className="text-gray-300" />
-      <span className="text-gray-300 uppercase">{location}</span>
+      <span className="text-gray-300 capitalize">{location}</span>
     </div>
     <div className="flex gap-2">
-      <button className="flex-1 bg-mas-gray uppercase py-1.5 border border-mas-border hover:border-primary hover:text-white transition-all">
+      <button className="flex-1 bg-mas-gray capitalize py-1.5 border border-mas-border hover:border-primary hover:text-white transition-all">
         Investigate
       </button>
       <button className="px-3 bg-primary/10 text-primary border border-primary/30 hover:bg-primary hover:text-white transition-all">
@@ -61,8 +61,8 @@ const SecurityMonitoring = () => {
       <div className="lg:col-span-2 mas-panel min-h-[400px] relative overflow-hidden group border-white/[0.05]">
         <div className="absolute inset-0 bg-secondary/10 z-10 pointer-events-none"></div>
         <div className="absolute top-6 left-6 z-[500] pointer-events-none">
-          <h2 className="uppercase text-white">Zone Tracking Map</h2>
-          <p className="text-gray-300 uppercase mt-1">Real-time visitor location monitoring</p>
+          <h2 className="capitalize text-white">Zone Tracking Map</h2>
+          <p className="text-gray-300 capitalize mt-1">Real-time visitor location monitoring</p>
         </div>
 
         <div className="absolute inset-0">
@@ -92,7 +92,7 @@ const SecurityMonitoring = () => {
           </MapContainer>
 
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-            <div className="px-3 py-1.5 rounded-lg bg-black/30 border border-white/10 text-gray-200 uppercase tracking-widest text-[11px]">
+            <div className="px-3 py-1.5 rounded-lg bg-black/30 border border-white/10 text-gray-200 capitalize tracking-widest text-[11px]">
               Scanning live zones...
             </div>
           </div>
@@ -108,7 +108,7 @@ const SecurityMonitoring = () => {
 
       <div className="mas-panel flex flex-col h-full border-white/[0.05]">
         <div className="p-6 border-b border-mas-border flex justify-between items-center bg-mas-dark/50">
-          <h2 className="uppercase text-white">Live Alerts</h2>
+          <h2 className="capitalize text-white">Live Alerts</h2>
           <span className="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_8px_var(--color-primary)]"></span>
         </div>
         <div className="p-4 space-y-4 overflow-y-auto flex-1 h-[320px]">
@@ -117,7 +117,7 @@ const SecurityMonitoring = () => {
           ))}
         </div>
         <div className="p-4 border-t border-mas-border bg-mas-dark/30 text-center">
-          <button className="uppercase text-gray-300 hover:text-white transition-all underline">
+          <button className="capitalize text-gray-300 hover:text-white transition-all underline">
             View all security logs
           </button>
         </div>

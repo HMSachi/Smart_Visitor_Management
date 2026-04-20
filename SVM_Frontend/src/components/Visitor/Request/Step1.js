@@ -81,7 +81,7 @@ const Step1Main = () => {
       }
     };
 
-    if (authUser?.VA_Role === "Visitor" && adminId) {
+    if (authUser && adminId) {
       dispatch(GetAdministratorById(adminId));
       dispatch(GetAllVehicles());
     }
@@ -204,32 +204,39 @@ const Step1Main = () => {
           }),
         );
 
-      if (vehicles && vehicles.length > 0) {
-        const matchedVehicle = vehicles.find(
-          (v) =>
-            String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id),
-        );
+        const visitorRequestIds = (visitRequestsByVis || []).map(r => String(r.VVR_Request_id));
+        
+        // Priority 1: Vehicle linked to THIS request (if it has a valid plate)
+        // Priority 2: Most recent vehicle from ANY of this visitor's requests (that isn't "N/A")
+        // Priority 3: Fallback to current request's record even if "N/A"
+        const matchedVehicle = 
+          vehicles.find(v => String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id) && v.VV_Vehicle_Number && v.VV_Vehicle_Number !== "N/A") ||
+          vehicles.find(v => visitorRequestIds.includes(String(v.VVR_Request_id)) && v.VV_Vehicle_Number && v.VV_Vehicle_Number !== "N/A") ||
+          vehicles.find(v => String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id));
 
-        console.log("Matched vehicle:", matchedVehicle);
+        console.log("Improved matched vehicle lookup:", matchedVehicle);
 
         if (matchedVehicle) {
-          if (!formData.vehicleType)
+          if (!formData.vehicleType || formData.vehicleType === "Car")
             dispatch(
               updateField({
                 name: "vehicleType",
-                value: matchedVehicle.VV_Vehicle_Type || "",
+                value: matchedVehicle.VV_Vehicle_Type && matchedVehicle.VV_Vehicle_Type !== "N/A" 
+                  ? matchedVehicle.VV_Vehicle_Type 
+                  : formData.vehicleType || "Car",
               }),
             );
 
-          if (!formData.plateNumber)
+          if (!formData.plateNumber || formData.plateNumber === "N/A")
             dispatch(
               updateField({
                 name: "plateNumber",
-                value: matchedVehicle.VV_Vehicle_Number || "",
+                value: matchedVehicle.VV_Vehicle_Number && matchedVehicle.VV_Vehicle_Number !== "N/A" 
+                  ? matchedVehicle.VV_Vehicle_Number 
+                  : "",
               }),
             );
         }
-      }
     }
   }, [
     dispatch,

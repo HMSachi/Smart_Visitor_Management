@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from '../../../components/Admin/Layout/Header';
 import VisitorTable from "../../../components/Admin/ApprovalManagement/VisitorTable";
-import VisitorDetailView from "../../../components/Admin/ApprovalManagement/VisitorDetailView";
+import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
 import ApprovalModal from "../../../components/Admin/ApprovalManagement/ApprovalModal";
 import QRSuccessModal from "../../../components/Admin/ApprovalManagement/QRSuccessModal";
 import {
@@ -19,7 +19,7 @@ const ApprovalManagement = () => {
   const dispatch = useDispatch();
   const searchTerm = useSelector(state => state.admin.approvals.searchTerm);
   const { visitRequests, isLoading: isVrLoading } = useSelector((state) => state.visitRequestsState);
-  const { allVisitors } = useSelector((state) => state.visitorManagement);
+  const { visitors } = useSelector((state) => state.visitorManagement);
   const { vehicles } = useSelector((state) => state.vehicleState || { vehicles: [] });
   const { gatePasses } = useSelector((state) => state.gatePassState || { gatePasses: [] });
 
@@ -46,7 +46,7 @@ const ApprovalManagement = () => {
         return status === "SENT" || status === "A" || status === "R" || status === "ACCEPTED" || status === "P" || status === "PENDING" || status === "SENT_TO_ADMIN";
       })
       .map(req => {
-        const visitor = (allVisitors || []).find(v => String(v.VV_Visitor_id) === String(req.VVR_Visitor_id));
+        const visitor = (visitors || []).find(v => String(v.VV_Visitor_id) === String(req.VVR_Visitor_id));
         const vehicle = (vehicles || []).find(veh => String(veh.VVR_Request_id) === String(req.VVR_Request_id));
         const s = (req.VVR_Status || "").toString().trim().toUpperCase();
 
@@ -68,13 +68,15 @@ const ApprovalManagement = () => {
           nic: visitor?.VV_NIC_Passport_NO || "N/A",
           contact: visitor?.VV_Phone || "N/A",
           email: visitor?.VV_Email || "N/A",
+          representingCompany: visitor?.VV_Company || "N/A",
+          visitorClassification: visitor?.VV_Visitor_Type || "N/A",
           purpose: req.VVR_Purpose || "GENERAL VISIT",
           vehicle: vehicle ? `${vehicle.VV_Vehicle_Number} (${vehicle.VV_Vehicle_Type})` : "None",
           members: [], // Members logic might need additional API if they are separate
           raw: req
         };
       });
-  }, [visitRequests, allVisitors, vehicles]);
+  }, [visitRequests, visitors, vehicles]);
 
   // Filtered list based on Redux searchTerm
   const filteredVisitors = mappedRequests.filter(
@@ -156,7 +158,7 @@ const ApprovalManagement = () => {
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <VisitorDetailView
+                  <PersonnelAuthProtocol
                     visitor={selectedVisitor}
                     onBack={handleBackToList}
                     onAction={handleAction}
