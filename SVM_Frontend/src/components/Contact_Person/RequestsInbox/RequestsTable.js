@@ -28,8 +28,8 @@ const RequestsTable = ({ requests, onReview }) => {
         <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
           <thead className="hidden sm:table-header-group">
             <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] text-[11px] font-bold uppercase tracking-[0.2em]">
-              <th className="px-8 py-3 w-20 text-center">Unit</th>
-              <th className="px-8 py-3">Visitor Identity</th>
+              <th className="px-8 py-3">Visitor ID</th>
+              <th className="px-8 py-3">Visitor Name</th>
               <th className="px-8 py-3 text-center">Date to Visit</th>
               <th className="px-8 py-3">Objective</th>
               <th className="px-8 py-3 text-center">Authorization</th>
@@ -39,14 +39,14 @@ const RequestsTable = ({ requests, onReview }) => {
           <tbody className="block sm:table-row-group">
             {requests.map((visitor) => (
               <tr key={visitor.id} className="group transition-all hover:bg-[var(--color-surface-1)] block sm:table-row bg-transparent border-b border-[var(--color-border-soft)] sm:border-none p-6 sm:p-0">
-                <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
-                  <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3">Unit Member Count</span>
-                  <div className="w-8 h-8 rounded-lg bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] text-[13px] font-medium text-[var(--color-text-secondary)] flex items-center justify-center transition-all mx-0 sm:mx-auto group-hover:border-primary/20 group-hover:text-[var(--color-text-primary)]">
-                    {visitor.members.length + 1}
+                <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
+                  <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3">Visitor ID</span>
+                  <div>
+                    <p className="text-[var(--color-text-secondary)] text-[13px] font-mono tracking-wider uppercase">{visitor.id || 'N/A'}</p>
                   </div>
                 </td>
                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
-                  <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3">Visitor Identity</span>
+                  <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3">Visitor Name</span>
                   <div>
                     <p className="text-[var(--color-text-primary)] text-[13px] font-bold uppercase tracking-wider">{visitor.name}</p>
                   </div>

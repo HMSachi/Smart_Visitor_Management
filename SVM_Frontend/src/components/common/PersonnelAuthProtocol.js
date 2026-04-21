@@ -191,7 +191,7 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
           <div className="grid grid-cols-1 gap-6 mt-12">
             {visitor.equipment.map((item, idx) => {
                 const itemName = typeof item === 'string' ? item : item.itemName;
-                const itemQty = typeof item === 'string' ? '01_UNIT' : (item.quantity || '01_UNIT');
+                const itemQty = typeof item === 'string' ? '01' : (item.quantity || '01');
                 const itemDesc = typeof item === 'string' ? 'DECLARED' : (item.description || 'DECLARED');
                 return (
                     <motion.div
