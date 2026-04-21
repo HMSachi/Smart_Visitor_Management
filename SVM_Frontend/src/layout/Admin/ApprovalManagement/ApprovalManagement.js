@@ -123,7 +123,7 @@ const ApprovalManagement = () => {
                 <span className="text-[var(--color-text-primary)] text-[14px] font-bold uppercase tracking-[0.4em]">Approval Management</span>
               </div>
               <p className="text-[var(--color-text-secondary)] text-[11px] uppercase font-bold tracking-[0.25em] opacity-80 leading-relaxed">
-                Monitor and authorize visitor access protocols
+                Manage and approve visitor entry requests
               </p>
             </div>
           </header>
