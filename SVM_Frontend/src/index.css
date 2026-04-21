@@ -106,6 +106,27 @@
   color-scheme: light !important;
 }
 
+.contact-theme-root {
+  background-color: var(--color-bg-default);
+  color: var(--color-text-primary);
+}
+
+.contact-theme-root [class*='text-white'] {
+  color: var(--color-text-primary) !important;
+}
+
+.contact-theme-root [class*='text-gray-'] {
+  color: var(--color-text-secondary) !important;
+}
+
+.contact-theme-root [class*='border-white'] {
+  border-color: var(--color-border-soft) !important;
+}
+
+.contact-theme-root [class*='bg-black/'] {
+  background-color: var(--color-surface-1) !important;
+}
+
 @layer base {
   body {
     font-family: 'Inter', sans-serif !important;

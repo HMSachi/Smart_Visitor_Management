@@ -5,7 +5,7 @@ import RejectedRequestsComponent from '../../../components/Contact_Person/Reject
 
 const RejectedRequests = () => {
     return (
-        <div className="flex bg-secondary overflow-hidden text-white h-screen w-full">
+        <div className="contact-theme-root flex bg-[var(--color-bg-default)] overflow-hidden text-[var(--color-text-primary)] h-screen w-full">
             <Sidebar />
             <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)] overflow-y-auto">
                 <Header title="Rejected Requests" />
