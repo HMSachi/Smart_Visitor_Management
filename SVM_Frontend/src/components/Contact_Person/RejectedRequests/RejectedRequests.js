@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import RejectionTable from './RejectionTable';
 import RejectionAlertPanel from './RejectionAlertPanel';
 import { XCircle } from 'lucide-react';
+import { useThemeMode } from '../../../theme/ThemeModeContext';
 
 const RejectedRequestsMain = () => {
+    const { themeMode } = useThemeMode();
+    const isLight = themeMode === "light";
     const [selectedVisitor, setSelectedVisitor] = useState(null);
 
     const requests = [
@@ -31,11 +34,11 @@ const RejectedRequestsMain = () => {
     ];
 
     return (
-        <div className="p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in">
-            <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-100 pb-6 gap-6 relative">
+        <div className={`p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in transition-colors duration-500`}>
+            <header className={`mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-6 gap-6 relative ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}>
                 <div>
-                  <h2 className="text-lg font-bold tracking-tight text-[#1A1A1A] uppercase">Rejected Requests</h2>
-                  <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90">View denied visitor applications</p>
+                  <h2 className={`text-lg font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>Rejected Requests</h2>
+                  <p className={`text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/40"}`}>View denied visitor applications</p>
                 </div>
             </header>
 

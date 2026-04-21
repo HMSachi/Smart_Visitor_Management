@@ -14,11 +14,11 @@ const ProgressionTimeline = ({ status }) => {
             {steps.map((step, i) => (
                 <React.Fragment key={i}>
                     <div className="flex flex-col items-center gap-2">
-                        <div className={`w-3 h-3 rounded-full border-2 ${step.done ? 'bg-green-500 border-green-500 shadow-[0_0_10px_#22c55e]' : step.current ? 'bg-primary border-primary animate-pulse shadow-[0_0_10px_var(--color-primary)]' : 'bg-transparent border-gray-300'}`}></div>
-                        <span className={`uppercase font-bold text-[10px] tracking-widest ${step.done ? 'text-green-500' : step.current ? 'text-primary' : 'text-gray-400'}`}>{step.label}</span>
+                        <div className={`w-3 h-3 rounded-full border-2 ${step.done ? 'bg-green-500 border-green-500 shadow-[0_0_10px_#22c55e]' : step.current ? 'bg-primary border-primary animate-pulse shadow-[0_0_10px_var(--color-primary)]' : 'bg-transparent border-[var(--color-border-soft)]'}`}></div>
+                        <span className={`uppercase font-bold text-[10px] tracking-widest ${step.done ? 'text-green-500' : step.current ? 'text-primary' : 'text-[var(--color-text-dim)]'}`}>{step.label}</span>
                     </div>
                     {i < steps.length - 1 && (
-                        <div className={`h-[1px] flex-1 ${step.done ? 'bg-green-500' : 'bg-gray-200'}`}></div>
+                        <div className={`h-[1px] flex-1 ${step.done ? 'bg-green-500' : 'bg-[var(--color-border-soft)]'}`}></div>
                     )}
                 </React.Fragment>
             ))}
@@ -28,10 +28,10 @@ const ProgressionTimeline = ({ status }) => {
 
 const SentTable = ({ requests }) => {
     return (
-        <div className="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-xl shadow-gray-200/50 animate-fade-in overflow-x-auto">
+        <div className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-3xl overflow-hidden shadow-xl shadow-black/20 animate-fade-in overflow-x-auto">
             <table className="w-full text-left border-collapse text-[13px]">
                 <thead>
-                    <tr className="bg-[#F8F9FA] border-b border-gray-100 text-gray-400 font-bold uppercase tracking-[0.2em]">
+                    <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] font-bold uppercase tracking-[0.2em]">
                         <th className="px-6 py-4 whitespace-nowrap">Forward ID</th>
                         <th className="px-6 py-4 whitespace-nowrap">Visitor Name</th>
                         <th className="px-6 py-4 whitespace-nowrap">Timeline</th>
@@ -40,14 +40,14 @@ const SentTable = ({ requests }) => {
                 </thead>
                 <tbody>
                     {requests.map((req) => (
-                        <tr key={req.id} className="border-b border-gray-50 bg-white hover:bg-[#F8F9FA]/50 transition-all font-bold">
+                        <tr key={req.id} className="border-b border-[var(--color-border-soft)] bg-[var(--color-bg-paper)] hover:bg-[var(--color-surface-1)]/60 transition-all font-bold">
                             <td className="px-6 py-6 whitespace-nowrap">
-                                <span className="text-[#1A1A1A]">#{req.id}</span>
+                                <span className="text-[var(--color-text-primary)]">#{req.id}</span>
                             </td>
                             <td className="px-6 py-6 whitespace-nowrap">
                                 <div className="flex flex-col">
-                                    <span className="uppercase text-[#1A1A1A] mb-1">{req.name}</span>
-                                    <span className="text-gray-500 uppercase text-[11px] tracking-widest font-bold">Awaiting Admin Response</span>
+                                    <span className="uppercase text-[var(--color-text-primary)] mb-1">{req.name}</span>
+                                    <span className="text-[var(--color-text-dim)] uppercase text-[11px] tracking-widest font-bold">Awaiting Admin Response</span>
                                 </div>
                             </td>
                             <td className="px-6 py-6 whitespace-nowrap">

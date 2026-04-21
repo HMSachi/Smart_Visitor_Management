@@ -72,7 +72,7 @@ const RequestsTable = ({ requests, onReview }) => {
                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-right">
                   <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Actions</span>
                   <button
-                    onClick={() => onReview(visitor)}
+                    onClick={() => onReview(visitor.id)}
                     className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl border border-[var(--color-border-soft)] text-[var(--color-text-primary)] text-[11px] font-bold uppercase tracking-widest hover:bg-primary hover:text-white hover:border-primary transition-all group/btn shadow-sm"
                   >
                     <Eye size={11} className="group-hover/btn:scale-110 transition-transform" />
