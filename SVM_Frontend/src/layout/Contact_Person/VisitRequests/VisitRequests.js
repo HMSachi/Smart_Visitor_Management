@@ -10,7 +10,7 @@ import {
   GetVisitRequestsByCP,
   ApproveVisitRequest,
 } from "../../../actions/VisitRequestAction";
-import { GetVisitorsByCP } from "../../../actions/VisitorAction";
+import { GetVisitorsByCP, GetAllVisitors } from "../../../actions/VisitorAction";
 import { AddVehicle } from "../../../actions/VehicleAction";
 import ContactPersonService from "../../../services/ContactPersonService";
 import Header from "../../../components/Contact_Person/Layout/Header";
@@ -77,12 +77,21 @@ const StatusBadge = ({ status }) => {
   }
 };
 
+const capitalizeName = (name) => {
+  if (!name) return "";
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 const VisitRequests = () => {
   const dispatch = useDispatch();
   const { visitRequestsByCP, isLoading, error } = useSelector(
     (state) => state.visitRequestsState,
   );
-  const { visitorsByCP } = useSelector((state) => state.visitorManagement);
+  const { visitorsByCP, visitors } = useSelector((state) => state.visitorManagement);
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
@@ -183,6 +192,7 @@ const VisitRequests = () => {
     if (!cpId) return;
     dispatch(GetVisitRequestsByCP(cpId));
     dispatch(GetVisitorsByCP(cpId));
+    dispatch(GetAllVisitors());
     setFormData((prev) => ({ ...prev, VVR_Contact_person_id: cpId }));
   }, [dispatch, cpId]);
 
@@ -334,10 +344,10 @@ const VisitRequests = () => {
                   <thead>
                     <tr className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/40 border-b-white/5"}`}>
                       <th className={`px-6 py-4 text-left font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-primary/60" : "text-primary"}`}>
-                        ID
+                        Visitor Node
                       </th>
                       <th className={`px-6 py-4 text-left font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-gray-400" : "text-white/40"}`}>
-                        Visitor Node
+                        Visitor Name
                       </th>
                       <th className={`px-6 py-4 text-center font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-gray-400" : "text-white/40"}`}>
                         Date to Visit
@@ -363,13 +373,16 @@ const VisitRequests = () => {
                           key={req.VVR_Request_id}
                           className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                         >
-                          <td className="px-6 py-5 text-primary font-mono text-[13px] tracking-widest font-bold">
-                            #{req.VVR_Request_id}
+                          <td className={`px-6 py-5 font-bold text-[13px] uppercase tracking-wider ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                            {req.VVR_Visitor_id}
                           </td>
                           <td className="px-6 py-5">
                             <div className="flex items-center gap-3">
                               <span className={`font-bold text-[13px] uppercase tracking-wider ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
-                                {req.VVR_Visitor_Name || req.VVR_Visitor_id}
+                                {(() => {
+                                  const matched = (visitors || []).find(v => String(v.VV_Visitor_id) === String(req.VVR_Visitor_id));
+                                  return capitalizeName(matched?.VV_Name || req.VVR_Visitor_Name || `Visitor ${req.VVR_Visitor_id}`);
+                                })()}
                               </span>
                             </div>
                           </td>
