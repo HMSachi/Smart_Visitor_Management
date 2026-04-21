@@ -309,6 +309,7 @@ const MyRequests = () => {
                           className="px-6 py-5 border-b-white/5"
                           align="right"
                         >
+                          {/* 
                           <button
                             onClick={() => openEditModal(req)}
                             className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-primary/10 hover:border-primary/30 transition-all text-primary"
@@ -316,6 +317,7 @@ const MyRequests = () => {
                           >
                             <Edit size={18} />
                           </button>
+                          */}
                         </TableCell>
                       </TableRow>
                     ))
