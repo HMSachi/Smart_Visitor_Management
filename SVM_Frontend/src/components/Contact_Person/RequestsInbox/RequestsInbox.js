@@ -7,7 +7,6 @@ import { useThemeMode } from '../../../theme/ThemeModeContext';
 import { setSearchTerm, setStatusFilter, setSelectedRequest } from '../../../reducers/contactPersonSlice';
 import { GetVisitRequestsByCP } from '../../../actions/VisitRequestAction';
 import ContactPersonService from '../../../services/ContactPersonService';
-import { GetAllVisitors } from '../../../actions/VisitorAction';
 
 const mapStatus = (status) => {
     const normalized = (status || '').toString().trim().toUpperCase();
@@ -24,15 +23,6 @@ const formatDateOnly = (value) => {
     return raw;
 };
 
-const capitalizeName = (name) => {
-    if (!name) return '';
-    return name
-        .toLowerCase()
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-};
-
 const RequestsInboxMain = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -40,7 +30,6 @@ const RequestsInboxMain = () => {
 
     const { searchTerm, statusFilter } = useSelector(state => state.contactPortal);
     const { visitRequestsByCP, isLoading, error } = useSelector((state) => state.visitRequestsState);
-    const { visitors } = useSelector((state) => state.visitorManagement);
     const user = useSelector((state) => state.login.user);
     const { themeMode } = useThemeMode();
     const isLight = themeMode === "light";
@@ -79,17 +68,12 @@ const RequestsInboxMain = () => {
     useEffect(() => {
         if (!cpId) return;
         dispatch(GetVisitRequestsByCP(cpId));
-        dispatch(GetAllVisitors());
     }, [dispatch, cpId]);
 
     const mappedRequests = useMemo(() => {
         return (visitRequestsByCP || []).map((req) => {
             const requestId = req?.VVR_Request_id;
-            
-            const matchedVisitor = (visitors || []).find(v => String(v.VV_Visitor_id) === String(req.VVR_Visitor_id));
-            const rawName = matchedVisitor?.VV_Name || req?.VV_Name || req?.VVR_Visitor_Name || `VISITOR ${req?.VVR_Visitor_id || 'UNKNOWN'}`;
-            const visitorName = capitalizeName(rawName);
-            
+            const visitorName = req?.VV_Name || req?.VVR_Visitor_Name || `VISITOR ${req?.VVR_Visitor_id || 'UNKNOWN'}`;
             const cpName = req?.VCP_Name || user?.ResultSet?.[0]?.VA_Name || 'CONTACT PERSON';
 
             return {
@@ -101,12 +85,10 @@ const RequestsInboxMain = () => {
                 timeIn: req?.VVR_Visit_Time || 'N/A',
                 areas: [req?.VVR_Places_to_Visit || 'N/A'],
                 status: mapStatus(req?.VVR_Status),
-                purpose: req?.VVR_Purpose || 'N/A',
                 members: [],
-                rawRequest: req,
             };
         });
-    }, [visitRequestsByCP, visitors, user]);
+    }, [visitRequestsByCP, user]);
 
     const sourceRequests = mappedRequests;
 
