@@ -160,13 +160,30 @@ const LiveFeed = () => {
     (value) => value !== "N/A",
   );
 
+  const handleResetNode = () => {
+    stopScanner();
+    setScanResult("");
+    setPassDetails(null);
+    setQrData(null);
+    setIsLoading(false);
+    setScanStatus("idle");
+    setScanMessage("Point the camera at a QR code to begin verification.");
+  };
+
   useEffect(() => {
-    startScanner();
+    if (scanStatus !== "idle") {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      startScanner();
+    }, 0);
 
     return () => {
+      clearTimeout(timer);
       stopScanner();
     };
-  }, []);
+  }, [scanStatus]);
 
   return (
     <div className="max-w-4xl w-full space-y-6 md:space-y-12 relative z-10 mx-auto px-4">
@@ -362,7 +379,7 @@ const LiveFeed = () => {
                 Grant Entrance <ArrowRight size={16} />
               </button>
               <button
-                onClick={startScanner}
+                onClick={handleResetNode}
                 className="px-10 py-5 border border-white/10 text-white hover:bg-white/5 font-black uppercase text-xs tracking-[0.3em] rounded-2xl transition-all"
               >
                 Reset Node
