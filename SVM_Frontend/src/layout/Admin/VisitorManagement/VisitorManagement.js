@@ -72,7 +72,7 @@ const VisitorManagement = () => {
                 <span className="text-[var(--color-text-primary)] text-[14px] font-bold uppercase tracking-[0.4em]">Visitor Registry</span>
               </div>
               <p className="text-[var(--color-text-secondary)] text-[11px] uppercase font-bold tracking-[0.25em] opacity-80 leading-relaxed">
-                Comprehensive history of all visitor entries and exits
+                Monitor and manage database of registered visitors
               </p>
             </div>
 

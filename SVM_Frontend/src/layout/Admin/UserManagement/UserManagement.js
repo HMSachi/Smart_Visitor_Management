@@ -165,12 +165,9 @@ const UserManagement = () => {
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header />
 
-      <div className="flex-1 p-4 md:p-10 !pt-2 space-y-6 md:space-y-12 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
-        {/* Dynamic Operational Aura */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
-
-        <div className="max-w-[1700px] mx-auto relative z-10">
-          <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
+      <div className="flex-1 p-8 overflow-y-auto w-full">
+        <div className="max-w-[1600px] mx-auto">
+          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
             <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-6 py-4 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
@@ -241,8 +238,7 @@ const UserManagement = () => {
             )}
           </header>
 
-          <div className="space-y-6 md:space-y-12">
-            {isFormVisible ? (
+          {isFormVisible ? (
             <form onSubmit={handleSubmit} className="p-8 bg-[#0F0F10] border border-white/5 space-y-6 mb-8 relative">
               <IconButton onClick={handleCloseForm} className="absolute top-4 right-4 text-white/40 hover:text-white">
                 <X size={20} />
@@ -354,7 +350,7 @@ const UserManagement = () => {
               </Table>
             </TableContainer>
           )}
-          </div>
+
         </div>
       </div>
     </div>

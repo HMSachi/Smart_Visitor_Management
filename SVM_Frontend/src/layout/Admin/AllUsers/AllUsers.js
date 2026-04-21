@@ -310,107 +310,102 @@ const AllUsers = () => {
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header />
 
-      <div className="flex-1 p-4 md:p-10 !pt-2 space-y-6 md:space-y-12 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
-        {/* Dynamic Operational Aura */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
-
-        <div className="max-w-[1700px] mx-auto relative z-10">
-          <header className="mb-12 border-b border-white/[0.03] pb-6 relative z-10">
-            <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-6 py-4 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
+      <div className="flex-1 p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+        <div className="max-w-[1600px] mx-auto">
+          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
+            <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)] animate-pulse"></div>
-                <span className="text-[var(--color-text-primary)] text-[14px] font-bold uppercase tracking-[0.4em]">All System Users</span>
+                <div className="w-8 h-[2px] bg-primary"></div>
+                <span className="text-primary uppercase tracking-wider text-xs font-semibold">
+                  User Directory
+                </span>
               </div>
-              <p className="text-[var(--color-text-secondary)] text-[11px] uppercase font-bold tracking-[0.25em] opacity-80 leading-relaxed">
-                Centralized directory of all administrative and organizational accounts
-              </p>
+              <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
+                All System Users
+              </h1>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
+              {/* Search Form */}
+              <form
+                onSubmit={handleSearch}
+                className="flex items-center bg-black/40 border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[300px]"
+              >
+                <Search size={16} className="text-gray-400 mr-3" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search across all roles..."
+                  className="bg-transparent text-[13px] text-white focus:outline-none w-full"
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm("")}
+                    className="text-gray-500 hover:text-white"
+                  >
+                    <RefreshCw size={14} />
+                  </button>
+                )}
+              </form>
+
+              <div
+                className="flex items-center transition-colors rounded-xl px-3 py-2 min-w-[180px]"
+                style={{
+                  background: themeMode === "light" ? "#ffffff" : undefined,
+                }}
+              >
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className={`text-[13px] focus:outline-none w-full ${themeMode === "light" ? "text-black bg-white border border-gray-200" : "bg-black/40 text-white border border-white/10 hover:border-white/20"}`}
+                >
+                  <option
+                    value="ALL"
+                    className={
+                      themeMode === "light"
+                        ? "bg-white text-black"
+                        : "bg-[#0f0f10]"
+                    }
+                  >
+                    All Statuses
+                  </option>
+                  <option
+                    value="ACTIVE"
+                    className={
+                      themeMode === "light"
+                        ? "bg-white text-black"
+                        : "bg-[#0f0f10]"
+                    }
+                  >
+                    Active
+                  </option>
+                  <option
+                    value="INACTIVE"
+                    className={
+                      themeMode === "light"
+                        ? "bg-white text-black"
+                        : "bg-[#0f0f10]"
+                    }
+                  >
+                    Inactive
+                  </option>
+                </select>
+              </div>
+
+              <button
+                onClick={() => openModal("add")}
+                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
+              >
+                <Plus size={16} /> Add New User
+              </button>
             </div>
           </header>
 
-          <div className="space-y-8 md:space-y-12">
-            {/* Operational Toolbar */}
-            <div className="bg-[var(--color-surface-1)] border border-white/5 p-6 rounded-[24px] backdrop-blur-md flex flex-col md:flex-row justify-between items-center gap-6 shadow-xl">
-              <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center lg:flex-1">
-                {/* Search Form */}
-                <form
-                  onSubmit={handleSearch}
-                  className="flex items-center bg-black/40 border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[300px] flex-1"
-                >
-                  <Search size={16} className="text-gray-400 mr-3" />
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search across all roles..."
-                    className="bg-transparent text-[13px] text-white focus:outline-none w-full"
-                  />
-                  {searchTerm && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchTerm("")}
-                      className="text-gray-500 hover:text-white"
-                    >
-                      <RefreshCw size={14} />
-                    </button>
-                  )}
-                </form>
-
-                <div
-                  className="flex items-center transition-colors rounded-xl px-3 py-2 min-w-[180px]"
-                  style={{
-                    background: themeMode === "light" ? "#ffffff" : undefined,
-                  }}
-                >
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className={`text-[13px] focus:outline-none w-full ${themeMode === "light" ? "text-black bg-white border border-gray-200" : "bg-black/40 text-white border border-white/10 hover:border-white/20"}`}
-                  >
-                    <option
-                      value="ALL"
-                      className={
-                        themeMode === "light"
-                          ? "bg-white text-black"
-                          : "bg-[#0f0f10]"
-                      }
-                    >
-                      All Statuses
-                    </option>
-                    <option
-                      value="ACTIVE"
-                      className={
-                        themeMode === "light"
-                          ? "bg-white text-black"
-                          : "bg-[#0f0f10]"
-                      }
-                    >
-                      Active
-                    </option>
-                    <option
-                      value="INACTIVE"
-                      className={
-                        themeMode === "light"
-                          ? "bg-white text-black"
-                          : "bg-[#0f0f10]"
-                      }
-                    >
-                      Inactive
-                    </option>
-                  </select>
-                </div>
-
-                <button
-                  onClick={() => openModal("add")}
-                  className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
-                >
-                  <Plus size={16} /> Add New User
-                </button>
-              </div>
-            </div>
-
-            {/* Main Content Area */}
-            <div className="space-y-12">
-              {loading ? (
+          <div className="space-y-12">
+            {loading ? (
               <div className="p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
                 <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
@@ -588,7 +583,6 @@ const AllUsers = () => {
                 </section>
               ))
             )}
-            </div>
           </div>
         </div>
       </div>
