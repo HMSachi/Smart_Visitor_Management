@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -16,7 +17,6 @@ import {
 } from "../../../actions/VisitRequestAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
-import QRSuccessModal from "../../../components/Admin/ApprovalManagement/QRSuccessModal";
 import {
   Search,
   X,
@@ -70,6 +70,7 @@ const StatusBadge = ({ status }) => {
 
 const MyRequests = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { visitRequestsByVis, isLoading, error } = useSelector(
     (state) => state.visitRequestsState,
   );
@@ -83,8 +84,6 @@ const MyRequests = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showQRModal, setShowQRModal] = useState(false);
-  const [approvedVisitorData, setApprovedVisitorData] = useState(null);
   const [formData, setFormData] = useState({
     VVR_Request_id: "",
     VVR_Visit_Date: "",
@@ -126,12 +125,28 @@ const MyRequests = () => {
   }, [dispatch, visitorId]);
 
   const handleViewGatePass = (req) => {
-    setApprovedVisitorData({
-      id: req.VVR_Request_id,
-      name: visitorName || "Visitor",
-      raw: { VVR_Visitor_id: req.VVR_Visitor_id }
+    // Find the gate pass ID from the gatePasses list
+    const list = Array.isArray(gatePasses)
+      ? gatePasses
+      : (gatePasses?.gatePasses || gatePasses?.ResultSet || []);
+    const gatePass = list.find((gp) => {
+      const gpRequestId =
+        gp.VVR_Request_id ||
+        gp.VGP_Request_id ||
+        gp.vvr_Request_id ||
+        gp.vgp_Request_id;
+      return String(gpRequestId) === String(req.VVR_Request_id);
     });
-    setShowQRModal(true);
+
+    const gatePassId = gatePass?.VGP_Pass_id || gatePass?.vgp_Pass_id;
+
+    if (!gatePassId) {
+      console.error("Gate pass not found");
+      return;
+    }
+
+    // Navigate with gatePassId as URL parameter
+    navigate(`/visitor/gate-pass/${gatePassId}`);
   };
 
   const hasGatePass = (requestId) => {
@@ -297,7 +312,7 @@ const MyRequests = () => {
                             {hasGatePass(req.VVR_Request_id) && (
                               <button
                                 onClick={() => handleViewGatePass(req)}
-                                className="flex items-center gap-2 text-[10px] items-center justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"
+                                className="flex items-center gap-2 text-[10px] justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"
                               >
                                 <QrCode size={12} className="group-hover/gp:scale-110 transition-transform" />
                                 View Gate Pass
@@ -449,12 +464,6 @@ const MyRequests = () => {
           </motion.div>
         </div>
       )}
-      <QRSuccessModal
-        isOpen={showQRModal}
-        onClose={() => setShowQRModal(false)}
-        visitorData={approvedVisitorData}
-        gatePasses={gatePasses}
-      />
     </div>
   );
 };
