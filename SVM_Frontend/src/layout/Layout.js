@@ -29,7 +29,10 @@ const Layout = ({ children }) => {
         className={`flex-1 flex flex-col min-w-0 transition-all duration-500 ease-in-out overflow-x-hidden
                     ${isDashboardPath ? "overflow-y-auto" : ""}
                     ${!isDashboardPath && !isLoginPage ? "pt-2" : ""}
-                    ${isMobile && isDashboardPath ? "w-full" : ""}`}
+                    ${isMobile && isDashboardPath ? "w-full" : ""}
+                    ${isAdminPath ? "admin-theme-root" : ""}
+                    ${location.pathname.startsWith("/contact_person") ? "contact-theme-root" : ""}
+                    ${location.pathname.startsWith("/visitor") ? "visitor-theme-root" : ""}`}
       >
         {children}
       </Box>

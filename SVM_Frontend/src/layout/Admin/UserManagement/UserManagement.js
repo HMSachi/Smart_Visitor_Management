@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { TextField, Button, CircularProgress, Alert, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, InputBase } from '@mui/material';
 import { Edit2, Plus, X, Search } from 'lucide-react';
 import Header from '../../../components/Admin/Layout/Header';
-import { 
+import {
   FetchContactPersons,
   FetchAdministrators,
   AddContactPerson,
@@ -17,11 +17,11 @@ import { DeleteAdministrator } from '../../../actions/AdministratorAction';
 
 const UserManagement = () => {
   const dispatch = useDispatch();
-  const { 
-    contactPersons, 
-    administrators, 
-    isLoading, 
-    success, 
+  const {
+    contactPersons,
+    administrators,
+    isLoading,
+    success,
     error: reduxError,
     validation
   } = useSelector((state) => state.userManagement);
@@ -33,7 +33,7 @@ const UserManagement = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -86,7 +86,7 @@ const UserManagement = () => {
     setMessage(null);
     setError(null);
     dispatch(ClearUserManagementErrors());
-    
+
     if (person) {
       setIsEditing(true);
       setSelectedPerson(person);
@@ -144,8 +144,8 @@ const UserManagement = () => {
 
   const getFilteredAdmins = () => {
     const role = activeTab === 'SECURITY' ? 'Security' : 'Visitor';
-    return administrators.filter(admin => 
-      admin.VA_Role === role && 
+    return administrators.filter(admin =>
+      admin.VA_Role === role &&
       (!searchTerm || admin.VA_Name?.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   };
@@ -164,39 +164,36 @@ const UserManagement = () => {
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header />
-      
+
       <div className="flex-1 p-8 overflow-y-auto w-full">
         <div className="max-w-[1600px] mx-auto">
-          <header className="mb-6 flex justify-between items-end border-b border-white/[0.03] pb-4">
-            <div>
+          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
+            <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-6 py-4 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-[2px] bg-primary"></div>
-                <span className="text-primary uppercase tracking-wider text-xs font-semibold">User Administration</span>
+                <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
+                <span className="text-[var(--color-text-primary)] text-[14px] font-bold uppercase tracking-[0.4em]">User Administration</span>
               </div>
-              <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
-                {activeTab === 'CONTACT' ? 'Contact Persons' : activeTab === 'SECURITY' ? 'Security Officers' : 'Visitor Accounts'}
-              </h1>
-              
-              {/* Tab Switcher */}
-              <div className="flex gap-4 mt-6">
-                <button 
-                  onClick={() => { setActiveTab('CONTACT'); setSearchTerm(''); }}
-                  className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${activeTab === 'CONTACT' ? 'border-primary text-white' : 'border-transparent text-white/30 hover:text-white/60'}`}
-                >
-                  Contact Persons
-                </button>
-                <button 
-                  onClick={() => { setActiveTab('SECURITY'); setSearchTerm(''); }}
-                  className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${activeTab === 'SECURITY' ? 'border-primary text-white' : 'border-transparent text-white/30 hover:text-white/60'}`}
-                >
-                  Security Officers
-                </button>
-                <button 
-                  onClick={() => { setActiveTab('VISITOR'); setSearchTerm(''); }}
-                  className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${activeTab === 'VISITOR' ? 'border-primary text-white' : 'border-transparent text-white/30 hover:text-white/60'}`}
-                >
-                  Visitor Accounts
-                </button>
+              <p className="text-[var(--color-text-secondary)] text-[11px] uppercase font-bold tracking-[0.25em] opacity-80 leading-relaxed">
+                Manage organizational roles and personnel database
+              </p>
+
+              {/* Horizontal Tab Navigation */}
+              <div className="flex gap-6 mt-6 border-t border-white/5 pt-4">
+                {['CONTACT', 'SECURITY', 'VISITOR'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => { setActiveTab(tab); setSearchTerm(''); }}
+                    className={`px-1 py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-all relative ${activeTab === tab
+                        ? 'text-[var(--color-text-primary)]'
+                        : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-secondary)]'
+                      }`}
+                  >
+                    {tab === 'CONTACT' ? 'Contact Persons' : tab === 'SECURITY' ? 'Security Officers' : 'Visitor Accounts'}
+                    {activeTab === tab && (
+                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                    )}
+                  </button>
+                ))}
               </div>
             </div>
             {!isFormVisible && (
@@ -217,11 +214,10 @@ const UserManagement = () => {
                   <Button
                     onClick={() => setShowActiveOnly(!showActiveOnly)}
                     variant="outlined"
-                    className={`rounded-none px-4 py-2 text-xs font-bold tracking-widest transition-all ${
-                      showActiveOnly 
-                      ? "border-primary text-primary bg-primary/10 hover:bg-primary/20" 
-                      : "border-white/10 text-white/40 hover:text-white/60 hover:border-white/20"
-                    }`}
+                    className={`rounded-none px-4 py-2 text-xs font-bold tracking-widest transition-all ${showActiveOnly
+                        ? "border-primary text-primary bg-primary/10 hover:bg-primary/20"
+                        : "border-white/10 text-white/40 hover:text-white/60 hover:border-white/20"
+                      }`}
                     sx={{ borderRadius: 0 }}
                   >
                     {showActiveOnly ? "SHOWING ACTIVE" : "SHOWING ALL"}
@@ -243,11 +239,11 @@ const UserManagement = () => {
           </header>
 
           {isFormVisible ? (
-             <form onSubmit={handleSubmit} className="p-8 bg-[#0F0F10] border border-white/5 space-y-6 mb-8 relative">
+            <form onSubmit={handleSubmit} className="p-8 bg-[#0F0F10] border border-white/5 space-y-6 mb-8 relative">
               <IconButton onClick={handleCloseForm} className="absolute top-4 right-4 text-white/40 hover:text-white">
                 <X size={20} />
               </IconButton>
-              
+
               <h2 className="text-lg font-bold uppercase tracking-wider mb-6 text-white/90">
                 {isEditing ? `UPDATE ${activeTab}` : `ADD NEW ${activeTab}`}
               </h2>
@@ -266,20 +262,20 @@ const UserManagement = () => {
                 </div>
                 <div className="group space-y-2">
                   <label className="text-[12px] font-medium tracking-[0.2em] text-white/40 uppercase ml-1 block">Email Address</label>
-                  <TextField 
-                    fullWidth name="email" type="email" value={formData.email} onChange={handleChange} onBlur={handleEmailBlur} required 
-                    error={!!validation.emailError} helperText={validation.emailError} variant="outlined" size="small" 
-                    InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }} 
-                    sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: validation.emailError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: validation.emailError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} 
+                  <TextField
+                    fullWidth name="email" type="email" value={formData.email} onChange={handleChange} onBlur={handleEmailBlur} required
+                    error={!!validation.emailError} helperText={validation.emailError} variant="outlined" size="small"
+                    InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }}
+                    sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: validation.emailError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: validation.emailError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }}
                   />
                 </div>
                 <div className="group space-y-2">
                   <label className="text-[12px] font-medium tracking-[0.2em] text-white/40 uppercase ml-1 block">Phone Number</label>
-                  <TextField 
-                    fullWidth name="phone" value={formData.phone} onChange={handleChange} onBlur={handlePhoneBlur} required 
-                    error={!!validation.phoneError} helperText={validation.phoneError} variant="outlined" size="small" 
-                    InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }} 
-                    sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }} 
+                  <TextField
+                    fullWidth name="phone" value={formData.phone} onChange={handleChange} onBlur={handlePhoneBlur} required
+                    error={!!validation.phoneError} helperText={validation.phoneError} variant="outlined" size="small"
+                    InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }}
+                    sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }}
                   />
                 </div>
               </div>
@@ -328,16 +324,16 @@ const UserManagement = () => {
                         <TableCell className={`border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'text-white/70' : 'text-white/20'}`}>{item.VCP_Department || item.VA_Role || '-'}</TableCell>
                         <TableCell className={`border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'text-white/70' : 'text-white/20'}`}>{item.VCP_Email || item.VA_Email || '-'}</TableCell>
                         {activeTab === 'CONTACT' && <TableCell className={`border-b-white/5 transition-colors ${item.VCP_Status === 'A' ? 'text-white/70' : 'text-white/20'}`}>{item.VCP_Phone || '-'}</TableCell>}
-                         <TableCell className="border-b-white/5">
-                            <button 
-                              onClick={() => handleToggleStatus(item)}
-                              disabled={isLoading}
-                              title="Click to toggle status"
-                              className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
-                            >
-                              {(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
-                            </button>
-                         </TableCell>
+                        <TableCell className="border-b-white/5">
+                          <button
+                            onClick={() => handleToggleStatus(item)}
+                            disabled={isLoading}
+                            title="Click to toggle status"
+                            className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'}`}
+                          >
+                            {(item.VCP_Status || item.VA_Status) === 'A' || (item.VCP_Status || item.VA_Status) === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
+                          </button>
+                        </TableCell>
                         <TableCell align="right" className="border-b-white/5">
                           {activeTab === 'CONTACT' ? (
                             <IconButton onClick={() => handleOpenForm(item)} size="small" className="text-white/40 hover:text-white">
