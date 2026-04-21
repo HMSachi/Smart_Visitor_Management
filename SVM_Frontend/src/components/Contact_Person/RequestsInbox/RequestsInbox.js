@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Eye, Search } from 'lucide-react';
 import RequestsTable from './RequestsTable';
+import { useThemeMode } from '../../../theme/ThemeModeContext';
 import { setSearchTerm, setStatusFilter, setSelectedRequest } from '../../../reducers/contactPersonSlice';
 import { GetVisitRequestsByCP } from '../../../actions/VisitRequestAction';
 import ContactPersonService from '../../../services/ContactPersonService';
@@ -30,6 +31,8 @@ const RequestsInboxMain = () => {
     const { searchTerm, statusFilter } = useSelector(state => state.contactPortal);
     const { visitRequestsByCP, isLoading, error } = useSelector((state) => state.visitRequestsState);
     const user = useSelector((state) => state.login.user);
+    const { themeMode } = useThemeMode();
+    const isLight = themeMode === "light";
     const userEmail = user?.ResultSet?.[0]?.VA_Email;
 
     useEffect(() => {
@@ -113,24 +116,24 @@ const RequestsInboxMain = () => {
     };
 
     return (
-        <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full">
-            {isLoading && <p className="text-xs tracking-[0.2em] text-gray-300 uppercase">Loading requests...</p>}
+        <div className={`p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full z-10 transition-colors duration-500`}>
+            {isLoading && <p className={`text-xs tracking-[0.2em] uppercase ${isLight ? "text-gray-400" : "text-white/40"}`}>Loading requests...</p>}
             {!!error && <p className="text-xs tracking-[0.2em] text-primary uppercase">{error}</p>}
 
-            <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
+            <header className={`mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-6 gap-6 relative z-10 ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}>
                 <div>
-                    <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
+                    <h1 className={`uppercase px-1 text-2xl font-bold tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
                         REQUESTS INBOX
                     </h1>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
-                    <div className="flex items-center bg-black/40 border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[300px]">
-                        <Search size={16} className="text-gray-400 mr-3" />
+                    <div className={`flex items-center transition-colors rounded-xl px-4 py-3 min-w-[300px] border ${isLight ? "bg-white border-gray-200 hover:border-gray-300" : "bg-black/40 border-white/10 hover:border-white/20"}`}>
+                        <Search size={16} className={`${isLight ? "text-gray-400" : "text-white/20"} mr-3`} />
                         <input
                             type="text"
                             placeholder="Search Visitor..."
-                            className="bg-transparent text-[13px] text-white focus:outline-none w-full"
+                            className={`bg-transparent text-[13px] focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder-white/20"}`}
                             value={searchTerm}
                             onChange={(e) => handleSearchChange(e.target.value)}
                         />
@@ -140,15 +143,15 @@ const RequestsInboxMain = () => {
                         <select
                             value={statusFilter}
                             onChange={(e) => handleFilterChange(e.target.value)}
-                            className="w-full pl-4 pr-10 py-3 bg-black/40 border border-white/10 hover:border-white/20 rounded-xl text-[13px] font-medium text-white uppercase tracking-widest transition-all cursor-pointer outline-none appearance-none"
+                            className={`w-full pl-4 pr-10 py-3 rounded-xl text-[13px] font-medium uppercase tracking-widest transition-all cursor-pointer outline-none appearance-none border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] hover:bg-gray-50" : "bg-black/40 border-white/10 text-white hover:border-white/20"}`}
                         >
-                            <option value="All">ALL STATUS</option>
-                            <option value="Pending">PENDING</option>
-                            <option value="Approved">APPROVED</option>
-                            <option value="Rejected">REJECTED</option>
-                            <option value="Checked Out">CHECKED OUT</option>
+                            <option value="All" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>ALL STATUS</option>
+                            <option value="Pending" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>PENDING</option>
+                            <option value="Approved" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>APPROVED</option>
+                            <option value="Rejected" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>REJECTED</option>
+                            <option value="Checked Out" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>CHECKED OUT</option>
                         </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-300 border-l border-white/10 pl-3">
+                        <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none border-l pl-3 ${isLight ? "text-gray-400 border-gray-200" : "text-gray-300 border-white/10"}`}>
                             <Eye size={12} />
                         </div>
                     </div>

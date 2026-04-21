@@ -213,7 +213,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                   onClick={handleClose}
                   className={`py-4 px-8 border border-white/10 text-white text-[11px] font-bold capitalize tracking-[0.2em] rounded-2xl hover:bg-white/5 transition-all ${!gatePassId ? 'w-full' : ''}`}
                 >
-                  Conclude
+                  Cancel
                 </button>
               </div>
             </motion.div>
