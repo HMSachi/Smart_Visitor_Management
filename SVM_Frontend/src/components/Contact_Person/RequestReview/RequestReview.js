@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 import { ApproveVisitRequest, GetVisitRequestById, GetVisitRequestsByCP, UpdateVisitRequest } from '../../../actions/VisitRequestAction';
 import VisitorService from '../../../services/VisitorService';
 import VehicleService from '../../../services/VehicleService';
+import { useThemeMode } from '../../../theme/ThemeModeContext';
 
 const normalizeStatus = (status) => {
     const s = (status || '').toString().trim().toUpperCase();
@@ -50,6 +51,8 @@ const RequestReviewMain = () => {
     const selectedRequestData = location.state?.requestData;
 
     const { visitRequestsByCP, visitRequests } = useSelector((state) => state.visitRequestsState);
+    const { themeMode } = useThemeMode();
+    const isLight = themeMode === "light";
     const [requestData, setRequestData] = useState(null);
     const [visitorRecord, setVisitorRecord] = useState(null);
     const [vehicleRecord, setVehicleRecord] = useState(null);
@@ -178,22 +181,22 @@ const RequestReviewMain = () => {
     };
 
     return (
-        <div className="flex-1 p-4 md:p-6 space-y-4 animate-fade-in-slow overflow-y-auto bg-[#F8F9FA] relative">
+        <div className={`flex-1 p-4 md:p-6 space-y-4 animate-fade-in-slow overflow-y-auto relative transition-colors duration-500 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}>
             <div className="max-w-[1700px] mx-auto relative z-10 w-full">
                 <div className="flex flex-row items-center justify-between pb-6 animate-fade-in transition-all">
                     <div className="flex items-center gap-4">
                         <div className="w-1.5 h-8 bg-primary rounded-full"></div>
                         <div>
-                            <p className="text-gray-400 text-[10px] uppercase font-bold tracking-[0.3em] mb-0.5 opacity-80">Identity Node</p>
-                            <h2 className="text-[#1A1A1A] text-lg font-bold uppercase tracking-tight">
+                            <p className={`text-[10px] uppercase font-bold tracking-[0.3em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}>Identity Node</p>
+                            <h2 className={`text-lg font-bold uppercase tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
                                 Reference <span className="text-primary font-mono ml-2">#{requestData?.id || selectedId || 'ALPHA-000'}</span>
                             </h2>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="bg-white border border-gray-200 px-5 py-3 rounded-2xl shadow-sm text-right">
-                            <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest mb-0.5">Sync Status</p>
+                        <div className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10"}`}>
+                            <p className={`text-[10px] uppercase font-bold tracking-widest mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}>Sync Status</p>
                             <span className="text-primary text-[12px] font-black uppercase tracking-widest">{requestData?.status || 'PENDING'}</span>
                         </div>
                     </div>

@@ -276,28 +276,28 @@ const VisitRequests = () => {
   });
 
   return (
-    <div className="flex bg-[#F8F9FA] overflow-hidden text-[#1A1A1A] h-screen w-full transition-colors duration-500">
+    <div className={`flex overflow-hidden h-screen w-full transition-colors duration-500 ${isLight ? "bg-[#F8F9FA] text-[#1A1A1A]" : "bg-[var(--color-bg-default)] text-white"}`}>
       <Sidebar />
 
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-y-auto relative">
+      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}>
         <Header title="Visitation Node Management" />
 
         <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
-          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-100 pb-8 gap-6 relative">
+          <header className={`mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-8 gap-6 relative ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}>
             <div>
-              <h2 className="text-lg font-bold tracking-tight text-[#1A1A1A] uppercase">Active Visit Requests</h2>
-              <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90">Manage visitor applications</p>
+              <h2 className={`text-lg font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>Active Visit Requests</h2>
+              <p className={`text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/50"}`}>Manage visitor applications</p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-5 w-full md:w-auto items-center">
-              <div className="flex items-center bg-white border border-gray-200 hover:border-primary/20 focus-within:border-primary/40 transition-all rounded-xl px-5 py-3.5 min-w-[340px] group shadow-sm">
-                <Search size={14} className="text-gray-400 group-focus-within:text-primary transition-colors mr-4" />
+              <div className={`flex items-center border transition-all rounded-xl px-5 py-3.5 min-w-[340px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}>
+                <Search size={14} className={`transition-colors mr-4 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`} />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="SEARCH VISITOR..."
-                  className="bg-transparent text-[12px] text-[#1A1A1A] focus:outline-none w-full uppercase tracking-widest placeholder:text-gray-400"
+                  className={`bg-transparent text-[12px] focus:outline-none w-full uppercase tracking-widest ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
                 />
               </div>
 
@@ -310,7 +310,7 @@ const VisitRequests = () => {
             </div>
           </header>
 
-          <div className="bg-white border border-gray-200 rounded-[24px] overflow-hidden shadow-xl shadow-gray-200/50 relative">
+          <div className={`border rounded-[24px] overflow-hidden relative ${isLight ? "bg-white border-gray-200 shadow-xl shadow-gray-200/50" : "bg-[#0F0F10] border-white/5"}`}>
 
             {isLoading ? (
               <div className="p-24 flex flex-col items-center justify-center text-center">
@@ -332,26 +332,26 @@ const VisitRequests = () => {
               <div className="overflow-x-auto custom-scrollbar relative z-10">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="bg-[#F8F9FA] border-b border-gray-100">
-                      <th className="px-6 py-4 text-left text-primary/60 font-bold uppercase tracking-[0.2em] text-[13px]">
+                    <tr className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/40 border-b-white/5"}`}>
+                      <th className={`px-6 py-4 text-left font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-primary/60" : "text-primary"}`}>
                         ID
                       </th>
-                      <th className="px-6 py-4 text-left text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                      <th className={`px-6 py-4 text-left font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-gray-400" : "text-white/40"}`}>
                         Visitor Node
                       </th>
-                      <th className="px-6 py-4 text-center text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                      <th className={`px-6 py-4 text-center font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-gray-400" : "text-white/40"}`}>
                         Date to Visit
                       </th>
-                      <th className="px-6 py-4 text-left text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                      <th className={`px-6 py-4 text-left font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-gray-400" : "text-white/40"}`}>
                         Objective
                       </th>
-                      <th className="px-6 py-4 text-left text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                      <th className={`px-6 py-4 text-left font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-gray-400" : "text-white/40"}`}>
                         Clearance Area
                       </th>
-                      <th className="px-6 py-4 text-left text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                      <th className={`px-6 py-4 text-left font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-gray-400" : "text-white/40"}`}>
                         Status
                       </th>
-                      <th className="px-6 py-4 text-right text-gray-400 font-bold uppercase tracking-[0.2em] text-[13px]">
+                      <th className={`px-6 py-4 text-right font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-gray-400" : "text-white/40"}`}>
                         Operations
                       </th>
                     </tr>
@@ -361,20 +361,20 @@ const VisitRequests = () => {
                       filteredRequests.map((req) => (
                         <tr
                           key={req.VVR_Request_id}
-                          className="group hover:bg-[#F8F9FA] border-b border-gray-50 transition-all duration-300 relative overflow-hidden"
+                          className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                         >
                           <td className="px-6 py-5 text-primary font-mono text-[13px] tracking-widest font-bold">
                             #{req.VVR_Request_id}
                           </td>
                           <td className="px-6 py-5">
                             <div className="flex items-center gap-3">
-                              <span className="text-[#1A1A1A] font-bold text-[13px] uppercase tracking-wider">
+                              <span className={`font-bold text-[13px] uppercase tracking-wider ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
                                 {req.VVR_Visitor_Name || req.VVR_Visitor_id}
                               </span>
                             </div>
                           </td>
                           <td className="px-6 py-5">
-                            <div className="flex flex-col items-center justify-center gap-2.5 text-gray-500 text-[13px]">
+                            <div className={`flex flex-col items-center justify-center gap-2.5 text-[13px] ${isLight ? "text-gray-500" : "text-white/70"}`}>
                               <span className="font-bold tracking-wide">
                                 {req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0].split(" ")[0] : "N/A"}
                               </span>
@@ -382,13 +382,13 @@ const VisitRequests = () => {
                           </td>
                           <td className="px-6 py-5">
                             <div className="max-w-[200px]">
-                              <p className="text-[#1A1A1A] font-bold uppercase tracking-wider text-[13px] truncate">
+                              <p className={`font-bold uppercase tracking-wider text-[13px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}>
                                 {req.VVR_Purpose || "-"}
                               </p>
                             </div>
                           </td>
                           <td className="px-6 py-5">
-                            <div className="flex items-center gap-2 text-gray-400 text-[13px] font-bold tracking-wide">
+                            <div className={`flex items-center gap-2 text-[13px] font-bold tracking-wide ${isLight ? "text-gray-400" : "text-white/50"}`}>
                               <MapPin size={13} className="opacity-40" />
                               <span>{req.VVR_Places_to_Visit || "-"}</span>
                             </div>
@@ -407,7 +407,7 @@ const VisitRequests = () => {
                               </button>
                               <button
                                 onClick={(e) => handleMenuOpen(e, req)}
-                                className="p-2 rounded-lg text-gray-400 hover:bg-white/5 border border-transparent hover:border-white/10 transition-all"
+                                className={`p-2 rounded-lg border border-transparent transition-all ${isLight ? "text-gray-400 hover:bg-black/5 hover:border-black/10" : "text-gray-400 hover:bg-white/5 hover:border-white/10"}`}
                                 title="Operational Menu"
                               >
                                 <MoreVertical size={16} />
@@ -423,8 +423,8 @@ const VisitRequests = () => {
                           className="py-24 text-center"
                         >
                            <div className="flex flex-col items-center justify-center opacity-20">
-                             <ClipboardList size={48} className="mb-4" />
-                             <p className="uppercase tracking-[0.4em] text-[10px] font-bold">
+                             <ClipboardList size={48} className={`mb-4 ${isLight ? "text-[#1A1A1A]" : "text-white"}`} />
+                             <p className={`uppercase tracking-[0.4em] text-[10px] font-bold ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
                                No Active Visit Requests Detected
                              </p>
                            </div>
