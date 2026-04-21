@@ -16,7 +16,7 @@ const Dashboard = () => {
                 <span className="text-[var(--color-text-primary)] text-[14px] font-bold uppercase tracking-[0.4em]">Dashboard Overview</span>
               </div>
               <p className="text-[var(--color-text-secondary)] text-[11px] uppercase font-bold tracking-[0.25em] opacity-80 leading-relaxed">
-                Real-time system summary and administrative management
+                Quick overview of visitor statistics and system status
               </p>
             </div>
           </header>
