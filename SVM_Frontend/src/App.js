@@ -32,7 +32,6 @@ import Login from "./layout/Login/Login";
 import ContactDashboard from "./layout/Contact_Person/Dashboard/Dashboard";
 import RequestsInbox from "./layout/Contact_Person/RequestsInbox/RequestsInbox";
 import RequestReview from "./layout/Contact_Person/RequestReview/RequestReview";
-import ApprovedRequests from "./layout/Contact_Person/ApprovedRequests/ApprovedRequests";
 import RejectedRequests from "./layout/Contact_Person/RejectedRequests/RejectedRequests";
 import SentToAdmin from "./layout/Contact_Person/SentToAdmin/SentToAdmin";
 import VisitorHistory from "./layout/Contact_Person/VisitorHistory/VisitorHistory";
@@ -198,7 +197,7 @@ const AppContent = () => {
           />
           <Route
             path="/contact_person/approved-requests"
-            element={<ApprovedRequests />}
+            element={<Navigate to="/contact_person/requests-inbox" replace />}
           />
           <Route
             path="/contact_person/rejected-requests"

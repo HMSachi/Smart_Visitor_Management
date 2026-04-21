@@ -13,16 +13,16 @@ const Panel = ({ icon, label, value, trend }) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-white border border-gray-200 p-6 rounded-[24px] flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 relative overflow-hidden shadow-xl shadow-gray-200/50 h-full"
+    className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] p-6 rounded-[24px] flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 relative overflow-hidden shadow-xl h-full"
     >
       <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all"></div>
 
       <div className="flex justify-between items-start relative z-10">
         <div>
-          <p className="text-gray-400 text-[11px] font-bold uppercase tracking-[0.2em] mb-4 group-hover:text-primary transition-opacity">{label}</p>
-          <h3 className="text-[#1A1A1A] text-2xl font-black tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
+                    <p className="text-[var(--color-text-dim)] text-[11px] font-bold uppercase tracking-[0.2em] mb-4 group-hover:text-primary transition-opacity">{label}</p>
+                    <h3 className="text-[var(--color-text-primary)] text-2xl font-black tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
         </div>
-        <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-500 shadow-sm">
+                <div className="p-3.5 rounded-xl bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-500 shadow-sm">
           <Icon className="text-primary group-hover:scale-110 transition-transform" size={18} strokeWidth={2.5} />
         </div>
       </div>

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ApprovedTable from './ApprovedTable';
 import QuickViewPanel from './QuickViewPanel';
-import { CheckCircle } from 'lucide-react';
 
 const ApprovedRequestsMain = () => {
     const [selectedVisitor, setSelectedVisitor] = useState(null);
@@ -16,16 +15,16 @@ const ApprovedRequestsMain = () => {
 
     return (
         <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)]/50">
-            <div className="p-4 md:p-10 space-y-10 animate-fade-in-slow">
-                <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-100 pb-6 gap-6 relative">
+            <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full">
+                <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
                     <div>
-                      <h2 className="text-lg font-bold tracking-tight text-[#1A1A1A] uppercase">Approved Forms</h2>
-                      <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90">View cleared visitor applications</p>
+                        <h2 className="text-white text-2xl font-bold tracking-tight uppercase">Approved Forms</h2>
+                        <p className="text-white/50 text-[11px] font-bold uppercase tracking-[0.2em] mt-1">View cleared visitor applications</p>
                     </div>
-                    <div className="flex items-center gap-4 bg-white border border-gray-200 p-3 px-5 rounded-xl shadow-sm">
+                    <div className="flex items-center gap-4 bg-black/40 border border-white/10 p-3 px-5 rounded-xl shadow-sm">
                         <div className="text-right">
-                            <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest mb-0.5">Total Verified</p>
-                            <span className="text-base font-black text-[#1A1A1A]">{requests.length}</span>
+                            <p className="text-white/50 text-[10px] uppercase font-bold tracking-widest mb-0.5">Total Verified</p>
+                            <span className="text-base font-black text-white">{requests.length}</span>
                         </div>
                     </div>
                 </header>
