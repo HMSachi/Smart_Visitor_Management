@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import Header from '../../../components/Admin/Layout/Header';
+import Header from "../../../components/Admin/Layout/Header";
 import VisitorTable from "../../../components/Admin/ApprovalManagement/VisitorTable";
 import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
 import ApprovalModal from "../../../components/Admin/ApprovalManagement/ApprovalModal";
@@ -10,18 +10,27 @@ import {
   setSearchTerm as setAdminSearchTerm,
   updateVisitorStatus,
 } from "../../../reducers/adminSlice";
-import { GetAllVisitRequests, ApproveVisitRequest } from "../../../actions/VisitRequestAction";
+import {
+  GetAllVisitRequests,
+  ApproveVisitRequest,
+} from "../../../actions/VisitRequestAction";
 import { GetAllVisitors } from "../../../actions/VisitorAction";
 import { GetAllVehicles } from "../../../actions/VehicleAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
 
 const ApprovalManagement = () => {
   const dispatch = useDispatch();
-  const searchTerm = useSelector(state => state.admin.approvals.searchTerm);
-  const { visitRequests, isLoading: isVrLoading } = useSelector((state) => state.visitRequestsState);
+  const searchTerm = useSelector((state) => state.admin.approvals.searchTerm);
+  const { visitRequests, isLoading: isVrLoading } = useSelector(
+    (state) => state.visitRequestsState,
+  );
   const { visitors } = useSelector((state) => state.visitorManagement);
-  const { vehicles } = useSelector((state) => state.vehicleState || { vehicles: [] });
-  const { gatePasses } = useSelector((state) => state.gatePassState || { gatePasses: [] });
+  const { vehicles } = useSelector(
+    (state) => state.vehicleState || { vehicles: [] },
+  );
+  const { gatePasses } = useSelector(
+    (state) => state.gatePassState || { gatePasses: [] },
+  );
 
   const [selectedVisitor, setSelectedVisitor] = useState(null);
   const [viewMode, setViewMode] = useState("list"); // 'list' or 'details'
@@ -40,30 +49,46 @@ const ApprovalManagement = () => {
   // Combine and map data for the table
   const mappedRequests = React.useMemo(() => {
     return (visitRequests || [])
-      .filter(req => {
+      .filter((req) => {
         const status = (req.VVR_Status || "").toString().trim().toUpperCase();
         // Include PENDING, SENT, APPROVED (A), REJECTED (R)
-        return status === "SENT" || status === "A" || status === "R" || status === "ACCEPTED" || status === "P" || status === "PENDING" || status === "SENT_TO_ADMIN";
+        return (
+          status === "SENT" ||
+          status === "A" ||
+          status === "R" ||
+          status === "ACCEPTED" ||
+          status === "P" ||
+          status === "PENDING" ||
+          status === "SENT_TO_ADMIN"
+        );
       })
-      .map(req => {
-        const visitor = (visitors || []).find(v => String(v.VV_Visitor_id) === String(req.VVR_Visitor_id));
-        const vehicle = (vehicles || []).find(veh => String(veh.VVR_Request_id) === String(req.VVR_Request_id));
+      .map((req) => {
+        const visitor = (visitors || []).find(
+          (v) => String(v.VV_Visitor_id) === String(req.VVR_Visitor_id),
+        );
+        const vehicle = (vehicles || []).find(
+          (veh) => String(veh.VVR_Request_id) === String(req.VVR_Request_id),
+        );
         const s = (req.VVR_Status || "").toString().trim().toUpperCase();
 
         let displayStatus = "Pending";
-        if (s === "SENT" || s === "SENT_TO_ADMIN") displayStatus = "Sent to Admin";
-        else if (s === "A" || s === "APPROVED") displayStatus = "Accepted by Admin";
+        if (s === "SENT" || s === "SENT_TO_ADMIN")
+          displayStatus = "Sent to Admin";
+        else if (s === "A" || s === "APPROVED")
+          displayStatus = "Accepted by Admin";
         else if (s === "R" || s === "REJECTED") displayStatus = "Declined";
         else if (s === "ACCEPTED") displayStatus = "Accepted";
 
         return {
           id: req.VVR_Request_id?.toString() || "",
-          batchId: `BATCH-${new Date(req.VVR_Visit_Date).getFullYear()}-${req.VVR_Request_id?.toString().padStart(3, '0')}`,
+          batchId: `BATCH-${new Date(req.VVR_Visit_Date).getFullYear()}-${req.VVR_Request_id?.toString().padStart(3, "0")}`,
           name: visitor?.VV_Name || `Visitor #${req.VVR_Visitor_id}`,
           contactPerson: `Admin Node`,
           date: req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0] : "N/A",
           timeIn: "08:30 AM",
-          areas: req.VVR_Places_to_Visit ? req.VVR_Places_to_Visit.split("|") : ["MAIN RECEPTION"],
+          areas: req.VVR_Places_to_Visit
+            ? req.VVR_Places_to_Visit.split("|")
+            : ["MAIN RECEPTION"],
           status: displayStatus,
           nic: visitor?.VV_NIC_Passport_NO || "N/A",
           contact: visitor?.VV_Phone || "N/A",
@@ -71,9 +96,11 @@ const ApprovalManagement = () => {
           representingCompany: visitor?.VV_Company || "N/A",
           visitorClassification: visitor?.VV_Visitor_Type || "N/A",
           purpose: req.VVR_Purpose || "GENERAL VISIT",
-          vehicle: vehicle ? `${vehicle.VV_Vehicle_Number} (${vehicle.VV_Vehicle_Type})` : "None",
+          vehicle: vehicle
+            ? `${vehicle.VV_Vehicle_Number} (${vehicle.VV_Vehicle_Type})`
+            : "None",
           members: [], // Members logic might need additional API if they are separate
-          raw: req
+          raw: req,
         };
       });
   }, [visitRequests, visitors, vehicles]);
@@ -98,7 +125,7 @@ const ApprovalManagement = () => {
 
   const handleAction = (visitor, type) => {
     setSelectedVisitor(visitor);
-    if (type === 'ViewGatePass') {
+    if (type === "ViewGatePass") {
       setApprovedVisitorData(visitor);
       setShowQRModal(true);
     } else {
@@ -111,25 +138,26 @@ const ApprovalManagement = () => {
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header />
 
-      <div className="flex-1 p-4 md:p-10 !pt-2 space-y-6 md:space-y-12 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
+      <div className="flex-1 p-4 md:p-8 !pt-2 space-y-3 md:space-y-6 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
         {/* Dynamic Operational Aura */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
         <div className="max-w-[1700px] mx-auto relative z-10">
-          <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
-            <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-6 py-4 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
-              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-2">
-                <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
-                <span className="text-[var(--color-text-primary)] text-[14px] font-bold uppercase tracking-[0.4em]">Approval Management</span>
+          <header className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-3 gap-4 relative z-10">
+            <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-3 py-2 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
+              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2 mb-1">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
+                <span className="text-[var(--color-text-primary)] text-[12px] font-bold uppercase tracking-[0.3em]">
+                  Approval Management
+                </span>
               </div>
-              <p className="text-[var(--color-text-secondary)] text-[11px] uppercase font-bold tracking-[0.25em] opacity-80 leading-relaxed">
+              <p className="text-[var(--color-text-secondary)] text-[10px] uppercase font-bold tracking-[0.2em] opacity-80 leading-tight">
                 Monitor and authorize visitor access protocols
               </p>
             </div>
           </header>
 
-          <div className="space-y-6 md:space-y-12">
-
+          <div className="space-y-3 md:space-y-6">
             <AnimatePresence mode="wait">
               {viewMode === "list" ? (
                 <motion.div

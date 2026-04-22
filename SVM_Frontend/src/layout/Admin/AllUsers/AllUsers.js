@@ -313,61 +313,62 @@ const AllUsers = () => {
       <div className="flex-1 p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="max-w-[1600px] mx-auto">
-          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
+          <header className="mb-7 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.06] pb-5 gap-4 relative z-10">
             <div>
-              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-2">
-                <div className="w-8 h-[2px] bg-primary"></div>
-                <span className="text-primary uppercase tracking-wider text-xs font-semibold">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-7 h-[2.5px] bg-gradient-to-r from-primary to-primary/50 rounded-full"></div>
+                <span className="text-primary/90 uppercase tracking-widest text-[9px] font-semibold letter-spacing-1">
                   User Directory
                 </span>
               </div>
-              <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
+              <h1 className="text-white uppercase text-base font-semibold tracking-wide">
                 All System Users
               </h1>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center\">
               {/* Search Form */}
               <form
                 onSubmit={handleSearch}
-                className="flex items-center bg-black/40 border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[300px]"
+                className="flex items-center bg-black/30 border border-white/15 hover:border-primary/40 transition-all duration-300 rounded-lg px-3 py-2 min-w-[250px] shadow-sm"
               >
-                <Search size={16} className="text-gray-400 mr-3" />
+                <Search size={14} className="text-gray-500 mr-2.5" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search across all roles..."
-                  className="bg-transparent text-[13px] text-white focus:outline-none w-full"
+                  placeholder="Search users..."
+                  className="bg-transparent text-[12px] text-white placeholder-gray-500 focus:outline-none w-full"
                 />
                 {searchTerm && (
                   <button
                     type="button"
                     onClick={() => setSearchTerm("")}
-                    className="text-gray-500 hover:text-white"
+                    className="text-gray-600 hover:text-gray-400 transition-colors"
                   >
-                    <RefreshCw size={14} />
+                    <X size={12} />
                   </button>
                 )}
               </form>
 
               <div
-                className="flex items-center transition-colors rounded-xl px-3 py-2 min-w-[180px]"
+                className="flex items-center transition-all rounded-lg px-2.5 py-1.5 min-w-[160px] border border-white/15 hover:border-primary/40 shadow-sm"
                 style={{
-                  background: themeMode === "light" ? "#ffffff" : undefined,
+                  background:
+                    themeMode === "light" ? "#ffffff" : "rgba(0,0,0,0.3)",
                 }}
               >
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`text-[13px] focus:outline-none w-full ${themeMode === "light" ? "text-black bg-white border border-gray-200" : "bg-black/40 text-white border border-white/10 hover:border-white/20"}`}
+                  className={`text-[11px] focus:outline-none w-full transition-colors ${themeMode === "light" ? "text-black bg-white" : "bg-transparent text-gray-300 hover:text-white"}`}
                 >
                   <option
                     value="ALL"
                     className={
                       themeMode === "light"
                         ? "bg-white text-black"
-                        : "bg-[#0f0f10]"
+                        : "bg-[#0f0f10] text-white"
                     }
                   >
                     All Statuses
@@ -377,7 +378,7 @@ const AllUsers = () => {
                     className={
                       themeMode === "light"
                         ? "bg-white text-black"
-                        : "bg-[#0f0f10]"
+                        : "bg-[#0f0f10] text-white"
                     }
                   >
                     Active
@@ -387,7 +388,7 @@ const AllUsers = () => {
                     className={
                       themeMode === "light"
                         ? "bg-white text-black"
-                        : "bg-[#0f0f10]"
+                        : "bg-[#0f0f10] text-white"
                     }
                   >
                     Inactive
@@ -397,14 +398,14 @@ const AllUsers = () => {
 
               <button
                 onClick={() => openModal("add")}
-                className="flex flex-col md:flex-row items-center gap-4 md:gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
+                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/85 text-white px-4 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-primary/30"
               >
-                <Plus size={16} /> Add New User
+                <Plus size={14} strokeWidth={2.5} /> Add User
               </button>
             </div>
           </header>
 
-          <div className="space-y-12">
+          <div className="space-y-10">
             {loading ? (
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
@@ -424,67 +425,129 @@ const AllUsers = () => {
             ) : (
               filteredCategories.map((cat) => (
                 <section key={cat.id} className="relative">
-                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
-                      <cat.icon size={20} />
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center text-primary shadow-md hover:shadow-lg transition-shadow">
+                      <cat.icon size={18} strokeWidth={1.8} />
                     </div>
-                    <div>
-                      <h2 className="text-white text-lg font-bold tracking-widest uppercase">
+                    <div className="flex-1">
+                      <h2 className="text-white text-sm font-semibold tracking-wide uppercase">
                         {cat.title}
                       </h2>
-                      <p className="text-white/30 text-[10px] tracking-[0.3em] uppercase font-medium">
-                        {cat.data.length} Total Users
+                      <p className="text-white/40 text-[9px] tracking-[0.2em] uppercase font-medium mt-0.5">
+                        {cat.data.length}{" "}
+                        {cat.data.length === 1 ? "user" : "users"}
                       </p>
                     </div>
-                    <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent ml-4"></div>
+                    <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent"></div>
                   </div>
 
-                  <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
+                  <div className="bg-[var(--color-bg-paper)] border border-white/8 rounded-2xl overflow-hidden shadow-xl relative hover:border-white/12 transition-colors duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none"></div>
                     <TableContainer
                       component={Paper}
-                      className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative"
+                      className="bg-transparent border-none z-10 relative"
+                      sx={{ maxHeight: "300px", overflow: "auto" }}
                     >
                       <Table
                         sx={{ minWidth: 650 }}
+                        stickyHeader
                         aria-label={`${cat.title} table`}
                       >
-                        <TableHead className="bg-black/40">
-                          <TableRow>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                        <TableHead>
+                          <TableRow
+                            sx={{
+                              height: "40px",
+                              backgroundColor: "rgba(255,255,255,0.03)",
+                            }}
+                          >
+                            <TableCell
+                              sx={{
+                                padding: "8px 14px",
+                                borderBottom:
+                                  "1px solid rgba(255,255,255,0.08)",
+                                width: "12%",
+                              }}
+                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                            >
                               User ID
                             </TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              Name
+                            <TableCell
+                              sx={{
+                                padding: "8px 14px",
+                                borderBottom:
+                                  "1px solid rgba(255,255,255,0.08)",
+                                width: "28%",
+                              }}
+                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                            >
+                              Name & Email
                             </TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                            <TableCell
+                              sx={{
+                                padding: "8px 14px",
+                                borderBottom:
+                                  "1px solid rgba(255,255,255,0.08)",
+                                width: "18%",
+                              }}
+                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                            >
                               {cat.id === "CONTACT" ? "Department" : "Role"}
                             </TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              {cat.id === "CONTACT"
-                                ? "Phone Number"
-                                : "Date Joined"}
+                            <TableCell
+                              sx={{
+                                padding: "8px 14px",
+                                borderBottom:
+                                  "1px solid rgba(255,255,255,0.08)",
+                                width: "16%",
+                              }}
+                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                            >
+                              {cat.id === "CONTACT" ? "Contact" : "Joined"}
                             </TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                            <TableCell
+                              sx={{
+                                padding: "8px 14px",
+                                borderBottom:
+                                  "1px solid rgba(255,255,255,0.08)",
+                                width: "14%",
+                              }}
+                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                            >
                               Status
                             </TableCell>
                             <TableCell
-                              className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5"
+                              sx={{
+                                padding: "8px 14px",
+                                borderBottom:
+                                  "1px solid rgba(255,255,255,0.08)",
+                                width: "12%",
+                              }}
                               align="right"
+                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
                             >
-                              Action
+                              Actions
                             </TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {cat.data.length === 0 ? (
-                            <TableRow>
+                            <TableRow
+                              sx={{
+                                height: "44px",
+                                "&:hover": { backgroundColor: "transparent" },
+                              }}
+                            >
                               <TableCell
                                 colSpan={6}
                                 align="center"
-                                className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5"
+                                sx={{
+                                  padding: "12px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
+                                }}
+                                className="text-white/30 text-[11px] font-medium"
                               >
-                                No users found in this category
+                                No users in this category
                               </TableCell>
                             </TableRow>
                           ) : (
@@ -506,18 +569,22 @@ const AllUsers = () => {
                                     item.VCP_Contact_person_id
                                   }
                                   sx={{
-                                    "&:last-child td, &:last-child th": {
-                                      border: 0,
-                                    },
                                     "&:hover": {
-                                      backgroundColor: "rgba(255,255,255,0.02)",
+                                      backgroundColor: "rgba(255,255,255,0.04)",
                                     },
+                                    height: "44px",
+                                    borderBottom:
+                                      "1px solid rgba(255,255,255,0.05)",
+                                    transition: "background-color 0.2s ease",
                                   }}
                                 >
-                                  <TableCell className="text-white/70 font-medium border-b-white/5">
-                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
+                                  <TableCell
+                                    sx={{ padding: "8px 14px", width: "12%" }}
+                                    className="text-white/70 font-medium text-[11px]"
+                                  >
+                                    <div className="flex items-center gap-1">
                                       <Hash
-                                        size={12}
+                                        size={10}
                                         className="text-primary/40"
                                       />
                                       <span>
@@ -527,49 +594,54 @@ const AllUsers = () => {
                                     </div>
                                   </TableCell>
                                   <TableCell
-                                    className={`font-medium border-b-white/5 transition-colors ${isActive ? "text-white" : "text-white/30 line-through"}`}
+                                    sx={{ padding: "8px 14px", width: "28%" }}
+                                    className={`font-medium transition-colors text-[11px] ${isActive ? "text-white" : "text-white/30 line-through"}`}
                                   >
                                     {item.VA_Name || item.VCP_Name || "-"}
-                                    <p className="text-gray-400 text-[10px] tracking-[0.1em] lowercase mt-1 opacity-70">
+                                    <p className="text-gray-400 text-[9px] tracking-[0.1em] lowercase mt-0.5 opacity-70">
                                       {item.VA_Email || item.VCP_Email}
                                     </p>
                                   </TableCell>
                                   <TableCell
-                                    className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    sx={{ padding: "8px 14px", width: "18%" }}
+                                    className={`transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                   >
                                     {item.VA_Role || item.VCP_Department || "-"}
                                   </TableCell>
                                   <TableCell
-                                    className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    sx={{ padding: "8px 14px", width: "16%" }}
+                                    className={`transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                   >
                                     {item.VA_Created_Date
                                       ? item.VA_Created_Date.split(" ")[0]
                                       : item.VCP_Phone || "AUTHEN.SYSTEM"}
                                   </TableCell>
-                                  <TableCell className="border-b-white/5">
+                                  <TableCell
+                                    sx={{ padding: "8px 14px", width: "14%" }}
+                                  >
                                     <button
                                       onClick={() =>
                                         handleToggleStatus(item, cat.id)
                                       }
                                       disabled={loading}
                                       title="Click to toggle status"
-                                      className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                      className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer rounded ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
                                     >
                                       {isActive ? "ACTIVE" : "INACTIVE"}
                                     </button>
                                   </TableCell>
                                   <TableCell
+                                    sx={{ padding: "8px 14px", width: "12%" }}
                                     align="right"
-                                    className="border-b-white/5"
                                   >
                                     <IconButton
                                       onClick={() =>
                                         openModal("edit", item, cat.id)
                                       }
                                       size="small"
-                                      className="text-white/40 hover:text-white"
+                                      className="text-white/40 hover:text-white p-1"
                                     >
-                                      <Edit size={16} />
+                                      <Edit size={13} />
                                     </IconButton>
                                   </TableCell>
                                 </TableRow>
