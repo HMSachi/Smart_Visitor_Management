@@ -10,10 +10,12 @@ import {
 } from "@mui/material";
 import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 import { GetLogin } from "../../actions/LoginAction";
+import { useThemeMode } from "../../theme/ThemeModeContext";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { themeMode } = useThemeMode();
   const {
     isLoading: reduxLoading,
     error: reduxError,
@@ -23,16 +25,41 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [localError, setLocalError] = useState("");
+  const isLightMode = themeMode === "light";
+  const leftPanelBackground = isLightMode
+    ? "rgba(255,255,255,0.72)"
+    : "rgba(17,17,20,0.35)";
+  const loginCardBackground = isLightMode
+    ? "rgba(255,255,255,0.86)"
+    : "rgba(17,17,20,0.85)";
+  const loginCardBorder = isLightMode
+    ? "rgba(17,24,39,0.08)"
+    : "rgba(255,255,255,0.07)";
+  const inputBackground = isLightMode
+    ? "rgba(17,24,39,0.03)"
+    : "rgba(255,255,255,0.03)";
+  const inputBorder = isLightMode
+    ? "rgba(17,24,39,0.12)"
+    : "rgba(255,255,255,0.08)";
+  const inputBorderHover = isLightMode
+    ? "rgba(17,24,39,0.2)"
+    : "rgba(255,255,255,0.15)";
+  const inputTextColor = isLightMode ? "var(--color-text-primary)" : "#F1F1F3";
+  const inputIconColor = isLightMode
+    ? "rgba(17,24,39,0.45)"
+    : "rgba(255,255,255,0.3)";
 
   useEffect(() => {
     if (user) {
       if (user.ResultSet && user.ResultSet.length > 0) {
         const role = user.ResultSet[0].VA_Role;
         if (role === "Admin") navigate("/admin-dashboard");
-        else if (role === "Contact_Person") navigate("/contact_person/dashboard");
+        else if (role === "Contact_Person")
+          navigate("/contact_person/dashboard");
         else if (role === "Security") navigate("/security-dashboard");
         else if (role === "Visitor") navigate("/home");
-        else setLocalError("Access denied. Your account role is not recognised.");
+        else
+          setLocalError("Access denied. Your account role is not recognised.");
       } else {
         setLocalError("Incorrect email or password. Please try again.");
       }
@@ -54,20 +81,20 @@ const Login = () => {
   const inputSx = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "10px",
-      backgroundColor: "rgba(255,255,255,0.03)",
-      "& fieldset": { borderColor: "rgba(255,255,255,0.08)" },
-      "&:hover fieldset": { borderColor: "rgba(255,255,255,0.15)" },
+      backgroundColor: inputBackground,
+      "& fieldset": { borderColor: inputBorder },
+      "&:hover fieldset": { borderColor: inputBorderHover },
       "&.Mui-focused fieldset": {
         borderColor: "var(--color-primary)",
         boxShadow: "0 0 0 3px rgba(200,16,46,0.12)",
       },
     },
     "& .MuiInputBase-input": {
-      color: "#F1F1F3",
+      color: inputTextColor,
       fontSize: "14px",
       padding: "14px 16px",
     },
-    "& .MuiInputAdornment-root svg": { color: "rgba(255,255,255,0.3)" },
+    "& .MuiInputAdornment-root svg": { color: inputIconColor },
   };
 
   return (
@@ -97,7 +124,13 @@ const Login = () => {
       </div>
 
       {/* ── Left Branding Panel ── */}
-      <div className="relative z-10 flex flex-col w-full lg:w-[46%] xl:w-[42%] items-center justify-center px-8 py-16 lg:py-0 bg-black/35 backdrop-blur-sm border-b lg:border-b-0 lg:border-r border-white/[0.05]">
+      <div
+        className="relative z-10 flex flex-col w-full lg:w-[46%] xl:w-[42%] items-center justify-center px-8 py-16 lg:py-0 backdrop-blur-sm border-b lg:border-b-0 lg:border-r"
+        style={{
+          background: leftPanelBackground,
+          borderColor: "var(--color-border-soft)",
+        }}
+      >
         {/* Glow blur */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[130px] bg-primary/10 opacity-40 pointer-events-none" />
 
@@ -131,16 +164,22 @@ const Login = () => {
             Welcome Back
           </h1>
           <p className="text-sm text-white/50 tracking-wide max-w-xs leading-relaxed">
-            Sign in to manage visitor access, security monitoring, and approvals in one place.
+            Sign in to manage visitor access, security monitoring, and approvals
+            in one place.
           </p>
 
           {/* Feature pills */}
           <div className="flex flex-wrap justify-center gap-2 mt-8">
-            {["Visitor Management", "QR Verification", "Real-time Alerts"].map((f) => (
-              <span key={f} className="text-[11px] text-white/40 bg-white/[0.04] border border-white/[0.07] px-3 py-1 rounded-full">
-                {f}
-              </span>
-            ))}
+            {["Visitor Management", "QR Verification", "Real-time Alerts"].map(
+              (f) => (
+                <span
+                  key={f}
+                  className="text-[11px] text-white/40 bg-white/[0.04] border border-white/[0.07] px-3 py-1 rounded-full"
+                >
+                  {f}
+                </span>
+              ),
+            )}
           </div>
         </motion.div>
       </div>
@@ -157,12 +196,13 @@ const Login = () => {
           <div
             className="relative w-full overflow-hidden"
             style={{
-              background: "rgba(17,17,20,0.85)",
+              background: loginCardBackground,
               backdropFilter: "blur(24px)",
               WebkitBackdropFilter: "blur(24px)",
-              border: "1px solid rgba(255,255,255,0.07)",
+              border: `1px solid ${loginCardBorder}`,
               borderRadius: "20px",
               padding: "2.5rem 2rem",
+              color: "var(--color-text-primary)",
             }}
           >
             {/* Top gradient line */}
@@ -233,7 +273,11 @@ const Login = () => {
                           size="small"
                           sx={{ color: "rgba(255,255,255,0.3)" }}
                         >
-                          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                          {showPassword ? (
+                            <EyeOff size={16} />
+                          ) : (
+                            <Eye size={16} />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     ),
