@@ -107,7 +107,7 @@ export const UpdateItemStatus = (id, status) => {
             } else {
                 throw new Error(response.data?.Message || "Failed to update item status");
             }
-               } catch (error) {
+        } catch (error) {
             if (error.message === "Network Error") {
                 dispatch({ type: UPDATE_ITEM_STATUS_SUCCESS });
                 setTimeout(() => dispatch(GetAllItemsCarried()), 1500);

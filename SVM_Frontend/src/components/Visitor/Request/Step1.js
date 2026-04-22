@@ -295,6 +295,7 @@ const Step1Main = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submit started. Equipment:", equipment);
     dispatch(setStatus("submitting"));
 
     try {
@@ -346,6 +347,7 @@ const Step1Main = () => {
           }
         }
 
+<<<<<<< HEAD
         // Save Visitor Group members
         if (formData.visitors && formData.visitors.length > 0) {
           for (const visitor of formData.visitors) {
@@ -371,6 +373,20 @@ const Step1Main = () => {
                 VIC_Item_Name: item.itemName,
                 VIC_Quantity: item.quantity || '1',
                 VIC_Designation: 'GENERAL'
+=======
+        // Add Items Carried
+        console.log("Checking equipment for existing request. Length:", equipment?.length);
+        if (equipment && equipment.length > 0) {
+          for (const item of equipment) {
+            console.log("Processing item:", item);
+            if (item.itemName) {
+              console.log("Dispatching AddItem for existing request ID:", latestRequest.VVR_Request_id);
+              await dispatch(AddItem({
+                VVR_Request_id: latestRequest.VVR_Request_id,
+                VIC_Item_Name: item.itemName,
+                VIC_Quantity: item.quantity || 1,
+                VIC_Designation: item.description || ""
+>>>>>>> f06d1ba202e7d20e6985c2e1b21c243f8f0ef04f
               }));
             }
           }
@@ -403,6 +419,7 @@ const Step1Main = () => {
           );
         }
 
+<<<<<<< HEAD
         // Save Visitor Group members for new request
         if (createdRequestId && formData.visitors && formData.visitors.length > 0) {
           for (const visitor of formData.visitors) {
@@ -427,6 +444,20 @@ const Step1Main = () => {
                 VIC_Item_Name: item.itemName,
                 VIC_Quantity: item.quantity || '1',
                 VIC_Designation: 'GENERAL'
+=======
+        // Add Items Carried
+        console.log("Checking equipment for NEW request. createdRequestId:", createdRequestId, "Equipment length:", equipment?.length);
+        if (createdRequestId && equipment && equipment.length > 0) {
+          for (const item of equipment) {
+            console.log("Processing item:", item);
+            if (item.itemName) {
+              console.log("Dispatching AddItem for NEW request ID:", createdRequestId);
+              await dispatch(AddItem({
+                VVR_Request_id: createdRequestId,
+                VIC_Item_Name: item.itemName,
+                VIC_Quantity: item.quantity || 1,
+                VIC_Designation: item.description || ""
+>>>>>>> f06d1ba202e7d20e6985c2e1b21c243f8f0ef04f
               }));
             }
           }
