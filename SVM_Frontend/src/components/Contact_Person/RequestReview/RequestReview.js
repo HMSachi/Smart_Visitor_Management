@@ -9,6 +9,8 @@ import { ApproveVisitRequest, GetVisitRequestById, GetVisitRequestsByCP, UpdateV
 import VisitorService from '../../../services/VisitorService';
 import VehicleService from '../../../services/VehicleService';
 import { useThemeMode } from '../../../theme/ThemeModeContext';
+import VisitorGroup from '../../Visitor/Request/Step1/VisitorGroup';
+import ItemsCarried from '../../Visitor/Request/Step1/ItemsCarried';
 
 const normalizeStatus = (status) => {
     const s = (status || '').toString().trim().toUpperCase();
@@ -61,6 +63,31 @@ const RequestReviewMain = () => {
     const [rejectionComment, setRejectionComment] = useState('');
     const [showApproveModal, setShowApproveModal] = useState(false);
     const [approvalComment, setApprovalComment] = useState('');
+
+    const [dummyVisitors, setDummyVisitors] = useState([{ id: 1, fullName: '', nic: '', contact: '' }]);
+    const [dummyItems, setDummyItems] = useState([{ id: 1, itemName: '', quantity: '' }]);
+
+    const handleAddVisitor = () => {
+        const newId = dummyVisitors.length > 0 ? Math.max(...dummyVisitors.map(v => v.id)) + 1 : 1;
+        setDummyVisitors([...dummyVisitors, { id: newId, fullName: '', nic: '', contact: '' }]);
+    };
+    const handleRemoveVisitor = (id) => {
+        setDummyVisitors(dummyVisitors.filter(v => v.id !== id));
+    };
+    const handleUpdateVisitor = (id, field, value) => {
+        setDummyVisitors(dummyVisitors.map(v => v.id === id ? { ...v, [field]: value } : v));
+    };
+
+    const handleAddItem = () => {
+        const newId = dummyItems.length > 0 ? Math.max(...dummyItems.map(i => i.id)) + 1 : 1;
+        setDummyItems([...dummyItems, { id: newId, itemName: '', quantity: '' }]);
+    };
+    const handleRemoveItem = (id) => {
+        setDummyItems(dummyItems.filter(i => i.id !== id));
+    };
+    const handleUpdateItem = (id, field, value) => {
+        setDummyItems(dummyItems.map(i => i.id === id ? { ...i, [field]: value } : i));
+    };
 
     useEffect(() => {
         if (!selectedId) return;
@@ -183,24 +210,6 @@ const RequestReviewMain = () => {
     return (
         <div className={`flex-1 p-4 md:p-6 space-y-4 animate-fade-in-slow overflow-y-auto relative transition-colors duration-500 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}>
             <div className="max-w-[1700px] mx-auto relative z-10 w-full">
-                <div className="flex flex-row items-center justify-between pb-6 animate-fade-in transition-all">
-                    <div className="flex items-center gap-4">
-                        <div className="w-1.5 h-8 bg-primary rounded-full"></div>
-                        <div>
-                            <p className={`text-[10px] uppercase font-bold tracking-[0.3em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}>Identity Node</p>
-                            <h2 className={`text-lg font-bold uppercase tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
-                                Reference <span className="text-primary font-mono ml-2">#{requestData?.id || selectedId || 'ALPHA-000'}</span>
-                            </h2>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10"}`}>
-                            <p className={`text-[10px] uppercase font-bold tracking-widest mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}>Sync Status</p>
-                            <span className="text-primary text-[12px] font-black uppercase tracking-widest">{requestData?.status || 'PENDING'}</span>
-                        </div>
-                    </div>
-                </div>
 
                 <div className="space-y-6">
                     <PersonnelAuthProtocol 
@@ -211,6 +220,26 @@ const RequestReviewMain = () => {
                             if (type === 'Reject') setShowRejectModal(true);
                         }}
                     />
+
+                    <div className={`mt-8 p-6 border rounded-3xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}>
+                        <VisitorGroup 
+                            visitors={dummyVisitors}
+                            onAdd={handleAddVisitor}
+                            onRemove={handleRemoveVisitor}
+                            onChange={handleUpdateVisitor}
+                            isLight={isLight}
+                        />
+                    </div>
+
+                    <div className={`mt-8 p-6 border rounded-3xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}>
+                        <ItemsCarried 
+                            items={dummyItems}
+                            onAdd={handleAddItem}
+                            onRemove={handleRemoveItem}
+                            onChange={handleUpdateItem}
+                            isLight={isLight}
+                        />
+                    </div>
                 </div>
             </div>
 
