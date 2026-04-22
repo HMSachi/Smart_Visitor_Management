@@ -27,6 +27,7 @@ import {
 } from "../../../reducers/visitorSlice";
 import VisitorGroup from "./Step1/VisitorGroup";
 import ItemsCarried from "./Step1/ItemsCarried";
+import { AddItem } from "../../../actions/ItemCarriedAction";
 
 const Step1Main = () => {
   const navigate = useNavigate();
@@ -293,6 +294,7 @@ const Step1Main = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submit started. Equipment:", equipment);
     dispatch(setStatus("submitting"));
 
     try {
@@ -344,6 +346,23 @@ const Step1Main = () => {
           }
         }
 
+        // Add Items Carried
+        console.log("Checking equipment for existing request. Length:", equipment?.length);
+        if (equipment && equipment.length > 0) {
+          for (const item of equipment) {
+            console.log("Processing item:", item);
+            if (item.itemName) {
+              console.log("Dispatching AddItem for existing request ID:", latestRequest.VVR_Request_id);
+              await dispatch(AddItem({
+                VVR_Request_id: latestRequest.VVR_Request_id,
+                VIC_Item_Name: item.itemName,
+                VIC_Quantity: item.quantity || 1,
+                VIC_Designation: item.description || ""
+              }));
+            }
+          }
+        }
+
         dispatch(setRequestRef(String(latestRequest.VVR_Request_id)));
       } else {
         const createPayload = {
@@ -369,6 +388,23 @@ const Step1Main = () => {
               VVR_Request_id: createdRequestId,
             }),
           );
+        }
+
+        // Add Items Carried
+        console.log("Checking equipment for NEW request. createdRequestId:", createdRequestId, "Equipment length:", equipment?.length);
+        if (createdRequestId && equipment && equipment.length > 0) {
+          for (const item of equipment) {
+            console.log("Processing item:", item);
+            if (item.itemName) {
+              console.log("Dispatching AddItem for NEW request ID:", createdRequestId);
+              await dispatch(AddItem({
+                VVR_Request_id: createdRequestId,
+                VIC_Item_Name: item.itemName,
+                VIC_Quantity: item.quantity || 1,
+                VIC_Designation: item.description || ""
+              }));
+            }
+          }
         }
 
         if (createdRequestId) {
