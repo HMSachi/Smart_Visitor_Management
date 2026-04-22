@@ -17,6 +17,11 @@ import {
 import { GetAllVisitors } from "../../../actions/VisitorAction";
 import { GetAllVehicles } from "../../../actions/VehicleAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
+import VisitorGroup from "../../../components/Visitor/Request/Step1/VisitorGroup";
+import ItemsCarried from "../../../components/Visitor/Request/Step1/ItemsCarried";
+import { useThemeMode } from "../../../theme/ThemeModeContext";
+import VisitGroupService from "../../../services/VisitGroupService";
+import ItemCarriedService from "../../../services/ItemCarriedService";
 
 const ApprovalManagement = () => {
   const dispatch = useDispatch();
@@ -38,6 +43,33 @@ const ApprovalManagement = () => {
   const [modalType, setModalType] = useState("Approve");
   const [showQRModal, setShowQRModal] = useState(false);
   const [approvedVisitorData, setApprovedVisitorData] = useState(null);
+  const { themeMode } = useThemeMode();
+  const isLight = themeMode === "light";
+
+  const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
+  const [itemsCarried, setItemsCarried] = useState([]);
+
+  const handleAddVisitor = () => {
+    const newId = visitorGroupMembers.length > 0 ? Math.max(...visitorGroupMembers.map(v => v.id || 0)) + 1 : 1;
+    setVisitorGroupMembers([...visitorGroupMembers, { id: newId, fullName: '', nic: '', contact: '' }]);
+  };
+  const handleRemoveVisitor = (id) => {
+    setVisitorGroupMembers(visitorGroupMembers.filter(v => v.id !== id));
+  };
+  const handleUpdateVisitor = (id, field, value) => {
+    setVisitorGroupMembers(visitorGroupMembers.map(v => v.id === id ? { ...v, [field]: value } : v));
+  };
+
+  const handleAddItem = () => {
+    const newId = itemsCarried.length > 0 ? Math.max(...itemsCarried.map(i => i.id || 0)) + 1 : 1;
+    setItemsCarried([...itemsCarried, { id: newId, itemName: '', quantity: '' }]);
+  };
+  const handleRemoveItem = (id) => {
+    setItemsCarried(itemsCarried.filter(i => i.id !== id));
+  };
+  const handleUpdateItem = (id, field, value) => {
+    setItemsCarried(itemsCarried.map(i => i.id === id ? { ...i, [field]: value } : i));
+  };
 
   React.useEffect(() => {
     dispatch(GetAllVisitRequests());
@@ -45,6 +77,41 @@ const ApprovalManagement = () => {
     dispatch(GetAllVehicles());
     dispatch(GetAllGatePasses());
   }, [dispatch]);
+
+  // Load visitor group and items when a visitor is selected
+  React.useEffect(() => {
+    if (selectedVisitor && viewMode === "details") {
+      const loadDetails = async () => {
+        try {
+          const groupRes = await VisitGroupService.GetAllVisitGroup();
+          const allGroups = groupRes?.data?.ResultSet || groupRes?.data || [];
+          const matchedMembers = (Array.isArray(allGroups) ? allGroups : [])
+            .filter(m => String(m.VVR_Request_id) === String(selectedVisitor.id))
+            .map(m => ({
+              id: m.VVG_id,
+              fullName: m.VVG_Visitor_Name,
+              nic: m.VVG_NIC_Passport_Number,
+              contact: m.VVG_Designation
+            }));
+          setVisitorGroupMembers(matchedMembers);
+
+          const itemsRes = await ItemCarriedService.GetAllItemsCarried();
+          const allItems = itemsRes?.data?.ResultSet || itemsRes?.data || [];
+          const matchedItems = (Array.isArray(allItems) ? allItems : [])
+            .filter(i => String(i.VVR_Request_id) === String(selectedVisitor.id))
+            .map(i => ({
+              id: i.VIC_Item_id,
+              itemName: i.VIC_Item_Name,
+              quantity: i.VIC_Quantity
+            }));
+          setItemsCarried(matchedItems);
+        } catch (err) {
+          console.error("Error loading group/items in Admin view:", err);
+        }
+      };
+      loadDetails();
+    }
+  }, [selectedVisitor, viewMode]);
 
   // Combine and map data for the table
   const mappedRequests = React.useMemo(() => {
@@ -187,6 +254,26 @@ const ApprovalManagement = () => {
                     onBack={handleBackToList}
                     onAction={handleAction}
                   />
+
+                  <div className={`mt-8 p-6 border rounded-3xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}>
+                    <VisitorGroup
+                      visitors={visitorGroupMembers}
+                      onAdd={handleAddVisitor}
+                      onRemove={handleRemoveVisitor}
+                      onChange={handleUpdateVisitor}
+                      isLight={isLight}
+                    />
+                  </div>
+
+                  <div className={`mt-8 p-6 border rounded-3xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}>
+                    <ItemsCarried
+                      items={itemsCarried}
+                      onAdd={handleAddItem}
+                      onRemove={handleRemoveItem}
+                      onChange={handleUpdateItem}
+                      isLight={isLight}
+                    />
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

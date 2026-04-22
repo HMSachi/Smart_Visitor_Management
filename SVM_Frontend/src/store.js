@@ -14,6 +14,8 @@ import visitRequestReducer from "./reducers/VisitRequestReducer";
 import contactPersonPortalReducer from "./reducers/contactPersonSlice";
 import vehicleReducer from "./reducers/VehicleReducer";
 import gatePassReducer from "./reducers/GatePassReducer";
+import itemCarriedReducer from "./reducers/ItemCarriedReducer";
+import { VisitGroupReducer } from "./reducers/VisitGroupReducer";
 
 const composeEnhancers =
     typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -35,6 +37,8 @@ const reducer = combineReducers({
     contactPortal: contactPersonPortalReducer,
     vehicleState: vehicleReducer,
     gatePassState: gatePassReducer,
+    itemCarriedState: itemCarriedReducer,
+    visitGroupState: VisitGroupReducer,
 });
 
 const store = createStore(

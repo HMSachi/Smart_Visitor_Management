@@ -18,11 +18,22 @@ import {
   GetAllVehicles,
   UpdateVehicle,
 } from "../../../actions/VehicleAction";
+import { AddVehicle, GetAllVehicles, UpdateVehicle } from "../../../actions/VehicleAction";
+import { AddVisitGroup } from "../../../actions/VisitGroupAction";
+import { AddItem } from "../../../actions/ItemCarriedAction";
 import {
   updateField,
   setStatus,
   setRequestRef,
+  addVisitor,
+  removeVisitor,
+  updateVisitorDetail,
+  addEquipment,
+  removeEquipment,
+  updateEquipmentDetail,
 } from "../../../reducers/visitorSlice";
+import VisitorGroup from "./Step1/VisitorGroup";
+import ItemsCarried from "./Step1/ItemsCarried";
 
 const Step1Main = () => {
   const navigate = useNavigate();
@@ -43,7 +54,7 @@ const Step1Main = () => {
   };
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.visitor);
-  const { status, requestRef } = formData;
+  const { status, requestRef, visitors, equipment } = formData;
   const user = useSelector((state) => state.login.user);
   const { administrators } = useSelector((state) => state.administrator);
   const { visitRequestsByVis, isLoading: isRequestsLoading } = useSelector(
@@ -291,8 +302,33 @@ const Step1Main = () => {
     );
   };
 
+  const handleAddVisitor = () => {
+    dispatch(addVisitor());
+  };
+
+  const handleRemoveVisitor = (id) => {
+    dispatch(removeVisitor(id));
+  };
+
+  const handleUpdateVisitor = (id, field, value) => {
+    dispatch(updateVisitorDetail({ id, field, value }));
+  };
+
+  const handleAddEquipment = () => {
+    dispatch(addEquipment());
+  };
+
+  const handleRemoveEquipment = (id) => {
+    dispatch(removeEquipment(id));
+  };
+
+  const handleUpdateEquipment = (id, field, value) => {
+    dispatch(updateEquipmentDetail({ id, field, value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submit started. Equipment:", equipment);
     dispatch(setStatus("submitting"));
 
     try {
@@ -348,6 +384,36 @@ const Step1Main = () => {
           }
         }
 
+        // Save Visitor Group members
+        if (formData.visitors && formData.visitors.length > 0) {
+          for (const visitor of formData.visitors) {
+            // Only add if name or NIC is provided to avoid empty records
+            if (visitor.fullName || visitor.nic) {
+              await dispatch(AddVisitGroup({
+                VVG_Visitor_Name: visitor.fullName || 'N/A',
+                VVG_NIC_Passport_Number: visitor.nic || 'N/A',
+                VVG_Designation: visitor.contact || 'N/A', // Using Designation field for contact as discussed
+                VVG_Status: 'A',
+                VVR_Request_id: latestRequest.VVR_Request_id
+              }));
+            }
+          }
+        }
+
+        // Save Equipment (Items Carried)
+        if (formData.equipment && formData.equipment.length > 0) {
+          for (const item of formData.equipment) {
+            if (item.itemName) {
+              await dispatch(AddItem({
+                VVR_Request_id: latestRequest.VVR_Request_id,
+                VIC_Item_Name: item.itemName,
+                VIC_Quantity: item.quantity || '1',
+                VIC_Designation: 'GENERAL'
+              }));
+            }
+          }
+        }
+
         dispatch(setRequestRef(String(latestRequest.VVR_Request_id)));
       } else {
         const createPayload = {
@@ -376,6 +442,35 @@ const Step1Main = () => {
               VVR_Request_id: createdRequestId,
             }),
           );
+        }
+
+        // Save Visitor Group members for new request
+        if (createdRequestId && formData.visitors && formData.visitors.length > 0) {
+          for (const visitor of formData.visitors) {
+            if (visitor.fullName || visitor.nic) {
+              await dispatch(AddVisitGroup({
+                VVG_Visitor_Name: visitor.fullName || 'N/A',
+                VVG_NIC_Passport_Number: visitor.nic || 'N/A',
+                VVG_Designation: visitor.contact || 'N/A',
+                VVG_Status: 'A',
+                VVR_Request_id: createdRequestId
+              }));
+            }
+          }
+        }
+
+        // Save Equipment for new request
+        if (createdRequestId && formData.equipment && formData.equipment.length > 0) {
+          for (const item of formData.equipment) {
+            if (item.itemName) {
+              await dispatch(AddItem({
+                VVR_Request_id: createdRequestId,
+                VIC_Item_Name: item.itemName,
+                VIC_Quantity: item.quantity || '1',
+                VIC_Designation: 'GENERAL'
+              }));
+            }
+          }
         }
 
         if (createdRequestId) {
@@ -462,6 +557,24 @@ const Step1Main = () => {
 
         <div className="border-t border-white/5 pt-10">
           <VehicleDetails data={formData} onChange={handleInputChange} />
+        </div>
+
+        <div className="border-t border-white/5 pt-6">
+          <VisitorGroup 
+            visitors={visitors || []} 
+            onAdd={handleAddVisitor} 
+            onRemove={handleRemoveVisitor} 
+            onChange={handleUpdateVisitor} 
+          />
+        </div>
+
+        <div className="border-t border-white/5 pt-6">
+          <ItemsCarried 
+            items={equipment || []} 
+            onAdd={handleAddEquipment} 
+            onRemove={handleRemoveEquipment} 
+            onChange={handleUpdateEquipment} 
+          />
         </div>
 
         {/* Action Footer */}

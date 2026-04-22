@@ -14,6 +14,7 @@ import {
     updateEquipmentDetail,
     setStatus
 } from '../../../reducers/visitorSlice';
+import { AddItem } from '../../../actions/ItemCarriedAction';
 
 const Step2Main = () => {
     const dispatch = useDispatch();
@@ -49,17 +50,40 @@ const Step2Main = () => {
         dispatch(updateEquipmentDetail({ id, field, value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         dispatch(setStatus('submitting'));
-        setTimeout(() => {
+
+        try {
+            // Add Items Carried to Backend
+            if (equipment && equipment.length > 0) {
+                for (const item of equipment) {
+                    if (item.itemName) {
+                        await dispatch(AddItem({
+                            VVR_Request_id: requestRef,
+                            VIC_Item_Name: item.itemName,
+                            VIC_Quantity: item.quantity || 1,
+                            VIC_Designation: item.description || ""
+                        }));
+                    }
+                }
+            }
+
+            // Keep local storage update as fallback
             updateVisitorRequestStep2(requestRef, {
                 visitors,
                 equipment,
             });
-            dispatch(setStatus('step2_pending'));
-            window.location.href = '/status';
-        }, 2000);
+
+            setTimeout(() => {
+                dispatch(setStatus('step2_pending'));
+                window.location.href = '/status';
+            }, 1000);
+        } catch (error) {
+            console.error("Failed to add items:", error);
+            alert("Failed to synchronize asset declaration. Please try again.");
+            dispatch(setStatus(null));
+        }
     };
 
     if (status === 'step2_pending') {

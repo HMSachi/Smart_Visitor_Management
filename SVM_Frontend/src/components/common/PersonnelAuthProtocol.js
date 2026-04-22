@@ -49,18 +49,6 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
       animate={{ opacity: 1, y: 0 }}
       className="pb-20 max-w-6xl mx-auto px-6"
     >
-      {/* Simplified Header */}
-      <div className="pt-2 pb-2 border-b border-white/5 relative mb-8 flex justify-between items-end">
-        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-white/[0.03]">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: '40%' }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="h-[3px] bg-primary -mt-[1px] shadow-[0_0_15px_var(--color-primary)]"
-          ></motion.div>
-        </div>
-      </div>
-
       {/* Control Navigation */}
       <div className={`flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-16 p-6 border rounded-2xl shadow-lg relative overflow-hidden transition-all duration-500 ${
         isLight ? "bg-white border-gray-200 shadow-gray-200/50" : "bg-black/40 border-white/10 shadow-black/50"

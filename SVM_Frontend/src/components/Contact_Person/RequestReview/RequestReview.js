@@ -9,6 +9,10 @@ import { ApproveVisitRequest, GetVisitRequestById, GetVisitRequestsByCP, UpdateV
 import VisitorService from '../../../services/VisitorService';
 import VehicleService from '../../../services/VehicleService';
 import { useThemeMode } from '../../../theme/ThemeModeContext';
+import VisitorGroup from '../../Visitor/Request/Step1/VisitorGroup';
+import ItemsCarried from '../../Visitor/Request/Step1/ItemsCarried';
+import VisitGroupService from '../../../services/VisitGroupService';
+import ItemCarriedService from '../../../services/ItemCarriedService';
 
 const normalizeStatus = (status) => {
     const s = (status || '').toString().trim().toUpperCase();
@@ -62,6 +66,32 @@ const RequestReviewMain = () => {
     const [showApproveModal, setShowApproveModal] = useState(false);
     const [approvalComment, setApprovalComment] = useState('');
 
+    const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
+    const [itemsCarried, setItemsCarried] = useState([]);
+
+    const handleAddVisitor = () => {
+        // In review mode, we don't necessarily allow adding unless it's an edit view
+        const newId = visitorGroupMembers.length > 0 ? Math.max(...visitorGroupMembers.map(v => v.id || 0)) + 1 : 1;
+        setVisitorGroupMembers([...visitorGroupMembers, { id: newId, fullName: '', nic: '', contact: '' }]);
+    };
+    const handleRemoveVisitor = (id) => {
+        setVisitorGroupMembers(visitorGroupMembers.filter(v => v.id !== id));
+    };
+    const handleUpdateVisitor = (id, field, value) => {
+        setVisitorGroupMembers(visitorGroupMembers.map(v => v.id === id ? { ...v, [field]: value } : v));
+    };
+
+    const handleAddItem = () => {
+        const newId = itemsCarried.length > 0 ? Math.max(...itemsCarried.map(i => i.id || 0)) + 1 : 1;
+        setItemsCarried([...itemsCarried, { id: newId, itemName: '', quantity: '' }]);
+    };
+    const handleRemoveItem = (id) => {
+        setItemsCarried(itemsCarried.filter(i => i.id !== id));
+    };
+    const handleUpdateItem = (id, field, value) => {
+        setItemsCarried(itemsCarried.map(i => i.id === id ? { ...i, [field]: value } : i));
+    };
+
     useEffect(() => {
         if (!selectedId) return;
         dispatch(GetVisitRequestById(selectedId));
@@ -113,6 +143,37 @@ const RequestReviewMain = () => {
 
                 if (!cancelled) {
                     setVehicleRecord(matchedVehicle || null);
+                }
+
+                // Load Visitor Group Members
+                const groupResponse = await VisitGroupService.GetAllVisitGroup();
+                const allGroupMembers = groupResponse?.data?.ResultSet || groupResponse?.data || [];
+                const matchedMembers = (Array.isArray(allGroupMembers) ? allGroupMembers : [])
+                    .filter(item => String(item?.VVR_Request_id) === String(apiRequest?.VVR_Request_id))
+                    .map(m => ({
+                        id: m.VVG_id,
+                        fullName: m.VVG_Visitor_Name,
+                        nic: m.VVG_NIC_Passport_Number,
+                        contact: m.VVG_Designation // Using designation as contact field mapping
+                    }));
+                
+                if (!cancelled) {
+                    setVisitorGroupMembers(matchedMembers);
+                }
+
+                // Load Items Carried
+                const itemsResponse = await ItemCarriedService.GetAllItemsCarried();
+                const allItems = itemsResponse?.data?.ResultSet || itemsResponse?.data || [];
+                const matchedItems = (Array.isArray(allItems) ? allItems : [])
+                    .filter(item => String(item?.VVR_Request_id) === String(apiRequest?.VVR_Request_id))
+                    .map(i => ({
+                        id: i.VIC_Item_id,
+                        itemName: i.VIC_Item_Name,
+                        quantity: i.VIC_Quantity
+                    }));
+                
+                if (!cancelled) {
+                    setItemsCarried(matchedItems);
                 }
             } catch (error) {
                 if (!cancelled) {
@@ -211,6 +272,26 @@ const RequestReviewMain = () => {
                             if (type === 'Reject') setShowRejectModal(true);
                         }}
                     />
+
+                    <div className={`mt-8 p-6 border rounded-3xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}>
+                        <VisitorGroup 
+                            visitors={visitorGroupMembers}
+                            onAdd={handleAddVisitor}
+                            onRemove={handleRemoveVisitor}
+                            onChange={handleUpdateVisitor}
+                            isLight={isLight}
+                        />
+                    </div>
+
+                    <div className={`mt-8 p-6 border rounded-3xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}>
+                        <ItemsCarried 
+                            items={itemsCarried}
+                            onAdd={handleAddItem}
+                            onRemove={handleRemoveItem}
+                            onChange={handleUpdateItem}
+                            isLight={isLight}
+                        />
+                    </div>
                 </div>
             </div>
 
