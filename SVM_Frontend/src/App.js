@@ -16,6 +16,7 @@ import Step1Request from "./layout/Visitor/Request/Step1";
 import Step2Request from "./layout/Visitor/Request/Step2";
 import StatusPage from "./layout/Visitor/Status/Status";
 import QRPage from "./layout/Visitor/QR/QR";
+import VisitorGatePass from "./layout/Visitor/GatePass/GatePass";
 import InstructionsPage from "./layout/Visitor/Instructions/Instructions";
 import MyRequests from "./layout/Visitor/MyRequests/MyRequests";
 import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
@@ -158,6 +159,7 @@ const AppContent = () => {
           <Route path="/qr" element={<QRPage />} />
           <Route path="/instructions" element={<InstructionsPage />} />
           <Route path="/visitor/my-requests" element={<MyRequests />} />
+          <Route path="/visitor/gate-pass/:gatePassId" element={<VisitorGatePass />} />
 
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

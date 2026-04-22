@@ -81,19 +81,16 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
     });
 
   return (
-    <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[40px] overflow-hidden flex flex-col shadow-2xl animate-fade-in-slow relative">
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+    <div className="space-y-8 animate-fade-in-slow">
+      {/* Header & Filter Hub Card */}
+      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
-      {/* Filter Hub */}
-      <div className="p-8 border-b border-white/5 bg-[#161618] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 shadow-inner relative z-10">
-        <div className="flex items-center gap-6">
-          <div className="w-1.5 h-10 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
-          <div>
-            <h2 className="capitalize text-white text-[14px] font-bold tracking-[0.4em]">Approval List</h2>
-            <p className="text-white/90 capitalize text-[12px] font-medium tracking-widest mt-1">Monitor and manage visitor requests</p>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-3 mt-4 xl:mt-0">
+        {/* Filter Hub */}
+        <div className="p-8 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 relative z-10">
+        
+        {/* Segmented Control Container */}
+        <div className="flex bg-[var(--color-surface-2)] p-1 rounded-2xl border border-white/5 relative overflow-x-auto no-scrollbar max-w-full">
           {[
             { id: 'All', label: 'All Forms' },
             { id: 'Pending', label: 'Pending' },
@@ -104,38 +101,48 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
             <button
               key={btn.id}
               onClick={() => setStatusFilter(btn.id)}
-              className={`px-5 py-2.5 rounded-xl text-[12px] font-bold uppercase tracking-[0.2em] transition-all duration-300 border ${
-                statusFilter === btn.id
-                  ? 'bg-primary border-primary text-white shadow-[0_0_15px_rgba(200,16,46,0.2)]'
-                  : 'bg-white/[0.03] border-white/5 text-gray-400 hover:text-white hover:border-white/20'
+              className={`relative px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max ${
+                statusFilter === btn.id ? '!text-white' : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]'
               }`}
             >
-              {btn.label}
+              {statusFilter === btn.id && (
+                <motion.div
+                  layoutId="activeFilter"
+                  className="absolute inset-0 bg-primary rounded-xl shadow-[0_0_20px_rgba(200,16,46,0.2)]"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className="relative z-10">{btn.label}</span>
             </button>
           ))}
         </div>
       </div>
+    </div>
 
-      <div className="flex-1 overflow-auto bg-[var(--color-bg-default)]">
-        {/* DESKTOP TABLE VIEW */}
+    {/* Table Card */}
+      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+        
+        <div className="overflow-auto bg-transparent">
+          {/* DESKTOP TABLE VIEW */}
         <table className="w-full text-left border-collapse hidden md:table">
           <thead>
-            <tr className="bg-[var(--color-bg-paper)] border-b border-white/5">
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 text-center w-24">No.</th>
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70">Visitor</th>
+            <tr className="bg-transparent border-b border-white/5">
+              <th className="px-8 py-5 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-24 opacity-60">REF.</th>
+              <th className="px-8 py-5 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] opacity-60">VISITOR IDENTITY</th>
               <th 
                 className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 cursor-pointer hover:text-primary transition-colors group"
                 onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
               >
                 <div className="flex items-center gap-2">
-                  Visit Details
+                  SCHEDULED VISIT
                   <div className={`transition-transform duration-300 ${sortOrder === 'asc' ? 'rotate-180' : ''}`}>
-                    <ChevronDown size={14} className={sortOrder ? 'text-primary' : 'text-gray-500'} />
+                    <ChevronDown size={14} className={sortOrder ? 'text-primary' : 'text-[var(--color-text-dim)]'} />
                   </div>
                 </div>
               </th>
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 text-center">Status</th>
-              <th className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-primary text-right pr-12">Action</th>
+              <th className="px-8 py-6 text-[11px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center">CURRENT STATUS</th>
+              <th className="px-8 py-6 text-[11px] font-bold tracking-[0.3em] uppercase text-primary text-right pr-12">AVAILABLE PROTOCOLS</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/[0.02]">
@@ -356,9 +363,9 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
           )}
         </div>
       </div>
-
     </div>
-  );
+  </div>
+);
 };
 
 export default VisitorTable;

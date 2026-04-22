@@ -106,25 +106,38 @@
   color-scheme: light !important;
 }
 
-.contact-theme-root {
+.contact-theme-root,
+.admin-theme-root,
+.visitor-theme-root {
   background-color: var(--color-bg-default);
   color: var(--color-text-primary);
 }
 
-.contact-theme-root [class*='text-white'] {
+
+.contact-theme-root [class*='text-white'],
+.admin-theme-root [class*='text-white'],
+.visitor-theme-root [class*='text-white'] {
   color: var(--color-text-primary) !important;
 }
 
-.contact-theme-root [class*='text-gray-'] {
+.contact-theme-root [class*='text-gray-'],
+.admin-theme-root [class*='text-gray-'],
+.visitor-theme-root [class*='text-gray-'] {
   color: var(--color-text-secondary) !important;
 }
 
-.contact-theme-root [class*='border-white'] {
+.contact-theme-root [class*='border-white'],
+.admin-theme-root [class*='border-white'],
+.visitor-theme-root [class*='border-white'] {
   border-color: var(--color-border-soft) !important;
 }
 
-.contact-theme-root [class*='bg-black/'] {
-  background-color: var(--color-surface-1) !important;
+.contact-theme-root [class*='bg-black/'],
+.admin-theme-root [class*='bg-black/'],
+.visitor-theme-root [class*='bg-black/'],
+.contact-theme-root [class*='bg-white/5'],
+.admin-theme-root [class*='bg-white/5'] {
+  background-color: var(--color-surface-2) !important;
 }
 
 .contact-theme-root [class*='bg-white'] {
