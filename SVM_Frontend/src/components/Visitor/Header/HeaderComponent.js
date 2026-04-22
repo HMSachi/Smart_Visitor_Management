@@ -112,16 +112,11 @@ const HeaderComponent = () => {
             <>
               <div className="w-px h-6 bg-[var(--color-border-soft)] mx-1" />
               <div className="flex items-center gap-2.5">
-                <div>
-                  <p className="text-[var(--color-text-primary)] text-[12px] font-semibold text-right truncate max-w-[130px]">
-                    {userName || userEmail}
-                  </p>
-                  <p className="text-primary text-[10px] font-medium text-right">
-                    Visitor
-                  </p>
-                </div>
+                <p className="text-[var(--color-text-primary)] text-[12px] font-semibold truncate max-w-[130px]">
+                  {userName || userEmail}
+                </p>
                 <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-[12px] font-bold"
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[12px] font-bold"
                   style={{
                     background:
                       "linear-gradient(135deg, var(--color-primary), #8B0C1F)",

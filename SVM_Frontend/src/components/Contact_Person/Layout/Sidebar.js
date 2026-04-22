@@ -154,30 +154,6 @@ const SidebarContent = ({
             <span className="text-[13px] font-medium">Sign Out</span>
           )}
         </button>
-
-        <div
-          className={`flex items-center gap-3 px-2 ${isCollapsed ? "justify-center" : ""}`}
-        >
-          <div
-            className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-white text-[13px] font-bold"
-            style={{
-              background:
-                "linear-gradient(135deg, var(--color-primary), #8B0C1F)",
-            }}
-          >
-            {initials}
-          </div>
-          {!isCollapsed && (
-            <div className="min-w-0 animate-fade-in">
-              <p className="text-[var(--color-text-primary)] text-[13px] font-semibold truncate">
-                {displayName}
-              </p>
-              <p className="text-[var(--color-text-dim)] text-[11px] truncate">
-                {displayEmail || "Contact Person"}
-              </p>
-            </div>
-          )}
-        </div>
       </div>
     </Box>
   );

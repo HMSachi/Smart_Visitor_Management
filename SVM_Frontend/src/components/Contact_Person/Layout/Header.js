@@ -113,12 +113,12 @@ const Header = ({ title }) => {
             <p className="text-[var(--color-text-primary)] text-[13px] font-semibold leading-tight truncate max-w-[130px]">
               {name || "Contact Person"}
             </p>
-            <p className="text-primary text-[11px] font-medium leading-tight">
-              Contact Person
+            <p className="text-[var(--color-text-dim)] text-[11px] leading-tight truncate">
+              {email || "Contact Person"}
             </p>
           </div>
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-[13px] font-bold shrink-0"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-bold shrink-0"
             style={{
               background:
                 "linear-gradient(135deg, var(--color-primary), #8B0C1F)",
