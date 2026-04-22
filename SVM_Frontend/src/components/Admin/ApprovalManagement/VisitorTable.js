@@ -44,6 +44,10 @@ const VisitorTable = ({
   onAction,
   gatePasses = [],
 }) => {
+  const desktopTableViewportStyle = {
+    maxHeight: "min(31rem, calc(100vh - 24rem))",
+  };
+
   const hasGatePass = (requestId) => {
     if (!requestId) return false;
     const list = Array.isArray(gatePasses)
@@ -161,13 +165,31 @@ const VisitorTable = ({
       <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
-        <div className="overflow-auto bg-transparent">
-          {/* DESKTOP TABLE VIEW */}
+        <div className="px-5 py-4 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-[var(--color-text-secondary)]">
+              Approval Queue
+            </p>
+            <p className="mt-1 text-[12px] text-[var(--color-text-dim)]">
+              Five-row preview with vertical scrolling for the remaining
+              records.
+            </p>
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-black/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-white/80">
+            <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]"></span>
+            {filteredVisitors.length} records
+          </div>
+        </div>
 
-          <div className="overflow-x-auto w-full max-w-full pb-4">
-            <table className="w-full text-left border-collapse hidden md:table">
-              <thead>
-                <tr className="bg-transparent border-b border-white/5">
+        <div className="bg-transparent">
+          {/* DESKTOP TABLE VIEW */}
+          <div
+            className="hidden md:block overflow-auto no-scrollbar"
+            style={desktopTableViewportStyle}
+          >
+            <table className="w-full min-w-[920px] text-left border-collapse">
+              <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)]">
+                <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
                   <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-20 opacity-60">
                     REF.
                   </th>
@@ -204,13 +226,13 @@ const VisitorTable = ({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.02]">
+              <tbody className="divide-y divide-white/[0.04]">
                 {filteredVisitors.map((visitor) => (
                   <React.Fragment key={visitor.batchId}>
                     <tr
-                      className={`group transition-all duration-500 ${expandedBatches.includes(visitor.batchId) ? "bg-primary/[0.02]" : "hover:bg-white/[0.01]"}`}
+                      className={`group transition-colors duration-300 ${expandedBatches.includes(visitor.batchId) ? "bg-primary/[0.03]" : "hover:bg-white/[0.02]"}`}
                     >
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-6 py-4 text-center align-middle">
                         <button
                           onClick={() => toggleBatch(visitor.batchId)}
                           className={`w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-500 shadow-lg ${expandedBatches.includes(visitor.batchId) ? "bg-primary text-white border-primary rotate-180" : "bg-[var(--color-bg-default)] border-white/5 text-gray-300 hover:text-white hover:border-primary/50"}`}
@@ -224,12 +246,12 @@ const VisitorTable = ({
                           )}
                         </button>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 align-middle">
                         <p className="text-white capitalize text-[12px] font-medium tracking-widest mb-0.5">
                           {visitor.name}
                         </p>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 align-middle">
                         <div className="flex flex-col gap-1">
                           <div className="flex flex-col md:flex-row items-center gap-3 md:gap-2">
                             <Calendar size={11} className="text-primary/60" />
@@ -243,7 +265,7 @@ const VisitorTable = ({
                           </p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-6 py-4 text-center align-middle">
                         <div className="flex flex-col items-center gap-1.5">
                           <StatusBadge status={visitor.status} />
                           {hasGatePass(visitor.id) && (
@@ -260,7 +282,7 @@ const VisitorTable = ({
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right pr-6">
+                      <td className="px-6 py-4 text-right pr-6 align-middle">
                         <div className="flex justify-end gap-2">
                           {(visitor.status === "Pending" ||
                             visitor.status === "Sent to Admin") && (

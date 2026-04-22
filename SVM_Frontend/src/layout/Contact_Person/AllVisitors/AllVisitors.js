@@ -2,15 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
-import {
   GetVisitorsByCP,
   ToggleVisitorStatus,
   AddVisitor,
@@ -218,32 +209,47 @@ const ContactAllVisitors = () => {
     : [];
 
   return (
-    <div className={`flex overflow-hidden h-screen w-full transition-colors duration-500 ${isLight ? "bg-[#F8F9FA] text-[#1A1A1A]" : "bg-[var(--color-bg-default)] text-white"}`}>
+    <div
+      className={`flex overflow-hidden h-screen w-full transition-colors duration-500 ${isLight ? "bg-[#F8F9FA] text-[#1A1A1A]" : "bg-[var(--color-bg-default)] text-white"}`}
+    >
       <Sidebar />
 
-      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}>
+      <div
+        className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
+      >
         <Header title="All Visitors" />
 
         <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full z-10">
-          <header className={`mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-6 gap-6 relative z-10 ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}>
+          <header
+            className={`mb-6 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-4 gap-4 relative z-10 ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}
+          >
             <div>
-              <h2 className={`text-lg font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+              <h2
+                className={`text-[15px] md:text-base font-bold tracking-[0.12em] uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+              >
                 All Authorized Visitors
               </h2>
-              <p className={`text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/50"}`}>
+              <p
+                className={`text-[10px] md:text-[11px] font-bold uppercase tracking-[0.18em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/50"}`}
+              >
                 Manage personal visitor registry
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
-              <div className={`flex items-center transition-colors border rounded-xl px-4 py-3 min-w-[250px] shadow-sm ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10 focus-within:border-primary"}`}>
-                <Search size={16} className={`mr-3 ${isLight ? "text-gray-400" : "text-white/20"}`} />
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+              <div
+                className={`flex items-center transition-colors border rounded-lg px-2.5 py-1.5 min-w-[180px] max-w-[220px] shadow-sm ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10 focus-within:border-primary"}`}
+              >
+                <Search
+                  size={13}
+                  className={`mr-2 ${isLight ? "text-gray-400" : "text-white/20"}`}
+                />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="SEARCH VISITOR..."
-                  className={`bg-transparent text-[12px] font-bold tracking-widest uppercase focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
+                  className={`bg-transparent text-[10px] font-bold tracking-[0.16em] uppercase focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
                 />
                 {searchTerm && (
                   <button
@@ -258,15 +264,16 @@ const ContactAllVisitors = () => {
 
               <button
                 onClick={openModal}
-                className="flex flex-col md:flex-row items-center gap-4 md:gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
+                className="flex flex-col md:flex-row items-center gap-3 md:gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-4 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-[0.18em] transition-all shadow-lg hover:shadow-primary/20"
               >
-                <Plus size={16} /> New Pre-Approval
+                <Plus size={14} /> New Pre-Approval
               </button>
             </div>
           </header>
 
-          <div className={`border rounded-[32px] overflow-hidden relative z-10 ${isLight ? "bg-white border-gray-200 shadow-xl shadow-gray-200/50" : "bg-[#0F0F10] border-white/5"}`}>
-
+          <div
+            className={`border rounded-[32px] overflow-hidden relative z-10 ${isLight ? "bg-white border-gray-200 shadow-xl shadow-gray-200/50" : "bg-[#0F0F10] border-white/5"}`}
+          >
             {isLoading ? (
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin mb-6"></div>
@@ -284,34 +291,48 @@ const ContactAllVisitors = () => {
                 </p>
               </div>
             ) : (
-              <TableContainer
-                component={Paper}
-                className="!bg-transparent !border-none !rounded-none !shadow-none z-10 relative"
+              <div
+                className="custom-scrollbar relative z-10 overflow-auto"
+                style={{ height: "38rem" }}
               >
-                <Table sx={{ minWidth: 650 }} aria-label="visitors table">
-                  <TableHead className={`${isLight ? "bg-[#F8F9FA]" : "bg-black/40"}`}>
-                    <TableRow>
-                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
+                <table className="w-full min-w-[900px] border-collapse">
+                  <thead className="sticky top-0 z-20">
+                    <tr
+                      className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
+                    >
+                      <th
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-primary/60" : "text-primary"}`}
+                      >
                         ID
-                      </TableCell>
-                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
+                      </th>
+                      <th
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                      >
                         Visitor
-                      </TableCell>
-                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
+                      </th>
+                      <th
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                      >
                         Credentials
-                      </TableCell>
-                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
+                      </th>
+                      <th
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                      >
                         Company
-                      </TableCell>
-                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
+                      </th>
+                      <th
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                      >
                         Destination
-                      </TableCell>
-                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
+                      </th>
+                      <th
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                      >
                         Status
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
                     {filteredVisitors && filteredVisitors.length > 0 ? (
                       filteredVisitors.map((visitor) => {
                         const isActive =
@@ -324,65 +345,69 @@ const ContactAllVisitors = () => {
                             .trim()
                             .toUpperCase() === "ACTIVE";
                         return (
-                          <TableRow
+                          <tr
                             key={visitor.VV_Visitor_id}
-                            sx={{
-                              "&:last-child td, &:last-child th": { border: 0 },
-                              "&:hover": {
-                                backgroundColor: isLight ? "#F8F9FA" : "rgba(255,255,255,0.02)",
-                              },
-                            }}
+                            className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                           >
-                            <TableCell className={`font-bold ${isLight ? "text-gray-600 border-b-gray-50" : "text-white/70 border-b-white/5"}`}>
-                              {visitor.VV_Visitor_id}
-                            </TableCell>
-                            <TableCell
-                              className={`font-bold transition-colors ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"} ${isLight ? "border-b-gray-50" : "border-b-white/5"}`}
-                            >
-                              {visitor.VV_Name || "-"}
-                            </TableCell>
-                            <TableCell
-                              className={`font-medium transition-colors ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"} ${isLight ? "border-b-gray-50" : "border-b-white/5"}`}
-                            >
-                              {visitor.VV_NIC_Passport_NO || "-"}
-                            </TableCell>
-                            <TableCell
-                              className={`font-medium transition-colors ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"} ${isLight ? "border-b-gray-50" : "border-b-white/5"}`}
-                            >
-                              {visitor.VV_Company || "-"}
-                            </TableCell>
-                            <TableCell
-                              className={`font-medium transition-colors ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"} ${isLight ? "border-b-gray-50" : "border-b-white/5"}`}
-                            >
-                              {visitor.VV_Visiting_places || "-"}
-                            </TableCell>
-                            <TableCell className={`${isLight ? "border-b-gray-50" : "border-b-white/5"}`}>
+                            <td className="px-4 py-4 text-primary font-mono text-[11px] tracking-[0.14em] font-bold">
+                              #{visitor.VV_Visitor_id}
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2">
+                                <span
+                                  className={`font-semibold text-[12px] uppercase tracking-[0.14em] ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
+                                >
+                                  {visitor.VV_Name || "-"}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4 text-center">
+                              <span
+                                className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
+                              >
+                                {visitor.VV_NIC_Passport_NO || "-"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-4">
+                              <span
+                                className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
+                              >
+                                {visitor.VV_Company || "-"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-4">
+                              <span
+                                className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
+                              >
+                                {visitor.VV_Visiting_places || "-"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-4">
                               <button
                                 onClick={() => handleToggleStatus(visitor)}
                                 disabled={isLoading}
                                 title="Click to toggle status"
-                                className={`px-2 py-1 rounded text-[10px] uppercase tracking-widest font-bold transition-all cursor-pointer ${isActive ? "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200" : "bg-red-50 text-primary hover:bg-red-100 border border-red-200"}`}
+                                className={`px-2.5 py-1 rounded-full text-[9px] uppercase tracking-[0.14em] font-bold transition-all cursor-pointer ${isActive ? "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200" : "bg-red-50 text-primary hover:bg-red-100 border border-red-200"}`}
                               >
                                 {isActive ? "ACTIVE" : "INACTIVE"}
                               </button>
-                            </TableCell>
-                          </TableRow>
+                            </td>
+                          </tr>
                         );
                       })
                     ) : (
-                      <TableRow>
-                        <TableCell
+                      <tr>
+                        <td
                           colSpan={6}
-                          align="center"
-                          className={`py-12 uppercase tracking-widest text-sm ${isLight ? "text-gray-400 border-b-gray-50" : "text-white/40 border-b-white/5"}`}
+                          className={`px-4 py-12 text-center uppercase tracking-[0.24em] text-[9px] font-medium ${isLight ? "text-gray-400" : "text-white/40"}`}
                         >
                           No Visitors detected matching criteria
-                        </TableCell>
-                      </TableRow>
+                        </td>
+                      </tr>
                     )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>
@@ -390,13 +415,13 @@ const ContactAllVisitors = () => {
         {/* Modal for Add Visitor */}
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto">
-            <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden relative my-auto">
+            <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden relative my-auto">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
 
-              <div className="flex justify-between items-center p-6 border-b border-white/5 relative z-10 bg-black/20">
+              <div className="flex justify-between items-center p-4 md:p-5 border-b border-white/5 relative z-10 bg-black/20">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                   <div className="w-1.5 h-6 bg-primary rounded-full"></div>
-                  <h2 className="text-lg font-bold text-white uppercase tracking-[0.2em]">
+                  <h2 className="text-base md:text-lg font-bold text-white uppercase tracking-[0.16em]">
                     Pre-Approve Visitor
                   </h2>
                 </div>
@@ -410,12 +435,13 @@ const ContactAllVisitors = () => {
 
               <form
                 onSubmit={handleFormSubmit}
-                className="p-8 space-y-6 relative z-10 max-h-[80vh] overflow-y-auto custom-scrollbar"
+                className="p-4 md:p-5 space-y-5 relative z-10 max-h-[80vh] overflow-y-auto custom-scrollbar"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
-                      <User size={12} className="text-primary/60" /> Full Name
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                      <User size={11} className="text-primary/60" /> Visitor
+                      name
                     </label>
                     <input
                       required
@@ -423,15 +449,15 @@ const ContactAllVisitors = () => {
                       name="VV_Name"
                       value={formData.VV_Name}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5"
-                      placeholder="JOHN SMITH"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      placeholder="Enter visitor name"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
-                      <Hash size={12} className="text-primary/60" /> NIC /
-                      Passport NO
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                      <Hash size={11} className="text-primary/60" /> ID /
+                      passport
                     </label>
                     <input
                       required
@@ -439,15 +465,14 @@ const ContactAllVisitors = () => {
                       name="VV_NIC_Passport_NO"
                       value={formData.VV_NIC_Passport_NO}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5"
-                      placeholder="Enter identification"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      placeholder="Enter ID or passport number"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
-                      <Mail size={12} className="text-primary/60" /> Email
-                      Address
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                      <Mail size={11} className="text-primary/60" /> Email
                     </label>
                     <input
                       required
@@ -455,15 +480,14 @@ const ContactAllVisitors = () => {
                       name="VV_Email"
                       value={formData.VV_Email}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5"
-                      placeholder="EMAIL@EXAMPLE.COM"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      placeholder="name@example.com"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
-                      <Phone size={12} className="text-primary/60" /> Phone
-                      Number
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                      <Phone size={11} className="text-primary/60" /> Phone
                     </label>
                     <input
                       required
@@ -471,15 +495,14 @@ const ContactAllVisitors = () => {
                       name="VV_Phone"
                       value={formData.VV_Phone}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5"
-                      placeholder="+94 7X XXX XXXX"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      placeholder="Enter phone number"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
-                      <Building size={12} className="text-primary/60" />{" "}
-                      Representing Company
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                      <Building size={11} className="text-primary/60" /> Company
                     </label>
                     <input
                       required
@@ -487,15 +510,15 @@ const ContactAllVisitors = () => {
                       name="VV_Company"
                       value={formData.VV_Company}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5"
-                      placeholder="COMPANY NAME"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      placeholder="Enter company name"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
-                      <Briefcase size={12} className="text-primary/60" />{" "}
-                      Visitor Classification
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                      <Briefcase size={11} className="text-primary/60" />{" "}
+                      Visitor type
                     </label>
                     <input
                       required
@@ -503,15 +526,15 @@ const ContactAllVisitors = () => {
                       name="VV_Visitor_Type"
                       value={formData.VV_Visitor_Type}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5"
-                      placeholder="E.G. CONTRACTOR, GUEST"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      placeholder="Guest, contractor, staff"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
-                      <MapPin size={12} className="text-primary/60" /> Visiting
-                      Area
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                      <MapPin size={11} className="text-primary/60" /> Visit
+                      area
                     </label>
                     <input
                       required
@@ -519,15 +542,15 @@ const ContactAllVisitors = () => {
                       name="VV_Visiting_places"
                       value={formData.VV_Visiting_places}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/5"
-                      placeholder="E.G. PRODUCTION FLOOR"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      placeholder="Where should the visitor go?"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[11px] text-primary uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
-                      <AlertCircle size={12} className="text-primary/60" />{" "}
-                      Login Security Password
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-primary uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                      <AlertCircle size={11} className="text-primary/60" />
+                      Login password
                     </label>
                     <input
                       required
@@ -535,27 +558,27 @@ const ContactAllVisitors = () => {
                       name="VA_Password"
                       value={formData.VA_Password}
                       onChange={handleInputChange}
-                      className="w-full bg-black/60 border border-primary/20 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      className="w-full bg-black/60 border border-primary/20 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
                       placeholder="••••••••"
                     />
-                    <p className="text-[9px] text-white/30 uppercase tracking-widest px-1 mt-1">
-                      Visitor will use this to log in
+                    <p className="text-[9px] text-white/35 uppercase tracking-[0.12em] px-1 mt-1">
+                      The visitor will use this to sign in
                     </p>
                   </div>
                 </div>
 
                 {/* NEW: Vehicle Section */}
-                <div className="pt-6 border-t border-white/5 space-y-4">
-                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
-                    <Car size={14} className="text-primary" />
-                    <h3 className="text-xs font-bold text-white uppercase tracking-[0.2em] mb-0">
+                <div className="pt-4 border-t border-white/5 space-y-3">
+                  <div className="flex flex-col md:flex-row items-center gap-3 md:gap-3">
+                    <Car size={13} className="text-primary" />
+                    <h3 className="text-[11px] font-bold text-white uppercase tracking-[0.16em] mb-0">
                       Vehicle Logistics
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold px-1">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold px-1">
                         Vehicle Type
                       </label>
                       <input
@@ -563,12 +586,12 @@ const ContactAllVisitors = () => {
                         name="VV_Vehicle_Type"
                         value={formData.VV_Vehicle_Type}
                         onChange={handleInputChange}
-                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50"
-                        placeholder="E.G. CAR, VAN"
+                        className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50"
+                        placeholder="Car, van, bike"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold px-1">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold px-1">
                         Plate Number
                       </label>
                       <input
@@ -576,24 +599,24 @@ const ContactAllVisitors = () => {
                         name="VV_Vehicle_Number"
                         value={formData.VV_Vehicle_Number}
                         onChange={handleInputChange}
-                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] text-white focus:outline-none focus:border-primary/50"
-                        placeholder="E.G. WP-CAD-1234"
+                        className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50"
+                        placeholder="Enter plate number"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-8 flex justify-end gap-3 border-t border-white/5">
+                <div className="pt-5 flex justify-end gap-3 border-t border-white/5">
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-8 py-3.5 rounded-xl text-[13px] font-bold text-gray-400 hover:bg-white/5 uppercase tracking-widest transition-all"
+                    className="px-6 py-2.5 rounded-lg text-[12px] font-bold text-gray-400 hover:bg-white/5 uppercase tracking-[0.14em] transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-10 py-3.5 rounded-xl bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[13px] font-bold uppercase tracking-[0.2em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
+                    className="px-7 py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-bold uppercase tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
                   >
                     Authorize Entry
                   </button>
