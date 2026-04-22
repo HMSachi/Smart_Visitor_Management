@@ -96,26 +96,26 @@ export const UpdateItemStatus = (id, status) => {
             const response = await ItemCarriedService.UpdateItemStatus(id, status);
             const isSuccess = response.data && (
                 response.data.ResultSet ||
-                response.data.Status === " Success\ ||
- response.data.Status === \OK\ ||
- response.status === 200
- );
- if (isSuccess) {
- dispatch({ type: UPDATE_ITEM_STATUS_SUCCESS, payload: response.data });
- setTimeout(() => dispatch(GetAllItemsCarried()), 1500);
- return response.data;
- } else {
- throw new Error(response.data?.Message || \Failed to update item status\);
- }
- } catch (error) {
- if (error.message === \Network Error\) {
- dispatch({ type: UPDATE_ITEM_STATUS_SUCCESS });
- setTimeout(() => dispatch(GetAllItemsCarried()), 1500);
- return { Status: \Success\ };
- } else {
- dispatch({ type: UPDATE_ITEM_STATUS_FAILURE, payload: error.message });
- throw error;
- }
- }
- };
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.status === 200
+            );
+            if (isSuccess) {
+                dispatch({ type: UPDATE_ITEM_STATUS_SUCCESS, payload: response.data });
+                setTimeout(() => dispatch(GetAllItemsCarried()), 1500);
+                return response.data;
+            } else {
+                throw new Error(response.data?.Message || "Failed to update item status");
+            }
+               } catch (error) {
+            if (error.message === "Network Error") {
+                dispatch({ type: UPDATE_ITEM_STATUS_SUCCESS });
+                setTimeout(() => dispatch(GetAllItemsCarried()), 1500);
+                return { Status: "Success" };
+            } else {
+                dispatch({ type: UPDATE_ITEM_STATUS_FAILURE, payload: error.message });
+                throw error;
+            }
+        }
+    };
 };
