@@ -568,7 +568,7 @@ const ContactAllVisitors = () => {
                 </div>
 
                 {/* NEW: Vehicle Section */}
-                <div className="pt-4 border-t border-white/5 space-y-3">
+                {/* <div className="pt-4 border-t border-white/5 space-y-3">
                   <div className="flex flex-col md:flex-row items-center gap-3 md:gap-3">
                     <Car size={13} className="text-primary" />
                     <h3 className="text-[11px] font-bold text-white uppercase tracking-[0.16em] mb-0">
@@ -604,7 +604,7 @@ const ContactAllVisitors = () => {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="pt-5 flex justify-end gap-3 border-t border-white/5">
                   <button

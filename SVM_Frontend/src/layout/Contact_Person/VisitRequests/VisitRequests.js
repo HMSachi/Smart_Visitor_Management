@@ -639,7 +639,7 @@ const VisitRequests = () => {
                     ></textarea>
                   </div>
 
-                  <div className="pt-3 border-t border-white/5 space-y-3">
+                  {/* <div className="pt-3 border-t border-white/5 space-y-3">
                     <p className="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">
                       Vehicle Details
                     </p>
@@ -669,7 +669,7 @@ const VisitRequests = () => {
                         placeholder="Plate number"
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="pt-4 flex justify-end gap-3 border-t border-white/5">
