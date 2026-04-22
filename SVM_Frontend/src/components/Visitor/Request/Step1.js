@@ -18,7 +18,15 @@ import {
   updateField,
   setStatus,
   setRequestRef,
+  addVisitor,
+  removeVisitor,
+  updateVisitorDetail,
+  addEquipment,
+  removeEquipment,
+  updateEquipmentDetail,
 } from "../../../reducers/visitorSlice";
+import VisitorGroup from "./Step1/VisitorGroup";
+import ItemsCarried from "./Step1/ItemsCarried";
 
 const Step1Main = () => {
   const navigate = useNavigate();
@@ -39,7 +47,7 @@ const Step1Main = () => {
   };
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.visitor);
-  const { status, requestRef } = formData;
+  const { status, requestRef, visitors, equipment } = formData;
   const user = useSelector((state) => state.login.user);
   const { administrators } = useSelector((state) => state.administrator);
   const { visitRequestsByVis, isLoading: isRequestsLoading } = useSelector(
@@ -259,6 +267,30 @@ const Step1Main = () => {
     );
   };
 
+  const handleAddVisitor = () => {
+    dispatch(addVisitor());
+  };
+
+  const handleRemoveVisitor = (id) => {
+    dispatch(removeVisitor(id));
+  };
+
+  const handleUpdateVisitor = (id, field, value) => {
+    dispatch(updateVisitorDetail({ id, field, value }));
+  };
+
+  const handleAddEquipment = () => {
+    dispatch(addEquipment());
+  };
+
+  const handleRemoveEquipment = (id) => {
+    dispatch(removeEquipment(id));
+  };
+
+  const handleUpdateEquipment = (id, field, value) => {
+    dispatch(updateEquipmentDetail({ id, field, value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setStatus("submitting"));
@@ -421,6 +453,24 @@ const Step1Main = () => {
 
         <div className="border-t border-white/5 pt-16">
           <VehicleDetails data={formData} onChange={handleInputChange} />
+        </div>
+
+        <div className="border-t border-white/5 pt-16">
+          <VisitorGroup 
+            visitors={visitors || []} 
+            onAdd={handleAddVisitor} 
+            onRemove={handleRemoveVisitor} 
+            onChange={handleUpdateVisitor} 
+          />
+        </div>
+
+        <div className="border-t border-white/5 pt-16">
+          <ItemsCarried 
+            items={equipment || []} 
+            onAdd={handleAddEquipment} 
+            onRemove={handleRemoveEquipment} 
+            onChange={handleUpdateEquipment} 
+          />
         </div>
 
         {/* Action Footer */}
