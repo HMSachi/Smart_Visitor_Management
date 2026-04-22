@@ -54,6 +54,14 @@ const StatusBadge = ({ status }) => {
           Rejected
         </div>
       );
+    case "C":
+    case "CANCEL":
+    case "CANCELLED":
+      return (
+        <div className="px-2 py-0.5 bg-gray-500/10 border border-gray-500/20 text-gray-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+          Cancelled
+        </div>
+      );
     case "ACCEPTED":
       return (
         <div className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max">
@@ -120,31 +128,17 @@ const VisitRequests = () => {
 
   const handleDisableRequest = async () => {
     if (selectedReq) {
-      const payload = {
-        VVR_Request_id: selectedReq.VVR_Request_id,
-        VVR_Visit_Date: selectedReq.VVR_Visit_Date ? selectedReq.VVR_Visit_Date.split("T")[0] : "",
-        VVR_Places_to_Visit: selectedReq.VVR_Places_to_Visit || "",
-        VVR_Purpose: selectedReq.VVR_Purpose || "",
-        VVR_Status: "R",
-        VVR_Contact_person_id: cpId
-      };
-      await dispatch(UpdateVisitRequest(payload));
+      await dispatch(ApproveVisitRequest(selectedReq.VVR_Request_id, "C"));
+      setTimeout(() => dispatch(GetVisitRequestsByCP(cpId)), 2000);
     }
     handleMenuClose();
   };
 
   const handleSendToAdmin = async () => {
     if (selectedReq) {
-      const payload = {
-        VVR_Request_id: selectedReq.VVR_Request_id,
-        VVR_Visit_Date: selectedReq.VVR_Visit_Date ? selectedReq.VVR_Visit_Date.split("T")[0] : "",
-        VVR_Places_to_Visit: selectedReq.VVR_Places_to_Visit || "",
-        VVR_Purpose: selectedReq.VVR_Purpose || "",
-        VVR_Status: "SENT",
-        VVR_Contact_person_id: cpId
-      };
-      await dispatch(UpdateVisitRequest(payload));
-      alert("Request protocol initiated. Sent to Cloud Admin for final approval.");
+      await dispatch(ApproveVisitRequest(selectedReq.VVR_Request_id, "A"));
+      setTimeout(() => dispatch(GetVisitRequestsByCP(cpId)), 2000);
+      alert("Request approved successfully.");
     }
     handleMenuClose();
   };
@@ -630,7 +624,7 @@ const VisitRequests = () => {
             className="px-4 py-3 text-[12px] uppercase font-bold tracking-widest text-green-500 hover:bg-green-500/5 transition-colors"
           >
             <div className="flex items-center gap-3">
-              <CheckCircle2 size={14} /> Send to Admin for Approve
+                  <CheckCircle2 size={14} /> Approve Visit Request
             </div>
           </MenuItem>
         </Menu>

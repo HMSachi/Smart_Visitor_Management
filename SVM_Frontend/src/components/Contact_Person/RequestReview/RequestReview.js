@@ -5,7 +5,7 @@ import PersonnelAuthProtocol from '../../../components/common/PersonnelAuthProto
 import RejectionModal from './RejectionModal';
 import ApprovalModal from './ApprovalModal';
 import { ArrowLeft } from 'lucide-react';
-import { ApproveVisitRequest, GetVisitRequestById, GetVisitRequestsByCP, UpdateVisitRequest } from '../../../actions/VisitRequestAction';
+import { ApproveVisitRequest, GetVisitRequestById, GetVisitRequestsByCP } from '../../../actions/VisitRequestAction';
 import VisitorService from '../../../services/VisitorService';
 import VehicleService from '../../../services/VehicleService';
 import { useThemeMode } from '../../../theme/ThemeModeContext';
@@ -14,7 +14,8 @@ const normalizeStatus = (status) => {
     const s = (status || '').toString().trim().toUpperCase();
     if (s === 'A' || s === 'APPROVED') return 'APPROVED';
     if (s === 'R' || s === 'REJECTED') return 'REJECTED';
-    if (s === 'C' || s === 'CHECKED OUT' || s === 'CHECKED_OUT') return 'CHECKED OUT';
+    if (s === 'C' || s === 'CANCEL' || s === 'CANCELLED') return 'CANCELLED';
+    if (s === 'CHECKED OUT' || s === 'CHECKED_OUT') return 'CHECKED OUT';
     return 'PENDING';
 };
 
@@ -140,15 +141,7 @@ const RequestReviewMain = () => {
             return;
         }
 
-        await dispatch(UpdateVisitRequest({
-            VVR_Request_id: apiRequest.VVR_Request_id,
-            VVR_Visit_Date: apiRequest.VVR_Visit_Date,
-            VVR_Places_to_Visit: apiRequest.VVR_Places_to_Visit,
-            VVR_Purpose: apiRequest.VVR_Purpose,
-            VVR_Status: 'SENT',
-            VVR_Contact_person_id: apiRequest.VVR_Contact_person_id,
-            approvalComment,
-        }));
+        await dispatch(ApproveVisitRequest(apiRequest.VVR_Request_id, 'A'));
 
         if (apiRequest?.VVR_Contact_person_id) {
             dispatch(GetVisitRequestsByCP(apiRequest.VVR_Contact_person_id));
