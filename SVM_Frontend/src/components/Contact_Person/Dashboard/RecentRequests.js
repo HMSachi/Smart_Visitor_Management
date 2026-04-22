@@ -14,7 +14,7 @@ const RecentRequests = () => {
         switch (status) {
             case 'Approved': return 'text-green-500 bg-green-500/10 border-green-500/20';
             case 'Pending': return 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20';
-            case 'Rejected': return 'text-primary bg-primary/10 border-primary/20';
+            case 'Declined': return 'text-primary bg-primary/10 border-primary/20';
             default: return 'text-gray-300 bg-white/5 border-white/10';
         }
     };
@@ -28,14 +28,16 @@ const RecentRequests = () => {
                 </div>
                 <button
                     onClick={() => navigate('/contact_person/requests-inbox')}
-                    className="flex items-center gap-2 text-[11px] font-bold text-primary hover:text-[#A00D25] uppercase tracking-widest transition-colors group"
+                    className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-[11px] font-bold text-primary hover:text-[#A00D25] uppercase tracking-widest transition-colors group"
                 >
                     View All Inbox <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </button>
             </div>
 
             <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full text-left">
                     <thead>
                         <tr className="bg-[#F8F9FA] text-gray-400 text-[13px] uppercase tracking-[0.2em] font-bold border-b border-gray-100">
                             <th className="px-4 md:px-6 py-3">Visitor Identity</th>
@@ -75,6 +77,8 @@ const RecentRequests = () => {
                         ))}
                     </tbody>
                 </table>
+</div>
+
             </div>
         </div>
     );

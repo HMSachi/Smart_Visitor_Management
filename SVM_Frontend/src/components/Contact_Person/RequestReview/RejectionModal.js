@@ -10,7 +10,7 @@ const RejectionModal = ({ isOpen, onClose, onConfirm, reason, setReason, comment
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-700"></div>
 
                 <div className="mb-10 relative z-10">
-                    <div className="flex items-center gap-4 mb-2">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-2">
                         <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
                         <h2 className="text-white text-xs font-bold uppercase tracking-[0.3em]">Protocol Rejection</h2>
                     </div>

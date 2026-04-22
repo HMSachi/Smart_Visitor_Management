@@ -43,7 +43,7 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
 
               {/* Header */}
               <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01] relative z-10">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-colors ${type === 'Approve' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-primary/10 border-primary/20 text-primary'}`}>
                     {type === 'Approve' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
                   </div>
@@ -65,7 +65,7 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
               {/* Content */}
               <form onSubmit={handleSubmit} className="p-8 space-y-4 md:space-y-8 relative z-10">
                 <div className="p-6 bg-[var(--color-bg-paper)] border border-white/5 rounded-2xl shadow-inner flex justify-between items-center group/target hover:border-primary/20 transition-all duration-500">
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                     <div className="w-1.5 h-6 bg-primary/40 group-hover:bg-primary rounded-full transition-all"></div>
                     <div>
                       <p className="text-gray-300/80 text-[12px] font-medium capitalize tracking-widest mb-1">Target Subject Identity</p>
@@ -80,12 +80,12 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-end">
-                    <label className="text-gray-300/90 capitalize text-[13px] font-medium tracking-widest flex items-center gap-2">
+                    <label className="text-gray-300/90 capitalize text-[13px] font-medium tracking-widest flex flex-col md:flex-row items-center gap-4 md:gap-2">
                       <Send size={12} className="text-primary/40" />
                       Protocol Feedback {type === 'Reject' && <span className="text-primary animate-pulse">*</span>}
                     </label>
                     {error && (
-                      <span className="text-primary text-[13px] font-medium capitalize animate-pulse flex items-center gap-1.5 tracking-widest">
+                      <span className="text-primary text-[13px] font-medium capitalize animate-pulse flex flex-col md:flex-row items-center gap-4 md:gap-1.5 tracking-widest">
                         <AlertCircle size={12} /> Required For Denial
                       </span>
                     )}
@@ -103,7 +103,7 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                 </div>
 
                 {/* Footer Actions */}
-                <div className="flex gap-4 pt-2">
+                <div className="flex flex-col md:flex-row gap-4 md:gap-4 pt-2">
                   <button
                     type="button"
                     onClick={onClose}

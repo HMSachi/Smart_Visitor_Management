@@ -33,7 +33,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
             <div className="mb-2 flex justify-start">
                 <button 
                     onClick={onBack}
-                    className="px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl text-gray-300 hover:text-white hover:border-white/30 transition-all flex items-center gap-3 text-[13px] font-medium uppercase tracking-widest group"
+                    className="px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl text-gray-300 hover:text-white hover:border-white/30 transition-all flex flex-col md:flex-row items-center gap-4 md:gap-3 text-[13px] font-medium uppercase tracking-widest group"
                 >
                     <ChevronRight size={14} className="group-hover:-translate-x-1 transition-transform rotate-180" /> Back to Profile Sync
                 </button>
@@ -74,7 +74,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                                 </div>
                                 <div className="hidden md:block space-y-1">
                                     <p className="text-gray-300/80 text-[7px] font-medium uppercase tracking-widest">Encryption</p>
-                                    <div className="flex items-center gap-1.5">
+                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-1.5">
                                         <Lock size={8} className="text-primary" />
                                         <span className="text-white text-[12px] font-medium tracking-widest">SECURED</span>
                                     </div>
@@ -90,8 +90,8 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
 
             {/* Authorization Matrix Protocol */}
             <div className="space-y-4 md:space-y-8">
-                <div className="flex items-center gap-6 px-4">
-                    <div className="flex items-center gap-3">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 px-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                         <Shield size={14} className="text-primary" />
                         <h4 className="text-gray-300/30 uppercase text-[12px] font-medium tracking-[0.5em]">Verification_Protocol_Matrix</h4>
                     </div>
@@ -113,21 +113,21 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                                 onClick={() => toggleCheck(item.id)}
                                 className={`mas-glass p-6 md:p-8 border-white/5 bg-[var(--color-bg-paper)]/40 flex items-center justify-between cursor-pointer transition-all duration-500 rounded-[28px] group relative overflow-hidden ${isChecked ? 'bg-primary/[0.04] border-primary/20' : 'hover:border-white/20'}`}
                             >
-                                <div className="flex gap-8 items-center relative z-10">
+                                <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-center relative z-10">
                                     <div className="relative">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-700 border ${isChecked ? 'bg-primary border-primary text-white rotate-12 shadow-[0_0_20px_var(--color-primary)]' : 'bg-[#0D0D0E] border-white/10 text-gray-300 group-hover:border-white'}`}>
                                             {isAuth ? <Activity size={18} className="animate-spin" /> : isChecked ? <Check size={20} strokeWidth={4} /> : <item.icon size={18} />}
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                             <p className={`text-[13px] font-medium tracking-widest transition-all duration-500 uppercase ${isChecked ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>{item.label}</p>
                                             {isAuth && <span className="text-primary text-[7px] font-medium animate-pulse tracking-[0.3em]">PROCESSING...</span>}
                                         </div>
                                         <p className="text-gray-300/80 text-[12px] font-medium uppercase tracking-widest">{item.desc}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4 relative z-10 px-4">
+                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 relative z-10 px-4">
                                     <div className={`w-1.5 h-6 rounded-full transition-all duration-700 ${isChecked ? 'bg-primary shadow-[0_0_8px_var(--color-primary)]' : 'bg-white/5'}`}></div>
                                     <Info size={14} className="text-gray-300/10 group-hover:text-gray-300 transition-colors" />
                                 </div>
@@ -186,7 +186,7 @@ const ApprovalChecklist = ({ visitor, onBack }) => {
                             <div className="absolute top-0 left-0 w-full h-[1px] bg-primary animate-scan z-20 opacity-80"></div>
 
                             <div className="space-y-6 md:space-y-12 relative z-10">
-                                <div className="flex items-center gap-8">
+                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                                     <div className="p-5 rounded-2xl bg-primary text-white shadow-[0_0_30px_rgba(200,16,46,0.4)] rotate-3">
                                         <AlertCircle size={28} strokeWidth={2.5} />
                                     </div>

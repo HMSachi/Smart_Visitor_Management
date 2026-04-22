@@ -8,7 +8,7 @@ import {
   InputAdornment,
   CircularProgress,
 } from "@mui/material";
-import { Lock, Mail, Eye, EyeOff } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 import { GetLogin } from "../../actions/LoginAction";
 
 const Login = () => {
@@ -32,9 +32,9 @@ const Login = () => {
         else if (role === "Contact_Person") navigate("/contact_person/dashboard");
         else if (role === "Security") navigate("/security-dashboard");
         else if (role === "Visitor") navigate("/home");
-        else setLocalError("Access denied. Unknown role.");
+        else setLocalError("Access denied. Your account role is not recognised.");
       } else {
-        setLocalError("Invalid email or password.");
+        setLocalError("Incorrect email or password. Please try again.");
       }
     }
   }, [user, navigate]);
@@ -51,27 +51,42 @@ const Login = () => {
     dispatch(GetLogin(formData.email, formData.password));
   };
 
+  const inputSx = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      backgroundColor: "rgba(255,255,255,0.03)",
+      "& fieldset": { borderColor: "rgba(255,255,255,0.08)" },
+      "&:hover fieldset": { borderColor: "rgba(255,255,255,0.15)" },
+      "&.Mui-focused fieldset": {
+        borderColor: "var(--color-primary)",
+        boxShadow: "0 0 0 3px rgba(200,16,46,0.12)",
+      },
+    },
+    "& .MuiInputBase-input": {
+      color: "#F1F1F3",
+      fontSize: "14px",
+      padding: "14px 16px",
+    },
+    "& .MuiInputAdornment-root svg": { color: "rgba(255,255,255,0.3)" },
+  };
+
   return (
-    <div className="min-h-screen bg-[var(--color-bg-default)] text-white flex flex-col md:flex-row relative overflow-hidden font-sans selection:bg-primary/30">
-      {/* AI Background Particles & Grid */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden circuit-grid opacity-70" />
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {[...Array(15)].map((_, i) => (
+    <div className="min-h-screen bg-[var(--color-bg-default)] text-white flex flex-col lg:flex-row relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none circuit-grid opacity-60" />
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: "100%" }}
-            animate={{
-              opacity: [0, 0.4, 0],
-              y: "-100%",
-              x: `${(Math.random() - 0.5) * 50}px`,
-            }}
+            initial={{ opacity: 0, y: "105%" }}
+            animate={{ opacity: [0, 0.35, 0], y: "-10%" }}
             transition={{
-              duration: 10 + Math.random() * 10,
+              duration: 10 + Math.random() * 8,
               repeat: Infinity,
               ease: "linear",
               delay: Math.random() * 10,
             }}
-            className="absolute bg-white/40 rounded-full"
+            className="absolute rounded-full bg-white/30"
             style={{
               left: `${Math.random() * 100}%`,
               width: `${Math.random() * 2 + 1}px`,
@@ -81,71 +96,93 @@ const Login = () => {
         ))}
       </div>
 
-      {/* Top/Left Branding Panel */}
-      <div className="relative z-10 flex flex-col w-full md:w-[45%] lg:w-[40%] items-center justify-center p-6 md:p-12 py-12 md:py-0 bg-black/40 backdrop-blur-sm border-b md:border-b-0 md:border-r border-white/5">
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] rounded-[0px] blur-[150px] bg-primary/10 opacity-30 animate-pulse-glow"
-          style={{ animationDuration: "8s" }}
-        />
+      {/* ── Left Branding Panel ── */}
+      <div className="relative z-10 flex flex-col w-full lg:w-[46%] xl:w-[42%] items-center justify-center px-8 py-16 lg:py-0 bg-black/35 backdrop-blur-sm border-b lg:border-b-0 lg:border-r border-white/[0.05]">
+        {/* Glow blur */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[130px] bg-primary/10 opacity-40 pointer-events-none" />
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="relative text-center flex flex-col items-center max-w-sm"
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="relative text-center flex flex-col items-center max-w-sm w-full"
         >
-          <div className="relative mb-8 group">
+          {/* Logo */}
+          <div className="relative mb-10">
             <motion.img
               src="/logo_mas.png"
               alt="MAS Logo"
-              className="h-[120px] w-auto filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+              className="h-[100px] sm:h-[120px] w-auto filter drop-shadow-[0_0_20px_rgba(200,16,46,0.25)]"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
             />
-            <div className="absolute -inset-8 border border-primary/10 rounded-full animate-ping opacity-10" />
           </div>
 
-          <h1 className="text-4xl font-bold tracking-[0.2em] mb-4 metallic-text uppercase leading-tight">
-            CHANGE IS COURAGE
+          {/* Tag line */}
+          <div className="mb-6">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-semibold tracking-widest uppercase">
+              <ShieldCheck size={12} />
+              Secure Access Portal
+            </span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight mb-3 text-white leading-tight">
+            Welcome Back
           </h1>
+          <p className="text-sm text-white/50 tracking-wide max-w-xs leading-relaxed">
+            Sign in to manage visitor access, security monitoring, and approvals in one place.
+          </p>
 
-          <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent mb-6 opacity-90" />
-
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold tracking-[0.4em] text-white/90 uppercase">
-              MAS ACCESS
-            </h2>
-            <p className="text-[13px] text-blue-400/50 tracking-[0.4em] font-medium uppercase glow-text-blue">
-              Secure Intelligent Access System
-            </p>
+          {/* Feature pills */}
+          <div className="flex flex-wrap justify-center gap-2 mt-8">
+            {["Visitor Management", "QR Verification", "Real-time Alerts"].map((f) => (
+              <span key={f} className="text-[11px] text-white/40 bg-white/[0.04] border border-white/[0.07] px-3 py-1 rounded-full">
+                {f}
+              </span>
+            ))}
           </div>
         </motion.div>
-
       </div>
 
-      {/* Right Login Panel */}
-      <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative z-10 bg-[var(--color-bg-default)]/40 backdrop-blur-md">
+      {/* ── Right Login Panel ── */}
+      <div className="flex-1 flex items-center justify-center px-5 sm:px-8 py-12 lg:py-0 relative z-10">
         <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="w-full max-w-md relative"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="w-full max-w-md"
         >
-          {/* Floating Glass Card */}
-          <div className="glass-card rounded-none p-8 md:p-12 border border-white/5 relative overflow-hidden backdrop-blur-2xl w-full">
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+          {/* Card */}
+          <div
+            className="relative w-full overflow-hidden"
+            style={{
+              background: "rgba(17,17,20,0.85)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              border: "1px solid rgba(255,255,255,0.07)",
+              borderRadius: "20px",
+              padding: "2.5rem 2rem",
+            }}
+          >
+            {/* Top gradient line */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
-            <div className="mb-10 text-center">
-              <h3 className="text-3xl font-semibold mb-2 tracking-[0.06em] text-white/90 uppercase">
-                LOGIN
-              </h3>
-              <p className="text-sm text-white/55 tracking-[0.02em]">
-                Use your email and password to continue.
+            {/* Form heading */}
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">
+                Sign In
+              </h2>
+              <p className="text-sm text-white/45">
+                Enter your email and password to continue.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="group space-y-2">
-                <label className="text-[14px] font-medium tracking-[0.03em] text-white/70 ml-1">
-                  Email address
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Email */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/60 tracking-wider uppercase block">
+                  Email Address
                 </label>
                 <TextField
                   fullWidth
@@ -156,30 +193,21 @@ const Login = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   autoComplete="email"
-                  placeholder="name@company.com"
+                  placeholder="you@company.com"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Mail size={16} color="rgba(255, 255, 255, 0.35)" />
+                        <Mail size={16} />
                       </InputAdornment>
                     ),
-                    className:
-                      "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black group-hover:border-white/10",
                   }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": { borderColor: "rgba(57, 55, 55, 0.34)" },
-                      "&:hover fieldset": {
-                        borderColor: "rgba(149, 138, 138, 0.1)",
-                      },
-                      "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" },
-                    },
-                  }}
+                  sx={inputSx}
                 />
               </div>
 
-              <div className="group space-y-2">
-                <label className="text-[14px] font-medium tracking-[0.03em] text-white/70 ml-1">
+              {/* Password */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/60 tracking-wider uppercase block">
                   Password
                 </label>
                 <TextField
@@ -195,7 +223,7 @@ const Login = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Lock size={16} color="rgba(255,255,255,0.1)" />
+                        <Lock size={16} />
                       </InputAdornment>
                     ),
                     endAdornment: (
@@ -203,60 +231,61 @@ const Login = () => {
                         <IconButton
                           onClick={() => setShowPassword(!showPassword)}
                           size="small"
-                          sx={{ color: "rgba(255,255,255,0.1)" }}
+                          sx={{ color: "rgba(255,255,255,0.3)" }}
                         >
-                          {showPassword ? (
-                            <EyeOff size={16} />
-                          ) : (
-                            <Eye size={16} />
-                          )}
+                          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         </IconButton>
                       </InputAdornment>
                     ),
-                    className:
-                      "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black group-hover:border-white/10",
                   }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": { borderColor: "rgba(255,255,255,0.05)" },
-                      "&:hover fieldset": {
-                        borderColor: "rgba(255,255,255,0.1)",
-                      },
-                      "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" },
-                    },
-                  }}
+                  sx={inputSx}
                 />
               </div>
 
+              {/* Error */}
               <AnimatePresence>
                 {(localError || reduxError) && (
-                  <motion.p
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-primary text-[12px] text-center font-medium tracking-widest uppercase py-2 bg-primary/5 rounded-none border border-primary/20"
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-primary/10 border border-primary/25 text-primary text-sm"
                   >
-                    {localError || reduxError}
-                  </motion.p>
+                    <ShieldCheck size={15} className="shrink-0" />
+                    <span>{localError || reduxError}</span>
+                  </motion.div>
                 )}
               </AnimatePresence>
 
+              {/* Submit */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileTap={{ scale: 0.97 }}
                 type="submit"
                 disabled={reduxLoading}
-                className="w-full bg-primary hover:bg-[var(--color-primary-hover)] py-5 rounded-[0px] text-sm font-semibold tracking-[0.08em] flex items-center justify-center gap-3 transition-all relative overflow-hidden shadow-[0_10px_30px_rgba(200,16,46,0.2)]"
+                className="w-full flex items-center justify-center gap-3 py-[14px] rounded-xl font-semibold text-sm text-white tracking-wide transition-all"
+                style={{
+                  background: reduxLoading
+                    ? "rgba(200,16,46,0.5)"
+                    : "linear-gradient(135deg, #C8102E 0%, #A60D26 100%)",
+                  boxShadow: "0 4px 20px rgba(200,16,46,0.35)",
+                }}
               >
                 {reduxLoading ? (
-                  <CircularProgress size={16} color="inherit" strokeWidth={6} />
+                  <CircularProgress size={18} color="inherit" />
                 ) : (
                   <>
-                    LOGIN
-                    <div className="w-1.5 h-1.5 rounded-full bg-white/40 group-hover:bg-white animate-pulse" />
+                    Sign In to Your Account
+                    <ArrowRight size={16} />
                   </>
                 )}
               </motion.button>
             </form>
+
+            {/* Footer note */}
+            <p className="mt-6 text-center text-[11px] text-white/25 leading-relaxed">
+              MAS Holdings Visitor Access System · Secure &amp; Encrypted
+            </p>
           </div>
         </motion.div>
       </div>

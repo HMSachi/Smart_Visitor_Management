@@ -42,25 +42,25 @@ const ExitVerificationMain = () => {
             {/* Tactical Protocol Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 border-b border-white/5 pb-10">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                         <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
                             <ClipboardList size={16} className="text-primary" />
                         </div>
                         <span className="text-primary font-medium uppercase text-[13px] tracking-[0.4em]">Operational_Exit_Protocol</span>
                         <div className="h-[1px] w-12 bg-gradient-to-r from-primary/50 to-transparent"></div>
                     </div>
-                    <div className="flex items-center gap-8">
-                        <h1 className="text-5xl font-bold text-white tracking-tighter uppercase">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                        <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tighter uppercase">
                             Exit_Verification
                         </h1>
-                        <div className="px-5 py-2 mas-glass border-primary/30 bg-primary/5 text-primary text-xs font-medium shadow-[0_0_30px_rgba(200,16,46,0.1)] rounded-xl border flex items-center gap-3">
+                        <div className="px-5 py-2 mas-glass border-primary/30 bg-primary/5 text-primary text-xs font-medium shadow-[0_0_30px_rgba(200,16,46,0.1)] rounded-xl border flex flex-col md:flex-row items-center gap-4 md:gap-3">
                             <ShieldAlert size={14} className={hasMismatch ? 'animate-pulse' : ''} />
                             NODE_VIS_4291_EXIT
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-8">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                     <div className="hidden sm:flex flex-col text-right">
                         <p className="text-gray-300/80 text-[14px] font-medium uppercase tracking-widest">Protocol_Sync_Time</p>
                         <p className="text-white text-sm font-mono font-medium tracking-widest">{currentTime}</p>
@@ -76,8 +76,8 @@ const ExitVerificationMain = () => {
             <div className="grid grid-cols-1 xl:grid-cols-1 md:grid-cols-2 gap-12">
                 {/* Declared Asset Matrix */}
                 <div className="space-y-4 md:space-y-8">
-                    <div className="flex items-center gap-6 px-4">
-                        <div className="flex items-center gap-3">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 px-4">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                             <Briefcase size={14} className="text-primary" />
                             <h4 className="text-gray-300/30 uppercase text-[12px] font-medium tracking-[0.5em]">Declared_Asset_Matrix</h4>
                         </div>
@@ -94,20 +94,20 @@ const ExitVerificationMain = () => {
                                     whileHover={{ x: 6 }}
                                     className={`p-6 border group flex items-center justify-between transition-all duration-500 rounded-2xl relative overflow-hidden ${item.mismatch ? 'bg-primary/[0.03] border-primary/20 shadow-[0_0_30px_rgba(200,16,46,0.05)]' : 'bg-white/[0.01] border-white/5 hover:border-white/20'}`}
                                 >
-                                    <div className="flex items-center gap-8 relative z-10">
+                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 relative z-10">
                                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 border-2 ${item.mismatch ? 'bg-primary border-primary text-white shadow-[0_0_20px_var(--color-primary)] animate-pulse' : 'bg-[#0D0D0E] border-white/10 text-gray-300 group-hover:border-white/40'}`}>
                                             {item.mismatch ? <AlertTriangle size={20} strokeWidth={3} /> : <Check size={20} strokeWidth={4} />}
                                         </div>
                                         <div className="space-y-1">
                                             <p className={`text-sm font-medium tracking-widest transition-all duration-300 uppercase ${item.mismatch ? 'text-primary' : 'text-white'}`}>{item.name}</p>
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                                 <span className="text-gray-300/30 text-[12px] font-medium uppercase tracking-widest">{item.category}</span>
                                                 <span className="w-1 h-1 bg-white/10 rounded-full"></span>
                                                 <span className="text-gray-300/30 text-[12px] font-mono tracking-widest uppercase">{item.sn}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-6 relative z-10">
+                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 relative z-10">
                                         <span className={`text-[13px] font-medium uppercase tracking-widest transition-all duration-300 ${item.mismatch ? 'text-primary animate-bounce' : 'text-gray-300/80 group-hover:text-white'}`}>{item.status}</span>
                                         <ChevronRight size={14} className="text-white/5 group-hover:text-primary transition-all" />
                                     </div>
@@ -140,8 +140,8 @@ const ExitVerificationMain = () => {
 
                 {/* Exit Integrity Protocol Matrix */}
                 <div className="space-y-4 md:space-y-8">
-                    <div className="flex items-center gap-6 px-4">
-                        <div className="flex items-center gap-3">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 px-4">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                             <Activity size={14} className="text-primary" />
                             <h4 className="text-gray-300/30 uppercase text-[12px] font-medium tracking-[0.5em]">Integrity_Verification_Matrix</h4>
                         </div>
@@ -163,12 +163,12 @@ const ExitVerificationMain = () => {
                                     onClick={() => toggleCheck(item.id)}
                                     className={`mas-glass p-6 border-white/5 bg-[var(--color-bg-paper)]/60 flex items-center justify-between cursor-pointer transition-all duration-500 rounded-2xl group relative overflow-hidden ${isChecked ? 'bg-primary/[0.04] border-primary/20' : 'hover:border-white/20'}`}
                                 >
-                                    <div className="flex gap-6 items-center relative z-10">
+                                    <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center relative z-10">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-700 border ${isChecked ? 'bg-primary border-primary text-white rotate-12 shadow-[0_0_20px_var(--color-primary)]' : 'bg-[#0D0D0E] border-white/10 text-gray-300 group-hover:border-white'}`}>
                                             {isAuth ? <RefreshCw size={18} className="animate-spin" /> : isChecked ? <Check size={20} strokeWidth={4} /> : <Zap size={18} />}
                                         </div>
                                         <div className="space-y-1">
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                                 <p className={`text-[12px] font-medium tracking-widest transition-all duration-500 uppercase ${isChecked ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>{item.label}</p>
                                                 {isAuth && <span className="text-primary text-[14px] font-medium animate-pulse tracking-[0.3em]">SYNCING...</span>}
                                             </div>
@@ -198,7 +198,7 @@ const ExitVerificationMain = () => {
 
                     {/* Guardian Node Log Footer */}
                     <div className="mas-glass p-8 border-primary/10 bg-[var(--color-bg-paper)]/60 backdrop-blur-3xl rounded-[28px] border text-center flex flex-col items-center gap-3 group/footer hover:border-primary/30 transition-all">
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                             <Lock size={12} className="text-primary animate-pulse" />
                             <span className="uppercase text-primary font-medium text-[13px] tracking-[0.4em]">Guardian_Node_Registry_Active</span>
                         </div>

@@ -27,7 +27,7 @@ const SafetyFeatures = () => {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row items-baseline justify-between mb-12 gap-12">
                     <div className="max-w-xl text-left">
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mb-3">
                             <div className="w-6 h-[1px] bg-primary/50"></div>
                             <span className="text-primary uppercase tracking-widest text-[12px] font-bold">Infrastructure</span>
                         </div>
@@ -59,7 +59,7 @@ const SafetyFeatures = () => {
                             
                             <ul className="space-y-3">
                                 {category.items.map((item, idx) => (
-                                    <li key={idx} className="flex items-center gap-2">
+                                    <li key={idx} className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                                         <CheckCircle2 size={12} className="text-primary/60" />
                                         <span className="text-gray-500 text-[14px] font-semibold uppercase tracking-wider group-hover:text-gray-300 transition-colors">
                                             {item}

@@ -27,7 +27,7 @@ const StatusMain = () => {
             {/* Page Header */}
             <header className="mb-8 flex items-center justify-between border-b border-white/5 pb-6">
                 <div>
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mb-2">
                         <span className="text-primary font-bold text-[12px] uppercase tracking-widest">Facility Access</span>
                     </div>
                     <h1 className="text-xl md:text-2xl font-bold uppercase tracking-tight">
@@ -36,7 +36,7 @@ const StatusMain = () => {
                     <p className="text-gray-500 text-[13px] uppercase font-semibold tracking-wider mt-0.5">Track your visitation progress</p>
                 </div>
 
-                <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-white/[0.02] border border-white/5 rounded-lg">
+                <div className="hidden md:flex flex-col md:flex-row items-center gap-4 md:gap-3 px-4 py-2 bg-white/[0.02] border border-white/5 rounded-lg">
                     <Activity size={14} className="text-primary" />
                     <span className="text-gray-400 text-[13px] font-bold uppercase tracking-widest">In Progress</span>
                 </div>
@@ -49,7 +49,7 @@ const StatusMain = () => {
                     
                     {/* Timeline Card */}
                     <div className="bg-white/[0.01] border border-white/5 p-6 rounded-xl">
-                        <div className="flex items-center gap-3 mb-8">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-8">
                             <div className="text-primary">
                                 <FileText size={14} />
                             </div>
@@ -65,7 +65,7 @@ const StatusMain = () => {
             {/* Footer Summary Actions */}
             <div className="mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-12">
 
-                <div className="flex gap-3 w-full md:w-auto">
+                <div className="flex flex-col md:flex-row gap-4 md:gap-3 w-full md:w-auto">
                     <button 
                         onClick={() => window.location.href='/home'} 
                         className="px-6 py-3 bg-white/[0.03] border border-white/10 text-white text-[13px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/[0.07] transition-all flex items-center justify-center gap-2"

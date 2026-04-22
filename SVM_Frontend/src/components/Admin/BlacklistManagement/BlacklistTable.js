@@ -10,14 +10,14 @@ const RestrictionLevel = ({ level }) => {
   };
 
   return (
-    <div className={`px-4 py-1.5 rounded-full text-[12px] font-medium tracking-[0.2em] capitalize border flex items-center gap-2 w-fit mx-auto ${styles[level] || styles['Level 01']}`}>
+    <div className={`px-4 py-1.5 rounded-full text-[12px] font-medium tracking-[0.2em] capitalize border flex flex-col md:flex-row items-center gap-4 md:gap-2 w-fit mx-auto ${styles[level] || styles['Level 01']}`}>
       <div className={`w-1 h-1 rounded-full ${level === 'Level 03' ? 'bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse' : 'bg-current opacity-90'}`}></div>
       {level}
     </div>
   );
 };
 
-const BlacklistTable = () => {
+const RestrictedTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const blacklist = [];
@@ -33,7 +33,9 @@ const BlacklistTable = () => {
 
 
       <div className="flex-1 overflow-x-auto sm:overflow-visible bg-[var(--color-bg-default)] p-4 sm:p-0">
-        <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
+        
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
           <thead className="hidden sm:table-header-group">
             <tr className="bg-[var(--color-bg-paper)] border-b border-white/5">
               <th className="px-6 md:px-10 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-gray-300 opacity-80 whitespace-nowrap">Visitor</th>
@@ -66,12 +68,12 @@ const BlacklistTable = () => {
                       <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 capitalize block sm:hidden mb-4">Blacklist Reason</span>
                       <div className="flex flex-col gap-2">
                         <p className="text-white/80 capitalize text-[13px] font-medium tracking-widest leading-relaxed max-w-full sm:max-w-md break-words">{item.reason}</p>
-                        <div className="flex items-center gap-4">
-                          <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.3em] flex items-center gap-2">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
+                          <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.3em] flex flex-col md:flex-row items-center gap-4 md:gap-2">
                             <User size={10} className="text-primary/40" /> {item.addedBy}
                           </p>
                           <span className="text-white/5 text-[13px]">|</span>
-                          <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.3em] flex items-center gap-2">
+                          <p className="text-gray-300/80 capitalize text-[13px] font-medium tracking-[0.3em] flex flex-col md:flex-row items-center gap-4 md:gap-2">
                             <Clock size={10} className="text-primary/40" /> {item.date}
                           </p>
                         </div>
@@ -106,7 +108,7 @@ const BlacklistTable = () => {
                         <Shield size={32} className="text-primary/40" />
                       </div>
                       <div>
-                        <h3 className="text-white text-lg font-bold capitalize tracking-[0.2em] mb-2">No Restricted Identities</h3>
+                        <h3 className="text-white text-lg font-bold capitalize tracking-[0.2em] mb-2">No Blacklist Identities</h3>
                         <p className="text-gray-300/60 text-sm capitalize tracking-widest">Enforcement registry is currently clear.</p>
                       </div>
                     </div>
@@ -116,10 +118,12 @@ const BlacklistTable = () => {
             </AnimatePresence>
           </tbody>
         </table>
+</div>
+
       </div>
 
     </div>
   );
 };
 
-export default BlacklistTable;
+export default RestrictedTable;

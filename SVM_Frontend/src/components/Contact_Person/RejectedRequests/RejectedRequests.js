@@ -37,7 +37,7 @@ const RejectedRequestsMain = () => {
         <div className={`p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in transition-colors duration-500`}>
             <header className={`mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-6 gap-6 relative ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}>
                 <div>
-                  <h2 className={`text-lg font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>Rejected Requests</h2>
+                  <h2 className={`text-lg font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>Declined Requests</h2>
                   <p className={`text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/40"}`}>View denied visitor applications</p>
                 </div>
             </header>

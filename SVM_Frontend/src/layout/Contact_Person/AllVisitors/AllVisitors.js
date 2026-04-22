@@ -258,7 +258,7 @@ const ContactAllVisitors = () => {
 
               <button
                 onClick={openModal}
-                className="flex items-center gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
+                className="flex flex-col md:flex-row items-center gap-4 md:gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
               >
                 <Plus size={16} /> New Pre-Approval
               </button>
@@ -268,14 +268,14 @@ const ContactAllVisitors = () => {
           <div className={`border rounded-[32px] overflow-hidden relative z-10 ${isLight ? "bg-white border-gray-200 shadow-xl shadow-gray-200/50" : "bg-[#0F0F10] border-white/5"}`}>
 
             {isLoading ? (
-              <div className="p-20 flex flex-col items-center justify-center text-center">
+              <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin mb-6"></div>
                 <p className="text-gray-500 text-[13px] uppercase tracking-[0.3em] font-medium">
                   Scanning Entries...
                 </p>
               </div>
             ) : error ? (
-              <div className="p-20 text-center">
+              <div className="p-8 md:p-20 text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 text-primary">
                   <AlertCircle size={24} />
                 </div>
@@ -394,7 +394,7 @@ const ContactAllVisitors = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
 
               <div className="flex justify-between items-center p-6 border-b border-white/5 relative z-10 bg-black/20">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                   <div className="w-1.5 h-6 bg-primary rounded-full"></div>
                   <h2 className="text-lg font-bold text-white uppercase tracking-[0.2em]">
                     Pre-Approve Visitor
@@ -414,7 +414,7 @@ const ContactAllVisitors = () => {
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                       <User size={12} className="text-primary/60" /> Full Name
                     </label>
                     <input
@@ -429,7 +429,7 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                       <Hash size={12} className="text-primary/60" /> NIC /
                       Passport NO
                     </label>
@@ -445,7 +445,7 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                       <Mail size={12} className="text-primary/60" /> Email
                       Address
                     </label>
@@ -461,7 +461,7 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                       <Phone size={12} className="text-primary/60" /> Phone
                       Number
                     </label>
@@ -477,7 +477,7 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                       <Building size={12} className="text-primary/60" />{" "}
                       Representing Company
                     </label>
@@ -493,7 +493,7 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                       <Briefcase size={12} className="text-primary/60" />{" "}
                       Visitor Classification
                     </label>
@@ -509,7 +509,7 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                       <MapPin size={12} className="text-primary/60" /> Visiting
                       Area
                     </label>
@@ -525,7 +525,7 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[11px] text-primary uppercase tracking-widest font-semibold flex items-center gap-2 px-1">
+                    <label className="text-[11px] text-primary uppercase tracking-widest font-semibold flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                       <AlertCircle size={12} className="text-primary/60" />{" "}
                       Login Security Password
                     </label>
@@ -546,7 +546,7 @@ const ContactAllVisitors = () => {
 
                 {/* NEW: Vehicle Section */}
                 <div className="pt-6 border-t border-white/5 space-y-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                     <Car size={14} className="text-primary" />
                     <h3 className="text-xs font-bold text-white uppercase tracking-[0.2em] mb-0">
                       Vehicle Logistics

@@ -51,7 +51,7 @@ const StatusBadge = ({ status }) => {
     case "REJECTED":
       return (
         <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
-          Rejected
+          Declined
         </div>
       );
     case "ACCEPTED":
@@ -303,7 +303,7 @@ const VisitRequests = () => {
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center gap-3 bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-xl text-[12px] font-bold uppercase tracking-[0.2em] transition-all shadow-[0_8px_20px_rgba(200,16,46,0.3)] active:scale-95 group"
+                className="flex flex-col md:flex-row items-center gap-4 md:gap-3 bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-xl text-[12px] font-bold uppercase tracking-[0.2em] transition-all shadow-[0_8px_20px_rgba(200,16,46,0.3)] active:scale-95 group"
               >
                 <Plus size={16} className="group-hover:rotate-90 transition-transform" /> Create Visit Request
               </button>
@@ -330,7 +330,9 @@ const VisitRequests = () => {
               </div>
             ) : (
               <div className="overflow-x-auto custom-scrollbar relative z-10">
-                <table className="w-full border-collapse">
+                
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full border-collapse">
                   <thead>
                     <tr className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/40 border-b-white/5"}`}>
                       <th className={`px-6 py-4 text-left font-bold uppercase tracking-[0.2em] text-[13px] ${isLight ? "text-primary/60" : "text-primary"}`}>
@@ -367,7 +369,7 @@ const VisitRequests = () => {
                             #{req.VVR_Request_id}
                           </td>
                           <td className="px-6 py-5">
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                               <span className={`font-bold text-[13px] uppercase tracking-wider ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
                                 {req.VVR_Visitor_Name || req.VVR_Visitor_id}
                               </span>
@@ -388,7 +390,7 @@ const VisitRequests = () => {
                             </div>
                           </td>
                           <td className="px-6 py-5">
-                            <div className={`flex items-center gap-2 text-[13px] font-bold tracking-wide ${isLight ? "text-gray-400" : "text-white/50"}`}>
+                            <div className={`flex flex-col md:flex-row items-center gap-4 md:gap-2 text-[13px] font-bold tracking-wide ${isLight ? "text-gray-400" : "text-white/50"}`}>
                               <MapPin size={13} className="opacity-40" />
                               <span>{req.VVR_Places_to_Visit || "-"}</span>
                             </div>
@@ -433,6 +435,8 @@ const VisitRequests = () => {
                     )}
                   </tbody>
                 </table>
+</div>
+
               </div>
             )}
           </div>
@@ -445,7 +449,7 @@ const VisitRequests = () => {
               <div className={`absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none opacity-50`}></div>
 
               <div className="flex justify-between items-center p-8 border-b border-white/5 relative z-10 bg-white/[0.01]">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                   <div className="w-1.5 h-8 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
                   <div>
                     <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em] mb-1">Authorization Layer</p>
@@ -621,7 +625,7 @@ const VisitRequests = () => {
             onClick={handleDisableRequest}
             className="px-4 py-3 text-[12px] uppercase font-bold tracking-widest text-primary hover:bg-primary/5 transition-colors border-b border-white/5"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
               <XCircle size={14} /> Disable Visit Request
             </div>
           </MenuItem>
@@ -629,7 +633,7 @@ const VisitRequests = () => {
             onClick={handleSendToAdmin}
             className="px-4 py-3 text-[12px] uppercase font-bold tracking-widest text-green-500 hover:bg-green-500/5 transition-colors"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
               <CheckCircle2 size={14} /> Send to Admin for Approve
             </div>
           </MenuItem>

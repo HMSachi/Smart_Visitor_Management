@@ -14,7 +14,7 @@ const LogsHistoryMain = () => {
         <div className="p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-mas-border pb-12">
                 <div>
-                    <div className="flex items-center gap-4 mb-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-4">
                         <History size={14} className="text-primary" />
                         <span className="text-primary uppercase">Movement Archives</span>
                         <div className="h-[1px] w-12 bg-primary"></div>
@@ -22,7 +22,7 @@ const LogsHistoryMain = () => {
                     <h1 className="uppercase text-white">Log Registry</h1>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                     <div className="relative">
                         <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
                         <input 
@@ -31,11 +31,11 @@ const LogsHistoryMain = () => {
                             className="mas-input w-80 pl-12 bg-white/[0.02] border-white/5 focus:border-primary uppercase"
                         />
                     </div>
-                    <button className="flex items-center gap-3 px-6 py-3 mas-glass border-white/5 text-gray-300 hover:text-white transition-all uppercase">
+                    <button className="flex flex-col md:flex-row items-center gap-4 md:gap-3 px-6 py-3 mas-glass border-white/5 text-gray-300 hover:text-white transition-all uppercase">
                         <Filter size={14} />
                         Filter
                     </button>
-                    <button className="flex items-center gap-3 px-6 py-3 bg-primary text-white uppercase shadow-[0_0_20px_rgba(200,16,46,0.2)]">
+                    <button className="flex flex-col md:flex-row items-center gap-4 md:gap-3 px-6 py-3 bg-primary text-white uppercase shadow-[0_0_20px_rgba(200,16,46,0.2)]">
                         <Download size={14} />
                         Export
                     </button>
@@ -43,7 +43,9 @@ const LogsHistoryMain = () => {
             </div>
 
             <div className="mas-glass border-mas-border overflow-hidden">
-                <table className="w-full text-left border-collapse">
+                
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-white/[0.02] border-b border-white/5 text-[13px]">
                             <th className="px-10 py-6 uppercase text-gray-300"> personnel</th>
@@ -82,6 +84,8 @@ const LogsHistoryMain = () => {
                         ))}
                     </tbody>
                 </table>
+</div>
+
             </div>
         </div>
     );

@@ -11,7 +11,7 @@ import ContactPersonService from '../../../services/ContactPersonService';
 const mapStatus = (status) => {
     const normalized = (status || '').toString().trim().toUpperCase();
     if (normalized === 'A' || normalized === 'APPROVED') return 'Approved';
-    if (normalized === 'R' || normalized === 'REJECTED') return 'Rejected';
+    if (normalized === 'R' || normalized === 'REJECTED') return 'Declined';
     if (normalized === 'C' || normalized === 'CHECKED OUT' || normalized === 'CHECKED_OUT') return 'Checked Out';
     return 'Pending';
 };
@@ -148,7 +148,7 @@ const RequestsInboxMain = () => {
                             <option value="All" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>ALL STATUS</option>
                             <option value="Pending" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>PENDING</option>
                             <option value="Approved" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>APPROVED</option>
-                            <option value="Rejected" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>REJECTED</option>
+                            <option value="Declined" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>REJECTED</option>
                             <option value="Checked Out" className={isLight ? "bg-white text-[#1A1A1A]" : "bg-[#0A0A0B] text-white"}>CHECKED OUT</option>
                         </select>
                         <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none border-l pl-3 ${isLight ? "text-gray-400 border-gray-200" : "text-gray-300 border-white/10"}`}>

@@ -4,7 +4,7 @@ import { Car, Hash } from 'lucide-react';
 const VehicleDetails = ({ data, onChange }) => {
     return (
         <section className="animate-fade-in stagger-item">
-            <div className="flex items-center gap-3 mb-8">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-8">
                 <div className="text-primary">
                     <Car size={16} />
                 </div>
@@ -14,7 +14,7 @@ const VehicleDetails = ({ data, onChange }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 {/* Vehicle Type */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2 px-1">
+                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                         VEHICLE TYPE
                     </label>
                     <div className="relative">
@@ -31,7 +31,7 @@ const VehicleDetails = ({ data, onChange }) => {
 
                 {/* Plate Number */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2 px-1">
+                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] flex flex-col md:flex-row items-center gap-4 md:gap-2 px-1">
                         PLATE NUMBER
                     </label>
                     <div className="relative">

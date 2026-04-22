@@ -8,9 +8,9 @@ import { motion } from 'framer-motion';
 import { useThemeMode } from '../../theme/ThemeModeContext';
 
 const SectionHeader = ({ title, icon: Icon, isLight }) => (
-  <div className="flex items-center gap-5 mb-10 group/header">
+  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-5 mb-10 group/header">
     <div className="w-1.5 h-6 bg-primary rounded-full group-hover/header:h-10 transition-all duration-500"></div>
-    <div className="flex items-center gap-3">
+    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
       {Icon && <Icon size={16} className="text-primary/40 group-hover/header:scale-110 transition-transform" />}
       <h3 className={`uppercase text-xs tracking-widest font-bold ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>{title}</h3>
     </div>
@@ -20,7 +20,7 @@ const SectionHeader = ({ title, icon: Icon, isLight }) => (
 
 const Field = ({ label, value, icon: Icon, isLight }) => (
   <div className="group/field relative">
-    <div className="flex items-center gap-3 mb-2">
+    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-2">
       {Icon && <Icon size={12} className="text-primary/20 group-hover/field:text-primary transition-colors" />}
       <label className={`uppercase text-[13px] font-bold tracking-widest ${isLight ? "text-gray-400" : "text-white/40"}`}>{label}</label>
     </div>
@@ -67,7 +67,7 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
       }`}>
         <button
           onClick={onBack}
-          className={`flex items-center gap-3 uppercase text-[13px] font-bold tracking-widest hover:text-primary transition-all group relative z-10 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+          className={`flex flex-col md:flex-row items-center gap-4 md:gap-3 uppercase text-[13px] font-bold tracking-widest hover:text-primary transition-all group relative z-10 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
         >
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center group-hover:border-primary transition-all border ${
             isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"
@@ -77,7 +77,7 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
           Return to Inbox
         </button>
 
-        <div className="flex gap-4 w-full lg:w-auto relative z-10">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-4 w-full lg:w-auto relative z-10">
           {(visitor.status === "Pending" || visitor.status === "Sent to Admin" || visitor.status === "PENDING") && (
             <>
               <button
@@ -125,7 +125,7 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
           isLight ? "bg-gray-50 border-gray-200" : "bg-black/20 border-white/5 shadow-black/50"
         }`}>
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-          <div className="flex items-center gap-4 mb-10">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-10">
             <div className="w-1 h-4 bg-primary rounded-full"></div>
             <p className={`text-[13px] font-bold uppercase tracking-widest ${isLight ? "text-gray-400" : "text-white/40"}`}>Infrastructure Zone Authorization</p>
           </div>

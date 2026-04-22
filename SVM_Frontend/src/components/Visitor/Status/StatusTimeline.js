@@ -84,7 +84,7 @@ const StatusTimeline = ({ currentStage }) => {
               >
                 {stage.label}
               </h4>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                 <span
                   className={`text-[12px] font-bold uppercase tracking-[0.05em] ${
                     status === "active" ? "text-gray-400" : "text-gray-600"

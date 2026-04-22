@@ -68,7 +68,7 @@ const EntryApprovalMain = () => {
                         >
                             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                                 <div>
-                                    <div className="flex items-center gap-3 mb-1">
+                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-1">
                                         <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
                                             <Activity size={12} className="text-primary animate-pulse sm:w-4 sm:h-4" />
                                         </div>
@@ -102,13 +102,13 @@ const EntryApprovalMain = () => {
                                             <div className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-lg text-gray-300/80 text-[10px] font-medium uppercase tracking-widest w-fit">{v.time} via {v.nodeOrigin.split('_')[0]}</div>
                                             <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary text-[10px] font-medium uppercase tracking-widest w-fit">Waiting</div>
                                         </div>
-                                        <div className="flex items-center gap-2 sm:gap-3 relative z-10">
+                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 sm:gap-3 relative z-10">
                                             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-md bg-mas-dark border border-white/8 flex items-center justify-center text-primary font-medium text-[11px] group-hover:scale-105 group-hover:bg-primary group-hover:text-white transition-all shadow-[0_0_4px_rgba(200,16,46,0.06)] shrink-0">
                                                 {v.initials}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="text-white text-sm sm:text-base font-medium uppercase tracking-tight group-hover:text-primary transition-colors truncate break-words">{v.name}</h3>
-                                                <div className="flex items-center gap-2 mt-1">
+                                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mt-1">
                                                     <Shield size={10} className="text-gray-300/90 sm:w-3 sm:h-3" />
                                                     <span className="text-gray-300/90 text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.16em] truncate">{v.id}</span>
                                                 </div>
@@ -139,11 +139,11 @@ const EntryApprovalMain = () => {
                             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                                 <button 
                                     onClick={() => setView('list')}
-                                    className="px-6 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-gray-300 hover:text-white hover:border-white/30 transition-all flex items-center gap-3 text-[13px] font-medium uppercase tracking-widest group"
+                                    className="px-6 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-gray-300 hover:text-white hover:border-white/30 transition-all flex flex-col md:flex-row items-center gap-4 md:gap-3 text-[13px] font-medium uppercase tracking-widest group"
                                 >
                                     <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Access Queue
                                 </button>
-                                <div className="px-5 py-2.5 bg-primary/10 border border-primary/20 rounded-xl flex items-center gap-3 shadow-[0_0_20px_rgba(200,16,46,0.1)]">
+                                <div className="px-5 py-2.5 bg-primary/10 border border-primary/20 rounded-xl flex flex-col md:flex-row items-center gap-4 md:gap-3 shadow-[0_0_20px_rgba(200,16,46,0.1)]">
                                     <Lock size={14} className="text-primary" />
                                     <span className="text-primary text-[13px] font-medium uppercase tracking-widest">Encrypted_Profile_Sync</span>
                                 </div>
@@ -151,7 +151,7 @@ const EntryApprovalMain = () => {
 
                             <div className="mas-glass p-4 md:p-6 border-primary/20 bg-[var(--color-bg-paper)]/80 backdrop-blur-3xl rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
-                                <div className="absolute top-0 right-0 p-6 opacity-[0.02] font-mono text-5xl md:text-6xl font-medium pointer-events-none">{selectedVisitor?.id.split('-').pop()}</div>
+                                <div className="absolute top-0 right-0 p-6 opacity-[0.02] font-mono text-3xl md:text-5xl md:text-6xl font-medium pointer-events-none">{selectedVisitor?.id.split('-').pop()}</div>
 
                                 <div className="flex flex-col lg:flex-row gap-12 relative z-10 w-full">
                                     <div className="w-full lg:w-1/3 space-y-6 flex flex-col items-center lg:items-start text-center lg:text-left">
@@ -170,37 +170,37 @@ const EntryApprovalMain = () => {
                                     
                                         <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6">
                                         <div className="space-y-3">
-                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/50 mb-1">
                                                 <User size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Identity / NIC</span>
                                             </div>
                                                 <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-2 px-3 rounded-lg">{selectedVisitor?.nic}</p>
                                         </div>
                                         <div className="space-y-3">
-                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/50 mb-1">
                                                 <Activity size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Company / Org</span>
                                             </div>
                                                 <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-2 px-3 rounded-lg">{selectedVisitor?.company}</p>
                                         </div>
                                         <div className="space-y-3">
-                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/50 mb-1">
                                                 <FileText size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Mission Purpose</span>
                                             </div>
                                                 <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-2 px-3 rounded-lg">{selectedVisitor?.purpose}</p>
                                         </div>
                                         <div className="space-y-3">
-                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/50 mb-1">
                                                 <Car size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Vehicle Profile</span>
                                             </div>
                                                 <p className="text-white text-sm tracking-widest uppercase bg-white/[0.02] border border-white/5 py-2 px-3 rounded-lg">{selectedVisitor?.vehicle}</p>
                                         </div>
                                         <div className="sm:col-span-2 space-y-4">
-                                            <div className="flex items-center gap-2 text-gray-300/50 mb-1">
+                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/50 mb-1">
                                                 <Package size={14} /> <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Declared Assets</span>
                                             </div>
                                                 {selectedVisitor?.equipment.length > 0 ? (
                                                     <div className="flex flex-wrap gap-3">
                                                         {selectedVisitor.equipment.map((eq, i) => (
-                                                            <div key={i} className="px-4 py-2 bg-[var(--color-bg-default)] border border-white/10 rounded-lg flex items-center gap-3">
+                                                            <div key={i} className="px-4 py-2 bg-[var(--color-bg-default)] border border-white/10 rounded-lg flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                                                 <span className="text-white text-[13px] font-medium uppercase tracking-widest">{eq.name}</span>
                                                                 <div className="h-3 w-[1px] bg-white/10"></div>
                                                                 <span className="text-gray-300/90 text-[11px] font-mono tracking-widest opacity-90">S/N: {eq.serial}</span>

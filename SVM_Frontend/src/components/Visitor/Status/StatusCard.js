@@ -39,7 +39,7 @@ const StatusCard = ({ status }) => {
             color: 'text-primary', 
             bg: 'bg-primary/20', 
             border: 'border-primary/40', 
-            label: 'Request Rejected', 
+            label: 'Request Declined', 
             icon: XCircle,
             desc: 'Access authorization failed.'
         }
@@ -51,7 +51,7 @@ const StatusCard = ({ status }) => {
     return (
         <div className="relative p-6 bg-white/[0.01] border border-white/5 rounded-xl transition-all duration-300">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-                <div className="flex items-center gap-6 text-center md:text-left flex-col md:flex-row">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left flex-col md:flex-row">
                     <div className={`w-10 h-10 rounded-lg ${current.bg} border ${current.border} flex items-center justify-center ${current.color}`}>
                         <Icon size={18} />
                     </div>

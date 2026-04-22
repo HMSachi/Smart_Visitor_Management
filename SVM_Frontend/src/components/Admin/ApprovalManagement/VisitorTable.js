@@ -9,13 +9,13 @@ const StatusBadge = ({ status }) => {
     'Pending': 'border-primary/20 text-primary bg-primary/5',
     'Sent to Admin': 'border-orange-500/20 text-orange-500 bg-orange-500/5',
     'Accepted': 'border-purple-500/20 text-purple-500 bg-purple-500/5',
-    'Rejected': 'border-white/10 text-gray-300 bg-white/5',
+    'Declined': 'border-white/10 text-gray-300 bg-white/5',
     'Checked In': 'border-blue-500/20 text-blue-500 bg-blue-500/5',
     'Checked Out': 'border-white/5 text-gray-300/80 bg-transparent',
   };
 
   return (
-    <div className={`px-4 py-1.5 rounded-full text-[12px] font-medium tracking-[0.2em] capitalize border flex items-center gap-2 w-fit mx-auto ${styles[status] || styles['Pending']}`}>
+    <div className={`px-4 py-1.5 rounded-full text-[12px] font-medium tracking-[0.2em] capitalize border flex flex-col md:flex-row items-center gap-4 md:gap-2 w-fit mx-auto ${styles[status] || styles['Pending']}`}>
       <div className={`w-1 h-1 rounded-full ${status === 'Approved' || status === 'Accepted by Admin' || status === 'Checked In' ? 'bg-green-500 shadow-[0_0_5px_#22c55e]' : status === 'Accepted' ? 'bg-purple-500 shadow-[0_0_5px_#a855f7]' : status === 'Sent to Admin' ? 'bg-orange-500 shadow-[0_0_5px_#f97316] animate-pulse' : status === 'Pending' ? 'bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse' : 'bg-mas-text-dim opacity-80'}`}></div>
       {status}
     </div>
@@ -52,7 +52,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
     <div className="bg-[var(--color-bg-paper)] border border-white/5 p-6 md:p-12 rounded-[40px] animate-pulse shadow-2xl">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-8">
         <div className="h-10 w-64 bg-white/[0.03] rounded-2xl"></div>
-        <div className="flex gap-4 w-full md:w-auto">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-4 w-full md:w-auto">
           <div className="h-12 w-full sm:w-48 bg-white/[0.03] rounded-2xl"></div>
           <div className="h-12 w-full sm:w-32 bg-white/[0.03] rounded-2xl"></div>
         </div>
@@ -87,7 +87,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
         {/* Filter Hub */}
-        <div className="p-8 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 relative z-10">
+        <div className="p-8 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col xl:flex-col md:flex-row justify-between items-start xl:items-center gap-8 relative z-10">
         
         {/* Segmented Control Container */}
         <div className="flex bg-[var(--color-surface-2)] p-1 rounded-2xl border border-white/5 relative overflow-x-auto no-scrollbar max-w-full">
@@ -96,7 +96,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
             { id: 'Pending', label: 'Pending' },
             { id: 'Sent to Admin', label: 'Sent to Admin' },
             { id: 'Accepted by Admin', label: 'Accepted by Admin' },
-            { id: 'Rejected', label: 'Rejected' },
+            { id: 'Declined', label: 'Declined' },
           ].map((btn) => (
             <button
               key={btn.id}
@@ -125,7 +125,9 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
         
         <div className="overflow-auto bg-transparent">
           {/* DESKTOP TABLE VIEW */}
-        <table className="w-full text-left border-collapse hidden md:table">
+        
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full text-left border-collapse hidden md:table">
           <thead>
             <tr className="bg-transparent border-b border-white/5">
               <th className="px-8 py-5 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-24 opacity-60">REF.</th>
@@ -134,7 +136,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                 className="px-8 py-6 text-[13px] font-medium tracking-[0.3em] capitalize text-white/70 cursor-pointer hover:text-primary transition-colors group"
                 onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                   SCHEDULED VISIT
                   <div className={`transition-transform duration-300 ${sortOrder === 'asc' ? 'rotate-180' : ''}`}>
                     <ChevronDown size={14} className={sortOrder ? 'text-primary' : 'text-[var(--color-text-dim)]'} />
@@ -162,11 +164,11 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                   </td>
                   <td className="px-8 py-8">
                     <div className="flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                         <Calendar size={12} className="text-primary/60" />
                         <span className="text-white capitalize text-[13px] font-medium tracking-widest">{visitor.date}</span>
                       </div>
-                      <p className="text-white/70 capitalize text-[12px] font-medium tracking-widest truncate max-w-[220px] flex items-center gap-2"><MapPin size={10} className="text-primary/70" /> {visitor.areas.join(' | ')}</p>
+                      <p className="text-white/70 capitalize text-[12px] font-medium tracking-widest truncate max-w-[220px] flex flex-col md:flex-row items-center gap-4 md:gap-2"><MapPin size={10} className="text-primary/70" /> {visitor.areas.join(' | ')}</p>
                     </div>
                   </td>
                   <td className="px-8 py-8 text-center">
@@ -175,10 +177,10 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                       {hasGatePass(visitor.id) && (
                         <button
                           onClick={() => onAction(visitor, 'ViewGatePass')}
-                          className="flex items-center gap-2 text-[10px] items-center justify-center font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
+                          className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-[10px] items-center justify-center font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
                         >
                           <QrCode size={12} className="group-hover/gp:scale-110 transition-transform" />
-                          View Gate Pass
+                          View GatePass
                         </button>
                       )}
                     </div>
@@ -214,7 +216,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                         <div className="p-4 md:p-10 pl-32 space-y-6 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
                           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-                          <div className="flex items-center gap-4 mb-8">
+                          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-8">
                             <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
                             <p className="text-primary text-[13px] font-medium capitalize tracking-[0.3em]">Personnel Unit Breakdown <span className="text-gray-300/80 ml-2">// Institutional Registry</span></p>
                           </div>
@@ -228,13 +230,13 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                                 transition={{ delay: idx * 0.1 }}
                                 className="flex items-center justify-between p-6 bg-[var(--color-bg-paper)] border border-white/5 hover:border-primary/30 transition-all duration-500 rounded-[24px] group/member shadow-2xl"
                               >
-                                <div className="flex items-center gap-5">
+                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-5">
                                   <div className="w-10 h-10 rounded-xl bg-[var(--color-bg-default)] border border-white/5 flex items-center justify-center text-gray-300 text-[13px] font-medium group-hover/member:border-primary transition-all">
                                     {(idx + 2).toString().padStart(2, '0')}
                                   </div>
                                   <div className="flex flex-col gap-1">
                                     <span className="text-white text-[13px] font-medium capitalize tracking-widest group-hover/member:text-primary transition-colors">{member.name}</span>
-                                    <span className="text-gray-300/80 text-[12px] font-medium capitalize tracking-[0.2em] flex items-center gap-2"><Hash size={10} className="text-primary/40" /> {member.nic}</span>
+                                    <span className="text-gray-300/80 text-[12px] font-medium capitalize tracking-[0.2em] flex flex-col md:flex-row items-center gap-4 md:gap-2"><Hash size={10} className="text-primary/40" /> {member.nic}</span>
                                   </div>
                                 </div>
                                 <div className="text-right">
@@ -253,6 +255,8 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
             ))}
           </tbody>
         </table>
+</div>
+
 
         {/* MOBILE CARDS VIEW */}
         <div className="md:hidden flex flex-col p-8 gap-8">
@@ -271,7 +275,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                   {hasGatePass(visitor.id) && (
                     <button
                       onClick={() => onAction(visitor, 'ViewGatePass')}
-                      className="flex items-center gap-2 text-[10px] font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
+                      className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-[10px] font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
                     >
                       <QrCode size={12} className="group-hover/gp:scale-110 transition-transform" />
                       View Pass
@@ -283,15 +287,15 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
               {/* Mobile Card Body */}
               <div className="p-6 space-y-5 relative z-10">
                 <div className="flex justify-between items-center text-[13px] font-medium capitalize tracking-[0.2em] border-b border-white/[0.03] pb-4">
-                  <span className="text-gray-300/80 flex items-center gap-2"><Calendar size={12} className="text-primary/60" /> Deployed</span>
+                  <span className="text-gray-300/80 flex flex-col md:flex-row items-center gap-4 md:gap-2"><Calendar size={12} className="text-primary/60" /> Deployed</span>
                   <span className="text-white">{visitor.date} <span className="text-primary mx-1">//</span> {visitor.timeIn}</span>
                 </div>
                 <div className="flex justify-between items-center text-[13px] font-medium capitalize tracking-[0.2em] border-b border-white/[0.03] pb-4">
-                  <span className="text-gray-300/80 flex items-center gap-2"><MapPin size={12} className="text-primary/60" /> Zones</span>
+                  <span className="text-gray-300/80 flex flex-col md:flex-row items-center gap-4 md:gap-2"><MapPin size={12} className="text-primary/60" /> Zones</span>
                   <span className="text-white text-right max-w-[150px] truncate">{visitor.areas.join(' | ')}</span>
                 </div>
                 <div className="flex justify-between items-center text-[13px] font-medium capitalize tracking-[0.2em]">
-                  <span className="text-gray-300/80 flex items-center gap-2"><Shield size={12} className="text-primary/60" /> Unit Size</span>
+                  <span className="text-gray-300/80 flex flex-col md:flex-row items-center gap-4 md:gap-2"><Shield size={12} className="text-primary/60" /> Unit Size</span>
                   <span className="text-primary bg-primary/10 px-3 py-1 rounded-full text-[12px]">{visitor.members.length + 1} PERSONNEL</span>
                 </div>
               </div>
@@ -336,7 +340,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
               )}
 
               {/* Mobile Card Actions */}
-              <div className="p-6 border-t border-white/5 bg-black/40 flex gap-4 relative z-10">
+              <div className="p-6 border-t border-white/5 bg-black/40 flex flex-col md:flex-row gap-4 md:gap-4 relative z-10">
                 {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin') && (
                   <>
                     <button onClick={() => onAction(visitor, 'Approve')} className="flex-1 h-14 flex justify-center items-center gap-3 bg-green-500/5 border border-green-500/20 text-green-500 text-[13px] font-medium capitalize tracking-[0.2em] rounded-2xl hover:bg-green-500 hover:text-white transition-all shadow-xl">
@@ -354,7 +358,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
             </div>
           ))}
           {filteredVisitors.length === 0 && (
-            <div className="p-16 text-center bg-white/[0.01] border border-white/5 rounded-[40px] shadow-2xl">
+            <div className="p-6 md:p-16 text-center bg-white/[0.01] border border-white/5 rounded-[40px] shadow-2xl">
               <div className="w-16 h-16 bg-[var(--color-bg-paper)] rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/5">
                 <Shield size={24} className="text-primary opacity-70" />
               </div>

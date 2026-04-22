@@ -26,7 +26,7 @@ const AboutAccessSystem = () => {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row items-baseline justify-between mb-12 gap-4">
                     <div className="max-w-xl">
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mb-3">
                             <div className="w-6 h-[1px] bg-primary/50"></div>
                             <span className="text-primary uppercase tracking-widest text-[12px] font-bold">Facility Grid</span>
                         </div>
@@ -57,7 +57,7 @@ const AboutAccessSystem = () => {
                                     <p className="text-gray-500 text-[14px] leading-relaxed mb-4 group-hover:text-gray-300">
                                         {feature.description}
                                     </p>
-                                    <div className="flex items-center gap-2 text-primary text-[13px] font-bold uppercase tracking-widest">
+                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-primary text-[13px] font-bold uppercase tracking-widest">
                                         <span>Initialize</span>
                                         <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                     </div>

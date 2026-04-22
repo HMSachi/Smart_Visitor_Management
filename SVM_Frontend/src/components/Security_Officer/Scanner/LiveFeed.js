@@ -265,7 +265,7 @@ const LiveFeed = () => {
               <button
                 onClick={startScanner}
                 disabled={scanStatus === "scanning" || isLoading}
-                className={`px-16 py-5 bg-primary text-white font-black uppercase text-xs tracking-[0.4em] shadow-[0_0_50px_rgba(200,16,46,0.3)] transition-all flex items-center gap-4 ${scanStatus === "scanning" ? "opacity-50 grayscale" : "hover:scale-105 active:scale-95"}`}
+                className={`px-16 py-5 bg-primary text-white font-black uppercase text-xs tracking-[0.4em] shadow-[0_0_50px_rgba(200,16,46,0.3)] transition-all flex flex-col md:flex-row items-center gap-4 md:gap-4 ${scanStatus === "scanning" ? "opacity-50 grayscale" : "hover:scale-105 active:scale-95"}`}
               >
                 <RefreshCw
                   size={18}
@@ -291,7 +291,7 @@ const LiveFeed = () => {
             <div className="absolute top-0 left-0 w-full h-2 bg-green-500/50"></div>
 
             <div className="p-10 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
                 <div className="w-16 h-16 bg-green-500/10 border border-green-500/30 rounded-3xl flex items-center justify-center text-green-500 shadow-lg">
                   <ShieldCheck size={32} />
                 </div>
@@ -316,7 +316,7 @@ const LiveFeed = () => {
 
             <div className="p-10 grid grid-cols-2 gap-10">
               <div className="space-y-3">
-                <label className="flex items-center gap-2 text-gray-500 uppercase text-[10px] font-bold tracking-[0.3em]">
+                <label className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-500 uppercase text-[10px] font-bold tracking-[0.3em]">
                   <User size={12} className="text-primary" /> Personnel Identity
                 </label>
                 <p className="text-white text-lg font-bold uppercase tracking-widest bg-white/5 p-4 rounded-2xl border border-white/5 shadow-inner">
@@ -324,7 +324,7 @@ const LiveFeed = () => {
                 </p>
               </div>
               <div className="space-y-3">
-                <label className="flex items-center gap-2 text-gray-500 uppercase text-[10px] font-bold tracking-[0.3em]">
+                <label className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-500 uppercase text-[10px] font-bold tracking-[0.3em]">
                   <Clipboard size={12} className="text-primary" /> Request
                   Protocol
                 </label>
@@ -334,7 +334,7 @@ const LiveFeed = () => {
               </div>
               {hasFullQrProfile && (
                 <div className="col-span-2 space-y-3">
-                  <label className="flex items-center gap-2 text-gray-500 uppercase text-[10px] font-bold tracking-[0.3em]">
+                  <label className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-500 uppercase text-[10px] font-bold tracking-[0.3em]">
                     <QrCode size={12} className="text-primary" /> Decoded QR
                     Profile
                   </label>
@@ -353,12 +353,12 @@ const LiveFeed = () => {
                 </div>
               )}
               <div className="col-span-2 space-y-3 pt-4">
-                <label className="flex items-center gap-2 text-gray-500 uppercase text-[10px] font-bold tracking-[0.3em]">
+                <label className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-500 uppercase text-[10px] font-bold tracking-[0.3em]">
                   <Zap size={12} className="text-primary" /> Authorization
                   Insights
                 </label>
                 <div className="bg-green-500/5 border border-green-500/10 rounded-3xl p-6 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                     <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                     <span className="text-white/90 text-[11px] uppercase tracking-widest font-medium italic">
                       Credential integrity confirmed via Cloud-Link
@@ -371,7 +371,7 @@ const LiveFeed = () => {
               </div>
             </div>
 
-            <div className="p-10 bg-black/20 border-t border-white/5 flex gap-4">
+            <div className="p-10 bg-black/20 border-t border-white/5 flex flex-col md:flex-row gap-4 md:gap-4">
               <button
                 onClick={() => alert("Verification Log Saved to Cluster")}
                 className="flex-1 bg-white text-black hover:bg-green-500 hover:text-white py-5 font-black uppercase text-xs tracking-[0.3em] rounded-2xl transition-all flex items-center justify-center gap-3"
@@ -390,19 +390,19 @@ const LiveFeed = () => {
       </AnimatePresence>
 
       <div className="flex items-center justify-center gap-8 py-8 border-t border-white/5 opacity-50">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
           <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
           <span className="text-gray-500 uppercase text-[9px] font-bold tracking-widest">
             Biometric: Active
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
           <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
           <span className="text-gray-500 uppercase text-[9px] font-bold tracking-widest">
             Log: Syncing
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
           <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
           <span className="text-gray-500 uppercase text-[9px] font-bold tracking-widest">
             Node: {navigator.onLine ? "ONLINE" : "OFFLINE"}

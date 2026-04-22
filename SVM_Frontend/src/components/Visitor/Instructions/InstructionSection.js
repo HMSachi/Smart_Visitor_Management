@@ -22,7 +22,7 @@ const InstructionSection = ({
       }`}
     >
 
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-6">
         <div
           className={`w-8 h-8 rounded-lg flex items-center justify-center ${
             isWarning

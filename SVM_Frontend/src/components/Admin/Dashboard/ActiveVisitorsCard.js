@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
-import { Activity, Zap, ShieldCheck } from 'lucide-react';
+import { Activity, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ActiveVisitorsCard = () => {
@@ -12,70 +12,85 @@ const ActiveVisitorsCard = () => {
     let start = displayCount;
     const end = activeVisitors;
     if (start === end) return;
-    let totalDuration = 1000;
-    let frameDuration = 1000 / 60;
-    let totalFrames = Math.round(totalDuration / frameDuration);
+    const totalFrames = 60;
     let counter = 0;
     const timer = setInterval(() => {
       counter++;
       const progress = counter / totalFrames;
-      const currentCount = Math.round(start + (end - start) * progress);
-      setDisplayCount(currentCount);
+      setDisplayCount(Math.round(start + (end - start) * progress));
       if (counter === totalFrames) clearInterval(timer);
-    }, frameDuration);
+    }, 1000 / 60);
     return () => clearInterval(timer);
   }, [activeVisitors]);
 
   const data = Array.from({ length: 12 }, (_, i) => ({
     val: Math.floor(Math.random() * 50) + 10,
-    active: i === 11
+    active: i === 11,
   }));
 
   return (
-    <div className="mas-glass p-8 group relative overflow-hidden animate-shine cursor-pointer border-white/[0.05] shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-all duration-500">
-      <div className="flex justify-between items-start mb-6 relative z-10">
+    <div
+      className="group relative overflow-hidden cursor-pointer h-full"
+      style={{
+        background: 'var(--color-bg-paper)',
+        border: '1px solid var(--color-border-soft)',
+        borderRadius: '16px',
+        padding: '1.5rem',
+        boxShadow: 'var(--shadow-card)',
+        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+      }}
+    >
+      {/* Background decoration */}
+      <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-30 blur-3xl group-hover:opacity-50 transition-all" style={{ background: 'rgba(200,16,46,0.15)' }} />
+
+      {/* Header */}
+      <div className="flex items-start justify-between mb-5 relative z-10">
         <div>
-          <div className="flex items-center space-x-3 mb-3">
+          <div className="flex items-center gap-2 mb-2">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
             </span>
-            <p className="text-gray-300 capitalize">Protocols Active</p>
+            <p className="text-[var(--color-text-secondary)] text-[12.5px] font-medium">Currently On-Site</p>
           </div>
           <AnimatePresence mode="wait">
-            <motion.h2 
+            <motion.div
               key={displayCount}
-              initial={{ y: 10, opacity: 0 }}
+              initial={{ y: 8, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="text-white flex items-baseline"
+              className="flex items-baseline gap-2"
             >
-              {displayCount}
-              <span className="text-primary ml-3 capitalize">Nodes</span>
-            </motion.h2>
+              <span className="text-3xl font-bold text-[var(--color-text-primary)]">{displayCount}</span>
+              <span className="text-primary text-sm font-semibold">visitors</span>
+            </motion.div>
           </AnimatePresence>
         </div>
-        <div className="p-4 bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-white group-hover:shadow-[0_0_20px_rgba(200,16,46,0.4)] transition-all duration-500">
-          <Zap size={24} fill="currentColor" />
+
+        <div
+          className="w-11 h-11 rounded-2xl flex items-center justify-center text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white"
+          style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.2)' }}
+        >
+          <Users size={20} strokeWidth={2} />
         </div>
       </div>
 
-      <div className="space-y-6 relative z-10">
-        <div className="flex justify-between items-end border-b border-white/5 pb-2">
-          <p className="text-white/80 capitalize">Traffic Density</p>
-          <div className="flex items-center text-green-500 capitalize">
-            <Activity size={12} className="mr-1.5" />
+      {/* Chart section */}
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[var(--color-text-secondary)] text-[12px] font-medium">Hourly Traffic</p>
+          <div className="flex items-center gap-1.5 text-green-500 text-[12px] font-semibold">
+            <Activity size={12} />
             Stable
           </div>
         </div>
-        
-        <div className="h-20 w-full opacity-90 group-hover:opacity-100 transition-all">
+        <div className="h-16 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data}>
-              <Bar dataKey="val">
+            <BarChart data={data} barCategoryGap="20%">
+              <Bar dataKey="val" radius={[3, 3, 0, 0]}>
                 {data.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={index === data.length - 1 ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)'} 
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={index === data.length - 1 ? 'var(--color-primary)' : 'rgba(255,255,255,0.06)'}
                   />
                 ))}
               </Bar>
@@ -84,9 +99,8 @@ const ActiveVisitorsCard = () => {
         </div>
       </div>
 
-      <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-all">
-        <ShieldCheck size={120} className="text-white" />
-      </div>
+      {/* Bottom accent */}
+      <div className="absolute bottom-0 left-0 h-[2px] w-0 group-hover:w-full transition-all duration-700 bg-primary" />
     </div>
   );
 };

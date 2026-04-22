@@ -169,7 +169,7 @@ const UserManagement = () => {
         <div className="max-w-[1600px] mx-auto">
           <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
             <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-6 py-4 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-2">
                 <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
                 <span className="text-[var(--color-text-primary)] text-[14px] font-bold uppercase tracking-[0.4em]">User Administration</span>
               </div>
@@ -178,7 +178,7 @@ const UserManagement = () => {
               </p>
 
               {/* Horizontal Tab Navigation */}
-              <div className="flex gap-6 mt-6 border-t border-white/5 pt-4">
+              <div className="flex flex-col md:flex-row gap-4 md:gap-6 mt-6 border-t border-white/5 pt-4">
                 {['CONTACT', 'SECURITY', 'VISITOR'].map((tab) => (
                   <button
                     key={tab}
@@ -188,7 +188,7 @@ const UserManagement = () => {
                         : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-secondary)]'
                       }`}
                   >
-                    {tab === 'CONTACT' ? 'Contact Persons' : tab === 'SECURITY' ? 'Security Officers' : 'Visitor Accounts'}
+                    {tab === 'CONTACT' ? 'Contact Persons' : tab === 'SECURITY' ? 'Security Supports' : 'Visitor Accounts'}
                     {activeTab === tab && (
                       <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
                     )}
@@ -197,7 +197,7 @@ const UserManagement = () => {
               </div>
             </div>
             {!isFormVisible && (
-              <div className="flex gap-4 items-center">
+              <div className="flex flex-col md:flex-row gap-4 md:gap-4 items-center">
                 <div className="flex items-center bg-black/40 border border-white/10 px-3 py-1 group focus-within:border-primary transition-all">
                   <Search size={16} className="text-white/20 group-focus-within:text-primary" />
                   <InputBase

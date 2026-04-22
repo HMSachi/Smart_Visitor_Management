@@ -7,14 +7,14 @@ const DashboardMain = () => {
             <div className="max-w-[1600px] mx-auto space-y-10">
                 <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-4">
                     <div>
-                        <div className="flex items-center gap-3 mb-1">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-1">
                             <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)] animate-pulse"></div>
                             <span className="text-gray-300 text-[13px] font-medium uppercase tracking-[0.3em]">Security Command</span>
                         </div>
                         <p className="text-gray-300 text-xs uppercase tracking-widest opacity-90">Global security node and tactical overview</p>
                     </div>
 
-                    <div className="flex items-center gap-6 bg-white/[0.02] border border-white/5 p-4 px-6 rounded-2xl backdrop-blur-md shadow-2xl">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 bg-white/[0.02] border border-white/5 p-4 px-6 rounded-2xl backdrop-blur-md shadow-2xl">
                         <div className="text-right">
                             <p className="text-gray-300 text-[12px] uppercase font-medium tracking-widest mb-1 opacity-80">Node Status</p>
                             <div className="flex items-center justify-end gap-2">

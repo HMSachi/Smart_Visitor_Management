@@ -55,7 +55,7 @@ const InstructionsMain = () => {
             {/* Header Section */}
             <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mb-3">
                         <div className="w-6 h-[1px] bg-primary/50" />
                         <span className="text-primary font-bold uppercase tracking-widest text-[12px]">Operational Protocol</span>
                     </div>

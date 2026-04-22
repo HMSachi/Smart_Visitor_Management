@@ -40,20 +40,20 @@ const StatusBadge = ({ status }) => {
     case "A":
     case "APPROVED":
       return (
-        <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+        <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max shadow-[0_0_15px_rgba(34,197,94,0.1)]">
           <CheckCircle2 size={12} /> Approved
         </div>
       );
     case "R":
     case "REJECTED":
       return (
-        <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
-          <XCircle size={12} /> Rejected
+        <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
+          <XCircle size={12} /> Declined
         </div>
       );
     case "ACCEPTED":
       return (
-        <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
+        <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
           <CheckCircle2 size={12} /> Accepted
         </div>
       );
@@ -61,7 +61,7 @@ const StatusBadge = ({ status }) => {
     case "PENDING":
     default:
       return (
-        <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
+        <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
           <Clock size={12} /> Pending
         </div>
       );
@@ -274,7 +274,7 @@ const MyRequests = () => {
                         className="hover:bg-white/[0.02] transition-all"
                       >
                         <TableCell className="px-6 py-5 border-b-white/5">
-                          <div className="flex items-center gap-3">
+                          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                               <Hash size={14} />
                             </div>
@@ -284,7 +284,7 @@ const MyRequests = () => {
                           </div>
                         </TableCell>
                         <TableCell className="px-6 py-5 border-b-white/5">
-                          <div className="flex items-center gap-3 text-gray-300">
+                          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 text-gray-300">
                             <Calendar size={14} className="text-primary/50" />
                             <span className="text-sm font-medium tracking-normal">
                               {req.VVR_Visit_Date
@@ -294,7 +294,7 @@ const MyRequests = () => {
                           </div>
                         </TableCell>
                         <TableCell className="px-6 py-5 border-b-white/5">
-                          <div className="flex items-center gap-3 text-gray-300">
+                          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 text-gray-300">
                             <MapPin size={14} className="text-primary/50" />
                             <span className="text-sm font-medium tracking-normal">
                               {req.VVR_Places_to_Visit || "-"}
@@ -312,10 +312,10 @@ const MyRequests = () => {
                             {hasGatePass(req.VVR_Request_id) && (
                               <button
                                 onClick={() => handleViewGatePass(req)}
-                                className="flex items-center gap-2 text-[10px] justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"
+                                className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-[10px] justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"
                               >
                                 <QrCode size={12} className="group-hover/gp:scale-110 transition-transform" />
-                                View Gate Pass
+                                View GatePass
                               </button>
                             )}
                           </div>
@@ -445,7 +445,7 @@ const MyRequests = () => {
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col md:flex-row gap-4 md:gap-4 pt-4">
                 <button
                   type="button"
                   onClick={closeModal}

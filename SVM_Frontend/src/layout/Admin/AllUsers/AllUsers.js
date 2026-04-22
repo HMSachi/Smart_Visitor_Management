@@ -48,13 +48,13 @@ const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
   if (s === "ACTIVE" || s === "A") {
     return (
-      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex items-center gap-2 w-max">
+      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
         <CheckCircle2 size={12} /> Active
       </div>
     );
   }
   return (
-    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex items-center gap-2 w-max">
+    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
       <AlertCircle size={12} /> Inactive
     </div>
   );
@@ -274,7 +274,7 @@ const AllUsers = () => {
     },
     {
       id: "SECURITY",
-      title: "Security Officers",
+      title: "Security Supports",
       icon: Shield,
       data: administrators.filter((a) => a.VA_Role === "Security"),
     },
@@ -315,7 +315,7 @@ const AllUsers = () => {
         <div className="max-w-[1600px] mx-auto">
           <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
             <div>
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-2">
                 <div className="w-8 h-[2px] bg-primary"></div>
                 <span className="text-primary uppercase tracking-wider text-xs font-semibold">
                   User Directory
@@ -397,7 +397,7 @@ const AllUsers = () => {
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
+                className="flex flex-col md:flex-row items-center gap-4 md:gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
               >
                 <Plus size={16} /> Add New User
               </button>
@@ -406,14 +406,14 @@ const AllUsers = () => {
 
           <div className="space-y-12">
             {loading ? (
-              <div className="p-20 flex flex-col items-center justify-center text-center">
+              <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
                 <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
                   Loading Users...
                 </p>
               </div>
             ) : error ? (
-              <div className="p-20 text-center">
+              <div className="p-8 md:p-20 text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 text-primary">
                   <AlertCircle size={24} />
                 </div>
@@ -424,7 +424,7 @@ const AllUsers = () => {
             ) : (
               filteredCategories.map((cat) => (
                 <section key={cat.id} className="relative">
-                  <div className="flex items-center gap-4 mb-6">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-6">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
                       <cat.icon size={20} />
                     </div>
@@ -515,7 +515,7 @@ const AllUsers = () => {
                                   }}
                                 >
                                   <TableCell className="text-white/70 font-medium border-b-white/5">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                                       <Hash
                                         size={12}
                                         className="text-primary/40"
@@ -612,7 +612,7 @@ const AllUsers = () => {
               className="p-6 space-y-4 relative z-10"
             >
               <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                   <User size={12} /> Name
                 </label>
                 <input
@@ -627,7 +627,7 @@ const AllUsers = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                   <Mail size={12} /> Email
                 </label>
                 <input
@@ -644,7 +644,7 @@ const AllUsers = () => {
               {formData.type === "CONTACT" ? (
                 <>
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Users size={12} /> Department
                     </label>
                     <input
@@ -658,7 +658,7 @@ const AllUsers = () => {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <X size={12} /> Phone Connection
                     </label>
                     <input
@@ -675,7 +675,7 @@ const AllUsers = () => {
               ) : (
                 <>
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Users size={12} /> Department
                     </label>
                     <input
@@ -689,7 +689,7 @@ const AllUsers = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Phone size={12} /> Phone
                     </label>
                     <input
@@ -703,7 +703,7 @@ const AllUsers = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Shield size={12} /> Role
                     </label>
                     <select
@@ -716,12 +716,12 @@ const AllUsers = () => {
                       <option value="">Select a role</option>
                       <option value="Admin">Admin</option>
                       <option value="Security">Security</option>
-                      <option value="Contact_Person">Contact Person</option>
+                      <option value="Contact_Person">Host</option>
                     </select>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Hash size={12} /> Password
                     </label>
                     <input

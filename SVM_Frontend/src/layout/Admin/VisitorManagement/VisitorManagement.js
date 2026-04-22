@@ -17,13 +17,13 @@ const StatusBadge = ({ status }) => {
   const s = (status || '').toString().trim().toUpperCase();
   if (s === 'ACTIVE' || s === 'A') {
     return (
-      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex items-center gap-2 w-max">
+      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
         <CheckCircle2 size={12} /> Active
       </div>
     );
   }
   return (
-    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex items-center gap-2 w-max">
+    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
       <AlertCircle size={12} /> Inactive
     </div>
   );
@@ -67,7 +67,7 @@ const VisitorManagement = () => {
 
           <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
             <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-6 py-4 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-2">
                 <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
                 <span className="text-[var(--color-text-primary)] text-[14px] font-bold uppercase tracking-[0.4em]">Visitor Registry</span>
               </div>
@@ -100,12 +100,12 @@ const VisitorManagement = () => {
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
             {isLoading ? (
-              <div className="p-20 flex flex-col items-center justify-center text-center">
+              <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
                 <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">Scanning Entries...</p>
               </div>
             ) : error ? (
-              <div className="p-20 text-center">
+              <div className="p-8 md:p-20 text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 text-primary">
                   <AlertCircle size={24} />
                 </div>

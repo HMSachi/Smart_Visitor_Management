@@ -5,7 +5,7 @@ const StatusBadge = ({ status }) => {
   const styles = {
     'Approved': 'text-green-500 bg-green-500/10 border-green-500/20',
     'Pending': 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
-    'Rejected': 'text-primary bg-primary/10 border-primary/20',
+    'Declined': 'text-primary bg-primary/10 border-primary/20',
     'Checked In': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
     'Checked Out': 'text-[var(--color-text-secondary)] bg-[var(--color-surface-1)] border-[var(--color-border-soft)]',
     'Accepted': 'text-purple-500 bg-purple-500/10 border-purple-500/20',
@@ -25,7 +25,9 @@ const RequestsTable = ({ requests, onReview }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
 
       <div className="overflow-x-auto sm:overflow-visible p-4 sm:p-0 z-10 relative">
-        <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
+        
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
           <thead className="hidden sm:table-header-group">
             <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] text-[11px] font-bold uppercase tracking-[0.2em]">
               <th className="px-8 py-3 w-20 text-center">Unit</th>
@@ -73,7 +75,7 @@ const RequestsTable = ({ requests, onReview }) => {
                   <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Actions</span>
                   <button
                     onClick={() => onReview(visitor.id)}
-                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl border border-[var(--color-border-soft)] text-[var(--color-text-primary)] text-[11px] font-bold uppercase tracking-widest hover:bg-primary hover:text-white hover:border-primary transition-all group/btn shadow-sm"
+                    className="inline-flex flex-col md:flex-row items-center gap-4 md:gap-2 px-4 py-1.5 rounded-xl border border-[var(--color-border-soft)] text-[var(--color-text-primary)] text-[11px] font-bold uppercase tracking-widest hover:bg-primary hover:text-white hover:border-primary transition-all group/btn shadow-sm"
                   >
                     <Eye size={11} className="group-hover/btn:scale-110 transition-transform" />
                     Review
@@ -90,6 +92,8 @@ const RequestsTable = ({ requests, onReview }) => {
             )}
           </tbody>
         </table>
+</div>
+
       </div>
     </div>
   );

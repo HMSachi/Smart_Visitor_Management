@@ -13,7 +13,7 @@ const ProfileForm = () => {
     <div className="space-y-6 md:space-y-12 max-w-2xl">
       {/* Profile Details */}
       <section className="space-y-4 md:space-y-8">
-        <div className="flex items-center gap-4 border-b border-white/5 pb-4">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 border-b border-white/5 pb-4">
           <User size={16} className="text-primary" />
           <h3 className="uppercase text-white">Identity Configuration</h3>
         </div>
@@ -57,7 +57,7 @@ const ProfileForm = () => {
 
       {/* Security Settings */}
       <section className="space-y-4 md:space-y-8 pt-8">
-        <div className="flex items-center gap-4 border-b border-white/5 pb-4">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 border-b border-white/5 pb-4">
           <Lock size={16} className="text-primary" />
           <h3 className="uppercase text-white">Security Protocol</h3>
         </div>
@@ -86,7 +86,7 @@ const ProfileForm = () => {
 
       {/* Actions */}
       <div className="pt-12 border-t border-mas-border">
-        <button className="flex items-center gap-4 px-12 py-4 bg-primary text-white uppercase shadow-[0_0_30px_rgba(200,16,46,0.3)] hover:scale-105 transition-all">
+        <button className="flex flex-col md:flex-row items-center gap-4 md:gap-4 px-12 py-4 bg-primary text-white uppercase shadow-[0_0_30px_rgba(200,16,46,0.3)] hover:scale-105 transition-all">
           <Save size={16} />
           Synchronize Profile
         </button>

@@ -1,33 +1,74 @@
 import React from 'react';
-
-import { CheckSquare, ShieldAlert, UserX } from 'lucide-react';
+import { CheckSquare, ShieldAlert, UserX, ArrowRight } from 'lucide-react';
 
 const QuickAccessHub = ({ setActiveTab }) => {
   const links = [
-    { id: 'approvals', label: 'Authorization Nodes', desc: 'Process Pending Requests', icon: CheckSquare, color: 'mas-red' },
-    { id: 'security', label: 'Security Monitoring', desc: 'Site Activity & Logs', icon: ShieldAlert, color: 'white' },
-    { id: 'blacklist', label: 'Restricted Registry', desc: 'Manage Blocked Personnel', icon: UserX, color: 'white' },
+    {
+      id: 'approvals',
+      label: 'Pending Approvals',
+      desc: 'Review and process visitor requests',
+      icon: CheckSquare,
+      primary: true,
+    },
+    {
+      id: 'security',
+      label: 'Security Monitor',
+      desc: 'View site activity and access logs',
+      icon: ShieldAlert,
+      primary: false,
+    },
+    {
+      id: 'blacklist',
+      label: 'Restricted List',
+      desc: 'Manage blocked visitors',
+      icon: UserX,
+      primary: false,
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-full">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 h-full">
       {links.map((link) => (
-        <div
+        <button
           key={link.id}
           onClick={() => setActiveTab(link.id)}
-          className="bg-[var(--color-bg-paper)] border border-white/5 p-8 rounded-[28px] group cursor-pointer hover:border-primary transition-all duration-500 relative overflow-hidden flex flex-col items-center justify-center text-center shadow-2xl active:scale-[0.98]"
+          className="group relative overflow-hidden flex flex-col items-center justify-center text-center p-6 rounded-2xl cursor-pointer transition-all duration-300 active:scale-[0.97] text-left"
+          style={{
+            background: 'var(--color-bg-paper)',
+            border: '1px solid var(--color-border-soft)',
+            boxShadow: 'var(--shadow-card)',
+          }}
         >
-          <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-primary/[0.02] rounded-full blur-2xl group-hover:bg-primary/5 transition-all"></div>
+          {/* Hover background */}
+          <div
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
+            style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.06), transparent)' }}
+          />
 
-          <div className={`w-14 h-14 mb-6 flex items-center justify-center rounded-2xl bg-white/[0.02] border border-white/10 group-hover:border-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-lg relative z-10`}>
-            <link.icon size={24} className={link.id === 'approvals' ? 'text-primary group-hover:text-white' : 'text-gray-300 group-hover:text-white'} strokeWidth={2} />
+          <div
+            className="w-12 h-12 mb-4 flex items-center justify-center rounded-2xl transition-all duration-300 group-hover:bg-primary group-hover:text-white relative z-10"
+            style={{
+              background: link.primary ? 'rgba(200,16,46,0.1)' : 'var(--color-surface-1)',
+              border: link.primary ? '1px solid rgba(200,16,46,0.25)' : '1px solid var(--color-border-soft)',
+              color: link.primary ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+            }}
+          >
+            <link.icon size={22} strokeWidth={2} />
           </div>
 
-          <h3 className="text-white text-[14px] font-bold capitalize tracking-[0.2em] mb-2 relative z-10 group-hover:text-primary transition-colors">{link.label}</h3>
-          <p className="text-gray-300 text-[12px] font-medium capitalize tracking-widest opacity-0 group-hover:opacity-90 transition-all duration-500 translate-y-2 group-hover:translate-y-0 relative z-10">
+          <h3
+            className="text-[var(--color-text-primary)] text-[14px] font-semibold mb-1 relative z-10 group-hover:text-primary transition-colors"
+          >
+            {link.label}
+          </h3>
+          <p className="text-[var(--color-text-secondary)] text-[12px] leading-relaxed relative z-10">
             {link.desc}
           </p>
-        </div>
+
+          <div className="flex items-center gap-1 mt-3 text-primary text-[11.5px] font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 relative z-10">
+            Open <ArrowRight size={13} />
+          </div>
+        </button>
       ))}
     </div>
   );

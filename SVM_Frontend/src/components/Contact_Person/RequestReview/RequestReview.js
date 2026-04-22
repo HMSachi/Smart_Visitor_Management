@@ -175,7 +175,7 @@ const RequestReviewMain = () => {
             dispatch(GetVisitRequestsByCP(apiRequest.VVR_Contact_person_id));
         }
 
-        alert(`Request Rejected: ${rejectionReason}`);
+        alert(`Request Declined: ${rejectionReason}`);
         setShowRejectModal(false);
         navigate('/contact_person/requests-inbox');
     };
@@ -183,8 +183,8 @@ const RequestReviewMain = () => {
     return (
         <div className={`flex-1 p-4 md:p-6 space-y-4 animate-fade-in-slow overflow-y-auto relative transition-colors duration-500 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}>
             <div className="max-w-[1700px] mx-auto relative z-10 w-full">
-                <div className="flex flex-row items-center justify-between pb-6 animate-fade-in transition-all">
-                    <div className="flex items-center gap-4">
+                <div className="flex flex-col md:flex-row items-center justify-between pb-6 animate-fade-in transition-all">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                         <div className="w-1.5 h-8 bg-primary rounded-full"></div>
                         <div>
                             <p className={`text-[10px] uppercase font-bold tracking-[0.3em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}>Identity Node</p>
@@ -194,7 +194,7 @@ const RequestReviewMain = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                         <div className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10"}`}>
                             <p className={`text-[10px] uppercase font-bold tracking-widest mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}>Sync Status</p>
                             <span className="text-primary text-[12px] font-black uppercase tracking-widest">{requestData?.status || 'PENDING'}</span>

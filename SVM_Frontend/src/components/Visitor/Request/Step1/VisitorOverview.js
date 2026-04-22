@@ -16,7 +16,7 @@ const VisitorOverview = ({ data, onChange }) => {
 
     return (
         <section className="animate-fade-in px-4">
-            <div className="flex items-center gap-4 mb-10 border-l-4 border-primary pl-6">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-10 border-l-4 border-primary pl-6">
                 <div className="text-primary">
                     <User size={20} />
                 </div>
@@ -26,7 +26,7 @@ const VisitorOverview = ({ data, onChange }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 px-6">
                 {fields.map((field) => (
                     <div key={field.name} className="space-y-4">
-                        <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.3em] flex items-center gap-3">
+                        <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.3em] flex flex-col md:flex-row items-center gap-4 md:gap-3">
                             <field.icon size={14} className="text-primary/70" />
                             {field.label}
                         </label>

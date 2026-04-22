@@ -113,7 +113,7 @@ const GatePass = () => {
         <div className="flex flex-col items-center gap-6">
           <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
           <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">
-            Loading Gate Pass...
+            Loading GatePass...
           </p>
         </div>
       </div>
@@ -128,7 +128,7 @@ const GatePass = () => {
             <AlertCircle size={26} />
           </div>
           <h2 className="text-xl md:text-2xl font-bold tracking-[0.08em] uppercase">
-            Gate Pass Not Available
+            GatePass Not Available
           </h2>
           <p className="text-gray-400 mt-4 text-sm tracking-wide">
             {error || "The requested gate pass could not be located. Please return to My Requests and try again."}
@@ -152,7 +152,7 @@ const GatePass = () => {
       <div className="max-w-[960px] mx-auto relative z-10">
         <button
           onClick={() => navigate("/visitor/my-requests")}
-          className="mb-6 inline-flex items-center gap-2 text-gray-300 hover:text-white text-xs font-bold uppercase tracking-[0.18em]"
+          className="mb-6 inline-flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300 hover:text-white text-xs font-bold uppercase tracking-[0.18em]"
         >
           <ArrowLeft size={14} /> Back to My Requests
         </button>
@@ -162,16 +162,16 @@ const GatePass = () => {
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
           <div className="p-8 border-b border-white/5 flex items-center justify-between relative z-10 bg-white/[0.01]">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
               <div className="w-10 h-10 bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center rounded-xl shadow-lg">
                 <ShieldCheck size={20} />
               </div>
               <div>
                 <p className="text-gray-300/90 text-[13px] font-medium capitalize tracking-widest mb-1">
-                  Gate Pass Intelligence
+                  GatePass Intelligence
                 </p>
                 <h2 className="text-white text-lg font-bold capitalize tracking-widest">
-                  Gate Pass Generated
+                  GatePass Generated
                 </h2>
               </div>
             </div>
@@ -180,7 +180,7 @@ const GatePass = () => {
           <div className="p-4 md:p-10 flex flex-col items-center justify-center text-center relative z-10">
             {qrPayload ? (
               <>
-                <div className="relative group/qr p-6 bg-white rounded-[32px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 visitor-qr-svg-container">
+                <div className="relative group/qr p-6 mas-glass rounded-[32px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 visitor-qr-svg-container">
                   <QRCodeSVG
                     value={JSON.stringify(qrPayload)}
                     size={200}
@@ -214,7 +214,7 @@ const GatePass = () => {
             )}
           </div>
 
-          <div className="p-8 border-t border-white/5 bg-white/[0.01] relative z-10 flex gap-4">
+          <div className="p-8 border-t border-white/5 bg-white/[0.01] relative z-10 flex flex-col md:flex-row gap-4 md:gap-4">
             <button
               onClick={handleDownloadQR}
               className="flex-1 py-4 bg-green-500/10 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white text-[11px] font-bold capitalize tracking-[0.2em] rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2"

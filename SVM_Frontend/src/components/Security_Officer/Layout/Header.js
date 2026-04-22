@@ -1,61 +1,97 @@
 import React from 'react';
-import { Shield, ArrowLeft } from 'lucide-react';
+import { Shield, ArrowLeft, Menu, X, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleMobileMenu } from '../../../reducers/uiSlice';
-import { Menu, X } from 'lucide-react';
 import ThemeToggleButton from '../../common/ThemeToggleButton';
 
 const Header = ({ title }) => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const isMobile = useSelector(state => state.ui.isMobile);
-    const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
-    return (
-        <header className="flex-none h-14 md:h-16 border-b border-white/5 bg-mas-dark/95 backdrop-blur-sm flex items-center justify-between px-4 md:px-8 transition-all duration-300 relative">
-            {/* Global Node Aura */}
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-50"></div>
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isMobile = useSelector(state => state.ui.isMobile);
+  const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
+  const user = useSelector(state => state.login.user);
 
-            <div className="flex items-center gap-4 md:gap-10 truncate mr-4 relative z-10">
-                {isMobile ? (
-                    <button
-                        onClick={() => dispatch(toggleMobileMenu())}
-                        className="p-2 text-primary transition-all bg-mas-dark/90 border border-primary/20 rounded-lg hover:bg-primary/10 active:scale-95"
-                    >
-                        {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-                    </button>
-                ) : (
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="p-2.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-all bg-mas-dark/90 border border-white/5 group rounded-lg hover:border-primary/40 hover:bg-primary/10"
-                        title="BACK_TO_PREVIOUS_NODE"
-                    >
-                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    </button>
-                )}
+  const displayName = user?.ResultSet?.[0]?.VA_Name || user?.ResultSet?.[0]?.VS_Name || 'Security Officer';
+  const initials = displayName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'SO';
 
-                <div className="flex items-center gap-6">
-                    <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 relative group cursor-pointer">
-                        <Shield size={18} className="text-primary group-hover:rotate-12 transition-transform duration-500" />
-                        <motion.div
-                            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-                            transition={{ repeat: Infinity, duration: 2 }}
-                            className="absolute inset-0 rounded-xl border-2 border-primary/40 blur-[3px]"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                        <h2 className="uppercase text-[var(--color-text-primary)] text-sm md:text-sm font-semibold tracking-[0.18em] truncate group-hover:text-primary transition-colors">{title}</h2>
-                    </div>
-                </div>
-            </div>
+  return (
+    <header
+      className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6"
+      style={{
+        height: '64px',
+        background: 'var(--color-bg-paper)',
+        borderBottom: '1px solid var(--color-border-soft)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+      }}
+    >
+      {/* Left: Back / Hamburger + Title */}
+      <div className="flex items-center gap-3 min-w-0">
+        {isMobile ? (
+          <button
+            onClick={() => dispatch(toggleMobileMenu())}
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-primary shrink-0"
+            style={{ background: 'var(--color-primary-low)', border: '1px solid rgba(200,16,46,0.2)' }}
+          >
+            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate(-1)}
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors group shrink-0"
+            style={{ background: 'var(--color-surface-1)', border: '1px solid var(--color-border-soft)' }}
+            title="Go Back"
+          >
+            <ArrowLeft size={17} className="group-hover:-translate-x-0.5 transition-transform" />
+          </button>
+        )}
 
-            <div className="relative z-10">
-                <ThemeToggleButton />
-            </div>
+        {/* Shield icon + Title */}
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-primary shrink-0"
+            style={{ background: 'var(--color-primary-low)', border: '1px solid rgba(200,16,46,0.2)' }}
+          >
+            <Shield size={16} />
+          </div>
+          {title && (
+            <h2 className="text-[var(--color-text-primary)] text-[14px] font-semibold truncate m-0 hidden sm:block">
+              {title}
+            </h2>
+          )}
+        </div>
+      </div>
 
-        </header>
-    );
+      {/* Right: Actions */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        <ThemeToggleButton />
+
+        <button
+          className="relative w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+          style={{ background: 'var(--color-surface-1)', border: '1px solid var(--color-border-soft)' }}
+        >
+          <Bell size={17} />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary" />
+        </button>
+
+        <div className="hidden sm:block w-px h-5 bg-[var(--color-border-soft)]" />
+
+        <div className="flex items-center gap-2.5">
+          <div className="hidden md:block text-right">
+            <p className="text-[var(--color-text-primary)] text-[13px] font-semibold leading-tight">{displayName}</p>
+            <p className="text-primary text-[11px] font-medium leading-tight">Security Officer</p>
+          </div>
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-[12px] font-bold shrink-0"
+            style={{ background: 'linear-gradient(135deg, var(--color-primary), #8B0C1F)' }}
+          >
+            {initials}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
 };
 
 export default Header;

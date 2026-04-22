@@ -49,7 +49,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
       setGatePassId(newPassId);
       dispatch(GetAllGatePasses());
     } catch (err) {
-      console.error("Gate Pass generation failed:", err);
+      console.error("GatePass generation failed:", err);
       setError("Failed to generate digital gate pass protocol.");
     } finally {
       setIsGenerating(false);
@@ -143,7 +143,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
               <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
               <div className="p-8 border-b border-white/5 flex items-center justify-between relative z-10 bg-white/[0.01]">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                   <div className="w-10 h-10 bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center rounded-xl shadow-lg">
                     {gatePassId ? (
                       <QrCode size={20} />
@@ -154,16 +154,16 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                   <div>
                     <p className="text-gray-300/90 text-[13px] font-medium capitalize tracking-widest mb-1">
                       {gatePassId
-                        ? "Gate Pass Intelligence"
+                        ? "GatePass Intelligence"
                         : "Security Protocol Concluded"}
                     </p>
                     <h2 className="text-white text-lg font-bold capitalize tracking-widest">
-                      {gatePassId ? "Gate Pass Generated" : "Clearance Granted"}
+                      {gatePassId ? "GatePass Generated" : "Clearance Granted"}
                     </h2>
                   </div>
                 </div>
                 {wasSent && (
-                  <div className="flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/30 rounded-full">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 px-3 py-1 bg-green-500/10 border border-green-500/30 rounded-full">
                     <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
                     <span className="text-green-500 text-[9px] font-black capitalize tracking-widest">
                       Dispatched
@@ -206,14 +206,14 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                       ) : (
                         <>
                           <QrCode size={16} />
-                          Generate Digital Gate Pass
+                          Generate Digital GatePass
                         </>
                       )}
                     </button>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <div className="relative group/qr p-6 bg-white rounded-[32px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 qr-svg-container">
+                    <div className="relative group/qr p-6 mas-glass rounded-[32px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 qr-svg-container">
                       <QRCodeSVG
                         value={JSON.stringify(qrPayload)}
                         size={200}
@@ -246,7 +246,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                 )}
               </div>
 
-              <div className="p-8 border-t border-white/5 bg-white/[0.01] relative z-10 flex gap-4">
+              <div className="p-8 border-t border-white/5 bg-white/[0.01] relative z-10 flex flex-col md:flex-row gap-4 md:gap-4">
                 {gatePassId && (
                   <>
                     <button
