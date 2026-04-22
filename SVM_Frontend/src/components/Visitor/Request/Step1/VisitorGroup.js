@@ -2,7 +2,7 @@ import React from 'react';
 import { Users, User, CreditCard, Phone, Plus, X } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 
-const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
+const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
     return (
         <section className="animate-fade-in stagger-item">
             <div className="flex items-center justify-between mb-4">
@@ -10,12 +10,12 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                     <div className="text-primary">
                         <Users size={16} />
                     </div>
-                    <h3 className="text-sm font-bold text-white uppercase tracking-[0.2em] mb-0">Visitor Group</h3>
+                    <h3 className={`text-sm font-bold uppercase tracking-[0.2em] mb-0 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>Visitor Group</h3>
                 </div>
                 <button 
                     type="button" 
                     onClick={onAdd} 
-                    className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-none hover:bg-primary hover:text-white transition-all text-[12px] font-bold uppercase tracking-[0.2em] group"
+                    className={`flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-none hover:bg-primary hover:text-white transition-all text-[12px] font-bold uppercase tracking-[0.2em] group`}
                 >
                     <Plus size={14} className="group-hover:scale-110 transition-transform" />
                     Add Visitor
@@ -52,7 +52,11 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                                         value={visitor.fullName}
                                         onChange={(e) => onChange(visitor.id, 'fullName', e.target.value)}
                                         placeholder="E.G. JOHN DOE"
-                                        className="w-full bg-white/[0.03] border border-white/20 rounded-none px-4 py-2.5 text-[12px] text-white/90 focus:outline-none focus:border-primary/60 transition-all placeholder:text-gray-600 font-medium"
+                                        className={`w-full rounded-none px-4 py-2.5 text-[12px] focus:outline-none transition-all font-medium ${
+                                            isLight 
+                                            ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400" 
+                                            : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
+                                        }`}
                                     />
                                 </div>
                             </div>
@@ -69,7 +73,11 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                                         value={visitor.nic}
                                         onChange={(e) => onChange(visitor.id, 'nic', e.target.value)}
                                         placeholder="ENTER NIC / PASSPORT"
-                                        className="w-full bg-white/[0.03] border border-white/20 rounded-none px-4 py-2.5 text-[12px] text-white/90 focus:outline-none focus:border-primary/60 transition-all placeholder:text-gray-600 font-medium"
+                                        className={`w-full rounded-none px-4 py-2.5 text-[12px] focus:outline-none transition-all font-medium ${
+                                            isLight 
+                                            ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400" 
+                                            : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
+                                        }`}
                                     />
                                 </div>
                             </div>
@@ -86,7 +94,11 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                                         value={visitor.contact}
                                         onChange={(e) => onChange(visitor.id, 'contact', e.target.value)}
                                         placeholder="E.G. +94 7X XXX XXXX"
-                                        className="w-full bg-white/[0.03] border border-white/20 rounded-none px-4 py-2.5 text-[12px] text-white/90 focus:outline-none focus:border-primary/60 transition-all placeholder:text-gray-600 font-medium"
+                                        className={`w-full rounded-none px-4 py-2.5 text-[12px] focus:outline-none transition-all font-medium ${
+                                            isLight 
+                                            ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400" 
+                                            : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
+                                        }`}
                                     />
                                 </div>
                             </div>
@@ -101,7 +113,11 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                         <button 
                             type="button" 
                             onClick={onAdd}
-                            className="px-6 py-3 bg-white/[0.03] border border-white/20 text-white text-[12px] font-bold uppercase tracking-[0.2em] rounded-none hover:bg-primary hover:border-primary transition-all"
+                            className={`px-6 py-3 rounded-none font-bold uppercase tracking-[0.2em] text-[12px] transition-all ${
+                                isLight 
+                                ? "bg-white border border-primary/20 text-primary hover:bg-primary hover:text-white" 
+                                : "bg-white/[0.03] border border-white/20 text-white hover:bg-primary hover:border-primary"
+                            }`}
                         >
                             Add Visitor
                         </button>
