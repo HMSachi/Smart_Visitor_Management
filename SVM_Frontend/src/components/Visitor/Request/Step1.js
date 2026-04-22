@@ -437,7 +437,7 @@ const Step1Main = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 py-2 pb-12 text-white bg-black">
       {/* Header Section */}
-      <div className="mb-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/5 pb-10">
+      <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/5 pb-4">
         <div>
           <h1 className="text-[24px] md:text-[24px] font-black uppercase tracking-tight mb-2 leading-none">
             Visitor Registration
@@ -448,14 +448,14 @@ const Step1Main = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-24">
+      <form onSubmit={handleSubmit} className="space-y-8">
         <VisitorOverview data={formData} onChange={handleInputChange} />
 
-        <div className="border-t border-white/5 pt-16">
+        <div className="border-t border-white/5 pt-6">
           <VehicleDetails data={formData} onChange={handleInputChange} />
         </div>
 
-        <div className="border-t border-white/5 pt-16">
+        <div className="border-t border-white/5 pt-6">
           <VisitorGroup 
             visitors={visitors || []} 
             onAdd={handleAddVisitor} 
@@ -464,7 +464,7 @@ const Step1Main = () => {
           />
         </div>
 
-        <div className="border-t border-white/5 pt-16">
+        <div className="border-t border-white/5 pt-6">
           <ItemsCarried 
             items={equipment || []} 
             onAdd={handleAddEquipment} 
@@ -474,7 +474,7 @@ const Step1Main = () => {
         </div>
 
         {/* Action Footer */}
-        <div className="pt-16 border-t border-white/5 flex flex-col sm:flex-row gap-6 items-center justify-center">
+        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row gap-6 items-center justify-center">
 
           <button
             type="submit"
