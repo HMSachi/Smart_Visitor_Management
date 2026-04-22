@@ -14,6 +14,8 @@ import {
 } from "../../../actions/VisitRequestAction";
 import VisitorService from "../../../services/VisitorService";
 import { AddVehicle, GetAllVehicles, UpdateVehicle } from "../../../actions/VehicleAction";
+import { AddVisitGroup } from "../../../actions/VisitGroupAction";
+import { AddItem } from "../../../actions/ItemCarriedAction";
 import {
   updateField,
   setStatus,
@@ -27,7 +29,6 @@ import {
 } from "../../../reducers/visitorSlice";
 import VisitorGroup from "./Step1/VisitorGroup";
 import ItemsCarried from "./Step1/ItemsCarried";
-import { AddItem } from "../../../actions/ItemCarriedAction";
 
 const Step1Main = () => {
   const navigate = useNavigate();
@@ -346,18 +347,31 @@ const Step1Main = () => {
           }
         }
 
-        // Add Items Carried
-        console.log("Checking equipment for existing request. Length:", equipment?.length);
-        if (equipment && equipment.length > 0) {
-          for (const item of equipment) {
-            console.log("Processing item:", item);
+        // Save Visitor Group members
+        if (formData.visitors && formData.visitors.length > 0) {
+          for (const visitor of formData.visitors) {
+            // Only add if name or NIC is provided to avoid empty records
+            if (visitor.fullName || visitor.nic) {
+              await dispatch(AddVisitGroup({
+                VVG_Visitor_Name: visitor.fullName || 'N/A',
+                VVG_NIC_Passport_Number: visitor.nic || 'N/A',
+                VVG_Designation: visitor.contact || 'N/A', // Using Designation field for contact as discussed
+                VVG_Status: 'A',
+                VVR_Request_id: latestRequest.VVR_Request_id
+              }));
+            }
+          }
+        }
+
+        // Save Equipment (Items Carried)
+        if (formData.equipment && formData.equipment.length > 0) {
+          for (const item of formData.equipment) {
             if (item.itemName) {
-              console.log("Dispatching AddItem for existing request ID:", latestRequest.VVR_Request_id);
               await dispatch(AddItem({
                 VVR_Request_id: latestRequest.VVR_Request_id,
                 VIC_Item_Name: item.itemName,
-                VIC_Quantity: item.quantity || 1,
-                VIC_Designation: item.description || ""
+                VIC_Quantity: item.quantity || '1',
+                VIC_Designation: 'GENERAL'
               }));
             }
           }
@@ -390,18 +404,30 @@ const Step1Main = () => {
           );
         }
 
-        // Add Items Carried
-        console.log("Checking equipment for NEW request. createdRequestId:", createdRequestId, "Equipment length:", equipment?.length);
-        if (createdRequestId && equipment && equipment.length > 0) {
-          for (const item of equipment) {
-            console.log("Processing item:", item);
+        // Save Visitor Group members for new request
+        if (createdRequestId && formData.visitors && formData.visitors.length > 0) {
+          for (const visitor of formData.visitors) {
+            if (visitor.fullName || visitor.nic) {
+              await dispatch(AddVisitGroup({
+                VVG_Visitor_Name: visitor.fullName || 'N/A',
+                VVG_NIC_Passport_Number: visitor.nic || 'N/A',
+                VVG_Designation: visitor.contact || 'N/A',
+                VVG_Status: 'A',
+                VVR_Request_id: createdRequestId
+              }));
+            }
+          }
+        }
+
+        // Save Equipment for new request
+        if (createdRequestId && formData.equipment && formData.equipment.length > 0) {
+          for (const item of formData.equipment) {
             if (item.itemName) {
-              console.log("Dispatching AddItem for NEW request ID:", createdRequestId);
               await dispatch(AddItem({
                 VVR_Request_id: createdRequestId,
                 VIC_Item_Name: item.itemName,
-                VIC_Quantity: item.quantity || 1,
-                VIC_Designation: item.description || ""
+                VIC_Quantity: item.quantity || '1',
+                VIC_Designation: 'GENERAL'
               }));
             }
           }
