@@ -668,7 +668,7 @@ const AllUsers = () => {
             <div className="flex justify-between items-center p-6 border-b border-white/5 relative z-10">
               <h2 className="text-lg font-bold text-white uppercase tracking-wider">
                 {modalMode === "add"
-                  ? "Add New System Admin"
+                  ? "Add New System User"
                   : "Edit Administrator Profile"}
               </h2>
               <button
@@ -825,7 +825,7 @@ const AllUsers = () => {
                   type="submit"
                   className="px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-[13px] font-bold uppercase tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary"
                 >
-                  {modalMode === "add" ? "Create Node" : "Update Access"}
+                  {modalMode === "add" ? "Create User" : "Update Access"}
                 </button>
               </div>
             </form>
