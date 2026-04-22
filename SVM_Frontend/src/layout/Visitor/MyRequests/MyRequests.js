@@ -74,7 +74,9 @@ const MyRequests = () => {
   const { visitRequestsByVis, isLoading, error } = useSelector(
     (state) => state.visitRequestsState,
   );
-  const { gatePasses } = useSelector((state) => state.gatePassState || { gatePasses: [] });
+  const { gatePasses } = useSelector(
+    (state) => state.gatePassState || { gatePasses: [] },
+  );
 
   // Extract Visitor ID from login session
   const user = useSelector((state) => state.login.user);
@@ -128,7 +130,7 @@ const MyRequests = () => {
     // Find the gate pass ID from the gatePasses list
     const list = Array.isArray(gatePasses)
       ? gatePasses
-      : (gatePasses?.gatePasses || gatePasses?.ResultSet || []);
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
     const gatePass = list.find((gp) => {
       const gpRequestId =
         gp.VVR_Request_id ||
@@ -151,9 +153,15 @@ const MyRequests = () => {
 
   const hasGatePass = (requestId) => {
     if (!requestId) return false;
-    const list = Array.isArray(gatePasses) ? gatePasses : (gatePasses?.gatePasses || gatePasses?.ResultSet || []);
-    return list.some(gp => {
-      const gpRequestId = gp.VVR_Request_id || gp.VGP_Request_id || gp.vvr_Request_id || gp.vgp_Request_id;
+    const list = Array.isArray(gatePasses)
+      ? gatePasses
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
+    return list.some((gp) => {
+      const gpRequestId =
+        gp.VVR_Request_id ||
+        gp.VGP_Request_id ||
+        gp.vvr_Request_id ||
+        gp.vgp_Request_id;
       return String(gpRequestId) === String(requestId);
     });
   };
@@ -196,10 +204,10 @@ const MyRequests = () => {
 
   const filteredRequests = visitRequestsByVis
     ? visitRequestsByVis.filter(
-      (req) =>
-        String(req.VVR_Request_id).includes(searchTerm) ||
-        req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
+        (req) =>
+          String(req.VVR_Request_id).includes(searchTerm) ||
+          req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
     : [];
 
   return (
@@ -314,7 +322,10 @@ const MyRequests = () => {
                                 onClick={() => handleViewGatePass(req)}
                                 className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-[10px] justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"
                               >
-                                <QrCode size={12} className="group-hover/gp:scale-110 transition-transform" />
+                                <QrCode
+                                  size={12}
+                                  className="group-hover/gp:scale-110 transition-transform"
+                                />
                                 View GatePass
                               </button>
                             )}
