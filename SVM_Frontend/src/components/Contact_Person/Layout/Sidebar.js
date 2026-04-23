@@ -29,7 +29,7 @@ const menuItems = [
   },
   {
     id: "inbox",
-    label: "Approval Inbox",
+    label: "Requests Inbox",
     icon: Inbox,
     path: "/contact_person/requests-inbox",
   },

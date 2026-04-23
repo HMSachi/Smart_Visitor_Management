@@ -288,7 +288,7 @@ const VisitRequests = () => {
       <div
         className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
       >
-        <Header title="Visitation Node Management" />
+        <Header title="" />
 
         <div className="p-3 md:p-5 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
           <header

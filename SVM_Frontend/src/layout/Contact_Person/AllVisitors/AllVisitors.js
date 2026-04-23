@@ -217,7 +217,7 @@ const ContactAllVisitors = () => {
       <div
         className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
       >
-        <Header title="All Visitors" />
+        <Header/>
 
         <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full z-10">
           <header
