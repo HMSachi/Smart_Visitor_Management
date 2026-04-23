@@ -325,6 +325,16 @@ const Step1Main = () => {
     dispatch(updateEquipmentDetail({ id, field, value }));
   };
 
+  useEffect(() => {
+    if (!visitors || visitors.length === 0) {
+      dispatch(addVisitor());
+    }
+
+    if (!equipment || equipment.length === 0) {
+      dispatch(addEquipment());
+    }
+  }, [dispatch, visitors, equipment]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submit started. Equipment:", equipment);

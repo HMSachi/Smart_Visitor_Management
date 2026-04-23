@@ -70,7 +70,11 @@ const visitorSlice = createSlice({
       });
     },
     removeEquipment: (state, action) => {
-      state.equipment = state.equipment.filter((e) => e.id !== action.payload);
+      if (state.equipment.length > 1) {
+        state.equipment = state.equipment.filter(
+          (e) => e.id !== action.payload,
+        );
+      }
     },
     updateEquipmentDetail: (state, action) => {
       const { id, field, value } = action.payload;

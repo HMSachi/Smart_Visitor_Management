@@ -87,10 +87,10 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
     >
       {/* Control Navigation */}
       <div
-        className={`flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-16 p-6 border rounded-2xl shadow-lg relative overflow-hidden transition-all duration-500 ${
+        className={`sticky top-0 z-30 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-16 p-6 border rounded-2xl shadow-lg overflow-hidden transition-all duration-500 backdrop-blur-lg ${
           isLight
-            ? "bg-white border-gray-200 shadow-gray-200/50"
-            : "bg-black/40 border-white/10 shadow-black/50"
+            ? "bg-white/95 border-gray-200 shadow-gray-200/50"
+            : "bg-black/80 border-white/10 shadow-black/50"
         }`}
       >
         <button
