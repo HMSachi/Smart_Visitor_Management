@@ -16,14 +16,16 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const StatusBadge = ({ status }) => {
   const styles = {
-    Approved: "border-green-500/20 text-green-500 bg-green-500/5",
-    "Accepted by Admin": "border-green-500/20 text-green-500 bg-green-500/5",
-    Pending: "border-primary/20 text-primary bg-primary/5",
-    "Sent to Admin": "border-orange-500/20 text-orange-500 bg-orange-500/5",
-    Accepted: "border-purple-500/20 text-purple-500 bg-purple-500/5",
-    Declined: "border-white/10 text-gray-300 bg-white/5",
-    "Checked In": "border-blue-500/20 text-blue-500 bg-blue-500/5",
-    "Checked Out": "border-white/5 text-gray-300/80 bg-transparent",
+    'Admin Approved': 'border-green-500/20 text-green-500 bg-green-500/5',
+    'Accepted by Admin': 'border-green-500/20 text-green-500 bg-green-500/5',
+    'Accepted by Visitor': 'border-yellow-500/20 text-yellow-500 bg-yellow-500/5',
+    'Sent to Visitor': 'border-blue-500/20 text-blue-500 bg-blue-500/5',
+    'Accepted by Contact Person': 'border-orange-500/20 text-orange-500 bg-orange-500/5',
+    'Sent to Admin': 'border-orange-500/20 text-orange-500 bg-orange-500/5',
+    'Accepted': 'border-purple-500/20 text-purple-500 bg-purple-500/5',
+    'Rejected': 'border-white/10 text-gray-300 bg-white/5',
+    'Checked In': 'border-blue-500/20 text-blue-500 bg-blue-500/5',
+    'Checked Out': 'border-white/5 text-gray-300/80 bg-transparent',
   };
 
   return (

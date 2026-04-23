@@ -112,10 +112,10 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
           Back to requests
         </button>
 
-        <div className="flex flex-col md:flex-row gap-4 md:gap-4 w-full lg:w-auto relative z-10">
-          {(visitor.status === "Pending" ||
-            visitor.status === "Sent to Admin" ||
-            visitor.status === "PENDING") && (
+        <div className="flex gap-4 w-full lg:w-auto relative z-10">
+          {(visitor.status === "Accepted by Visitor" || 
+             visitor.status === "Accepted by Contact Person" || 
+             visitor.status === "Sent to Admin") && (
             <>
               <button
                 onClick={() => onAction(visitor, "Approve")}
