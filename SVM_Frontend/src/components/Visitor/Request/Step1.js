@@ -554,27 +554,30 @@ const Step1Main = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-2 pb-10 text-white bg-black">
+    <div className="h-full min-h-0 flex flex-col max-w-5xl mx-auto px-4 sm:px-6 py-3 pb-10 text-white bg-black overflow-hidden">
       {/* Header Section */}
-      <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/5 pb-6">
+      <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-white/5 pb-5">
         <div>
-          <h1 className="text-[18px] md:text-[20px] font-black uppercase tracking-tight mb-2 leading-none">
+          <h1 className="text-[18px] md:text-[20px] font-black uppercase tracking-tight mb-1.5 leading-none">
             Visitor Registration
           </h1>
-          <p className="text-gray-500 text-[11px] uppercase font-bold tracking-[0.25em] opacity-80">
+          <p className="text-gray-500 text-[11px] uppercase font-bold tracking-[0.22em] opacity-80">
             Tell us about your visit
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-12">
+      <form
+        onSubmit={handleSubmit}
+        className="flex-1 min-h-0 space-y-10 overflow-y-auto pr-2 custom-scrollbar"
+      >
         <VisitorOverview data={formData} onChange={handleInputChange} />
 
-        <div className="border-t border-white/5 pt-10">
+        <div className="border-t border-white/5 pt-12">
           <VehicleDetails data={formData} onChange={handleInputChange} />
         </div>
 
-        <div className="border-t border-white/5 pt-6">
+        <div className="border-t border-white/5 pt-8">
           <VisitorGroup
             visitors={visitors || []}
             onAdd={handleAddVisitor}
@@ -583,7 +586,7 @@ const Step1Main = () => {
           />
         </div>
 
-        <div className="border-t border-white/5 pt-6">
+        <div className="border-t border-white/5 pt-8">
           <ItemsCarried
             items={equipment || []}
             onAdd={handleAddEquipment}
@@ -593,18 +596,18 @@ const Step1Main = () => {
         </div>
 
         {/* Action Footer */}
-        <div className="pt-10 border-t border-white/5 flex flex-col sm:flex-row gap-4 items-center justify-center">
+        <div className="pt-12 border-t border-white/5 flex flex-col sm:flex-row gap-4 items-center justify-center">
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="w-full sm:w-auto px-12 h-14 bg-primary hover:bg-primary-hover text-white font-black uppercase text-[11px] tracking-[0.22em] shadow-2xl shadow-primary/20 transition-all flex items-center justify-center gap-3 group disabled:opacity-50"
+            className="w-full sm:w-auto px-14 h-16 bg-primary hover:bg-primary-hover text-white font-black uppercase text-[11px] tracking-[0.22em] shadow-2xl shadow-primary/20 transition-all flex items-center justify-center gap-3 group disabled:opacity-50"
           >
             {status === "submitting" ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
                 <ShieldCheck
-                  size={16}
+                  size={18}
                   className="group-hover:scale-110 transition-transform"
                 />
                 Submit Request

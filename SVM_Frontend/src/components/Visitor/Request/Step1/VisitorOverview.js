@@ -79,21 +79,21 @@ const VisitorOverview = ({ data, onChange }) => {
   ];
 
   return (
-    <section className="animate-fade-in px-2 sm:px-3">
-      <div className="flex flex-col md:flex-row items-center gap-3 md:gap-3 mb-6 border-l-4 border-primary pl-4 sm:pl-5">
+    <section className="animate-fade-in px-1 sm:px-2">
+      <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2 mb-4 border-l-4 border-primary pl-3 sm:pl-4">
         <div className="text-primary">
-          <User size={18} />
+          <User size={15} />
         </div>
-        <h3 className="text-sm sm:text-base font-black text-white uppercase tracking-[0.2em] mb-0">
+        <h3 className="text-[12px] sm:text-sm font-black text-white uppercase tracking-[0.18em] mb-0">
           Visitor details
         </h3>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 px-1 sm:px-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4 px-0.5 sm:px-1">
         {fields.map((field) => (
-          <div key={field.name} className="space-y-2.5">
-            <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.18em] flex flex-col md:flex-row items-center gap-3 md:gap-2">
-              <field.icon size={13} className="text-primary/70" />
+          <div key={field.name} className="space-y-2">
+            <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.16em] flex flex-col md:flex-row items-center gap-2 md:gap-2">
+              <field.icon size={11} className="text-primary/70" />
               {field.label}
             </label>
             <div className="relative group">
@@ -104,7 +104,7 @@ const VisitorOverview = ({ data, onChange }) => {
                 onChange={onChange}
                 required
                 placeholder={field.placeholder}
-                className="w-full bg-white/[0.03] border border-white/10 rounded-none px-4 py-3 text-[12px] text-white/90 focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-600 font-medium [color-scheme:dark]"
+                className="w-full bg-white/[0.03] border border-white/10 rounded-none px-3.5 py-2.5 text-[11px] text-white/90 focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-600 font-medium [color-scheme:dark]"
               />
             </div>
           </div>

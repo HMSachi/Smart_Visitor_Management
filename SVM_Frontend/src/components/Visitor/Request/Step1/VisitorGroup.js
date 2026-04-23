@@ -5,13 +5,13 @@ import { AnimatePresence } from "framer-motion";
 const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
   return (
     <section className="animate-fade-in stagger-item">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="text-primary">
-            <Users size={16} />
+            <Users size={14} />
           </div>
           <h3
-            className={`text-sm font-bold uppercase tracking-[0.2em] mb-0 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+            className={`text-[12px] font-bold uppercase tracking-[0.18em] mb-0 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
           >
             People visiting
           </h3>
@@ -19,22 +19,22 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
         <button
           type="button"
           onClick={onAdd}
-          className={`flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-none hover:bg-primary hover:text-white transition-all text-[12px] font-bold uppercase tracking-[0.2em] group`}
+          className={`flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 text-primary rounded-none hover:bg-primary hover:text-white transition-all text-[11px] font-bold uppercase tracking-[0.18em] group`}
         >
           <Plus
-            size={14}
+            size={12}
             className="group-hover:scale-110 transition-transform"
           />
           Add person
         </button>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         <AnimatePresence mode="popLayout">
           {visitors.map((visitor, index) => (
             <div
               key={visitor.id}
-              className="relative grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4 pt-4 border-t border-white/5 first:border-0 first:pt-0"
+              className="relative grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-3 pt-3 border-t border-white/5 first:border-0 first:pt-0"
             >
               {visitors.length > 0 && (
                 <button
@@ -61,7 +61,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
                       onChange(visitor.id, "fullName", e.target.value)
                     }
                     placeholder="e.g. John Doe"
-                    className={`w-full rounded-none px-4 py-2.5 text-[12px] focus:outline-none transition-all font-medium ${
+                    className={`w-full rounded-none px-3.5 py-2 text-[11px] focus:outline-none transition-all font-medium ${
                       isLight
                         ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400"
                         : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
@@ -72,7 +72,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
 
               {/* NIC / Passport */}
               <div className="space-y-2">
-                <label className="text-[12px] font-bold text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2 px-1">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.18em] flex items-center gap-2 px-1">
                   ID or passport number
                 </label>
                 <div className="relative">
@@ -84,7 +84,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
                       onChange(visitor.id, "nic", e.target.value)
                     }
                     placeholder="Enter ID or passport number"
-                    className={`w-full rounded-none px-4 py-2.5 text-[12px] focus:outline-none transition-all font-medium ${
+                    className={`w-full rounded-none px-3.5 py-2 text-[11px] focus:outline-none transition-all font-medium ${
                       isLight
                         ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400"
                         : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
@@ -94,8 +94,8 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
               </div>
 
               {/* Contact Number */}
-              <div className="space-y-2 pr-6 md:pr-8">
-                <label className="text-[12px] font-bold text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2 px-1">
+              <div className="space-y-2 pr-4 md:pr-5">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.18em] flex items-center gap-2 px-1">
                   Phone number
                 </label>
                 <div className="relative">
@@ -107,7 +107,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
                       onChange(visitor.id, "contact", e.target.value)
                     }
                     placeholder="e.g. +94 7X XXX XXXX"
-                    className={`w-full rounded-none px-4 py-2.5 text-[12px] focus:outline-none transition-all font-medium ${
+                    className={`w-full rounded-none px-3.5 py-2 text-[11px] focus:outline-none transition-all font-medium ${
                       isLight
                         ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400"
                         : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
@@ -120,15 +120,15 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
         </AnimatePresence>
 
         {visitors.length === 0 && (
-          <div className="p-8 border-2 border-dashed border-white/10 rounded-none flex flex-col items-center justify-center text-center mt-4">
-            <Users size={24} className="text-gray-600 mb-3" />
-            <p className="text-gray-500 text-[12px] font-bold uppercase tracking-[0.2em] mb-4">
+          <div className="p-6 border-2 border-dashed border-white/10 rounded-none flex flex-col items-center justify-center text-center mt-3">
+            <Users size={20} className="text-gray-600 mb-2.5" />
+            <p className="text-gray-500 text-[11px] font-bold uppercase tracking-[0.18em] mb-3">
               No additional people added yet.
             </p>
             <button
               type="button"
               onClick={onAdd}
-              className={`px-6 py-3 rounded-none font-bold uppercase tracking-[0.2em] text-[12px] transition-all ${
+              className={`px-5 py-2.5 rounded-none font-bold uppercase tracking-[0.18em] text-[11px] transition-all ${
                 isLight
                   ? "bg-white border border-primary/20 text-primary hover:bg-primary hover:text-white"
                   : "bg-white/[0.03] border border-white/20 text-white hover:bg-primary hover:border-primary"
