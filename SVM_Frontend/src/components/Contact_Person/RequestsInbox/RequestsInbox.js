@@ -139,7 +139,7 @@ const RequestsInboxMain = () => {
 
   return (
     <div
-      className={`p-3 md:p-5 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full z-10 transition-colors duration-500`}
+      className={`p-3 md:p-5 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full h-full min-h-0 overflow-hidden z-10 transition-colors duration-500`}
     >
       {isLoading && (
         <p
@@ -182,11 +182,11 @@ const RequestsInboxMain = () => {
             />
           </div>
 
-          <div className="relative min-w-[140px] w-full sm:w-auto">
+          <div className="relative min-w-[120px] w-full sm:w-auto">
             <select
               value={statusFilter}
               onChange={(e) => handleFilterChange(e.target.value)}
-              className={`w-full pl-3 pr-8 py-2 rounded-xl text-[10px] font-medium uppercase tracking-widest transition-all cursor-pointer outline-none appearance-none border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] hover:bg-gray-50" : "bg-black/40 border-white/10 text-white hover:border-white/20"}`}
+              className={`w-full pl-2.5 pr-7 py-1.5 rounded-xl text-[9px] font-medium uppercase tracking-widest transition-all cursor-pointer outline-none appearance-none border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] hover:bg-gray-50" : "bg-black/40 border-white/10 text-white hover:border-white/20"}`}
             >
               <option
                 value="All"
@@ -199,27 +199,47 @@ const RequestsInboxMain = () => {
                 ALL STATUS
               </option>
               <option
-                value="Pending"
+                value="Sent to Visitor"
                 className={
                   isLight
                     ? "bg-white text-[#1A1A1A]"
                     : "bg-[#0A0A0B] text-white"
                 }
               >
-                PENDING
+                SENT TO VISITOR
               </option>
               <option
-                value="Approved"
+                value="Accepted by Visitor"
                 className={
                   isLight
                     ? "bg-white text-[#1A1A1A]"
                     : "bg-[#0A0A0B] text-white"
                 }
               >
-                APPROVED
+                ACCEPTED BY VISITOR
               </option>
               <option
-                value="Declined"
+                value="Accepted by Contact Person"
+                className={
+                  isLight
+                    ? "bg-white text-[#1A1A1A]"
+                    : "bg-[#0A0A0B] text-white"
+                }
+              >
+                ACCEPTED BY CONTACT PERSON
+              </option>
+              <option
+                value="Admin Approved"
+                className={
+                  isLight
+                    ? "bg-white text-[#1A1A1A]"
+                    : "bg-[#0A0A0B] text-white"
+                }
+              >
+                ADMIN APPROVED
+              </option>
+              <option
+                value="Rejected"
                 className={
                   isLight
                     ? "bg-white text-[#1A1A1A]"
@@ -248,7 +268,9 @@ const RequestsInboxMain = () => {
         </div>
       </header>
 
-      <RequestsTable requests={filteredRequests} onReview={handleReview} />
+      <div className="mt-2 h-[calc(100vh-180px)] min-h-0 overflow-hidden">
+        <RequestsTable requests={filteredRequests} onReview={handleReview} />
+      </div>
     </div>
   );
 };
