@@ -72,7 +72,7 @@ const RequestsTable = ({ requests, onReview }) => {
               <col className="w-[16%]" />
             </colgroup>
             <tbody className="block sm:table-row-group">
-              {requests.map((visitor) => (
+              {requests.map((visitor, index) => (
                 <tr
                   key={visitor.id}
                   className="group transition-all hover:bg-[var(--color-surface-1)]/70 block sm:table-row bg-transparent border-b border-[var(--color-border-soft)]/80 sm:border-none p-4 sm:p-0"
@@ -82,7 +82,7 @@ const RequestsTable = ({ requests, onReview }) => {
                       Request
                     </span>
                     <div className="w-7 h-7 rounded-lg bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] text-[11px] font-medium text-[var(--color-text-secondary)] flex items-center justify-center transition-all mx-0 sm:mx-auto group-hover:border-primary/20 group-hover:text-[var(--color-text-primary)]">
-                      {visitor.members.length + 1}
+                      {index + 1}
                     </div>
                   </td>
                   <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-left sm:text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
