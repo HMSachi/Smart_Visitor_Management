@@ -117,11 +117,11 @@ const ApprovalManagement = () => {
         const vehicle = (vehicles || []).find(veh => String(veh.VVR_Request_id) === String(req.VVR_Request_id));
         const s = (req.VVR_Status || "").toString().trim().toUpperCase();
 
-        let displayStatus = "Pending";
-        if (s === "SENT" || s === "SENT_TO_ADMIN") displayStatus = "Sent to Admin";
-        else if (s === "A" || s === "APPROVED") displayStatus = "Accepted by Admin";
+        let displayStatus = "Sent to Visitor";
+        if (s === "SENT" || s === "SENT_TO_ADMIN") displayStatus = "Accepted by Contact Person";
+        else if (s === "A" || s === "APPROVED") displayStatus = "Admin Approved";
         else if (s === "R" || s === "REJECTED") displayStatus = "Rejected";
-        else if (s === "ACCEPTED") displayStatus = "Accepted";
+        else if (s === "ACCEPTED") displayStatus = "Accepted by Visitor";
 
         return {
           id: req.VVR_Request_id?.toString() || "",

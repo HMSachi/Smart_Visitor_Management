@@ -309,7 +309,7 @@ const MyRequests = () => {
                         <TableCell className="px-6 py-5 border-b-white/5">
                           <div className="flex flex-col gap-2">
                             <StatusBadge status={req.VVR_Status} />
-                            {hasGatePass(req.VVR_Request_id) && (
+                            {hasGatePass(req.VVR_Request_id) && (req.VVR_Status === 'A' || req.VVR_Status === 'APPROVED') && (
                               <button
                                 onClick={() => handleViewGatePass(req)}
                                 className="flex items-center gap-2 text-[10px] justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"

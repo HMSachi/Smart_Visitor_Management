@@ -4,9 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const StatusBadge = ({ status }) => {
   const styles = {
-    'Approved': 'border-green-500/20 text-green-500 bg-green-500/5',
+    'Admin Approved': 'border-green-500/20 text-green-500 bg-green-500/5',
     'Accepted by Admin': 'border-green-500/20 text-green-500 bg-green-500/5',
-    'Pending': 'border-primary/20 text-primary bg-primary/5',
+    'Accepted by Visitor': 'border-yellow-500/20 text-yellow-500 bg-yellow-500/5',
+    'Sent to Visitor': 'border-blue-500/20 text-blue-500 bg-blue-500/5',
+    'Accepted by Contact Person': 'border-orange-500/20 text-orange-500 bg-orange-500/5',
     'Sent to Admin': 'border-orange-500/20 text-orange-500 bg-orange-500/5',
     'Accepted': 'border-purple-500/20 text-purple-500 bg-purple-500/5',
     'Rejected': 'border-white/10 text-gray-300 bg-white/5',
@@ -93,9 +95,10 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
         <div className="flex bg-[var(--color-surface-2)] p-1 rounded-2xl border border-white/5 relative overflow-x-auto no-scrollbar max-w-full">
           {[
             { id: 'All', label: 'All Forms' },
-            { id: 'Pending', label: 'Pending' },
-            { id: 'Sent to Admin', label: 'Sent to Admin' },
-            { id: 'Accepted by Admin', label: 'Accepted by Admin' },
+            { id: 'Sent to Visitor', label: 'Sent to Visitor' },
+            { id: 'Accepted by Visitor', label: 'Accepted by Visitor' },
+            { id: 'Accepted by Contact Person', label: 'Contact Person Accepted' },
+            { id: 'Admin Approved', label: 'Admin Approved' },
             { id: 'Rejected', label: 'Rejected' },
           ].map((btn) => (
             <button
@@ -172,7 +175,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                   <td className="px-8 py-8 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <StatusBadge status={visitor.status} />
-                      {hasGatePass(visitor.id) && (
+                      {hasGatePass(visitor.id) && visitor.status === 'Admin Approved' && (
                         <button
                           onClick={() => onAction(visitor, 'ViewGatePass')}
                           className="flex items-center gap-2 text-[10px] items-center justify-center font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
@@ -185,7 +188,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                   </td>
                   <td className="px-8 py-8 text-right pr-10">
                     <div className="flex justify-end gap-3">
-                      {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin') && (
+                      {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin' || visitor.status === 'Accepted by Visitor' || visitor.status === 'Accepted by Contact Person') && (
                         <>
                           <button onClick={() => onAction(visitor, 'Approve')} title="AUTHORIZE BATCH" className="w-10 h-10 rounded-xl flex items-center justify-center bg-green-500/5 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-500 shadow-xl group/btn">
                             <Check size={16} strokeWidth={3} className="group-hover/btn:scale-110 transition-transform" />
@@ -268,7 +271,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <StatusBadge status={visitor.status} />
-                  {hasGatePass(visitor.id) && (
+                  {hasGatePass(visitor.id) && visitor.status === 'Admin Approved' && (
                     <button
                       onClick={() => onAction(visitor, 'ViewGatePass')}
                       className="flex items-center gap-2 text-[10px] font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
@@ -337,7 +340,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
 
               {/* Mobile Card Actions */}
               <div className="p-6 border-t border-white/5 bg-black/40 flex gap-4 relative z-10">
-                {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin') && (
+                {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin' || visitor.status === 'Accepted by Visitor' || visitor.status === 'Accepted by Contact Person') && (
                   <>
                     <button onClick={() => onAction(visitor, 'Approve')} className="flex-1 h-14 flex justify-center items-center gap-3 bg-green-500/5 border border-green-500/20 text-green-500 text-[13px] font-medium capitalize tracking-[0.2em] rounded-2xl hover:bg-green-500 hover:text-white transition-all shadow-xl">
                       <Check size={16} strokeWidth={3} /> <span>Approve</span>

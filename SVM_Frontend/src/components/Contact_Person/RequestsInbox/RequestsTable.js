@@ -3,13 +3,16 @@ import { Eye } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
   const styles = {
-    'Approved': 'text-green-500 bg-green-500/10 border-green-500/20',
-    'Pending': 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
+    'Admin Approved': 'text-green-500 bg-green-500/10 border-green-500/20',
+    'Accepted by Visitor': 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
+    'Sent to Visitor': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
     'Rejected': 'text-primary bg-primary/10 border-primary/20',
     'Checked In': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
     'Checked Out': 'text-[var(--color-text-secondary)] bg-[var(--color-surface-1)] border-[var(--color-border-soft)]',
     'Accepted': 'text-purple-500 bg-purple-500/10 border-purple-500/20',
+    'Accepted by Contact Person': 'text-orange-500 bg-orange-500/10 border-orange-500/20',
     'Sent to Admin': 'text-orange-500 bg-orange-500/10 border-orange-500/20',
+    'Pending': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
   };
 
   return (
