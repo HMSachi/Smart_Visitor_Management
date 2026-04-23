@@ -187,7 +187,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                   </td>
                   <td className="px-8 py-8 text-right pr-10">
                     <div className="flex justify-end gap-3">
-                      {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin') && (
+                      {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin' || visitor.status === 'Accepted by Visitor' || visitor.status === 'Accepted by Contact Person') && (
                         <>
                           <button onClick={() => onAction(visitor, 'Approve')} title="AUTHORIZE BATCH" className="w-10 h-10 rounded-xl flex items-center justify-center bg-green-500/5 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-500 shadow-xl group/btn">
                             <Check size={16} strokeWidth={3} className="group-hover/btn:scale-110 transition-transform" />
@@ -339,7 +339,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
 
               {/* Mobile Card Actions */}
               <div className="p-6 border-t border-white/5 bg-black/40 flex gap-4 relative z-10">
-                {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin') && (
+                {(visitor.status === 'Pending' || visitor.status === 'Sent to Admin' || visitor.status === 'Accepted by Visitor' || visitor.status === 'Accepted by Contact Person') && (
                   <>
                     <button onClick={() => onAction(visitor, 'Approve')} className="flex-1 h-14 flex justify-center items-center gap-3 bg-green-500/5 border border-green-500/20 text-green-500 text-[13px] font-medium capitalize tracking-[0.2em] rounded-2xl hover:bg-green-500 hover:text-white transition-all shadow-xl">
                       <Check size={16} strokeWidth={3} /> <span>Approve</span>
