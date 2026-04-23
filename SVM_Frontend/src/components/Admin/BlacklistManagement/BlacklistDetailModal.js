@@ -91,10 +91,10 @@ const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
                   </div>
                   <div>
                     <p className="text-gray-300/70 text-[11px] font-medium tracking-[0.3em] uppercase mb-1">
-                      Enforcement Registry
+                      Blacklist Management
                     </p>
                     <h2 className="text-white text-base font-bold tracking-[0.15em] capitalize">
-                      Blacklist Profile
+                      Visitor Details
                     </h2>
                   </div>
                 </div>
@@ -119,7 +119,7 @@ const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]" />
                     <p className="text-primary text-[11px] font-bold tracking-[0.3em] uppercase">
-                      Restricted Identity
+                      Visitor Information
                     </p>
                   </div>
 

@@ -122,7 +122,7 @@ const BlacklistTable = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
-              placeholder="Search identity or email..."
+              placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-white/[0.03] border border-white/10 rounded-2xl pl-12 pr-4 py-3.5 text-white text-sm focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-500 shadow-inner"
@@ -134,7 +134,7 @@ const BlacklistTable = () => {
             className="w-full md:w-auto px-8 py-3.5 bg-primary text-white text-xs font-bold uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 active:scale-[0.98] group"
           >
             <UserPlus size={18} className="group-hover:rotate-12 transition-transform" />
-            Add New Identity
+            Add to Blacklist
           </button>
         </div>
 
@@ -299,10 +299,10 @@ const BlacklistTable = () => {
                         </div>
                         <div>
                           <h3 className="text-white text-lg font-bold capitalize tracking-[0.2em] mb-2">
-                            No Restricted Identities
+                            No Blacklisted Visitors
                           </h3>
                           <p className="text-gray-300/60 text-sm capitalize tracking-widest">
-                            Enforcement registry is currently clear.
+                            There are currently no visitors on the blacklist.
                           </p>
                         </div>
                       </div>

@@ -79,8 +79,8 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                     <UserPlus size={24} />
                   </div>
                   <div>
-                    <h2 className="text-white text-lg font-bold tracking-widest uppercase">Restrict New Identity</h2>
-                    <p className="text-gray-400 text-xs tracking-wider">Initialize enforcement protocol for security blacklist</p>
+                    <h2 className="text-white text-lg font-bold tracking-widest uppercase">Add Blacklisted Visitor</h2>
+                    <p className="text-gray-400 text-xs tracking-wider">Add a visitor to the restricted access list</p>
                   </div>
                 </div>
                 <button type="button" onClick={onClose} className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-400 hover:text-white">
@@ -95,10 +95,10 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="col-span-full flex items-center gap-3">
                     <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
-                    <h3 className="text-primary text-[12px] font-bold uppercase tracking-[0.3em]">Identity Matrix</h3>
+                    <h3 className="text-primary text-[12px] font-bold uppercase tracking-[0.3em]">Visitor Details</h3>
                   </div>
                   
-                  <InputField label="Full Name" icon={User} name="VB_Name" value={formData.VB_Name} onChange={handleChange} placeholder="Subject full legal name" required />
+                  <InputField label="Full Name" icon={User} name="VB_Name" value={formData.VB_Name} onChange={handleChange} placeholder="Visitor's full name" required />
                   <InputField label="Email Address" icon={Mail} name="VB_Email" value={formData.VB_Email} onChange={handleChange} type="email" placeholder="email@example.com" />
                   <InputField label="Role" icon={Briefcase} name="VB_Role" value={formData.VB_Role} onChange={handleChange} placeholder="e.g. visitor, contractor" />
                 </div>
@@ -107,13 +107,13 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
                   <div className="col-span-full flex items-center gap-3">
                     <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
-                    <h3 className="text-primary text-[12px] font-bold uppercase tracking-[0.3em]">Restriction Logistics</h3>
+                    <h3 className="text-primary text-[12px] font-bold uppercase tracking-[0.3em]">Blacklist Details</h3>
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
                     <label className="text-gray-300/70 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2">
                       <AlertTriangle size={12} className="text-primary/60" />
-                      Enforcement Rationale <span className="text-primary">*</span>
+                      Reason for Blacklisting <span className="text-primary">*</span>
                     </label>
                     <textarea
                       name="VB_Description"
@@ -157,7 +157,7 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                     className="flex-[2] py-4 bg-primary rounded-2xl text-white text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20"
                   >
                     <Save size={18} />
-                    Commit Restriction
+                    Add to Blacklist
                   </button>
                 </div>
               </form>

@@ -80,8 +80,8 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
                     <Edit3 size={24} />
                   </div>
                   <div>
-                    <h2 className="text-white text-lg font-bold tracking-widest uppercase">Modify Restriction</h2>
-                    <p className="text-gray-400 text-xs tracking-wider">Update enforcement protocol details</p>
+                    <h2 className="text-white text-lg font-bold tracking-widest uppercase">Edit Blacklisted Visitor</h2>
+                    <p className="text-gray-400 text-xs tracking-wider">Update the details of this blacklisted visitor</p>
                   </div>
                 </div>
                 <button type="button" onClick={onClose} className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-400 hover:text-white">
@@ -96,10 +96,10 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="col-span-full flex items-center gap-3">
                     <div className="w-1 h-4 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
-                    <h3 className="text-blue-400 text-[12px] font-bold uppercase tracking-[0.3em]">Identity Matrix</h3>
+                    <h3 className="text-blue-400 text-[12px] font-bold uppercase tracking-[0.3em]">Visitor Details</h3>
                   </div>
                   
-                  <InputField label="Full Name" icon={User} name="VB_Name" value={formData.VB_Name} onChange={handleChange} placeholder="Subject full legal name" required />
+                  <InputField label="Full Name" icon={User} name="VB_Name" value={formData.VB_Name} onChange={handleChange} placeholder="Visitor's full name" required />
                   <InputField label="Email Address" icon={Mail} name="VB_Email" value={formData.VB_Email} onChange={handleChange} type="email" placeholder="email@example.com" />
                   <InputField label="Role" icon={Briefcase} name="VB_Role" value={formData.VB_Role} onChange={handleChange} placeholder="e.g. visitor, contractor" />
                 </div>
@@ -108,7 +108,7 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
                   <div className="col-span-full flex items-center gap-3">
                     <div className="w-1 h-4 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
-                    <h3 className="text-blue-400 text-[12px] font-bold uppercase tracking-[0.3em]">Restriction Logistics</h3>
+                    <h3 className="text-blue-400 text-[12px] font-bold uppercase tracking-[0.3em]">Blacklist Details</h3>
                   </div>
 
                   <div className="space-y-2">
@@ -143,7 +143,7 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
                     className="flex-[2] py-4 bg-blue-600 rounded-2xl text-white text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-lg shadow-blue-500/20"
                   >
                     <Save size={18} />
-                    Update Restriction
+                    Update Details
                   </button>
                 </div>
               </form>
