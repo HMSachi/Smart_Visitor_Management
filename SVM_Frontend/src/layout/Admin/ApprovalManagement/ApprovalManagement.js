@@ -50,25 +50,43 @@ const ApprovalManagement = () => {
   const [itemsCarried, setItemsCarried] = useState([]);
 
   const handleAddVisitor = () => {
-    const newId = visitorGroupMembers.length > 0 ? Math.max(...visitorGroupMembers.map(v => v.id || 0)) + 1 : 1;
-    setVisitorGroupMembers([...visitorGroupMembers, { id: newId, fullName: '', nic: '', contact: '' }]);
+    const newId =
+      visitorGroupMembers.length > 0
+        ? Math.max(...visitorGroupMembers.map((v) => v.id || 0)) + 1
+        : 1;
+    setVisitorGroupMembers([
+      ...visitorGroupMembers,
+      { id: newId, fullName: "", nic: "", contact: "" },
+    ]);
   };
   const handleRemoveVisitor = (id) => {
-    setVisitorGroupMembers(visitorGroupMembers.filter(v => v.id !== id));
+    setVisitorGroupMembers(visitorGroupMembers.filter((v) => v.id !== id));
   };
   const handleUpdateVisitor = (id, field, value) => {
-    setVisitorGroupMembers(visitorGroupMembers.map(v => v.id === id ? { ...v, [field]: value } : v));
+    setVisitorGroupMembers(
+      visitorGroupMembers.map((v) =>
+        v.id === id ? { ...v, [field]: value } : v,
+      ),
+    );
   };
 
   const handleAddItem = () => {
-    const newId = itemsCarried.length > 0 ? Math.max(...itemsCarried.map(i => i.id || 0)) + 1 : 1;
-    setItemsCarried([...itemsCarried, { id: newId, itemName: '', quantity: '' }]);
+    const newId =
+      itemsCarried.length > 0
+        ? Math.max(...itemsCarried.map((i) => i.id || 0)) + 1
+        : 1;
+    setItemsCarried([
+      ...itemsCarried,
+      { id: newId, itemName: "", quantity: "" },
+    ]);
   };
   const handleRemoveItem = (id) => {
-    setItemsCarried(itemsCarried.filter(i => i.id !== id));
+    setItemsCarried(itemsCarried.filter((i) => i.id !== id));
   };
   const handleUpdateItem = (id, field, value) => {
-    setItemsCarried(itemsCarried.map(i => i.id === id ? { ...i, [field]: value } : i));
+    setItemsCarried(
+      itemsCarried.map((i) => (i.id === id ? { ...i, [field]: value } : i)),
+    );
   };
 
   React.useEffect(() => {
@@ -86,23 +104,27 @@ const ApprovalManagement = () => {
           const groupRes = await VisitGroupService.GetAllVisitGroup();
           const allGroups = groupRes?.data?.ResultSet || groupRes?.data || [];
           const matchedMembers = (Array.isArray(allGroups) ? allGroups : [])
-            .filter(m => String(m.VVR_Request_id) === String(selectedVisitor.id))
-            .map(m => ({
+            .filter(
+              (m) => String(m.VVR_Request_id) === String(selectedVisitor.id),
+            )
+            .map((m) => ({
               id: m.VVG_id,
               fullName: m.VVG_Visitor_Name,
               nic: m.VVG_NIC_Passport_Number,
-              contact: m.VVG_Designation
+              contact: m.VVG_Designation,
             }));
           setVisitorGroupMembers(matchedMembers);
 
           const itemsRes = await ItemCarriedService.GetAllItemsCarried();
           const allItems = itemsRes?.data?.ResultSet || itemsRes?.data || [];
           const matchedItems = (Array.isArray(allItems) ? allItems : [])
-            .filter(i => String(i.VVR_Request_id) === String(selectedVisitor.id))
-            .map(i => ({
+            .filter(
+              (i) => String(i.VVR_Request_id) === String(selectedVisitor.id),
+            )
+            .map((i) => ({
               id: i.VIC_Item_id,
               itemName: i.VIC_Item_Name,
-              quantity: i.VIC_Quantity
+              quantity: i.VIC_Quantity,
             }));
           setItemsCarried(matchedItems);
         } catch (err) {
@@ -249,31 +271,40 @@ const ApprovalManagement = () => {
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <PersonnelAuthProtocol
-                    visitor={selectedVisitor}
-                    onBack={handleBackToList}
-                    onAction={handleAction}
-                  />
-
-                  <div className={`mt-8 p-6 border rounded-3xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}>
-                    <VisitorGroup
-                      visitors={visitorGroupMembers}
-                      onAdd={handleAddVisitor}
-                      onRemove={handleRemoveVisitor}
-                      onChange={handleUpdateVisitor}
-                      isLight={isLight}
+                  <form
+                    className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-2 custom-scrollbar"
+                    onSubmit={(e) => e.preventDefault()}
+                  >
+                    <PersonnelAuthProtocol
+                      visitor={selectedVisitor}
+                      onBack={handleBackToList}
+                      onAction={handleAction}
                     />
-                  </div>
 
-                  <div className={`mt-8 p-6 border rounded-3xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}>
-                    <ItemsCarried
-                      items={itemsCarried}
-                      onAdd={handleAddItem}
-                      onRemove={handleRemoveItem}
-                      onChange={handleUpdateItem}
-                      isLight={isLight}
-                    />
-                  </div>
+                    <div
+                      className={`mt-4 p-4 border rounded-xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}
+                    >
+                      <VisitorGroup
+                        visitors={visitorGroupMembers}
+                        onAdd={handleAddVisitor}
+                        onRemove={handleRemoveVisitor}
+                        onChange={handleUpdateVisitor}
+                        isLight={isLight}
+                      />
+                    </div>
+
+                    <div
+                      className={`mt-2 p-2 border rounded-xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}
+                    >
+                      <ItemsCarried
+                        items={itemsCarried}
+                        onAdd={handleAddItem}
+                        onRemove={handleRemoveItem}
+                        onChange={handleUpdateItem}
+                        isLight={isLight}
+                      />
+                    </div>
+                  </form>
                 </motion.div>
               )}
             </AnimatePresence>
