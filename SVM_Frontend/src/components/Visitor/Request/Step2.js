@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { ShieldCheck, ArrowRight, ClipboardCheck, CheckCircle2, Clock } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Clock } from 'lucide-react';
 import VisitorGroup from './Step2/VisitorGroup';
 import EquipmentDeclaration from './Step2/EquipmentDeclaration';
-import Phase1Summary from './Step2/Phase1Summary';
 import { updateVisitorRequestStep2 } from '../../../services/visitorRequestService';
 import { 
     addVisitor, 
@@ -15,6 +14,7 @@ import {
     updateEquipmentDetail,
     setStatus
 } from '../../../reducers/visitorSlice';
+import { AddItem } from '../../../actions/ItemCarriedAction';
 
 const Step2Main = () => {
     const dispatch = useDispatch();
@@ -25,19 +25,6 @@ const Step2Main = () => {
         status, 
         requestRef 
     } = visitorState;
-
-    const [isConfirmed, setIsConfirmed] = useState(false);
-
-    // Prepare summary from all fields in state (including step 1)
-    const step1Summary = {
-        fullName: visitorState.fullName,
-        nic: visitorState.nic,
-        email: visitorState.email,
-        date: visitorState.visitDate,
-        purpose: visitorState.purpose,
-        visitors: visitorState.visitorCount,
-        areas: visitorState.selectedAreas || []
-    };
 
     const handleAddVisitor = () => {
         dispatch(addVisitor());
@@ -63,17 +50,40 @@ const Step2Main = () => {
         dispatch(updateEquipmentDetail({ id, field, value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         dispatch(setStatus('submitting'));
-        setTimeout(() => {
+
+        try {
+            // Add Items Carried to Backend
+            if (equipment && equipment.length > 0) {
+                for (const item of equipment) {
+                    if (item.itemName) {
+                        await dispatch(AddItem({
+                            VVR_Request_id: requestRef,
+                            VIC_Item_Name: item.itemName,
+                            VIC_Quantity: item.quantity || 1,
+                            VIC_Designation: item.description || ""
+                        }));
+                    }
+                }
+            }
+
+            // Keep local storage update as fallback
             updateVisitorRequestStep2(requestRef, {
                 visitors,
                 equipment,
             });
-            dispatch(setStatus('step2_pending'));
-            window.location.href = '/status';
-        }, 2000);
+
+            setTimeout(() => {
+                dispatch(setStatus('step2_pending'));
+                window.location.href = '/status';
+            }, 1000);
+        } catch (error) {
+            console.error("Failed to add items:", error);
+            alert("Failed to synchronize asset declaration. Please try again.");
+            dispatch(setStatus(null));
+        }
     };
 
     if (status === 'step2_pending') {
@@ -128,31 +138,20 @@ const Step2Main = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto px-6 pt-2 pb-12 text-white bg-background border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-6 py-2 pb-12 text-white bg-black">
             {/* Phase Header */}
-            <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+            <div className="mb-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/5 pb-10">
                 <div>
-                    <div className="flex items-center gap-2 mb-3 justify-center md:justify-start">
-                        <div className="w-6 h-[1px] bg-primary/50" />
-                        <span className="text-primary font-bold uppercase tracking-widest text-[12px]">PHASE 02 [DETAILED]</span>
-                    </div>
-                    <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-tight">
+                    <h1 className="text-[24px] md:text-[24px] font-bold uppercase tracking-tight">
                         Detailed <span className="text-primary">Clearance</span>
                     </h1>
-                    <p className="text-gray-500 text-[13px] font-bold uppercase tracking-widest mt-1">Personnel & Asset Declaration Node</p>
+                    <p className="text-gray-500 text-[12px] uppercase font-bold tracking-[0.4em] opacity-80 mt-1">Personnel & Asset Declaration Node</p>
                 </div>
 
-                <div className="hidden md:flex items-center gap-4 px-5 py-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                    <ClipboardCheck size={20} className="text-primary" />
-                    <div>
-                        <p className="text-white text-[13px] font-bold uppercase tracking-widest">Protocol Sync</p>
-                        <p className="text-gray-600 text-[12px] uppercase font-bold tracking-widest">Node Secured</p>
-                    </div>
-                </div>
             </div>
 
             {/* Progress Visualization */}
-            <div className="mb-16 relative">
+            <div className="mb-12 relative">
                 <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                     <motion.div 
                         initial={{ width: '50%' }}
@@ -171,34 +170,11 @@ const Step2Main = () => {
                     <EquipmentDeclaration items={equipment} onAdd={handleAddEquipment} onRemove={handleRemoveEquipment} onChange={handleUpdateEquipment} />
                 </div>
                 
-                <div className="relative group pt-12 border-t border-white/5">
-                    <Phase1Summary summary={step1Summary} />
-                </div>
-
-                {/* Modern Confirmation Action */}
                 <div className="space-y-10 pt-6">
-                    <div 
-                        className={`p-6 bg-white/[0.01] border rounded-xl flex items-start gap-4 cursor-pointer transition-all ${
-                            isConfirmed ? 'border-primary/50 bg-primary/5' : 'border-white/5 hover:border-white/10'
-                        }`}
-                        onClick={() => setIsConfirmed(!isConfirmed)}
-                    >
-                        <div className={`mt-0.5 min-w-[20px] h-5 flex items-center justify-center rounded border transition-all ${
-                            isConfirmed ? 'bg-primary border-primary' : 'border-white/20'
-                        }`}>
-                            {isConfirmed && <CheckCircle2 size={12} className="text-white" />}
-                        </div>
-                        <p className="text-[14px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">
-                            I verify that all group details and declarations provided above are <span className="text-white underline underline-offset-4 decoration-primary/40">accurate and authentic</span>. 
-                            <br />
-                            <span className="text-gray-700 text-[12px]">Unauthorized equipment or undisclosed personnel may result in blacklist.</span>
-                        </p>
-                    </div>
-
                     <div className="pt-8 pb-20 text-center">
                         <button 
                             type="submit"
-                            disabled={!isConfirmed || status === 'submitting'}
+                            disabled={status === 'submitting'}
                             className="compact-btn !w-full md:!w-auto !px-20 !py-5"
                         >
                             {status === 'submitting' ? (
@@ -209,7 +185,7 @@ const Step2Main = () => {
                             ) : (
                                 <div className="flex items-center gap-3">
                                     <ShieldCheck size={18} />
-                                    <span>Finalize Clearance</span>
+                                    <span>Submit</span>
                                 </div>
                             )}
                         </button>

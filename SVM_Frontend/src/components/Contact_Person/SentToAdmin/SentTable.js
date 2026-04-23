@@ -14,11 +14,11 @@ const ProgressionTimeline = ({ status }) => {
             {steps.map((step, i) => (
                 <React.Fragment key={i}>
                     <div className="flex flex-col items-center gap-2">
-                        <div className={`w-3 h-3 rounded-full border-2 ${step.done ? 'bg-green-500 border-green-500 shadow-[0_0_10px_#22c55e]' : step.current ? 'bg-primary border-primary animate-pulse shadow-[0_0_10px_var(--color-primary)]' : 'bg-transparent border-white/20'}`}></div>
-                        <span className={`uppercase ${step.done ? 'text-green-500' : step.current ? 'text-white' : 'text-gray-300'}`}>{step.label}</span>
+                        <div className={`w-3 h-3 rounded-full border-2 ${step.done ? 'bg-green-500 border-green-500 shadow-[0_0_10px_#22c55e]' : step.current ? 'bg-primary border-primary animate-pulse shadow-[0_0_10px_var(--color-primary)]' : 'bg-transparent border-[var(--color-border-soft)]'}`}></div>
+                        <span className={`uppercase font-bold text-[10px] tracking-widest ${step.done ? 'text-green-500' : step.current ? 'text-primary' : 'text-[var(--color-text-dim)]'}`}>{step.label}</span>
                     </div>
                     {i < steps.length - 1 && (
-                        <div className={`h-[1px] flex-1 ${step.done ? 'bg-green-500' : 'bg-white/10'}`}></div>
+                        <div className={`h-[1px] flex-1 ${step.done ? 'bg-green-500' : 'bg-[var(--color-border-soft)]'}`}></div>
                     )}
                 </React.Fragment>
             ))}
@@ -28,26 +28,26 @@ const ProgressionTimeline = ({ status }) => {
 
 const SentTable = ({ requests }) => {
     return (
-        <div className="mas-glass border-mas-border overflow-x-auto overflow-y-hidden custom-scrollbar">
+        <div className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-3xl overflow-hidden shadow-xl shadow-black/20 animate-fade-in overflow-x-auto">
             <table className="w-full text-left border-collapse text-[13px]">
                 <thead>
-                    <tr className="border-b border-mas-border bg-white/[0.02] text-[13px]">
-                        <th className="px-6 py-6 uppercase text-gray-300 whitespace-nowrap">Forward ID</th>
-                        <th className="px-6 py-6 uppercase text-gray-300 whitespace-nowrap">Visitor Node</th>
-                        <th className="px-6 py-6 uppercase text-gray-300 whitespace-nowrap">Progression Matrix</th>
-                        <th className="px-6 py-6 uppercase text-gray-300 whitespace-nowrap">Current Status</th>
+                    <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] font-bold uppercase tracking-[0.2em]">
+                        <th className="px-6 py-4 whitespace-nowrap">Forward ID</th>
+                        <th className="px-6 py-4 whitespace-nowrap">Visitor Name</th>
+                        <th className="px-6 py-4 whitespace-nowrap">Timeline</th>
+                        <th className="px-6 py-4 whitespace-nowrap">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {requests.map((req) => (
-                        <tr key={req.id} className="border-b border-mas-border group hover:bg-white/[0.03] transition-all">
+                        <tr key={req.id} className="border-b border-[var(--color-border-soft)] bg-[var(--color-bg-paper)] hover:bg-[var(--color-surface-1)]/60 transition-all font-bold">
                             <td className="px-6 py-6 whitespace-nowrap">
-                                <span className="text-gray-300 group-hover:text-white transition-colors">#{req.id}</span>
+                                <span className="text-[var(--color-text-primary)]">#{req.id}</span>
                             </td>
                             <td className="px-6 py-6 whitespace-nowrap">
                                 <div className="flex flex-col">
-                                    <span className="uppercase text-white mb-1">{req.name}</span>
-                                    <span className="text-gray-300 uppercase text-[12px]">Target: Unit 08A</span>
+                                    <span className="uppercase text-[var(--color-text-primary)] mb-1">{req.name}</span>
+                                    <span className="text-[var(--color-text-dim)] uppercase text-[11px] tracking-widest font-bold">Awaiting Admin Response</span>
                                 </div>
                             </td>
                             <td className="px-6 py-6 whitespace-nowrap">

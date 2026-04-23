@@ -16,13 +16,14 @@ import Step1Request from "./layout/Visitor/Request/Step1";
 import Step2Request from "./layout/Visitor/Request/Step2";
 import StatusPage from "./layout/Visitor/Status/Status";
 import QRPage from "./layout/Visitor/QR/QR";
+import VisitorGatePass from "./layout/Visitor/GatePass/GatePass";
 import InstructionsPage from "./layout/Visitor/Instructions/Instructions";
 import MyRequests from "./layout/Visitor/MyRequests/MyRequests";
 import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
 import ApprovalManagement from "./layout/Admin/ApprovalManagement/ApprovalManagement";
 import SecurityMonitoringPage from "./layout/Admin/SecurityMonitoring/SecurityMonitoring";
 import BlacklistManagement from "./layout/Admin/BlacklistManagement/BlacklistManagement";
-import ReportsAndLogs from "./layout/Admin/ReportsAndLogs/ReportsAndLogs";
+
 import UserManagement from "./layout/Admin/UserManagement/UserManagement";
 import AllUsers from "./layout/Admin/AllUsers/AllUsers";
 import VisitorManagement from "./layout/Admin/VisitorManagement/VisitorManagement";
@@ -32,7 +33,6 @@ import Login from "./layout/Login/Login";
 import ContactDashboard from "./layout/Contact_Person/Dashboard/Dashboard";
 import RequestsInbox from "./layout/Contact_Person/RequestsInbox/RequestsInbox";
 import RequestReview from "./layout/Contact_Person/RequestReview/RequestReview";
-import ApprovedRequests from "./layout/Contact_Person/ApprovedRequests/ApprovedRequests";
 import RejectedRequests from "./layout/Contact_Person/RejectedRequests/RejectedRequests";
 import SentToAdmin from "./layout/Contact_Person/SentToAdmin/SentToAdmin";
 import VisitorHistory from "./layout/Contact_Person/VisitorHistory/VisitorHistory";
@@ -159,6 +159,7 @@ const AppContent = () => {
           <Route path="/qr" element={<QRPage />} />
           <Route path="/instructions" element={<InstructionsPage />} />
           <Route path="/visitor/my-requests" element={<MyRequests />} />
+          <Route path="/visitor/gate-pass/:gatePassId" element={<VisitorGatePass />} />
 
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -174,7 +175,7 @@ const AppContent = () => {
             path="/admin/blacklist-management"
             element={<BlacklistManagement />}
           />
-          <Route path="/admin/reports-logs" element={<ReportsAndLogs />} />
+
           <Route path="/admin/user-management" element={<UserManagement />} />
           <Route path="/admin/all-users" element={<AllUsers />} />
           <Route path="/admin/visitor-management" element={<VisitorManagement />} />
@@ -198,7 +199,7 @@ const AppContent = () => {
           />
           <Route
             path="/contact_person/approved-requests"
-            element={<ApprovedRequests />}
+            element={<Navigate to="/contact_person/requests-inbox" replace />}
           />
           <Route
             path="/contact_person/rejected-requests"

@@ -1,8 +1,11 @@
 import React from 'react';
 import HistoryTable from './HistoryTable';
 import { Search, Download, Filter, Database } from 'lucide-react';
+import { useThemeMode } from '../../../theme/ThemeModeContext';
 
 const VisitorHistoryMain = () => {
+    const { themeMode } = useThemeMode();
+    const isLight = themeMode === "light";
     const historyData = [
         { id: '1', visitor: 'MICHAEL BROWN', date: 'OCT 20, 2024', category: 'MAINTENANCE', status: 'Approved' },
         { id: '2', visitor: 'EMMA WATSON', date: 'OCT 15, 2024', category: 'INTERVIEW', status: 'Approved' },
@@ -12,48 +15,42 @@ const VisitorHistoryMain = () => {
     ];
 
     return (
-        <div className="p-4 md:p-10 space-y-10 animate-fade-in-slow">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-2">
+        <div className="p-4 md:p-10 space-y-10 animate-fade-in-slow transition-colors duration-500">
+            <header className={`mb-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-6 gap-6 relative ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}>
                 <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <div className="w-1.5 h-1.5 bg-mas-text-dim rounded-full opacity-80 shadow-[0_0_8px_rgba(255,255,255,0.3)]"></div>
-                        <span className="text-gray-300 text-[13px] font-medium uppercase tracking-[0.3em]">Historical Ledger</span>
-                    </div>
-                    <p className="text-gray-300 text-xs uppercase tracking-widest opacity-90">Verified personnel archive and entry logs</p>
+                  <h2 className={`text-lg font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>Visitor History</h2>
+                  <p className={`text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/40"}`}>Verified personnel archive and entry logs</p>
                 </div>
-
-                <div className="flex items-center gap-4">
-                    <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" size={14} />
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                    <div className="relative group flex-1 md:w-80">
+                        <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${isLight ? "text-gray-400" : "text-white/40"} group-focus-within:text-primary`} size={14} />
                         <input
                             type="text"
                             placeholder="SEARCH ARCHIVES..."
-                            className="bg-white/[0.03] border border-white/5 text-[13px] font-medium uppercase tracking-widest text-white placeholder:text-white/70 w-80 pl-12 py-3 rounded-xl focus:outline-none focus:border-primary focus:bg-white/[0.05] transition-all"
+                            className={`text-[12px] font-bold uppercase tracking-widest placeholder:opacity-50 w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:border-primary focus:shadow-sm transition-all shadow-sm border ${
+                                isLight 
+                                    ? "bg-white border-gray-200 text-[#1A1A1A] placeholder:text-gray-400" 
+                                    : "bg-black/40 border-white/10 text-white placeholder:text-white/40"
+                            }`}
                         />
                     </div>
-                    <div className="flex items-center gap-2 px-5 py-3 bg-white/[0.03] border border-white/5 rounded-xl cursor-pointer hover:border-primary group transition-all">
-                        <Filter size={14} className="text-gray-300 group-hover:text-primary" />
-                        <span className="text-[13px] font-medium uppercase tracking-widest text-gray-300 group-hover:text-white">Filters</span>
-                    </div>
-                    <button className="flex items-center gap-3 px-6 py-3 bg-primary text-white text-[13px] font-medium uppercase tracking-widest rounded-xl hover:bg-primary-dark transition-all shadow-[0_4px_20px_rgba(200,16,46,0.2)]">
-                        <Download size={14} />
-                        Export Ledger
-                    </button>
                 </div>
-            </div>
+            </header>
 
             <HistoryTable history={historyData} />
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-4">
                 {[
-                    { label: 'Fiscal Log', val: '1,492', color: 'text-white' },
+                    { label: 'Total Logs', val: '1,492', color: isLight ? 'text-[#1A1A1A]' : 'text-white' },
                     { label: 'Approved Entries', val: '1,120', color: 'text-green-500' },
-                    { label: 'Breach Events', val: '00', color: 'text-primary' },
-                    { label: 'Pending Sync', val: '12', color: 'text-gray-300' }
+                    { label: 'Rejected Forms', val: '00', color: 'text-primary' },
+                    { label: 'Pending Action', val: '12', color: isLight ? 'text-gray-500' : 'text-white/40' }
                 ].map((stat, i) => (
-                    <div key={i} className="p-6 rounded-3xl bg-[var(--color-bg-paper)] border border-white/5 shadow-xl group hover:border-white/10 transition-all">
-                        <p className="text-gray-300 text-[12px] font-medium uppercase tracking-[0.2em] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">{stat.label}</p>
-                        <p className={`text-2xl font-medium tracking-tight ${stat.color}`}>{stat.val}</p>
+                    <div key={i} className={`p-6 rounded-2xl border shadow-sm group hover:border-primary/20 transition-all ${
+                        isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10 shadow-black/50"
+                    }`}>
+                        <p className={`text-[11px] font-bold uppercase tracking-[0.2em] mb-4 ${isLight ? "text-gray-400" : "text-white/40"}`}>{stat.label}</p>
+                        <p className={`text-2xl font-black tracking-tight ${stat.color}`}>{stat.val}</p>
                     </div>
                 ))}
             </div>

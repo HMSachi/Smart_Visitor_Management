@@ -48,7 +48,6 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate, onLogout }) => {
     { id: 'approvals', label: 'Approvals', icon: CheckSquare, path: '/admin/approval-management' },
     { id: 'security', label: 'Monitor', icon: ShieldAlert, path: '/admin/security-monitoring' },
     { id: 'blacklist', label: 'Blacklist', icon: UserX, path: '/admin/blacklist-management' },
-    { id: 'reports', label: 'Reports', icon: FileText, path: '/admin/reports-logs' },
     { id: 'all-users', label: 'All Users', icon: UserPlus, path: '/admin/all-users' },
   ];
 

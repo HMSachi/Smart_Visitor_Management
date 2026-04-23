@@ -106,6 +106,62 @@
   color-scheme: light !important;
 }
 
+.contact-theme-root,
+.admin-theme-root,
+.visitor-theme-root {
+  background-color: var(--color-bg-default);
+  color: var(--color-text-primary);
+}
+
+
+.contact-theme-root [class*='text-white'],
+.admin-theme-root [class*='text-white'],
+.visitor-theme-root [class*='text-white'] {
+  color: var(--color-text-primary) !important;
+}
+
+.contact-theme-root [class*='text-gray-'],
+.admin-theme-root [class*='text-gray-'],
+.visitor-theme-root [class*='text-gray-'] {
+  color: var(--color-text-secondary) !important;
+}
+
+.contact-theme-root [class*='border-white'],
+.admin-theme-root [class*='border-white'],
+.visitor-theme-root [class*='border-white'] {
+  border-color: var(--color-border-soft) !important;
+}
+
+.contact-theme-root [class*='bg-black/'],
+.admin-theme-root [class*='bg-black/'],
+.visitor-theme-root [class*='bg-black/'],
+.contact-theme-root [class*='bg-white/5'],
+.admin-theme-root [class*='bg-white/5'] {
+  background-color: var(--color-surface-2) !important;
+}
+
+.contact-theme-root [class*='bg-white'] {
+  background-color: var(--color-bg-paper);
+}
+
+.contact-theme-root [class*='border-gray-'] {
+  border-color: var(--color-border-soft) !important;
+}
+
+[data-theme='dark'] .contact-theme-root .bg-white {
+  background-color: var(--color-bg-paper) !important;
+}
+
+[data-theme='dark'] .contact-theme-root .text-[#1A1A1A] {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme='dark'] .contact-theme-root .text-gray-400,
+[data-theme='dark'] .contact-theme-root .text-gray-500,
+[data-theme='dark'] .contact-theme-root .text-gray-600 {
+  color: var(--color-text-secondary) !important;
+}
+
 @layer base {
   body {
     font-family: 'Inter', sans-serif !important;

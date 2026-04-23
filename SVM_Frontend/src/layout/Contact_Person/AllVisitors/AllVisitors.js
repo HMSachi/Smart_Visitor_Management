@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
   Table,
   TableBody,
@@ -39,6 +40,8 @@ const ContactAllVisitors = () => {
   const { visitorsByCP, isLoading, error } = useSelector(
     (state) => state.visitorManagement,
   );
+  const { themeMode } = useThemeMode();
+  const isLight = themeMode === "light";
 
   // Try to safely extract CP ID from logged in user, fallback to 2 per your specification if undefined
   const user = useSelector((state) => state.login.user);
@@ -215,41 +218,38 @@ const ContactAllVisitors = () => {
     : [];
 
   return (
-    <div className="flex bg-secondary overflow-hidden text-white h-screen w-full">
+    <div className={`flex overflow-hidden h-screen w-full transition-colors duration-500 ${isLight ? "bg-[#F8F9FA] text-[#1A1A1A]" : "bg-[var(--color-bg-default)] text-white"}`}>
       <Sidebar />
 
-      <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)] overflow-y-auto">
+      <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}>
         <Header title="All Visitors" />
 
-        <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full">
-          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
+        <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full z-10">
+          <header className={`mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-6 gap-6 relative z-10 ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}>
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-[2px] bg-primary"></div>
-                <span className="text-primary uppercase tracking-wider text-xs font-semibold">
-                  Access Control
-                </span>
-              </div>
-              <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
-                My Authorized Visitors
-              </h1>
+              <h2 className={`text-lg font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                All Authorized Visitors
+              </h2>
+              <p className={`text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/50"}`}>
+                Manage personal visitor registry
+              </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
-              <div className="flex items-center bg-black/40 border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[250px]">
-                <Search size={16} className="text-gray-400 mr-3" />
+              <div className={`flex items-center transition-colors border rounded-xl px-4 py-3 min-w-[250px] shadow-sm ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10 focus-within:border-primary"}`}>
+                <Search size={16} className={`mr-3 ${isLight ? "text-gray-400" : "text-white/20"}`} />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search Visior (ID/Name)..."
-                  className="bg-transparent text-[13px] text-white focus:outline-none w-full"
+                  placeholder="SEARCH VISITOR..."
+                  className={`bg-transparent text-[12px] font-bold tracking-widest uppercase focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
                 />
                 {searchTerm && (
                   <button
                     type="button"
                     onClick={() => setSearchTerm("")}
-                    className="text-gray-500 hover:text-white"
+                    className="text-gray-400 hover:text-primary"
                   >
                     <X size={14} />
                   </button>
@@ -265,13 +265,12 @@ const ContactAllVisitors = () => {
             </div>
           </header>
 
-          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
+          <div className={`border rounded-[32px] overflow-hidden relative z-10 ${isLight ? "bg-white border-gray-200 shadow-xl shadow-gray-200/50" : "bg-[#0F0F10] border-white/5"}`}>
 
             {isLoading ? (
               <div className="p-20 flex flex-col items-center justify-center text-center">
-                <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
-                <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
+                <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin mb-6"></div>
+                <p className="text-gray-500 text-[13px] uppercase tracking-[0.3em] font-medium">
                   Scanning Entries...
                 </p>
               </div>
@@ -280,34 +279,34 @@ const ContactAllVisitors = () => {
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 text-primary">
                   <AlertCircle size={24} />
                 </div>
-                <p className="text-primary text-[14px] uppercase tracking-widest">
+                <p className="text-primary text-[14px] uppercase tracking-widest font-bold">
                   {error}
                 </p>
               </div>
             ) : (
               <TableContainer
                 component={Paper}
-                className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative"
+                className="!bg-transparent !border-none !rounded-none !shadow-none z-10 relative"
               >
                 <Table sx={{ minWidth: 650 }} aria-label="visitors table">
-                  <TableHead className="bg-black/40">
+                  <TableHead className={`${isLight ? "bg-[#F8F9FA]" : "bg-black/40"}`}>
                     <TableRow>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
                         ID
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
                         Visitor
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
                         Credentials
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
                         Company
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
                         Destination
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
+                      <TableCell className={`font-bold uppercase tracking-widest text-[11px] ${isLight ? "text-gray-500 border-b-gray-100" : "text-white/40 border-b-white/5"}`}>
                         Status
                       </TableCell>
                     </TableRow>
@@ -330,39 +329,39 @@ const ContactAllVisitors = () => {
                             sx={{
                               "&:last-child td, &:last-child th": { border: 0 },
                               "&:hover": {
-                                backgroundColor: "rgba(255,255,255,0.02)",
+                                backgroundColor: isLight ? "#F8F9FA" : "rgba(255,255,255,0.02)",
                               },
                             }}
                           >
-                            <TableCell className="text-white/70 font-medium border-b-white/5">
+                            <TableCell className={`font-bold ${isLight ? "text-gray-600 border-b-gray-50" : "text-white/70 border-b-white/5"}`}>
                               {visitor.VV_Visitor_id}
                             </TableCell>
                             <TableCell
-                              className={`font-medium border-b-white/5 transition-colors ${isActive ? "text-white" : "text-white/30 line-through"}`}
+                              className={`font-bold transition-colors ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"} ${isLight ? "border-b-gray-50" : "border-b-white/5"}`}
                             >
                               {visitor.VV_Name || "-"}
                             </TableCell>
                             <TableCell
-                              className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={`font-medium transition-colors ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"} ${isLight ? "border-b-gray-50" : "border-b-white/5"}`}
                             >
                               {visitor.VV_NIC_Passport_NO || "-"}
                             </TableCell>
                             <TableCell
-                              className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={`font-medium transition-colors ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"} ${isLight ? "border-b-gray-50" : "border-b-white/5"}`}
                             >
                               {visitor.VV_Company || "-"}
                             </TableCell>
                             <TableCell
-                              className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={`font-medium transition-colors ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"} ${isLight ? "border-b-gray-50" : "border-b-white/5"}`}
                             >
                               {visitor.VV_Visiting_places || "-"}
                             </TableCell>
-                            <TableCell className="border-b-white/5">
+                            <TableCell className={`${isLight ? "border-b-gray-50" : "border-b-white/5"}`}>
                               <button
                                 onClick={() => handleToggleStatus(visitor)}
                                 disabled={isLoading}
                                 title="Click to toggle status"
-                                className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                className={`px-2 py-1 rounded text-[10px] uppercase tracking-widest font-bold transition-all cursor-pointer ${isActive ? "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200" : "bg-red-50 text-primary hover:bg-red-100 border border-red-200"}`}
                               >
                                 {isActive ? "ACTIVE" : "INACTIVE"}
                               </button>
@@ -375,7 +374,7 @@ const ContactAllVisitors = () => {
                         <TableCell
                           colSpan={6}
                           align="center"
-                          className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5"
+                          className={`py-12 uppercase tracking-widest text-sm ${isLight ? "text-gray-400 border-b-gray-50" : "text-white/40 border-b-white/5"}`}
                         >
                           No Visitors detected matching criteria
                         </TableCell>

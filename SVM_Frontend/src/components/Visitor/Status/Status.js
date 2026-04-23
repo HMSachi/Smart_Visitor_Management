@@ -66,14 +66,6 @@ const StatusMain = () => {
             <div className="mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-12">
 
                 <div className="flex gap-3 w-full md:w-auto">
-                    {currentStatus !== 'fully_approved' && (
-                        <button 
-                            onClick={() => window.location.href='/request-step-2'} 
-                            className="compact-btn !px-10"
-                        >
-                            Next Phase
-                        </button>
-                    )}
                     <button 
                         onClick={() => window.location.href='/home'} 
                         className="px-6 py-3 bg-white/[0.03] border border-white/10 text-white text-[13px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/[0.07] transition-all flex items-center justify-center gap-2"

@@ -47,6 +47,7 @@ export const AddVehicle = (vehicleData) => {
             if (isSuccess) {
                 dispatch({ type: ADD_VEHICLE_SUCCESS, payload: response.data });
                 setTimeout(() => dispatch(GetAllVehicles()), 1500);
+                return response.data;
             } else {
                 throw new Error(response.data?.Message || "Failed to add vehicle");
             }
@@ -54,8 +55,10 @@ export const AddVehicle = (vehicleData) => {
             if (error.message === "Network Error") {
                 dispatch({ type: ADD_VEHICLE_SUCCESS });
                 setTimeout(() => dispatch(GetAllVehicles()), 1500);
+                return { Status: "Success" };
             } else {
                 dispatch({ type: ADD_VEHICLE_FAILURE, payload: error.message });
+                throw error;
             }
         }
     };
@@ -66,14 +69,27 @@ export const UpdateVehicle = (vehicleData) => {
         dispatch({ type: UPDATE_VEHICLE_REQUEST });
         try {
             const response = await VehicleService.UpdateVehicle(vehicleData);
-            dispatch({ type: UPDATE_VEHICLE_SUCCESS, payload: response.data });
-            setTimeout(() => dispatch(GetAllVehicles()), 1500);
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.status === 200
+            );
+            if (isSuccess) {
+                dispatch({ type: UPDATE_VEHICLE_SUCCESS, payload: response.data });
+                setTimeout(() => dispatch(GetAllVehicles()), 1500);
+                return response.data;
+            } else {
+                throw new Error(response.data?.Message || "Failed to update vehicle");
+            }
         } catch (error) {
             if (error.message === "Network Error") {
                 dispatch({ type: UPDATE_VEHICLE_SUCCESS });
                 setTimeout(() => dispatch(GetAllVehicles()), 1500);
+                return { Status: "Success" };
             } else {
                 dispatch({ type: UPDATE_VEHICLE_FAILURE, payload: error.message });
+                throw error;
             }
         }
     };
@@ -97,14 +113,27 @@ export const UpdateVehicleStatus = (id, status) => {
         dispatch({ type: UPDATE_VEHICLE_STATUS_REQUEST });
         try {
             const response = await VehicleService.UpdateVehicleStatus(id, status);
-            dispatch({ type: UPDATE_VEHICLE_STATUS_SUCCESS, payload: response.data });
-            setTimeout(() => dispatch(GetAllVehicles()), 1500);
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.status === 200
+            );
+            if (isSuccess) {
+                dispatch({ type: UPDATE_VEHICLE_STATUS_SUCCESS, payload: response.data });
+                setTimeout(() => dispatch(GetAllVehicles()), 1500);
+                return response.data;
+            } else {
+                throw new Error(response.data?.Message || "Failed to update vehicle status");
+            }
         } catch (error) {
             if (error.message === "Network Error") {
                 dispatch({ type: UPDATE_VEHICLE_STATUS_SUCCESS });
                 setTimeout(() => dispatch(GetAllVehicles()), 1500);
+                return { Status: "Success" };
             } else {
                 dispatch({ type: UPDATE_VEHICLE_STATUS_FAILURE, payload: error.message });
+                throw error;
             }
         }
     };
