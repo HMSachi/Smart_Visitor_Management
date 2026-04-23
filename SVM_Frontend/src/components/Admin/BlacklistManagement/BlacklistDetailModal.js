@@ -1,9 +1,16 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  X, Ban, User, Mail, Briefcase,
-  AlertTriangle, Calendar, UserCheck, Shield
-} from 'lucide-react';
+  X,
+  Ban,
+  User,
+  Mail,
+  Briefcase,
+  AlertTriangle,
+  Calendar,
+  UserCheck,
+  Shield,
+} from "lucide-react";
 
 /* ──────────────────────────────────────────────
    Small helper – labelled field row
@@ -16,10 +23,10 @@ const Field = ({ icon: Icon, label, value, accent }) => (
     </span>
     <span
       className={`text-[13px] font-medium tracking-widest text-right break-all ${
-        accent ? 'text-primary' : 'text-white/90'
+        accent ? "text-primary" : "text-white/90"
       }`}
     >
-      {value || '—'}
+      {value || "—"}
     </span>
   </div>
 );
@@ -29,21 +36,22 @@ const Field = ({ icon: Icon, label, value, accent }) => (
 ────────────────────────────────────────────── */
 const RiskBadge = ({ level }) => {
   const styles = {
-    'Level 01': 'border-blue-500/20 text-blue-500 bg-blue-500/5',
-    'Level 02': 'border-primary/20 text-primary bg-primary/5',
-    'Level 03': 'border-primary/40 text-primary bg-primary/10 shadow-[0_0_15px_rgba(200,16,46,0.1)]',
+    "Level 01": "border-blue-500/20 text-blue-500 bg-blue-500/5",
+    "Level 02": "border-primary/20 text-primary bg-primary/5",
+    "Level 03":
+      "border-primary/40 text-primary bg-primary/10 shadow-[0_0_15px_rgba(200,16,46,0.1)]",
   };
   return (
     <span
       className={`px-4 py-1.5 rounded-full text-[11px] font-medium tracking-[0.25em] uppercase border flex items-center gap-2 w-fit ${
-        styles[level] || styles['Level 01']
+        styles[level] || styles["Level 01"]
       }`}
     >
       <span
         className={`w-1.5 h-1.5 rounded-full ${
-          level === 'Level 03'
-            ? 'bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse'
-            : 'bg-current opacity-80'
+          level === "Level 03"
+            ? "bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse"
+            : "bg-current opacity-80"
         }`}
       />
       {level}
@@ -76,95 +84,123 @@ const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
               initial={{ scale: 0.9, opacity: 0, y: 24 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 24 }}
-              transition={{ type: 'spring', bounce: 0.18, duration: 0.5 }}
-              className="w-full max-w-2xl bg-[#141416]/98 backdrop-blur-3xl border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.9)] rounded-[36px] pointer-events-auto overflow-hidden relative"
+              transition={{ type: "spring", bounce: 0.18, duration: 0.5 }}
+              className="w-full max-w-xl bg-[#141416]/98 backdrop-blur-2xl border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.75)] rounded-[28px] pointer-events-auto overflow-hidden relative"
             >
               {/* ambient glow */}
-              <div className="absolute top-0 right-0 w-72 h-72 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+              <div className="absolute top-0 right-0 w-56 h-56 bg-primary/4 rounded-full blur-[90px] pointer-events-none" />
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
               {/* ── Header ── */}
-              <div className="p-7 border-b border-white/5 flex justify-between items-center relative z-10">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-primary/10 border border-primary/20 text-primary shadow-inner">
-                    <Ban size={22} />
+              <div className="p-5 border-b border-white/5 flex justify-between items-center relative z-10">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center bg-primary/10 border border-primary/15 text-primary shadow-inner">
+                    <Ban size={18} />
                   </div>
                   <div>
-                    <p className="text-gray-300/70 text-[11px] font-medium tracking-[0.3em] uppercase mb-1">
+                    <p className="text-gray-300/70 text-[10px] font-medium tracking-[0.28em] uppercase mb-1">
                       Blacklist Management
                     </p>
-                    <h2 className="text-white text-base font-bold tracking-[0.15em] capitalize">
+                    <h2 className="text-white text-[15px] font-semibold tracking-[0.12em] capitalize">
                       Visitor Details
                     </h2>
                   </div>
                 </div>
 
                 {/* Risk badge in header */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   <RiskBadge level={person.VB_Alert_Type} />
                   <button
                     onClick={onClose}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-300/80 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300"
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-gray-300/80 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300"
                   >
-                    <X size={18} />
+                    <X size={16} />
                   </button>
                 </div>
               </div>
 
               {/* ── Scrollable Body ── */}
-              <div className="overflow-y-auto max-h-[75vh] px-7 py-6 space-y-6 relative z-10 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
-
+              <div className="overflow-y-auto max-h-[60vh] px-5 py-4 space-y-5 relative z-10 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
                 {/* ── Section: Blacklisted Person ── */}
                 <section>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]" />
-                    <p className="text-primary text-[11px] font-bold tracking-[0.3em] uppercase">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-1 h-3.5 bg-primary rounded-full shadow-[0_0_6px_var(--color-primary)]" />
+                    <p className="text-primary text-[10px] font-bold tracking-[0.26em] uppercase">
                       Visitor Information
                     </p>
                   </div>
 
-                  <div className="bg-[var(--color-bg-paper)] border border-white/[0.06] rounded-2xl px-6 py-2 shadow-inner">
-                    <Field icon={User}          label="Full Name"          value={person.VB_Name} />
-                    <Field icon={Mail}          label="Email Address"      value={person.VB_Email} />
-                    <Field icon={Briefcase}     label="Role"               value={person.VB_Role} />
+                  <div className="bg-[var(--color-bg-paper)] border border-white/[0.06] rounded-2xl px-5 py-1.5 shadow-inner">
+                    <Field
+                      icon={User}
+                      label="Full Name"
+                      value={person.VB_Name}
+                    />
+                    <Field
+                      icon={Mail}
+                      label="Email Address"
+                      value={person.VB_Email}
+                    />
+                    <Field
+                      icon={Briefcase}
+                      label="Role"
+                      value={person.VB_Role}
+                    />
                   </div>
                 </section>
 
                 {/* ── Section: Blacklist Details ── */}
                 <section>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]" />
-                    <p className="text-primary text-[11px] font-bold tracking-[0.3em] uppercase">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-1 h-3.5 bg-primary rounded-full shadow-[0_0_6px_var(--color-primary)]" />
+                    <p className="text-primary text-[10px] font-bold tracking-[0.26em] uppercase">
                       Blacklist Details
                     </p>
                   </div>
 
-                  <div className="bg-[var(--color-bg-paper)] border border-white/[0.06] rounded-2xl px-6 py-2 shadow-inner">
+                  <div className="bg-[var(--color-bg-paper)] border border-white/[0.06] rounded-2xl px-5 py-1.5 shadow-inner">
                     {/* Reason as a styled block */}
-                    <div className="py-4 border-b border-white/[0.04]">
-                      <span className="flex items-center gap-2 text-gray-300/70 text-[12px] font-medium tracking-[0.2em] capitalize mb-2">
+                    <div className="py-3.5 border-b border-white/[0.04]">
+                      <span className="flex items-center gap-2 text-gray-300/70 text-[11px] font-medium tracking-[0.18em] capitalize mb-2">
                         <AlertTriangle size={12} className="text-primary/40" />
                         Blacklist Reason
                       </span>
-                      <p className="text-white/90 text-[13px] font-medium tracking-wide leading-relaxed pl-5">
-                        {person.VB_Description || '—'}
+                      <p className="text-white/90 text-[12px] font-medium tracking-wide leading-relaxed pl-5">
+                        {person.VB_Description || "—"}
                       </p>
                     </div>
 
-                    <Field icon={Calendar}  label="Date Added"       value={person.VB_Created_Date ? person.VB_Created_Date.split(' ')[0] : ''} />
+                    <Field
+                      icon={Calendar}
+                      label="Date Added"
+                      value={
+                        person.VB_Created_Date
+                          ? person.VB_Created_Date.split(" ")[0]
+                          : ""
+                      }
+                    />
 
-                    <Field icon={Shield}    label="Risk Level"       value={person.VB_Alert_Type} accent />
-                    <Field icon={Shield}    label="Status"           value={person.VB_Status === 'I' ? 'Inactive' : 'Active'} accent />
+                    <Field
+                      icon={Shield}
+                      label="Risk Level"
+                      value={person.VB_Alert_Type}
+                      accent
+                    />
+                    <Field
+                      icon={Shield}
+                      label="Status"
+                      value={person.VB_Status === "I" ? "Inactive" : "Active"}
+                      accent
+                    />
                   </div>
                 </section>
-
               </div>
 
               {/* ── Footer ── */}
-              <div className="px-7 py-5 border-t border-white/5 flex justify-end relative z-10 bg-black/20">
+              <div className="px-5 py-4 border-t border-white/5 flex justify-end relative z-10 bg-black/20">
                 <button
                   onClick={onClose}
-                  className="px-8 py-3 border border-white/10 text-gray-300/90 text-[12px] font-medium capitalize tracking-widest hover:text-white hover:border-white/20 hover:bg-white/[0.03] transition-all rounded-xl shadow-xl"
+                  className="px-6 py-2.5 border border-white/10 text-gray-300/90 text-[11px] font-medium capitalize tracking-widest hover:text-white hover:border-white/20 hover:bg-white/[0.03] transition-all rounded-xl shadow-xl"
                 >
                   Close
                 </button>
