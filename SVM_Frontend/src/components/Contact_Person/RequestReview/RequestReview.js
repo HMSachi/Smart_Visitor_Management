@@ -20,13 +20,15 @@ import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 
 const normalizeStatus = (status) => {
-    const s = (status || '').toString().trim().toUpperCase();
-    if (s === 'A' || s === 'APPROVED') return 'Admin Approved';
-    if (s === 'R' || s === 'REJECTED') return 'Rejected';
-    if (s === 'C' || s === 'CHECKED OUT' || s === 'CHECKED_OUT') return 'Checked Out';
-    if (s === 'ACCEPTED') return 'Accepted by Visitor';
-    if (s === 'SENT' || s === 'SENT_TO_ADMIN') return 'Accepted by Contact Person';
-    return 'Sent to Visitor';
+  const s = (status || "").toString().trim().toUpperCase();
+  if (s === "A" || s === "APPROVED") return "Admin Approved";
+  if (s === "R" || s === "REJECTED") return "Rejected";
+  if (s === "C" || s === "CHECKED OUT" || s === "CHECKED_OUT")
+    return "Checked Out";
+  if (s === "ACCEPTED") return "Accepted by Visitor";
+  if (s === "SENT" || s === "SENT_TO_ADMIN")
+    return "Accepted by Contact Person";
+  return "Sent to Visitor";
 };
 
 const toReviewModel = (request, visitorRecord, vehicleRecord) => {
@@ -312,12 +314,12 @@ const RequestReviewMain = () => {
               <p
                 className={`text-[10px] uppercase font-bold tracking-[0.3em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}
               >
-                Identity Node
+                Request Details
               </p>
               <h2
                 className={`text-lg font-bold uppercase tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
               >
-                Reference{" "}
+                Request ID{" "}
                 <span className="text-primary font-mono ml-2">
                   #{requestData?.id || selectedId || "ALPHA-000"}
                 </span>
@@ -332,7 +334,7 @@ const RequestReviewMain = () => {
               <p
                 className={`text-[10px] uppercase font-bold tracking-widest mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}
               >
-                Sync Status
+                Request Status
               </p>
               <span className="text-primary text-[12px] font-black uppercase tracking-widest">
                 {requestData?.status || "PENDING"}

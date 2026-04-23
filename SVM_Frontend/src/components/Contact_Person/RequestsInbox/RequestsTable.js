@@ -45,7 +45,7 @@ const RequestsTable = ({ requests, onReview }) => {
           <thead>
             <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] text-[9px] font-bold uppercase tracking-[0.22em]">
               <th className="px-5 py-3 w-20 text-center align-middle">
-                Request
+                Request ID
               </th>
               <th className="px-5 py-3 text-center align-middle">Visitor</th>
               <th className="px-5 py-3 text-center align-middle">Visit Date</th>
@@ -79,10 +79,10 @@ const RequestsTable = ({ requests, onReview }) => {
                 >
                   <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-left sm:text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
                     <span className="text-[9px] font-bold tracking-[0.16em] text-primary/60 uppercase block sm:hidden mb-2">
-                      Request
+                      Request ID
                     </span>
-                    <div className="w-7 h-7 rounded-lg bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] text-[11px] font-medium text-[var(--color-text-secondary)] flex items-center justify-center transition-all mx-0 sm:mx-auto group-hover:border-primary/20 group-hover:text-[var(--color-text-primary)]">
-                      {index + 1}
+                    <div className="text-[11px] font-semibold tracking-[0.12em] text-[var(--color-text-primary)] flex items-center justify-start sm:justify-center transition-all mx-0 sm:mx-auto group-hover:text-primary">
+                      #{visitor.id || "N/A"}
                     </div>
                   </td>
                   <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-left sm:text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
