@@ -10,10 +10,12 @@ import ContactPersonService from '../../../services/ContactPersonService';
 
 const mapStatus = (status) => {
     const normalized = (status || '').toString().trim().toUpperCase();
-    if (normalized === 'A' || normalized === 'APPROVED') return 'Approved';
+    if (normalized === 'A' || normalized === 'APPROVED') return 'Admin Approved';
     if (normalized === 'R' || normalized === 'REJECTED') return 'Rejected';
+    if (normalized === 'SENT' || normalized === 'SENT_TO_ADMIN') return 'Accepted by Contact Person';
+    if (normalized === 'ACCEPTED') return 'Accepted by Visitor';
     if (normalized === 'C' || normalized === 'CHECKED OUT' || normalized === 'CHECKED_OUT') return 'Checked Out';
-    return 'Pending';
+    return 'Sent to Visitor';
 };
 
 const formatDateOnly = (value) => {

@@ -44,7 +44,7 @@ const StatusBadge = ({ status }) => {
     case "APPROVED":
       return (
         <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
-          Approved
+          Admin Approved
         </div>
       );
     case "R":
@@ -56,14 +56,15 @@ const StatusBadge = ({ status }) => {
       );
     case "ACCEPTED":
       return (
-        <div className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max">
-          Accepted
+        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+          Accepted by Visitor
         </div>
       );
     case "SENT":
+    case "SENT_TO_ADMIN":
       return (
-        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max">
-          Syncing
+        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+          Accepted by Contact Person
         </div>
       );
     case "P":
@@ -71,7 +72,7 @@ const StatusBadge = ({ status }) => {
     default:
       return (
         <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
-          Pending
+          Sent to Visitor
         </div>
       );
   }
