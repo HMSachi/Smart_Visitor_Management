@@ -95,9 +95,10 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
         <div className="flex bg-[var(--color-surface-2)] p-1 rounded-2xl border border-white/5 relative overflow-x-auto no-scrollbar max-w-full">
           {[
             { id: 'All', label: 'All Forms' },
-            { id: 'Pending', label: 'Pending' },
-            { id: 'Sent to Admin', label: 'Sent to Admin' },
-            { id: 'Accepted by Admin', label: 'Accepted by Admin' },
+            { id: 'Sent to Visitor', label: 'Sent to Visitor' },
+            { id: 'Accepted by Visitor', label: 'Accepted by Visitor' },
+            { id: 'Accepted by Contact Person', label: 'Contact Person Accepted' },
+            { id: 'Admin Approved', label: 'Admin Approved' },
             { id: 'Rejected', label: 'Rejected' },
           ].map((btn) => (
             <button
@@ -174,7 +175,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                   <td className="px-8 py-8 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <StatusBadge status={visitor.status} />
-                      {hasGatePass(visitor.id) && (
+                      {hasGatePass(visitor.id) && visitor.status === 'Admin Approved' && (
                         <button
                           onClick={() => onAction(visitor, 'ViewGatePass')}
                           className="flex items-center gap-2 text-[10px] items-center justify-center font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
@@ -270,7 +271,7 @@ const VisitorTable = ({ visitors, onViewDetails, onAction, gatePasses = [] }) =>
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <StatusBadge status={visitor.status} />
-                  {hasGatePass(visitor.id) && (
+                  {hasGatePass(visitor.id) && visitor.status === 'Admin Approved' && (
                     <button
                       onClick={() => onAction(visitor, 'ViewGatePass')}
                       className="flex items-center gap-2 text-[10px] font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"

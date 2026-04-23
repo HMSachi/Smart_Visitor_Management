@@ -16,10 +16,12 @@ import ItemCarriedService from '../../../services/ItemCarriedService';
 
 const normalizeStatus = (status) => {
     const s = (status || '').toString().trim().toUpperCase();
-    if (s === 'A' || s === 'APPROVED') return 'APPROVED';
-    if (s === 'R' || s === 'REJECTED') return 'REJECTED';
-    if (s === 'C' || s === 'CHECKED OUT' || s === 'CHECKED_OUT') return 'CHECKED OUT';
-    return 'PENDING';
+    if (s === 'A' || s === 'APPROVED') return 'Admin Approved';
+    if (s === 'R' || s === 'REJECTED') return 'Rejected';
+    if (s === 'C' || s === 'CHECKED OUT' || s === 'CHECKED_OUT') return 'Checked Out';
+    if (s === 'ACCEPTED') return 'Accepted by Visitor';
+    if (s === 'SENT' || s === 'SENT_TO_ADMIN') return 'Accepted by Contact Person';
+    return 'Sent to Visitor';
 };
 
 const toReviewModel = (request, visitorRecord, vehicleRecord) => {
