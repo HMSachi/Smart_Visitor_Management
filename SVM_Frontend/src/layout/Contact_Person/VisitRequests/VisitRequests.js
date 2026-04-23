@@ -698,7 +698,7 @@ const VisitRequests = () => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
           PaperProps={{
-            className: `${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-xl" : "bg-[#18181B] border-white/10 text-white shadow-2xl"} border min-w-[170px] overflow-hidden rounded-xl py-1`,
+            className: `${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-xl" : "bg-[#18181B] border-white/10 text-white shadow-2xl"} border min-w-[45px] overflow-hidden rounded-md py-0`,
           }}
           MenuListProps={{
             className: "py-0",
@@ -706,18 +706,18 @@ const VisitRequests = () => {
         >
           <MenuItem
             onClick={handleDisableRequest}
-            className="px-2 py-1.5 text-[9px] uppercase font-semibold tracking-[0.1em] text-primary hover:bg-primary/5 transition-colors border-b border-white/5 min-h-0"
+            className="px-1.5 py-0.5 text-[3px] uppercase font-semibold tracking-[0.006em] text-primary hover:bg-primary/5 transition-colors border-b border-white/5 min-h-0 leading-none"
           >
-            <div className="flex flex-col md:flex-row items-center gap-1.5 md:gap-1.5">
-              <XCircle size={10} /> Disable Request
+            <div className="flex flex-col md:flex-row items-center gap-0.5 md:gap-0.5">
+              <XCircle size={7} /> Disable Request
             </div>
           </MenuItem>
           <MenuItem
             onClick={handleSendToAdmin}
-            className="px-2 py-1.5 text-[9px] uppercase font-semibold tracking-[0.1em] text-green-500 hover:bg-green-500/5 transition-colors min-h-0"
+            className="px-1.5 py-0.5 text-[3px] uppercase font-semibold tracking-[0.006em] text-green-500 hover:bg-green-500/5 transition-colors min-h-0 leading-none"
           >
-            <div className="flex flex-col md:flex-row items-center gap-1.5 md:gap-1.5">
-              <CheckCircle2 size={10} /> Send for Approval
+            <div className="flex flex-col md:flex-row items-center gap-0.5 md:gap-0.5">
+              <CheckCircle2 size={7} /> Send for Approval
             </div>
           </MenuItem>
         </Menu>
