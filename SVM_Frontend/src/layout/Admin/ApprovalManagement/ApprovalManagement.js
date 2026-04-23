@@ -161,15 +161,21 @@ const ApprovalManagement = () => {
         const s = (req.VVR_Status || "").toString().trim().toUpperCase();
 
         let displayStatus = "Sent to Visitor";
-        if (s === "SENT" || s === "SENT_TO_ADMIN") displayStatus = "Accepted by Contact Person";
-        else if (s === "A" || s === "APPROVED") displayStatus = "Admin Approved";
+        if (s === "SENT" || s === "SENT_TO_ADMIN")
+          displayStatus = "Accepted by Contact Person";
+        else if (s === "A" || s === "APPROVED")
+          displayStatus = "Admin Approved";
         else if (s === "R" || s === "REJECTED") displayStatus = "Rejected";
         else if (s === "ACCEPTED") displayStatus = "Accepted by Visitor";
 
         return {
           id: req.VVR_Request_id?.toString() || "",
           batchId: `BATCH-${new Date(req.VVR_Visit_Date).getFullYear()}-${req.VVR_Request_id?.toString().padStart(3, "0")}`,
-          name: visitor?.VV_Name || `Visitor #${req.VVR_Visitor_id}`,
+          name:
+            req?.VV_Name ||
+            req?.VVR_Visitor_Name ||
+            visitor?.VV_Name ||
+            `Visitor #${req.VVR_Visitor_id}`,
           contactPerson: `Admin Node`,
           date: req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0] : "N/A",
           timeIn: "08:30 AM",
