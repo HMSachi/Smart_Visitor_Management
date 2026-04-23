@@ -113,13 +113,13 @@ const WelcomeSection = () => {
               </button>
             )}
 
-            <button
+            {/* <button
               onClick={() => navigate('/status')}
               className={`flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold text-[15px] transition-all active:scale-95 ${isLight ? 'bg-white/80 text-gray-800' : 'bg-white/10 text-white'}`}
               style={{ backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' }}
             >
               Check Visit Status
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
