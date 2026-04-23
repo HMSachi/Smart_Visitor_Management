@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  X, UserPlus, User, Mail, Shield, AlertTriangle, Save, Briefcase
+  X, Edit3, User, Mail, Shield, Save, Briefcase
 } from 'lucide-react';
 
 const InputField = ({ label, icon: Icon, name, value, onChange, type = "text", placeholder, required = false }) => (
@@ -13,7 +13,7 @@ const InputField = ({ label, icon: Icon, name, value, onChange, type = "text", p
     <input
       type={type}
       name={name}
-      value={value}
+      value={value || ''}
       onChange={onChange}
       required={required}
       placeholder={placeholder}
@@ -22,14 +22,26 @@ const InputField = ({ label, icon: Icon, name, value, onChange, type = "text", p
   </div>
 );
 
-const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
+const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
   const [formData, setFormData] = useState({
+    VB_id: '',
     VB_Name: '',
-    VB_Role: 'visitor',
+    VB_Role: '',
     VB_Email: '',
-    VB_Description: '',
     VB_Alert_Type: 'Level 01',
   });
+
+  useEffect(() => {
+    if (initialData && isOpen) {
+      setFormData({
+        VB_id: initialData.VB_id || '',
+        VB_Name: initialData.VB_Name || '',
+        VB_Role: initialData.VB_Role || '',
+        VB_Email: initialData.VB_Email || '',
+        VB_Alert_Type: initialData.VB_Alert_Type || 'Level 01',
+      });
+    }
+  }, [initialData, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,19 +50,8 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd({
-      ...formData,
-      VB_Admin_id: localStorage.getItem('admin_id') || '1',
-      VB_Visitor_id: '' // Empty string instead of '0' avoids foreign key conflicts
-    });
+    onEdit(formData);
     onClose();
-    setFormData({
-      VB_Name: '',
-      VB_Role: 'visitor',
-      VB_Email: '',
-      VB_Description: '',
-      VB_Alert_Type: 'Level 01',
-    });
   };
 
   return (
@@ -75,12 +76,12 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
               {/* Header */}
               <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                    <UserPlus size={24} />
+                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
+                    <Edit3 size={24} />
                   </div>
                   <div>
-                    <h2 className="text-white text-lg font-bold tracking-widest uppercase">Restrict New Identity</h2>
-                    <p className="text-gray-400 text-xs tracking-wider">Initialize enforcement protocol for security blacklist</p>
+                    <h2 className="text-white text-lg font-bold tracking-widest uppercase">Modify Restriction</h2>
+                    <p className="text-gray-400 text-xs tracking-wider">Update enforcement protocol details</p>
                   </div>
                 </div>
                 <button type="button" onClick={onClose} className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-400 hover:text-white">
@@ -94,8 +95,8 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                 {/* Section 1: Subject Identity */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="col-span-full flex items-center gap-3">
-                    <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
-                    <h3 className="text-primary text-[12px] font-bold uppercase tracking-[0.3em]">Identity Matrix</h3>
+                    <div className="w-1 h-4 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
+                    <h3 className="text-blue-400 text-[12px] font-bold uppercase tracking-[0.3em]">Identity Matrix</h3>
                   </div>
                   
                   <InputField label="Full Name" icon={User} name="VB_Name" value={formData.VB_Name} onChange={handleChange} placeholder="Subject full legal name" required />
@@ -106,23 +107,8 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                 {/* Section 2: Restriction Logistics */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
                   <div className="col-span-full flex items-center gap-3">
-                    <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
-                    <h3 className="text-primary text-[12px] font-bold uppercase tracking-[0.3em]">Restriction Logistics</h3>
-                  </div>
-
-                  <div className="md:col-span-2 space-y-2">
-                    <label className="text-gray-300/70 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2">
-                      <AlertTriangle size={12} className="text-primary/60" />
-                      Enforcement Rationale <span className="text-primary">*</span>
-                    </label>
-                    <textarea
-                      name="VB_Description"
-                      value={formData.VB_Description}
-                      onChange={handleChange}
-                      required
-                      placeholder="Specify reasons for blacklisting..."
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 transition-all min-h-[100px] resize-none"
-                    />
+                    <div className="w-1 h-4 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
+                    <h3 className="text-blue-400 text-[12px] font-bold uppercase tracking-[0.3em]">Restriction Logistics</h3>
                   </div>
 
                   <div className="space-y-2">
@@ -154,10 +140,10 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-[2] py-4 bg-primary rounded-2xl text-white text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20"
+                    className="flex-[2] py-4 bg-blue-600 rounded-2xl text-white text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-lg shadow-blue-500/20"
                   >
                     <Save size={18} />
-                    Commit Restriction
+                    Update Restriction
                   </button>
                 </div>
               </form>
@@ -169,4 +155,4 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
   );
 };
 
-export default AddBlacklistModal;
+export default EditBlacklistModal;
