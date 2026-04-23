@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import {
   Table,
   TableBody,
@@ -75,6 +76,7 @@ const AllUsers = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [tableFilter, setTableFilter] = useState("ADMIN");
   const { themeMode } = useThemeMode();
 
   // Modal State
@@ -265,32 +267,35 @@ const AllUsers = () => {
     closeModal();
   };
 
-  const categories = [
-    {
-      id: "ADMIN",
-      title: "System Administrators",
-      icon: ShieldAlert,
-      data: administrators.filter((a) => a.VA_Role === "Admin"),
-    },
-    {
-      id: "SECURITY",
-      title: "Security Supports",
-      icon: Shield,
-      data: administrators.filter((a) => a.VA_Role === "Security"),
-    },
-    {
-      id: "CONTACT",
-      title: "Contact Persons",
-      icon: Users,
-      data: contactPersons,
-    },
-    {
-      id: "VISITOR",
-      title: "Visitor Accounts",
-      icon: UserCheck,
-      data: administrators.filter((a) => a.VA_Role === "Visitor"),
-    },
-  ];
+  const categories = useMemo(
+    () => [
+      {
+        id: "ADMIN",
+        title: "System Administrators",
+        icon: ShieldAlert,
+        data: administrators.filter((a) => a.VA_Role === "Admin"),
+      },
+      {
+        id: "SECURITY",
+        title: "Security Supports",
+        icon: Shield,
+        data: administrators.filter((a) => a.VA_Role === "Security"),
+      },
+      {
+        id: "CONTACT",
+        title: "Contact Persons",
+        icon: Users,
+        data: contactPersons,
+      },
+      {
+        id: "VISITOR",
+        title: "Visitor Accounts",
+        icon: UserCheck,
+        data: administrators.filter((a) => a.VA_Role === "Visitor"),
+      },
+    ],
+    [administrators, contactPersons],
+  );
 
   const filteredCategories = useMemo(
     () =>
@@ -302,6 +307,11 @@ const AllUsers = () => {
       })),
     [categories, searchTerm, statusFilter],
   );
+
+  const visibleCategories =
+    tableFilter === "ALL"
+      ? filteredCategories
+      : filteredCategories.filter((cat) => cat.id === tableFilter);
 
   const loading = adminLoading || contactLoading;
   const error = adminError || contactError;
@@ -326,7 +336,36 @@ const AllUsers = () => {
               </h1>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center\">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+              <div className="flex bg-[var(--color-surface-2)] p-0.5 rounded-xl border border-white/5 relative overflow-x-auto no-scrollbar max-w-full shadow-sm">
+                {[
+                  ...categories.map((cat) => ({
+                    id: cat.id,
+                    label: cat.title,
+                  })),
+                ].map((btn) => (
+                  <button
+                    key={btn.id}
+                    type="button"
+                    onClick={() => setTableFilter(btn.id)}
+                    className={`relative px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max ${tableFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                  >
+                    {tableFilter === btn.id && (
+                      <motion.div
+                        layoutId="userTableFilter"
+                        className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
+                        transition={{
+                          type: "spring",
+                          bounce: 0.2,
+                          duration: 0.6,
+                        }}
+                      />
+                    )}
+                    <span className="relative z-10">{btn.label}</span>
+                  </button>
+                ))}
+              </div>
+
               {/* Search Form */}
               <form
                 onSubmit={handleSearch}
@@ -423,237 +462,249 @@ const AllUsers = () => {
                 </p>
               </div>
             ) : (
-              filteredCategories.map((cat) => (
-                <section key={cat.id} className="relative">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center text-primary shadow-md hover:shadow-lg transition-shadow">
-                      <cat.icon size={18} strokeWidth={1.8} />
+              <>
+                {visibleCategories.map((cat) => (
+                  <section key={cat.id} className="relative">
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center text-primary shadow-md hover:shadow-lg transition-shadow">
+                        <cat.icon size={18} strokeWidth={1.8} />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-white text-sm font-semibold tracking-wide uppercase">
+                          {cat.title}
+                        </h2>
+                        <p className="text-white/40 text-[9px] tracking-[0.2em] uppercase font-medium mt-0.5">
+                          {cat.data.length}{" "}
+                          {cat.data.length === 1 ? "user" : "users"}
+                        </p>
+                      </div>
+                      <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent"></div>
                     </div>
-                    <div className="flex-1">
-                      <h2 className="text-white text-sm font-semibold tracking-wide uppercase">
-                        {cat.title}
-                      </h2>
-                      <p className="text-white/40 text-[9px] tracking-[0.2em] uppercase font-medium mt-0.5">
-                        {cat.data.length}{" "}
-                        {cat.data.length === 1 ? "user" : "users"}
-                      </p>
-                    </div>
-                    <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent"></div>
-                  </div>
 
-                  <div className="bg-[var(--color-bg-paper)] border border-white/8 rounded-2xl overflow-hidden shadow-xl relative hover:border-white/12 transition-colors duration-300">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none"></div>
-                    <TableContainer
-                      component={Paper}
-                      className="bg-transparent border-none z-10 relative"
-                      sx={{ maxHeight: "300px", overflow: "auto" }}
-                    >
-                      <Table
-                        sx={{ minWidth: 650 }}
-                        stickyHeader
-                        aria-label={`${cat.title} table`}
+                    <div className="bg-[var(--color-bg-paper)] border border-white/8 rounded-2xl overflow-hidden shadow-xl relative hover:border-white/12 transition-colors duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none"></div>
+                      <TableContainer
+                        component={Paper}
+                        className="bg-transparent border-none z-10 relative"
+                        sx={{ maxHeight: "300px", overflow: "auto" }}
                       >
-                        <TableHead>
-                          <TableRow
-                            sx={{
-                              height: "40px",
-                              backgroundColor: "rgba(255,255,255,0.03)",
-                            }}
-                          >
-                            <TableCell
-                              sx={{
-                                padding: "8px 14px",
-                                borderBottom:
-                                  "1px solid rgba(255,255,255,0.08)",
-                                width: "12%",
-                              }}
-                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
-                            >
-                              User ID
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 14px",
-                                borderBottom:
-                                  "1px solid rgba(255,255,255,0.08)",
-                                width: "28%",
-                              }}
-                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
-                            >
-                              Name & Email
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 14px",
-                                borderBottom:
-                                  "1px solid rgba(255,255,255,0.08)",
-                                width: "18%",
-                              }}
-                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
-                            >
-                              {cat.id === "CONTACT" ? "Department" : "Role"}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 14px",
-                                borderBottom:
-                                  "1px solid rgba(255,255,255,0.08)",
-                                width: "16%",
-                              }}
-                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
-                            >
-                              {cat.id === "CONTACT" ? "Contact" : "Joined"}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 14px",
-                                borderBottom:
-                                  "1px solid rgba(255,255,255,0.08)",
-                                width: "14%",
-                              }}
-                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
-                            >
-                              Status
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 14px",
-                                borderBottom:
-                                  "1px solid rgba(255,255,255,0.08)",
-                                width: "12%",
-                              }}
-                              align="right"
-                              className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
-                            >
-                              Actions
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {cat.data.length === 0 ? (
+                        <Table
+                          sx={{ minWidth: 650 }}
+                          stickyHeader
+                          aria-label={`${cat.title} table`}
+                        >
+                          <TableHead>
                             <TableRow
                               sx={{
-                                height: "44px",
-                                "&:hover": { backgroundColor: "transparent" },
+                                height: "40px",
+                                backgroundColor: "rgba(255,255,255,0.03)",
                               }}
                             >
                               <TableCell
-                                colSpan={6}
-                                align="center"
                                 sx={{
-                                  padding: "12px",
+                                  padding: "8px 14px",
                                   borderBottom:
-                                    "1px solid rgba(255,255,255,0.05)",
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "12%",
                                 }}
-                                className="text-white/30 text-[11px] font-medium"
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
                               >
-                                No users in this category
+                                User ID
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "28%",
+                                }}
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                              >
+                                Name & Email
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "18%",
+                                }}
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                              >
+                                {cat.id === "CONTACT" ? "Department" : "Role"}
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "16%",
+                                }}
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                              >
+                                {cat.id === "CONTACT" ? "Contact" : "Joined"}
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "14%",
+                                }}
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                              >
+                                Status
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "12%",
+                                }}
+                                align="right"
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                              >
+                                Actions
                               </TableCell>
                             </TableRow>
-                          ) : (
-                            cat.data.map((item) => {
-                              const isActive =
-                                (item.VA_Status || item.VCP_Status || "")
-                                  .toString()
-                                  .trim()
-                                  .toUpperCase() === "A" ||
-                                (item.VA_Status || item.VCP_Status || "")
-                                  .toString()
-                                  .trim()
-                                  .toUpperCase() === "ACTIVE";
-
-                              return (
-                                <TableRow
-                                  key={
-                                    item.VA_Admin_id ||
-                                    item.VCP_Contact_person_id
-                                  }
+                          </TableHead>
+                          <TableBody>
+                            {cat.data.length === 0 ? (
+                              <TableRow
+                                sx={{
+                                  height: "44px",
+                                  "&:hover": { backgroundColor: "transparent" },
+                                }}
+                              >
+                                <TableCell
+                                  colSpan={6}
+                                  align="center"
                                   sx={{
-                                    "&:hover": {
-                                      backgroundColor: "rgba(255,255,255,0.04)",
-                                    },
-                                    height: "44px",
+                                    padding: "12px",
                                     borderBottom:
                                       "1px solid rgba(255,255,255,0.05)",
-                                    transition: "background-color 0.2s ease",
                                   }}
+                                  className="text-white/30 text-[11px] font-medium"
                                 >
-                                  <TableCell
-                                    sx={{ padding: "8px 14px", width: "12%" }}
-                                    className="text-white/70 font-medium text-[11px]"
+                                  No users in this category
+                                </TableCell>
+                              </TableRow>
+                            ) : (
+                              cat.data.map((item) => {
+                                const isActive =
+                                  (item.VA_Status || item.VCP_Status || "")
+                                    .toString()
+                                    .trim()
+                                    .toUpperCase() === "A" ||
+                                  (item.VA_Status || item.VCP_Status || "")
+                                    .toString()
+                                    .trim()
+                                    .toUpperCase() === "ACTIVE";
+
+                                return (
+                                  <TableRow
+                                    key={
+                                      item.VA_Admin_id ||
+                                      item.VCP_Contact_person_id
+                                    }
+                                    sx={{
+                                      "&:hover": {
+                                        backgroundColor:
+                                          "rgba(255,255,255,0.04)",
+                                      },
+                                      height: "44px",
+                                      borderBottom:
+                                        "1px solid rgba(255,255,255,0.05)",
+                                      transition: "background-color 0.2s ease",
+                                    }}
                                   >
-                                    <div className="flex items-center gap-1">
-                                      <Hash
-                                        size={10}
-                                        className="text-primary/40"
-                                      />
-                                      <span>
-                                        {item.VA_Admin_id ||
-                                          item.VCP_Contact_person_id}
-                                      </span>
-                                    </div>
-                                  </TableCell>
-                                  <TableCell
-                                    sx={{ padding: "8px 14px", width: "28%" }}
-                                    className={`font-medium transition-colors text-[11px] ${isActive ? "text-white" : "text-white/30 line-through"}`}
-                                  >
-                                    {item.VA_Name || item.VCP_Name || "-"}
-                                    <p className="text-gray-400 text-[9px] tracking-[0.1em] lowercase mt-0.5 opacity-70">
-                                      {item.VA_Email || item.VCP_Email}
-                                    </p>
-                                  </TableCell>
-                                  <TableCell
-                                    sx={{ padding: "8px 14px", width: "18%" }}
-                                    className={`transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
-                                  >
-                                    {item.VA_Role || item.VCP_Department || "-"}
-                                  </TableCell>
-                                  <TableCell
-                                    sx={{ padding: "8px 14px", width: "16%" }}
-                                    className={`transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
-                                  >
-                                    {item.VA_Created_Date
-                                      ? item.VA_Created_Date.split(" ")[0]
-                                      : item.VCP_Phone || "AUTHEN.SYSTEM"}
-                                  </TableCell>
-                                  <TableCell
-                                    sx={{ padding: "8px 14px", width: "14%" }}
-                                  >
-                                    <button
-                                      onClick={() =>
-                                        handleToggleStatus(item, cat.id)
-                                      }
-                                      disabled={loading}
-                                      title="Click to toggle status"
-                                      className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer rounded ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "12%" }}
+                                      className="text-white/70 font-medium text-[11px]"
                                     >
-                                      {isActive ? "ACTIVE" : "INACTIVE"}
-                                    </button>
-                                  </TableCell>
-                                  <TableCell
-                                    sx={{ padding: "8px 14px", width: "12%" }}
-                                    align="right"
-                                  >
-                                    <IconButton
-                                      onClick={() =>
-                                        openModal("edit", item, cat.id)
-                                      }
-                                      size="small"
-                                      className="text-white/40 hover:text-white p-1"
+                                      <div className="flex items-center gap-1">
+                                        <Hash
+                                          size={10}
+                                          className="text-primary/40"
+                                        />
+                                        <span>
+                                          {item.VA_Admin_id ||
+                                            item.VCP_Contact_person_id}
+                                        </span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "28%" }}
+                                      className={`font-medium transition-colors text-[11px] ${isActive ? "text-white" : "text-white/30 line-through"}`}
                                     >
-                                      <Edit size={13} />
-                                    </IconButton>
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            })
-                          )}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
+                                      {item.VA_Name || item.VCP_Name || "-"}
+                                      <p className="text-gray-400 text-[9px] tracking-[0.1em] lowercase mt-0.5 opacity-70">
+                                        {item.VA_Email || item.VCP_Email}
+                                      </p>
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "18%" }}
+                                      className={`transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    >
+                                      {item.VA_Role ||
+                                        item.VCP_Department ||
+                                        "-"}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "16%" }}
+                                      className={`transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    >
+                                      {item.VA_Created_Date
+                                        ? item.VA_Created_Date.split(" ")[0]
+                                        : item.VCP_Phone || "AUTHEN.SYSTEM"}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "14%" }}
+                                    >
+                                      <button
+                                        onClick={() =>
+                                          handleToggleStatus(item, cat.id)
+                                        }
+                                        disabled={loading}
+                                        title="Click to toggle status"
+                                        className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer rounded ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                      >
+                                        {isActive ? "ACTIVE" : "INACTIVE"}
+                                      </button>
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "12%" }}
+                                      align="right"
+                                    >
+                                      <IconButton
+                                        onClick={() =>
+                                          openModal("edit", item, cat.id)
+                                        }
+                                        size="small"
+                                        className="text-white/40 hover:text-white p-1"
+                                      >
+                                        <Edit size={13} />
+                                      </IconButton>
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })
+                            )}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </div>
+                  </section>
+                ))}
+                {visibleCategories.length === 0 && (
+                  <div className="p-8 md:p-20 text-center border border-white/5 rounded-2xl bg-black/20">
+                    <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
+                      No users match the selected table and filters.
+                    </p>
                   </div>
-                </section>
-              ))
+                )}
+              </>
             )}
           </div>
         </div>
