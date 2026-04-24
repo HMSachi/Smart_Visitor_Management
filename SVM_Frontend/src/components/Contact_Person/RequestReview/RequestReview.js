@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
 import RejectionModal from "./RejectionModal";
 import ApprovalModal from "./ApprovalModal";
-import { ArrowLeft } from "lucide-react";
 import {
   ApproveVisitRequest,
   GetVisitRequestById,
@@ -86,9 +85,12 @@ const RequestReviewMain = () => {
 
   const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
   const [itemsCarried, setItemsCarried] = useState([]);
+  const formScrollRef = useRef(null);
+  const pendingScrollRef = useRef(null);
 
   const handleAddVisitor = () => {
     // In review mode, we don't necessarily allow adding unless it's an edit view
+    pendingScrollRef.current = "visitor";
     const newId =
       visitorGroupMembers.length > 0
         ? Math.max(...visitorGroupMembers.map((v) => v.id || 0)) + 1
@@ -110,6 +112,7 @@ const RequestReviewMain = () => {
   };
 
   const handleAddItem = () => {
+    pendingScrollRef.current = "item";
     const newId =
       itemsCarried.length > 0
         ? Math.max(...itemsCarried.map((i) => i.id || 0)) + 1
@@ -254,6 +257,28 @@ const RequestReviewMain = () => {
     setRequestData(toReviewModel(apiRequest, visitorRecord, vehicleRecord));
   }, [apiRequest, visitorRecord, vehicleRecord]);
 
+  useEffect(() => {
+    if (!pendingScrollRef.current) return;
+
+    const scrollContainer = formScrollRef.current;
+    if (!scrollContainer) {
+      pendingScrollRef.current = null;
+      return;
+    }
+
+    const scrollToBottom = () => {
+      scrollContainer.scrollTo({
+        top: scrollContainer.scrollHeight,
+        behavior: "smooth",
+      });
+      pendingScrollRef.current = null;
+    };
+
+    const frameId = window.requestAnimationFrame(scrollToBottom);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [visitorGroupMembers.length, itemsCarried.length]);
+
   const confirmApprove = async () => {
     if (!apiRequest?.VVR_Request_id) {
       alert("No request found for approval.");
@@ -307,17 +332,17 @@ const RequestReviewMain = () => {
       className={`flex-1 p-4 md:p-6 space-y-4 animate-fade-in-slow overflow-y-auto relative transition-colors duration-500 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
     >
       <div className="max-w-[1700px] mx-auto relative z-10 w-full">
-        <div className="flex flex-col md:flex-row items-center justify-between pb-6 animate-fade-in transition-all">
+        <div className="flex flex-col md:flex-row items-center justify-between pb-6 animate-fade-in transition-all gap-4">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
             <div className="w-1.5 h-8 bg-primary rounded-full"></div>
             <div>
               <p
-                className={`text-[10px] uppercase font-bold tracking-[0.3em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}
+                className={`text-[10px] uppercase font-semibold tracking-[0.28em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}
               >
                 Request Details
               </p>
               <h2
-                className={`text-lg font-bold uppercase tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                className={`text-lg font-semibold uppercase tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
               >
                 Request ID{" "}
                 <span className="text-primary font-mono ml-2">
@@ -329,14 +354,14 @@ const RequestReviewMain = () => {
 
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
             <div
-              className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10"}`}
+              className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/35 border-white/10"}`}
             >
               <p
-                className={`text-[10px] uppercase font-bold tracking-widest mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}
+                className={`text-[10px] uppercase font-semibold tracking-[0.22em] mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}
               >
                 Request Status
               </p>
-              <span className="text-primary text-[12px] font-black uppercase tracking-widest">
+              <span className="text-primary text-[12px] font-semibold uppercase tracking-[0.2em]">
                 {requestData?.status || "PENDING"}
               </span>
             </div>
@@ -344,6 +369,7 @@ const RequestReviewMain = () => {
         </div>
 
         <form
+          ref={formScrollRef}
           className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-2 custom-scrollbar"
           onSubmit={(e) => e.preventDefault()}
         >
