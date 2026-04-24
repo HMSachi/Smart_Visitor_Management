@@ -288,20 +288,20 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
         <SectionCard isLight={isLight}>
           <div className="p-4 md:p-5">
             <SplitSection
-              title="Logistics & Vehicle Registry"
+              title="Vehicle Registry"
               icon={Car}
               description="Transport details associated with the request."
               isLight={isLight}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Field
-                  label="Transport Identifier"
+                  label="Vehicle Registration Number"
                   value={visitor.vehicle || visitor.plateNumber}
                   icon={Car}
                   isLight={isLight}
                 />
                 <Field
-                  label="Transport Type"
+                  label="Vehicle Type"
                   value={visitor.vehicleType}
                   icon={Hash}
                   isLight={isLight}
