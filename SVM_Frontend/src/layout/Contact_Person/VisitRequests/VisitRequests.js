@@ -91,6 +91,7 @@ const VisitRequests = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add");
+  const [expandedAreasByRequest, setExpandedAreasByRequest] = useState({});
   const [formData, setFormData] = useState({
     VVR_Request_id: "",
     VVR_Visitor_id: "",
@@ -279,6 +280,82 @@ const VisitRequests = () => {
     return status === "A" || status === "ACTIVE";
   });
 
+  const getVisitorDisplayName = (req) => {
+    const requestName = req?.VVR_Visitor_Name?.trim();
+    if (requestName) return requestName;
+
+    const matchedVisitor = (visitorsByCP || []).find(
+      (visitor) =>
+        String(visitor?.VV_Visitor_id) === String(req?.VVR_Visitor_id),
+    );
+
+    return matchedVisitor?.VV_Name || req?.VVR_Visitor_id || "Unknown visitor";
+  };
+
+  const getVisitAreas = (value) => {
+    if (Array.isArray(value)) {
+      return value.map((item) => String(item).trim()).filter(Boolean);
+    }
+
+    if (typeof value !== "string") {
+      return [];
+    }
+
+    return value
+      .split("|")
+      .flatMap((chunk) => chunk.split(","))
+      .map((item) => item.trim())
+      .filter(Boolean);
+  };
+
+  const toggleVisitAreas = (requestId) => {
+    setExpandedAreasByRequest((previous) => ({
+      ...previous,
+      [requestId]: !previous[requestId],
+    }));
+  };
+
+  const renderVisitAreas = (req) => {
+    const areas = getVisitAreas(req?.VVR_Places_to_Visit);
+    const requestKey = req?.VVR_Request_id;
+    const isExpanded = Boolean(expandedAreasByRequest[requestKey]);
+    const visibleAreas = isExpanded ? areas : areas.slice(0, 1);
+    const remainingCount = areas.length - visibleAreas.length;
+
+    if (!areas.length) {
+      return <span className="text-gray-400">No places listed</span>;
+    }
+
+    return (
+      <div className="flex flex-col gap-2 min-w-0 max-w-full">
+        <div className="flex flex-wrap gap-1.5 max-w-full">
+          {visibleAreas.map((area, index) => (
+            <span
+              key={`${requestKey}-${area}-${index}`}
+              className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] max-w-full ${isLight ? "bg-[#F8F9FA] border-gray-200 text-[#1A1A1A]" : "bg-white/5 border-white/10 text-white/85"}`}
+            >
+              <span className="truncate">{area}</span>
+            </span>
+          ))}
+        </div>
+
+        {areas.length > 2 && (
+          <button
+            type="button"
+            onClick={() => toggleVisitAreas(requestKey)}
+            className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] transition-colors ${isLight ? "text-primary hover:text-primary-hover" : "text-primary hover:text-primary-hover"}`}
+          >
+            <ChevronDown
+              size={12}
+              className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
+            />
+            {isExpanded ? "Show less" : `See ${remainingCount} more`}
+          </button>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div
       className={`flex overflow-hidden h-screen w-full transition-colors duration-500 ${isLight ? "bg-[#F8F9FA] text-[#1A1A1A]" : "bg-[var(--color-bg-default)] text-white"}`}
@@ -344,7 +421,7 @@ const VisitRequests = () => {
               <div className="p-24 flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 border-2 border-white/5 border-t-primary rounded-full animate-spin mb-8 shadow-[0_0_15px_var(--color-primary)]"></div>
                 <p className="text-gray-400 text-[11px] uppercase tracking-[0.4em] font-bold animate-pulse">
-                  Initializing Security Protocol...
+                  Hang tight, we’re loading your visit requests.
                 </p>
               </div>
             ) : error ? (
@@ -418,7 +495,7 @@ const VisitRequests = () => {
                               <span
                                 className={`font-semibold text-[12px] uppercase tracking-[0.14em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                               >
-                                {req.VVR_Visitor_Name || req.VVR_Visitor_id}
+                                {getVisitorDisplayName(req)}
                               </span>
                             </div>
                           </td>
@@ -444,12 +521,19 @@ const VisitRequests = () => {
                               </p>
                             </div>
                           </td>
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 align-top">
                             <div
-                              className={`flex flex-col md:flex-row items-center gap-2 md:gap-2 text-[12px] font-medium tracking-wide ${isLight ? "text-gray-500" : "text-white/55"}`}
+                              className={`flex flex-col gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
                             >
-                              <MapPin size={12} className="opacity-40" />
-                              <span>{req.VVR_Places_to_Visit || "-"}</span>
+                              <div className="flex items-center gap-2 min-w-0">
+                                <MapPin
+                                  size={12}
+                                  className="opacity-40 shrink-0"
+                                />
+                              </div>
+                              <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
+                                {renderVisitAreas(req)}
+                              </div>
                             </div>
                           </td>
                           <td className="px-4 py-4">

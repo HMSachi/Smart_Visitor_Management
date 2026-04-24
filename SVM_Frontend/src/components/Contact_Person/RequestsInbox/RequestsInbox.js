@@ -145,7 +145,7 @@ const RequestsInboxMain = () => {
         <p
           className={`text-[10px] tracking-[0.2em] uppercase ${isLight ? "text-gray-400" : "text-white/40"}`}
         >
-          Loading requests...
+          Hang tight, we’re loading your requests.
         </p>
       )}
       {!!error && (

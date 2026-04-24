@@ -217,7 +217,7 @@ const ContactAllVisitors = () => {
       <div
         className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
       >
-        <Header/>
+        <Header />
 
         <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full z-10">
           <header
@@ -278,7 +278,7 @@ const ContactAllVisitors = () => {
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin mb-6"></div>
                 <p className="text-gray-500 text-[13px] uppercase tracking-[0.3em] font-medium">
-                  Scanning Entries...
+                  Hang tight, we’re loading visitor records.
                 </p>
               </div>
             ) : error ? (

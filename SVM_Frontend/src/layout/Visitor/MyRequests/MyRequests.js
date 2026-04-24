@@ -230,7 +230,7 @@ const MyRequests = () => {
             <div className="p-24 flex flex-col items-center justify-center">
               <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
               <p className="mt-6 text-gray-400 font-bold uppercase tracking-[0.4em] text-xs">
-                Accessing System Registry...
+                Hang tight, we’re loading your visit requests.
               </p>
             </div>
           ) : error ? (
@@ -317,18 +317,20 @@ const MyRequests = () => {
                         <TableCell className="px-6 py-5 border-b-white/5">
                           <div className="flex flex-col gap-2">
                             <StatusBadge status={req.VVR_Status} />
-                            {hasGatePass(req.VVR_Request_id) && (req.VVR_Status === 'A' || req.VVR_Status === 'APPROVED') && (
-                              <button
-                                onClick={() => handleViewGatePass(req)}
-                                className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-[10px] justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"
-                              >
-                                <QrCode
-                                  size={12}
-                                  className="group-hover/gp:scale-110 transition-transform"
-                                />
-                                View GatePass
-                              </button>
-                            )}
+                            {hasGatePass(req.VVR_Request_id) &&
+                              (req.VVR_Status === "A" ||
+                                req.VVR_Status === "APPROVED") && (
+                                <button
+                                  onClick={() => handleViewGatePass(req)}
+                                  className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-[10px] justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"
+                                >
+                                  <QrCode
+                                    size={12}
+                                    className="group-hover/gp:scale-110 transition-transform"
+                                  />
+                                  View GatePass
+                                </button>
+                              )}
                           </div>
                         </TableCell>
                         <TableCell

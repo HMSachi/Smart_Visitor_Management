@@ -449,7 +449,7 @@ const AllUsers = () => {
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
                 <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
-                  Loading Users...
+                  Hang tight, we’re loading the user list.
                 </p>
               </div>
             ) : error ? (

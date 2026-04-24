@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowLeft, Download, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Download,
+  ShieldCheck,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 import GatePassService from "../../../services/GatePassService";
 
 const GatePass = () => {
@@ -23,7 +29,7 @@ const GatePass = () => {
         setIsLoading(true);
         setError(null);
         const response = await GatePassService.GetGatePassById(gatePassId);
-        
+
         if (response?.data?.ResultSet && response.data.ResultSet.length > 0) {
           setGatePassData(response.data.ResultSet[0]);
         } else if (response?.data) {
@@ -73,9 +79,21 @@ const GatePass = () => {
         gatePassData.VV_NIC_Passport_NO ||
         gatePassData.nicPassport ||
         "N/A",
-      Email: gatePassData.Visitor_Email || gatePassData.VV_Email || gatePassData.email || "N/A",
-      "Phone number": gatePassData.Visitor_Phone || gatePassData.VV_Phone || gatePassData.phone || "N/A",
-      Company: gatePassData.Visitor_Company || gatePassData.VV_Company || gatePassData.company || "N/A",
+      Email:
+        gatePassData.Visitor_Email ||
+        gatePassData.VV_Email ||
+        gatePassData.email ||
+        "N/A",
+      "Phone number":
+        gatePassData.Visitor_Phone ||
+        gatePassData.VV_Phone ||
+        gatePassData.phone ||
+        "N/A",
+      Company:
+        gatePassData.Visitor_Company ||
+        gatePassData.VV_Company ||
+        gatePassData.company ||
+        "N/A",
       "Visiting purpose":
         gatePassData.VVR_Purpose ||
         gatePassData.VVR_Visiting_Purpose ||
@@ -113,7 +131,7 @@ const GatePass = () => {
         <div className="flex flex-col items-center gap-6">
           <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
           <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">
-            Loading GatePass...
+            Hang tight, we’re preparing your gate pass.
           </p>
         </div>
       </div>
@@ -131,7 +149,8 @@ const GatePass = () => {
             GatePass Not Available
           </h2>
           <p className="text-gray-400 mt-4 text-sm tracking-wide">
-            {error || "The requested gate pass could not be located. Please return to My Requests and try again."}
+            {error ||
+              "The requested gate pass could not be located. Please return to My Requests and try again."}
           </p>
           <button
             onClick={() => navigate("/visitor/my-requests")}
@@ -203,13 +222,16 @@ const GatePass = () => {
                   </p>
                   <div className="h-[1px] w-16 bg-white/10 mx-auto my-4"></div>
                   <p className="text-gray-400 text-[13px] capitalize tracking-widest leading-relaxed max-w-sm">
-                    Present this digital gate pass at the security checkpoint for verification.
+                    Present this digital gate pass at the security checkpoint
+                    for verification.
                   </p>
                 </div>
               </>
             ) : (
               <div className="py-12">
-                <p className="text-gray-400 text-sm">Unable to generate QR code</p>
+                <p className="text-gray-400 text-sm">
+                  Unable to generate QR code
+                </p>
               </div>
             )}
           </div>
