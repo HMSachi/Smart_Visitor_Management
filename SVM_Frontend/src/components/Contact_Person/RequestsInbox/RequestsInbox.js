@@ -159,10 +159,15 @@ const RequestsInboxMain = () => {
       >
         <div>
           <h1
-            className={`uppercase px-1 text-[18px] md:text-[20px] font-bold tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+            className={`px-1 text-[18px] md:text-[20px] font-bold tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
           >
             REQUESTS INBOX
           </h1>
+          <p
+            className={`text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.16em] mt-1 ${isLight ? "text-gray-500" : "text-white/50"}`}
+          >
+            review visitor approval workflows
+          </p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
@@ -186,7 +191,7 @@ const RequestsInboxMain = () => {
             <select
               value={statusFilter}
               onChange={(e) => handleFilterChange(e.target.value)}
-              className={`w-full pl-2.5 pr-7 py-1.5 rounded-xl text-[9px] font-medium uppercase tracking-widest transition-all cursor-pointer outline-none appearance-none border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] hover:bg-gray-50" : "bg-black/40 border-white/10 text-white hover:border-white/20"}`}
+              className={`w-full pl-2.5 pr-5 py-1.5 rounded-md text-[8px] font-medium uppercase tracking-widest transition-all cursor-pointer outline-none appearance-none border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] hover:bg-gray-50" : "bg-black/40 border-white/10 text-white hover:border-white/20"}`}
             >
               <option
                 value="All"
@@ -196,7 +201,7 @@ const RequestsInboxMain = () => {
                     : "bg-[#0A0A0B] text-white"
                 }
               >
-                ALL STATUS
+                All Statuses
               </option>
               <option
                 value="Sent to Visitor"
@@ -206,7 +211,7 @@ const RequestsInboxMain = () => {
                     : "bg-[#0A0A0B] text-white"
                 }
               >
-                SENT TO VISITOR
+                Pending Visitor Response
               </option>
               <option
                 value="Accepted by Visitor"
@@ -216,7 +221,7 @@ const RequestsInboxMain = () => {
                     : "bg-[#0A0A0B] text-white"
                 }
               >
-                ACCEPTED BY VISITOR
+                Visitor Accepted
               </option>
               <option
                 value="Accepted by Contact Person"
@@ -226,7 +231,7 @@ const RequestsInboxMain = () => {
                     : "bg-[#0A0A0B] text-white"
                 }
               >
-                ACCEPTED BY CONTACT PERSON
+                Awaiting Admin Review
               </option>
               <option
                 value="Admin Approved"
@@ -236,7 +241,7 @@ const RequestsInboxMain = () => {
                     : "bg-[#0A0A0B] text-white"
                 }
               >
-                ADMIN APPROVED
+                Approved
               </option>
               <option
                 value="Rejected"
@@ -246,7 +251,7 @@ const RequestsInboxMain = () => {
                     : "bg-[#0A0A0B] text-white"
                 }
               >
-                REJECTED
+                Rejected
               </option>
               <option
                 value="Checked Out"
@@ -256,7 +261,7 @@ const RequestsInboxMain = () => {
                     : "bg-[#0A0A0B] text-white"
                 }
               >
-                CHECKED OUT
+                Completed
               </option>
             </select>
             <div

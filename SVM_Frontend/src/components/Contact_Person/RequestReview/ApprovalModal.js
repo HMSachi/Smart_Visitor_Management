@@ -4,17 +4,17 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       ></div>
-      <div className="w-full max-w-xl bg-[#161618]/95 backdrop-blur-3xl border border-white/10 rounded-[40px] p-6 md:p-10 relative z-10 animate-fade-in shadow-[0_30px_100px_rgba(0,0,0,0.6)] overflow-hidden group">
+      <div className="w-full max-w-md bg-[#161618]/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-5 md:p-6 relative z-10 animate-fade-in shadow-[0_30px_100px_rgba(0,0,0,0.6)] overflow-hidden group">
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-700 pointer-events-none"></div>
 
-        <div className="mb-8 relative z-10">
+        <div className="mb-6 relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_var(--color-primary)]"></div>
+            <div className="w-2 h-2 bg-[#00B14F] rounded-full shadow-[0_0_10px_#00B14F]"></div>
             <h2 className="text-white text-sm font-semibold tracking-[0.18em] uppercase">
               Approve Request
             </h2>
@@ -25,7 +25,7 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
           </p>
         </div>
 
-        <div className="space-y-6 mb-10 relative z-10">
+        <div className="space-y-4 mb-6 relative z-10">
           <div className="space-y-3">
             <label className="text-gray-300 text-[13px] font-medium tracking-wide">
               Approval notes
@@ -40,16 +40,16 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 relative z-10">
+        <div className="flex flex-col sm:flex-row gap-3 relative z-10">
           <button
             onClick={onConfirm}
-            className="flex-1 py-4 bg-primary text-white text-sm font-medium tracking-wide rounded-2xl shadow-[0_5px_20px_rgba(200,16,46,0.25)] hover:bg-primary-dark transition-all transform active:scale-95"
+            className="flex-1 py-3 bg-[#00B14F] text-white text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl shadow-[0_4px_24px_rgba(0,177,79,0.25)] hover:bg-[#009845] transition-all transform active:scale-95"
           >
             Send Approval
           </button>
           <button
             onClick={onClose}
-            className="flex-1 py-4 bg-white/[0.03] border border-white/5 text-gray-300 text-sm font-medium tracking-wide rounded-2xl hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all"
+            className="flex-1 py-3 bg-white/[0.03] border border-white/10 text-gray-300 text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all"
           >
             Cancel
           </button>

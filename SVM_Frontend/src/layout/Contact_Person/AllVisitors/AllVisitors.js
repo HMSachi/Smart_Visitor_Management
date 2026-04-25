@@ -241,15 +241,15 @@ const ContactAllVisitors = () => {
                 className={`flex items-center transition-colors border rounded-lg px-2.5 py-1.5 min-w-[180px] max-w-[220px] shadow-sm ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10 focus-within:border-primary"}`}
               >
                 <Search
-                  size={13}
-                  className={`mr-2 ${isLight ? "text-gray-400" : "text-white/20"}`}
+                  size={12}
+                  className={`mr-3 ${isLight ? "text-gray-400" : "text-white/20"}`}
                 />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="SEARCH VISITOR..."
-                  className={`bg-transparent text-[10px] font-bold tracking-[0.16em] uppercase focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
+                  className={`bg-transparent text-[5px] font-medium tracking-[0.16em] uppercase focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
                 />
                 {searchTerm && (
                   <button
@@ -440,8 +440,7 @@ const ContactAllVisitors = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <User size={11} className="text-primary/60" /> Visitor
-                      name
+                      <User size={11} className="text-primary/60" /> Full Name
                     </label>
                     <input
                       required
@@ -450,14 +449,14 @@ const ContactAllVisitors = () => {
                       value={formData.VV_Name}
                       onChange={handleInputChange}
                       className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
-                      placeholder="Enter visitor name"
+                      placeholder="e.g., John Smith"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <Hash size={11} className="text-primary/60" /> ID /
-                      passport
+                      <Hash size={11} className="text-primary/60" /> ID or
+                      Passport
                     </label>
                     <input
                       required
@@ -466,13 +465,14 @@ const ContactAllVisitors = () => {
                       value={formData.VV_NIC_Passport_NO}
                       onChange={handleInputChange}
                       className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
-                      placeholder="Enter ID or passport number"
+                      placeholder="e.g., 123456789"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Mail size={11} className="text-primary/60" /> Email
+                      Address
                     </label>
                     <input
                       required
@@ -481,13 +481,14 @@ const ContactAllVisitors = () => {
                       value={formData.VV_Email}
                       onChange={handleInputChange}
                       className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
-                      placeholder="name@example.com"
+                      placeholder="john@example.com"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Phone size={11} className="text-primary/60" /> Phone
+                      Number
                     </label>
                     <input
                       required
@@ -496,13 +497,14 @@ const ContactAllVisitors = () => {
                       value={formData.VV_Phone}
                       onChange={handleInputChange}
                       className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
-                      placeholder="Enter phone number"
+                      placeholder="+1 (555) 123-4567"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <Building size={11} className="text-primary/60" /> Company
+                      <Building size={11} className="text-primary/60" />{" "}
+                      Organization
                     </label>
                     <input
                       required
@@ -511,14 +513,14 @@ const ContactAllVisitors = () => {
                       value={formData.VV_Company}
                       onChange={handleInputChange}
                       className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
-                      placeholder="Enter company name"
+                      placeholder="e.g., Acme Corporation"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Briefcase size={11} className="text-primary/60" />{" "}
-                      Visitor type
+                      Purpose of Visit
                     </label>
                     <input
                       required
@@ -527,14 +529,14 @@ const ContactAllVisitors = () => {
                       value={formData.VV_Visitor_Type}
                       onChange={handleInputChange}
                       className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
-                      placeholder="Guest, contractor, staff"
+                      placeholder="e.g., Meeting, Delivery, Interview"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <MapPin size={11} className="text-primary/60" /> Visit
-                      area
+                      <MapPin size={11} className="text-primary/60" /> Where to
+                      Visit
                     </label>
                     <input
                       required
@@ -543,14 +545,14 @@ const ContactAllVisitors = () => {
                       value={formData.VV_Visiting_places}
                       onChange={handleInputChange}
                       className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
-                      placeholder="Where should the visitor go?"
+                      placeholder="e.g., Building A, Floor 3, Room 301"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-primary uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <AlertCircle size={11} className="text-primary/60" />
-                      Login password
+                      <AlertCircle size={11} className="text-primary/60" />{" "}
+                      Create Password
                     </label>
                     <input
                       required
@@ -562,7 +564,7 @@ const ContactAllVisitors = () => {
                       placeholder="••••••••"
                     />
                     <p className="text-[9px] text-white/35 uppercase tracking-[0.12em] px-1 mt-1">
-                      The visitor will use this to sign in
+                      Share this password with the visitor for secure check-in
                     </p>
                   </div>
                 </div>
@@ -612,13 +614,13 @@ const ContactAllVisitors = () => {
                     onClick={closeModal}
                     className="px-6 py-2.5 rounded-lg text-[12px] font-bold text-gray-400 hover:bg-white/5 uppercase tracking-[0.14em] transition-all"
                   >
-                    Cancel
+                    Close
                   </button>
                   <button
                     type="submit"
                     className="px-7 py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-bold uppercase tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
                   >
-                    Authorize Entry
+                    Send Pre-Approval
                   </button>
                 </div>
               </form>
