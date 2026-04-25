@@ -48,6 +48,20 @@ const ApprovalManagement = () => {
 
   const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
   const [itemsCarried, setItemsCarried] = useState([]);
+  const formScrollRef = React.useRef(null);
+
+  const scrollDetailsFormToBottom = () => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const formEl = formScrollRef.current;
+        if (!formEl) return;
+        formEl.scrollTo({
+          top: formEl.scrollHeight,
+          behavior: "smooth",
+        });
+      });
+    });
+  };
 
   const handleAddVisitor = () => {
     const newId =
@@ -58,6 +72,7 @@ const ApprovalManagement = () => {
       ...visitorGroupMembers,
       { id: newId, fullName: "", nic: "", contact: "" },
     ]);
+    scrollDetailsFormToBottom();
   };
   const handleRemoveVisitor = (id) => {
     setVisitorGroupMembers(visitorGroupMembers.filter((v) => v.id !== id));
@@ -79,6 +94,7 @@ const ApprovalManagement = () => {
       ...itemsCarried,
       { id: newId, itemName: "", quantity: "" },
     ]);
+    scrollDetailsFormToBottom();
   };
   const handleRemoveItem = (id) => {
     setItemsCarried(itemsCarried.filter((i) => i.id !== id));
@@ -276,6 +292,7 @@ const ApprovalManagement = () => {
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <form
+                    ref={formScrollRef}
                     className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-2 custom-scrollbar"
                     onSubmit={(e) => e.preventDefault()}
                   >
@@ -283,6 +300,7 @@ const ApprovalManagement = () => {
                       visitor={selectedVisitor}
                       onBack={handleBackToList}
                       onAction={handleAction}
+                      showStatusForAdmin={true}
                     />
 
                     <div
@@ -298,7 +316,7 @@ const ApprovalManagement = () => {
                     </div>
 
                     <div
-                      className={`mt-2 p-2 border rounded-xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}
+                      className={`mt-4 p-4 border rounded-xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}
                     >
                       <ItemsCarried
                         items={itemsCarried}

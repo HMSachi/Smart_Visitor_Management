@@ -94,9 +94,16 @@ const Field = ({ label, value, icon: Icon, isLight }) => (
   </div>
 );
 
-const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
+const PersonnelAuthProtocol = ({
+  visitor,
+  onBack,
+  onAction,
+  showStatusForAdmin = false,
+}) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
+  const visitorStatus =
+    visitor?.status || visitor?.raw?.VVR_Status || visitor?.raw?.VV_Status;
 
   if (!visitor) return null;
 
@@ -133,7 +140,19 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
           Back to requests
         </button>
 
-        <div className="flex gap-4 w-full lg:w-auto relative z-10">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 w-full lg:w-auto relative z-10">
+          {showStatusForAdmin && (
+            <div
+              className={`px-4 py-2 rounded-xl border text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center justify-center gap-2 whitespace-nowrap ${
+                isLight
+                  ? "bg-gray-50 border-gray-200 text-[#1A1A1A]"
+                  : "bg-white/5 border-white/10 text-white"
+              }`}
+            >
+              <Shield size={14} className="text-primary" />
+              Status: {visitorStatus || "Pending"}
+            </div>
+          )}
           {(visitor.status === "Accepted by Visitor" ||
             visitor.status === "Accepted by Contact Person" ||
             visitor.status === "Sent to Admin") && (
@@ -288,7 +307,8 @@ const PersonnelAuthProtocol = ({ visitor, onBack, onAction }) => {
         <SectionCard isLight={isLight}>
           <div className="p-4 md:p-5">
             <SplitSection
-              title="Vehicle Registry"
+              title="
+              Vehicle Registry"
               icon={Car}
               description="Transport details associated with the request."
               isLight={isLight}

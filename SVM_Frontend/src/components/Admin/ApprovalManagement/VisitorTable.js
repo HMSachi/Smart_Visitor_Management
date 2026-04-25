@@ -31,7 +31,7 @@ const StatusBadge = ({ status }) => {
 
   return (
     <div
-      className={`px-4 py-1.5 rounded-full text-[12px] font-medium tracking-[0.2em] uppercase border flex items-center gap-2 w-fit mx-auto ${styles[status] || styles.Pending}`}
+      className={`px-3 py-1 rounded-full text-[10px] font-medium tracking-[0.15em] uppercase border flex items-center gap-1.5 w-fit mx-auto ${styles[status] || styles.Pending}`}
     >
       <span
         className={`w-1.5 h-1.5 rounded-full ${status === "Admin Approved" || status === "Accepted by Admin" || status === "Checked In" ? "bg-green-500 shadow-[0_0_5px_#22c55e]" : status === "Accepted" ? "bg-purple-500 shadow-[0_0_5px_#a855f7]" : status === "Sent to Admin" ? "bg-orange-500 shadow-[0_0_5px_#f97316] animate-pulse" : status === "Pending" ? "bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse" : "bg-mas-text-dim opacity-80"}`}
@@ -184,10 +184,10 @@ const VisitorTable = ({
               <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)]">
                 <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
                   <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-20 opacity-60">
-                    REF.
+                    NO.
                   </th>
                   <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] opacity-60">
-                    VISITOR IDENTITY
+                    VISITOR NAME
                   </th>
                   <th
                     className="px-6 py-3 text-[12px] font-medium tracking-[0.3em] capitalize text-white/70 cursor-pointer hover:text-primary transition-colors group"
@@ -196,7 +196,7 @@ const VisitorTable = ({
                     }
                   >
                     <div className="flex flex-col md:flex-row items-center gap-3 md:gap-2">
-                      SCHEDULED VISIT
+                      VISIT DATE & TIME
                       <div
                         className={`transition-transform duration-300 ${sortOrder === "asc" ? "rotate-180" : ""}`}
                       >
@@ -211,11 +211,11 @@ const VisitorTable = ({
                       </div>
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-[11px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center">
-                    CURRENT STATUS
+                  <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center">
+                    STATUS
                   </th>
                   <th className="px-6 py-3 text-[11px] font-bold tracking-[0.3em] uppercase text-primary text-right pr-6">
-                    AVAILABLE PROTOCOLS
+                    ACTIONS
                   </th>
                 </tr>
               </thead>

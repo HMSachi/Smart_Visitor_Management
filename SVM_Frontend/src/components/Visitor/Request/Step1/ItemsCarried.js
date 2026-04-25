@@ -1,16 +1,14 @@
 import React from "react";
-import { Package, Hash, Plus, X } from "lucide-react";
+import { Package, Plus, X } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 
 const ItemsCarried = ({ items, onAdd, onRemove, onChange, isLight }) => {
   return (
-    <section className="animate-fade-in stagger-item grid grid-cols-1 gap-4 xl:grid-cols-[190px_minmax(0,1fr)]">
+    <section className="animate-fade-in stagger-item grid grid-cols-1 gap-3 p-1 xl:grid-cols-[190px_minmax(0,1fr)]">
       <div className="xl:sticky xl:top-28 self-start">
         <div className="flex items-center gap-2.5 mb-3">
           <div className="w-1.5 h-8 bg-primary rounded-full"></div>
-          <div className="text-primary">
-            <Package size={14} />
-          </div>
+          <Package size={14} className="text-primary/70" />
           <h3
             className={`text-[10px] font-semibold uppercase tracking-[0.18em] mb-0 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
           >
@@ -42,14 +40,16 @@ const ItemsCarried = ({ items, onAdd, onRemove, onChange, isLight }) => {
               key={item.id}
               className="relative grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3 pt-3 border-t border-white/8 first:border-0 first:pt-0"
             >
-              <button
-                type="button"
-                onClick={() => onRemove(item.id)}
-                className="absolute -right-2 top-0 p-2 text-gray-500 hover:text-primary transition-all md:top-6"
-                title="Remove Item"
-              >
-                <X size={16} />
-              </button>
+              {items.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => onRemove(item.id)}
+                  className="absolute -right-2 top-0 p-2 text-gray-500 hover:text-primary transition-all md:top-6"
+                  title="Remove Item"
+                >
+                  <X size={16} />
+                </button>
+              )}
 
               {/* Item Name */}
               <div className="space-y-2">
@@ -105,7 +105,7 @@ const ItemsCarried = ({ items, onAdd, onRemove, onChange, isLight }) => {
           <div className="p-6 border-2 border-dashed border-white/10 rounded-none flex flex-col items-center justify-center text-center mt-3">
             <Package size={20} className="text-gray-600 mb-2.5" />
             <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-[0.18em] mb-3">
-              No items added yet.
+              No additional items added yet.
             </p>
             <button
               type="button"
