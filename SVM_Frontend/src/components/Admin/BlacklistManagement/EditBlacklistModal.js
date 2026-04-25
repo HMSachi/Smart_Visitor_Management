@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
 import { X, Edit3, User, Mail, Shield, Save, Briefcase } from "lucide-react";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 
@@ -67,7 +68,7 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
     onClose();
   };
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -76,7 +77,7 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[110]"
+            className={`fixed inset-0 backdrop-blur-sm z-[110] ${isLight ? "bg-transparent" : "bg-black/40"}`}
           />
 
           <div className="fixed inset-0 flex items-center justify-center p-4 z-[111] pointer-events-none">
@@ -208,7 +209,9 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
                 </div>
 
                 {/* Footer */}
-                <div className="flex gap-2.5 pt-4 border-t border-white/5">
+                <div
+                  className={`flex gap-2.5 pt-4 border-t ${isLight ? "border-gray-200" : "border-white/5"}`}
+                >
                   <button
                     type="button"
                     onClick={onClose}
@@ -229,7 +232,8 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
           </div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 };
 

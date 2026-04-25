@@ -307,7 +307,9 @@ const BlacklistTable = () => {
                         </td>
 
                         {/* Risk Level */}
-                        <td className="block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b border-white/5 sm:border-none">
+                        <td
+                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none ${isLight ? "border-gray-200" : "border-white/5"}`}
+                        >
                           <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
                             Risk Level
                           </span>
@@ -402,10 +404,14 @@ const BlacklistTable = () => {
                             <Shield size={26} className="text-primary/40" />
                           </div>
                           <div>
-                            <h3 className="text-white text-base font-bold capitalize tracking-[0.2em] mb-2">
+                            <h3
+                              className={`text-base font-bold capitalize tracking-[0.2em] mb-2 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                            >
                               No Blacklisted Visitors
                             </h3>
-                            <p className="text-gray-300/60 text-[12px] capitalize tracking-widest">
+                            <p
+                              className={`text-[12px] capitalize tracking-widest ${isLight ? "text-gray-500" : "text-gray-300/60"}`}
+                            >
                               There are currently no visitors on the blacklist.
                             </p>
                           </div>

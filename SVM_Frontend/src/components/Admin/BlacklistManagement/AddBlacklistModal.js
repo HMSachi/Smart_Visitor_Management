@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
 import {
   X,
   UserPlus,
@@ -75,7 +76,7 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
     });
   };
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -84,7 +85,7 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[110]"
+            className={`fixed inset-0 backdrop-blur-sm z-[110] ${isLight ? "bg-transparent" : "bg-black/40"}`}
           />
 
           <div className="fixed inset-0 flex items-center justify-center p-4 z-[111] pointer-events-none">
@@ -170,7 +171,9 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                 </div>
 
                 {/* Section 2: Restriction Logistics */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-3.5 border-t border-white/5">
+                <div
+                  className={`grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-3.5 border-t ${isLight ? "border-gray-200" : "border-white/5"}`}
+                >
                   <div className="col-span-full flex items-center gap-2.5">
                     <div className="w-1 h-3.5 bg-primary rounded-full shadow-[0_0_6px_var(--color-primary)]"></div>
                     <h3 className="text-primary text-[10px] font-bold uppercase tracking-[0.28em]">
@@ -232,7 +235,9 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                 </div>
 
                 {/* Footer */}
-                <div className="flex gap-2.5 pt-4 border-t border-white/5">
+                <div
+                  className={`flex gap-2.5 pt-4 border-t ${isLight ? "border-gray-200" : "border-white/5"}`}
+                >
                   <button
                     type="button"
                     onClick={onClose}
@@ -253,7 +258,8 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
           </div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 };
 
