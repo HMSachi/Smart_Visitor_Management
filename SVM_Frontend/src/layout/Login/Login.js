@@ -48,6 +48,15 @@ const Login = () => {
   const inputIconColor = isLightMode
     ? "rgba(17,24,39,0.45)"
     : "rgba(255,255,255,0.3)";
+  const pageBackgroundImage = isLightMode
+    ? "/login_bg_light.svg"
+    : "/login_bg_dark.svg";
+  const pageBackgroundOverlay = isLightMode
+    ? "linear-gradient(126deg, rgba(252,254,255,0.6) 0%, rgba(240,246,252,0.36) 54%, rgba(231,239,249,0.64) 100%)"
+    : "linear-gradient(126deg, rgba(4,8,13,0.68) 0%, rgba(6,10,15,0.44) 54%, rgba(11,16,24,0.73) 100%)";
+  const vignetteOverlay = isLightMode
+    ? "radial-gradient(110% 88% at 78% 10%, rgba(200,16,46,0.12) 0%, rgba(200,16,46,0) 54%), radial-gradient(120% 90% at 22% 92%, rgba(47,107,154,0.1) 0%, rgba(47,107,154,0) 55%), radial-gradient(130% 110% at 50% 50%, rgba(26,38,54,0) 55%, rgba(26,38,54,0.2) 100%)"
+    : "radial-gradient(110% 88% at 78% 10%, rgba(200,16,46,0.22) 0%, rgba(200,16,46,0) 54%), radial-gradient(120% 90% at 22% 92%, rgba(47,107,154,0.2) 0%, rgba(47,107,154,0) 55%), radial-gradient(130% 110% at 50% 50%, rgba(4,8,13,0) 55%, rgba(4,8,13,0.44) 100%)";
 
   useEffect(() => {
     if (user) {
@@ -99,8 +108,24 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-default)] text-white flex flex-col lg:flex-row relative overflow-hidden">
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: `${pageBackgroundOverlay}, url(${pageBackgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ background: vignetteOverlay }}
+      />
       {/* Animated Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none circuit-grid opacity-60" />
+      <div
+        className="absolute inset-0 z-0 pointer-events-none circuit-grid"
+        style={{ opacity: isLightMode ? 0.34 : 0.56 }}
+      />
       <div className="absolute inset-0 z-0 pointer-events-none">
         {[...Array(12)].map((_, i) => (
           <motion.div
