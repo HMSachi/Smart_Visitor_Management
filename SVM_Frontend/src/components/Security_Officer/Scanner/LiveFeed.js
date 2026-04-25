@@ -1,6 +1,13 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { useDispatch } from "react-redux";
 import { BrowserMultiFormatReader } from "@zxing/browser";
+import { useLocation } from "react-router-dom";
 import {
   QrCode,
   Zap,
@@ -14,6 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const LiveFeed = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const videoRef = useRef(null);
   const controlsRef = useRef(null);
   const scannerRef = useRef(null);
@@ -26,12 +34,33 @@ const LiveFeed = () => {
   const [qrData, setQrData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const stopScanner = () => {
+  const stopScanner = useCallback(() => {
     if (controlsRef.current) {
-      controlsRef.current.stop();
+      try {
+        controlsRef.current.stop();
+      } catch (err) {
+        console.warn("Unable to stop scanner controls cleanly:", err);
+      }
       controlsRef.current = null;
     }
-  };
+
+    if (scannerRef.current) {
+      try {
+        scannerRef.current.reset();
+      } catch (err) {
+        console.warn("Unable to reset scanner cleanly:", err);
+      }
+    }
+
+    const stream = videoRef.current?.srcObject;
+    if (stream && typeof stream.getTracks === "function") {
+      stream.getTracks().forEach((track) => track.stop());
+    }
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  }, []);
 
   const startScanner = async () => {
     if (!videoRef.current) {
@@ -216,7 +245,26 @@ const LiveFeed = () => {
       clearTimeout(timer);
       stopScanner();
     };
-  }, [scanStatus]);
+  }, [scanStatus, stopScanner]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopScanner();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [stopScanner]);
+
+  useEffect(() => {
+    return () => {
+      stopScanner();
+    };
+  }, [location.pathname, stopScanner]);
 
   return (
     <div className="max-w-2xl w-full space-y-4 md:space-y-6 relative z-10 mx-auto px-4">
