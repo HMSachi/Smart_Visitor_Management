@@ -301,34 +301,34 @@ const ContactAllVisitors = () => {
                       className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
                     >
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-primary/60" : "text-primary"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-primary/60" : "text-primary"}`}
                       >
-                        ID
-                      </th>
-                      <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                      >
-                        Visitor
+                        Visitor ID
                       </th>
                       <th
                         className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
-                        Credentials
+                        Visitor Name
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
-                        Company
+                        NIC / Passport
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
-                        Destination
+                        Company Name
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
-                        Status
+                        Visiting Area
+                      </th>
+                      <th
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                      >
+                        Account Status
                       </th>
                     </tr>
                   </thead>
@@ -349,11 +349,11 @@ const ContactAllVisitors = () => {
                             key={visitor.VV_Visitor_id}
                             className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                           >
-                            <td className="px-4 py-4 text-primary font-mono text-[11px] tracking-[0.14em] font-bold">
+                            <td className="px-4 py-4 text-center text-primary font-mono text-[11px] tracking-[0.14em] font-bold">
                               #{visitor.VV_Visitor_id}
                             </td>
-                            <td className="px-4 py-4">
-                              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2">
+                            <td className="px-4 py-4 text-center">
+                              <div className="flex items-center justify-center gap-2">
                                 <span
                                   className={`font-semibold text-[12px] uppercase tracking-[0.14em] ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
                                 >
@@ -368,29 +368,33 @@ const ContactAllVisitors = () => {
                                 {visitor.VV_NIC_Passport_NO || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4">
+                            <td className="px-4 py-4 text-center">
                               <span
+                                title={visitor.VV_Company || "No company specified"}
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Company || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4">
+                            <td className="px-4 py-4 text-center">
                               <span
+                                title={visitor.VV_Visiting_places || "No visiting area specified"}
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Visiting_places || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4">
-                              <button
-                                onClick={() => handleToggleStatus(visitor)}
-                                disabled={isLoading}
-                                title="Click to toggle status"
-                                className={`px-2.5 py-1 rounded-full text-[9px] uppercase tracking-[0.14em] font-bold transition-all cursor-pointer ${isActive ? "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200" : "bg-red-50 text-primary hover:bg-red-100 border border-red-200"}`}
-                              >
-                                {isActive ? "ACTIVE" : "INACTIVE"}
-                              </button>
+                            <td className="px-4 py-4 text-center">
+                              <div className="flex items-center justify-center">
+                                <button
+                                  onClick={() => handleToggleStatus(visitor)}
+                                  disabled={isLoading}
+                                  title="Click to toggle status"
+                                  className={`px-2.5 py-1 rounded-full text-[9px] uppercase tracking-[0.14em] font-bold transition-all cursor-pointer ${isActive ? "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200" : "bg-red-50 text-primary hover:bg-red-100 border border-red-200"}`}
+                                >
+                                  {isActive ? "ACTIVE" : "INACTIVE"}
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         );

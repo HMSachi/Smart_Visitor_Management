@@ -446,12 +446,12 @@ const VisitRequests = () => {
                       className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
                     >
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-primary/60" : "text-primary"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-primary/60" : "text-primary"}`}
                       >
                         Request ID
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Visitor
                       </th>
@@ -461,22 +461,22 @@ const VisitRequests = () => {
                         Visit Date
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Purpose
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Visit Areas
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Status
                       </th>
                       <th
-                        className={`px-4 py-3 text-right font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Actions
                       </th>
@@ -489,11 +489,11 @@ const VisitRequests = () => {
                           key={req.VVR_Request_id}
                           className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                         >
-                          <td className="px-4 py-4 text-primary font-mono text-[11px] tracking-[0.14em] font-bold">
+                          <td className="px-4 py-4 text-center text-primary font-mono text-[11px] tracking-[0.14em] font-bold">
                             #{req.VVR_Request_id}
                           </td>
-                          <td className="px-4 py-4">
-                            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2">
+                          <td className="px-4 py-4 text-center">
+                            <div className="flex items-center justify-center gap-2">
                               <span
                                 className={`font-semibold text-[12px] uppercase tracking-[0.14em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                               >
@@ -514,35 +514,38 @@ const VisitRequests = () => {
                               </span>
                             </div>
                           </td>
-                          <td className="px-4 py-4">
-                            <div className="max-w-[170px]">
+                          <td className="px-4 py-4 text-center">
+                            <div className="max-w-[170px] mx-auto">
                               <p
+                                title={req.VVR_Purpose || "No purpose specified"}
                                 className={`font-semibold uppercase tracking-[0.14em] text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
                               >
                                 {req.VVR_Purpose || "-"}
                               </p>
                             </div>
                           </td>
-                          <td className="px-4 py-4 align-top">
+                          <td className="px-4 py-4 align-top text-center">
                             <div
-                              className={`flex flex-col gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
+                              className={`flex flex-col items-center gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
                             >
-                              <div className="flex items-center gap-2 min-w-0">
+                              <div className="flex items-center justify-center gap-2 min-w-0">
                                 <MapPin
                                   size={12}
                                   className="opacity-40 shrink-0"
                                 />
                               </div>
-                              <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
+                              <div className="min-w-0 max-w-[280px] lg:max-w-[360px] mx-auto">
                                 {renderVisitAreas(req)}
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-4">
-                            <StatusBadge status={req.VVR_Status} />
+                          <td className="px-4 py-4 text-center">
+                            <div className="flex items-center justify-center">
+                              <StatusBadge status={req.VVR_Status} />
+                            </div>
                           </td>
-                          <td className="px-4 py-4 text-right">
-                            <div className="flex items-center justify-end gap-2 opacity-45 group-hover:opacity-100 transition-opacity">
+                          <td className="px-4 py-4 text-center">
+                            <div className="flex items-center justify-center gap-2 opacity-45 group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => openModal("edit", req)}
                                 className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-400/10 border border-transparent hover:border-blue-400/20 transition-all"

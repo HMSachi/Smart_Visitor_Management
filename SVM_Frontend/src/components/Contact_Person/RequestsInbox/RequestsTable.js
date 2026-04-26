@@ -33,7 +33,7 @@ const RequestsTable = ({ requests, onReview }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-30"></div>
 
       <div className="hidden sm:block relative z-10">
-        <table className="w-full text-left border-separate border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] table-fixed">
+        <table className="w-full text-center border-separate border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] table-fixed">
           <colgroup>
             <col className="w-[72px]" />
             <col className="w-[32%]" />
@@ -62,7 +62,7 @@ const RequestsTable = ({ requests, onReview }) => {
         style={{ maxHeight: "35rem" }}
       >
         <div className="overflow-x-auto w-full max-w-full pb-4">
-          <table className="w-full text-left border-separate border-spacing-y-3 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table table-fixed">
+          <table className="w-full text-center border-separate border-spacing-y-3 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table table-fixed">
             <colgroup>
               <col className="w-[72px]" />
               <col className="w-[32%]" />
@@ -77,15 +77,15 @@ const RequestsTable = ({ requests, onReview }) => {
                   key={visitor.id}
                   className="group transition-all hover:bg-[var(--color-surface-1)]/70 block sm:table-row bg-transparent border-b border-[var(--color-border-soft)]/80 sm:border-none p-4 sm:p-0"
                 >
-                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-left sm:text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
+                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
                     <span className="text-[9px] font-bold tracking-[0.16em] text-primary/60 uppercase block sm:hidden mb-2">
                       Request ID
                     </span>
-                    <div className="text-[11px] font-semibold tracking-[0.12em] text-[var(--color-text-primary)] flex items-center justify-start sm:justify-center transition-all mx-0 sm:mx-auto group-hover:text-primary">
+                    <div className="text-[11px] font-semibold tracking-[0.12em] text-[var(--color-text-primary)] flex items-center justify-center transition-all mx-auto group-hover:text-primary">
                       #{visitor.id || "N/A"}
                     </div>
                   </td>
-                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-left sm:text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
+                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
                     <span className="text-[9px] font-bold tracking-[0.16em] text-primary/60 uppercase block sm:hidden mb-2">
                       Visitor
                     </span>
@@ -107,26 +107,29 @@ const RequestsTable = ({ requests, onReview }) => {
                       </div>
                     </div>
                   </td>
-                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-left sm:text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
+                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
                     <span className="text-[9px] font-bold tracking-[0.16em] text-primary/60 uppercase block sm:hidden mb-2">
                       Purpose
                     </span>
-                    <p className="text-[var(--color-text-primary)] text-[11px] font-semibold uppercase tracking-[0.12em] truncate max-w-[220px] sm:mx-auto sm:text-center">
+                    <p
+                      title={visitor.rawRequest?.VVR_Purpose || visitor.purpose || "No purpose specified"}
+                      className="text-[var(--color-text-primary)] text-[11px] font-semibold uppercase tracking-[0.12em] truncate max-w-[220px] mx-auto text-center"
+                    >
                       {visitor.rawRequest?.VVR_Purpose ||
                         visitor.purpose ||
                         "N/A"}
                     </p>
                   </td>
-                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-left sm:text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
-                    <span className="text-[9px] font-bold tracking-[0.16em] text-primary/60 uppercase block sm:hidden mb-2 text-left">
+                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-center border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
+                    <span className="text-[9px] font-bold tracking-[0.16em] text-primary/60 uppercase block sm:hidden mb-2 text-center">
                       Status
                     </span>
                     <div className="sm:flex sm:justify-center">
                       <StatusBadge status={visitor.status} />
                     </div>
                   </td>
-                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-left sm:text-center">
-                    <span className="text-[9px] font-bold tracking-[0.16em] text-primary/60 uppercase block sm:hidden mb-2 text-left">
+                  <td className="block sm:table-cell px-2 sm:px-5 py-3 sm:py-4 text-center">
+                    <span className="text-[9px] font-bold tracking-[0.16em] text-primary/60 uppercase block sm:hidden mb-2 text-center">
                       Actions
                     </span>
                     <div className="sm:flex sm:justify-center">
