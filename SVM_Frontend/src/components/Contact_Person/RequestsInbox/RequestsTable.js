@@ -59,7 +59,7 @@ const RequestsTable = ({ requests, onReview }) => {
 
       <div
         className="overflow-auto p-2.5 sm:p-0 z-10 relative"
-        style={{ maxHeight: "42rem" }}
+        style={{ maxHeight: "35rem" }}
       >
         <div className="overflow-x-auto w-full max-w-full pb-4">
           <table className="w-full text-left border-separate border-spacing-y-3 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table table-fixed">
