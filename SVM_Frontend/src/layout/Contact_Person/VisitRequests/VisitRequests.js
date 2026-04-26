@@ -106,6 +106,8 @@ const VisitRequests = () => {
   // Action Menu State
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedReq, setSelectedReq] = useState(null);
+  const [visitorSearchOpen, setVisitorSearchOpen] = useState(false);
+  const [visitorSearchTerm, setVisitorSearchTerm] = useState("");
 
   const handleMenuOpen = (event, req) => {
     setAnchorEl(event.currentTarget);
@@ -629,41 +631,125 @@ const VisitRequests = () => {
                       <label className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold px-1 opacity-70">
                         Choose Visitor
                       </label>
-                      <select
-                        required
-                        name="VVR_Visitor_id"
-                        value={formData.VVR_Visitor_id}
-                        onChange={handleInputChange}
-                        className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 appearance-none cursor-pointer transition-all ${
-                          isLight
-                            ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
-                            : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                        }`}
-                      >
-                        <option
-                          value=""
-                          className={
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setVisitorSearchOpen(!visitorSearchOpen);
+                            setVisitorSearchTerm("");
+                          }}
+                          className={`w-full border rounded-xl px-5 py-4 text-[13px] text-left focus:outline-none focus:border-primary/50 appearance-none cursor-pointer transition-all flex items-center justify-between ${
                             isLight
-                              ? "bg-white text-[#1A1A1A]"
-                              : "bg-[#0A0A0B] text-white"
-                          }
+                              ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
+                              : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                          } ${formData.VVR_Visitor_id ? (isLight ? "text-[#1A1A1A]" : "text-white") : isLight ? "text-gray-400" : "text-white/50"}`}
                         >
-                          Select a visitor
-                        </option>
-                        {activeVisitors.map((v) => (
-                          <option
-                            key={v.VV_Visitor_id}
-                            value={v.VV_Visitor_id}
-                            className={
+                          <span>
+                            {formData.VVR_Visitor_id
+                              ? activeVisitors.find(
+                                  (v) =>
+                                    String(v.VV_Visitor_id) ===
+                                    String(formData.VVR_Visitor_id),
+                                )?.VV_Name || "Select a visitor"
+                              : "Select a visitor"}
+                          </span>
+                          <ChevronDown
+                            size={16}
+                            className={`transition-transform ${visitorSearchOpen ? "rotate-180" : ""}`}
+                          />
+                        </button>
+
+                        {visitorSearchOpen && (
+                          <div
+                            className={`absolute top-full left-0 right-0 z-50 mt-2 border rounded-xl shadow-lg ${
                               isLight
-                                ? "bg-white text-[#1A1A1A]"
-                                : "bg-[#0A0A0B] text-white"
-                            }
+                                ? "bg-white border-gray-200 shadow-gray-200/40"
+                                : "bg-[#0A0A0B] border-white/10 shadow-black/50"
+                            }`}
                           >
-                            {v.VV_Name} (ID: {v.VV_Visitor_id})
-                          </option>
-                        ))}
-                      </select>
+                            <div className="p-3 border-b border-white/5 sticky top-0 bg-inherit">
+                              <input
+                                type="text"
+                                placeholder="Search visitors..."
+                                value={visitorSearchTerm}
+                                onChange={(e) =>
+                                  setVisitorSearchTerm(e.target.value)
+                                }
+                                className={`w-full border rounded-lg px-3 py-2 text-[12px] focus:outline-none focus:border-primary/50 transition-all ${
+                                  isLight
+                                    ? "bg-gray-50 border-gray-200 text-[#1A1A1A]"
+                                    : "bg-white/[0.02] border-white/10 text-white"
+                                }`}
+                                autoFocus
+                              />
+                            </div>
+                            <div className="max-h-[280px] overflow-y-auto custom-scrollbar">
+                              {activeVisitors
+                                .filter((v) =>
+                                  `${v.VV_Name} ${v.VV_Visitor_id}`
+                                    .toLowerCase()
+                                    .includes(visitorSearchTerm.toLowerCase()),
+                                )
+                                .map((v, index) => (
+                                  <button
+                                    key={v.VV_Visitor_id}
+                                    type="button"
+                                    onClick={() => {
+                                      setFormData({
+                                        ...formData,
+                                        VVR_Visitor_id: v.VV_Visitor_id,
+                                      });
+                                      setVisitorSearchOpen(false);
+                                      setVisitorSearchTerm("");
+                                    }}
+                                    className={`w-full px-4 py-3 text-left text-[12px] font-medium transition-all border-b border-white/5 last:border-b-0 flex items-center justify-between group ${
+                                      String(formData.VVR_Visitor_id) ===
+                                      String(v.VV_Visitor_id)
+                                        ? isLight
+                                          ? "bg-primary/10 text-primary"
+                                          : "bg-primary/10 text-primary"
+                                        : isLight
+                                          ? "hover:bg-gray-50 text-[#1A1A1A]"
+                                          : "hover:bg-white/[0.05] text-white/80"
+                                    }`}
+                                  >
+                                    <div className="flex flex-col">
+                                      <span className="font-semibold">
+                                        {v.VV_Name}
+                                      </span>
+                                      <span
+                                        className={`text-[10px] ${
+                                          isLight
+                                            ? "text-gray-500"
+                                            : "text-white/40"
+                                        }`}
+                                      >
+                                        ID: {v.VV_Visitor_id}
+                                      </span>
+                                    </div>
+                                    {String(formData.VVR_Visitor_id) ===
+                                      String(v.VV_Visitor_id) && (
+                                      <CheckCircle2 size={16} />
+                                    )}
+                                  </button>
+                                ))}
+                              {activeVisitors.filter((v) =>
+                                `${v.VV_Name} ${v.VV_Visitor_id}`
+                                  .toLowerCase()
+                                  .includes(visitorSearchTerm.toLowerCase()),
+                              ).length === 0 && (
+                                <div
+                                  className={`px-4 py-6 text-center text-[11px] font-semibold tracking-[0.1em] uppercase ${
+                                    isLight ? "text-gray-400" : "text-white/40"
+                                  }`}
+                                >
+                                  No visitors found
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
 
