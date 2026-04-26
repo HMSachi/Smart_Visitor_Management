@@ -92,6 +92,7 @@ const AllUsers = () => {
     department: "",
     type: "ADMIN", // Current being edited type
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     dispatch(GetAllAdministrator());
@@ -196,17 +197,75 @@ const AllUsers = () => {
         type: "ADMIN",
       });
     }
+    setErrors({});
     setIsModalOpen(true);
   };
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setErrors({});
+  };
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: "" });
+    }
+  };
+
+  const validateForm = () => {
+    const nextErrors = {};
+    const name = formData.name?.trim();
+    const email = formData.email?.trim();
+    const department = formData.department?.trim();
+    const password = formData.password || "";
+    const phoneDigits = formData.phone?.replace(/\D/g, "") || "";
+
+    if (!name) {
+      nextErrors.name = "Name is required";
+    } else if (name.length < 2) {
+      nextErrors.name = "Name must be at least 2 characters";
+    }
+
+    if (!email) {
+      nextErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      nextErrors.email = "Enter a valid email address";
+    }
+
+    if (modalMode === "add") {
+      if (!formData.role) {
+        nextErrors.role = "Role is required";
+      }
+
+      if (!password) {
+        nextErrors.password = "Password is required";
+      } else if (password.length < 8) {
+        nextErrors.password = "Password must be at least 8 characters";
+      }
+    } else if (password && password.length < 8) {
+      nextErrors.password = "Password must be at least 8 characters";
+    }
+
+    if (!department) {
+      nextErrors.department = "Department is required";
+    }
+
+    if (!formData.phone?.trim()) {
+      nextErrors.phone = "Phone number is required";
+    } else if (phoneDigits.length !== 10) {
+      nextErrors.phone = "Phone number must contain exactly 10 digits";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     if (modalMode === "add") {
       const adminData = {
         VA_Name: formData.name,
@@ -745,14 +804,22 @@ const AllUsers = () => {
                   <User size={12} /> Name
                 </label>
                 <input
-                  required
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                  className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                    errors.name
+                      ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                      : "bg-black/40 border border-white/10 focus:border-primary/50"
+                  }`}
                   placeholder="e.g. John Doe"
                 />
+                {errors.name && (
+                  <p className="text-[10px] text-red-400 font-semibold mt-1">
+                    {errors.name}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -760,14 +827,22 @@ const AllUsers = () => {
                   <Mail size={12} /> Email
                 </label>
                 <input
-                  required
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                  className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                    errors.email
+                      ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                      : "bg-black/40 border border-white/10 focus:border-primary/50"
+                  }`}
                   placeholder="example@mas.com"
                 />
+                {errors.email && (
+                  <p className="text-[10px] text-red-400 font-semibold mt-1">
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               {formData.type === "CONTACT" ? (
@@ -777,28 +852,44 @@ const AllUsers = () => {
                       <Users size={12} /> Department
                     </label>
                     <input
-                      required
                       type="text"
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                        errors.department
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g. Human Resources"
                     />
+                    {errors.department && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.department}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-1">
                     <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <X size={12} /> Phone Connection
                     </label>
                     <input
-                      required
                       type="text"
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                        errors.phone
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g. +94 123 4567"
                     />
+                    {errors.phone && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
                 </>
               ) : (
@@ -812,9 +903,18 @@ const AllUsers = () => {
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                        errors.department
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g. Human Resources"
                     />
+                    {errors.department && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.department}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1">
@@ -826,9 +926,18 @@ const AllUsers = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                        errors.phone
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g. +94 123 4567"
                     />
+                    {errors.phone && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1">
@@ -836,17 +945,25 @@ const AllUsers = () => {
                       <Shield size={12} /> Role
                     </label>
                     <select
-                      required
                       name="role"
                       value={formData.role}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                        errors.role
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                     >
                       <option value="">Select a role</option>
                       <option value="Admin">Admin</option>
                       <option value="Security">Security</option>
                       <option value="Contact_Person">Host</option>
                     </select>
+                    {errors.role && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.role}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1">
@@ -854,18 +971,26 @@ const AllUsers = () => {
                       <Hash size={12} /> Password
                     </label>
                     <input
-                      required={modalMode === "add"}
                       type="password"
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                        errors.password
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder={
                         modalMode === "add"
                           ? "Enter secure password"
                           : "Leave blank to keep current"
                       }
                     />
+                    {errors.password && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.password}
+                      </p>
+                    )}
                   </div>
                 </>
               )}
