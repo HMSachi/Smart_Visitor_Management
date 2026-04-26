@@ -374,6 +374,19 @@ const AllUsers = () => {
 
   const loading = adminLoading || contactLoading;
   const error = adminError || contactError;
+  const isCompactAddForm = modalMode === "add";
+  const modalWidthClass = isCompactAddForm ? "max-w-sm" : "max-w-md";
+  const headerPaddingClass = isCompactAddForm ? "p-4" : "p-6";
+  const formSpacingClass = isCompactAddForm ? "p-4 space-y-3" : "p-6 space-y-4";
+  const fieldSizeClass = isCompactAddForm
+    ? "px-3 py-2.5 text-[12px]"
+    : "px-4 py-3 text-[13px]";
+  const actionsPaddingClass = isCompactAddForm
+    ? "pt-4 mt-2 gap-2"
+    : "pt-6 mt-4 gap-3";
+  const actionButtonSizeClass = isCompactAddForm
+    ? "px-4 py-2.5 text-[12px]"
+    : "px-6 py-3 text-[13px]";
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
@@ -778,11 +791,17 @@ const AllUsers = () => {
       {/* Modal for Add / Edit Administrator */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative">
+          <div
+            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full ${modalWidthClass} overflow-hidden relative`}
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
 
-            <div className="flex justify-between items-center p-6 border-b border-white/5 relative z-10">
-              <h2 className="text-lg font-bold text-white uppercase tracking-wider">
+            <div
+              className={`flex justify-between items-center ${headerPaddingClass} border-b border-white/5 relative z-10`}
+            >
+              <h2
+                className={`${isCompactAddForm ? "text-base" : "text-lg"} font-bold text-white uppercase tracking-wider`}
+              >
                 {modalMode === "add"
                   ? "Add New System User"
                   : "Edit User Profile"}
@@ -797,7 +816,7 @@ const AllUsers = () => {
 
             <form
               onSubmit={handleFormSubmit}
-              className="p-6 space-y-4 relative z-10"
+              className={`${formSpacingClass} relative z-10`}
             >
               <div className="space-y-1">
                 <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
@@ -808,7 +827,7 @@ const AllUsers = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                  className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                     errors.name
                       ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                       : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -831,7 +850,7 @@ const AllUsers = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                  className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                     errors.email
                       ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                       : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -856,7 +875,7 @@ const AllUsers = () => {
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.department
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -878,7 +897,7 @@ const AllUsers = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -903,7 +922,7 @@ const AllUsers = () => {
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.department
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -926,7 +945,7 @@ const AllUsers = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -948,7 +967,7 @@ const AllUsers = () => {
                       name="role"
                       value={formData.role}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.role
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -975,7 +994,7 @@ const AllUsers = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.password
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -995,17 +1014,17 @@ const AllUsers = () => {
                 </>
               )}
 
-              <div className="pt-6 flex justify-end gap-3 mt-4">
+              <div className={`${actionsPaddingClass} flex justify-end`}>
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-6 py-3 rounded-xl text-[13px] font-bold text-gray-400 hover:bg-white/5 uppercase tracking-wider transition-all"
+                  className={`${actionButtonSizeClass} rounded-xl font-bold text-gray-400 hover:bg-white/5 uppercase tracking-wider transition-all`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-[13px] font-bold uppercase tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary"
+                  className={`${actionButtonSizeClass} rounded-xl bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary`}
                 >
                   {modalMode === "add" ? "Create User" : "Update Access"}
                 </button>
