@@ -57,6 +57,7 @@ const ContactAllVisitors = () => {
     VV_Vehicle_Type: "",
     VV_Vehicle_Number: "",
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const loadContactPersonId = async () => {
@@ -136,14 +137,102 @@ const ContactAllVisitors = () => {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setErrors({});
+  };
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error for this field when user starts typing
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: "" });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Full Name validation
+    if (!formData.VV_Name?.trim()) {
+      newErrors.VV_Name = "Full name is required";
+    } else if (formData.VV_Name.trim().length < 2) {
+      newErrors.VV_Name = "Name must be at least 2 characters";
+    } else if (!/^[a-zA-Z\s'-]+$/.test(formData.VV_Name)) {
+      newErrors.VV_Name =
+        "Name can only contain letters, spaces, hyphens, and apostrophes";
+    }
+
+    // NIC/Passport validation
+    if (!formData.VV_NIC_Passport_NO?.trim()) {
+      newErrors.VV_NIC_Passport_NO = "ID or Passport number is required";
+    } else if (formData.VV_NIC_Passport_NO.trim().length < 5) {
+      newErrors.VV_NIC_Passport_NO =
+        "ID/Passport must be at least 5 characters";
+    }
+
+    // Email validation
+    if (!formData.VV_Email?.trim()) {
+      newErrors.VV_Email = "Email address is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.VV_Email)) {
+      newErrors.VV_Email = "Please enter a valid email address";
+    }
+
+    // Phone validation
+    if (!formData.VV_Phone?.trim()) {
+      newErrors.VV_Phone = "Phone number is required";
+    } else {
+      const digitsOnly = formData.VV_Phone.replace(/\D/g, "");
+      if (digitsOnly.length !== 10) {
+        newErrors.VV_Phone = "Phone number must contain exactly 10 digits";
+      }
+    }
+
+    // Organization validation
+    if (!formData.VV_Company?.trim()) {
+      newErrors.VV_Company = "Organization name is required";
+    } else if (formData.VV_Company.trim().length < 2) {
+      newErrors.VV_Company = "Organization must be at least 2 characters";
+    }
+
+    // Purpose of Visit validation
+    if (!formData.VV_Visitor_Type?.trim()) {
+      newErrors.VV_Visitor_Type = "Purpose of visit is required";
+    } else if (formData.VV_Visitor_Type.trim().length < 2) {
+      newErrors.VV_Visitor_Type = "Purpose must be at least 2 characters";
+    }
+
+    // Where to Visit validation
+    if (!formData.VV_Visiting_places?.trim()) {
+      newErrors.VV_Visiting_places = "Visiting area is required";
+    } else if (formData.VV_Visiting_places.trim().length < 2) {
+      newErrors.VV_Visiting_places =
+        "Visiting area must be at least 2 characters";
+    }
+
+    // Password validation
+    if (!formData.VA_Password?.trim()) {
+      newErrors.VA_Password = "Password is required";
+    } else if (formData.VA_Password.length < 6) {
+      newErrors.VA_Password = "Password must be at least 6 characters";
+    } else if (
+      !/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(formData.VA_Password)
+    ) {
+      newErrors.VA_Password =
+        "Password must contain uppercase, lowercase, and numbers";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form before submitting
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       console.log("Logged user:", user);
@@ -370,7 +459,9 @@ const ContactAllVisitors = () => {
                             </td>
                             <td className="px-4 py-4 text-center">
                               <span
-                                title={visitor.VV_Company || "No company specified"}
+                                title={
+                                  visitor.VV_Company || "No company specified"
+                                }
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Company || "-"}
@@ -378,7 +469,10 @@ const ContactAllVisitors = () => {
                             </td>
                             <td className="px-4 py-4 text-center">
                               <span
-                                title={visitor.VV_Visiting_places || "No visiting area specified"}
+                                title={
+                                  visitor.VV_Visiting_places ||
+                                  "No visiting area specified"
+                                }
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Visiting_places || "-"}
@@ -447,14 +541,22 @@ const ContactAllVisitors = () => {
                       <User size={11} className="text-primary/60" /> Full Name
                     </label>
                     <input
-                      required
                       type="text"
                       name="VV_Name"
                       value={formData.VV_Name}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VV_Name
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g., John Smith"
                     />
+                    {errors.VV_Name && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.VV_Name}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -463,14 +565,22 @@ const ContactAllVisitors = () => {
                       Passport
                     </label>
                     <input
-                      required
                       type="text"
                       name="VV_NIC_Passport_NO"
                       value={formData.VV_NIC_Passport_NO}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VV_NIC_Passport_NO
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g., 123456789"
                     />
+                    {errors.VV_NIC_Passport_NO && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.VV_NIC_Passport_NO}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -479,14 +589,22 @@ const ContactAllVisitors = () => {
                       Address
                     </label>
                     <input
-                      required
                       type="email"
                       name="VV_Email"
                       value={formData.VV_Email}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VV_Email
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="john@example.com"
                     />
+                    {errors.VV_Email && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.VV_Email}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -495,14 +613,27 @@ const ContactAllVisitors = () => {
                       Number
                     </label>
                     <input
-                      required
                       type="text"
                       name="VV_Phone"
                       value={formData.VV_Phone}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
-                      placeholder="+1 (555) 123-4567"
+                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VV_Phone
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
+                      placeholder="1234567890"
                     />
+                    {errors.VV_Phone && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.VV_Phone}
+                      </p>
+                    )}
+                    {!errors.VV_Phone && (
+                      <p className="text-[9px] text-white/40 uppercase tracking-[0.12em] px-1 mt-1">
+                        Enter 10 digits (with or without formatting)
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -511,14 +642,22 @@ const ContactAllVisitors = () => {
                       Organization
                     </label>
                     <input
-                      required
                       type="text"
                       name="VV_Company"
                       value={formData.VV_Company}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VV_Company
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g., Acme Corporation"
                     />
+                    {errors.VV_Company && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.VV_Company}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -527,14 +666,22 @@ const ContactAllVisitors = () => {
                       Purpose of Visit
                     </label>
                     <input
-                      required
                       type="text"
                       name="VV_Visitor_Type"
                       value={formData.VV_Visitor_Type}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VV_Visitor_Type
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g., Meeting, Delivery, Interview"
                     />
+                    {errors.VV_Visitor_Type && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.VV_Visitor_Type}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -543,14 +690,22 @@ const ContactAllVisitors = () => {
                       Visit
                     </label>
                     <input
-                      required
                       type="text"
                       name="VV_Visiting_places"
                       value={formData.VV_Visiting_places}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VV_Visiting_places
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g., Building A, Floor 3, Room 301"
                     />
+                    {errors.VV_Visiting_places && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.VV_Visiting_places}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -559,17 +714,26 @@ const ContactAllVisitors = () => {
                       Create Password
                     </label>
                     <input
-                      required
                       type="password"
                       name="VA_Password"
                       value={formData.VA_Password}
                       onChange={handleInputChange}
-                      className="w-full bg-black/60 border border-primary/20 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50 transition-colors placeholder-white/10"
+                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VA_Password
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/60 border border-primary/20 focus:border-primary/50"
+                      }`}
                       placeholder="••••••••"
                     />
-                    <p className="text-[9px] text-white/35 uppercase tracking-[0.12em] px-1 mt-1">
-                      Share this password with the visitor for secure check-in
-                    </p>
+                    {errors.VA_Password ? (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.VA_Password}
+                      </p>
+                    ) : (
+                      <p className="text-[9px] text-white/35 uppercase tracking-[0.12em] px-1 mt-1">
+                        Min 6 chars, uppercase, lowercase &amp; numbers
+                      </p>
+                    )}
                   </div>
                 </div>
 
