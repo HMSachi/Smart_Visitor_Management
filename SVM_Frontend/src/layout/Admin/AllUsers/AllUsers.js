@@ -320,10 +320,10 @@ const AllUsers = () => {
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header />
 
-      <div className="flex-1 p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
+      <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-        <div className="max-w-[1600px] mx-auto">
-          <header className="mb-7 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.06] pb-5 gap-4 relative z-10">
+        <div className="max-w-[1500px] mx-auto">
+          <header className="mb-4 md:mb-5 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.06] pb-4 md:pb-5 gap-4 relative z-10">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-7 h-[2.5px] bg-gradient-to-r from-primary to-primary/50 rounded-full"></div>
@@ -336,40 +336,11 @@ const AllUsers = () => {
               </h1>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
-              <div className="flex bg-[var(--color-surface-2)] p-0.5 rounded-xl border border-white/5 relative overflow-x-auto no-scrollbar max-w-full shadow-sm">
-                {[
-                  ...categories.map((cat) => ({
-                    id: cat.id,
-                    label: cat.title,
-                  })),
-                ].map((btn) => (
-                  <button
-                    key={btn.id}
-                    type="button"
-                    onClick={() => setTableFilter(btn.id)}
-                    className={`relative px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max ${tableFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
-                  >
-                    {tableFilter === btn.id && (
-                      <motion.div
-                        layoutId="userTableFilter"
-                        className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
-                        transition={{
-                          type: "spring",
-                          bounce: 0.2,
-                          duration: 0.6,
-                        }}
-                      />
-                    )}
-                    <span className="relative z-10">{btn.label}</span>
-                  </button>
-                ))}
-              </div>
-
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-stretch sm:items-center">
               {/* Search Form */}
               <form
                 onSubmit={handleSearch}
-                className="flex items-center bg-black/30 border border-white/15 hover:border-primary/40 transition-all duration-300 rounded-lg px-3 py-2 min-w-[250px] shadow-sm"
+                className="flex items-center bg-black/30 border border-white/15 hover:border-primary/40 transition-all duration-300 rounded-lg px-3 py-2 w-full sm:min-w-[240px] sm:w-auto shadow-sm"
               >
                 <Search size={14} className="text-gray-500 mr-2.5" />
                 <input
@@ -391,7 +362,7 @@ const AllUsers = () => {
               </form>
 
               <div
-                className="flex items-center transition-all rounded-lg px-2.5 py-1.5 min-w-[160px] border border-white/15 hover:border-primary/40 shadow-sm"
+                className="flex items-center transition-all rounded-lg px-2.5 py-1.5 w-full sm:min-w-[160px] sm:w-auto border border-white/15 hover:border-primary/40 shadow-sm"
                 style={{
                   background:
                     themeMode === "light" ? "#ffffff" : "rgba(0,0,0,0.3)",
@@ -437,12 +408,43 @@ const AllUsers = () => {
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/85 text-white px-4 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-primary/30"
+                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/85 text-white px-4 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-primary/30 w-full sm:w-auto"
               >
                 <Plus size={14} strokeWidth={2.5} /> Add User
               </button>
             </div>
           </header>
+
+          <div className="flex flex-col gap-3 mb-6 md:mb-7">
+            <div className="flex flex-wrap bg-[var(--color-surface-2)] p-1 rounded-xl border border-white/5 relative max-w-full shadow-sm gap-1 w-full sm:w-auto">
+              {[
+                ...categories.map((cat) => ({
+                  id: cat.id,
+                  label: cat.title,
+                })),
+              ].map((btn) => (
+                <button
+                  key={btn.id}
+                  type="button"
+                  onClick={() => setTableFilter(btn.id)}
+                  className={`relative px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                >
+                  {tableFilter === btn.id && (
+                    <motion.div
+                      layoutId="userTableFilter"
+                      className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
+                      transition={{
+                        type: "spring",
+                        bounce: 0.2,
+                        duration: 0.6,
+                      }}
+                    />
+                  )}
+                  <span className="relative z-10">{btn.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div className="space-y-10">
             {loading ? (
@@ -486,10 +488,14 @@ const AllUsers = () => {
                       <TableContainer
                         component={Paper}
                         className="bg-transparent border-none z-10 relative"
-                        sx={{ maxHeight: "300px", overflow: "auto" }}
+                        sx={{
+                          maxHeight: "453px",
+                          overflow: "auto",
+                          overflowX: "auto",
+                        }}
                       >
                         <Table
-                          sx={{ minWidth: 650 }}
+                          sx={{ minWidth: 920 }}
                           stickyHeader
                           aria-label={`${cat.title} table`}
                         >
@@ -507,7 +513,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.08)",
                                   width: "12%",
                                 }}
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
                               >
                                 User ID
                               </TableCell>
@@ -518,7 +524,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.08)",
                                   width: "28%",
                                 }}
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
                               >
                                 Name & Email
                               </TableCell>
@@ -529,7 +535,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.08)",
                                   width: "18%",
                                 }}
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                                className="hidden sm:table-cell text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
                               >
                                 {cat.id === "CONTACT" ? "Department" : "Role"}
                               </TableCell>
@@ -540,7 +546,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.08)",
                                   width: "16%",
                                 }}
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                                className="hidden md:table-cell text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
                               >
                                 {cat.id === "CONTACT" ? "Contact" : "Joined"}
                               </TableCell>
@@ -551,7 +557,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.08)",
                                   width: "14%",
                                 }}
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
                               >
                                 Status
                               </TableCell>
@@ -563,7 +569,7 @@ const AllUsers = () => {
                                   width: "12%",
                                 }}
                                 align="right"
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase"
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
                               >
                                 Actions
                               </TableCell>
@@ -621,7 +627,7 @@ const AllUsers = () => {
                                   >
                                     <TableCell
                                       sx={{ padding: "8px 14px", width: "12%" }}
-                                      className="text-white/70 font-medium text-[11px]"
+                                      className="text-white/70 font-medium text-[11px] whitespace-nowrap"
                                     >
                                       <div className="flex items-center gap-1">
                                         <Hash
@@ -645,7 +651,7 @@ const AllUsers = () => {
                                     </TableCell>
                                     <TableCell
                                       sx={{ padding: "8px 14px", width: "18%" }}
-                                      className={`transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                      className={`hidden sm:table-cell transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                     >
                                       {item.VA_Role ||
                                         item.VCP_Department ||
@@ -653,7 +659,7 @@ const AllUsers = () => {
                                     </TableCell>
                                     <TableCell
                                       sx={{ padding: "8px 14px", width: "16%" }}
-                                      className={`transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                      className={`hidden md:table-cell transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                     >
                                       {item.VA_Created_Date
                                         ? item.VA_Created_Date.split(" ")[0]
@@ -720,7 +726,7 @@ const AllUsers = () => {
               <h2 className="text-lg font-bold text-white uppercase tracking-wider">
                 {modalMode === "add"
                   ? "Add New System User"
-                  : "Edit Administrator Profile"}
+                  : "Edit User Profile"}
               </h2>
               <button
                 onClick={closeModal}
