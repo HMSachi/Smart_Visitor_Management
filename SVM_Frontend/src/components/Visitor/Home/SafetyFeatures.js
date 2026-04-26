@@ -1,9 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { ShieldCheck, Cpu, Network, CheckCircle2 } from 'lucide-react';
 
 const SafetyFeatures = () => {
     const navigate = useNavigate();
+    const { visitRequestsByVis } = useSelector((state) => state.visitRequestsState);
+    const hasExistingVisitRequest = Array.isArray(visitRequestsByVis)
+        ? visitRequestsByVis.length > 0
+        : false;
     const categories = [
         {
             name: "Compliance",
@@ -84,10 +89,16 @@ const SafetyFeatures = () => {
                         </div>
 
                         <button 
-                            onClick={() => navigate('/request-step-1')}
+                            onClick={() =>
+                                navigate(
+                                    hasExistingVisitRequest
+                                        ? '/visitor/my-requests'
+                                        : '/request-step-1'
+                                )
+                            }
                             className="compact-btn !px-10"
                         >
-                            Request Visit
+                            {hasExistingVisitRequest ? 'My Requests' : 'Request Visit'}
                         </button>
                     </div>
                 </div>

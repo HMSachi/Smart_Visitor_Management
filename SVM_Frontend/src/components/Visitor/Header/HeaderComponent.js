@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Menu, X, Home, Plus, LogOut, User, ChevronRight } from "lucide-react";
@@ -7,14 +7,18 @@ import { toggleMobileMenu, setMobileMenu } from "../../../reducers/uiSlice";
 import ThemeToggleButton from "../../common/ThemeToggleButton";
 import { LOGOUT } from "../../../constants/LoginConstants";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
+import { GetVisitRequestsByVisitor } from "../../../actions/VisitRequestAction";
+import VisitorService from "../../../services/VisitorService";
 
 const HeaderComponent = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isMobileMenuOpen = useSelector((state) => state.ui.isMobileMenuOpen);
   const { user } = useSelector((state) => state.login);
+  const { visitRequestsByVis } = useSelector((state) => state.visitRequestsState);
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
+  const [visitorId, setVisitorId] = useState(null);
 
   const visitorProfile = user?.ResultSet?.[0] || {};
   const userEmail = visitorProfile.VA_Email || visitorProfile.VV_Email || "";
@@ -34,6 +38,47 @@ const HeaderComponent = () => {
         .slice(0, 2)
         .toUpperCase()
     : "??";
+
+  const hasExistingVisitRequest = Array.isArray(visitRequestsByVis)
+    ? visitRequestsByVis.length > 0
+    : false;
+
+  useEffect(() => {
+    const resolveVisitorId = async () => {
+      const directVisitorId = visitorProfile.VV_Visitor_id || visitorProfile.VA_Visitor_id;
+      if (directVisitorId) {
+        setVisitorId(directVisitorId);
+        return;
+      }
+
+      if (!userEmail) {
+        return;
+      }
+
+      try {
+        const response = await VisitorService.GetAllVisitors();
+        const visitors = response?.data?.ResultSet || [];
+        const match = visitors.find(
+          (v) =>
+            v?.VV_Email?.trim().toLowerCase() ===
+            userEmail?.trim().toLowerCase(),
+        );
+
+        if (match?.VV_Visitor_id) {
+          setVisitorId(match.VV_Visitor_id);
+        }
+      } catch (error) {
+        console.error("Unable to resolve visitor id:", error);
+      }
+    };
+
+    resolveVisitorId();
+  }, [userEmail, visitorProfile]);
+
+  useEffect(() => {
+    if (!visitorId) return;
+    dispatch(GetVisitRequestsByVisitor(visitorId));
+  }, [dispatch, visitorId]);
 
   const menuItems = [{ label: "Home", path: "/home", icon: Home }];
 
@@ -93,18 +138,20 @@ const HeaderComponent = () => {
             </Link>
           ))}
 
-          <button
-            onClick={() => navigate("/request-step-1")}
-            className="flex items-center gap-2 ml-2 px-5 py-2.5 rounded-xl text-white text-[13px] font-semibold transition-all"
-            style={{
-              background:
-                "linear-gradient(135deg, var(--color-primary), #A60D26)",
-              boxShadow: "0 4px 14px rgba(200,16,46,0.3)",
-            }}
-          >
-            <Plus size={15} />
-            Request a Visit
-          </button>
+          {!hasExistingVisitRequest && (
+            <button
+              onClick={() => navigate("/request-step-1")}
+              className="flex items-center gap-2 ml-2 px-5 py-2.5 rounded-xl text-white text-[13px] font-semibold transition-all"
+              style={{
+                background:
+                  "linear-gradient(135deg, var(--color-primary), #A60D26)",
+                boxShadow: "0 4px 14px rgba(200,16,46,0.3)",
+              }}
+            >
+              <Plus size={15} />
+              Request a Visit
+            </button>
+          )}
 
           <ThemeToggleButton />
 
@@ -246,18 +293,20 @@ const HeaderComponent = () => {
           </div>
 
           {/* CTA */}
-          <button
-            onClick={() => handleNavigate("/request-step-1")}
-            className="mt-6 w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-white text-[14px] font-bold transition-all active:scale-95"
-            style={{
-              background:
-                "linear-gradient(135deg, var(--color-primary), #A60D26)",
-              boxShadow: "0 4px 20px rgba(200,16,46,0.35)",
-            }}
-          >
-            <Plus size={18} />
-            Request a Visit
-          </button>
+          {!hasExistingVisitRequest && (
+            <button
+              onClick={() => handleNavigate("/request-step-1")}
+              className="mt-6 w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-white text-[14px] font-bold transition-all active:scale-95"
+              style={{
+                background:
+                  "linear-gradient(135deg, var(--color-primary), #A60D26)",
+                boxShadow: "0 4px 20px rgba(200,16,46,0.35)",
+              }}
+            >
+              <Plus size={18} />
+              Request a Visit
+            </button>
+          )}
         </Box>
       </Drawer>
     </header>
