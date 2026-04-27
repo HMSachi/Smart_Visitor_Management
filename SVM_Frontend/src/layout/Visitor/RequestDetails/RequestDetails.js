@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar, Hash, MapPin, User, Mail, Phone, Building2, Briefc
 import VisitorService from "../../../services/VisitorService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import VehicleService from "../../../services/VehicleService";
 
 const RAW_FIELD_LABELS = {
   VVR_Contact_person_id: "Contact Person ID",
@@ -96,6 +97,7 @@ const RequestDetails = () => {
   const [visitorRecord, setVisitorRecord] = useState(null);
   const [groupMembers, setGroupMembers] = useState([]);
   const [items, setItems] = useState([]);
+  const [vehicleRecord, setVehicleRecord] = useState(null);
 
   useEffect(() => {
     const loadExtraDetails = async () => {
@@ -121,6 +123,13 @@ const RequestDetails = () => {
             (i) => String(i.VVR_Request_id) === String(currentRequest.VVR_Request_id),
           );
           setItems(matchedItems);
+
+          const vehicleRes = await VehicleService.GetAllVehicles();
+          const allVehicles = vehicleRes?.data?.ResultSet || vehicleRes?.data || [];
+          const matchedVehicle = (Array.isArray(allVehicles) ? allVehicles : []).find(
+            (v) => String(v.VVR_Request_id) === String(currentRequest.VVR_Request_id)
+          );
+          setVehicleRecord(matchedVehicle || null);
         }
       } catch (error) {
         console.error("Failed to load full request details:", error);
@@ -135,6 +144,7 @@ const RequestDetails = () => {
   const summary = useMemo(() => {
     const req = currentRequest || {};
     const visitor = visitorRecord || {};
+    const vehicle = vehicleRecord || {};
 
     return {
       id: req.VVR_Request_id || requestId || "N/A",
@@ -148,15 +158,19 @@ const RequestDetails = () => {
       visitDate: toDisplayDate(req.VVR_Visit_Date),
       areas: req.VVR_Places_to_Visit || visitor.VV_Visiting_places || "N/A",
       purpose: req.VVR_Purpose || "N/A",
-      vehicleNo: req.VV_Vehicle_Number || visitor.VV_Vehicle_Number || "N/A",
-      vehicleType: req.VV_Vehicle_Type || visitor.VV_Vehicle_Type || "N/A",
+      vehicleNo: req.VV_Vehicle_Number || visitor.VV_Vehicle_Number || vehicle.VV_Vehicle_Number || "N/A",
+      vehicleType: req.VV_Vehicle_Type || visitor.VV_Vehicle_Type || vehicle.VV_Vehicle_Type || "N/A",
     };
-  }, [currentRequest, visitorRecord, requestId]);
+  }, [currentRequest, visitorRecord, vehicleRecord, requestId]);
 
   const rawFields = useMemo(() => {
     if (!currentRequest) return [];
     return Object.entries(currentRequest)
-      .filter(([key, value]) => value !== null && value !== undefined && value !== "")
+      .filter(([key, value]) => {
+        // Remove status field from raw fields display as well
+        if (key === "VVR_Status") return false;
+        return value !== null && value !== undefined && value !== "";
+      })
       .sort(([a], [b]) => a.localeCompare(b));
   }, [currentRequest]);
 
@@ -190,8 +204,7 @@ const RequestDetails = () => {
 
         <SectionCard title="Request Summary" icon={Hash}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SmallField label="Protocol ID" value={`#${summary.id}`} icon={Hash} />
-            <SmallField label="Current Status" value={summary.status} icon={Briefcase} />
+            <SmallField label="Reference ID" value={`#${summary.id}`} icon={Hash} />
             <SmallField label="Visit Date" value={summary.visitDate} icon={Calendar} />
             <SmallField label="Visiting Areas" value={summary.areas} icon={MapPin} />
             <div className="md:col-span-2">
