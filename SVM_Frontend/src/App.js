@@ -16,13 +16,13 @@ import Step1Request from "./layout/Visitor/Request/Step1";
 import Step2Request from "./layout/Visitor/Request/Step2";
 import StatusPage from "./layout/Visitor/Status/Status";
 import QRPage from "./layout/Visitor/QR/QR";
-import VisitorGatePass from "./layout/Visitor/GatePass/GatePass";
+import GatePass from "./layout/Visitor/GatePass/GatePass";
 import InstructionsPage from "./layout/Visitor/Instructions/Instructions";
 import MyRequests from "./layout/Visitor/MyRequests/MyRequests";
 import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
 import ApprovalManagement from "./layout/Admin/ApprovalManagement/ApprovalManagement";
 import SecurityMonitoringPage from "./layout/Admin/SecurityMonitoring/SecurityMonitoring";
-import BlacklistManagement from "./layout/Admin/BlacklistManagement/BlacklistManagement";
+import RestrictedManagement from "./layout/Admin/BlacklistManagement/BlacklistManagement";
 
 import UserManagement from "./layout/Admin/UserManagement/UserManagement";
 import AllUsers from "./layout/Admin/AllUsers/AllUsers";
@@ -33,14 +33,14 @@ import Login from "./layout/Login/Login";
 import ContactDashboard from "./layout/Contact_Person/Dashboard/Dashboard";
 import RequestsInbox from "./layout/Contact_Person/RequestsInbox/RequestsInbox";
 import RequestReview from "./layout/Contact_Person/RequestReview/RequestReview";
-import RejectedRequests from "./layout/Contact_Person/RejectedRequests/RejectedRequests";
+import DeclinedRequests from "./layout/Contact_Person/RejectedRequests/RejectedRequests";
 import SentToAdmin from "./layout/Contact_Person/SentToAdmin/SentToAdmin";
 import VisitorHistory from "./layout/Contact_Person/VisitorHistory/VisitorHistory";
 import ProfileSettings from "./layout/Contact_Person/ProfileSettings/ProfileSettings";
 import ContactAllVisitors from "./layout/Contact_Person/AllVisitors/AllVisitors";
 import ContactVisitRequests from "./layout/Contact_Person/VisitRequests/VisitRequests";
 
-// Security Officer Layouts
+// Security Support Layouts
 import Scanner from "./layout/Security_Officer/Scanner/Scanner";
 import Verification from "./layout/Security_Officer/Verification/Verification";
 import EntryApproval from "./layout/Security_Officer/EntryApproval/EntryApproval";
@@ -94,21 +94,33 @@ const createAppTheme = (mode) => {
       },
     },
     typography: {
-      fontFamily: '"Inter", sans-serif',
-      h1: { fontWeight: 700, letterSpacing: "-0.02em" },
-      h2: { fontWeight: 700, letterSpacing: "-0.01em" },
-      button: { textTransform: "none", fontWeight: 600 },
+      fontFamily: '"Inter", "Plus Jakarta Sans", sans-serif',
+      h1: { fontWeight: 800, letterSpacing: "-0.025em" },
+      h2: { fontWeight: 700, letterSpacing: "-0.015em" },
+      h3: { fontWeight: 700 },
+      button: { textTransform: "none", fontWeight: 600, letterSpacing: "0.01em" },
     },
     shape: {
-      borderRadius: 0,
+      borderRadius: 12,
     },
     components: {
       MuiButton: {
         styleOverrides: {
           root: {
-            borderRadius: 0,
+            borderRadius: 12,
             padding: "10px 24px",
-            textTransform: "uppercase",
+            textTransform: "none",
+            fontWeight: 600,
+            boxShadow: "none",
+            "&:hover": { boxShadow: "none" },
+          },
+          containedPrimary: {
+            background: "linear-gradient(135deg, #C8102E, #A60D26)",
+            boxShadow: "0 4px 14px rgba(200,16,46,0.3)",
+            "&:hover": {
+              background: "linear-gradient(135deg, #A60D26, #8B0C1F)",
+              boxShadow: "0 6px 20px rgba(200,16,46,0.4)",
+            },
           },
         },
       },
@@ -118,7 +130,32 @@ const createAppTheme = (mode) => {
             backgroundImage: "none",
             backgroundColor: palette.backgroundPaper,
             border: `1px solid ${palette.paperBorder}`,
+            borderRadius: 16,
           },
+        },
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 10,
+            },
+          },
+        },
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: { borderRadius: 8 },
+        },
+      },
+      MuiDialog: {
+        styleOverrides: {
+          paper: { borderRadius: 20 },
+        },
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: { borderRadius: 16 },
         },
       },
     },
@@ -159,7 +196,7 @@ const AppContent = () => {
           <Route path="/qr" element={<QRPage />} />
           <Route path="/instructions" element={<InstructionsPage />} />
           <Route path="/visitor/my-requests" element={<MyRequests />} />
-          <Route path="/visitor/gate-pass/:gatePassId" element={<VisitorGatePass />} />
+          <Route path="/visitor/gate-pass/:gatePassId" element={<GatePass />} />
 
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -173,7 +210,7 @@ const AppContent = () => {
           />
           <Route
             path="/admin/blacklist-management"
-            element={<BlacklistManagement />}
+            element={<RestrictedManagement />}
           />
 
           <Route path="/admin/user-management" element={<UserManagement />} />
@@ -184,7 +221,7 @@ const AppContent = () => {
             element={<Navigate to="/admin/dashboard" replace />}
           />
 
-          {/* Contact Person Routes */}
+          {/* Host Routes */}
           <Route
             path="/contact_person/dashboard"
             element={<ContactDashboard />}
@@ -203,7 +240,7 @@ const AppContent = () => {
           />
           <Route
             path="/contact_person/rejected-requests"
-            element={<RejectedRequests />}
+            element={<DeclinedRequests />}
           />
           <Route
             path="/contact_person/sent-to-admin"
@@ -226,7 +263,7 @@ const AppContent = () => {
             element={<ContactVisitRequests />}
           />
 
-          {/* Security Officer Routes */}
+          {/* Security Support Routes */}
           <Route path="/Security_Officer/scanner" element={<Scanner />} />
           <Route
             path="/Security_Officer/verification"

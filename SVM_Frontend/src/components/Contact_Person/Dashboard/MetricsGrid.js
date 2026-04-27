@@ -98,7 +98,7 @@ const MetricsGrid = () => {
         return [
             { label: 'Pending Requests', value: pending.toString(), icon: Clock, trend: 'Awaiting Action' },
             { label: 'Accepted Forms', value: accepted.toString(), icon: CheckSquare, trend: 'Clearance Granted' },
-            { label: 'Rejected Forms', value: rejected.toString(), icon: XCircle, trend: 'Access Denied' },
+            { label: 'Declined Forms', value: rejected.toString(), icon: XCircle, trend: 'Access Denied' },
             { label: 'Sent to Admin', value: sent.toString(), icon: Send, trend: 'Escalated' },
         ];
     };

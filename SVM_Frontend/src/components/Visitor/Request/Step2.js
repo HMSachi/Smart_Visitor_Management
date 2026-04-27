@@ -102,7 +102,7 @@ const Step2Main = () => {
 
                     <div className="bg-white/[0.01] border border-white/5 rounded-xl p-6 mb-10 text-left">
                         <div className="flex justify-between items-center mb-4">
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                                 <Clock size={14} className="text-primary" />
                                 <span className="text-gray-500 text-[12px] font-bold uppercase tracking-widest">Protocol Priority</span>
                             </div>
@@ -178,12 +178,12 @@ const Step2Main = () => {
                             className="compact-btn !w-full md:!w-auto !px-20 !py-5"
                         >
                             {status === 'submitting' ? (
-                                <div className="flex items-center gap-3">
+                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                     <span>Synchronizing Pass...</span>
                                 </div>
                             ) : (
-                                <div className="flex items-center gap-3">
+                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                     <ShieldCheck size={18} />
                                     <span>Submit</span>
                                 </div>

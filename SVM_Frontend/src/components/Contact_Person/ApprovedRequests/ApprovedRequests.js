@@ -21,7 +21,7 @@ const ApprovedRequestsMain = () => {
                         <h2 className="text-white text-2xl font-bold tracking-tight uppercase">Approved Forms</h2>
                         <p className="text-white/50 text-[11px] font-bold uppercase tracking-[0.2em] mt-1">View cleared visitor applications</p>
                     </div>
-                    <div className="flex items-center gap-4 bg-black/40 border border-white/10 p-3 px-5 rounded-xl shadow-sm">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 bg-black/40 border border-white/10 p-3 px-5 rounded-xl shadow-sm">
                         <div className="text-right">
                             <p className="text-white/50 text-[10px] uppercase font-bold tracking-widest mb-0.5">Total Verified</p>
                             <span className="text-base font-black text-white">{requests.length}</span>

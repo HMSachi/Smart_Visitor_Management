@@ -12,7 +12,7 @@ const AreasToVisit = ({ selectedAreas, onToggle }) => {
 
     return (
         <section className="animate-fade-in stagger-item">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-6">
                 <div className="text-primary">
                     <Map size={14} />
                 </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import {
   Table,
   TableBody,
@@ -48,13 +49,13 @@ const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
   if (s === "ACTIVE" || s === "A") {
     return (
-      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex items-center gap-2 w-max">
+      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
         <CheckCircle2 size={12} /> Active
       </div>
     );
   }
   return (
-    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex items-center gap-2 w-max">
+    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
       <AlertCircle size={12} /> Inactive
     </div>
   );
@@ -75,6 +76,7 @@ const AllUsers = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [tableFilter, setTableFilter] = useState("ADMIN");
   const { themeMode } = useThemeMode();
 
   // Modal State
@@ -90,6 +92,7 @@ const AllUsers = () => {
     department: "",
     type: "ADMIN", // Current being edited type
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     dispatch(GetAllAdministrator());
@@ -194,17 +197,75 @@ const AllUsers = () => {
         type: "ADMIN",
       });
     }
+    setErrors({});
     setIsModalOpen(true);
   };
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setErrors({});
+  };
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: "" });
+    }
+  };
+
+  const validateForm = () => {
+    const nextErrors = {};
+    const name = formData.name?.trim();
+    const email = formData.email?.trim();
+    const department = formData.department?.trim();
+    const password = formData.password || "";
+    const phoneDigits = formData.phone?.replace(/\D/g, "") || "";
+
+    if (!name) {
+      nextErrors.name = "Name is required";
+    } else if (name.length < 2) {
+      nextErrors.name = "Name must be at least 2 characters";
+    }
+
+    if (!email) {
+      nextErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      nextErrors.email = "Enter a valid email address";
+    }
+
+    if (modalMode === "add") {
+      if (!formData.role) {
+        nextErrors.role = "Role is required";
+      }
+
+      if (!password) {
+        nextErrors.password = "Password is required";
+      } else if (password.length < 8) {
+        nextErrors.password = "Password must be at least 8 characters";
+      }
+    } else if (password && password.length < 8) {
+      nextErrors.password = "Password must be at least 8 characters";
+    }
+
+    if (!department) {
+      nextErrors.department = "Department is required";
+    }
+
+    if (!formData.phone?.trim()) {
+      nextErrors.phone = "Phone number is required";
+    } else if (phoneDigits.length !== 10) {
+      nextErrors.phone = "Phone number must contain exactly 10 digits";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     if (modalMode === "add") {
       const adminData = {
         VA_Name: formData.name,
@@ -265,32 +326,35 @@ const AllUsers = () => {
     closeModal();
   };
 
-  const categories = [
-    {
-      id: "ADMIN",
-      title: "System Administrators",
-      icon: ShieldAlert,
-      data: administrators.filter((a) => a.VA_Role === "Admin"),
-    },
-    {
-      id: "SECURITY",
-      title: "Security Officers",
-      icon: Shield,
-      data: administrators.filter((a) => a.VA_Role === "Security"),
-    },
-    {
-      id: "CONTACT",
-      title: "Contact Persons",
-      icon: Users,
-      data: contactPersons,
-    },
-    {
-      id: "VISITOR",
-      title: "Visitor Accounts",
-      icon: UserCheck,
-      data: administrators.filter((a) => a.VA_Role === "Visitor"),
-    },
-  ];
+  const categories = useMemo(
+    () => [
+      {
+        id: "ADMIN",
+        title: "System Administrators",
+        icon: ShieldAlert,
+        data: administrators.filter((a) => a.VA_Role === "Admin"),
+      },
+      {
+        id: "SECURITY",
+        title: "Security Supports",
+        icon: Shield,
+        data: administrators.filter((a) => a.VA_Role === "Security"),
+      },
+      {
+        id: "CONTACT",
+        title: "Contact Persons",
+        icon: Users,
+        data: contactPersons,
+      },
+      {
+        id: "VISITOR",
+        title: "Visitor Accounts",
+        icon: UserCheck,
+        data: administrators.filter((a) => a.VA_Role === "Visitor"),
+      },
+    ],
+    [administrators, contactPersons],
+  );
 
   const filteredCategories = useMemo(
     () =>
@@ -303,71 +367,90 @@ const AllUsers = () => {
     [categories, searchTerm, statusFilter],
   );
 
+  const visibleCategories =
+    tableFilter === "ALL"
+      ? filteredCategories
+      : filteredCategories.filter((cat) => cat.id === tableFilter);
+
   const loading = adminLoading || contactLoading;
   const error = adminError || contactError;
+  const isCompactAddForm = modalMode === "add";
+  const modalWidthClass = isCompactAddForm ? "max-w-sm" : "max-w-md";
+  const headerPaddingClass = isCompactAddForm ? "p-4" : "p-6";
+  const formSpacingClass = isCompactAddForm ? "p-4 space-y-3" : "p-6 space-y-4";
+  const fieldSizeClass = isCompactAddForm
+    ? "px-3 py-2.5 text-[12px]"
+    : "px-4 py-3 text-[13px]";
+  const actionsPaddingClass = isCompactAddForm
+    ? "pt-4 mt-2 gap-2"
+    : "pt-6 mt-4 gap-3";
+  const actionButtonSizeClass = isCompactAddForm
+    ? "px-4 py-2.5 text-[12px]"
+    : "px-6 py-3 text-[13px]";
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header />
 
-      <div className="flex-1 p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
+      <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-        <div className="max-w-[1600px] mx-auto">
-          <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-6 gap-6 relative z-10">
+        <div className="max-w-[1500px] mx-auto">
+          <header className="mb-4 md:mb-5 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.06] pb-4 md:pb-5 gap-4 relative z-10">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-[2px] bg-primary"></div>
-                <span className="text-primary uppercase tracking-wider text-xs font-semibold">
+                <div className="w-7 h-[2.5px] bg-gradient-to-r from-primary to-primary/50 rounded-full"></div>
+                <span className="text-primary/90 uppercase tracking-widest text-[9px] font-semibold letter-spacing-1">
                   User Directory
                 </span>
               </div>
-              <h1 className="text-white uppercase px-1 text-2xl font-bold tracking-tight">
+              <h1 className="text-white uppercase text-base font-semibold tracking-wide">
                 All System Users
               </h1>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-stretch sm:items-center">
               {/* Search Form */}
               <form
                 onSubmit={handleSearch}
-                className="flex items-center bg-black/40 border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[300px]"
+                className="flex items-center bg-black/30 border border-white/15 hover:border-primary/40 transition-all duration-300 rounded-lg px-3 py-2 w-full sm:min-w-[240px] sm:w-auto shadow-sm"
               >
-                <Search size={16} className="text-gray-400 mr-3" />
+                <Search size={14} className="text-gray-500 mr-2.5" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search across all roles..."
-                  className="bg-transparent text-[13px] text-white focus:outline-none w-full"
+                  placeholder="Search users..."
+                  className="bg-transparent text-[12px] text-white placeholder-gray-500 focus:outline-none w-full"
                 />
                 {searchTerm && (
                   <button
                     type="button"
                     onClick={() => setSearchTerm("")}
-                    className="text-gray-500 hover:text-white"
+                    className="text-gray-600 hover:text-gray-400 transition-colors"
                   >
-                    <RefreshCw size={14} />
+                    <X size={12} />
                   </button>
                 )}
               </form>
 
               <div
-                className="flex items-center transition-colors rounded-xl px-3 py-2 min-w-[180px]"
+                className="flex items-center transition-all rounded-lg px-2.5 py-1.5 w-full sm:min-w-[160px] sm:w-auto border border-white/15 hover:border-primary/40 shadow-sm"
                 style={{
-                  background: themeMode === "light" ? "#ffffff" : undefined,
+                  background:
+                    themeMode === "light" ? "#ffffff" : "rgba(0,0,0,0.3)",
                 }}
               >
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`text-[13px] focus:outline-none w-full ${themeMode === "light" ? "text-black bg-white border border-gray-200" : "bg-black/40 text-white border border-white/10 hover:border-white/20"}`}
+                  className={`text-[11px] focus:outline-none w-full transition-colors ${themeMode === "light" ? "text-black bg-white" : "bg-transparent text-gray-300 hover:text-white"}`}
                 >
                   <option
                     value="ALL"
                     className={
                       themeMode === "light"
                         ? "bg-white text-black"
-                        : "bg-[#0f0f10]"
+                        : "bg-[#0f0f10] text-white"
                     }
                   >
                     All Statuses
@@ -377,7 +460,7 @@ const AllUsers = () => {
                     className={
                       themeMode === "light"
                         ? "bg-white text-black"
-                        : "bg-[#0f0f10]"
+                        : "bg-[#0f0f10] text-white"
                     }
                   >
                     Active
@@ -387,7 +470,7 @@ const AllUsers = () => {
                     className={
                       themeMode === "light"
                         ? "bg-white text-black"
-                        : "bg-[#0f0f10]"
+                        : "bg-[#0f0f10] text-white"
                     }
                   >
                     Inactive
@@ -397,23 +480,54 @@ const AllUsers = () => {
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-primary/20"
+                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/85 text-white px-4 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-primary/30 w-full sm:w-auto"
               >
-                <Plus size={16} /> Add New User
+                <Plus size={14} strokeWidth={2.5} /> Add User
               </button>
             </div>
           </header>
 
-          <div className="space-y-12">
+          <div className="flex flex-col gap-3 mb-6 md:mb-7">
+            <div className="flex flex-wrap bg-[var(--color-surface-2)] p-1 rounded-xl border border-white/5 relative max-w-full shadow-sm gap-1 w-full sm:w-auto">
+              {[
+                ...categories.map((cat) => ({
+                  id: cat.id,
+                  label: cat.title,
+                })),
+              ].map((btn) => (
+                <button
+                  key={btn.id}
+                  type="button"
+                  onClick={() => setTableFilter(btn.id)}
+                  className={`relative px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                >
+                  {tableFilter === btn.id && (
+                    <motion.div
+                      layoutId="userTableFilter"
+                      className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
+                      transition={{
+                        type: "spring",
+                        bounce: 0.2,
+                        duration: 0.6,
+                      }}
+                    />
+                  )}
+                  <span className="relative z-10">{btn.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-10">
             {loading ? (
-              <div className="p-20 flex flex-col items-center justify-center text-center">
+              <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
                 <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
-                  Loading Users...
+                  Hang tight, we’re loading the user list.
                 </p>
               </div>
             ) : error ? (
-              <div className="p-20 text-center">
+              <div className="p-8 md:p-20 text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 text-primary">
                   <AlertCircle size={24} />
                 </div>
@@ -422,166 +536,253 @@ const AllUsers = () => {
                 </p>
               </div>
             ) : (
-              filteredCategories.map((cat) => (
-                <section key={cat.id} className="relative">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
-                      <cat.icon size={20} />
+              <>
+                {visibleCategories.map((cat) => (
+                  <section key={cat.id} className="relative">
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center text-primary shadow-md hover:shadow-lg transition-shadow">
+                        <cat.icon size={18} strokeWidth={1.8} />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-white text-sm font-semibold tracking-wide uppercase">
+                          {cat.title}
+                        </h2>
+                        <p className="text-white/40 text-[9px] tracking-[0.2em] uppercase font-medium mt-0.5">
+                          {cat.data.length}{" "}
+                          {cat.data.length === 1 ? "user" : "users"}
+                        </p>
+                      </div>
+                      <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent"></div>
                     </div>
-                    <div>
-                      <h2 className="text-white text-lg font-bold tracking-widest uppercase">
-                        {cat.title}
-                      </h2>
-                      <p className="text-white/30 text-[10px] tracking-[0.3em] uppercase font-medium">
-                        {cat.data.length} Total Users
-                      </p>
-                    </div>
-                    <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent ml-4"></div>
-                  </div>
 
-                  <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none opacity-50"></div>
-                    <TableContainer
-                      component={Paper}
-                      className="bg-[#0F0F10] border border-white/5 rounded-none z-10 relative"
-                    >
-                      <Table
-                        sx={{ minWidth: 650 }}
-                        aria-label={`${cat.title} table`}
+                    <div className="bg-[var(--color-bg-paper)] border border-white/8 rounded-2xl overflow-hidden shadow-xl relative hover:border-white/12 transition-colors duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none"></div>
+                      <TableContainer
+                        component={Paper}
+                        className="bg-transparent border-none z-10 relative"
+                        sx={{
+                          maxHeight: "453px",
+                          overflow: "auto",
+                          overflowX: "auto",
+                        }}
                       >
-                        <TableHead className="bg-black/40">
-                          <TableRow>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              User ID
-                            </TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              Name
-                            </TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              {cat.id === "CONTACT" ? "Department" : "Role"}
-                            </TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              {cat.id === "CONTACT"
-                                ? "Phone Number"
-                                : "Date Joined"}
-                            </TableCell>
-                            <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                              Status
-                            </TableCell>
-                            <TableCell
-                              className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5"
-                              align="right"
+                        <Table
+                          sx={{ minWidth: 920 }}
+                          stickyHeader
+                          aria-label={`${cat.title} table`}
+                        >
+                          <TableHead>
+                            <TableRow
+                              sx={{
+                                height: "40px",
+                                backgroundColor: "rgba(255,255,255,0.03)",
+                              }}
                             >
-                              Action
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {cat.data.length === 0 ? (
-                            <TableRow>
                               <TableCell
-                                colSpan={6}
-                                align="center"
-                                className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5"
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "12%",
+                                }}
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
                               >
-                                No users found in this category
+                                User ID
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "28%",
+                                }}
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                              >
+                                Name & Email
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "18%",
+                                }}
+                                className="hidden sm:table-cell text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                              >
+                                {cat.id === "CONTACT" ? "Department" : "Role"}
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "16%",
+                                }}
+                                className="hidden md:table-cell text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                              >
+                                {cat.id === "CONTACT" ? "Contact" : "Joined"}
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "14%",
+                                }}
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                              >
+                                Status
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 14px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.08)",
+                                  width: "12%",
+                                }}
+                                align="right"
+                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                              >
+                                Actions
                               </TableCell>
                             </TableRow>
-                          ) : (
-                            cat.data.map((item) => {
-                              const isActive =
-                                (item.VA_Status || item.VCP_Status || "")
-                                  .toString()
-                                  .trim()
-                                  .toUpperCase() === "A" ||
-                                (item.VA_Status || item.VCP_Status || "")
-                                  .toString()
-                                  .trim()
-                                  .toUpperCase() === "ACTIVE";
-
-                              return (
-                                <TableRow
-                                  key={
-                                    item.VA_Admin_id ||
-                                    item.VCP_Contact_person_id
-                                  }
+                          </TableHead>
+                          <TableBody>
+                            {cat.data.length === 0 ? (
+                              <TableRow
+                                sx={{
+                                  height: "44px",
+                                  "&:hover": { backgroundColor: "transparent" },
+                                }}
+                              >
+                                <TableCell
+                                  colSpan={6}
+                                  align="center"
                                   sx={{
-                                    "&:last-child td, &:last-child th": {
-                                      border: 0,
-                                    },
-                                    "&:hover": {
-                                      backgroundColor: "rgba(255,255,255,0.02)",
-                                    },
+                                    padding: "12px",
+                                    borderBottom:
+                                      "1px solid rgba(255,255,255,0.05)",
                                   }}
+                                  className="text-white/30 text-[11px] font-medium"
                                 >
-                                  <TableCell className="text-white/70 font-medium border-b-white/5">
-                                    <div className="flex items-center gap-2">
-                                      <Hash
-                                        size={12}
-                                        className="text-primary/40"
-                                      />
-                                      <span>
-                                        {item.VA_Admin_id ||
-                                          item.VCP_Contact_person_id}
-                                      </span>
-                                    </div>
-                                  </TableCell>
-                                  <TableCell
-                                    className={`font-medium border-b-white/5 transition-colors ${isActive ? "text-white" : "text-white/30 line-through"}`}
+                                  No users in this category
+                                </TableCell>
+                              </TableRow>
+                            ) : (
+                              cat.data.map((item) => {
+                                const isActive =
+                                  (item.VA_Status || item.VCP_Status || "")
+                                    .toString()
+                                    .trim()
+                                    .toUpperCase() === "A" ||
+                                  (item.VA_Status || item.VCP_Status || "")
+                                    .toString()
+                                    .trim()
+                                    .toUpperCase() === "ACTIVE";
+
+                                return (
+                                  <TableRow
+                                    key={
+                                      item.VA_Admin_id ||
+                                      item.VCP_Contact_person_id
+                                    }
+                                    sx={{
+                                      "&:hover": {
+                                        backgroundColor:
+                                          "rgba(255,255,255,0.04)",
+                                      },
+                                      height: "44px",
+                                      borderBottom:
+                                        "1px solid rgba(255,255,255,0.05)",
+                                      transition: "background-color 0.2s ease",
+                                    }}
                                   >
-                                    {item.VA_Name || item.VCP_Name || "-"}
-                                    <p className="text-gray-400 text-[10px] tracking-[0.1em] lowercase mt-1 opacity-70">
-                                      {item.VA_Email || item.VCP_Email}
-                                    </p>
-                                  </TableCell>
-                                  <TableCell
-                                    className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
-                                  >
-                                    {item.VA_Role || item.VCP_Department || "-"}
-                                  </TableCell>
-                                  <TableCell
-                                    className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
-                                  >
-                                    {item.VA_Created_Date
-                                      ? item.VA_Created_Date.split(" ")[0]
-                                      : item.VCP_Phone || "AUTHEN.SYSTEM"}
-                                  </TableCell>
-                                  <TableCell className="border-b-white/5">
-                                    <button
-                                      onClick={() =>
-                                        handleToggleStatus(item, cat.id)
-                                      }
-                                      disabled={loading}
-                                      title="Click to toggle status"
-                                      className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "12%" }}
+                                      className="text-white/70 font-medium text-[11px] whitespace-nowrap"
                                     >
-                                      {isActive ? "ACTIVE" : "INACTIVE"}
-                                    </button>
-                                  </TableCell>
-                                  <TableCell
-                                    align="right"
-                                    className="border-b-white/5"
-                                  >
-                                    <IconButton
-                                      onClick={() =>
-                                        openModal("edit", item, cat.id)
-                                      }
-                                      size="small"
-                                      className="text-white/40 hover:text-white"
+                                      <div className="flex items-center gap-1">
+                                        <Hash
+                                          size={10}
+                                          className="text-primary/40"
+                                        />
+                                        <span>
+                                          {item.VA_Admin_id ||
+                                            item.VCP_Contact_person_id}
+                                        </span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "28%" }}
+                                      className={`font-medium transition-colors text-[11px] ${isActive ? "text-white" : "text-white/30 line-through"}`}
                                     >
-                                      <Edit size={16} />
-                                    </IconButton>
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            })
-                          )}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
+                                      {item.VA_Name || item.VCP_Name || "-"}
+                                      <p className="text-gray-400 text-[9px] tracking-[0.1em] lowercase mt-0.5 opacity-70">
+                                        {item.VA_Email || item.VCP_Email}
+                                      </p>
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "18%" }}
+                                      className={`hidden sm:table-cell transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    >
+                                      {item.VA_Role ||
+                                        item.VCP_Department ||
+                                        "-"}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "16%" }}
+                                      className={`hidden md:table-cell transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    >
+                                      {item.VA_Created_Date
+                                        ? item.VA_Created_Date.split(" ")[0]
+                                        : item.VCP_Phone || "AUTHEN.SYSTEM"}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "14%" }}
+                                    >
+                                      <button
+                                        onClick={() =>
+                                          handleToggleStatus(item, cat.id)
+                                        }
+                                        disabled={loading}
+                                        title="Click to toggle status"
+                                        className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer rounded ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                      >
+                                        {isActive ? "ACTIVE" : "INACTIVE"}
+                                      </button>
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{ padding: "8px 14px", width: "12%" }}
+                                      align="right"
+                                    >
+                                      <IconButton
+                                        onClick={() =>
+                                          openModal("edit", item, cat.id)
+                                        }
+                                        size="small"
+                                        className="text-white/40 hover:text-white p-1"
+                                      >
+                                        <Edit size={13} />
+                                      </IconButton>
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })
+                            )}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </div>
+                  </section>
+                ))}
+                {visibleCategories.length === 0 && (
+                  <div className="p-8 md:p-20 text-center border border-white/5 rounded-2xl bg-black/20">
+                    <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
+                      No users match the selected table and filters.
+                    </p>
                   </div>
-                </section>
-              ))
+                )}
+              </>
             )}
           </div>
         </div>
@@ -590,14 +791,20 @@ const AllUsers = () => {
       {/* Modal for Add / Edit Administrator */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative">
+          <div
+            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full ${modalWidthClass} overflow-hidden relative`}
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
 
-            <div className="flex justify-between items-center p-6 border-b border-white/5 relative z-10">
-              <h2 className="text-lg font-bold text-white uppercase tracking-wider">
+            <div
+              className={`flex justify-between items-center ${headerPaddingClass} border-b border-white/5 relative z-10`}
+            >
+              <h2
+                className={`${isCompactAddForm ? "text-base" : "text-lg"} font-bold text-white uppercase tracking-wider`}
+              >
                 {modalMode === "add"
-                  ? "Add New System Admin"
-                  : "Edit Administrator Profile"}
+                  ? "Add New System User"
+                  : "Edit User Profile"}
               </h2>
               <button
                 onClick={closeModal}
@@ -609,73 +816,105 @@ const AllUsers = () => {
 
             <form
               onSubmit={handleFormSubmit}
-              className="p-6 space-y-4 relative z-10"
+              className={`${formSpacingClass} relative z-10`}
             >
               <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                   <User size={12} /> Name
                 </label>
                 <input
-                  required
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                  className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                    errors.name
+                      ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                      : "bg-black/40 border border-white/10 focus:border-primary/50"
+                  }`}
                   placeholder="e.g. John Doe"
                 />
+                {errors.name && (
+                  <p className="text-[10px] text-red-400 font-semibold mt-1">
+                    {errors.name}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                   <Mail size={12} /> Email
                 </label>
                 <input
-                  required
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                  className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                    errors.email
+                      ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                      : "bg-black/40 border border-white/10 focus:border-primary/50"
+                  }`}
                   placeholder="example@mas.com"
                 />
+                {errors.email && (
+                  <p className="text-[10px] text-red-400 font-semibold mt-1">
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               {formData.type === "CONTACT" ? (
                 <>
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Users size={12} /> Department
                     </label>
                     <input
-                      required
                       type="text"
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                        errors.department
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g. Human Resources"
                     />
+                    {errors.department && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.department}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <X size={12} /> Phone Connection
                     </label>
                     <input
-                      required
                       type="text"
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                        errors.phone
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g. +94 123 4567"
                     />
+                    {errors.phone && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
                 </>
               ) : (
                 <>
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Users size={12} /> Department
                     </label>
                     <input
@@ -683,13 +922,22 @@ const AllUsers = () => {
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                        errors.department
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g. Human Resources"
                     />
+                    {errors.department && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.department}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Phone size={12} /> Phone
                     </label>
                     <input
@@ -697,63 +945,88 @@ const AllUsers = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                        errors.phone
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder="e.g. +94 123 4567"
                     />
+                    {errors.phone && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Shield size={12} /> Role
                     </label>
                     <select
-                      required
                       name="role"
                       value={formData.role}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                        errors.role
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                     >
                       <option value="">Select a role</option>
                       <option value="Admin">Admin</option>
                       <option value="Security">Security</option>
-                      <option value="Contact_Person">Contact Person</option>
+                      <option value="Contact_Person">Host</option>
                     </select>
+                    {errors.role && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.role}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex gap-2">
+                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
                       <Hash size={12} /> Password
                     </label>
                     <input
-                      required={modalMode === "add"}
                       type="password"
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[13px] text-white focus:outline-none focus:border-primary/50 transition-colors"
+                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                        errors.password
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
                       placeholder={
                         modalMode === "add"
                           ? "Enter secure password"
                           : "Leave blank to keep current"
                       }
                     />
+                    {errors.password && (
+                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                        {errors.password}
+                      </p>
+                    )}
                   </div>
                 </>
               )}
 
-              <div className="pt-6 flex justify-end gap-3 mt-4">
+              <div className={`${actionsPaddingClass} flex justify-end`}>
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-6 py-3 rounded-xl text-[13px] font-bold text-gray-400 hover:bg-white/5 uppercase tracking-wider transition-all"
+                  className={`${actionButtonSizeClass} rounded-xl font-bold text-gray-400 hover:bg-white/5 uppercase tracking-wider transition-all`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-[13px] font-bold uppercase tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary"
+                  className={`${actionButtonSizeClass} rounded-xl bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary`}
                 >
-                  {modalMode === "add" ? "Create Node" : "Update Access"}
+                  {modalMode === "add" ? "Create User" : "Update Access"}
                 </button>
               </div>
             </form>

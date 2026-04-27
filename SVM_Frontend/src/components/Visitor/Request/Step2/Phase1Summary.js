@@ -4,7 +4,7 @@ import { ClipboardCheck, Calendar, Info, Users, MapPin } from 'lucide-react';
 const Phase1Summary = ({ summary }) => {
     return (
         <section className="stagger-item">
-            <div className="flex items-center gap-3 mb-8">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-8">
                 <div className="text-primary">
                     <ClipboardCheck size={16} />
                 </div>
@@ -22,7 +22,7 @@ const Phase1Summary = ({ summary }) => {
                         { label: 'Size', value: `${summary.visitors} Persons`, icon: Users }
                     ].map((item) => (
                         <div key={item.label} className="group/item">
-                            <div className="flex items-center gap-2 mb-2">
+                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mb-2">
                                 <item.icon size={12} className="text-primary/60" />
                                 <span className="text-[12px] font-bold uppercase tracking-widest text-gray-600">{item.label}</span>
                             </div>
@@ -33,7 +33,7 @@ const Phase1Summary = ({ summary }) => {
                     ))}
 
                     <div className="md:col-span-2 group/item">
-                        <div className="flex items-center gap-2 mb-4">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mb-4">
                             <MapPin size={12} className="text-primary/60" />
                             <span className="text-[12px] font-bold uppercase tracking-widest text-gray-600">Authorized Zones</span>
                         </div>
@@ -52,7 +52,7 @@ const Phase1Summary = ({ summary }) => {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                         <div className="w-1 h-1 rounded-full bg-primary/40" />
                         <span className="text-[14px] font-bold text-gray-700 uppercase tracking-widest">Integrity Check Active</span>
                     </div>

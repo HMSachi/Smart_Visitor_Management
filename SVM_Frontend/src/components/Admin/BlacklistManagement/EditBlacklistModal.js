@@ -1,51 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, Edit3, User, Mail, Shield, Save, Briefcase
-} from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
+import { X, Edit3, User, Mail, Shield, Save, Briefcase } from "lucide-react";
+import { useThemeMode } from "../../../theme/ThemeModeContext";
 
-const InputField = ({ label, icon: Icon, name, value, onChange, type = "text", placeholder, required = false }) => (
+const InputField = ({
+  label,
+  icon: Icon,
+  name,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+  required = false,
+  isLight,
+}) => (
   <div className="space-y-2">
-    <label className="text-gray-300/70 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2">
+    <label
+      className={`text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 ${isLight ? "text-gray-500" : "text-gray-300/70"}`}
+    >
       <Icon size={12} className="text-primary/60" />
       {label} {required && <span className="text-primary">*</span>}
     </label>
     <input
       type={type}
       name={name}
-      value={value || ''}
+      value={value || ""}
       onChange={onChange}
       required={required}
       placeholder={placeholder}
-      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-600"
+      className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-500 border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20"}`}
     />
   </div>
 );
 
 const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
+  const { themeMode } = useThemeMode();
+  const isLight = themeMode === "light";
   const [formData, setFormData] = useState({
-    VB_id: '',
-    VB_Name: '',
-    VB_Role: '',
-    VB_Email: '',
-    VB_Alert_Type: 'Level 01',
+    VB_id: "",
+    VB_Name: "",
+    VB_Role: "",
+    VB_Email: "",
+    VB_Alert_Type: "Level 01",
   });
 
   useEffect(() => {
     if (initialData && isOpen) {
       setFormData({
-        VB_id: initialData.VB_id || '',
-        VB_Name: initialData.VB_Name || '',
-        VB_Role: initialData.VB_Role || '',
-        VB_Email: initialData.VB_Email || '',
-        VB_Alert_Type: initialData.VB_Alert_Type || 'Level 01',
+        VB_id: initialData.VB_id || "",
+        VB_Name: initialData.VB_Name || "",
+        VB_Role: initialData.VB_Role || "",
+        VB_Email: initialData.VB_Email || "",
+        VB_Alert_Type: initialData.VB_Alert_Type || "Level 01",
       });
     }
   }, [initialData, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
@@ -54,7 +68,7 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
     onClose();
   };
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -63,7 +77,7 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[110]"
+            className={`fixed inset-0 backdrop-blur-sm z-[110] ${isLight ? "bg-transparent" : "bg-black/40"}`}
           />
 
           <div className="fixed inset-0 flex items-center justify-center p-4 z-[111] pointer-events-none">
@@ -71,48 +85,98 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="w-full max-w-4xl bg-[#141416] border border-white/10 rounded-[32px] pointer-events-auto overflow-hidden flex flex-col max-h-[90vh]"
+              className={`w-full max-w-2xl rounded-[26px] pointer-events-auto overflow-hidden flex flex-col max-h-[82vh] border ${isLight ? "bg-white border-gray-200 shadow-[0_20px_48px_rgba(0,0,0,0.14)]" : "bg-[#141416] border-white/10 shadow-[0_20px_64px_rgba(0,0,0,0.52)]"}`}
             >
               {/* Header */}
-              <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
-                    <Edit3 size={24} />
+              <div
+                className={`p-4 border-b flex justify-between items-center ${isLight ? "border-gray-200 bg-[#F8F9FA]" : "border-white/5 bg-white/[0.01]"}`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                    <Edit3 size={18} />
                   </div>
                   <div>
-                    <h2 className="text-white text-lg font-bold tracking-widest uppercase">Edit Blacklisted Visitor</h2>
-                    <p className="text-gray-400 text-xs tracking-wider">Update the details of this blacklisted visitor</p>
+                    <h2
+                      className={`text-[14px] font-semibold tracking-[0.18em] uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                    >
+                      Edit Blacklisted Visitor
+                    </h2>
+                    <p
+                      className={`text-[10px] tracking-wider ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    >
+                      Update the details of this blacklisted visitor
+                    </p>
                   </div>
                 </div>
-                <button type="button" onClick={onClose} className="p-2 hover:bg-white/5 rounded-xl transition-colors text-gray-400 hover:text-white">
-                  <X size={20} />
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className={`p-2 rounded-xl transition-colors ${isLight ? "text-gray-500 hover:bg-gray-100 hover:text-[#1A1A1A]" : "text-gray-400 hover:bg-white/5 hover:text-white"}`}
+                >
+                  <X size={18} />
                 </button>
               </div>
 
               {/* Form Content */}
-              <form onSubmit={handleSubmit} className="overflow-y-auto p-8 space-y-8 scrollbar-thin scrollbar-thumb-white/10">
-                
+              <form
+                onSubmit={handleSubmit}
+                className={`overflow-y-auto p-5 space-y-5 ${isLight ? "bg-[#F8F9FA] scrollbar-thin scrollbar-thumb-gray-300" : "bg-[var(--color-bg-default)] scrollbar-thin scrollbar-thumb-white/10"}`}
+              >
                 {/* Section 1: Subject Identity */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="col-span-full flex items-center gap-3">
-                    <div className="w-1 h-4 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
-                    <h3 className="text-blue-400 text-[12px] font-bold uppercase tracking-[0.3em]">Visitor Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="col-span-full flex items-center gap-2.5">
+                    <div className="w-1 h-3.5 bg-primary rounded-full shadow-[0_0_6px_var(--color-primary)]"></div>
+                    <h3 className="text-primary text-[10px] font-bold uppercase tracking-[0.28em]">
+                      Visitor Details
+                    </h3>
                   </div>
-                  
-                  <InputField label="Full Name" icon={User} name="VB_Name" value={formData.VB_Name} onChange={handleChange} placeholder="Visitor's full name" required />
-                  <InputField label="Email Address" icon={Mail} name="VB_Email" value={formData.VB_Email} onChange={handleChange} type="email" placeholder="email@example.com" />
-                  <InputField label="Role" icon={Briefcase} name="VB_Role" value={formData.VB_Role} onChange={handleChange} placeholder="e.g. visitor, contractor" />
+
+                  <InputField
+                    isLight={isLight}
+                    label="Full Name"
+                    icon={User}
+                    name="VB_Name"
+                    value={formData.VB_Name}
+                    onChange={handleChange}
+                    placeholder="Visitor's full name"
+                    required
+                  />
+                  <InputField
+                    isLight={isLight}
+                    label="Email Address"
+                    icon={Mail}
+                    name="VB_Email"
+                    value={formData.VB_Email}
+                    onChange={handleChange}
+                    type="email"
+                    placeholder="email@example.com"
+                  />
+                  <InputField
+                    isLight={isLight}
+                    label="Role"
+                    icon={Briefcase}
+                    name="VB_Role"
+                    value={formData.VB_Role}
+                    onChange={handleChange}
+                    placeholder="e.g. visitor, contractor"
+                  />
                 </div>
 
                 {/* Section 2: Restriction Logistics */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
-                  <div className="col-span-full flex items-center gap-3">
-                    <div className="w-1 h-4 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
-                    <h3 className="text-blue-400 text-[12px] font-bold uppercase tracking-[0.3em]">Blacklist Details</h3>
+                <div
+                  className={`grid grid-cols-1 md:grid-cols-2 gap-4 pt-3.5 border-t ${isLight ? "border-gray-200" : "border-white/5"}`}
+                >
+                  <div className="col-span-full flex items-center gap-2.5">
+                    <div className="w-1 h-3.5 bg-primary rounded-full shadow-[0_0_6px_var(--color-primary)]"></div>
+                    <h3 className="text-primary text-[10px] font-bold uppercase tracking-[0.28em]">
+                      Blacklist Details
+                    </h3>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-gray-300/70 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2">
+                  <div className="space-y-1.5">
+                    <label
+                      className={`text-[9px] font-bold uppercase tracking-[0.18em] flex items-center gap-2 ${isLight ? "text-gray-500" : "text-gray-300/70"}`}
+                    >
                       <Shield size={12} className="text-primary/60" />
                       Risk Level
                     </label>
@@ -120,29 +184,46 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
                       name="VB_Alert_Type"
                       value={formData.VB_Alert_Type}
                       onChange={handleChange}
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 transition-all appearance-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 text-[12px] focus:outline-none focus:border-primary/50 transition-all appearance-none border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20"}`}
                     >
-                      <option value="Level 01" className="bg-[#141416]">Level 01 - Monitoring Required</option>
-                      <option value="Level 02" className="bg-[#141416]">Level 02 - Strict Access Control</option>
-                      <option value="Level 03" className="bg-[#141416]">Level 03 - Denied Entry</option>
+                      <option
+                        value="Level 01"
+                        className={isLight ? "bg-white" : "bg-[#141416]"}
+                      >
+                        Level 01 - Monitoring Required
+                      </option>
+                      <option
+                        value="Level 02"
+                        className={isLight ? "bg-white" : "bg-[#141416]"}
+                      >
+                        Level 02 - Strict Access Control
+                      </option>
+                      <option
+                        value="Level 03"
+                        className={isLight ? "bg-white" : "bg-[#141416]"}
+                      >
+                        Level 03 - Denied Entry
+                      </option>
                     </select>
                   </div>
                 </div>
 
                 {/* Footer */}
-                <div className="flex gap-4 pt-6 border-t border-white/5">
+                <div
+                  className={`flex gap-2.5 pt-4 border-t ${isLight ? "border-gray-200" : "border-white/5"}`}
+                >
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-4 border border-white/10 rounded-2xl text-gray-400 text-xs font-bold uppercase tracking-widest hover:bg-white/5 hover:text-white transition-all"
+                    className={`flex-1 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all border ${isLight ? "border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-[#1A1A1A]" : "border-white/10 text-gray-400 hover:bg-white/5 hover:text-white"}`}
                   >
                     Discard Changes
                   </button>
                   <button
                     type="submit"
-                    className="flex-[2] py-4 bg-blue-600 rounded-2xl text-white text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-lg shadow-blue-500/20"
+                    className="flex-[2] py-3 bg-primary hover:bg-primary-hover rounded-2xl text-white text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2.5 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20"
                   >
-                    <Save size={18} />
+                    <Save size={15} />
                     Update Details
                   </button>
                 </div>
@@ -151,7 +232,8 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
           </div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 };
 

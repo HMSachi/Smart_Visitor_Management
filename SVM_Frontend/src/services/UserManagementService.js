@@ -35,7 +35,7 @@ const GetContactPersonByEmail = async (email) => {
     return axios.get(`${BASE_URL}/ContactPerson/GetContactPersonByEmail?VCP_Email=${encodeURIComponent(email)}`);
 };
 
-// Administrator Services (Security Officers & Visitors)
+// Administrator Services (Security Supports & Visitors)
 const GetAllAdministrators = async () => {
     return axios.get(`${BASE_URL}/Administrator/GetAllAdministrator`);
 };

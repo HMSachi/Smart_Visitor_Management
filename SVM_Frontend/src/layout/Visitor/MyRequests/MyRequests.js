@@ -40,29 +40,29 @@ const StatusBadge = ({ status }) => {
     case "A":
     case "APPROVED":
       return (
-        <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max shadow-[0_0_15px_rgba(34,197,94,0.1)]">
-          <CheckCircle2 size={12} /> Approved
+        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max shadow-[0_0_12px_rgba(34,197,94,0.1)]">
+          <CheckCircle2 size={10} /> Approved
         </div>
       );
     case "R":
     case "REJECTED":
       return (
-        <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
-          <XCircle size={12} /> Rejected
+        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max">
+          <XCircle size={10} /> Declined
         </div>
       );
     case "ACCEPTED":
       return (
-        <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
-          <CheckCircle2 size={12} /> Accepted
+        <div className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max">
+          <CheckCircle2 size={10} /> Accepted
         </div>
       );
     case "P":
     case "PENDING":
     default:
       return (
-        <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-lg text-[10px] font-bold tracking-[0.1em] uppercase flex items-center gap-2 w-max">
-          <Clock size={12} /> Pending
+        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max">
+          <Clock size={10} /> Pending
         </div>
       );
   }
@@ -74,7 +74,9 @@ const MyRequests = () => {
   const { visitRequestsByVis, isLoading, error } = useSelector(
     (state) => state.visitRequestsState,
   );
-  const { gatePasses } = useSelector((state) => state.gatePassState || { gatePasses: [] });
+  const { gatePasses } = useSelector(
+    (state) => state.gatePassState || { gatePasses: [] },
+  );
 
   // Extract Visitor ID from login session
   const user = useSelector((state) => state.login.user);
@@ -128,7 +130,7 @@ const MyRequests = () => {
     // Find the gate pass ID from the gatePasses list
     const list = Array.isArray(gatePasses)
       ? gatePasses
-      : (gatePasses?.gatePasses || gatePasses?.ResultSet || []);
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
     const gatePass = list.find((gp) => {
       const gpRequestId =
         gp.VVR_Request_id ||
@@ -151,9 +153,15 @@ const MyRequests = () => {
 
   const hasGatePass = (requestId) => {
     if (!requestId) return false;
-    const list = Array.isArray(gatePasses) ? gatePasses : (gatePasses?.gatePasses || gatePasses?.ResultSet || []);
-    return list.some(gp => {
-      const gpRequestId = gp.VVR_Request_id || gp.VGP_Request_id || gp.vvr_Request_id || gp.vgp_Request_id;
+    const list = Array.isArray(gatePasses)
+      ? gatePasses
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
+    return list.some((gp) => {
+      const gpRequestId =
+        gp.VVR_Request_id ||
+        gp.VGP_Request_id ||
+        gp.vvr_Request_id ||
+        gp.vgp_Request_id;
       return String(gpRequestId) === String(requestId);
     });
   };
@@ -196,10 +204,10 @@ const MyRequests = () => {
 
   const filteredRequests = visitRequestsByVis
     ? visitRequestsByVis.filter(
-      (req) =>
-        String(req.VVR_Request_id).includes(searchTerm) ||
-        req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
+        (req) =>
+          String(req.VVR_Request_id).includes(searchTerm) ||
+          req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
     : [];
 
   return (
@@ -208,21 +216,21 @@ const MyRequests = () => {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none"></div>
 
-      <div className="max-w-[1400px] mx-auto relative z-10">
-        <header className="mb-8">
+      <div className="max-w-[1100px] mx-auto relative z-10">
+        <header className="mb-5">
           <div>
-            <h1 className="text-[24px] md:text-[24px] font-semibold text-white mt-2 tracking-[0.02em]">
+            <h1 className="text-[20px] md:text-[21px] font-semibold text-white mt-1 tracking-[0.02em]">
               My Visit Requests
             </h1>
           </div>
         </header>
 
-        <div className="bg-black/20 border border-white/5 rounded-[28px] overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div className="bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl">
           {isLoading ? (
             <div className="p-24 flex flex-col items-center justify-center">
               <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
               <p className="mt-6 text-gray-400 font-bold uppercase tracking-[0.4em] text-xs">
-                Accessing System Registry...
+                Hang tight, we’re loading your visit requests.
               </p>
             </div>
           ) : error ? (
@@ -239,26 +247,26 @@ const MyRequests = () => {
               component={Paper}
               className="bg-transparent shadow-none border-none"
             >
-              <Table sx={{ minWidth: 650 }}>
+              <Table size="small" sx={{ minWidth: 560 }}>
                 <TableHead className="bg-white/[0.02]">
                   <TableRow>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
                       Protocol ID
                     </TableCell>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
                       Date
                     </TableCell>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
                       Destination
                     </TableCell>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
                       Purpose
                     </TableCell>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6">
+                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
                       Status
                     </TableCell>
                     <TableCell
-                      className="text-gray-400 font-semibold uppercase tracking-[0.12em] text-[12px] border-b-white/5 py-5 px-6"
+                      className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4"
                       align="right"
                     >
                       Controls
@@ -273,55 +281,60 @@ const MyRequests = () => {
                         hover
                         className="hover:bg-white/[0.02] transition-all"
                       >
-                        <TableCell className="px-6 py-5 border-b-white/5">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                              <Hash size={14} />
+                        <TableCell className="px-4 py-3 border-b-white/5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                              <Hash size={11} />
                             </div>
-                            <span className="text-white font-mono tracking-normal text-base">
+                            <span className="text-white font-mono tracking-normal text-[13px]">
                               #{req.VVR_Request_id}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell className="px-6 py-5 border-b-white/5">
-                          <div className="flex items-center gap-3 text-gray-300">
-                            <Calendar size={14} className="text-primary/50" />
-                            <span className="text-sm font-medium tracking-normal">
+                        <TableCell className="px-4 py-3 border-b-white/5">
+                          <div className="flex items-center gap-2 text-gray-300">
+                            <Calendar size={11} className="text-primary/50" />
+                            <span className="text-[12px] font-medium tracking-normal">
                               {req.VVR_Visit_Date
                                 ? req.VVR_Visit_Date.split("T")[0]
                                 : "N/A"}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell className="px-6 py-5 border-b-white/5">
-                          <div className="flex items-center gap-3 text-gray-300">
-                            <MapPin size={14} className="text-primary/50" />
-                            <span className="text-sm font-medium tracking-normal">
+                        <TableCell className="px-4 py-3 border-b-white/5">
+                          <div className="flex items-center gap-2 text-gray-300">
+                            <MapPin size={11} className="text-primary/50" />
+                            <span className="text-[12px] font-medium tracking-normal">
                               {req.VVR_Places_to_Visit || "-"}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell className="px-6 py-5 border-b-white/5">
-                          <p className="text-white font-medium tracking-wide text-sm opacity-80 line-clamp-1">
+                        <TableCell className="px-4 py-3 border-b-white/5">
+                          <p className="text-white font-medium tracking-wide text-[12px] opacity-80 line-clamp-1">
                             {req.VVR_Purpose || "-"}
                           </p>
                         </TableCell>
-                        <TableCell className="px-6 py-5 border-b-white/5">
-                          <div className="flex flex-col gap-2">
+                        <TableCell className="px-4 py-3 border-b-white/5">
+                          <div className="flex flex-col gap-1.5">
                             <StatusBadge status={req.VVR_Status} />
-                            {hasGatePass(req.VVR_Request_id) && (req.VVR_Status === 'A' || req.VVR_Status === 'APPROVED') && (
-                              <button
-                                onClick={() => handleViewGatePass(req)}
-                                className="flex items-center gap-2 text-[10px] justify-center font-black uppercase tracking-[0.2em] text-primary hover:text-white transition-all group/gp"
-                              >
-                                <QrCode size={12} className="group-hover/gp:scale-110 transition-transform" />
-                                View Gate Pass
-                              </button>
-                            )}
+                            {hasGatePass(req.VVR_Request_id) &&
+                              (req.VVR_Status === "A" ||
+                                req.VVR_Status === "APPROVED") && (
+                                <button
+                                  onClick={() => handleViewGatePass(req)}
+                                  className="flex items-center gap-1.5 text-[9px] justify-center font-black uppercase tracking-[0.12em] text-primary hover:text-white transition-all group/gp"
+                                >
+                                  <QrCode
+                                    size={10}
+                                    className="group-hover/gp:scale-110 transition-transform"
+                                  />
+                                  View GatePass
+                                </button>
+                              )}
                           </div>
                         </TableCell>
                         <TableCell
-                          className="px-6 py-5 border-b-white/5"
+                          className="px-4 py-3 border-b-white/5"
                           align="right"
                         >
                           {/* 
@@ -445,7 +458,7 @@ const MyRequests = () => {
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col md:flex-row gap-4 md:gap-4 pt-4">
                 <button
                   type="button"
                   onClick={closeModal}

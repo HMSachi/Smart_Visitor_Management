@@ -10,10 +10,14 @@ import {
   AddVisitRequest,
   GetVisitRequestsByVisitor,
   UpdateVisitRequest,
-  ApproveVisitRequest
+  ApproveVisitRequest,
 } from "../../../actions/VisitRequestAction";
 import VisitorService from "../../../services/VisitorService";
-import { AddVehicle, GetAllVehicles, UpdateVehicle } from "../../../actions/VehicleAction";
+import {
+  AddVehicle,
+  GetAllVehicles,
+  UpdateVehicle,
+} from "../../../actions/VehicleAction";
 import { AddVisitGroup } from "../../../actions/VisitGroupAction";
 import { AddItem } from "../../../actions/ItemCarriedAction";
 import {
@@ -183,9 +187,18 @@ const Step1Main = () => {
       console.log("Matched latestRequest:", latestRequest);
 
       // Block access if already accepted
-      const normalizedStatus = (latestRequest.VVR_Status || "").toString().trim().toUpperCase();
-      if (normalizedStatus === "ACCEPTED" || normalizedStatus === "A" || normalizedStatus === "APPROVED") {
-        alert("This visit request has already been accepted and sent to the contact person.");
+      const normalizedStatus = (latestRequest.VVR_Status || "")
+        .toString()
+        .trim()
+        .toUpperCase();
+      if (
+        normalizedStatus === "ACCEPTED" ||
+        normalizedStatus === "A" ||
+        normalizedStatus === "APPROVED"
+      ) {
+        alert(
+          "This visit request has already been accepted and sent to the contact person.",
+        );
         navigate("/home", { replace: true });
         return;
       }
@@ -214,39 +227,58 @@ const Step1Main = () => {
           }),
         );
 
-        const visitorRequestIds = (visitRequestsByVis || []).map(r => String(r.VVR_Request_id));
-        
-        // Priority 1: Vehicle linked to THIS request (if it has a valid plate)
-        // Priority 2: Most recent vehicle from ANY of this visitor's requests (that isn't "N/A")
-        // Priority 3: Fallback to current request's record even if "N/A"
-        const matchedVehicle = 
-          vehicles.find(v => String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id) && v.VV_Vehicle_Number && v.VV_Vehicle_Number !== "N/A") ||
-          vehicles.find(v => visitorRequestIds.includes(String(v.VVR_Request_id)) && v.VV_Vehicle_Number && v.VV_Vehicle_Number !== "N/A") ||
-          vehicles.find(v => String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id));
+      const visitorRequestIds = (visitRequestsByVis || []).map((r) =>
+        String(r.VVR_Request_id),
+      );
 
-        console.log("Improved matched vehicle lookup:", matchedVehicle);
+      // Priority 1: Vehicle linked to THIS request (if it has a valid plate)
+      // Priority 2: Most recent vehicle from ANY of this visitor's requests (that isn't "N/A")
+      // Priority 3: Fallback to current request's record even if "N/A"
+      const matchedVehicle =
+        vehicles.find(
+          (v) =>
+            String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id) &&
+            v.VV_Vehicle_Number &&
+            v.VV_Vehicle_Number !== "N/A",
+        ) ||
+        vehicles.find(
+          (v) =>
+            visitorRequestIds.includes(String(v.VVR_Request_id)) &&
+            v.VV_Vehicle_Number &&
+            v.VV_Vehicle_Number !== "N/A",
+        ) ||
+        vehicles.find(
+          (v) =>
+            String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id),
+        );
 
-        if (matchedVehicle) {
-          if (!formData.vehicleType || formData.vehicleType === "Car")
-            dispatch(
-              updateField({
-                name: "vehicleType",
-                value: matchedVehicle.VV_Vehicle_Type && matchedVehicle.VV_Vehicle_Type !== "N/A" 
-                  ? matchedVehicle.VV_Vehicle_Type 
+      console.log("Improved matched vehicle lookup:", matchedVehicle);
+
+      if (matchedVehicle) {
+        if (!formData.vehicleType || formData.vehicleType === "Car")
+          dispatch(
+            updateField({
+              name: "vehicleType",
+              value:
+                matchedVehicle.VV_Vehicle_Type &&
+                matchedVehicle.VV_Vehicle_Type !== "N/A"
+                  ? matchedVehicle.VV_Vehicle_Type
                   : formData.vehicleType || "Car",
-              }),
-            );
+            }),
+          );
 
-          if (!formData.plateNumber || formData.plateNumber === "N/A")
-            dispatch(
-              updateField({
-                name: "plateNumber",
-                value: matchedVehicle.VV_Vehicle_Number && matchedVehicle.VV_Vehicle_Number !== "N/A" 
-                  ? matchedVehicle.VV_Vehicle_Number 
+        if (!formData.plateNumber || formData.plateNumber === "N/A")
+          dispatch(
+            updateField({
+              name: "plateNumber",
+              value:
+                matchedVehicle.VV_Vehicle_Number &&
+                matchedVehicle.VV_Vehicle_Number !== "N/A"
+                  ? matchedVehicle.VV_Vehicle_Number
                   : "",
-              }),
-            );
-        }
+            }),
+          );
+      }
     }
   }, [
     dispatch,
@@ -293,6 +325,16 @@ const Step1Main = () => {
     dispatch(updateEquipmentDetail({ id, field, value }));
   };
 
+  useEffect(() => {
+    if (!visitors || visitors.length === 0) {
+      dispatch(addVisitor());
+    }
+
+    if (!equipment || equipment.length === 0) {
+      dispatch(addEquipment());
+    }
+  }, [dispatch, visitors, equipment]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submit started. Equipment:", equipment);
@@ -325,7 +367,8 @@ const Step1Main = () => {
         }
 
         const matchedVehicle = (vehicles || []).find(
-          (v) => String(v?.VVR_Request_id) === String(latestRequest.VVR_Request_id),
+          (v) =>
+            String(v?.VVR_Request_id) === String(latestRequest.VVR_Request_id),
         );
 
         if (formData.plateNumber || formData.vehicleType) {
@@ -333,7 +376,10 @@ const Step1Main = () => {
             await dispatch(
               UpdateVehicle({
                 VV_Vehicle_id: matchedVehicle.VV_Vehicle_id,
-                VV_Vehicle_Number: formData.plateNumber || matchedVehicle.VV_Vehicle_Number || "N/A",
+                VV_Vehicle_Number:
+                  formData.plateNumber ||
+                  matchedVehicle.VV_Vehicle_Number ||
+                  "N/A",
               }),
             );
           } else {
@@ -352,13 +398,15 @@ const Step1Main = () => {
           for (const visitor of formData.visitors) {
             // Only add if name or NIC is provided to avoid empty records
             if (visitor.fullName || visitor.nic) {
-              await dispatch(AddVisitGroup({
-                VVG_Visitor_Name: visitor.fullName || 'N/A',
-                VVG_NIC_Passport_Number: visitor.nic || 'N/A',
-                VVG_Designation: visitor.contact || 'N/A', // Using Designation field for contact as discussed
-                VVG_Status: 'A',
-                VVR_Request_id: latestRequest.VVR_Request_id
-              }));
+              await dispatch(
+                AddVisitGroup({
+                  VVG_Visitor_Name: visitor.fullName || "N/A",
+                  VVG_NIC_Passport_Number: visitor.nic || "N/A",
+                  VVG_Designation: visitor.contact || "N/A", // Using Designation field for contact as discussed
+                  VVG_Status: "A",
+                  VVR_Request_id: latestRequest.VVR_Request_id,
+                }),
+              );
             }
           }
         }
@@ -367,12 +415,14 @@ const Step1Main = () => {
         if (formData.equipment && formData.equipment.length > 0) {
           for (const item of formData.equipment) {
             if (item.itemName) {
-              await dispatch(AddItem({
-                VVR_Request_id: latestRequest.VVR_Request_id,
-                VIC_Item_Name: item.itemName,
-                VIC_Quantity: item.quantity || '1',
-                VIC_Designation: 'GENERAL'
-              }));
+              await dispatch(
+                AddItem({
+                  VVR_Request_id: latestRequest.VVR_Request_id,
+                  VIC_Item_Name: item.itemName,
+                  VIC_Quantity: item.quantity || "1",
+                  VIC_Designation: "GENERAL",
+                }),
+              );
             }
           }
         }
@@ -394,7 +444,10 @@ const Step1Main = () => {
           createResponse?.VVR_Request_id ||
           null;
 
-        if (createdRequestId && (formData.plateNumber || formData.vehicleType)) {
+        if (
+          createdRequestId &&
+          (formData.plateNumber || formData.vehicleType)
+        ) {
           await dispatch(
             AddVehicle({
               VV_Vehicle_Type: formData.vehicleType || "N/A",
@@ -405,30 +458,42 @@ const Step1Main = () => {
         }
 
         // Save Visitor Group members for new request
-        if (createdRequestId && formData.visitors && formData.visitors.length > 0) {
+        if (
+          createdRequestId &&
+          formData.visitors &&
+          formData.visitors.length > 0
+        ) {
           for (const visitor of formData.visitors) {
             if (visitor.fullName || visitor.nic) {
-              await dispatch(AddVisitGroup({
-                VVG_Visitor_Name: visitor.fullName || 'N/A',
-                VVG_NIC_Passport_Number: visitor.nic || 'N/A',
-                VVG_Designation: visitor.contact || 'N/A',
-                VVG_Status: 'A',
-                VVR_Request_id: createdRequestId
-              }));
+              await dispatch(
+                AddVisitGroup({
+                  VVG_Visitor_Name: visitor.fullName || "N/A",
+                  VVG_NIC_Passport_Number: visitor.nic || "N/A",
+                  VVG_Designation: visitor.contact || "N/A",
+                  VVG_Status: "A",
+                  VVR_Request_id: createdRequestId,
+                }),
+              );
             }
           }
         }
 
         // Save Equipment for new request
-        if (createdRequestId && formData.equipment && formData.equipment.length > 0) {
+        if (
+          createdRequestId &&
+          formData.equipment &&
+          formData.equipment.length > 0
+        ) {
           for (const item of formData.equipment) {
             if (item.itemName) {
-              await dispatch(AddItem({
-                VVR_Request_id: createdRequestId,
-                VIC_Item_Name: item.itemName,
-                VIC_Quantity: item.quantity || '1',
-                VIC_Designation: 'GENERAL'
-              }));
+              await dispatch(
+                AddItem({
+                  VVR_Request_id: createdRequestId,
+                  VIC_Item_Name: item.itemName,
+                  VIC_Quantity: item.quantity || "1",
+                  VIC_Designation: "GENERAL",
+                }),
+              );
             }
           }
         }
@@ -457,7 +522,10 @@ const Step1Main = () => {
   };
 
   const latestRequest = visitRequestsByVis?.[0];
-  const normalizedStatus = (latestRequest?.VVR_Status || "").toString().trim().toUpperCase();
+  const normalizedStatus = (latestRequest?.VVR_Status || "")
+    .toString()
+    .trim()
+    .toUpperCase();
   const isBlocked = ["ACCEPTED", "A", "APPROVED"].includes(normalizedStatus);
 
   if (isRequestsLoading && !visitRequestsByVis.length) {
@@ -475,73 +543,74 @@ const Step1Main = () => {
   if (status === "step1_pending") {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-10 text-center rounded-none shadow-2xl relative">
+        <div className="max-w-sm w-full bg-white/[0.02] border border-white/5 p-8 text-center rounded-none shadow-2xl relative">
           <div className="absolute top-0 left-0 w-[2px] h-full bg-primary" />
-          <div className="w-16 h-16 bg-primary/10 border border-primary/20 rounded-none mx-auto mb-8 flex items-center justify-center text-primary">
-            <ShieldCheck size={32} />
+          <div className="w-14 h-14 bg-primary/10 border border-primary/20 rounded-none mx-auto mb-6 flex items-center justify-center text-primary">
+            <ShieldCheck size={28} />
           </div>
 
-          <h2 className="text-xl font-bold text-white uppercase tracking-[0.2em] mb-3">
-            Identity Verified
+          <h2 className="text-lg font-bold text-white uppercase tracking-[0.18em] mb-3">
+            Request Saved
           </h2>
-          <p className="text-gray-500 text-[12px] font-medium uppercase tracking-[0.3em] mb-10 leading-relaxed">
-            Access record established for{" "}
+          <p className="text-gray-500 text-[12px] font-medium uppercase tracking-[0.18em] mb-8 leading-relaxed">
+            We found your visit record for{" "}
             <span className="text-white font-semibold">{requestRef}</span>
           </p>
 
-          <div className="flex flex-col gap-4">
-          </div>
+          <div className="flex flex-col gap-4"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-2 pb-12 text-white bg-black">
+    <div className="h-full min-h-0 flex flex-col max-w-5xl mx-auto px-4 sm:px-6 py-3 pb-10 text-white bg-black overflow-hidden">
       {/* Header Section */}
-      <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/5 pb-4">
+      <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-white/5 pb-5">
         <div>
-          <h1 className="text-[24px] md:text-[24px] font-black uppercase tracking-tight mb-2 leading-none">
+          <h1 className="text-[18px] md:text-[20px] font-black uppercase tracking-tight mb-1.5 leading-none">
             Visitor Registration
           </h1>
-          <p className="text-gray-500 text-[12px] uppercase font-bold tracking-[0.4em] opacity-80">
-            Facility Access Clearance Request
+          <p className="text-gray-500 text-[11px] uppercase font-bold tracking-[0.22em] opacity-80">
+            Tell us about your visit
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form
+        onSubmit={handleSubmit}
+        className="flex-1 min-h-0 space-y-10 overflow-y-auto pr-2 custom-scrollbar"
+      >
         <VisitorOverview data={formData} onChange={handleInputChange} />
 
-        <div className="border-t border-white/5 pt-6">
+        <div className="border-t border-white/5 pt-12">
           <VehicleDetails data={formData} onChange={handleInputChange} />
         </div>
 
-        <div className="border-t border-white/5 pt-6">
-          <VisitorGroup 
-            visitors={visitors || []} 
-            onAdd={handleAddVisitor} 
-            onRemove={handleRemoveVisitor} 
-            onChange={handleUpdateVisitor} 
+        <div className="border-t border-white/5 pt-8">
+          <VisitorGroup
+            visitors={visitors || []}
+            onAdd={handleAddVisitor}
+            onRemove={handleRemoveVisitor}
+            onChange={handleUpdateVisitor}
           />
         </div>
 
-        <div className="border-t border-white/5 pt-6">
-          <ItemsCarried 
-            items={equipment || []} 
-            onAdd={handleAddEquipment} 
-            onRemove={handleRemoveEquipment} 
-            onChange={handleUpdateEquipment} 
+        <div className="border-t border-white/5 pt-8">
+          <ItemsCarried
+            items={equipment || []}
+            onAdd={handleAddEquipment}
+            onRemove={handleRemoveEquipment}
+            onChange={handleUpdateEquipment}
           />
         </div>
 
         {/* Action Footer */}
-        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row gap-6 items-center justify-center">
-
+        <div className="pt-12 border-t border-white/5 flex flex-col sm:flex-row gap-4 items-center justify-center">
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="w-full sm:w-auto px-20 h-16 bg-primary hover:bg-primary-hover text-white font-black uppercase text-[12px] tracking-[0.3em] shadow-2xl shadow-primary/20 transition-all flex items-center justify-center gap-4 group disabled:opacity-50"
+            className="w-full sm:w-auto px-14 h-16 bg-primary hover:bg-primary-hover text-white font-black uppercase text-[11px] tracking-[0.22em] shadow-2xl shadow-primary/20 transition-all flex items-center justify-center gap-3 group disabled:opacity-50"
           >
             {status === "submitting" ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -551,7 +620,7 @@ const Step1Main = () => {
                   size={18}
                   className="group-hover:scale-110 transition-transform"
                 />
-                ACCEPT
+                Submit Request
               </>
             )}
           </button>
@@ -562,6 +631,3 @@ const Step1Main = () => {
 };
 
 export default Step1Main;
-
-
-

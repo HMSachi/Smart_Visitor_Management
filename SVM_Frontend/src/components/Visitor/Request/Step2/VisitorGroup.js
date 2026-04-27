@@ -6,7 +6,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
     return (
         <section className="stagger-item">
             <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                     <div className="text-primary">
                         <Users size={16} />
                     </div>
@@ -18,7 +18,7 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
                 <button 
                     type="button" 
                     onClick={onAdd} 
-                    className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-lg hover:bg-primary hover:text-white transition-all text-[12px] font-bold uppercase tracking-widest group"
+                    className="flex flex-col md:flex-row items-center gap-4 md:gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-lg hover:bg-primary hover:text-white transition-all text-[12px] font-bold uppercase tracking-widest group"
                 >
                     <UserPlus size={14} />
                     Add Node

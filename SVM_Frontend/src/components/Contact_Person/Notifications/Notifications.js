@@ -20,8 +20,8 @@ const NotificationsMain = () => {
             <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
                 {/* Compact Action Bar - No Redundant Title */}
                 <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-white/5 bg-gradient-to-r from-white/[0.02] to-transparent flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                             <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)] animate-pulse"></div>
                             <span className="text-gray-300 text-[12px] font-medium uppercase tracking-[0.3em] opacity-90">Operational Alerts</span>
                         </div>
@@ -30,7 +30,7 @@ const NotificationsMain = () => {
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 w-full sm:w-auto">
                         <button onClick={markAllRead} className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[13px] font-medium uppercase tracking-widest text-gray-300 hover:text-white hover:border-primary/30 hover:bg-primary/5 transition-all group">
                             <CheckSquare size={14} className="group-hover:text-primary transition-colors" /> Acknowledge All
                         </button>

@@ -1,53 +1,116 @@
-import { Search, Bell, Settings, User, ArrowLeft, Menu, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { toggleMobileMenu } from '../../../reducers/uiSlice';
-import ThemeToggleButton from '../../common/ThemeToggleButton';
+import { Bell, User, ArrowLeft, Menu, X, ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleMobileMenu } from "../../../reducers/uiSlice";
+import ThemeToggleButton from "../../common/ThemeToggleButton";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isMobile = useSelector(state => state.ui.isMobile);
-  const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
-  const user = useSelector(state => state.login.user);
-  
-  const userEmail = user?.ResultSet?.[0]?.VA_Email || user?.ResultSet?.[0]?.VCP_Email || 'ROOT.ADMIN';
+  const isMobile = useSelector((state) => state.ui.isMobile);
+  const isMobileMenuOpen = useSelector((state) => state.ui.isMobileMenuOpen);
+  const user = useSelector((state) => state.login.user);
+
+  const displayName =
+    user?.ResultSet?.[0]?.VA_Name ||
+    user?.ResultSet?.[0]?.VCP_Name ||
+    "Administrator";
+  const displayEmail =
+    user?.ResultSet?.[0]?.VA_Email || user?.ResultSet?.[0]?.VCP_Email || "";
+  const initials = displayName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
-    <header className="h-16 md:h-20 bg-secondary/95 backdrop-blur sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between border-b border-white/10 shadow-2xl">
-      <div className="flex-1 max-w-xl flex items-center gap-3 md:gap-4">
+    <header
+      className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6"
+      style={{
+        height: "64px",
+        background: "var(--color-bg-paper)",
+        borderBottom: "1px solid var(--color-border-soft)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+      }}
+    >
+      {/* Left: Mobile hamburger / Back button */}
+      <div className="flex items-center gap-3">
         {isMobile ? (
           <button
             onClick={() => dispatch(toggleMobileMenu())}
-            className="p-2.5 text-primary bg-primary/5 border border-primary/20 rounded-lg hover:bg-primary/10 active:scale-95 transition-all shadow-lg"
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-primary"
+            style={{
+              background: "var(--color-primary-low)",
+              border: "1px solid rgba(200,16,46,0.2)",
+            }}
           >
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
         ) : (
           <button
             onClick={() => navigate(-1)}
-            className="p-3 text-gray-300 hover:text-white transition-colors bg-white/5 border border-white/10 group rounded-lg"
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors group"
+            style={{
+              background: "var(--color-surface-1)",
+              border: "1px solid var(--color-border-soft)",
+            }}
             title="Go Back"
           >
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft
+              size={17}
+              className="group-hover:-translate-x-0.5 transition-transform"
+            />
           </button>
         )}
       </div>
 
-      <div className="flex items-center gap-8">
-        <div className="flex items-center gap-4">
-          <ThemeToggleButton />
-        </div>
+      {/* Right: Actions */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* Theme toggle */}
+        <ThemeToggleButton />
 
-        <div className="h-6 w-[1px] bg-white/10 hidden sm:block"></div>
+        {/* Bell */}
+        <button
+          className="relative w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+          style={{
+            background: "var(--color-surface-1)",
+            border: "1px solid var(--color-border-soft)",
+          }}
+          title="Notifications"
+        >
+          <Bell size={17} />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary" />
+        </button>
 
-        <button className="flex items-center gap-4 group text-left">
-          <div className="hidden md:block">
-            <p className="text-white capitalize mb-0.5 max-w-[150px] truncate">{userEmail}</p>
-            <p className="text-primary capitalize text-right">Root Admin</p>
+        {/* Divider — hidden on xs */}
+        <div className="hidden sm:block w-px h-6 bg-[var(--color-border-soft)]" />
+
+        {/* User profile */}
+        <button
+          className="flex items-center gap-2.5 group cursor-default"
+          title={displayName}
+        >
+          {/* Name (desktop) */}
+          <div className="hidden md:block text-right">
+            <p className="text-[var(--color-text-primary)] text-[13px] font-semibold leading-tight truncate max-w-[140px]">
+              {displayName}
+            </p>
+            <p className="text-[var(--color-text-dim)] text-[11px] leading-tight truncate">
+              {displayEmail || "Administrator"}
+            </p>
           </div>
-          <div className="w-10 h-10 bg-primary/10 flex items-center justify-center border border-primary/30 group-hover:bg-primary group-hover:text-white transition-all text-primary">
-            <User size={20} strokeWidth={2.5} />
+
+          {/* Avatar */}
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-bold shrink-0 transition-transform group-hover:scale-105"
+            style={{
+              background:
+                "linear-gradient(135deg, var(--color-primary), #8B0C1F)",
+            }}
+          >
+            {initials || <User size={16} />}
           </div>
         </button>
       </div>

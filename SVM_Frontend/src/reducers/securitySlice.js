@@ -1,26 +1,49 @@
-import { createSlice } from '@reduxjs/toolkit';
-
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   metrics: [
-    { label: 'Scanned Today', value: '142', iconName: 'QrCode', trend: '+12%', color: 'text-white' },
-    { label: 'Inside Facility', value: '28', iconName: 'Users', trend: 'Normal', color: 'text-white' },
-    { label: 'Clearance Sync', value: '100%', iconName: 'ShieldCheck', trend: 'Steady', color: 'text-green-500' },
-    { label: 'Pending Alerts', value: '02', iconName: 'AlertTriangle', trend: 'Action Req', color: 'text-primary' }
+    {
+      label: "Scans Today",
+      value: "142",
+      iconName: "QrCode",
+      trend: "+12%",
+      color: "text-white",
+    },
+    {
+      label: "People Inside",
+      value: "28",
+      iconName: "Users",
+      trend: "Normal",
+      color: "text-white",
+    },
+    {
+      label: "Safety Check",
+      value: "100%",
+      iconName: "ShieldCheck",
+      trend: "Steady",
+      color: "text-green-500",
+    },
+    {
+      label: "Open Alerts",
+      value: "02",
+      iconName: "AlertTriangle",
+      trend: "Needs Attention",
+      color: "text-primary",
+    },
   ],
-  commandStatus: 'NORMAL OPERATIONS',
-  stationId: 'NODE-08-MAIN',
+  commandStatus: "All Systems Working",
+  stationId: "NODE-08-MAIN",
   activeVisitors: [],
   alerts: [],
 };
 
 const securitySlice = createSlice({
-  name: 'security',
+  name: "security",
   initialState,
   reducers: {
     updateMetric: (state, action) => {
       const { label, value } = action.payload;
-      const metric = state.metrics.find(m => m.label === label);
+      const metric = state.metrics.find((m) => m.label === label);
       if (metric) {
         metric.value = value;
       }
@@ -34,6 +57,7 @@ const securitySlice = createSlice({
   },
 });
 
-export const { updateMetric, setCommandStatus, addAlert } = securitySlice.actions;
+export const { updateMetric, setCommandStatus, addAlert } =
+  securitySlice.actions;
 
 export default securitySlice.reducer;

@@ -65,7 +65,7 @@ const QRMain = () => {
             {/* Return Button */}
             <button 
                 onClick={() => window.location.href='/status'}
-                className="mt-10 flex items-center gap-2 text-gray-700 hover:text-primary text-[13px] font-bold uppercase tracking-widest transition-colors"
+                className="mt-10 flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-700 hover:text-primary text-[13px] font-bold uppercase tracking-widest transition-colors"
             >
                 <ArrowLeft size={14} /> Back to Status
             </button>

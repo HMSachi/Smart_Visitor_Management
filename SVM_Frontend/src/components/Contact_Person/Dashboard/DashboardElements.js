@@ -4,16 +4,16 @@ import { Globe } from 'lucide-react';
 export const PerformanceAnalytics = () => (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 animate-fade-in">
         <div>
-            <div className="flex items-center gap-3 mb-1">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-1">
                 <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                 <span className="text-primary text-[11px] font-bold uppercase tracking-[0.3em]">Operational Intel</span>
             </div>
             <p className="text-gray-400 text-[10px] uppercase tracking-widest leading-relaxed">Real-time visitor traffic and authorization metrics</p>
         </div>
-        <div className="flex items-center gap-3 sm:gap-6 bg-white border border-gray-200 p-2.5 sm:p-3 px-4 sm:px-5 rounded-2xl shadow-sm">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 sm:gap-6 bg-white border border-gray-200 p-2.5 sm:p-3 px-4 sm:px-5 rounded-2xl shadow-sm">
             <div className="text-right border-r border-gray-100 pr-6">
                 <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest mb-0.5">Cycle Efficiency</p>
-                <div className="flex items-center gap-2 justify-end">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 justify-end">
                     <span className="text-lg font-bold text-[#1A1A1A]">98.4%</span>
                     <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                 </div>
@@ -30,7 +30,7 @@ export const NodeConfiguration = () => (
     <div className="space-y-6 h-full flex flex-col animate-fade-in" style={{ animationDelay: '0.3s' }}>
         <div className="flex items-center justify-between px-1">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#1A1A1A]">Security Protocol</h3>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.3)]"></div>
                 <span className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Node Optimal</span>
             </div>
