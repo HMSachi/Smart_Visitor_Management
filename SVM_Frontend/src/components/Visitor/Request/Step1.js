@@ -36,6 +36,7 @@ import ItemsCarried from "./Step1/ItemsCarried";
 
 const Step1Main = () => {
   const navigate = useNavigate();
+  const [formErrors, setFormErrors] = React.useState({});
   const formatDateForInput = (dateValue) => {
     if (!dateValue) return "";
 
@@ -293,6 +294,13 @@ const Step1Main = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+    setFormErrors((currentErrors) => {
+      if (!currentErrors[name]) return currentErrors;
+
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[name];
+      return nextErrors;
+    });
     dispatch(
       updateField({
         name,
@@ -301,15 +309,171 @@ const Step1Main = () => {
     );
   };
 
+  const validateForm = () => {
+    const nextErrors = {};
+    const requiredFields = [
+      ["fullName", "Your name is required."],
+      ["nic", "ID or passport number is required."],
+      ["emailAddress", "Email address is required."],
+      ["phoneNumber", "Phone number is required."],
+      ["representingCompany", "Company or group is required."],
+      ["visitorClassification", "Visitor type is required."],
+      ["proposedVisitDate", "Visit date is required."],
+      ["purposeOfVisitation", "Visit purpose is required."],
+      ["visitingArea", "Visit location is required."],
+    ];
+
+    requiredFields.forEach(([field, message]) => {
+      if (!String(formData[field] || "").trim()) {
+        nextErrors[field] = message;
+      }
+    });
+
+    if (
+      formData.emailAddress &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(formData.emailAddress).trim())
+    ) {
+      nextErrors.emailAddress = "Enter a valid email address.";
+    }
+
+    if (formData.phoneNumber) {
+      const normalizedPhone = String(formData.phoneNumber).replace(
+        /[\s()-]/g,
+        "",
+      );
+      if (!/^\+?\d{8,15}$/.test(normalizedPhone)) {
+        nextErrors.phoneNumber = "Enter a valid phone number.";
+      }
+    }
+
+    if (formData.proposedVisitDate) {
+      const selectedDate = new Date(`${formData.proposedVisitDate}T00:00:00`);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (Number.isNaN(selectedDate.getTime())) {
+        nextErrors.proposedVisitDate = "Enter a valid visit date.";
+      } else if (selectedDate < today) {
+        nextErrors.proposedVisitDate = "Visit date cannot be in the past.";
+      }
+    }
+
+    const visitorRowErrors = {};
+    (formData.visitors || []).forEach((visitor) => {
+      const hasContent = [visitor.fullName, visitor.nic, visitor.contact].some(
+        (entry) => String(entry || "").trim(),
+      );
+
+      if (!hasContent) {
+        return;
+      }
+
+      const rowErrors = {};
+      if (!String(visitor.fullName || "").trim()) {
+        rowErrors.fullName = "Visitor name is required.";
+      }
+      if (!String(visitor.nic || "").trim()) {
+        rowErrors.nic = "Visitor ID or passport number is required.";
+      }
+      if (!String(visitor.contact || "").trim()) {
+        rowErrors.contact = "Visitor phone number is required.";
+      } else {
+        const normalizedPhone = String(visitor.contact).replace(/[\s()-]/g, "");
+        if (!/^\+?\d{8,15}$/.test(normalizedPhone)) {
+          rowErrors.contact = "Enter a valid visitor phone number.";
+        }
+      }
+
+      if (Object.keys(rowErrors).length > 0) {
+        visitorRowErrors[visitor.id] = rowErrors;
+      }
+    });
+
+    const equipmentRowErrors = {};
+    (formData.equipment || []).forEach((item) => {
+      const hasContent = [item.itemName, item.quantity].some((entry) =>
+        String(entry || "").trim(),
+      );
+
+      if (!hasContent) {
+        return;
+      }
+
+      const rowErrors = {};
+      if (!String(item.itemName || "").trim()) {
+        rowErrors.itemName = "Item name is required.";
+      }
+
+      const quantity = Number(item.quantity);
+      if (!String(item.quantity || "").trim()) {
+        rowErrors.quantity = "Quantity is required.";
+      } else if (!Number.isInteger(quantity) || quantity < 1) {
+        rowErrors.quantity = "Quantity must be at least 1.";
+      }
+
+      if (Object.keys(rowErrors).length > 0) {
+        equipmentRowErrors[item.id] = rowErrors;
+      }
+    });
+
+    if (Object.keys(visitorRowErrors).length > 0) {
+      nextErrors.visitors = visitorRowErrors;
+    }
+
+    if (Object.keys(equipmentRowErrors).length > 0) {
+      nextErrors.equipment = equipmentRowErrors;
+    }
+
+    return nextErrors;
+  };
+
   const handleAddVisitor = () => {
     dispatch(addVisitor());
   };
 
   const handleRemoveVisitor = (id) => {
+    setFormErrors((currentErrors) => {
+      if (!currentErrors.visitors?.[id]) return currentErrors;
+
+      const nextErrors = { ...currentErrors };
+      const nextVisitorErrors = { ...nextErrors.visitors };
+      delete nextVisitorErrors[id];
+
+      if (Object.keys(nextVisitorErrors).length > 0) {
+        nextErrors.visitors = nextVisitorErrors;
+      } else {
+        delete nextErrors.visitors;
+      }
+
+      return nextErrors;
+    });
     dispatch(removeVisitor(id));
   };
 
   const handleUpdateVisitor = (id, field, value) => {
+    setFormErrors((currentErrors) => {
+      const rowErrors = currentErrors.visitors?.[id];
+      if (!rowErrors?.[field]) return currentErrors;
+
+      const nextErrors = { ...currentErrors };
+      const nextVisitorErrors = { ...nextErrors.visitors };
+      const nextRowErrors = { ...nextVisitorErrors[id] };
+      delete nextRowErrors[field];
+
+      if (Object.keys(nextRowErrors).length > 0) {
+        nextVisitorErrors[id] = nextRowErrors;
+      } else {
+        delete nextVisitorErrors[id];
+      }
+
+      if (Object.keys(nextVisitorErrors).length > 0) {
+        nextErrors.visitors = nextVisitorErrors;
+      } else {
+        delete nextErrors.visitors;
+      }
+
+      return nextErrors;
+    });
     dispatch(updateVisitorDetail({ id, field, value }));
   };
 
@@ -318,10 +482,48 @@ const Step1Main = () => {
   };
 
   const handleRemoveEquipment = (id) => {
+    setFormErrors((currentErrors) => {
+      if (!currentErrors.equipment?.[id]) return currentErrors;
+
+      const nextErrors = { ...currentErrors };
+      const nextEquipmentErrors = { ...nextErrors.equipment };
+      delete nextEquipmentErrors[id];
+
+      if (Object.keys(nextEquipmentErrors).length > 0) {
+        nextErrors.equipment = nextEquipmentErrors;
+      } else {
+        delete nextErrors.equipment;
+      }
+
+      return nextErrors;
+    });
     dispatch(removeEquipment(id));
   };
 
   const handleUpdateEquipment = (id, field, value) => {
+    setFormErrors((currentErrors) => {
+      const rowErrors = currentErrors.equipment?.[id];
+      if (!rowErrors?.[field]) return currentErrors;
+
+      const nextErrors = { ...currentErrors };
+      const nextEquipmentErrors = { ...nextErrors.equipment };
+      const nextRowErrors = { ...nextEquipmentErrors[id] };
+      delete nextRowErrors[field];
+
+      if (Object.keys(nextRowErrors).length > 0) {
+        nextEquipmentErrors[id] = nextRowErrors;
+      } else {
+        delete nextEquipmentErrors[id];
+      }
+
+      if (Object.keys(nextEquipmentErrors).length > 0) {
+        nextErrors.equipment = nextEquipmentErrors;
+      } else {
+        delete nextErrors.equipment;
+      }
+
+      return nextErrors;
+    });
     dispatch(updateEquipmentDetail({ id, field, value }));
   };
 
@@ -338,6 +540,14 @@ const Step1Main = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submit started. Equipment:", equipment);
+
+    const nextErrors = validateForm();
+    if (Object.keys(nextErrors).length > 0) {
+      setFormErrors(nextErrors);
+      return;
+    }
+
+    setFormErrors({});
     dispatch(setStatus("submitting"));
 
     try {
@@ -581,10 +791,18 @@ const Step1Main = () => {
         onSubmit={handleSubmit}
         className="flex-1 min-h-0 space-y-10 overflow-y-auto pr-2 custom-scrollbar"
       >
-        <VisitorOverview data={formData} onChange={handleInputChange} />
+        <VisitorOverview
+          data={formData}
+          onChange={handleInputChange}
+          errors={formErrors}
+        />
 
         <div className="border-t border-white/5 pt-12">
-          <VehicleDetails data={formData} onChange={handleInputChange} />
+          <VehicleDetails
+            data={formData}
+            onChange={handleInputChange}
+            errors={formErrors}
+          />
         </div>
 
         <div className="border-t border-white/5 pt-8">
@@ -593,6 +811,7 @@ const Step1Main = () => {
             onAdd={handleAddVisitor}
             onRemove={handleRemoveVisitor}
             onChange={handleUpdateVisitor}
+            errors={formErrors.visitors || {}}
           />
         </div>
 
@@ -602,6 +821,7 @@ const Step1Main = () => {
             onAdd={handleAddEquipment}
             onRemove={handleRemoveEquipment}
             onChange={handleUpdateEquipment}
+            errors={formErrors.equipment || {}}
           />
         </div>
 

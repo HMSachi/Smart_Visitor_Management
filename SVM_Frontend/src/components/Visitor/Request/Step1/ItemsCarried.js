@@ -2,7 +2,14 @@ import React from "react";
 import { Package, Plus, X } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 
-const ItemsCarried = ({ items, onAdd, onRemove, onChange, isLight }) => {
+const ItemsCarried = ({
+  items,
+  onAdd,
+  onRemove,
+  onChange,
+  isLight,
+  errors = {},
+}) => {
   return (
     <section className="animate-fade-in stagger-item grid grid-cols-1 gap-3 p-1 xl:grid-cols-[190px_minmax(0,1fr)]">
       <div className="xl:sticky xl:top-28 self-start">
@@ -64,14 +71,30 @@ const ItemsCarried = ({ items, onAdd, onRemove, onChange, isLight }) => {
                     onChange={(e) =>
                       onChange(item.id, "itemName", e.target.value)
                     }
+                    aria-invalid={Boolean(errors[item.id]?.itemName)}
+                    aria-describedby={
+                      errors[item.id]?.itemName
+                        ? `item-${item.id}-name-error`
+                        : undefined
+                    }
                     placeholder="e.g. Laptop"
                     className={`w-full rounded-none px-3 py-2 text-[10px] focus:outline-none transition-all font-medium ${
                       isLight
                         ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400"
-                        : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
+                        : errors[item.id]?.itemName
+                          ? "bg-white/[0.03] border border-red-500/70 text-white/90 focus:border-red-400 placeholder:text-gray-600"
+                          : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
                     }`}
                   />
                 </div>
+                {errors[item.id]?.itemName && (
+                  <p
+                    id={`item-${item.id}-name-error`}
+                    className="text-[10px] text-red-400 font-medium leading-snug"
+                  >
+                    {errors[item.id].itemName}
+                  </p>
+                )}
               </div>
 
               {/* Quantity */}
@@ -88,14 +111,30 @@ const ItemsCarried = ({ items, onAdd, onRemove, onChange, isLight }) => {
                     onChange={(e) =>
                       onChange(item.id, "quantity", e.target.value)
                     }
+                    aria-invalid={Boolean(errors[item.id]?.quantity)}
+                    aria-describedby={
+                      errors[item.id]?.quantity
+                        ? `item-${item.id}-quantity-error`
+                        : undefined
+                    }
                     placeholder="e.g. 1"
                     className={`w-full rounded-none px-3 py-2 text-[10px] focus:outline-none transition-all font-medium ${
                       isLight
                         ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400"
-                        : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
+                        : errors[item.id]?.quantity
+                          ? "bg-white/[0.03] border border-red-500/70 text-white/90 focus:border-red-400 placeholder:text-gray-600"
+                          : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
                     }`}
                   />
                 </div>
+                {errors[item.id]?.quantity && (
+                  <p
+                    id={`item-${item.id}-quantity-error`}
+                    className="text-[10px] text-red-400 font-medium leading-snug"
+                  >
+                    {errors[item.id].quantity}
+                  </p>
+                )}
               </div>
             </div>
           ))}

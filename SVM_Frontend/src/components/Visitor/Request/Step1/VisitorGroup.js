@@ -2,7 +2,14 @@ import React from "react";
 import { Users, User, CreditCard, Phone, Plus, X } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 
-const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
+const VisitorGroup = ({
+  visitors,
+  onAdd,
+  onRemove,
+  onChange,
+  isLight,
+  errors = {},
+}) => {
   return (
     <section className="animate-fade-in stagger-item grid grid-cols-1 gap-3 xl:grid-cols-[190px_minmax(0,1fr)]">
       <div className="xl:sticky xl:top-28 self-start">
@@ -64,14 +71,30 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
                     onChange={(e) =>
                       onChange(visitor.id, "fullName", e.target.value)
                     }
+                    aria-invalid={Boolean(errors[visitor.id]?.fullName)}
+                    aria-describedby={
+                      errors[visitor.id]?.fullName
+                        ? `visitor-${visitor.id}-fullName-error`
+                        : undefined
+                    }
                     placeholder="e.g. John Doe"
                     className={`w-full rounded-none px-3 py-2 text-[10px] focus:outline-none transition-all font-medium ${
                       isLight
                         ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400"
-                        : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
+                        : errors[visitor.id]?.fullName
+                          ? "bg-white/[0.03] border border-red-500/70 text-white/90 focus:border-red-400 placeholder:text-gray-600"
+                          : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
                     }`}
                   />
                 </div>
+                {errors[visitor.id]?.fullName && (
+                  <p
+                    id={`visitor-${visitor.id}-fullName-error`}
+                    className="text-[10px] text-red-400 font-medium leading-snug"
+                  >
+                    {errors[visitor.id].fullName}
+                  </p>
+                )}
               </div>
 
               {/* NIC / Passport */}
@@ -87,14 +110,30 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
                     onChange={(e) =>
                       onChange(visitor.id, "nic", e.target.value)
                     }
+                    aria-invalid={Boolean(errors[visitor.id]?.nic)}
+                    aria-describedby={
+                      errors[visitor.id]?.nic
+                        ? `visitor-${visitor.id}-nic-error`
+                        : undefined
+                    }
                     placeholder="Enter ID or passport number"
                     className={`w-full rounded-none px-3 py-2 text-[10px] focus:outline-none transition-all font-medium ${
                       isLight
                         ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400"
-                        : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
+                        : errors[visitor.id]?.nic
+                          ? "bg-white/[0.03] border border-red-500/70 text-white/90 focus:border-red-400 placeholder:text-gray-600"
+                          : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
                     }`}
                   />
                 </div>
+                {errors[visitor.id]?.nic && (
+                  <p
+                    id={`visitor-${visitor.id}-nic-error`}
+                    className="text-[10px] text-red-400 font-medium leading-snug"
+                  >
+                    {errors[visitor.id].nic}
+                  </p>
+                )}
               </div>
 
               {/* Contact Number */}
@@ -110,14 +149,30 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, isLight }) => {
                     onChange={(e) =>
                       onChange(visitor.id, "contact", e.target.value)
                     }
+                    aria-invalid={Boolean(errors[visitor.id]?.contact)}
+                    aria-describedby={
+                      errors[visitor.id]?.contact
+                        ? `visitor-${visitor.id}-contact-error`
+                        : undefined
+                    }
                     placeholder="e.g. +94 7X XXX XXXX"
                     className={`w-full rounded-none px-3 py-2 text-[10px] focus:outline-none transition-all font-medium ${
                       isLight
                         ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400"
-                        : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
+                        : errors[visitor.id]?.contact
+                          ? "bg-white/[0.03] border border-red-500/70 text-white/90 focus:border-red-400 placeholder:text-gray-600"
+                          : "bg-white/[0.03] border border-white/20 text-white/90 focus:border-primary/60 placeholder:text-gray-600"
                     }`}
                   />
                 </div>
+                {errors[visitor.id]?.contact && (
+                  <p
+                    id={`visitor-${visitor.id}-contact-error`}
+                    className="text-[10px] text-red-400 font-medium leading-snug"
+                  >
+                    {errors[visitor.id].contact}
+                  </p>
+                )}
               </div>
             </div>
           ))}
