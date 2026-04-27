@@ -71,19 +71,6 @@ const Header = () => {
         {/* Theme toggle */}
         <ThemeToggleButton />
 
-        {/* Bell */}
-        <button
-          className="relative w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-          style={{
-            background: "var(--color-surface-1)",
-            border: "1px solid var(--color-border-soft)",
-          }}
-          title="Notifications"
-        >
-          <Bell size={17} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary" />
-        </button>
-
         {/* Divider — hidden on xs */}
         <div className="hidden sm:block w-px h-6 bg-[var(--color-border-soft)]" />
 
