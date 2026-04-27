@@ -489,13 +489,13 @@ const VisitRequests = () => {
                           key={req.VVR_Request_id}
                           className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                         >
-                          <td className="px-4 py-4 text-center text-primary font-mono text-[11px] tracking-[0.14em] font-bold">
+                          <td className="px-4 py-4 text-center text-primary text-[11px] tracking-[0.14em] font-medium">
                             #{req.VVR_Request_id}
                           </td>
                           <td className="px-4 py-4 text-center">
                             <div className="flex items-center justify-center gap-2">
                               <span
-                                className={`font-semibold text-[12px] uppercase tracking-[0.14em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                                className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                               >
                                 {getVisitorDisplayName(req)}
                               </span>
@@ -505,7 +505,7 @@ const VisitRequests = () => {
                             <div
                               className={`flex flex-col items-center justify-center gap-1.5 text-[12px] ${isLight ? "text-gray-500" : "text-white/70"}`}
                             >
-                              <span className="font-semibold tracking-wide">
+                              <span className="font-medium tracking-wide">
                                 {req.VVR_Visit_Date
                                   ? req.VVR_Visit_Date.split("T")[0].split(
                                       " ",
@@ -518,7 +518,7 @@ const VisitRequests = () => {
                             <div className="max-w-[170px] mx-auto">
                               <p
                                 title={req.VVR_Purpose || "No purpose specified"}
-                                className={`font-semibold uppercase tracking-[0.14em] text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
+                                className={`font-medium uppercase tracking-[0.14em] text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
                               >
                                 {req.VVR_Purpose || "-"}
                               </p>

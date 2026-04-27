@@ -433,7 +433,7 @@ const VisitorTable = ({
                       <p className="text-white capitalize text-[12px] font-medium tracking-widest mb-0.5 leading-tight">
                         {visitor.name}
                       </p>
-                      <p className="text-gray-300/80 capitalize text-[11px] font-medium tracking-widest font-mono">
+                      <p className="text-gray-300/80 capitalize text-[11px] font-medium tracking-widest">
                         {visitor.batchId}
                       </p>
                     </div>
@@ -521,7 +521,7 @@ const VisitorTable = ({
                                     <span className="text-white text-[12px] font-medium capitalize tracking-widest block mb-0.5 group-hover/mem:text-primary transition-colors">
                                       {idx + 2}. {member.name}
                                     </span>
-                                    <span className="text-gray-300/30 text-[11px] font-medium capitalize tracking-[0.2em] block font-mono">
+                                    <span className="text-gray-300/30 text-[11px] font-medium capitalize tracking-[0.2em] block">
                                       NIC_: {member.nic}
                                     </span>
                                   </div>
@@ -529,7 +529,7 @@ const VisitorTable = ({
                                     <span className="text-[12px] text-gray-300/80 font-medium capitalize tracking-widest block mb-0.5">
                                       Contact
                                     </span>
-                                    <span className="text-white/90 text-[11px] font-medium font-mono">
+                                    <span className="text-white/90 text-[11px] font-medium">
                                       {member.contact}
                                     </span>
                                   </div>

@@ -192,22 +192,22 @@ const BlacklistTable = () => {
                   }
                 >
                   <th
-                    className={`px-4 md:px-5 py-4 text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Visitor
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-4 text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Blacklist Reason
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-4 text-[10px] font-bold tracking-[0.2em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Date Added
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-4 text-[10px] font-bold tracking-[0.2em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Risk Level
                   </th>
@@ -245,7 +245,7 @@ const BlacklistTable = () => {
                       >
                         {/* Visitor */}
                         <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none ${isLight ? "border-gray-200" : "border-white/5"}`}
+                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
                         >
                           <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
                             Visitor
@@ -258,7 +258,7 @@ const BlacklistTable = () => {
                                 {item.VB_Name}
                               </p>
                               <p
-                                className={`text-[12px] font-medium tracking-[0.2em] font-mono lowercase ${isLight ? "text-gray-500" : "text-gray-300/80"}`}
+                                className={`text-[12px] font-medium tracking-[0.2em] lowercase ${isLight ? "text-gray-500" : "text-gray-300/80"}`}
                               >
                                 {item.VB_Email || "no-email"}
                               </p>
@@ -268,7 +268,7 @@ const BlacklistTable = () => {
 
                         {/* Reason */}
                         <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none ${isLight ? "border-gray-200" : "border-white/5"}`}
+                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
                         >
                           <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
                             Blacklist Reason
@@ -284,7 +284,7 @@ const BlacklistTable = () => {
 
                         {/* Date Added */}
                         <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-center ${isLight ? "border-gray-200" : "border-white/5"}`}
+                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-center text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
                         >
                           <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5 text-left">
                             Date Added
@@ -308,7 +308,7 @@ const BlacklistTable = () => {
 
                         {/* Risk Level */}
                         <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none ${isLight ? "border-gray-200" : "border-white/5"}`}
+                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
                         >
                           <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
                             Risk Level
@@ -320,7 +320,7 @@ const BlacklistTable = () => {
 
                         {/* Actions */}
                         <td className="block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 text-right">
-                          <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5 text-left">
+                          <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5 text-left">
                             Action
                           </span>
                           <div className="flex justify-start sm:justify-end gap-2.5">

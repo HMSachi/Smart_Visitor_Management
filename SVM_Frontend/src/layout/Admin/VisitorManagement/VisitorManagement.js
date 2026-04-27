@@ -162,22 +162,22 @@ const VisitorManagement = () => {
                   <TableHead className="bg-black/40">
                     <TableRow>
                       <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        ID
+                        <span className="text-[13px]">ID</span>
                       </TableCell>
                       <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        Visitor
+                        <span className="text-[13px]">Visitor</span>
                       </TableCell>
                       <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        Credentials
+                        <span className="text-[13px]">Credentials</span>
                       </TableCell>
                       <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        Company
+                        <span className="text-[13px]">Company</span>
                       </TableCell>
                       <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        Destination
+                        <span className="text-[13px]">Destination</span>
                       </TableCell>
                       <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        Status
+                        <span className="text-[13px]">Status</span>
                       </TableCell>
                     </TableRow>
                   </TableHead>

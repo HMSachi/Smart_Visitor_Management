@@ -11,11 +11,11 @@ const HistoryTable = ({ history }) => {
 <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
                 <thead className="hidden sm:table-header-group">
                     <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] text-[13px] font-bold uppercase tracking-[0.2em]">
-                        <th className="px-8 py-3 w-16"></th>
-                        <th className="px-8 py-3">Visitor Name</th>
-                        <th className="px-8 py-3">Visit Date</th>
-                        <th className="px-8 py-3">Purpose</th>
-                        <th className="px-8 py-3 text-right">Status</th>
+                        <th className="px-8 py-3 w-16 text-[13px]"> </th>
+                        <th className="px-8 py-3 text-[13px]">Visitor Name</th>
+                        <th className="px-8 py-3 text-[13px]">Visit Date</th>
+                        <th className="px-8 py-3 text-[13px]">Purpose</th>
+                        <th className="px-8 py-3 text-right text-[13px]">Status</th>
                     </tr>
                 </thead>
                 <tbody className="block sm:table-row-group">
