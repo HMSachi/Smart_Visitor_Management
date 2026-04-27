@@ -14,7 +14,6 @@ import { GetVisitRequestsByVisitor } from "../../../actions/VisitRequestAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
 import {
-  X,
   Calendar,
   MapPin,
   CheckCircle2,
@@ -24,7 +23,6 @@ import {
   AlertCircle,
   QrCode,
 } from "lucide-react";
-import { motion } from "framer-motion";
 
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -82,8 +80,6 @@ const MyRequests = () => {
   const [visitorName, setVisitorName] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [reviewRequest, setReviewRequest] = useState(null);
 
   useEffect(() => {
     const loadVisitorId = async () => {
@@ -158,14 +154,13 @@ const MyRequests = () => {
     });
   };
 
-  const openReviewModal = (request) => {
-    setReviewRequest(request);
-    setIsReviewModalOpen(true);
-  };
-
-  const closeReviewModal = () => {
-    setIsReviewModalOpen(false);
-    setReviewRequest(null);
+  const handleOpenReviewPage = (request) => {
+    navigate(`/visitor/request-details/${request.VVR_Request_id}`, {
+      state: {
+        request,
+        visitorName,
+      },
+    });
   };
 
   const filteredRequests = visitRequestsByVis
@@ -305,7 +300,7 @@ const MyRequests = () => {
                         >
                           {canReviewRequest(req.VVR_Status) && (
                             <button
-                              onClick={() => openReviewModal(req)}
+                              onClick={() => handleOpenReviewPage(req)}
                               className="px-3 py-1.5 border border-primary/30 bg-primary/10 text-primary rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] hover:bg-primary hover:text-white transition-all"
                               title="Review Submitted Details"
                             >
@@ -333,116 +328,6 @@ const MyRequests = () => {
         </div>
       </div>
 
-      {/* Review Modal (Visitor side) */}
-      {isReviewModalOpen && reviewRequest && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 md:p-6 bg-black/40 backdrop-blur-sm animate-fade-in overflow-y-auto">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-white border border-gray-100 rounded-[40px] shadow-2xl w-full max-w-xl overflow-hidden relative my-4 md:my-8 max-h-[calc(100vh-2rem)] md:max-h-[calc(100vh-4rem)] flex flex-col"
-          >
-            <div className="p-8 md:p-10 border-b border-gray-100 bg-[#F8F9FA] flex justify-between items-center">
-              <div>
-                <span className="text-primary font-bold uppercase tracking-[0.3em] text-[10px]">
-                  Submitted Request
-                </span>
-                <h2 className="text-2xl font-black text-[#1A1A1A] mt-1 uppercase tracking-tight">
-                  Review Details
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={closeReviewModal}
-                className="p-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-400 hover:text-primary rounded-2xl transition-all shadow-sm"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-8 md:p-10 space-y-8 overflow-y-auto">
-              <div className="grid grid-cols-1 gap-8">
-                <div className="space-y-3">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
-                    Protocol ID
-                  </label>
-                  <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-6 py-4 text-[#1A1A1A] text-sm font-bold tracking-widest">
-                    #{reviewRequest.VVR_Request_id || "N/A"}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
-                    Visitor
-                  </label>
-                  <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-6 py-4 text-[#1A1A1A] text-sm font-bold tracking-widest">
-                    {visitorName || "N/A"}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
-                    Visit Date
-                  </label>
-                  <div className="relative group">
-                    <Calendar
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
-                      size={18}
-                    />
-                    <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest">
-                      {reviewRequest.VVR_Visit_Date
-                        ? reviewRequest.VVR_Visit_Date.split("T")[0]
-                        : "N/A"}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
-                    Visiting Areas
-                  </label>
-                  <div className="relative group">
-                    <MapPin
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
-                      size={18}
-                    />
-                    <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest">
-                      {reviewRequest.VVR_Places_to_Visit || "N/A"}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
-                    Submitted Purpose
-                  </label>
-                  <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-6 py-4 text-[#1A1A1A] text-[13px] font-medium tracking-wide min-h-[120px] whitespace-pre-wrap break-words">
-                    {reviewRequest.VVR_Purpose || "N/A"}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
-                    Current Status
-                  </label>
-                  <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest">
-                    {(reviewRequest.VVR_Status || "PENDING").toString()}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex pt-4">
-                <button
-                  type="button"
-                  onClick={closeReviewModal}
-                  className="w-full py-4 bg-white border border-gray-200 rounded-2xl text-gray-500 font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-gray-700 hover:border-gray-300 transition-all shadow-sm"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
     </div>
   );
 };
