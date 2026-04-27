@@ -290,11 +290,13 @@ const ContactAllVisitors = () => {
 
   // Client-side filtering based on search ID/Name
   const filteredVisitors = visitorsByCP
-    ? visitorsByCP.filter(
-        (visitor) =>
-          visitor.VV_Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          String(visitor.VV_Visitor_id).includes(searchTerm),
-      )
+    ? visitorsByCP
+        .filter(
+          (visitor) =>
+            visitor.VV_Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            String(visitor.VV_Visitor_id).includes(searchTerm),
+        )
+        .sort((a, b) => Number(b.VV_Visitor_id) - Number(a.VV_Visitor_id))
     : [];
 
   return (

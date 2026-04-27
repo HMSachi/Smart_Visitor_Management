@@ -113,14 +113,16 @@ const RequestsInboxMain = () => {
 
   const sourceRequests = mappedRequests;
 
-  const filteredRequests = sourceRequests.filter((req) => {
-    const matchesSearch =
-      req.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "All" || req.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filteredRequests = sourceRequests
+    .filter((req) => {
+      const matchesSearch =
+        req.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        req.batchId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        req.id.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "All" || req.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => Number(b.id) - Number(a.id));
 
   const handleSearchChange = (term) => {
     dispatch(setSearchTerm(term));

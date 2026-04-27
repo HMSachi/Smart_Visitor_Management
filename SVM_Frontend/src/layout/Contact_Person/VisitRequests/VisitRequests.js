@@ -270,11 +270,13 @@ const VisitRequests = () => {
   };
 
   const filteredRequests = visitRequestsByCP
-    ? visitRequestsByCP.filter(
-        (req) =>
-          String(req.VVR_Request_id).includes(searchTerm) ||
-          req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+    ? visitRequestsByCP
+        .filter(
+          (req) =>
+            String(req.VVR_Request_id).includes(searchTerm) ||
+            req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
+        )
+        .sort((a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id))
     : [];
 
   const activeVisitors = (visitorsByCP || []).filter((visitor) => {
