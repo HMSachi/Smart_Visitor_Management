@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { CheckSquare, QrCode, Send, Loader2, Download } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { AddGatePass, GetAllGatePasses } from "../../../actions/GatePassAction";
+import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
 const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
   const dispatch = useDispatch();
@@ -11,6 +12,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [wasSent, setWasSent] = useState(false);
   const [error, setError] = useState(null);
+  const [encodedQrValue, setEncodedQrValue] = useState("");
 
   useEffect(() => {
     if (isOpen) setWasSent(false);
@@ -98,28 +100,43 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
       visitorData?.raw?.VV_Visiting_places ||
       "N/A";
 
-  const qrPayload = {
-    // Keep pass id for the existing scanner verification flow.
-    id: gatePassId,
-    Name:
-      visitorData?.name ||
-      visitorData?.raw?.VV_Name ||
-      visitorData?.raw?.VVR_Name ||
-      "N/A",
-    "NIC/Passport_No":
-      visitorData?.nic || visitorData?.raw?.VV_NIC_Passport_NO || "N/A",
-    Email: visitorData?.email || visitorData?.raw?.VV_Email || "N/A",
-    "Phone number": visitorData?.contact || visitorData?.raw?.VV_Phone || "N/A",
-    Company:
-      visitorData?.representingCompany || visitorData?.raw?.VV_Company || "N/A",
-    "Visiting purpose":
-      visitorData?.visitingPurpose ||
-      visitorData?.raw?.VVR_Purpose ||
-      visitorData?.raw?.VVR_Visiting_Purpose ||
-      visitorData?.raw?.VV_Visiting_Purpose ||
-      "N/A",
-    "Visiting area": visitingArea,
-  };
+  const qrPayload = useMemo(
+    () => ({
+      // Keep payload intentionally minimal so encrypted QR stays easy to scan.
+      id: gatePassId,
+      v: 1,
+      iat: Date.now(),
+    }),
+    [gatePassId],
+  );
+
+  useEffect(() => {
+    const buildSecureQr = async () => {
+      if (!gatePassId) {
+        console.log("[QRSuccessModal] No gatePassId, skipping encoding");
+        setEncodedQrValue("");
+        return;
+      }
+
+      try {
+        console.log(
+          "[QRSuccessModal] Building secure QR for pass:",
+          gatePassId,
+        );
+        const encoded = await encodeSecureQrPayload(qrPayload);
+        console.log("[QRSuccessModal] QR encoded successfully");
+        setEncodedQrValue(encoded);
+      } catch (err) {
+        console.error(
+          "[QRSuccessModal] Failed to encode secure QR payload:",
+          err,
+        );
+        setEncodedQrValue("");
+      }
+    };
+
+    buildSecureQr();
+  }, [gatePassId, qrPayload]);
 
   return (
     <AnimatePresence>
@@ -215,7 +232,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                   <div className="flex flex-col items-center">
                     <div className="relative group/qr p-6 mas-glass rounded-[32px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 qr-svg-container">
                       <QRCodeSVG
-                        value={JSON.stringify(qrPayload)}
+                        value={encodedQrValue || "SVMQR_PENDING"}
                         size={200}
                         level="H"
                         includeMargin={false}

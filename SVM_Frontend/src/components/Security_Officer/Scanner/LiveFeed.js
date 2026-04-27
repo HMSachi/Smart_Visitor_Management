@@ -18,6 +18,10 @@ import {
 } from "lucide-react";
 import { GetGatePassById } from "../../../actions/GatePassAction";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  decodeSecureQrPayload,
+  isSecureQrPayload,
+} from "../../../utils/secureQrPayload";
 
 const LiveFeed = () => {
   const dispatch = useDispatch();
@@ -119,25 +123,47 @@ const LiveFeed = () => {
     setScanMessage("QR code found. Checking the visitor details now...");
 
     try {
+      console.log("[LiveFeed] Scanned QR data length:", data?.length);
+      console.log("[LiveFeed] Scanned QR starts with:", data?.substring(0, 20));
+
       let passId = data;
       let parsedQrData = null;
 
-      // Try to parse if it's JSON from our QRSuccessModal
-      try {
-        const parsed = JSON.parse(data);
-        if (parsed && typeof parsed === "object") {
-          parsedQrData = parsed;
-          setQrData(parsed);
+      if (isSecureQrPayload(data)) {
+        console.log("[LiveFeed] Detected secure QR format");
+        const decoded = await decodeSecureQrPayload(data);
+        if (decoded && typeof decoded === "object") {
+          parsedQrData = decoded;
+          setQrData(decoded);
         }
-        if (parsed.id) passId = parsed.id;
-      } catch (e) {
-        // Not JSON, use raw data as pass ID
-        console.log("QR data is not JSON, treating as gate pass ID:", data);
+        if (decoded?.id) {
+          passId = decoded.id;
+        }
+      } else {
+        console.log("[LiveFeed] Not a secure QR, trying legacy format");
+        // Backward compatibility: handle old plain JSON and raw pass ID QR values.
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed && typeof parsed === "object") {
+            parsedQrData = parsed;
+            setQrData(parsed);
+          }
+          if (parsed?.id) {
+            passId = parsed.id;
+          }
+        } catch (e) {
+          console.log(
+            "[LiveFeed] QR data is not JSON, treating as gate pass ID:",
+            data,
+          );
+        }
       }
 
       if (!passId) {
         throw new Error("We could not find a valid pass ID in the QR code.");
       }
+
+      console.log("[LiveFeed] Looking up pass ID:", passId);
 
       // Fetch gate pass details from database
       const result = await dispatch(GetGatePassById(passId));
@@ -153,6 +179,8 @@ const LiveFeed = () => {
       ) {
         details = result;
       }
+
+      console.log("[LiveFeed] Database lookup result:", details);
 
       if (details && details.VGP_Pass_id) {
         // Database validation successful
