@@ -397,22 +397,22 @@ const ContactAllVisitors = () => {
                         Visitor ID
                       </th>
                       <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Visitor Name
                       </th>
                       <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         NIC / Passport
                       </th>
                       <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Company Name
                       </th>
                       <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Visiting Area
                       </th>
@@ -443,38 +443,31 @@ const ContactAllVisitors = () => {
                             <td className="px-4 py-4 text-center text-primary text-[11px] tracking-[0.14em] font-medium">
                               #{visitor.VV_Visitor_id}
                             </td>
-                            <td className="px-4 py-4 text-center">
-                              <div className="flex items-center justify-center gap-2">
-                                <span
-                                  className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
-                                >
-                                  {visitor.VV_Name || "-"}
-                                </span>
-                              </div>
+                            <td className="px-4 py-4 text-left">
+                              <span
+                                className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
+                              >
+                                {visitor.VV_Name || "-"}
+                              </span>
                             </td>
-                            <td className="px-4 py-4 text-center">
+                            <td className="px-4 py-4 text-left">
                               <span
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_NIC_Passport_NO || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-center">
+                            <td className="px-4 py-4 text-left">
                               <span
-                                title={
-                                  visitor.VV_Company || "No company specified"
-                                }
+                                title={visitor.VV_Company || "No company specified"}
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Company || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-center">
+                            <td className="px-4 py-4 text-left">
                               <span
-                                title={
-                                  visitor.VV_Visiting_places ||
-                                  "No visiting area specified"
-                                }
+                                title={visitor.VV_Visiting_places || "No visiting area specified"}
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Visiting_places || "-"}

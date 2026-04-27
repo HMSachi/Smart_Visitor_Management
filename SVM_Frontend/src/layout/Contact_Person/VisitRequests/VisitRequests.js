@@ -453,7 +453,7 @@ const VisitRequests = () => {
                         Request ID
                       </th>
                       <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Visitor
                       </th>
@@ -463,12 +463,12 @@ const VisitRequests = () => {
                         Visit Date
                       </th>
                       <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Purpose
                       </th>
                       <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Visit Areas
                       </th>
@@ -494,14 +494,12 @@ const VisitRequests = () => {
                           <td className="px-4 py-4 text-center text-primary text-[11px] tracking-[0.14em] font-medium">
                             #{req.VVR_Request_id}
                           </td>
-                          <td className="px-4 py-4 text-center">
-                            <div className="flex items-center justify-center gap-2">
-                              <span
-                                className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                              >
-                                {getVisitorDisplayName(req)}
-                              </span>
-                            </div>
+                          <td className="px-4 py-4 text-left">
+                            <span
+                              className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                            >
+                              {getVisitorDisplayName(req)}
+                            </span>
                           </td>
                           <td className="px-4 py-4">
                             <div
@@ -516,8 +514,8 @@ const VisitRequests = () => {
                               </span>
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-center">
-                            <div className="max-w-[170px] mx-auto">
+                          <td className="px-4 py-4 text-left">
+                            <div className="max-w-[170px]">
                               <p
                                 title={req.VVR_Purpose || "No purpose specified"}
                                 className={`font-medium uppercase tracking-[0.14em] text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
@@ -526,17 +524,11 @@ const VisitRequests = () => {
                               </p>
                             </div>
                           </td>
-                          <td className="px-4 py-4 align-top text-center">
+                          <td className="px-4 py-4 align-top text-left">
                             <div
-                              className={`flex flex-col items-center gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
+                              className={`flex flex-col gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
                             >
-                              <div className="flex items-center justify-center gap-2 min-w-0">
-                                <MapPin
-                                  size={12}
-                                  className="opacity-40 shrink-0"
-                                />
-                              </div>
-                              <div className="min-w-0 max-w-[280px] lg:max-w-[360px] mx-auto">
+                              <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
                                 {renderVisitAreas(req)}
                               </div>
                             </div>

@@ -19,6 +19,7 @@ import QRPage from "./layout/Visitor/QR/QR";
 import GatePass from "./layout/Visitor/GatePass/GatePass";
 import InstructionsPage from "./layout/Visitor/Instructions/Instructions";
 import MyRequests from "./layout/Visitor/MyRequests/MyRequests";
+import RequestDetails from "./layout/Visitor/RequestDetails/RequestDetails";
 import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
 import ApprovalManagement from "./layout/Admin/ApprovalManagement/ApprovalManagement";
 import SecurityMonitoringPage from "./layout/Admin/SecurityMonitoring/SecurityMonitoring";
@@ -196,6 +197,7 @@ const AppContent = () => {
           <Route path="/qr" element={<QRPage />} />
           <Route path="/instructions" element={<InstructionsPage />} />
           <Route path="/visitor/my-requests" element={<MyRequests />} />
+          <Route path="/visitor/request-details/:requestId" element={<RequestDetails />} />
           <Route path="/visitor/gate-pass/:gatePassId" element={<GatePass />} />
 
           {/* Admin Routes */}

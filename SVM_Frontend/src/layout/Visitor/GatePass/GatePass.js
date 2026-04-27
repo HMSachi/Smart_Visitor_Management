@@ -9,6 +9,7 @@ import {
   Loader2,
 } from "lucide-react";
 import GatePassService from "../../../services/GatePassService";
+import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
 const GatePass = () => {
   const { gatePassId } = useParams();
@@ -16,6 +17,7 @@ const GatePass = () => {
   const [gatePassData, setGatePassData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [encodedQrValue, setEncodedQrValue] = useState("");
 
   useEffect(() => {
     const fetchGatePass = async () => {
@@ -72,36 +74,37 @@ const GatePass = () => {
   const qrPayload = useMemo(() => {
     if (!gatePassData) return null;
     return {
+      // Keep payload intentionally minimal so encrypted QR stays easy to scan.
       id: gatePassId,
-      Name: visitorName,
-      "NIC/Passport_No":
-        gatePassData.Visitor_NIC ||
-        gatePassData.VV_NIC_Passport_NO ||
-        gatePassData.nicPassport ||
-        "N/A",
-      Email:
-        gatePassData.Visitor_Email ||
-        gatePassData.VV_Email ||
-        gatePassData.email ||
-        "N/A",
-      "Phone number":
-        gatePassData.Visitor_Phone ||
-        gatePassData.VV_Phone ||
-        gatePassData.phone ||
-        "N/A",
-      Company:
-        gatePassData.Visitor_Company ||
-        gatePassData.VV_Company ||
-        gatePassData.company ||
-        "N/A",
-      "Visiting purpose":
-        gatePassData.VVR_Purpose ||
-        gatePassData.VVR_Visiting_Purpose ||
-        gatePassData.visitingPurpose ||
-        "N/A",
-      "Visiting area": visitingArea,
+      v: 1,
+      iat: Date.now(),
     };
-  }, [gatePassData, gatePassId, visitorName, visitingArea]);
+  }, [gatePassData, gatePassId]);
+
+  useEffect(() => {
+    const buildSecureQr = async () => {
+      if (!qrPayload) {
+        console.log("[GatePass] No qrPayload, skipping encoding");
+        setEncodedQrValue("");
+        return;
+      }
+
+      try {
+        console.log("[GatePass] Building secure QR with payload:", qrPayload);
+        const encoded = await encodeSecureQrPayload(qrPayload);
+        console.log(
+          "[GatePass] QR encoded successfully, length:",
+          encoded.length,
+        );
+        setEncodedQrValue(encoded);
+      } catch (err) {
+        console.error("[GatePass] Failed to encode secure QR payload:", err);
+        setEncodedQrValue("");
+      }
+    };
+
+    buildSecureQr();
+  }, [qrPayload]);
 
   const handleDownloadQR = () => {
     const svg = document.querySelector(".visitor-qr-svg-container svg");
@@ -201,7 +204,7 @@ const GatePass = () => {
               <>
                 <div className="relative group/qr p-4 mas-glass rounded-[22px] mb-5 shadow-[0_0_35px_rgba(255,255,255,0.08)] transition-all hover:scale-105 visitor-qr-svg-container">
                   <QRCodeSVG
-                    value={JSON.stringify(qrPayload)}
+                    value={encodedQrValue || "SVMQR_PENDING"}
                     size={156}
                     level="H"
                     includeMargin={false}

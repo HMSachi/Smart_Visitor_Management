@@ -1,6 +1,7 @@
 import React from "react";
 import { Package, Plus, X } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
 const ItemsCarried = ({
   items,
@@ -9,7 +10,18 @@ const ItemsCarried = ({
   onChange,
   isLight,
   errors = {},
+  readOnly = false,
 }) => {
+  const location = useLocation();
+  const isContactRequestReview = location.pathname.includes(
+    "/contact_person/request-review",
+  );
+  const isAdminApprovalManagement = location.pathname.includes(
+    "/admin/approval-management",
+  );
+  const isReadOnly =
+    readOnly || isContactRequestReview || isAdminApprovalManagement;
+
   return (
     <section className="animate-fade-in stagger-item grid grid-cols-1 gap-3 p-1 xl:grid-cols-[190px_minmax(0,1fr)]">
       <div className="xl:sticky xl:top-28 self-start">
@@ -27,17 +39,19 @@ const ItemsCarried = ({
         >
           Declared items carried for the visit.
         </p>
-        <button
-          type="button"
-          onClick={onAdd}
-          className={`flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 text-primary rounded-none hover:bg-primary hover:text-white transition-all text-[9px] font-semibold uppercase tracking-[0.18em] group`}
-        >
-          <Plus
-            size={12}
-            className="group-hover:scale-110 transition-transform"
-          />
-          Add item
-        </button>
+        {!isReadOnly && (
+          <button
+            type="button"
+            onClick={onAdd}
+            className={`flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 text-primary rounded-none hover:bg-primary hover:text-white transition-all text-[9px] font-semibold uppercase tracking-[0.18em] group`}
+          >
+            <Plus
+              size={12}
+              className="group-hover:scale-110 transition-transform"
+            />
+            Add item
+          </button>
+        )}
       </div>
 
       <div className="space-y-3">
@@ -47,7 +61,7 @@ const ItemsCarried = ({
               key={item.id}
               className="relative grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3 pt-3 border-t border-white/8 first:border-0 first:pt-0"
             >
-              {items.length > 0 && (
+              {!isReadOnly && items.length > 0 && (
                 <button
                   type="button"
                   onClick={() => onRemove(item.id)}
@@ -68,9 +82,11 @@ const ItemsCarried = ({
                     type="text"
                     name="itemName"
                     value={item.itemName}
-                    onChange={(e) =>
-                      onChange(item.id, "itemName", e.target.value)
-                    }
+                    readOnly={isReadOnly}
+                    onChange={(e) => {
+                      if (isReadOnly) return;
+                      onChange(item.id, "itemName", e.target.value);
+                    }}
                     aria-invalid={Boolean(errors[item.id]?.itemName)}
                     aria-describedby={
                       errors[item.id]?.itemName
@@ -108,9 +124,11 @@ const ItemsCarried = ({
                     name="quantity"
                     min="1"
                     value={item.quantity}
-                    onChange={(e) =>
-                      onChange(item.id, "quantity", e.target.value)
-                    }
+                    readOnly={isReadOnly}
+                    onChange={(e) => {
+                      if (isReadOnly) return;
+                      onChange(item.id, "quantity", e.target.value);
+                    }}
                     aria-invalid={Boolean(errors[item.id]?.quantity)}
                     aria-describedby={
                       errors[item.id]?.quantity
@@ -146,17 +164,19 @@ const ItemsCarried = ({
             <p className="text-gray-500 text-[10px] font-semibold uppercase tracking-[0.18em] mb-3">
               No additional items added yet.
             </p>
-            <button
-              type="button"
-              onClick={onAdd}
-              className={`px-5 py-2.5 rounded-none font-semibold uppercase tracking-[0.18em] text-[10px] transition-all ${
-                isLight
-                  ? "bg-white border border-primary/20 text-primary hover:bg-primary hover:text-white"
-                  : "bg-white/[0.03] border border-white/20 text-white hover:bg-primary hover:border-primary"
-              }`}
-            >
-              Add item
-            </button>
+            {!isReadOnly && (
+              <button
+                type="button"
+                onClick={onAdd}
+                className={`px-5 py-2.5 rounded-none font-semibold uppercase tracking-[0.18em] text-[10px] transition-all ${
+                  isLight
+                    ? "bg-white border border-primary/20 text-primary hover:bg-primary hover:text-white"
+                    : "bg-white/[0.03] border border-white/20 text-white hover:bg-primary hover:border-primary"
+                }`}
+              >
+                Add item
+              </button>
+            )}
           </div>
         )}
       </div>
