@@ -11,7 +11,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 
-const VisitorOverview = ({ data, onChange }) => {
+const VisitorOverview = ({ data, onChange, errors = {} }) => {
   const fields = [
     {
       name: "fullName",
@@ -102,11 +102,22 @@ const VisitorOverview = ({ data, onChange }) => {
                 name={field.name}
                 value={data[field.name]}
                 onChange={onChange}
-                required
+                aria-invalid={Boolean(errors[field.name])}
+                aria-describedby={
+                  errors[field.name] ? `${field.name}-error` : undefined
+                }
                 placeholder={field.placeholder}
-                className="w-full bg-white/[0.03] border border-white/10 rounded-none px-3.5 py-2.5 text-[11px] text-white/90 focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-600 font-medium [color-scheme:dark]"
+                className={`w-full bg-white/[0.03] rounded-none px-3.5 py-2.5 text-[11px] text-white/90 focus:outline-none transition-all placeholder:text-gray-600 font-medium [color-scheme:dark] ${errors[field.name] ? "border border-red-500/70 focus:border-red-400" : "border border-white/10 focus:border-primary/50"}`}
               />
             </div>
+            {errors[field.name] && (
+              <p
+                id={`${field.name}-error`}
+                className="text-[10px] text-red-400 font-medium leading-snug"
+              >
+                {errors[field.name]}
+              </p>
+            )}
           </div>
         ))}
       </div>

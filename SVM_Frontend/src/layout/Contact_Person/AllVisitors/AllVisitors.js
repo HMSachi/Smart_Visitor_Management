@@ -290,11 +290,13 @@ const ContactAllVisitors = () => {
 
   // Client-side filtering based on search ID/Name
   const filteredVisitors = visitorsByCP
-    ? visitorsByCP.filter(
-        (visitor) =>
-          visitor.VV_Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          String(visitor.VV_Visitor_id).includes(searchTerm),
-      )
+    ? visitorsByCP
+        .filter(
+          (visitor) =>
+            visitor.VV_Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            String(visitor.VV_Visitor_id).includes(searchTerm),
+        )
+        .sort((a, b) => Number(b.VV_Visitor_id) - Number(a.VV_Visitor_id))
     : [];
 
   return (
@@ -438,13 +440,13 @@ const ContactAllVisitors = () => {
                             key={visitor.VV_Visitor_id}
                             className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                           >
-                            <td className="px-4 py-4 text-center text-primary font-mono text-[11px] tracking-[0.14em] font-bold">
+                            <td className="px-4 py-4 text-center text-primary text-[11px] tracking-[0.14em] font-medium">
                               #{visitor.VV_Visitor_id}
                             </td>
                             <td className="px-4 py-4 text-center">
                               <div className="flex items-center justify-center gap-2">
                                 <span
-                                  className={`font-semibold text-[12px] uppercase tracking-[0.14em] ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
+                                  className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
                                 >
                                   {visitor.VV_Name || "-"}
                                 </span>
@@ -484,9 +486,13 @@ const ContactAllVisitors = () => {
                                   onClick={() => handleToggleStatus(visitor)}
                                   disabled={isLoading}
                                   title="Click to toggle status"
-                                  className={`px-2.5 py-1 rounded-full text-[9px] uppercase tracking-[0.14em] font-bold transition-all cursor-pointer ${isActive ? "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200" : "bg-red-50 text-primary hover:bg-red-100 border border-red-200"}`}
+                                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm border transition-all cursor-pointer ${
+                                    isActive
+                                      ? "bg-green-500/10 border-green-500/20 text-green-500 hover:bg-green-500/20"
+                                      : "bg-primary/10 border-primary/20 text-primary hover:bg-primary/20"
+                                  }`}
                                 >
-                                  {isActive ? "ACTIVE" : "INACTIVE"}
+                                  {isActive ? "Active" : "Inactive"}
                                 </button>
                               </div>
                             </td>

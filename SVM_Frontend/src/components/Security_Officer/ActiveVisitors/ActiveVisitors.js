@@ -133,11 +133,11 @@ const ActiveVisitorsMain = () => {
                                                     <div className="space-y-1.5">
                                                         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5">
                                                             <Calendar size={12} className="text-primary opacity-70" />
-                                                            <span className="text-white text-[13px] font-mono font-medium tracking-widest">{v.date}</span>
+                                                            <span className="text-white text-[13px] font-medium tracking-widest">{v.date}</span>
                                                         </div>
                                                         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5 ml-2">
                                                             <Clock size={10} className="text-primary opacity-50" />
-                                                            <span className="text-white/70 text-[13px] font-mono font-medium tracking-widest">{v.entryTime}</span>
+                                                            <span className="text-white/70 text-[13px] font-medium tracking-widest">{v.entryTime}</span>
                                                         </div>
                                                         <p className="text-white/80 text-[13px] font-medium uppercase tracking-widest ml-5">via_{v.node}</p>
                                                     </div>
@@ -192,7 +192,7 @@ const ActiveVisitorsMain = () => {
                                                                         <Phone size={14} className="text-primary/80" />
                                                                         <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Contact Protocol</span>
                                                                     </div>
-                                                                    <p className="text-white text-sm font-mono tracking-widest">{v.phone}</p>
+                                                                    <p className="text-white text-sm tracking-widest">{v.phone}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
                                                                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
