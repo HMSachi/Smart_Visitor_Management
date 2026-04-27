@@ -86,7 +86,7 @@ const RequestsTable = ({ requests, onReview }) => {
                 Request ID
               </th>
               <th
-                className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${
+                className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
@@ -100,7 +100,7 @@ const RequestsTable = ({ requests, onReview }) => {
                 Visit Date
               </th>
               <th
-                className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${
+                className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
@@ -139,7 +139,7 @@ const RequestsTable = ({ requests, onReview }) => {
                   </td>
 
                   {/* Visitor Name */}
-                  <td className="px-4 py-4 text-center">
+                  <td className="px-4 py-4 text-left">
                     <span
                       className={`font-medium text-[12px] uppercase tracking-[0.14em] ${
                         isLight ? "text-[#1A1A1A]" : "text-white"
@@ -161,8 +161,8 @@ const RequestsTable = ({ requests, onReview }) => {
                   </td>
 
                   {/* Purpose */}
-                  <td className="px-4 py-4 text-center">
-                    <div className="max-w-[200px] mx-auto">
+                  <td className="px-4 py-4 text-left">
+                    <div className="max-w-[200px]">
                       <p
                         title={
                           visitor.rawRequest?.VVR_Purpose ||
