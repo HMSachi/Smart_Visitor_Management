@@ -14,6 +14,7 @@ import { GetVisitRequestsByVisitor } from "../../../actions/VisitRequestAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
 import {
+  ClipboardList,
   Calendar,
   MapPin,
   CheckCircle2,
@@ -23,6 +24,7 @@ import {
   AlertCircle,
   QrCode,
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -186,16 +188,16 @@ const MyRequests = () => {
           </div>
         </header>
 
-        <div className="bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div>
           {isLoading ? (
-            <div className="p-24 flex flex-col items-center justify-center">
+            <div className="bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl p-24 flex flex-col items-center justify-center">
               <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
               <p className="mt-6 text-gray-400 font-bold uppercase tracking-[0.4em] text-xs">
-                Hang tight, we’re loading your visit requests.
+                Hang tight, we're loading your visit requests.
               </p>
             </div>
           ) : error ? (
-            <div className="p-24 text-center">
+            <div className="bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl p-24 text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary border border-primary/20">
                 <AlertCircle size={32} />
               </div>
@@ -203,127 +205,227 @@ const MyRequests = () => {
                 {error}
               </p>
             </div>
-          ) : (
-            <TableContainer
-              component={Paper}
-              className="bg-transparent shadow-none border-none"
-            >
-              <Table size="small" sx={{ minWidth: 560 }}>
-                <TableHead className="bg-white/[0.02]">
-                  <TableRow>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
-                      Protocol ID
-                    </TableCell>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
-                      Date
-                    </TableCell>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
-                      Destination
-                    </TableCell>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
-                      Purpose
-                    </TableCell>
-                    <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
-                      Status
-                    </TableCell>
-                    <TableCell
-                      className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4"
-                      align="right"
-                    >
-                      Controls
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredRequests.length > 0 ? (
-                    filteredRequests.map((req) => (
-                      <TableRow
-                        key={req.VVR_Request_id}
-                        hover
-                        className="hover:bg-white/[0.02] transition-all"
-                      >
-                        <TableCell className="px-4 py-3 border-b-white/5">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                              <Hash size={11} />
-                            </div>
-                            <span className="text-white font-mono tracking-normal text-[13px]">
-                              #{req.VVR_Request_id}
-                            </span>
-                          </div>
+          ) : filteredRequests.length > 0 ? (
+            <>
+              <div className="hidden lg:block bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl mb-4">
+                <TableContainer
+                  component={Paper}
+                  className="bg-transparent shadow-none border-none"
+                >
+                  <Table size="small" sx={{ minWidth: 560 }}>
+                    <TableHead className="bg-white/[0.02]">
+                      <TableRow>
+                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                          Protocol ID
                         </TableCell>
-                        <TableCell className="px-4 py-3 border-b-white/5">
+                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                          Date
+                        </TableCell>
+                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                          Destination
+                        </TableCell>
+                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                          Purpose
+                        </TableCell>
+                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                          Status
+                        </TableCell>
+                        <TableCell
+                          className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4"
+                          align="right"
+                        >
+                          Controls
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredRequests.map((req) => (
+                        <TableRow
+                          key={req.VVR_Request_id}
+                          hover
+                          className="hover:bg-white/[0.02] transition-all"
+                        >
+                          <TableCell className="px-4 py-3 border-b-white/5">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                                <Hash size={11} />
+                              </div>
+                              <span className="text-white font-mono tracking-normal text-[13px]">
+                                #{req.VVR_Request_id}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="px-4 py-3 border-b-white/5">
+                            <div className="flex items-center gap-2 text-gray-300">
+                              <Calendar size={11} className="text-primary/50" />
+                              <span className="text-[12px] font-medium tracking-normal">
+                                {req.VVR_Visit_Date
+                                  ? req.VVR_Visit_Date.split("T")[0]
+                                  : "N/A"}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="px-4 py-3 border-b-white/5">
+                            <div className="flex items-center gap-2 text-gray-300">
+                              <MapPin size={11} className="text-primary/50" />
+                              <span className="text-[12px] font-medium tracking-normal">
+                                {req.VVR_Places_to_Visit || "-"}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="px-4 py-3 border-b-white/5">
+                            <p className="text-white font-medium tracking-wide text-[12px] opacity-80 line-clamp-1">
+                              {req.VVR_Purpose || "-"}
+                            </p>
+                          </TableCell>
+                          <TableCell className="px-4 py-3 border-b-white/5">
+                            <div className="flex flex-col gap-1.5">
+                              <StatusBadge status={req.VVR_Status} />
+                              {hasGatePass(req.VVR_Request_id) &&
+                                (req.VVR_Status === "A" ||
+                                  req.VVR_Status === "APPROVED") && (
+                                  <button
+                                    onClick={() => handleViewGatePass(req)}
+                                    className="flex items-center gap-1.5 text-[9px] justify-center font-black uppercase tracking-[0.12em] text-primary hover:text-white transition-all group/gp"
+                                  >
+                                    <QrCode
+                                      size={10}
+                                      className="group-hover/gp:scale-110 transition-transform"
+                                    />
+                                    View GatePass
+                                  </button>
+                                )}
+                            </div>
+                          </TableCell>
+                          <TableCell
+                            className="px-4 py-3 border-b-white/5"
+                            align="right"
+                          >
+                            {canReviewRequest(req.VVR_Status) && (
+                              <button
+                                onClick={() => handleOpenReviewPage(req)}
+                                className="px-3 py-1.5 border border-primary/30 bg-primary/10 text-primary rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] hover:bg-primary hover:text-white transition-all"
+                                title="Review Submitted Details"
+                              >
+                                Review
+                              </button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-4 auto-rows-max">
+                {filteredRequests.map((req) => (
+                  <motion.div
+                    key={req.VVR_Request_id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="group bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl hover:border-white/10 hover:bg-black/30 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10"
+                  >
+                    <div className="p-5 md:p-6 space-y-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                          <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20 flex-shrink-0">
+                            <Hash size={11} />
+                          </div>
+                          <span className="text-white font-mono tracking-normal text-[13px] font-semibold truncate">
+                            #{req.VVR_Request_id}
+                          </span>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <StatusBadge status={req.VVR_Status} />
+                        </div>
+                      </div>
+
+                      <div className="h-px bg-gradient-to-r from-white/5 via-white/10 to-white/5"></div>
+
+                      <div className="space-y-3.5">
+                        <div>
+                          <p className="text-gray-500 font-semibold uppercase tracking-[0.1em] text-[9px] mb-1.5">
+                            Visit Date
+                          </p>
                           <div className="flex items-center gap-2 text-gray-300">
-                            <Calendar size={11} className="text-primary/50" />
-                            <span className="text-[12px] font-medium tracking-normal">
+                            <Calendar
+                              size={14}
+                              className="text-primary/50 flex-shrink-0"
+                            />
+                            <span className="text-[13px] font-medium tracking-normal">
                               {req.VVR_Visit_Date
                                 ? req.VVR_Visit_Date.split("T")[0]
                                 : "N/A"}
                             </span>
                           </div>
-                        </TableCell>
-                        <TableCell className="px-4 py-3 border-b-white/5">
+                        </div>
+
+                        <div>
+                          <p className="text-gray-500 font-semibold uppercase tracking-[0.1em] text-[9px] mb-1.5">
+                            Destination
+                          </p>
                           <div className="flex items-center gap-2 text-gray-300">
-                            <MapPin size={11} className="text-primary/50" />
-                            <span className="text-[12px] font-medium tracking-normal">
+                            <MapPin
+                              size={14}
+                              className="text-primary/50 flex-shrink-0"
+                            />
+                            <span className="text-[13px] font-medium tracking-normal truncate">
                               {req.VVR_Places_to_Visit || "-"}
                             </span>
                           </div>
-                        </TableCell>
-                        <TableCell className="px-4 py-3 border-b-white/5">
-                          <p className="text-white font-medium tracking-wide text-[12px] opacity-80 line-clamp-1">
+                        </div>
+
+                        <div>
+                          <p className="text-gray-500 font-semibold uppercase tracking-[0.1em] text-[9px] mb-1.5">
+                            Purpose
+                          </p>
+                          <p className="text-white font-medium tracking-wide text-[13px] opacity-80 line-clamp-2">
                             {req.VVR_Purpose || "-"}
                           </p>
-                        </TableCell>
-                        <TableCell className="px-4 py-3 border-b-white/5">
-                          <div className="flex flex-col gap-1.5">
-                            <StatusBadge status={req.VVR_Status} />
-                            {hasGatePass(req.VVR_Request_id) &&
-                              (req.VVR_Status === "A" ||
-                                req.VVR_Status === "APPROVED") && (
-                                <button
-                                  onClick={() => handleViewGatePass(req)}
-                                  className="flex items-center gap-1.5 text-[9px] justify-center font-black uppercase tracking-[0.12em] text-primary hover:text-white transition-all group/gp"
-                                >
-                                  <QrCode
-                                    size={10}
-                                    className="group-hover/gp:scale-110 transition-transform"
-                                  />
-                                  View GatePass
-                                </button>
-                              )}
-                          </div>
-                        </TableCell>
-                        <TableCell
-                          className="px-4 py-3 border-b-white/5"
-                          align="right"
-                        >
-                          {canReviewRequest(req.VVR_Status) && (
+                        </div>
+                      </div>
+
+                      <div className="pt-2 flex gap-2">
+                        {canReviewRequest(req.VVR_Status) && (
+                          <button
+                            onClick={() => handleOpenReviewPage(req)}
+                            className="flex-1 px-3 py-2 border border-primary/30 bg-primary/10 text-primary rounded-xl text-[10px] font-bold uppercase tracking-[0.12em] hover:bg-primary hover:text-white transition-all"
+                            title="Review Submitted Details"
+                          >
+                            Review
+                          </button>
+                        )}
+                        {hasGatePass(req.VVR_Request_id) &&
+                          (req.VVR_Status === "A" ||
+                            req.VVR_Status === "APPROVED") && (
                             <button
-                              onClick={() => handleOpenReviewPage(req)}
-                              className="px-3 py-1.5 border border-primary/30 bg-primary/10 text-primary rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] hover:bg-primary hover:text-white transition-all"
-                              title="Review Submitted Details"
+                              onClick={() => handleViewGatePass(req)}
+                              className="flex-1 flex items-center justify-center gap-2 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary hover:bg-primary/20 hover:border-primary/50 transition-all font-bold uppercase tracking-[0.1em] text-[10px] group/btn"
                             >
-                              Review
+                              <QrCode
+                                size={13}
+                                className="group-hover/btn:scale-110 transition-transform"
+                              />
+                              Gate Pass
                             </button>
                           )}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={6}
-                        align="center"
-                        className="py-24 border-none text-gray-600 font-bold uppercase tracking-[0.3em] text-xs"
-                      >
-                        No active visitation requests detected
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl p-24 text-center">
+              <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6 text-gray-400 border border-white/5">
+                <ClipboardList size={32} />
+              </div>
+              <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">
+                No active visitation requests detected
+              </p>
+            </div>
           )}
         </div>
       </div>
