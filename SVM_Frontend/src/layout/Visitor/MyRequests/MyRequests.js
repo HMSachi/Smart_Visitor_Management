@@ -9,22 +9,14 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton,
 } from "@mui/material";
-import {
-  GetVisitRequestsByVisitor,
-  UpdateVisitRequest,
-} from "../../../actions/VisitRequestAction";
+import { GetVisitRequestsByVisitor } from "../../../actions/VisitRequestAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
 import {
-  Search,
   X,
   Calendar,
   MapPin,
-  ClipboardList,
-  Send,
-  Edit,
   CheckCircle2,
   XCircle,
   Clock,
@@ -68,6 +60,11 @@ const StatusBadge = ({ status }) => {
   }
 };
 
+const canReviewRequest = (status) => {
+  const s = (status || "").toString().trim().toUpperCase();
+  return s === "A" || s === "APPROVED" || s === "ACCEPTED";
+};
+
 const MyRequests = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -85,13 +82,8 @@ const MyRequests = () => {
   const [visitorName, setVisitorName] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    VVR_Request_id: "",
-    VVR_Visit_Date: "",
-    VVR_Places_to_Visit: "",
-    VVR_Purpose: "",
-  });
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewRequest, setReviewRequest] = useState(null);
 
   useEffect(() => {
     const loadVisitorId = async () => {
@@ -166,40 +158,14 @@ const MyRequests = () => {
     });
   };
 
-  const openEditModal = (request) => {
-    setFormData({
-      VVR_Request_id: request.VVR_Request_id,
-      VVR_Visit_Date: request.VVR_Visit_Date
-        ? request.VVR_Visit_Date.split("T")[0]
-        : "",
-      VVR_Places_to_Visit: request.VVR_Places_to_Visit,
-      VVR_Purpose: request.VVR_Purpose,
-    });
-    setIsModalOpen(true);
+  const openReviewModal = (request) => {
+    setReviewRequest(request);
+    setIsReviewModalOpen(true);
   };
 
-  const closeModal = () => setIsModalOpen(false);
-
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!visitorId) {
-      console.error("Update blocked: visitorId is missing.");
-      alert("Visitor ID not found for the logged user.");
-      return;
-    }
-
-    console.log("visitorId being used:", visitorId);
-    console.log("UpdateVisitRequest payload:", formData);
-
-    dispatch(UpdateVisitRequest(formData));
-    closeModal();
-
-    setTimeout(() => dispatch(GetVisitRequestsByVisitor(visitorId)), 1500);
+  const closeReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setReviewRequest(null);
   };
 
   const filteredRequests = visitRequestsByVis
@@ -337,15 +303,15 @@ const MyRequests = () => {
                           className="px-4 py-3 border-b-white/5"
                           align="right"
                         >
-                          {/* 
-                          <button
-                            onClick={() => openEditModal(req)}
-                            className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-primary/10 hover:border-primary/30 transition-all text-primary"
-                            title="Edit Request"
-                          >
-                            <Edit size={18} />
-                          </button>
-                          */}
+                          {canReviewRequest(req.VVR_Status) && (
+                            <button
+                              onClick={() => openReviewModal(req)}
+                              className="px-3 py-1.5 border border-primary/30 bg-primary/10 text-primary rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] hover:bg-primary hover:text-white transition-all"
+                              title="Review Submitted Details"
+                            >
+                              Review
+                            </button>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))
@@ -367,34 +333,52 @@ const MyRequests = () => {
         </div>
       </div>
 
-      {/* Edit Modal (Visitor side) */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm animate-fade-in">
+      {/* Review Modal (Visitor side) */}
+      {isReviewModalOpen && reviewRequest && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 md:p-6 bg-black/40 backdrop-blur-sm animate-fade-in overflow-y-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-white border border-gray-100 rounded-[40px] shadow-2xl w-full max-w-xl overflow-hidden relative"
+            className="bg-white border border-gray-100 rounded-[40px] shadow-2xl w-full max-w-xl overflow-hidden relative my-4 md:my-8 max-h-[calc(100vh-2rem)] md:max-h-[calc(100vh-4rem)] flex flex-col"
           >
             <div className="p-8 md:p-10 border-b border-gray-100 bg-[#F8F9FA] flex justify-between items-center">
               <div>
                 <span className="text-primary font-bold uppercase tracking-[0.3em] text-[10px]">
-                  Edit Request
+                  Submitted Request
                 </span>
                 <h2 className="text-2xl font-black text-[#1A1A1A] mt-1 uppercase tracking-tight">
-                  Review &amp; Update
+                  Review Details
                 </h2>
               </div>
               <button
                 type="button"
-                onClick={closeModal}
+                onClick={closeReviewModal}
                 className="p-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-400 hover:text-primary rounded-2xl transition-all shadow-sm"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-8">
+            <div className="p-8 md:p-10 space-y-8 overflow-y-auto">
               <div className="grid grid-cols-1 gap-8">
+                <div className="space-y-3">
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
+                    Protocol ID
+                  </label>
+                  <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-6 py-4 text-[#1A1A1A] text-sm font-bold tracking-widest">
+                    #{reviewRequest.VVR_Request_id || "N/A"}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
+                    Visitor
+                  </label>
+                  <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-6 py-4 text-[#1A1A1A] text-sm font-bold tracking-widest">
+                    {visitorName || "N/A"}
+                  </div>
+                </div>
+
                 <div className="space-y-3">
                   <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
                     Visit Date
@@ -404,14 +388,11 @@ const MyRequests = () => {
                       className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
                       size={18}
                     />
-                    <input
-                      required
-                      type="date"
-                      name="VVR_Visit_Date"
-                      value={formData.VVR_Visit_Date}
-                      onChange={handleInputChange}
-                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest focus:outline-none focus:border-primary/50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all"
-                    />
+                    <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest">
+                      {reviewRequest.VVR_Visit_Date
+                        ? reviewRequest.VVR_Visit_Date.split("T")[0]
+                        : "N/A"}
+                    </div>
                   </div>
                 </div>
 
@@ -424,56 +405,41 @@ const MyRequests = () => {
                       className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
                       size={18}
                     />
-                    <input
-                      required
-                      type="text"
-                      name="VVR_Places_to_Visit"
-                      value={formData.VVR_Places_to_Visit}
-                      onChange={handleInputChange}
-                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest focus:outline-none focus:border-primary/50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-gray-400"
-                      placeholder="E.G. MAIN PRODUCTION FLOOR"
-                    />
+                    <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest">
+                      {reviewRequest.VVR_Places_to_Visit || "N/A"}
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
-                    Updated Purpose
+                    Submitted Purpose
                   </label>
-                  <div className="relative group">
-                    <ClipboardList
-                      className="absolute left-4 top-5 text-gray-400 group-focus-within:text-primary transition-colors"
-                      size={18}
-                    />
-                    <textarea
-                      required
-                      name="VVR_Purpose"
-                      value={formData.VVR_Purpose}
-                      onChange={handleInputChange}
-                      rows="4"
-                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl pl-12 pr-6 py-4 text-[#1A1A1A] text-[13px] font-medium tracking-wide focus:outline-none focus:border-primary/50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all resize-none placeholder:text-gray-400"
-                      placeholder="Clarify the purpose of your visit..."
-                    />
+                  <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-6 py-4 text-[#1A1A1A] text-[13px] font-medium tracking-wide min-h-[120px] whitespace-pre-wrap break-words">
+                    {reviewRequest.VVR_Purpose || "N/A"}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] ml-1">
+                    Current Status
+                  </label>
+                  <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-6 py-4 text-[#1A1A1A] text-sm font-bold uppercase tracking-widest">
+                    {(reviewRequest.VVR_Status || "PENDING").toString()}
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row gap-4 md:gap-4 pt-4">
+              <div className="flex pt-4">
                 <button
                   type="button"
-                  onClick={closeModal}
-                  className="flex-1 py-4 bg-white border border-gray-200 rounded-2xl text-gray-500 font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-gray-700 hover:border-gray-300 transition-all shadow-sm"
+                  onClick={closeReviewModal}
+                  className="w-full py-4 bg-white border border-gray-200 rounded-2xl text-gray-500 font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-gray-700 hover:border-gray-300 transition-all shadow-sm"
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-5 bg-primary rounded-2xl text-white font-black uppercase tracking-[0.2em] hover:bg-[var(--color-primary-hover)] transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3"
-                >
-                  <Send size={18} /> Confirm Changes
+                  Close
                 </button>
               </div>
-            </form>
+            </div>
           </motion.div>
         </div>
       )}
