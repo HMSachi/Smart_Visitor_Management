@@ -15,7 +15,9 @@ const HeaderComponent = () => {
   const dispatch = useDispatch();
   const isMobileMenuOpen = useSelector((state) => state.ui.isMobileMenuOpen);
   const { user } = useSelector((state) => state.login);
-  const { visitRequestsByVis } = useSelector((state) => state.visitRequestsState);
+  const { visitRequestsByVis } = useSelector(
+    (state) => state.visitRequestsState,
+  );
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
   const [visitorId, setVisitorId] = useState(null);
@@ -39,13 +41,21 @@ const HeaderComponent = () => {
         .toUpperCase()
     : "??";
 
-  const hasExistingVisitRequest = Array.isArray(visitRequestsByVis)
-    ? visitRequestsByVis.length > 0
-    : false;
+  const latestVisitRequest = Array.isArray(visitRequestsByVis)
+    ? visitRequestsByVis[0]
+    : null;
+  const latestRequestStatus = (latestVisitRequest?.VVR_Status || "")
+    .toString()
+    .trim()
+    .toUpperCase();
+  const isLatestVisitAccepted = ["ACCEPTED", "A", "APPROVED"].includes(
+    latestRequestStatus,
+  );
 
   useEffect(() => {
     const resolveVisitorId = async () => {
-      const directVisitorId = visitorProfile.VV_Visitor_id || visitorProfile.VA_Visitor_id;
+      const directVisitorId =
+        visitorProfile.VV_Visitor_id || visitorProfile.VA_Visitor_id;
       if (directVisitorId) {
         setVisitorId(directVisitorId);
         return;
@@ -138,7 +148,7 @@ const HeaderComponent = () => {
             </Link>
           ))}
 
-          {!hasExistingVisitRequest && (
+          {!isLatestVisitAccepted && (
             <button
               onClick={() => navigate("/request-step-1")}
               className="flex items-center gap-2 ml-2 px-5 py-2.5 rounded-xl text-white text-[13px] font-semibold transition-all"
@@ -293,7 +303,7 @@ const HeaderComponent = () => {
           </div>
 
           {/* CTA */}
-          {!hasExistingVisitRequest && (
+          {!isLatestVisitAccepted && (
             <button
               onClick={() => handleNavigate("/request-step-1")}
               className="mt-6 w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-white text-[14px] font-bold transition-all active:scale-95"
