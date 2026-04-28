@@ -1,105 +1,99 @@
 import React from 'react';
-import { Users, UserPlus, X, CreditCard, Phone, User } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
+import { Users, Plus, X, CreditCard, Phone, User, Save, Edit2 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 
-const VisitorGroup = ({ visitors, onAdd, onRemove, onChange }) => {
+const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onToggleConfirm }) => {
     return (
-        <section className="stagger-item">
+        <section className="animate-fade-in stagger-item pt-12 border-t border-white/5">
             <div className="flex items-center justify-between mb-8">
-                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
-                    <div className="text-primary">
-                        <Users size={16} />
-                    </div>
+                <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-8 bg-primary rounded-full" />
                     <div>
-                        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-0">Visitor Group</h2>
-                        <p className="text-gray-600 text-[12px] font-bold uppercase tracking-widest">Secondary Identification</p>
+                        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-0 flex items-center gap-2">
+                            <Users size={16} className="text-primary" /> Additional Visitors
+                        </h2>
                     </div>
                 </div>
                 <button 
                     type="button" 
                     onClick={onAdd} 
-                    className="flex flex-col md:flex-row items-center gap-4 md:gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-lg hover:bg-primary hover:text-white transition-all text-[12px] font-bold uppercase tracking-widest group"
+                    className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-none hover:bg-primary hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.2em] group"
                 >
-                    <UserPlus size={14} />
-                    Add Node
+                    <Plus size={14} />
+                    Add Person
                 </button>
             </div>
 
             <div className="space-y-4">
                 <AnimatePresence mode="popLayout">
-                    {visitors.map((visitor, index) => (
+                    {visitors.map((visitor) => (
                         <div 
                             key={visitor.id}
-                            className="relative grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-white/[0.01] border border-white/5 rounded-xl transition-colors"
+                            className={`relative grid grid-cols-1 md:grid-cols-12 gap-4 p-5 rounded-none border transition-all duration-300 ${
+                                visitor.isConfirmed 
+                                ? "bg-green-500/5 border-green-500/20" 
+                                : "bg-white/[0.02] border-white/5"
+                            }`}
                         >
-                            {visitors.length > 0 && (
+                            <div className="md:col-span-4 space-y-1.5">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Full Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="Name"
+                                    disabled={visitor.isConfirmed}
+                                    value={visitor.fullName}
+                                    onChange={(e) => onChange(visitor.id, 'fullName', e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white outline-none disabled:opacity-50"
+                                />
+                            </div>
+
+                            <div className="md:col-span-3 space-y-1.5">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">NIC / Passport</label>
+                                <input
+                                    type="text"
+                                    placeholder="ID Number"
+                                    disabled={visitor.isConfirmed}
+                                    value={visitor.nic}
+                                    onChange={(e) => onChange(visitor.id, 'nic', e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white outline-none disabled:opacity-50"
+                                />
+                            </div>
+
+                            <div className="md:col-span-3 space-y-1.5">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Contact</label>
+                                <input
+                                    type="text"
+                                    placeholder="07XXXXXXXX"
+                                    disabled={visitor.isConfirmed}
+                                    value={visitor.contact}
+                                    onChange={(e) => onChange(visitor.id, 'contact', e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white outline-none disabled:opacity-50"
+                                />
+                            </div>
+
+                            <div className="md:col-span-2 flex items-end justify-end gap-1">
+                                <button 
+                                    type="button"
+                                    onClick={() => onToggleConfirm(visitor.id)}
+                                    className={`p-2.5 transition-all ${
+                                        visitor.isConfirmed 
+                                        ? "text-gray-500 hover:text-white" 
+                                        : "text-primary hover:scale-110"
+                                    }`}
+                                >
+                                    {visitor.isConfirmed ? <Edit2 size={16} /> : <Save size={18} />}
+                                </button>
                                 <button 
                                     type="button" 
                                     onClick={() => onRemove(visitor.id)} 
-                                    className="absolute top-2 right-2 p-1 text-gray-700 hover:text-primary transition-all"
+                                    className="p-2.5 text-gray-700 hover:text-red-500 transition-all"
                                 >
-                                    <X size={12} />
+                                    <X size={18} />
                                 </button>
-                            )}
-
-                            <div className="space-y-1.5">
-                                <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600">Full Name</label>
-                                <div className="relative">
-                                    <User size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
-                                    <input
-                                        type="text"
-                                        placeholder="Name"
-                                        value={visitor.fullName}
-                                        onChange={(event) => onChange(visitor.id, 'fullName', event.target.value)}
-                                        className="compact-input pl-9"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600">NIC / Passport</label>
-                                <div className="relative">
-                                    <CreditCard size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
-                                    <input
-                                        type="text"
-                                        placeholder="ID"
-                                        value={visitor.nic}
-                                        onChange={(event) => onChange(visitor.id, 'nic', event.target.value)}
-                                        className="compact-input pl-9"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <label className="text-[12px] font-bold uppercase tracking-widest text-gray-600">Contact</label>
-                                <div className="relative">
-                                    <Phone size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-800" />
-                                    <input
-                                        type="tel"
-                                        placeholder="Mobile"
-                                        value={visitor.contact}
-                                        onChange={(event) => onChange(visitor.id, 'contact', event.target.value)}
-                                        className="compact-input pl-9"
-                                    />
-                                </div>
                             </div>
                         </div>
                     ))}
                 </AnimatePresence>
-
-                {visitors.length === 0 && (
-                    <div className="p-6 md:p-12 border-2 border-dashed border-white/5 rounded-xl flex flex-col items-center justify-center text-center">
-                        <Users size={32} className="text-gray-800 mb-4" />
-                        <p className="text-gray-600 text-[13px] font-bold uppercase tracking-widest mb-6 max-w-[200px] leading-relaxed">No secondary declarations in current protocol.</p>
-                        <button 
-                            type="button" 
-                            onClick={onAdd}
-                            className="px-6 py-2.5 bg-white/[0.03] border border-white/10 text-white text-[12px] font-bold uppercase tracking-widest rounded-lg hover:bg-primary hover:border-primary transition-all"
-                        >
-                            Declare Member
-                        </button>
-                    </div>
-                )}
             </div>
         </section>
     );

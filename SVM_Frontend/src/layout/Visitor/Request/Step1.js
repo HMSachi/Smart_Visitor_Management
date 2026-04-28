@@ -3,7 +3,7 @@ import Step1 from "../../../components/Visitor/Request/Step1";
 
 const Step1Request = () => {
   return (
-    <div className="h-screen overflow-hidden bg-charcoal-900 pt-32 pb-24 px-6">
+    <div className="min-h-screen bg-black pt-28 pb-12 px-4 md:px-6">
       <Step1 />
     </div>
   );
