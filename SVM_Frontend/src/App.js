@@ -40,6 +40,8 @@ import VisitorHistory from "./layout/Contact_Person/VisitorHistory/VisitorHistor
 import ProfileSettings from "./layout/Contact_Person/ProfileSettings/ProfileSettings";
 import ContactAllVisitors from "./layout/Contact_Person/AllVisitors/AllVisitors";
 import ContactVisitRequests from "./layout/Contact_Person/VisitRequests/VisitRequests";
+import CreateVisitRequest from "./layout/Contact_Person/VisitRequests/CreateVisitRequest";
+
 
 // Security Support Layouts
 import Scanner from "./layout/Security_Officer/Scanner/Scanner";
@@ -263,6 +265,10 @@ const AppContent = () => {
           <Route
             path="/contact_person/visit-requests"
             element={<ContactVisitRequests />}
+          />
+          <Route
+            path="/contact_person/create-visit-request"
+            element={<CreateVisitRequest />}
           />
 
           {/* Security Support Routes */}
