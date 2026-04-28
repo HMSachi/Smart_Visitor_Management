@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 import { Menu, MenuItem } from "@mui/material";
 import {
   AddVisitRequest,
@@ -76,7 +78,9 @@ const StatusBadge = ({ status }) => {
 };
 
 const VisitRequests = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const { visitRequestsByCP, isLoading, error } = useSelector(
     (state) => state.visitRequestsState,
   );
@@ -406,7 +410,7 @@ const VisitRequests = () => {
               </div>
 
               <button
-                onClick={() => openModal("add")}
+                onClick={() => navigate("/contact_person/create-visit-request")}
                 className="flex flex-col md:flex-row items-center gap-2.5 md:gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.18em] transition-all shadow-[0_8px_20px_rgba(200,16,46,0.3)] active:scale-95 group"
               >
                 <Plus
