@@ -1,8 +1,8 @@
 import React from 'react';
-import { Users, Plus, X, CreditCard, Phone, User, Save, Edit2 } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { Users, Plus, X, Save, Edit2, Loader2 } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 
-const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onToggleConfirm }) => {
+const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onSave, savingId }) => {
     return (
         <section className="animate-fade-in stagger-item pt-12 border-t border-white/5">
             <div className="flex items-center justify-between mb-8">
@@ -14,9 +14,9 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onToggleConfirm }) 
                         </h2>
                     </div>
                 </div>
-                <button 
-                    type="button" 
-                    onClick={onAdd} 
+                <button
+                    type="button"
+                    onClick={onAdd}
                     className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-none hover:bg-primary hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.2em] group"
                 >
                     <Plus size={14} />
@@ -27,12 +27,12 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onToggleConfirm }) 
             <div className="space-y-4">
                 <AnimatePresence mode="popLayout">
                     {visitors.map((visitor) => (
-                        <div 
+                        <div
                             key={visitor.id}
                             className={`relative grid grid-cols-1 md:grid-cols-12 gap-4 p-5 rounded-none border transition-all duration-300 ${
-                                visitor.isConfirmed 
-                                ? "bg-green-500/5 border-green-500/20" 
-                                : "bg-white/[0.02] border-white/5"
+                                visitor.isConfirmed
+                                    ? 'bg-green-500/5 border-green-500/20'
+                                    : 'bg-white/[0.02] border-white/5'
                             }`}
                         >
                             <div className="md:col-span-4 space-y-1.5">
@@ -72,20 +72,27 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onToggleConfirm }) 
                             </div>
 
                             <div className="md:col-span-2 flex items-end justify-end gap-1">
-                                <button 
+                                <button
                                     type="button"
-                                    onClick={() => onToggleConfirm(visitor.id)}
-                                    className={`p-2.5 transition-all ${
-                                        visitor.isConfirmed 
-                                        ? "text-gray-500 hover:text-white" 
-                                        : "text-primary hover:scale-110"
+                                    onClick={() => onSave(visitor.id)}
+                                    disabled={savingId === visitor.id}
+                                    title={visitor.isConfirmed ? 'Edit Visitor' : 'Save Visitor'}
+                                    className={`p-2.5 transition-all disabled:opacity-50 ${
+                                        visitor.isConfirmed
+                                            ? 'text-green-400 hover:text-white'
+                                            : 'text-primary hover:scale-110'
                                     }`}
                                 >
-                                    {visitor.isConfirmed ? <Edit2 size={16} /> : <Save size={18} />}
+                                    {savingId === visitor.id
+                                        ? <Loader2 size={18} className="animate-spin" />
+                                        : visitor.isConfirmed
+                                            ? <Edit2 size={16} />
+                                            : <Save size={18} />
+                                    }
                                 </button>
-                                <button 
-                                    type="button" 
-                                    onClick={() => onRemove(visitor.id)} 
+                                <button
+                                    type="button"
+                                    onClick={() => onRemove(visitor.id)}
                                     className="p-2.5 text-gray-700 hover:text-red-500 transition-all"
                                 >
                                     <X size={18} />

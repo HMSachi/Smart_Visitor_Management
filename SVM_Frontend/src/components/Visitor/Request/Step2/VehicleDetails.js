@@ -1,8 +1,8 @@
 import React from 'react';
-import { Car, Plus, X, Hash, Save, Edit2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Car, Plus, X, Save, Edit2, Loader2 } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 
-const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onToggleConfirm }) => {
+const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onSave, savingId }) => {
     return (
         <section className="animate-fade-in stagger-item">
             <div className="flex items-center justify-between mb-8">
@@ -14,9 +14,9 @@ const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onToggleConfirm }
                         </h2>
                     </div>
                 </div>
-                <button 
-                    type="button" 
-                    onClick={onAdd} 
+                <button
+                    type="button"
+                    onClick={onAdd}
                     className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-none hover:bg-primary hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.2em] group"
                 >
                     <Plus size={14} />
@@ -27,12 +27,12 @@ const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onToggleConfirm }
             <div className="space-y-4">
                 <AnimatePresence mode="popLayout">
                     {vehicles.map((vehicle) => (
-                        <div 
+                        <div
                             key={vehicle.id}
                             className={`relative grid grid-cols-1 md:grid-cols-12 gap-6 p-6 rounded-none border transition-all duration-300 ${
-                                vehicle.isConfirmed 
-                                ? "bg-green-500/5 border-green-500/20" 
-                                : "bg-white/[0.02] border-white/5"
+                                vehicle.isConfirmed
+                                    ? 'bg-green-500/5 border-green-500/20'
+                                    : 'bg-white/[0.02] border-white/5'
                             }`}
                         >
                             <div className="md:col-span-5 space-y-2">
@@ -64,19 +64,25 @@ const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onToggleConfirm }
                             </div>
 
                             <div className="md:col-span-2 flex items-end justify-end gap-2 pb-0.5">
-                                <button 
+                                <button
                                     type="button"
-                                    onClick={() => onToggleConfirm(vehicle.id)}
-                                    className={`p-2.5 transition-all ${
-                                        vehicle.isConfirmed 
-                                        ? "text-gray-500 hover:text-white" 
-                                        : "text-primary hover:scale-110"
+                                    onClick={() => onSave(vehicle.id)}
+                                    disabled={savingId === vehicle.id}
+                                    title={vehicle.isConfirmed ? 'Edit Vehicle' : 'Save Vehicle'}
+                                    className={`p-2.5 transition-all disabled:opacity-50 ${
+                                        vehicle.isConfirmed
+                                            ? 'text-green-400 hover:text-white'
+                                            : 'text-primary hover:scale-110'
                                     }`}
-                                    title={vehicle.isConfirmed ? "Edit Vehicle" : "Confirm Vehicle"}
                                 >
-                                    {vehicle.isConfirmed ? <Edit2 size={16} /> : <Save size={18} />}
+                                    {savingId === vehicle.id
+                                        ? <Loader2 size={18} className="animate-spin" />
+                                        : vehicle.isConfirmed
+                                            ? <Edit2 size={16} />
+                                            : <Save size={18} />
+                                    }
                                 </button>
-                                <button 
+                                <button
                                     type="button"
                                     onClick={() => onRemove(vehicle.id)}
                                     className="p-2.5 text-gray-700 hover:text-red-500 transition-all hover:scale-110"

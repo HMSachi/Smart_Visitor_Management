@@ -13,7 +13,7 @@ const initialState = {
   purposeOfVisitation: "",
   
   // Stage 2: Detailed Logistics
-  vehicles: [{ id: Date.now(), vehicleType: "Car", plateNumber: "", isConfirmed: false }],
+  vehicles: [{ id: Date.now(), vehicleType: "Car", plateNumber: "", isConfirmed: false, isSavedToServer: false }],
   visitors: [{ id: Date.now(), fullName: "", nic: "", contact: "", isConfirmed: false }],
   equipment: [{ id: Date.now(), itemName: "", quantity: "", description: "", isConfirmed: false }],
 
@@ -51,6 +51,7 @@ const visitorSlice = createSlice({
         vehicleType: "Car",
         plateNumber: "",
         isConfirmed: false,
+        isSavedToServer: false,
       });
     },
     removeVehicle: (state, action) => {
@@ -67,6 +68,13 @@ const visitorSlice = createSlice({
       const vehicle = state.vehicles.find((v) => v.id === action.payload);
       if (vehicle) vehicle.isConfirmed = !vehicle.isConfirmed;
     },
+    markVehicleSavedVisitor: (state, action) => {
+      const vehicle = state.vehicles.find((v) => v.id === action.payload);
+      if (vehicle) {
+        vehicle.isSavedToServer = true;
+        vehicle.isConfirmed = true;
+      }
+    },
 
     // Step 2 dynamic lists enhancements
     addVisitor: (state) => {
@@ -76,6 +84,7 @@ const visitorSlice = createSlice({
         nic: "",
         contact: "",
         isConfirmed: false,
+        isSavedToServer: false,
       });
     },
     removeVisitor: (state, action) => {
@@ -92,6 +101,10 @@ const visitorSlice = createSlice({
       const visitor = state.visitors.find((v) => v.id === action.payload);
       if (visitor) visitor.isConfirmed = !visitor.isConfirmed;
     },
+    markVisitorSaved: (state, action) => {
+      const visitor = state.visitors.find((v) => v.id === action.payload);
+      if (visitor) { visitor.isSavedToServer = true; visitor.isConfirmed = true; }
+    },
 
     addEquipment: (state) => {
       state.equipment.push({
@@ -100,6 +113,7 @@ const visitorSlice = createSlice({
         quantity: "",
         description: "",
         isConfirmed: false,
+        isSavedToServer: false,
       });
     },
     removeEquipment: (state, action) => {
@@ -117,6 +131,10 @@ const visitorSlice = createSlice({
     toggleEquipmentConfirmed: (state, action) => {
       const item = state.equipment.find((e) => e.id === action.payload);
       if (item) item.isConfirmed = !item.isConfirmed;
+    },
+    markEquipmentSaved: (state, action) => {
+      const item = state.equipment.find((e) => e.id === action.payload);
+      if (item) { item.isSavedToServer = true; item.isConfirmed = true; }
     },
 
     // Status updates
@@ -147,14 +165,17 @@ export const {
   removeVehicle,
   updateVehicleDetail,
   toggleVehicleConfirmed,
+  markVehicleSavedVisitor,
   addVisitor,
   removeVisitor,
   updateVisitorDetail,
   toggleVisitorConfirmed,
+  markVisitorSaved,
   addEquipment,
   removeEquipment,
   updateEquipmentDetail,
   toggleEquipmentConfirmed,
+  markEquipmentSaved,
   setStatus,
   setRequestId,
   setRequestRef,

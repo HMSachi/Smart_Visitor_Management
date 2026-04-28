@@ -11,6 +11,7 @@ import {
 import VisitorOverview from "./Step1/VisitorOverview";
 import { AddVisitRequest } from "../../../actions/VisitRequestAction";
 import VisitorService from "../../../services/VisitorService";
+import VisitRequestService from "../../../services/VisitRequestService";
 import {
   updateField,
   setStatus,
@@ -106,7 +107,6 @@ const Step1Main = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validation removed as requested
 
     if (requestId) {
       navigate("/request-step-2");
@@ -119,7 +119,7 @@ const Step1Main = () => {
     try {
       const payload = {
         VVR_Visitor_id: visitorRecord?.VV_Visitor_id,
-        VVR_Contact_person_id: visitorRecord?.VV_Contact_person_id || "4", // Default CP if not set
+        VVR_Contact_person_id: visitorRecord?.VV_Contact_person_id || "4",
         VVR_Visit_Date: formData.proposedVisitDate,
         VVR_Places_to_Visit: formData.visitingArea,
         VVR_Purpose: formData.purposeOfVisitation,
@@ -129,61 +129,67 @@ const Step1Main = () => {
       console.log("AddVisitRequest Payload:", payload);
       const response = await dispatch(AddVisitRequest(payload));
       console.log("AddVisitRequest Raw Response:", response);
-      
-      // Ultra-robust ID detection (searching for any key that looks like Request ID)
-      const findId = (obj) => {
-        if (!obj || typeof obj !== 'object') return null;
-        
-        // 1. Check direct keys with variations
-        const directMatch = obj.VVR_Request_id || 
-                           obj["VVR Request id"] || 
-                           obj.vvr_request_id || 
-                           obj.requestId || 
-                           obj.id ||
-                           obj.VVR_ID;
-        if (directMatch) return directMatch;
 
-        // 2. Check ResultSet
+      // ── Step 1: try to extract the ID directly from the response ─────────
+      const findId = (obj) => {
+        if (!obj || typeof obj !== "object") return null;
+        const direct = obj.VVR_Request_id || obj["VVR Request id"] ||
+                       obj.vvr_request_id || obj.requestId || obj.id || obj.VVR_ID;
+        if (direct) return direct;
         if (obj.ResultSet) {
           const res = Array.isArray(obj.ResultSet) ? obj.ResultSet[0] : obj.ResultSet;
-          const match = findId(res);
-          if (match) return match;
+          const m = findId(res);
+          if (m) return m;
         }
-
-        // 3. Last resort: scan all keys for something containing 'id' and having a number
-        const keys = Object.keys(obj);
-        for (const key of keys) {
-          const lowerKey = key.toLowerCase();
-          if (lowerKey.includes('id') && lowerKey.includes('request') && !isNaN(obj[key])) {
-             return obj[key];
-          }
+        for (const key of Object.keys(obj)) {
+          if (key.toLowerCase().includes("id") && key.toLowerCase().includes("request") && !isNaN(obj[key]))
+            return obj[key];
         }
-
-        // 4. Check nested data if exists
         if (obj.data) return findId(obj.data);
-
         return null;
       };
 
-      const newId = findId(response) || `VVR-${Date.now()}`; // Use fallback ID if server doesn't return one
+      let resolvedId = findId(response);
 
-      console.log("Proceeding with Request ID:", newId);
-      dispatch(setRequestId(newId));
+      // ── Step 2: fallback — fetch visitor's request list & pick latest ─────
+      if (!resolvedId && visitorRecord?.VV_Visitor_id) {
+        try {
+          console.log("ID not in response — fetching visitor request list as fallback...");
+          const listRes = await VisitRequestService.GetVisitRequestsByVisitor(
+            visitorRecord.VV_Visitor_id
+          );
+          const allRequests = listRes?.data?.ResultSet || listRes?.data || [];
+          if (Array.isArray(allRequests) && allRequests.length > 0) {
+            const sorted = [...allRequests].sort(
+              (a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id)
+            );
+            resolvedId = sorted[0]?.VVR_Request_id;
+            console.log("Resolved ID from visitor request list:", resolvedId);
+          }
+        } catch (fallbackErr) {
+          console.error("Fallback ID fetch failed:", fallbackErr);
+        }
+      }
+
+      if (!resolvedId) {
+        console.warn("Could not resolve a real Request ID — staying on Step 1.");
+        alert("Could not confirm your visit request. Please try again.");
+        dispatch(setSubmitting(false));
+        return;
+      }
+
+      console.log("Proceeding with Request ID:", resolvedId);
+      dispatch(setRequestId(resolvedId));
       setShowSuccess(true);
-      
-      // Navigate to Step 2 after a short delay regardless of everything
+
       setTimeout(() => {
-        console.log("Navigating to Step 2...");
         navigate("/request-step-2");
       }, 1500);
 
     } catch (err) {
-      console.error("Submission error (proceeding anyway):", err);
-      // Even on error, we proceed as per request
-      const fallbackId = `VVR-ERR-${Date.now()}`;
-      dispatch(setRequestId(fallbackId));
-      setShowSuccess(true);
-      setTimeout(() => navigate("/request-step-2"), 1500);
+      console.error("Submission error:", err);
+      dispatch(setError(err.message || "Submission failed."));
+      setShowError(true);
     } finally {
       dispatch(setSubmitting(false));
     }
