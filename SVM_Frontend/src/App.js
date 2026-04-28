@@ -41,6 +41,8 @@ import ProfileSettings from "./layout/Contact_Person/ProfileSettings/ProfileSett
 import ContactAllVisitors from "./layout/Contact_Person/AllVisitors/AllVisitors";
 import ContactVisitRequests from "./layout/Contact_Person/VisitRequests/VisitRequests";
 import CreateVisitRequest from "./layout/Contact_Person/VisitRequests/CreateVisitRequest";
+import CreateVisitRequestDetails from "./layout/Contact_Person/VisitRequests/CreateVisitRequestDetails";
+import VisitRequestSuccess from "./layout/Contact_Person/VisitRequests/VisitRequestSuccess";
 
 
 // Security Support Layouts
@@ -269,6 +271,14 @@ const AppContent = () => {
           <Route
             path="/contact_person/create-visit-request"
             element={<CreateVisitRequest />}
+          />
+          <Route
+            path="/contact_person/create-visit-request-details"
+            element={<CreateVisitRequestDetails />}
+          />
+          <Route
+            path="/contact_person/visit-request-success/:requestId"
+            element={<VisitRequestSuccess />}
           />
 
           {/* Security Support Routes */}
