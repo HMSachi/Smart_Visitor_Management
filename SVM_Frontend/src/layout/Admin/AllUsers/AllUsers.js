@@ -332,25 +332,39 @@ const AllUsers = () => {
         id: "ADMIN",
         title: "System Administrators",
         icon: ShieldAlert,
-        data: administrators.filter((a) => a.VA_Role === "Admin"),
+        data: administrators
+          .filter((a) => a.VA_Role === "Admin")
+          .slice()
+          .sort((a, b) => (b.VA_Admin_id || 0) - (a.VA_Admin_id || 0)),
       },
       {
         id: "SECURITY",
         title: "Security Supports",
         icon: Shield,
-        data: administrators.filter((a) => a.VA_Role === "Security"),
+        data: administrators
+          .filter((a) => a.VA_Role === "Security")
+          .slice()
+          .sort((a, b) => (b.VA_Admin_id || 0) - (a.VA_Admin_id || 0)),
       },
       {
         id: "CONTACT",
         title: "Contact Persons",
         icon: Users,
-        data: contactPersons,
+        data: contactPersons
+          .slice()
+          .sort(
+            (a, b) =>
+              (b.VCP_Contact_person_id || 0) - (a.VCP_Contact_person_id || 0),
+          ),
       },
       {
         id: "VISITOR",
         title: "Visitor Accounts",
         icon: UserCheck,
-        data: administrators.filter((a) => a.VA_Role === "Visitor"),
+        data: administrators
+          .filter((a) => a.VA_Role === "Visitor")
+          .slice()
+          .sort((a, b) => (b.VA_Admin_id || 0) - (a.VA_Admin_id || 0)),
       },
     ],
     [administrators, contactPersons],

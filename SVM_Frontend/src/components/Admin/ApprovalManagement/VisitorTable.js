@@ -91,9 +91,9 @@ const VisitorTable = ({
         (visitor) => statusFilter === "All" || visitor.status === statusFilter,
       )
       .sort((a, b) => {
-        const dateA = new Date(a.date || 0);
-        const dateB = new Date(b.date || 0);
-        return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+        const idA = parseInt(a.id, 10) || 0;
+        const idB = parseInt(b.id, 10) || 0;
+        return sortOrder === "desc" ? idB - idA : idA - idB; // newest request first
       });
   }, [visitors, statusFilter, sortOrder]);
 
