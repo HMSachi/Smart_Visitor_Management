@@ -46,11 +46,10 @@ const CreateVisitRequest = () => {
     VVR_Places_to_Visit: "",
     VVR_Purpose: "",
     VVR_Status: "PENDING",
-    VV_Vehicle_Type: "Car",
-    VV_Vehicle_Number: "",
   });
 
   const [selectedVisitorDetails, setSelectedVisitorDetails] = useState(null);
+  const [vehicles, setVehicles] = useState([]);
   const [people, setPeople] = useState([]);
   const [items, setItems] = useState([]);
   const [errors, setErrors] = useState({});
@@ -101,15 +100,23 @@ const CreateVisitRequest = () => {
     }
   };
 
-  const addPerson = () => setPeople([...people, { name: "", nic: "", phone: "" }]);
+  const addVehicle = () => setVehicles([{ type: "Car", number: "" }, ...vehicles]);
+  const removeVehicle = (index) => setVehicles(vehicles.filter((_, i) => i !== index));
+  const handleVehicleChange = (index, field, value) => {
+    const updated = [...vehicles];
+    updated[index][field] = value;
+    setVehicles(updated);
+  };
+  
+  const addPerson = () => setPeople([{ name: "", nic: "", phone: "" }, ...people]);
   const removePerson = (index) => setPeople(people.filter((_, i) => i !== index));
   const handlePersonChange = (index, field, value) => {
     const updated = [...people];
     updated[index][field] = value;
     setPeople(updated);
   };
-
-  const addItem = () => setItems([...items, { name: "", quantity: "" }]);
+  
+  const addItem = () => setItems([{ name: "", quantity: "", serialNumber: "" }, ...items]);
   const removeItem = (index) => setItems(items.filter((_, i) => i !== index));
   const handleItemChange = (index, field, value) => {
     const updated = [...items];
@@ -143,12 +150,14 @@ const CreateVisitRequest = () => {
       const requestId = response?.VVR_Request_id || response?.ResultSet?.[0]?.VVR_Request_id;
       
       if (requestId) {
-        if (formData.VV_Vehicle_Number) {
-          await dispatch(AddVehicle({
-            VV_Vehicle_Type: formData.VV_Vehicle_Type,
-            VV_Vehicle_Number: formData.VV_Vehicle_Number,
-            VVR_Request_id: requestId
-          }));
+        for (const vehicle of vehicles) {
+          if (vehicle.number) {
+            await dispatch(AddVehicle({
+              VV_Vehicle_Type: vehicle.type,
+              VV_Vehicle_Number: vehicle.number,
+              VVR_Request_id: requestId
+            }));
+          }
         }
 
         for (const person of people) {
@@ -168,7 +177,7 @@ const CreateVisitRequest = () => {
             await dispatch(AddItem({
               VIC_Item_Name: item.name,
               VIC_Quantity: item.quantity,
-              VIC_Designation: "N/A",
+              VIC_Designation: item.serialNumber || "N/A",
               VVR_Request_id: requestId
             }));
           }
@@ -186,8 +195,8 @@ const CreateVisitRequest = () => {
   };
 
   const SectionHeader = ({ icon: Icon, title, subtitle }) => (
-    <div className="flex items-start gap-3 mb-6">
-      <div className="w-1 h-10 bg-[#C8102E] rounded-full shrink-0 mt-0.5"></div>
+    <div className="flex items-start gap-3 mb-4">
+      <div className="w-1 h-8 bg-[#C8102E] rounded-full shrink-0 mt-0.5"></div>
       <div className="flex flex-col gap-0.5">
         <div className="flex items-center gap-2">
           <Icon size={14} className="text-[#C8102E]" />
@@ -215,7 +224,7 @@ const CreateVisitRequest = () => {
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full bg-white border rounded-lg px-4 py-2.5 text-[12px] font-medium transition-all placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/5 ${
+        className={`w-full bg-white border rounded-lg px-3 py-2 text-[12px] font-medium transition-all placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/5 ${
           error ? "border-red-500" : "border-gray-200 focus:border-primary/50"
         }`}
       />
@@ -229,12 +238,12 @@ const CreateVisitRequest = () => {
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-hidden">
         <Header title="Visitor Registration" />
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
-          <div className="max-w-6xl mx-auto space-y-6 animate-fade-in-slow pb-10">
+        <main className="flex-1 overflow-y-auto p-4 md:p-5 custom-scrollbar">
+          <div className="max-w-6xl mx-auto space-y-4 animate-fade-in-slow pb-6">
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               
-              <div className="bg-white p-6 md:p-8 rounded-[20px] shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-gray-100">
+              <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <SectionHeader title="Visitation Details" subtitle="Core Information" icon={FileText} />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
@@ -246,7 +255,7 @@ const CreateVisitRequest = () => {
                       name="VVR_Visitor_id"
                       value={formData.VVR_Visitor_id}
                       onChange={handleInputChange}
-                      className={`w-full bg-white border rounded-lg px-4 py-2.5 text-[12px] font-medium transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
+                      className={`w-full bg-white border rounded-lg px-3 py-2 text-[12px] font-medium transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
                         errors.VVR_Visitor_id ? "border-red-500" : "border-gray-200 focus:border-primary/50"
                       }`}
                     >
@@ -287,32 +296,53 @@ const CreateVisitRequest = () => {
                 </div>
               </div>
 
-              <div className="bg-white p-6 md:p-8 rounded-[20px] shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-gray-100">
-                <SectionHeader title="Vehicle Details" icon={Car} />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] flex items-center gap-1.5 px-0.5">Vehicle Type</label>
-                    <select
-                      name="VV_Vehicle_Type"
-                      value={formData.VV_Vehicle_Type}
-                      onChange={handleInputChange}
-                      className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-[12px] font-medium focus:outline-none focus:border-primary/50"
-                    >
-                      <option value="Car">Car</option>
-                      <option value="Van">Van</option>
-                      <option value="Motorbike">Motorbike</option>
-                      <option value="Truck">Truck</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                  <InputField label="Plate Number" name="VV_Vehicle_Number" placeholder="E.G. WP-CAD-1234" value={formData.VV_Vehicle_Number} onChange={handleInputChange} />
+              <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+                  <SectionHeader title="Vehicle Details" icon={Car} />
+                  <button type="button" onClick={addVehicle} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                    <Plus size={12} /> Add Vehicle
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {vehicles.map((vehicle, index) => (
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 rounded-xl bg-gray-50/50 border border-gray-100 relative group">
+                      <div className="md:col-span-5">
+                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] flex items-center gap-1.5 px-0.5 mb-1.5">Vehicle Type</label>
+                        <select
+                          value={vehicle.type}
+                          onChange={(e) => handleVehicleChange(index, "type", e.target.value)}
+                          className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-[12px] font-medium focus:outline-none focus:border-primary/50"
+                        >
+                          <option value="Car">Car</option>
+                          <option value="Van">Van</option>
+                          <option value="Motorbike">Motorbike</option>
+                          <option value="Truck">Truck</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div className="md:col-span-6">
+                        <InputField label="Plate Number" placeholder="E.G. WP-CAD-1234" value={vehicle.number} onChange={(e) => handleVehicleChange(index, "number", e.target.value)} />
+                      </div>
+                      <div className="md:col-span-1 flex justify-center pb-1">
+                        <button type="button" onClick={() => removeVehicle(index)} className="p-2 text-gray-300 hover:text-red-500 transition-all">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {vehicles.length === 0 && (
+                    <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl">
+                      <p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">No vehicles added</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="bg-white p-6 md:p-8 rounded-[20px] shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-gray-100">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+              <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="People Visiting" icon={Users} />
-                  <button type="button" onClick={addPerson} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                  <button type="button" onClick={addPerson} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
                     <Plus size={12} /> Add Person
                   </button>
                 </div>
@@ -344,10 +374,10 @@ const CreateVisitRequest = () => {
                 </div>
               </div>
 
-              <div className="bg-white p-6 md:p-8 rounded-[20px] shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-gray-100">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+              <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="Items to Bring" icon={Package} />
-                  <button type="button" onClick={addItem} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                  <button type="button" onClick={addItem} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
                     <Plus size={12} /> Add Item
                   </button>
                 </div>
@@ -355,11 +385,14 @@ const CreateVisitRequest = () => {
                 <div className="space-y-4">
                   {items.map((item, index) => (
                     <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 rounded-xl bg-gray-50/50 border border-gray-100 relative group">
-                      <div className="md:col-span-7">
+                      <div className="md:col-span-4">
                         <InputField label="Item Name" placeholder="e.g. Laptop" value={item.name} onChange={(e) => handleItemChange(index, "name", e.target.value)} />
                       </div>
-                      <div className="md:col-span-4">
+                      <div className="md:col-span-2">
                         <InputField label="Quantity" placeholder="e.g. 1" value={item.quantity} onChange={(e) => handleItemChange(index, "quantity", e.target.value)} />
+                      </div>
+                      <div className="md:col-span-5">
+                        <InputField label="Serial Number" placeholder="E.g. SN12345" value={item.serialNumber} onChange={(e) => handleItemChange(index, "serialNumber", e.target.value)} />
                       </div>
                       <div className="md:col-span-1 flex justify-center pb-1">
                         <button type="button" onClick={() => removeItem(index)} className="p-2 text-gray-300 hover:text-red-500 transition-all">
