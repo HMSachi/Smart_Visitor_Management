@@ -17,11 +17,10 @@ import {
 import { GetAllVisitors } from "../../../actions/VisitorAction";
 import { GetAllVehicles } from "../../../actions/VehicleAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
-import VisitorGroup from "../../../components/Visitor/Request/Step1/VisitorGroup";
-import ItemsCarried from "../../../components/Visitor/Request/Step1/ItemsCarried";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import VehicleService from "../../../services/VehicleService";
 
 const ApprovalManagement = () => {
   const dispatch = useDispatch();
@@ -48,62 +47,9 @@ const ApprovalManagement = () => {
 
   const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
   const [itemsCarried, setItemsCarried] = useState([]);
+  const [vehiclesForVisitor, setVehiclesForVisitor] = useState([]);
+  const [detailsLoading, setDetailsLoading] = useState(false);
   const formScrollRef = React.useRef(null);
-
-  const scrollDetailsFormToBottom = () => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const formEl = formScrollRef.current;
-        if (!formEl) return;
-        formEl.scrollTo({
-          top: formEl.scrollHeight,
-          behavior: "smooth",
-        });
-      });
-    });
-  };
-
-  const handleAddVisitor = () => {
-    const newId =
-      visitorGroupMembers.length > 0
-        ? Math.max(...visitorGroupMembers.map((v) => v.id || 0)) + 1
-        : 1;
-    setVisitorGroupMembers([
-      ...visitorGroupMembers,
-      { id: newId, fullName: "", nic: "", contact: "" },
-    ]);
-    scrollDetailsFormToBottom();
-  };
-  const handleRemoveVisitor = (id) => {
-    setVisitorGroupMembers(visitorGroupMembers.filter((v) => v.id !== id));
-  };
-  const handleUpdateVisitor = (id, field, value) => {
-    setVisitorGroupMembers(
-      visitorGroupMembers.map((v) =>
-        v.id === id ? { ...v, [field]: value } : v,
-      ),
-    );
-  };
-
-  const handleAddItem = () => {
-    const newId =
-      itemsCarried.length > 0
-        ? Math.max(...itemsCarried.map((i) => i.id || 0)) + 1
-        : 1;
-    setItemsCarried([
-      ...itemsCarried,
-      { id: newId, itemName: "", quantity: "" },
-    ]);
-    scrollDetailsFormToBottom();
-  };
-  const handleRemoveItem = (id) => {
-    setItemsCarried(itemsCarried.filter((i) => i.id !== id));
-  };
-  const handleUpdateItem = (id, field, value) => {
-    setItemsCarried(
-      itemsCarried.map((i) => (i.id === id ? { ...i, [field]: value } : i)),
-    );
-  };
 
   React.useEffect(() => {
     dispatch(GetAllVisitRequests());
@@ -112,11 +58,13 @@ const ApprovalManagement = () => {
     dispatch(GetAllGatePasses());
   }, [dispatch]);
 
-  // Load visitor group and items when a visitor is selected
+  // Load visitor group, items, and vehicles when a visitor is selected
   React.useEffect(() => {
     if (selectedVisitor && viewMode === "details") {
       const loadDetails = async () => {
+        setDetailsLoading(true);
         try {
+          // Load visiting people (group members)
           const groupRes = await VisitGroupService.GetAllVisitGroup();
           const allGroups = groupRes?.data?.ResultSet || groupRes?.data || [];
           const matchedMembers = (Array.isArray(allGroups) ? allGroups : [])
@@ -131,6 +79,7 @@ const ApprovalManagement = () => {
             }));
           setVisitorGroupMembers(matchedMembers);
 
+          // Load items carried
           const itemsRes = await ItemCarriedService.GetAllItemsCarried();
           const allItems = itemsRes?.data?.ResultSet || itemsRes?.data || [];
           const matchedItems = (Array.isArray(allItems) ? allItems : [])
@@ -143,8 +92,24 @@ const ApprovalManagement = () => {
               quantity: i.VIC_Quantity,
             }));
           setItemsCarried(matchedItems);
+
+          // Load vehicles for this request
+          const vehiclesRes = await VehicleService.GetAllVehicles();
+          const allVehicles = vehiclesRes?.data?.ResultSet || vehiclesRes?.data || [];
+          const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
+            .filter(
+              (v) => String(v.VVR_Request_id) === String(selectedVisitor.id),
+            )
+            .map((v) => ({
+              id: v.VV_Vehicle_id,
+              vehicleType: v.VV_Vehicle_Type,
+              plateNumber: v.VV_Vehicle_Number,
+            }));
+          setVehiclesForVisitor(matchedVehicles);
         } catch (err) {
-          console.error("Error loading group/items in Admin view:", err);
+          console.error("Error loading details in Admin view:", err);
+        } finally {
+          setDetailsLoading(false);
         }
       };
       loadDetails();
@@ -291,42 +256,26 @@ const ApprovalManagement = () => {
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <form
+                  <div
                     ref={formScrollRef}
                     className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-2 custom-scrollbar"
-                    onSubmit={(e) => e.preventDefault()}
                   >
-                    <PersonnelAuthProtocol
-                      visitor={selectedVisitor}
-                      onBack={handleBackToList}
-                      onAction={handleAction}
-                      showStatusForAdmin={true}
-                    />
-
-                    <div
-                      className={`mt-4 p-4 border rounded-xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}
-                    >
-                      <VisitorGroup
-                        visitors={visitorGroupMembers}
-                        onAdd={handleAddVisitor}
-                        onRemove={handleRemoveVisitor}
-                        onChange={handleUpdateVisitor}
-                        isLight={isLight}
+                    {detailsLoading ? (
+                      <div className="flex items-center justify-center py-16">
+                        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    ) : (
+                      <PersonnelAuthProtocol
+                        visitor={selectedVisitor}
+                        onBack={handleBackToList}
+                        onAction={handleAction}
+                        showStatusForAdmin={true}
+                        groupMembers={visitorGroupMembers}
+                        itemsCarried={itemsCarried}
+                        vehiclesList={vehiclesForVisitor}
                       />
-                    </div>
-
-                    <div
-                      className={`mt-4 p-4 border rounded-xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}
-                    >
-                      <ItemsCarried
-                        items={itemsCarried}
-                        onAdd={handleAddItem}
-                        onRemove={handleRemoveItem}
-                        onChange={handleUpdateItem}
-                        isLight={isLight}
-                      />
-                    </div>
-                  </form>
+                    )}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
@@ -13,8 +13,6 @@ import {
 import VisitorService from "../../../services/VisitorService";
 import VehicleService from "../../../services/VehicleService";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
-import VisitorGroup from "../../Visitor/Request/Step1/VisitorGroup";
-import ItemsCarried from "../../Visitor/Request/Step1/ItemsCarried";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 
@@ -30,11 +28,9 @@ const normalizeStatus = (status) => {
   return "Sent to Visitor";
 };
 
-const toReviewModel = (request, visitorRecord, vehicleRecord) => {
+const toReviewModel = (request, visitorRecord) => {
   if (!request) return null;
-
   const visitor = visitorRecord || request;
-  const vehicle = vehicleRecord || request;
 
   return {
     id: request.VVR_Request_id,
@@ -55,10 +51,6 @@ const toReviewModel = (request, visitorRecord, vehicleRecord) => {
     selectedAreas: request.VVR_Places_to_Visit
       ? request.VVR_Places_to_Visit.split("|")
       : [],
-    plateNumber: vehicle?.VV_Vehicle_Number || "",
-    vehicleType: vehicle?.VV_Vehicle_Type || "",
-    additionalVisitors: [], // Currently not linked in CP view state
-    equipment: [], // Currently not linked in CP view state
   };
 };
 
@@ -74,62 +66,19 @@ const RequestReviewMain = () => {
   );
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
+
   const [requestData, setRequestData] = useState(null);
   const [visitorRecord, setVisitorRecord] = useState(null);
-  const [vehicleRecord, setVehicleRecord] = useState(null);
+  const [vehiclesList, setVehiclesList] = useState([]);
+  const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
+  const [itemsCarried, setItemsCarried] = useState([]);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [rejectionComment, setRejectionComment] = useState("");
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [approvalComment, setApprovalComment] = useState("");
-
-  const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
-  const [itemsCarried, setItemsCarried] = useState([]);
-  const formScrollRef = useRef(null);
-  const pendingScrollRef = useRef(null);
-
-  const handleAddVisitor = () => {
-    // In review mode, we don't necessarily allow adding unless it's an edit view
-    pendingScrollRef.current = "visitor";
-    const newId =
-      visitorGroupMembers.length > 0
-        ? Math.max(...visitorGroupMembers.map((v) => v.id || 0)) + 1
-        : 1;
-    setVisitorGroupMembers([
-      ...visitorGroupMembers,
-      { id: newId, fullName: "", nic: "", contact: "" },
-    ]);
-  };
-  const handleRemoveVisitor = (id) => {
-    setVisitorGroupMembers(visitorGroupMembers.filter((v) => v.id !== id));
-  };
-  const handleUpdateVisitor = (id, field, value) => {
-    setVisitorGroupMembers(
-      visitorGroupMembers.map((v) =>
-        v.id === id ? { ...v, [field]: value } : v,
-      ),
-    );
-  };
-
-  const handleAddItem = () => {
-    pendingScrollRef.current = "item";
-    const newId =
-      itemsCarried.length > 0
-        ? Math.max(...itemsCarried.map((i) => i.id || 0)) + 1
-        : 1;
-    setItemsCarried([
-      ...itemsCarried,
-      { id: newId, itemName: "", quantity: "" },
-    ]);
-  };
-  const handleRemoveItem = (id) => {
-    setItemsCarried(itemsCarried.filter((i) => i.id !== id));
-  };
-  const handleUpdateItem = (id, field, value) => {
-    setItemsCarried(
-      itemsCarried.map((i) => (i.id === id ? { ...i, [field]: value } : i)),
-    );
-  };
 
   useEffect(() => {
     if (!selectedId) return;
@@ -154,17 +103,22 @@ const RequestReviewMain = () => {
     return fromById || null;
   }, [selectedId, selectedRequestData, visitRequestsByCP, visitRequests]);
 
+  // Load all related records for the selected request
   useEffect(() => {
     let cancelled = false;
 
     const loadRelatedRecords = async () => {
       if (!apiRequest) {
         setVisitorRecord(null);
-        setVehicleRecord(null);
+        setVehiclesList([]);
+        setVisitorGroupMembers([]);
+        setItemsCarried([]);
         return;
       }
 
+      setDetailsLoading(true);
       try {
+        // Load visitor profile
         if (apiRequest?.VVR_Visitor_id) {
           const visitorResponse = await VisitorService.GetVisitorById(
             apiRequest.VVR_Visitor_id,
@@ -174,28 +128,29 @@ const RequestReviewMain = () => {
           const visitor = Array.isArray(visitorPayload)
             ? visitorPayload[0]
             : visitorPayload;
-          if (!cancelled) {
-            setVisitorRecord(visitor || null);
-          }
+          if (!cancelled) setVisitorRecord(visitor || null);
         } else if (!cancelled) {
           setVisitorRecord(null);
         }
 
+        // Load vehicles for this request (full list)
         const vehicleResponse = await VehicleService.GetAllVehicles();
         const allVehicles =
           vehicleResponse?.data?.ResultSet || vehicleResponse?.data || [];
-        const matchedVehicle = (
-          Array.isArray(allVehicles) ? allVehicles : []
-        ).find(
-          (item) =>
-            String(item?.VVR_Request_id) === String(apiRequest?.VVR_Request_id),
-        );
+        const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
+          .filter(
+            (v) =>
+              String(v?.VVR_Request_id) ===
+              String(apiRequest?.VVR_Request_id),
+          )
+          .map((v) => ({
+            id: v.VV_Vehicle_id,
+            vehicleType: v.VV_Vehicle_Type,
+            plateNumber: v.VV_Vehicle_Number,
+          }));
+        if (!cancelled) setVehiclesList(matchedVehicles);
 
-        if (!cancelled) {
-          setVehicleRecord(matchedVehicle || null);
-        }
-
-        // Load Visitor Group Members
+        // Load visiting people (group members)
         const groupResponse = await VisitGroupService.GetAllVisitGroup();
         const allGroupMembers =
           groupResponse?.data?.ResultSet || groupResponse?.data || [];
@@ -211,14 +166,11 @@ const RequestReviewMain = () => {
             id: m.VVG_id,
             fullName: m.VVG_Visitor_Name,
             nic: m.VVG_NIC_Passport_Number,
-            contact: m.VVG_Designation, // Using designation as contact field mapping
+            contact: m.VVG_Designation,
           }));
+        if (!cancelled) setVisitorGroupMembers(matchedMembers);
 
-        if (!cancelled) {
-          setVisitorGroupMembers(matchedMembers);
-        }
-
-        // Load Items Carried
+        // Load items carried
         const itemsResponse = await ItemCarriedService.GetAllItemsCarried();
         const allItems =
           itemsResponse?.data?.ResultSet || itemsResponse?.data || [];
@@ -233,16 +185,15 @@ const RequestReviewMain = () => {
             itemName: i.VIC_Item_Name,
             quantity: i.VIC_Quantity,
           }));
-
-        if (!cancelled) {
-          setItemsCarried(matchedItems);
-        }
+        if (!cancelled) setItemsCarried(matchedItems);
       } catch (error) {
         if (!cancelled) {
           setVisitorRecord(null);
-          setVehicleRecord(null);
+          setVehiclesList([]);
         }
         console.error("Error loading related request review data:", error);
+      } finally {
+        if (!cancelled) setDetailsLoading(false);
       }
     };
 
@@ -254,30 +205,8 @@ const RequestReviewMain = () => {
   }, [apiRequest]);
 
   useEffect(() => {
-    setRequestData(toReviewModel(apiRequest, visitorRecord, vehicleRecord));
-  }, [apiRequest, visitorRecord, vehicleRecord]);
-
-  useEffect(() => {
-    if (!pendingScrollRef.current) return;
-
-    const scrollContainer = formScrollRef.current;
-    if (!scrollContainer) {
-      pendingScrollRef.current = null;
-      return;
-    }
-
-    const scrollToBottom = () => {
-      scrollContainer.scrollTo({
-        top: scrollContainer.scrollHeight,
-        behavior: "smooth",
-      });
-      pendingScrollRef.current = null;
-    };
-
-    const frameId = window.requestAnimationFrame(scrollToBottom);
-
-    return () => window.cancelAnimationFrame(frameId);
-  }, [visitorGroupMembers.length, itemsCarried.length]);
+    setRequestData(toReviewModel(apiRequest, visitorRecord));
+  }, [apiRequest, visitorRecord]);
 
   const confirmApprove = async () => {
     if (!apiRequest?.VVR_Request_id) {
@@ -368,44 +297,25 @@ const RequestReviewMain = () => {
           </div>
         </div>
 
-        <form
-          ref={formScrollRef}
-          className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-2 custom-scrollbar"
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <PersonnelAuthProtocol
-            visitor={requestData}
-            onBack={() => navigate("/contact_person/requests-inbox")}
-            onAction={(visitor, type) => {
-              if (type === "Approve") setShowApproveModal(true);
-              if (type === "Reject") setShowRejectModal(true);
-            }}
-          />
-
-          <div
-            className={`mt-4 p-4 border rounded-xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}
-          >
-            <VisitorGroup
-              visitors={visitorGroupMembers}
-              onAdd={handleAddVisitor}
-              onRemove={handleRemoveVisitor}
-              onChange={handleUpdateVisitor}
-              isLight={isLight}
+        <div className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-2 custom-scrollbar">
+          {detailsLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : (
+            <PersonnelAuthProtocol
+              visitor={requestData}
+              onBack={() => navigate("/contact_person/requests-inbox")}
+              onAction={(visitor, type) => {
+                if (type === "Approve") setShowApproveModal(true);
+                if (type === "Reject") setShowRejectModal(true);
+              }}
+              groupMembers={visitorGroupMembers}
+              itemsCarried={itemsCarried}
+              vehiclesList={vehiclesList}
             />
-          </div>
-
-          <div
-            className={`mt-4 p-4 border rounded-xl ${isLight ? "bg-white border-gray-200 shadow-sm" : "bg-black/40 border-white/10"}`}
-          >
-            <ItemsCarried
-              items={itemsCarried}
-              onAdd={handleAddItem}
-              onRemove={handleRemoveItem}
-              onChange={handleUpdateItem}
-              isLight={isLight}
-            />
-          </div>
-        </form>
+          )}
+        </div>
       </div>
 
       <ApprovalModal
