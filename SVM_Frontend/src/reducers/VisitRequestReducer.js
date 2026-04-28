@@ -27,6 +27,7 @@ const initialState = {
     visitRequests: [],       // general or all
     visitRequestsByCP: [],   // specifically for Contact Person context
     visitRequestsByVis: [],  // specifically for Visitor context
+    lastCreatedRequestId: null, // ID returned after AddVisitRequest
     error: null,
 };
 
@@ -88,6 +89,15 @@ const visitRequestReducer = (state = initialState, action) => {
                 error: null,
             };
         case ADD_VISIT_REQUEST_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                lastCreatedRequestId: action.payload?.ResultSet?.[0]?.VVR_Request_id
+                    || action.payload?.ResultSet?.VVR_Request_id
+                    || action.payload?.VVR_Request_id
+                    || null,
+                error: null,
+            };
         case UPDATE_VISIT_REQUEST_SUCCESS:
         case UPDATE_VR_STATUS_SUCCESS:
             return {

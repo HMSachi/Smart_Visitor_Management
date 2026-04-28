@@ -3,19 +3,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
 import Header from "../../../components/Contact_Person/Layout/Header";
-import { AddVisitRequest } from "../../../actions/VisitRequestAction";
 import { AddVehicle } from "../../../actions/VehicleAction";
 import { AddVisitGroup } from "../../../actions/VisitGroupAction";
 import { AddItem } from "../../../actions/ItemCarriedAction";
 import { 
-  addVehicle, toggleVehicleConfirmed, removeVehicle, updateVehicle,
-  addPerson, togglePersonConfirmed, removePerson, updatePerson,
-  addItem, toggleItemConfirmed, removeItem, updateItem,
+  addVehicle, toggleVehicleConfirmed, removeVehicle, updateVehicle, markVehicleSaved,
+  addPerson, togglePersonConfirmed, removePerson, updatePerson, markPersonSaved,
+  addItem, toggleItemConfirmed, removeItem, updateItem, markItemSaved,
   resetForm, setSubmitting, setError
 } from "../../../reducers/visitRequestFormSlice";
 import { SectionHeader, InputField } from "../../../components/Contact_Person/VisitRequests/FormComponents";
 import { 
-  Car, Users, Package, Plus, Trash2, ArrowLeft, CheckCircle2, Save, Edit2
+  Car, Users, Package, Plus, Trash2, ArrowLeft, CheckCircle2, Save, Edit2, Loader2
 } from "lucide-react";
 
 const CreateVisitRequestDetails = () => {
@@ -23,51 +22,194 @@ const CreateVisitRequestDetails = () => {
   const dispatch = useDispatch();
   const { 
     visitationDetails: formData, 
+    savedRequestId,
     vehicles, 
     people, 
     items, 
     isSubmitting 
   } = useSelector((state) => state.visitRequestForm);
 
+  // Dual-source requestId: form slice (explicit set) OR reducer (set by ADD_VISIT_REQUEST_SUCCESS)
+  const lastCreatedRequestId = useSelector((state) => state.visitRequestsState?.lastCreatedRequestId);
+  const effectiveRequestId = savedRequestId || lastCreatedRequestId;
+
+  const [vehicleSavingIndex, setVehicleSavingIndex] = useState(null);
+  const [personSavingIndex, setPersonSavingIndex] = useState(null);
+  const [itemSavingIndex, setItemSavingIndex] = useState(null);
+
+  // Save a specific vehicle row via API, mark confirmed, then add a new blank row
+  const handleVehicleSave = async (index) => {
+    const vehicle = vehicles[index];
+    if (vehicle.isConfirmed) {
+      dispatch(toggleVehicleConfirmed(index)); // toggle back to edit
+      return;
+    }
+    if (!vehicle.number?.trim()) {
+      alert("Please enter a plate number before saving.");
+      return;
+    }
+    if (!effectiveRequestId) {
+      alert("Visit request not found. Please go back to Step 1.");
+      return;
+    }
+    setVehicleSavingIndex(index);
+    try {
+      await dispatch(AddVehicle({
+        VV_Vehicle_Type: vehicle.type,
+        VV_Vehicle_Number: vehicle.number,
+        VVR_Request_id: effectiveRequestId
+      }));
+      dispatch(markVehicleSaved(index));
+      dispatch(toggleVehicleConfirmed(index));
+      dispatch(addVehicle()); // prepend a new blank row
+    } catch (err) {
+      console.error("Failed to save vehicle:", err);
+      alert("Failed to save vehicle. Please try again.");
+    } finally {
+      setVehicleSavingIndex(null);
+    }
+  };
+
+  // "Add Vehicle" button: if there's an unsaved filled row, save it first then add blank
+  const handleAddVehicle = async () => {
+    const unsaved = vehicles.find(v => !v.isConfirmed && v.number?.trim());
+    if (unsaved) {
+      const idx = vehicles.indexOf(unsaved);
+      await handleVehicleSave(idx);
+    } else {
+      dispatch(addVehicle());
+    }
+  };
+
+  // ── PEOPLE ────────────────────────────────────────────────────────────────
+  const handlePersonSave = async (index) => {
+    const person = people[index];
+    if (person.isConfirmed) {
+      dispatch(togglePersonConfirmed(index));
+      return;
+    }
+    if (!person.name?.trim()) {
+      alert("Please enter a name before saving.");
+      return;
+    }
+    if (!effectiveRequestId) {
+      alert("Visit request not found. Please go back to Step 1.");
+      return;
+    }
+    setPersonSavingIndex(index);
+    try {
+      await dispatch(AddVisitGroup({
+        VVG_Visitor_Name: person.name,
+        VVG_NIC_Passport_Number: person.nic,
+        VVG_Designation: person.phone,
+        VVR_Request_id: effectiveRequestId,
+        VVG_Status: "A"
+      }));
+      dispatch(markPersonSaved(index));
+      dispatch(togglePersonConfirmed(index));
+      dispatch(addPerson());
+    } catch (err) {
+      console.error("Failed to save person:", err);
+      alert("Failed to save visitor. Please try again.");
+    } finally {
+      setPersonSavingIndex(null);
+    }
+  };
+
+  const handleAddPerson = async () => {
+    const unsaved = people.find(p => !p.isConfirmed && p.name?.trim());
+    if (unsaved) {
+      await handlePersonSave(people.indexOf(unsaved));
+    } else {
+      dispatch(addPerson());
+    }
+  };
+
+  // ── ITEMS ─────────────────────────────────────────────────────────────────
+  const handleItemSave = async (index) => {
+    const item = items[index];
+    if (item.isConfirmed) {
+      dispatch(toggleItemConfirmed(index));
+      return;
+    }
+    if (!item.name?.trim()) {
+      alert("Please enter an item name before saving.");
+      return;
+    }
+    if (!effectiveRequestId) {
+      alert("Visit request not found. Please go back to Step 1.");
+      return;
+    }
+    setItemSavingIndex(index);
+    try {
+      await dispatch(AddItem({
+        VIC_Item_Name: item.name,
+        VIC_Quantity: item.quantity,
+        VIC_Designation: item.description || "N/A",
+        VVR_Request_id: effectiveRequestId
+      }));
+      dispatch(markItemSaved(index));
+      dispatch(toggleItemConfirmed(index));
+      dispatch(addItem());
+    } catch (err) {
+      console.error("Failed to save item:", err);
+      alert("Failed to save item. Please try again.");
+    } finally {
+      setItemSavingIndex(null);
+    }
+  };
+
+  const handleAddItem = async () => {
+    const unsaved = items.find(i => !i.isConfirmed && i.name?.trim());
+    if (unsaved) {
+      await handleItemSave(items.indexOf(unsaved));
+    } else {
+      dispatch(addItem());
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setSubmitting(true));
     try {
-      const response = await dispatch(AddVisitRequest(formData));
-      const requestId = response?.VVR_Request_id || response?.ResultSet?.[0]?.VVR_Request_id;
-      
-      if (requestId) {
-        // Only submit if they have a name/number and were at least meant to be submitted
-        const vehiclePromises = vehicles
-          .filter(v => v.number)
-          .map(v => dispatch(AddVehicle({
-            VV_Vehicle_Type: v.type,
-            VV_Vehicle_Number: v.number,
-            VVR_Request_id: requestId
-          })));
+      const requestId = effectiveRequestId;
 
-        const peoplePromises = people
-          .filter(p => p.name)
-          .map(p => dispatch(AddVisitGroup({
-            VVG_Visitor_Name: p.name,
-            VVG_NIC_Passport_Number: p.nic,
-            VVG_Designation: p.phone,
-            VVR_Request_id: requestId,
-            VVG_Status: "A"
-          })));
-
-        const itemPromises = items
-          .filter(i => i.name)
-          .map(i => dispatch(AddItem({
-            VIC_Item_Name: i.name,
-            VIC_Quantity: i.quantity,
-            VIC_Designation: i.description || "N/A",
-            VVR_Request_id: requestId
-          })));
-
-        await Promise.all([...vehiclePromises, ...peoplePromises, ...itemPromises]);
-        navigate(`/contact_person/visit-request-success/${requestId}`);
+      if (!requestId) {
+        alert("Visit request ID not found. Please go back to Step 1 and try again.");
+        dispatch(setSubmitting(false));
+        return;
       }
+
+      // Only submit if they have a name/number and were at least meant to be submitted
+      const vehiclePromises = vehicles
+        .filter(v => v.number && !v.isSavedToServer)
+        .map(v => dispatch(AddVehicle({
+          VV_Vehicle_Type: v.type,
+          VV_Vehicle_Number: v.number,
+          VVR_Request_id: requestId
+        })));
+
+      const peoplePromises = people
+        .filter(p => p.name && !p.isSavedToServer)
+        .map(p => dispatch(AddVisitGroup({
+          VVG_Visitor_Name: p.name,
+          VVG_NIC_Passport_Number: p.nic,
+          VVG_Designation: p.phone,
+          VVR_Request_id: requestId,
+          VVG_Status: "A"
+        })));
+
+      const itemPromises = items
+        .filter(i => i.name && !i.isSavedToServer)
+        .map(i => dispatch(AddItem({
+          VIC_Item_Name: i.name,
+          VIC_Quantity: i.quantity,
+          VIC_Designation: i.description || "N/A",
+          VVR_Request_id: requestId
+        })));
+
+      await Promise.all([...vehiclePromises, ...peoplePromises, ...itemPromises]);
+      navigate(`/contact_person/visit-request-success/${requestId}`);
     } catch (err) {
       console.error("Submission failed:", err);
       dispatch(setError(err.message));
@@ -105,7 +247,7 @@ const CreateVisitRequestDetails = () => {
               <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="Vehicle Details" icon={Car} />
-                  <button type="button" onClick={() => dispatch(addVehicle())} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                  <button type="button" onClick={handleAddVehicle} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
                     <Plus size={12} /> Add Vehicle
                   </button>
                 </div>
@@ -139,11 +281,14 @@ const CreateVisitRequestDetails = () => {
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
                         <button 
                           type="button" 
-                          onClick={() => dispatch(toggleVehicleConfirmed(index))}
-                          className={`p-2 rounded-lg transition-all ${v.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
-                          title={v.isConfirmed ? "Edit Entry" : "Confirm Entry"}
+                          onClick={() => handleVehicleSave(index)}
+                          disabled={vehicleSavingIndex === index}
+                          className={`p-2 rounded-lg transition-all disabled:opacity-50 ${v.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
+                          title={v.isConfirmed ? "Edit Entry" : "Save to Server"}
                         >
-                          {v.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
+                          {vehicleSavingIndex === index
+                            ? <Loader2 size={16} className="animate-spin" />
+                            : v.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
                         </button>
                         <button type="button" onClick={() => dispatch(removeVehicle(index))} className="p-2 text-gray-300 hover:text-red-500 transition-all"><Trash2 size={16} /></button>
                       </div>
@@ -157,7 +302,7 @@ const CreateVisitRequestDetails = () => {
               <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="Additional Visitors" icon={Users} />
-                  <button type="button" onClick={() => dispatch(addPerson())} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                  <button type="button" onClick={handleAddPerson} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
                     <Plus size={12} /> Add Person
                   </button>
                 </div>
@@ -177,10 +322,14 @@ const CreateVisitRequestDetails = () => {
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
                         <button 
                           type="button" 
-                          onClick={() => dispatch(togglePersonConfirmed(index))}
-                          className={`p-2 rounded-lg transition-all ${p.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
+                          onClick={() => handlePersonSave(index)}
+                          disabled={personSavingIndex === index}
+                          className={`p-2 rounded-lg transition-all disabled:opacity-50 ${p.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
+                          title={p.isConfirmed ? "Edit Entry" : "Save to Server"}
                         >
-                          {p.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
+                          {personSavingIndex === index
+                            ? <Loader2 size={16} className="animate-spin" />
+                            : p.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
                         </button>
                         <button type="button" onClick={() => dispatch(removePerson(index))} className="p-2 text-gray-300 hover:text-red-500 transition-all"><Trash2 size={16} /></button>
                       </div>
@@ -194,7 +343,7 @@ const CreateVisitRequestDetails = () => {
               <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="Items to Bring" icon={Package} />
-                  <button type="button" onClick={() => dispatch(addItem())} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                  <button type="button" onClick={handleAddItem} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
                     <Plus size={12} /> Add Item
                   </button>
                 </div>
@@ -214,10 +363,14 @@ const CreateVisitRequestDetails = () => {
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
                         <button 
                           type="button" 
-                          onClick={() => dispatch(toggleItemConfirmed(index))}
-                          className={`p-2 rounded-lg transition-all ${i.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
+                          onClick={() => handleItemSave(index)}
+                          disabled={itemSavingIndex === index}
+                          className={`p-2 rounded-lg transition-all disabled:opacity-50 ${i.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
+                          title={i.isConfirmed ? "Edit Entry" : "Save to Server"}
                         >
-                          {i.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
+                          {itemSavingIndex === index
+                            ? <Loader2 size={16} className="animate-spin" />
+                            : i.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
                         </button>
                         <button type="button" onClick={() => dispatch(removeItem(index))} className="p-2 text-gray-300 hover:text-red-500 transition-all"><Trash2 size={16} /></button>
                       </div>
