@@ -85,7 +85,7 @@ const Header = ({ title }) => {
         )}
 
         {title && (
-          <h2 className="text-[var(--color-text-primary)] text-[14px] font-semibold truncate m-0 hidden sm:block">
+          <h2 className="text-[var(--color-text-primary)] text-[13px] md:text-[15px] font-black uppercase tracking-tight truncate m-0">
             {title}
           </h2>
         )}
