@@ -91,9 +91,9 @@ const VisitorTable = ({
         (visitor) => statusFilter === "All" || visitor.status === statusFilter,
       )
       .sort((a, b) => {
-        const dateA = new Date(a.date || 0);
-        const dateB = new Date(b.date || 0);
-        return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+        const idA = parseInt(a.id, 10) || 0;
+        const idB = parseInt(b.id, 10) || 0;
+        return sortOrder === "desc" ? idB - idA : idA - idB; // newest request first
       });
   }, [visitors, statusFilter, sortOrder]);
 
@@ -139,7 +139,7 @@ const VisitorTable = ({
               <button
                 key={btn.id}
                 onClick={() => setStatusFilter(btn.id)}
-                className={`relative px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                className={`relative px-1.5 sm:px-2 md:px-3 lg:px-3 py-1 sm:py-1.5 rounded-lg text-[6px] xs:text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
               >
                 {statusFilter === btn.id && (
                   <motion.div

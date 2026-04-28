@@ -77,13 +77,19 @@ const BlacklistTable = () => {
 
   const safeBlacklists = Array.isArray(blacklists) ? blacklists : [];
 
-  const filtered = safeBlacklists.filter(
-    (item) =>
-      (item.VB_Name &&
-        item.VB_Name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (item.VB_Email &&
-        item.VB_Email.toLowerCase().includes(searchTerm.toLowerCase())),
-  );
+  const filtered = safeBlacklists
+    .filter(
+      (item) =>
+        (item.VB_Name &&
+          item.VB_Name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (item.VB_Email &&
+          item.VB_Email.toLowerCase().includes(searchTerm.toLowerCase())),
+    )
+    .sort((a, b) => {
+      const dateA = new Date(a.VB_Created_Date || 0);
+      const dateB = new Date(b.VB_Created_Date || 0);
+      return dateB - dateA; // newest first
+    });
 
   const handleViewDetails = (item) => {
     setSelectedPerson(item);
