@@ -9,8 +9,11 @@ import ContactPersonService from "../../../services/ContactPersonService";
 import { 
   updateVisitationDetails, 
   setSelectedVisitor,
-  resetForm
+  setSavedRequestId,
+  resetForm,
+  setSubmitting
 } from "../../../reducers/visitRequestFormSlice";
+import { AddVisitRequest, GetVisitRequestsByCP } from "../../../actions/VisitRequestAction";
 import { 
   User, 
   Calendar, 
@@ -30,7 +33,7 @@ const CreateVisitRequest = () => {
   const user = useSelector((state) => state.login.user);
   const userEmail = user?.ResultSet?.[0]?.VA_Email;
 
-  const { visitationDetails: formData, selectedVisitorDetails } = useSelector((state) => state.visitRequestForm);
+  const { visitationDetails: formData, selectedVisitorDetails, isSubmitting } = useSelector((state) => state.visitRequestForm);
   const [cpId, setCpId] = useState(null);
   const [errors, setErrors] = useState({});
 
@@ -82,11 +85,50 @@ const CreateVisitRequest = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = (e) => {
+  const handleNext = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
+    const payload = { ...formData, VVR_Contact_person_id: cpId };
     dispatch(updateVisitationDetails({ VVR_Contact_person_id: cpId }));
-    navigate("/contact_person/create-visit-request-details");
+    dispatch(setSubmitting(true));
+
+    try {
+      const response = await dispatch(AddVisitRequest(payload));
+      console.log("[AddVisitRequest] raw response:", JSON.stringify(response));
+
+      // API returns ResultSet:null — no ID in the response.
+      // Fetch the CP's request list and pick the one with the highest ID (just created).
+      let requestId =
+        response?.VVR_Request_id ||
+        response?.ResultSet?.[0]?.VVR_Request_id ||
+        response?.ResultSet?.VVR_Request_id ||
+        response?.Data?.VVR_Request_id;
+
+      if (!requestId && cpId) {
+        const requests = await dispatch(GetVisitRequestsByCP(cpId));
+        if (Array.isArray(requests) && requests.length > 0) {
+          const latest = requests.reduce((max, r) =>
+            Number(r.VVR_Request_id) > Number(max.VVR_Request_id) ? r : max,
+            requests[0]
+          );
+          requestId = latest.VVR_Request_id;
+          console.log("[AddVisitRequest] resolved requestId from list:", requestId);
+        }
+      }
+
+      if (requestId) {
+        dispatch(setSavedRequestId(requestId));
+        navigate("/contact_person/create-visit-request-details");
+      } else {
+        alert("Could not retrieve the new visit request ID. Please try again.");
+      }
+    } catch (err) {
+      console.error("Failed to save visit request:", err);
+      alert("Failed to save visit details. Please try again.");
+    } finally {
+      dispatch(setSubmitting(false));
+    }
   };
 
   return (
@@ -166,11 +208,11 @@ const CreateVisitRequest = () => {
               </div>
 
               <div className="flex flex-col md:flex-row items-center gap-4 pt-4">
-                <button type="button" onClick={() => { dispatch(resetForm()); navigate("/contact_person/visit-requests"); }} className="w-full md:w-auto px-10 py-3 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all">
+                <button type="button" disabled={isSubmitting} onClick={() => { dispatch(resetForm()); navigate("/contact_person/visit-requests"); }} className="w-full md:w-auto px-10 py-3 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all disabled:opacity-40">
                   Cancel
                 </button>
-                <button type="submit" className="w-full md:w-auto flex-1 px-10 py-3.5 bg-[#C8102E] hover:bg-[#A60D26] text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-xl shadow-[0_10px_25px_rgba(200,16,46,0.15)] transition-all active:scale-95 group flex items-center justify-center gap-2">
-                  Next Step: Additional Details <ArrowLeft className="rotate-180 transition-transform group-hover:translate-x-1" size={14} />
+                <button type="submit" disabled={isSubmitting} className="w-full md:w-auto flex-1 px-10 py-3.5 bg-[#C8102E] hover:bg-[#A60D26] text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-xl shadow-[0_10px_25px_rgba(200,16,46,0.15)] transition-all active:scale-95 disabled:opacity-60 group flex items-center justify-center gap-2">
+                  {isSubmitting ? "Saving Details..." : (<>Next Step: Additional Details <ArrowLeft className="rotate-180 transition-transform group-hover:translate-x-1" size={14} /></>)}
                 </button>
               </div>
             </form>

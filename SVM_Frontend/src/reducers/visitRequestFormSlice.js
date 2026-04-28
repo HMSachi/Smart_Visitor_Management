@@ -9,6 +9,7 @@ const initialState = {
     VVR_Status: "PENDING",
   },
   selectedVisitorDetails: null,
+  savedRequestId: null,
   vehicles: [],
   people: [],
   items: [],
@@ -31,7 +32,10 @@ const visitRequestFormSlice = createSlice({
       state.vehicles = action.payload;
     },
     addVehicle: (state) => {
-      state.vehicles = [{ type: "Car", number: "", isConfirmed: false }, ...state.vehicles];
+      state.vehicles = [{ type: "Car", number: "", isConfirmed: false, isSavedToServer: false }, ...state.vehicles];
+    },
+    markVehicleSaved: (state, action) => {
+      state.vehicles[action.payload].isSavedToServer = true;
     },
     toggleVehicleConfirmed: (state, action) => {
       state.vehicles[action.payload].isConfirmed = !state.vehicles[action.payload].isConfirmed;
@@ -48,7 +52,10 @@ const visitRequestFormSlice = createSlice({
       state.people = action.payload;
     },
     addPerson: (state) => {
-      state.people = [{ name: "", nic: "", phone: "", isConfirmed: false }, ...state.people];
+      state.people = [{ name: "", nic: "", phone: "", isConfirmed: false, isSavedToServer: false }, ...state.people];
+    },
+    markPersonSaved: (state, action) => {
+      state.people[action.payload].isSavedToServer = true;
     },
     togglePersonConfirmed: (state, action) => {
       state.people[action.payload].isConfirmed = !state.people[action.payload].isConfirmed;
@@ -65,7 +72,10 @@ const visitRequestFormSlice = createSlice({
       state.items = action.payload;
     },
     addItem: (state) => {
-      state.items = [{ name: "", quantity: "", description: "", isConfirmed: false }, ...state.items];
+      state.items = [{ name: "", quantity: "", description: "", isConfirmed: false, isSavedToServer: false }, ...state.items];
+    },
+    markItemSaved: (state, action) => {
+      state.items[action.payload].isSavedToServer = true;
     },
     toggleItemConfirmed: (state, action) => {
       state.items[action.payload].isConfirmed = !state.items[action.payload].isConfirmed;
@@ -78,6 +88,9 @@ const visitRequestFormSlice = createSlice({
       state.items[index][field] = value;
     },
     // Meta
+    setSavedRequestId: (state, action) => {
+      state.savedRequestId = action.payload;
+    },
     resetForm: () => initialState,
     setSubmitting: (state, action) => {
       state.isSubmitting = action.payload;
@@ -91,6 +104,8 @@ const visitRequestFormSlice = createSlice({
 export const {
   updateVisitationDetails,
   setSelectedVisitor,
+  setSavedRequestId,
+  markVehicleSaved,
   setVehicles,
   addVehicle,
   toggleVehicleConfirmed,
@@ -101,11 +116,13 @@ export const {
   togglePersonConfirmed,
   removePerson,
   updatePerson,
+  markPersonSaved,
   setItems,
   addItem,
   toggleItemConfirmed,
   removeItem,
   updateItem,
+  markItemSaved,
   resetForm,
   setSubmitting,
   setError

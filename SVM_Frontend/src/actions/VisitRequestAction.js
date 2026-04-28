@@ -135,6 +135,7 @@ export const GetVisitRequestsByCP = (cpId) => {
             const response = await VisitRequestService.GetVisitRequestsByContactPerson(cpId);
             const payloadData = response.data?.ResultSet || response.data || [];
             dispatch({ type: GET_VR_BY_CP_SUCCESS, payload: payloadData });
+            return payloadData; // expose data to the caller
         } catch (error) {
             dispatch({ type: GET_VR_BY_CP_FAILURE, payload: error.message });
         }
