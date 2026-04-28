@@ -65,23 +65,7 @@ const Header = ({ title }) => {
           </button>
         )}
 
-        {/* Shield icon + Title */}
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-primary shrink-0"
-            style={{
-              background: "var(--color-primary-low)",
-              border: "1px solid rgba(200,16,46,0.2)",
-            }}
-          >
-            <Shield size={16} />
-          </div>
-          {title && (
-            <h2 className="text-[var(--color-text-primary)] text-[14px] font-semibold truncate m-0 hidden sm:block">
-              {title}
-            </h2>
-          )}
-        </div>
+       
       </div>
 
       {/* Right: Actions */}
