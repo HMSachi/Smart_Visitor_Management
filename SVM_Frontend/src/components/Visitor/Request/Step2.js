@@ -156,10 +156,6 @@ const Step2Main = () => {
                 </div>
             )}
 
-            <div className="mb-14 border-b border-white/5 pb-10">
-                <h1 className="text-[28px] font-black uppercase tracking-tight italic">LOGISTICS DECLARATION</h1>
-                <p className="text-gray-500 text-[11px] uppercase font-bold tracking-[0.4em] opacity-60">PERSONNEL & ASSET SYNCHRONIZATION</p>
-            </div>
 
             <form onSubmit={handleSubmit} className="space-y-16">
                 <VehicleDetails 
