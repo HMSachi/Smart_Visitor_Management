@@ -61,8 +61,7 @@ const StatusBadge = ({ status }) => {
 };
 
 const canReviewRequest = (status) => {
-  const s = (status || "").toString().trim().toUpperCase();
-  return s === "A" || s === "APPROVED" || s === "ACCEPTED";
+  return true;
 };
 
 const MyRequests = () => {
