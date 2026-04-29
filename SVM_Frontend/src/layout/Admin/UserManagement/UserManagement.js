@@ -302,6 +302,7 @@ const UserManagement = () => {
                   <TextField
                     fullWidth name="phone" value={formData.phone} onChange={handleChange} onBlur={handlePhoneBlur} required
                     error={!!validation.phoneError} helperText={validation.phoneError} variant="outlined" size="small"
+                    placeholder="e.g. 0712345678 (10 digits only)"
                     InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }}
                     sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }}
                   />

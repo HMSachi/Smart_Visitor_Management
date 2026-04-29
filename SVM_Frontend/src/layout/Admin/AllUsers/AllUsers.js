@@ -44,6 +44,9 @@ import {
   UserCheck,
   Phone,
 } from "lucide-react";
+import { 
+  validateName, validateNIC, validatePhone, validateEmail, validatePassword 
+} from "../../../utils/validation";
 
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -207,54 +210,47 @@ const AllUsers = () => {
   };
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: "" });
+    let { name, value } = e.target;
+    
+    // Real-time filtering and length enforcement
+    if (name === "name") {
+      value = value.replace(/[^A-Za-z\s]/g, "");
+    } else if (name === "phone") {
+      value = value.replace(/[^0-9]/g, "").slice(0, 10);
+    }
+    
+    setFormData({ ...formData, [name]: value });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
     }
   };
 
   const validateForm = () => {
     const nextErrors = {};
-    const name = formData.name?.trim();
-    const email = formData.email?.trim();
-    const department = formData.department?.trim();
-    const password = formData.password || "";
-    const phoneDigits = formData.phone?.replace(/\D/g, "") || "";
 
-    if (!name) {
-      nextErrors.name = "Name is required";
-    } else if (name.length < 2) {
-      nextErrors.name = "Name must be at least 2 characters";
-    }
+    const nameErr = validateName(formData.name);
+    if (nameErr) nextErrors.name = nameErr;
 
-    if (!email) {
-      nextErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      nextErrors.email = "Enter a valid email address";
-    }
+    const emailErr = validateEmail(formData.email);
+    if (emailErr) nextErrors.email = emailErr;
+
+    const phoneErr = validatePhone(formData.phone);
+    if (phoneErr) nextErrors.phone = phoneErr;
 
     if (modalMode === "add") {
       if (!formData.role) {
         nextErrors.role = "Role is required";
       }
 
-      if (!password) {
-        nextErrors.password = "Password is required";
-      } else if (password.length < 8) {
-        nextErrors.password = "Password must be at least 8 characters";
-      }
-    } else if (password && password.length < 8) {
-      nextErrors.password = "Password must be at least 8 characters";
+      const passErr = validatePassword(formData.password);
+      if (passErr) nextErrors.password = passErr;
+    } else if (formData.password) {
+      const passErr = validatePassword(formData.password);
+      if (passErr) nextErrors.password = passErr;
     }
 
-    if (!department) {
+    if (!formData.department?.trim()) {
       nextErrors.department = "Department is required";
-    }
-
-    if (!formData.phone?.trim()) {
-      nextErrors.phone = "Phone number is required";
-    } else if (phoneDigits.length !== 10) {
-      nextErrors.phone = "Phone number must contain exactly 10 digits";
     }
 
     setErrors(nextErrors);
@@ -964,11 +960,15 @@ const AllUsers = () => {
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
                       }`}
-                      placeholder="e.g. +94 123 4567"
+                      placeholder="e.g. 0712345678"
                     />
-                    {errors.phone && (
+                    {errors.phone ? (
                       <p className="text-[10px] text-red-400 font-semibold mt-1">
                         {errors.phone}
+                      </p>
+                    ) : (
+                      <p className="text-[9px] text-white/30 uppercase tracking-widest mt-1">
+                        10 digits only
                       </p>
                     )}
                   </div>
@@ -1015,13 +1015,17 @@ const AllUsers = () => {
                       }`}
                       placeholder={
                         modalMode === "add"
-                          ? "Enter secure password"
+                          ? "Max 5 chars, Capital & Special"
                           : "Leave blank to keep current"
                       }
                     />
-                    {errors.password && (
+                    {errors.password ? (
                       <p className="text-[10px] text-red-400 font-semibold mt-1">
                         {errors.password}
+                      </p>
+                    ) : (
+                      <p className="text-[9px] text-white/30 uppercase tracking-widest mt-1">
+                        Max 5 chars, Capital &amp; Special Char
                       </p>
                     )}
                   </div>
