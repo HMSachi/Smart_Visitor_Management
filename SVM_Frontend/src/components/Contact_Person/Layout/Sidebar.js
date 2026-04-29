@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   LayoutDashboard,
-  Inbox,
+  // Inbox,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -26,12 +26,6 @@ const menuItems = [
     label: "Visit Requests",
     icon: CalendarDays,
     path: "/contact_person/visit-requests",
-  },
-  {
-    id: "inbox",
-    label: "Requests Inbox",
-    icon: Inbox,
-    path: "/contact_person/requests-inbox",
   },
   {
     id: "all-visitors",

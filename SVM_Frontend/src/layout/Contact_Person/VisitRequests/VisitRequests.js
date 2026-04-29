@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Menu, MenuItem } from "@mui/material";
 import {
@@ -18,6 +19,7 @@ import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
   Search,
   Plus,
+  Eye,
   X,
   Calendar,
   MapPin,
@@ -35,6 +37,7 @@ import {
   Car,
   MoreVertical,
 } from "lucide-react";
+import { setSelectedRequest } from "../../../reducers/contactPersonSlice";
 
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -93,6 +96,7 @@ const VisitRequests = () => {
   const [cpId, setCpId] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add");
   const [expandedAreasByRequest, setExpandedAreasByRequest] = useState({});
@@ -272,16 +276,46 @@ const VisitRequests = () => {
     dispatch(ApproveVisitRequest(id, status));
     setTimeout(() => dispatch(GetVisitRequestsByCP(cpId)), 2000);
   };
+  
+  const handleReview = (requestId) => {
+    dispatch(setSelectedRequest(requestId));
+    navigate("/contact_person/request-review", {
+      state: { requestId },
+    });
+  };
 
-  const filteredRequests = visitRequestsByCP
-    ? visitRequestsByCP
-        .filter(
-          (req) =>
-            String(req.VVR_Request_id).includes(searchTerm) ||
-            req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-        .sort((a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id))
-    : [];
+  const statusOptions = [
+    { id: "All", label: "All Requests" },
+    { id: "P", label: "Sent to Visitor" },
+    { id: "ACCEPTED", label: "Visitor Accepted" },
+    { id: "SENT", label: "Sent to Admin" },
+    { id: "A", label: "Approved" },
+    { id: "R", label: "Rejected" },
+  ];
+
+  const filteredRequests = useMemo(() => {
+    if (!visitRequestsByCP) return [];
+    
+    return visitRequestsByCP
+      .filter((req) => {
+        const matchesSearch = 
+          String(req.VVR_Request_id).includes(searchTerm) ||
+          req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (req.VVR_Visitor_Name || "").toLowerCase().includes(searchTerm.toLowerCase());
+          
+        const reqStatus = (req.VVR_Status || "").toString().trim().toUpperCase();
+        let matchesStatus = statusFilter === "All";
+        
+        if (statusFilter === "P") matchesStatus = (reqStatus === "P" || reqStatus === "PENDING");
+        if (statusFilter === "ACCEPTED") matchesStatus = (reqStatus === "ACCEPTED");
+        if (statusFilter === "SENT") matchesStatus = (reqStatus === "SENT" || reqStatus === "SENT_TO_ADMIN");
+        if (statusFilter === "A") matchesStatus = (reqStatus === "A" || reqStatus === "APPROVED");
+        if (statusFilter === "R") matchesStatus = (reqStatus === "R" || reqStatus === "REJECTED");
+        
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id));
+  }, [visitRequestsByCP, searchTerm, statusFilter]);
 
   const activeVisitors = (visitorsByCP || []).filter((visitor) => {
     const status = (visitor?.VV_Status || "").toString().trim().toUpperCase();
@@ -422,6 +456,32 @@ const VisitRequests = () => {
             </div>
           </header>
 
+          {/* Status Filter Tabs - Modern Tab Bar Style */}
+          <div className="mb-6 overflow-x-auto no-scrollbar pb-2">
+            <div className={`inline-flex p-1 rounded-2xl border transition-all ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}>
+              {statusOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setStatusFilter(option.id)}
+                  className={`relative px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300 whitespace-nowrap ${
+                    statusFilter === option.id
+                      ? "text-white"
+                      : isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-white"
+                  }`}
+                >
+                  {statusFilter === option.id && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-primary rounded-xl shadow-[0_5px_15px_rgba(200,16,46,0.3)]"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  <span className="relative z-10">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div
             className={`border rounded-[20px] overflow-hidden relative ${isLight ? "bg-white border-gray-200 shadow-lg shadow-gray-200/40" : "bg-[#0F0F10] border-white/5"}`}
           >
@@ -544,6 +604,13 @@ const VisitRequests = () => {
                           </td>
                           <td className="px-4 py-4 text-center">
                             <div className="flex items-center justify-center gap-2 opacity-45 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={() => handleReview(req.VVR_Request_id)}
+                                className={`p-1.5 rounded-lg border border-transparent transition-all ${isLight ? "text-primary hover:bg-primary/10 hover:border-primary/20" : "text-blue-400 hover:bg-blue-400/10 hover:border-blue-400/20"}`}
+                                title="View Request Details"
+                              >
+                                <Eye size={14} />
+                              </button>
                               <button
                                 onClick={() => openModal("edit", req)}
                                 className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-400/10 border border-transparent hover:border-blue-400/20 transition-all"

@@ -6,13 +6,36 @@ import { motion } from "framer-motion";
 
 const RecentRequests = () => {
   const navigate = useNavigate();
-  const { requests } = useSelector((state) => state.contactPortal || {});
+  const { visitRequestsByCP: requests, isLoading } = useSelector(
+    (state) => state.visitRequestsState || {}
+  );
 
   // Get latest 5 requests
   const recentRequests =
     requests && Array.isArray(requests)
-      ? [...requests].reverse().slice(0, 5)
+      ? [...requests].sort((a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id)).slice(0, 5)
       : [];
+
+  const mapRequestToUI = (req) => {
+    const requestId = req?.VVR_Request_id;
+    const visitorName = req?.VVR_Visitor_Name || req?.VV_Name || `Visitor #${req?.VVR_Visitor_id}`;
+    const date = req?.VVR_Visit_Date ? req.VVR_Visit_Date.split('T')[0] : "N/A";
+    const status = (req?.VVR_Status || "").toString().trim().toUpperCase();
+    
+    let displayStatus = "Sent to Visitor";
+    if (status === "SENT" || status === "SENT_TO_ADMIN") displayStatus = "Sent to Admin";
+    else if (status === "A" || status === "APPROVED") displayStatus = "Approved";
+    else if (status === "R" || status === "REJECTED") displayStatus = "Declined";
+    else if (status === "ACCEPTED") displayStatus = "Accepted";
+
+    return {
+      id: requestId,
+      name: visitorName,
+      date: date,
+      status: displayStatus,
+      timeIn: req?.VVR_Visit_Time || "N/A"
+    };
+  };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -46,7 +69,7 @@ const RecentRequests = () => {
           </p>
         </div>
         <button
-          onClick={() => navigate("/contact_person/requests-inbox")}
+          onClick={() => navigate("/contact_person/visit-requests")}
           className="flex flex-col md:flex-row items-center gap-1 sm:gap-2 text-[10px] sm:text-[11px] font-bold text-primary hover:text-primary/80 uppercase tracking-widest transition-colors group"
         >
           View All{" "}
@@ -69,55 +92,58 @@ const RecentRequests = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border-soft)]">
-              {recentRequests.map((req, index) => (
-                <motion.tr
-                  key={req?.id || index}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="group hover:bg-primary/5 transition-all"
-                >
-                  <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-3">
-                    <div>
-                      <p className="text-[var(--color-text-primary)] text-[11px] sm:text-[13px] font-bold uppercase tracking-wider flex items-center gap-1 sm:gap-2">
-                        <User size={12} className="opacity-75" />
-                        {req?.name || "Unknown"}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-center">
-                    <div className="flex flex-col items-center justify-center gap-0.5 sm:gap-1">
-                      <span className="text-[var(--color-text-primary)] text-[11px] sm:text-[13px] font-bold flex items-center gap-1 sm:gap-2">
-                        <Calendar size={12} className="opacity-75" />
-                        {req?.date || "-"}
+              {recentRequests.map((rawReq, index) => {
+                const req = mapRequestToUI(rawReq);
+                return (
+                  <motion.tr
+                    key={req?.id || index}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group hover:bg-primary/5 transition-all"
+                  >
+                    <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-3">
+                      <div>
+                        <p className="text-[var(--color-text-primary)] text-[11px] sm:text-[13px] font-bold uppercase tracking-wider flex items-center gap-1 sm:gap-2">
+                          <User size={12} className="opacity-75" />
+                          {req?.name || "Unknown"}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-center">
+                      <div className="flex flex-col items-center justify-center gap-0.5 sm:gap-1">
+                        <span className="text-[var(--color-text-primary)] text-[11px] sm:text-[13px] font-bold flex items-center gap-1 sm:gap-2">
+                          <Calendar size={12} className="opacity-75" />
+                          {req?.date || "-"}
+                        </span>
+                        <span className="text-[var(--color-text-secondary)] text-[9px] sm:text-[11px] uppercase tracking-widest opacity-75">
+                          {req?.timeIn || ""}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-center">
+                      <span
+                        className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider border shadow-sm inline-block ${getStatusColor(req?.status)}`}
+                      >
+                        {req?.status || "Unknown"}
                       </span>
-                      <span className="text-[var(--color-text-secondary)] text-[9px] sm:text-[11px] uppercase tracking-widest opacity-75">
-                        {req?.timeIn || ""}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-center">
-                    <span
-                      className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider border shadow-sm inline-block ${getStatusColor(req?.status)}`}
-                    >
-                      {req?.status || "Unknown"}
-                    </span>
-                  </td>
-                  <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-right">
-                    <button
-                      onClick={() =>
-                        navigate("/contact_person/request-review", {
-                          state: { requestId: req?.id },
-                        })
-                      }
-                      className="text-[9px] sm:text-[11px] font-bold text-[var(--color-text-secondary)] hover:text-primary uppercase tracking-widest transition-all py-1 sm:py-1.5 px-2 sm:px-3 rounded-lg border border-[var(--color-border-soft)] hover:border-primary/30 hover:bg-primary/5 opacity-75 hover:opacity-100"
-                    >
-                      Review
-                    </button>
-                  </td>
-                </motion.tr>
-              ))}
+                    </td>
+                    <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-right">
+                      <button
+                        onClick={() =>
+                          navigate("/contact_person/request-review", {
+                            state: { requestId: req?.id },
+                          })
+                        }
+                        className="text-[9px] sm:text-[11px] font-bold text-[var(--color-text-secondary)] hover:text-primary uppercase tracking-widest transition-all py-1 sm:py-1.5 px-2 sm:px-3 rounded-lg border border-[var(--color-border-soft)] hover:border-primary/30 hover:bg-primary/5 opacity-75 hover:opacity-100"
+                      >
+                        Review
+                      </button>
+                    </td>
+                  </motion.tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

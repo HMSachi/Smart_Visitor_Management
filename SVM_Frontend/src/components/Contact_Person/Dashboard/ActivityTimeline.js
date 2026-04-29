@@ -1,42 +1,64 @@
 import React from "react";
 import { Activity, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ActivityTimeline = () => {
-  const activities = [
-    {
-      id: 1,
-      type: "review",
-      visitor: "John Doe",
-      time: "2 mins ago",
-      action: "Pending Review",
-      status: "priority",
-    },
-    {
-      id: 2,
-      type: "approval",
-      visitor: "Sarah Smith",
-      time: "15 mins ago",
-      action: "Sent to Admin",
-      status: "complete",
-    },
-    {
-      id: 3,
-      type: "request",
-      visitor: "Michael Chen",
-      time: "45 mins ago",
-      action: "New Request",
-      status: "new",
-    },
-    {
-      id: 4,
-      type: "review",
-      visitor: "Emma Wilson",
-      time: "1 hour ago",
-      action: "Pending Review",
-      status: "urgent",
-    },
-  ];
+  const navigate = useNavigate();
+  const { visitRequestsByCP: requests } = useSelector(
+    (state) => state.visitRequestsState || {}
+  );
+
+  const calculateRelativeTime = (dateString) => {
+    if (!dateString) return "Just now";
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHrs = Math.floor(diffMins / 60);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHrs < 24) return `${diffHrs}h ago`;
+    return date.toLocaleDateString();
+  };
+
+  const activities = (requests || [])
+    .slice(0, 10)
+    .map((req, idx) => {
+      const status = (req.VVR_Status || "").toString().trim().toUpperCase();
+      let action = "New Request Received";
+      let type = "request";
+      let badgeStatus = "new";
+
+      if (status === "A" || status === "APPROVED") {
+        action = "Request Approved";
+        type = "approval";
+        badgeStatus = "complete";
+      } else if (status === "R" || status === "REJECTED") {
+        action = "Request Declined";
+        type = "review";
+        badgeStatus = "urgent";
+      } else if (status === "SENT" || status === "SENT_TO_ADMIN") {
+        action = "Sent to Admin";
+        type = "approval";
+        badgeStatus = "priority";
+      } else if (status === "ACCEPTED") {
+        action = "Accepted by Visitor";
+        type = "review";
+        badgeStatus = "new";
+      }
+
+      return {
+        id: req.VVR_Request_id || idx,
+        type,
+        visitor: req.VVR_Visitor_Name || req.VV_Name || `Visitor #${req.VVR_Visitor_id}`,
+        time: calculateRelativeTime(req.VVR_Visit_Date),
+        action,
+        status: badgeStatus
+      };
+    });
 
   return (
     <motion.div
@@ -50,7 +72,10 @@ const ActivityTimeline = () => {
           <Activity size={14} className="text-primary" />
           Real-Time Activity
         </h3>
-        <button className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] font-bold uppercase tracking-widest hover:text-primary transition-colors">
+        <button 
+          onClick={() => navigate("/contact_person/visit-requests")}
+          className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] font-bold uppercase tracking-widest hover:text-primary transition-colors"
+        >
           View All
         </button>
       </div>
