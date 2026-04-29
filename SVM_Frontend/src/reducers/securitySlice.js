@@ -34,6 +34,7 @@ const initialState = {
   commandStatus: "All Systems Working",
   stationId: "NODE-08-MAIN",
   activeVisitors: [],
+  accessLogs: [],
   alerts: [],
 };
 
@@ -48,8 +49,14 @@ const securitySlice = createSlice({
         metric.value = value;
       }
     },
-    setCommandStatus: (state, action) => {
-      state.commandStatus = action.payload;
+    setActiveVisitors: (state, action) => {
+      state.activeVisitors = action.payload;
+    },
+    setAccessLogs: (state, action) => {
+      state.accessLogs = action.payload;
+    },
+    setAlerts: (state, action) => {
+      state.alerts = action.payload;
     },
     addAlert: (state, action) => {
       state.alerts.unshift(action.payload);
@@ -57,7 +64,7 @@ const securitySlice = createSlice({
   },
 });
 
-export const { updateMetric, setCommandStatus, addAlert } =
+export const { updateMetric, setCommandStatus, addAlert, setActiveVisitors, setAccessLogs, setAlerts } =
   securitySlice.actions;
 
 export default securitySlice.reducer;

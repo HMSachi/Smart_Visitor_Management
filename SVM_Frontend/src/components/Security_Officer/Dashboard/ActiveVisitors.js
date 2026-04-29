@@ -1,15 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Users, MapPin, Clock, Shield } from 'lucide-react';
 
 const ActiveVisitors = () => {
-    const [visitors, setVisitors] = useState([
-        { id: 1, name: 'John Doe', location: 'Building A - Floor 2', duration: '2 hrs 15 mins', badge: '#4521', status: 'approved' },
-        { id: 2, name: 'Sarah Smith', location: 'Building B - Reception', duration: '1 hr 40 mins', badge: '#4522', status: 'approved' },
-        { id: 3, name: 'Michael Chen', location: 'Building A - Conference Room', duration: '45 mins', badge: '#4523', status: 'approved' },
-        { id: 4, name: 'Emma Wilson', location: 'Building C - Lab', duration: '30 mins', badge: '#4524', status: 'approved' },
-        { id: 5, name: 'James Brown', location: 'Building A - Waiting Area', duration: '15 mins', badge: '#4525', status: 'pending' },
-    ]);
+    const { activeVisitors: visitors } = useSelector((state) => state.security);
 
     const VisitorRow = ({ visitor, index }) => (
         <motion.tr

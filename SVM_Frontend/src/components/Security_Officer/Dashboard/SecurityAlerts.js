@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle, Clock, Shield } from 'lucide-react';
 
 const SecurityAlerts = () => {
-    const [alerts, setAlerts] = useState([
-        { id: 1, type: 'warning', title: 'Unauthorized Badge Scan', description: 'Badge not recognized at Entry Gate 2', time: '5 mins ago', severity: 'high' },
-        { id: 2, type: 'info', title: 'Entry Approved', description: 'Visitor cleared by Contact Person', time: '12 mins ago', severity: 'normal' },
-        { id: 3, type: 'warning', title: 'QR Code Mismatch', description: 'QR scan failed verification check', time: '28 mins ago', severity: 'medium' },
-        { id: 4, type: 'success', title: 'Visitor Exited', description: 'All visitors verified and exited', time: '1 hour ago', severity: 'normal' },
-    ]);
+    const { alerts } = useSelector((state) => state.security);
 
     const getAlertIcon = (type) => {
         switch (type) {
