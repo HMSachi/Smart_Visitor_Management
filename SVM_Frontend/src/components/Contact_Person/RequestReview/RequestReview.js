@@ -305,7 +305,7 @@ const RequestReviewMain = () => {
           ) : (
             <PersonnelAuthProtocol
               visitor={requestData}
-              onBack={() => navigate("/contact_person/requests-inbox")}
+              onBack={() => navigate(-1)}
               onAction={(visitor, type) => {
                 if (type === "Approve") setShowApproveModal(true);
                 if (type === "Reject") setShowRejectModal(true);
