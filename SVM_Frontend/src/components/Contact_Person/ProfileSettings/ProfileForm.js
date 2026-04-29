@@ -129,6 +129,7 @@ const ProfileForm = () => {
               name="currentPassword"
               value={formData.currentPassword}
               onChange={handleInputChange}
+              maxLength={5}
               className={inputClass("currentPassword")} 
             />
           </div>
@@ -141,6 +142,7 @@ const ProfileForm = () => {
                 name="newPassword"
                 value={formData.newPassword}
                 onChange={handleInputChange}
+                maxLength={5}
                 className={inputClass("newPassword")} 
               />
               {errors.newPassword && <p className="text-red-500 text-[10px] font-bold uppercase">{errors.newPassword}</p>}
@@ -155,6 +157,7 @@ const ProfileForm = () => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
+                maxLength={5}
                 className={inputClass("confirmPassword")} 
               />
               {errors.confirmPassword && <p className="text-red-500 text-[10px] font-bold uppercase">{errors.confirmPassword}</p>}

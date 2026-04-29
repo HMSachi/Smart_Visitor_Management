@@ -217,6 +217,8 @@ const AllUsers = () => {
       value = value.replace(/[^A-Za-z\s]/g, "");
     } else if (name === "phone") {
       value = value.replace(/[^0-9]/g, "").slice(0, 10);
+    } else if (name === "password") {
+      value = value.slice(0, 5);
     }
     
     setFormData({ ...formData, [name]: value });
@@ -907,6 +909,7 @@ const AllUsers = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
+                      maxLength={10}
                       className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
@@ -955,6 +958,7 @@ const AllUsers = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
+                      maxLength={10}
                       className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
@@ -1008,6 +1012,7 @@ const AllUsers = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
+                      maxLength={5}
                       className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.password
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
