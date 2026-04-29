@@ -30,7 +30,6 @@ const Step1Main = () => {
 
   const [formErrors, setFormErrors] = useState({});
   const [visitorRecord, setVisitorRecord] = useState(null);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
   // Load visitor profile on mount
@@ -180,11 +179,8 @@ const Step1Main = () => {
 
       console.log("Proceeding with Request ID:", resolvedId);
       dispatch(setRequestId(resolvedId));
-      setShowSuccess(true);
 
-      setTimeout(() => {
-        navigate("/request-step-2");
-      }, 1500);
+      navigate("/request-step-2");
 
     } catch (err) {
       console.error("Submission error:", err);
@@ -197,24 +193,6 @@ const Step1Main = () => {
 
   return (
     <div className="h-full min-h-0 flex flex-col max-w-5xl mx-auto px-4 sm:px-6 py-3 pb-10 text-white bg-black overflow-hidden relative">
-      {/* Success Popup */}
-      {showSuccess && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-xl animate-fade-in"></div>
-          <div className="relative bg-[#111] p-10 rounded-[40px] shadow-[0_30px_100px_rgba(0,0,0,0.5)] border border-white/10 flex flex-col items-center text-center max-w-sm w-full animate-scale-in">
-            <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center text-white mb-8 shadow-[0_15px_40px_rgba(200,16,46,0.3)]">
-              <CheckCircle2 size={48} className="animate-bounce-subtle" />
-            </div>
-            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-4 italic">CORE DETAILS SAVED</h3>
-            <p className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.2em] leading-relaxed mb-10">
-              Proceeding to logistics declaration...
-            </p>
-            <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-              <div className="h-full bg-primary animate-progress-fast"></div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Error Popup */}
       {showError && (
