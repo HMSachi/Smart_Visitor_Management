@@ -141,8 +141,7 @@ const RequestReviewMain = () => {
         const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
           .filter(
             (v) =>
-              String(v?.VVR_Request_id) ===
-              String(apiRequest?.VVR_Request_id),
+              String(v?.VVR_Request_id) === String(apiRequest?.VVR_Request_id),
           )
           .map((v) => ({
             id: v.VV_Vehicle_id,
@@ -185,6 +184,7 @@ const RequestReviewMain = () => {
             id: i.VIC_Item_id,
             itemName: i.VIC_Item_Name,
             quantity: i.VIC_Quantity,
+            description: i.VIC_Designation,
           }));
         if (!cancelled) setItemsCarried(matchedItems);
       } catch (error) {
@@ -283,9 +283,17 @@ const RequestReviewMain = () => {
           </div>
 
           <div className="flex flex-col md:flex-row items-center gap-4">
-            <div className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/35 border-white/10"}`}>
-              <p className={`text-[10px] uppercase font-semibold tracking-[0.22em] mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}>Request Status</p>
-              <span className="text-primary text-[12px] font-semibold uppercase tracking-[0.2em]">{requestData?.status || "PENDING"}</span>
+            <div
+              className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/35 border-white/10"}`}
+            >
+              <p
+                className={`text-[10px] uppercase font-semibold tracking-[0.22em] mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}
+              >
+                Request Status
+              </p>
+              <span className="text-primary text-[12px] font-semibold uppercase tracking-[0.2em]">
+                {requestData?.status || "PENDING"}
+              </span>
             </div>
           </div>
         </div>
@@ -311,8 +319,22 @@ const RequestReviewMain = () => {
         </div>
       </div>
 
-      <ApprovalModal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} onConfirm={confirmApprove} comment={approvalComment} setComment={setApprovalComment} />
-      <RejectionModal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} onConfirm={confirmReject} reason={rejectionReason} setReason={setRejectionReason} comment={rejectionComment} setComment={setRejectionComment} />
+      <ApprovalModal
+        isOpen={showApproveModal}
+        onClose={() => setShowApproveModal(false)}
+        onConfirm={confirmApprove}
+        comment={approvalComment}
+        setComment={setApprovalComment}
+      />
+      <RejectionModal
+        isOpen={showRejectModal}
+        onClose={() => setShowRejectModal(false)}
+        onConfirm={confirmReject}
+        reason={rejectionReason}
+        setReason={setRejectionReason}
+        comment={rejectionComment}
+        setComment={setRejectionComment}
+      />
     </div>
   );
 };
