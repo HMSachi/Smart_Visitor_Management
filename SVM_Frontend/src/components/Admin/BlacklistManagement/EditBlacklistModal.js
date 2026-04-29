@@ -58,7 +58,13 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
   }, [initialData, isOpen]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    
+    // Real-time filtering
+    if (name === "VB_Name") {
+      value = value.replace(/[^A-Za-z\s]/g, "");
+    }
+    
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 

@@ -107,7 +107,7 @@ const VisitorOverview = ({ data, onChange, errors = {} }) => {
                   if (field.name === "fullName") {
                     value = value.replace(/[^A-Za-z\s]/g, "");
                   } else if (field.name === "phoneNumber" || field.name === "nic") {
-                    value = value.replace(/[^0-9]/g, "");
+                    value = value.replace(/[^0-9]/g, "").slice(0, 10);
                   }
                   
                   // Create a synthetic event or just call onChange with modified value

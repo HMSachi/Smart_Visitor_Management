@@ -18,6 +18,8 @@ const ProfileForm = () => {
     // Real-time filtering
     if (name === "name") {
       value = value.replace(/[^A-Za-z\s]/g, "");
+    } else if (name.toLowerCase().includes("password")) {
+      value = value.slice(0, 5);
     }
     
     setFormData(prev => ({ ...prev, [name]: value }));

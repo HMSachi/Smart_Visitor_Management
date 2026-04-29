@@ -120,7 +120,7 @@ const UserManagement = () => {
     if (name === 'name') {
       value = value.replace(/[^A-Za-z\s]/g, "");
     } else if (name === 'phone') {
-      value = value.replace(/[^0-9]/g, "");
+      value = value.replace(/[^0-9]/g, "").slice(0, 10);
     }
     
     setFormData((prev) => ({ ...prev, [name]: value }));

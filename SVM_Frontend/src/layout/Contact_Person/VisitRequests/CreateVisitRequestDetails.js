@@ -16,6 +16,7 @@ import { SectionHeader, InputField } from "../../../components/Contact_Person/Vi
 import { 
   Car, Users, Package, Plus, Trash2, ArrowLeft, CheckCircle2, Save, Edit2, Loader2
 } from "lucide-react";
+import { validateName, validateNIC, validatePhone } from "../../../utils/validation";
 
 const CreateVisitRequestDetails = () => {
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ const CreateVisitRequestDetails = () => {
     isSubmitting 
   } = useSelector((state) => state.visitRequestForm);
 
-  // Dual-source requestId: form slice (explicit set) OR reducer (set by ADD_VISIT_REQUEST_SUCCESS)
   const lastCreatedRequestId = useSelector((state) => state.visitRequestsState?.lastCreatedRequestId);
   const effectiveRequestId = savedRequestId || lastCreatedRequestId;
 
@@ -37,11 +37,10 @@ const CreateVisitRequestDetails = () => {
   const [personSavingIndex, setPersonSavingIndex] = useState(null);
   const [itemSavingIndex, setItemSavingIndex] = useState(null);
 
-  // Save a specific vehicle row via API, mark confirmed, then add a new blank row
   const handleVehicleSave = async (index) => {
     const vehicle = vehicles[index];
     if (vehicle.isConfirmed) {
-      dispatch(toggleVehicleConfirmed(index)); // toggle back to edit
+      dispatch(toggleVehicleConfirmed(index));
       return;
     }
     if (!vehicle.number?.trim()) {
@@ -61,7 +60,7 @@ const CreateVisitRequestDetails = () => {
       }));
       dispatch(markVehicleSaved(index));
       dispatch(toggleVehicleConfirmed(index));
-      dispatch(addVehicle()); // prepend a new blank row
+      dispatch(addVehicle());
     } catch (err) {
       console.error("Failed to save vehicle:", err);
       alert("Failed to save vehicle. Please try again.");
@@ -70,7 +69,6 @@ const CreateVisitRequestDetails = () => {
     }
   };
 
-  // "Add Vehicle" button: if there's an unsaved filled row, save it first then add blank
   const handleAddVehicle = async () => {
     const unsaved = vehicles.find(v => !v.isConfirmed && v.number?.trim());
     if (unsaved) {
@@ -81,17 +79,21 @@ const CreateVisitRequestDetails = () => {
     }
   };
 
-  // ── PEOPLE ────────────────────────────────────────────────────────────────
   const handlePersonSave = async (index) => {
     const person = people[index];
     if (person.isConfirmed) {
       dispatch(togglePersonConfirmed(index));
       return;
     }
-    if (!person.name?.trim()) {
-      alert("Please enter a name before saving.");
-      return;
-    }
+    
+    // Validations
+    const nameErr = validateName(person.name);
+    if (nameErr) { alert(nameErr); return; }
+    const nicErr = validateNIC(person.nic);
+    if (nicErr) { alert(nicErr); return; }
+    const phoneErr = validatePhone(person.phone);
+    if (phoneErr) { alert(phoneErr); return; }
+
     if (!effectiveRequestId) {
       alert("Visit request not found. Please go back to Step 1.");
       return;
@@ -125,7 +127,6 @@ const CreateVisitRequestDetails = () => {
     }
   };
 
-  // ── ITEMS ─────────────────────────────────────────────────────────────────
   const handleItemSave = async (index) => {
     const item = items[index];
     if (item.isConfirmed) {
@@ -173,14 +174,13 @@ const CreateVisitRequestDetails = () => {
     dispatch(setSubmitting(true));
     try {
       const requestId = effectiveRequestId;
-
       if (!requestId) {
         alert("Visit request ID not found. Please go back to Step 1 and try again.");
         dispatch(setSubmitting(false));
         return;
       }
 
-      // Only submit if they have a name/number and were at least meant to be submitted
+      // Final batch save if any unsaved items exist
       const vehiclePromises = vehicles
         .filter(v => v.number && !v.isSavedToServer)
         .map(v => dispatch(AddVehicle({
@@ -191,13 +191,17 @@ const CreateVisitRequestDetails = () => {
 
       const peoplePromises = people
         .filter(p => p.name && !p.isSavedToServer)
-        .map(p => dispatch(AddVisitGroup({
-          VVG_Visitor_Name: p.name,
-          VVG_NIC_Passport_Number: p.nic,
-          VVG_Designation: p.phone,
-          VVR_Request_id: requestId,
-          VVG_Status: "A"
-        })));
+        .map(p => {
+          // Pre-submission check
+          if (validateName(p.name) || validateNIC(p.nic) || validatePhone(p.phone)) return Promise.resolve();
+          return dispatch(AddVisitGroup({
+            VVG_Visitor_Name: p.name,
+            VVG_NIC_Passport_Number: p.nic,
+            VVG_Designation: p.phone,
+            VVR_Request_id: requestId,
+            VVG_Status: "A"
+          }));
+        });
 
       const itemPromises = items
         .filter(i => i.name && !i.isSavedToServer)
@@ -228,7 +232,6 @@ const CreateVisitRequestDetails = () => {
         <main className="flex-1 overflow-y-auto p-4 md:p-5 custom-scrollbar">
           <div className="max-w-6xl mx-auto space-y-4 animate-fade-in-slow pb-6">
             
-            {/* Step Indicator */}
             <div className="flex items-center gap-4 px-1">
               <div className="flex items-center gap-2 opacity-40">
                 <div className="w-6 h-6 rounded-full bg-green-500 text-white text-[10px] font-black flex items-center justify-center"><CheckCircle2 size={12} /></div>
@@ -243,7 +246,6 @@ const CreateVisitRequestDetails = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               
-              {/* Vehicles */}
               <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="Vehicle Details" icon={Car} />
@@ -298,7 +300,6 @@ const CreateVisitRequestDetails = () => {
                 </div>
               </div>
 
-              {/* People */}
               <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="Additional Visitors" icon={Users} />
@@ -311,13 +312,40 @@ const CreateVisitRequestDetails = () => {
                   {people.map((p, index) => (
                     <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 rounded-xl border transition-all ${p.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"}`}>
                       <div className="md:col-span-3">
-                        <InputField disabled={p.isConfirmed} label="Name" value={p.name} onChange={(e) => dispatch(updatePerson({ index, field: "name", value: e.target.value }))} placeholder="Full Name" />
+                        <InputField 
+                          disabled={p.isConfirmed} 
+                          label="Name" 
+                          value={p.name} 
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                            dispatch(updatePerson({ index, field: "name", value: val }));
+                          }} 
+                          placeholder="Full Name" 
+                        />
                       </div>
                       <div className="md:col-span-4">
-                        <InputField disabled={p.isConfirmed} label="NIC" value={p.nic} onChange={(e) => dispatch(updatePerson({ index, field: "nic", value: e.target.value }))} placeholder="ID Number" />
+                        <InputField 
+                          disabled={p.isConfirmed} 
+                          label="NIC" 
+                          value={p.nic} 
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+                            dispatch(updatePerson({ index, field: "nic", value: val }));
+                          }} 
+                          placeholder="ID Number" 
+                        />
                       </div>
                       <div className="md:col-span-3">
-                        <InputField disabled={p.isConfirmed} label="Contact" value={p.phone} onChange={(e) => dispatch(updatePerson({ index, field: "phone", value: e.target.value }))} placeholder="07XXXXXXXX" />
+                        <InputField 
+                          disabled={p.isConfirmed} 
+                          label="Contact" 
+                          value={p.phone} 
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+                            dispatch(updatePerson({ index, field: "phone", value: val }));
+                          }} 
+                          placeholder="07XXXXXXXX" 
+                        />
                       </div>
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
                         <button 
@@ -325,11 +353,8 @@ const CreateVisitRequestDetails = () => {
                           onClick={() => handlePersonSave(index)}
                           disabled={personSavingIndex === index}
                           className={`p-2 rounded-lg transition-all disabled:opacity-50 ${p.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
-                          title={p.isConfirmed ? "Edit Entry" : "Save to Server"}
                         >
-                          {personSavingIndex === index
-                            ? <Loader2 size={16} className="animate-spin" />
-                            : p.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
+                          {personSavingIndex === index ? <Loader2 size={16} className="animate-spin" /> : p.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
                         </button>
                         <button type="button" onClick={() => dispatch(removePerson(index))} className="p-2 text-gray-300 hover:text-red-500 transition-all"><Trash2 size={16} /></button>
                       </div>
@@ -339,7 +364,6 @@ const CreateVisitRequestDetails = () => {
                 </div>
               </div>
 
-              {/* Items */}
               <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="Items to Bring" icon={Package} />
@@ -366,11 +390,8 @@ const CreateVisitRequestDetails = () => {
                           onClick={() => handleItemSave(index)}
                           disabled={itemSavingIndex === index}
                           className={`p-2 rounded-lg transition-all disabled:opacity-50 ${i.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
-                          title={i.isConfirmed ? "Edit Entry" : "Save to Server"}
                         >
-                          {itemSavingIndex === index
-                            ? <Loader2 size={16} className="animate-spin" />
-                            : i.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
+                          {itemSavingIndex === index ? <Loader2 size={16} className="animate-spin" /> : i.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
                         </button>
                         <button type="button" onClick={() => dispatch(removeItem(index))} className="p-2 text-gray-300 hover:text-red-500 transition-all"><Trash2 size={16} /></button>
                       </div>
