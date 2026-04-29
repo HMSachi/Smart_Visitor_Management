@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { AlertTriangle, CheckCircle, Clock, TrendingDown } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, TrendingDown, ShieldCheck } from 'lucide-react';
 
 const IncidentMonitoring = () => {
-    const [incidents, setIncidents] = useState([
-        { id: 1, type: 'Badge Mismatch', severity: 'high', timestamp: '09:45 AM', location: 'Gate 2', description: 'Unauthorized badge scan detected', status: 'resolved' },
-        { id: 2, type: 'QR Verification Failed', severity: 'medium', timestamp: '10:12 AM', location: 'Entry Gate', description: 'QR code did not match system records', status: 'investigating' },
-        { id: 3, type: 'Extended Visit', severity: 'low', timestamp: '10:35 AM', location: 'Building A', description: 'Visitor exceeded approved duration', status: 'pending_action' },
-    ]);
+    const { incidents = [] } = useSelector((state) => state.security);
 
     const getSeverityColor = (severity) => {
         switch (severity) {
@@ -64,7 +61,7 @@ const IncidentMonitoring = () => {
 
     const totalIncidents = incidents.length;
     const resolvedCount = incidents.filter(i => i.status === 'resolved').length;
-    const resolutionRate = Math.round((resolvedCount / totalIncidents) * 100);
+    const resolutionRate = totalIncidents > 0 ? Math.round((resolvedCount / totalIncidents) * 100) : 100;
 
     return (
         <motion.div
@@ -91,9 +88,17 @@ const IncidentMonitoring = () => {
             </div>
 
             <div className="space-y-3 mb-6">
-                {incidents.map((incident, index) => (
-                    <IncidentCard key={incident.id} incident={incident} index={index} />
-                ))}
+                {incidents.length > 0 ? (
+                    incidents.map((incident, index) => (
+                        <IncidentCard key={incident.id} incident={incident} index={index} />
+                    ))
+                ) : (
+                    <div className="py-12 flex flex-col items-center justify-center border border-dashed border-[var(--color-border-soft)] rounded-xl bg-white/[0.01]">
+                        <ShieldCheck size={48} className="text-green-500/20 mb-4" />
+                        <p className="text-[var(--color-text-secondary)] text-sm font-medium">No security incidents reported today</p>
+                        <p className="text-[var(--color-text-dim)] text-[10px] uppercase tracking-widest mt-1">All systems clear</p>
+                    </div>
+                )}
             </div>
 
             {/* Summary Stats */}

@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
+import { FetchSecurityDashboardData } from "../../../actions/SecurityAction";
 import SecurityMetrics from "./SecurityMetrics";
 import SecurityQuickActions from "./SecurityQuickActions";
 import SecurityAlerts from "./SecurityAlerts";
@@ -11,6 +13,19 @@ import AccessLogs from "./AccessLogs";
 import SecurityStatus from "./SecurityStatus";
 
 const DashboardMain = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(FetchSecurityDashboardData());
+    
+    // Optional: Refresh every 30 seconds
+    const interval = setInterval(() => {
+      dispatch(FetchSecurityDashboardData());
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, [dispatch]);
+
   return (
     <div className="flex-1 p-4 sm:p-8 lg:p-4 md:p-10 space-y-6 md:space-y-10 animate-fade-in-slow overflow-y-auto min-h-full bg-[var(--color-bg-default)]">
       <div className="max-w-[1600px] mx-auto space-y-10">
