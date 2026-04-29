@@ -994,7 +994,7 @@ const AllUsers = () => {
                       <option value="">Select a role</option>
                       <option value="Admin">Admin</option>
                       <option value="Security">Security</option>
-                      <option value="Contact_Person">Host</option>
+                      <option value="Contact_Person">Contact Person</option>
                     </select>
                     {errors.role && (
                       <p className="text-[10px] text-red-400 font-semibold mt-1">
