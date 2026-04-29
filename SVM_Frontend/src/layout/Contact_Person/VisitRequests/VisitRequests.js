@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -82,6 +82,7 @@ const StatusBadge = ({ status }) => {
 
 const VisitRequests = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const { visitRequestsByCP, isLoading, error } = useSelector(
@@ -96,7 +97,7 @@ const VisitRequests = () => {
   const [cpId, setCpId] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState(location.state?.initialFilter || "All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add");
   const [expandedAreasByRequest, setExpandedAreasByRequest] = useState({});
