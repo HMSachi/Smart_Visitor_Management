@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -118,6 +118,9 @@ const MyRequests = () => {
   const [newItemSavingIdx, setNewItemSavingIdx] = useState(null);
   const [rowSuccess, setRowSuccess] = useState({});
   const [editError, setEditError] = useState("");
+  const [dirtyRows, setDirtyRows] = useState(new Set());  // keys: 'vehicle-N','member-N','item-N'
+  const [warnDirty, setWarnDirty] = useState(false);     // true when Save is blocked by dirty rows
+  const rowRefs = useRef({});                             // { 'vehicle-0': domEl, 'member-1': domEl, ... }
 
   useEffect(() => {
     const loadVisitorId = async () => {
@@ -213,6 +216,8 @@ const MyRequests = () => {
     setEditVehicles([]);
     setEditGroupMembers([]);
     setEditItems([]);
+    setDirtyRows(new Set());
+    setWarnDirty(false);
     try {
       const [vehicleRes, groupRes, itemsRes] = await Promise.all([
         VehicleService.GetAllVehicles(),
@@ -224,19 +229,19 @@ const MyRequests = () => {
       setEditVehicles(
         (Array.isArray(allVehicles) ? allVehicles : [])
           .filter((v) => String(v.VVR_Request_id) === reqId)
-          .map((v) => ({ VV_Vehicle_id: v.VV_Vehicle_id, VV_Vehicle_Number: v.VV_Vehicle_Number || "", VV_Vehicle_Type: v.VV_Vehicle_Type || "" }))
+          .map((v) => ({ VV_Vehicle_id: v.VV_Vehicle_id, VV_Vehicle_Number: v.VV_Vehicle_Number || "", VV_Vehicle_Type: v.VV_Vehicle_Type || "", _original: { VV_Vehicle_Number: v.VV_Vehicle_Number || "", VV_Vehicle_Type: v.VV_Vehicle_Type || "" } }))
       );
       const allGroups = groupRes?.data?.ResultSet || groupRes?.data || [];
       setEditGroupMembers(
         (Array.isArray(allGroups) ? allGroups : [])
           .filter((m) => String(m.VVR_Request_id) === reqId)
-          .map((m) => ({ VVG_id: m.VVG_id, VVG_Visitor_Name: m.VVG_Visitor_Name || "", VVG_NIC_Passport_Number: m.VVG_NIC_Passport_Number || "", VVG_Designation: m.VVG_Designation || "", VVR_Request_id: m.VVR_Request_id }))
+          .map((m) => ({ VVG_id: m.VVG_id, VVG_Visitor_Name: m.VVG_Visitor_Name || "", VVG_NIC_Passport_Number: m.VVG_NIC_Passport_Number || "", VVG_Designation: m.VVG_Designation || "", VVR_Request_id: m.VVR_Request_id, _original: { VVG_Visitor_Name: m.VVG_Visitor_Name || "", VVG_Designation: m.VVG_Designation || "" } }))
       );
       const allItems = itemsRes?.data?.ResultSet || itemsRes?.data || [];
       setEditItems(
         (Array.isArray(allItems) ? allItems : [])
           .filter((i) => String(i.VVR_Request_id) === reqId)
-          .map((i) => ({ VIC_Item_id: i.VIC_Item_id, VIC_Item_Name: i.VIC_Item_Name || "", VIC_Quantity: String(i.VIC_Quantity || ""), VIC_Designation: i.VIC_Designation || "" }))
+          .map((i) => ({ VIC_Item_id: i.VIC_Item_id, VIC_Item_Name: i.VIC_Item_Name || "", VIC_Quantity: String(i.VIC_Quantity || ""), VIC_Designation: i.VIC_Designation || "", _original: { VIC_Item_Name: i.VIC_Item_Name || "", VIC_Quantity: String(i.VIC_Quantity || ""), VIC_Designation: i.VIC_Designation || "" } }))
       );
     } catch (err) {
       console.error("Failed to load edit data:", err);
@@ -250,6 +255,29 @@ const MyRequests = () => {
     setEditingRequest(null);
     setEditError("");
     setRowSuccess({});
+    setDirtyRows(new Set());
+    setWarnDirty(false);
+  };
+
+  // Helper: mark a row as dirty (edited but not yet saved)
+  const markDirty = (key) => setDirtyRows((prev) => new Set(prev).add(key));
+  const clearDirty = (key) => setDirtyRows((prev) => { const n = new Set(prev); n.delete(key); return n; });
+
+  // Helper: check if a vehicle/member/item row has unsaved edits vs _original
+  const isVehicleDirty = (v, idx) => {
+    if (v._isNew) return true; // new unsaved row is always dirty
+    if (!v._original) return false;
+    return v.VV_Vehicle_Number !== v._original.VV_Vehicle_Number;
+  };
+  const isMemberDirty = (m) => {
+    if (m._isNew) return true;
+    if (!m._original) return false;
+    return m.VVG_Visitor_Name !== m._original.VVG_Visitor_Name || m.VVG_Designation !== m._original.VVG_Designation;
+  };
+  const isItemDirty = (it) => {
+    if (it._isNew) return true;
+    if (!it._original) return false;
+    return it.VIC_Item_Name !== it._original.VIC_Item_Name || it.VIC_Quantity !== it._original.VIC_Quantity || it.VIC_Designation !== it._original.VIC_Designation;
   };
 
   // Helper to flash a green tick on a row key then clear it after 2s
@@ -265,6 +293,24 @@ const MyRequests = () => {
       setEditError("Visit date, places, and purpose are required.");
       return;
     }
+    // Check for unsaved row edits
+    const unsavedKeys = [];
+    editVehicles.forEach((v, i) => { if (isVehicleDirty(v, i)) unsavedKeys.push(`vehicle-${i}`); });
+    editGroupMembers.forEach((m, i) => { if (isMemberDirty(m)) unsavedKeys.push(`member-${i}`); });
+    editItems.forEach((it, i) => { if (isItemDirty(it)) unsavedKeys.push(`item-${i}`); });
+    if (unsavedKeys.length > 0) {
+      setDirtyRows(new Set(unsavedKeys));
+      setWarnDirty(true);
+      setEditError(`${unsavedKeys.length} row(s) have unsaved changes. Please click Update/Submit on each highlighted row first.`);
+      // Auto-scroll to the first dirty row
+      const firstKey = unsavedKeys[0];
+      const el = rowRefs.current[firstKey];
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+    setWarnDirty(false);
     setEditSaving(true);
     setEditError("");
     try {
@@ -277,6 +323,14 @@ const MyRequests = () => {
       });
       if (visitorId) dispatch(GetVisitRequestsByVisitor(visitorId));
       flashSuccess("core");
+      // All clean — close form and go back to My Requests
+      setTimeout(() => {
+        setEditingRequest(null);
+        setEditError("");
+        setRowSuccess({});
+        setDirtyRows(new Set());
+        navigate("/visitor/my-requests");
+      }, 800);
     } catch (err) {
       console.error("Failed to update request core:", err);
       setEditError("Failed to save request details. Please try again.");
@@ -295,6 +349,9 @@ const MyRequests = () => {
         VV_Vehicle_id: vehicle.VV_Vehicle_id,
         VV_Vehicle_Number: vehicle.VV_Vehicle_Number,
       });
+      // Sync _original so row is no longer dirty
+      setEditVehicles((arr) => arr.map((v, i) => i === idx ? { ...v, _original: { VV_Vehicle_Number: v.VV_Vehicle_Number, VV_Vehicle_Type: v.VV_Vehicle_Type } } : v));
+      clearDirty(`vehicle-${idx}`);
       flashSuccess(`vehicle-${idx}`);
     } catch (err) { console.error(`Failed to update vehicle ${idx}:`, err); }
     finally { setVehicleSavingIdx(null); }
@@ -314,7 +371,8 @@ const MyRequests = () => {
         VV_Vehicle_Type: vehicle.VV_Vehicle_Type,
         VVR_Request_id: editingRequest.VVR_Request_id,
       });
-      setEditVehicles((arr) => arr.map((v, i) => i === idx ? { ...v, _isNew: false, VV_Vehicle_id: "saved" } : v));
+      setEditVehicles((arr) => arr.map((v, i) => i === idx ? { ...v, _isNew: false, VV_Vehicle_id: "saved", _original: { VV_Vehicle_Number: v.VV_Vehicle_Number, VV_Vehicle_Type: v.VV_Vehicle_Type } } : v));
+      clearDirty(`vehicle-${idx}`);
       flashSuccess(`vehicle-${idx}`);
     } catch (err) { console.error(`Failed to add vehicle ${idx}:`, err); setEditError("Failed to add vehicle."); }
     finally { setNewVehicleSavingIdx(null); }
@@ -333,6 +391,8 @@ const MyRequests = () => {
         VVG_Status: "A",
         VVR_Request_id: member.VVR_Request_id,
       });
+      setEditGroupMembers((arr) => arr.map((m, i) => i === idx ? { ...m, _original: { VVG_Visitor_Name: m.VVG_Visitor_Name, VVG_Designation: m.VVG_Designation } } : m));
+      clearDirty(`member-${idx}`);
       flashSuccess(`member-${idx}`);
     } catch (err) { console.error(`Failed to update member ${idx}:`, err); }
     finally { setMemberSavingIdx(null); }
@@ -355,7 +415,8 @@ const MyRequests = () => {
         VVR_Request_id: editingRequest.VVR_Request_id,
       });
       // Replace the _isNew row with a persisted placeholder (refresh marks it persisted)
-      setEditGroupMembers((arr) => arr.map((m, i) => i === idx ? { ...m, _isNew: false, VVG_id: "saved" } : m));
+      setEditGroupMembers((arr) => arr.map((m, i) => i === idx ? { ...m, _isNew: false, VVG_id: "saved", _original: { VVG_Visitor_Name: m.VVG_Visitor_Name, VVG_Designation: m.VVG_Designation } } : m));
+      clearDirty(`member-${idx}`);
       flashSuccess(`member-${idx}`);
     } catch (err) { console.error(`Failed to add member ${idx}:`, err); setEditError("Failed to add visitor."); }
     finally { setNewMemberSavingIdx(null); }
@@ -373,6 +434,8 @@ const MyRequests = () => {
         VIC_Quantity: item.VIC_Quantity,
         VIC_Designation: item.VIC_Designation,
       });
+      setEditItems((arr) => arr.map((it, i) => i === idx ? { ...it, _original: { VIC_Item_Name: it.VIC_Item_Name, VIC_Quantity: it.VIC_Quantity, VIC_Designation: it.VIC_Designation } } : it));
+      clearDirty(`item-${idx}`);
       flashSuccess(`item-${idx}`);
     } catch (err) { console.error(`Failed to update item ${idx}:`, err); }
     finally { setItemSavingIdx(null); }
@@ -391,7 +454,8 @@ const MyRequests = () => {
         VIC_Designation: item.VIC_Designation || "",
         VVR_Request_id: editingRequest.VVR_Request_id,
       });
-      setEditItems((arr) => arr.map((it, i) => i === idx ? { ...it, _isNew: false, VIC_Item_id: "saved" } : it));
+      setEditItems((arr) => arr.map((it, i) => i === idx ? { ...it, _isNew: false, VIC_Item_id: "saved", _original: { VIC_Item_Name: it.VIC_Item_Name, VIC_Quantity: it.VIC_Quantity, VIC_Designation: it.VIC_Designation } } : it));
+      clearDirty(`item-${idx}`);
       flashSuccess(`item-${idx}`);
     } catch (err) { console.error(`Failed to add item ${idx}:`, err); setEditError("Failed to add item."); }
     finally { setNewItemSavingIdx(null); }
@@ -827,11 +891,14 @@ const MyRequests = () => {
                         {editVehicles.map((vehicle, idx) => (
                           <div
                             key={vehicle.VV_Vehicle_id || idx}
+                            ref={(el) => { rowRefs.current[`vehicle-${idx}`] = el; }}
                             className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
-                            style={vehicle._isNew
-                              ? { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" }
-                              : { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" }
-                            }
+                            style={(() => {
+                              const isDirtyWarn = warnDirty && dirtyRows.has(`vehicle-${idx}`);
+                              if (isDirtyWarn) return { border: "2px solid rgba(239,68,68,0.7)", background: "rgba(239,68,68,0.05)", borderRadius: "16px" };
+                              if (vehicle._isNew) return { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" };
+                              return { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" };
+                            })()}
                           >
                             <div className="space-y-1.5">
                               <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>Vehicle Number</label>
@@ -882,11 +949,14 @@ const MyRequests = () => {
                         {editGroupMembers.map((member, idx) => (
                           <div
                             key={member.VVG_id || idx}
+                            ref={(el) => { rowRefs.current[`member-${idx}`] = el; }}
                             className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
-                            style={member._isNew
-                              ? { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" }
-                              : { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" }
-                            }
+                            style={(() => {
+                              const isDirtyWarn = warnDirty && dirtyRows.has(`member-${idx}`);
+                              if (isDirtyWarn) return { border: "2px solid rgba(239,68,68,0.7)", background: "rgba(239,68,68,0.05)", borderRadius: "16px" };
+                              if (member._isNew) return { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" };
+                              return { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" };
+                            })()}
                           >
                             <div className="space-y-1.5">
                               <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>Full Name</label>
@@ -941,11 +1011,14 @@ const MyRequests = () => {
                         {editItems.map((item, idx) => (
                           <div
                             key={item.VIC_Item_id || idx}
+                            ref={(el) => { rowRefs.current[`item-${idx}`] = el; }}
                             className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
-                            style={item._isNew
-                              ? { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" }
-                              : { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" }
-                            }
+                            style={(() => {
+                              const isDirtyWarn = warnDirty && dirtyRows.has(`item-${idx}`);
+                              if (isDirtyWarn) return { border: "2px solid rgba(239,68,68,0.7)", background: "rgba(239,68,68,0.05)", borderRadius: "16px" };
+                              if (item._isNew) return { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" };
+                              return { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" };
+                            })()}
                           >
                             <div className="space-y-1.5">
                               <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>Item Name</label>
