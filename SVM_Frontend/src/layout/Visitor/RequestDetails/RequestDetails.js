@@ -161,8 +161,6 @@ const RequestDetails = () => {
       visitDate: toDisplayDate(req.VVR_Visit_Date),
       areas: req.VVR_Places_to_Visit || visitor.VV_Visiting_places || "N/A",
       purpose: req.VVR_Purpose || "N/A",
-      vehicleNo: req.VV_Vehicle_Number || visitor.VV_Vehicle_Number || firstVehicle.VV_Vehicle_Number || "N/A",
-      vehicleType: req.VV_Vehicle_Type || visitor.VV_Vehicle_Type || firstVehicle.VV_Vehicle_Type || "N/A",
     };
   }, [currentRequest, visitorRecord, vehicleRecords, requestId]);
 
@@ -284,10 +282,7 @@ const RequestDetails = () => {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <SmallField label="Vehicle Number" value={summary.vehicleNo} icon={Car} />
-              <SmallField label="Vehicle Type" value={summary.vehicleType} icon={Car} />
-            </div>
+            <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No vehicles registered.</p>
           )}
         </SectionCard>
 
