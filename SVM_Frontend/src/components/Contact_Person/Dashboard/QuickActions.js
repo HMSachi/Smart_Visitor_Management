@@ -55,25 +55,25 @@ const QuickActions = () => {
       icon: Plus,
       label: "New Request",
       description: "Create a new visitor authorization request",
-      onClick: () => navigate("/contact_person/new-request"),
+      onClick: () => navigate("/contact_person/create-visit-request"),
     },
     {
       icon: Inbox,
-      label: "View Inbox",
-      description: "Check pending requests and responses",
-      onClick: () => navigate("/contact_person/requests-inbox"),
+      label: "Visit Requests",
+      description: "Manage all pending and active requests",
+      onClick: () => navigate("/contact_person/visit-requests"),
     },
     {
       icon: Send,
       label: "Sent Requests",
-      description: "Review submitted requests and status",
-      onClick: () => navigate("/contact_person/sent-to-admin"),
+      description: "Review requests sent to Cloud Admin",
+      onClick: () => navigate("/contact_person/visit-requests", { state: { initialFilter: "SENT" } }),
     },
     {
       icon: Users,
       label: "All Visitors",
       description: "Manage visitor information database",
-      onClick: () => navigate("/contact_person/visitor-history"),
+      onClick: () => navigate("/contact_person/all-visitors"),
     },
   ];
 
