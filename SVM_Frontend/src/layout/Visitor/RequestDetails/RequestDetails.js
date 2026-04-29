@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { ArrowLeft, Calendar, Hash, MapPin, User, Mail, Phone, Building2, Briefcase, Car, Users, Package } from "lucide-react";
 import VisitorService from "../../../services/VisitorService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
+import { UpdateVisitRequest } from "../../../actions/VisitRequestAction";
 
 const RAW_FIELD_LABELS = {
   VVR_Contact_person_id: "Contact Person ID",
@@ -81,6 +82,7 @@ const SectionCard = ({ title, icon: Icon, children }) => (
 
 const RequestDetails = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const { requestId } = useParams();
 
@@ -98,6 +100,7 @@ const RequestDetails = () => {
   const [groupMembers, setGroupMembers] = useState([]);
   const [items, setItems] = useState([]);
   const [vehicleRecord, setVehicleRecord] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const loadExtraDetails = async () => {
@@ -174,6 +177,17 @@ const RequestDetails = () => {
       .sort(([a], [b]) => a.localeCompare(b));
   }, [currentRequest]);
 
+  const handleAccept = async () => {
+    if (!currentRequest?.VVR_Request_id) return;
+    try {
+      await dispatch(UpdateVisitRequest({ ...currentRequest, VVR_Status: "ACCEPTED" }));
+      setShowSuccess(true);
+    } catch (error) {
+      console.error("Error accepting request:", error);
+      alert("Failed to accept request. Please try again.");
+    }
+  };
+
   if (!currentRequest) {
     return (
       <div className="min-h-screen bg-[var(--color-bg-default)] text-white px-4 md:px-8 pt-24 md:pt-28 pb-8">
@@ -193,14 +207,49 @@ const RequestDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-default)] text-white px-4 md:px-8 pt-24 md:pt-28 pb-8">
+    <div className="min-h-screen bg-[var(--color-bg-default)] text-white px-4 md:px-8 pt-24 md:pt-28 pb-8 relative">
+      {/* Success Popup */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"></div>
+          <div className="relative bg-white p-6 rounded-[20px] shadow-2xl border border-gray-200 flex flex-col max-w-sm w-full animate-scale-in">
+            <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">Success</h3>
+            <p className="text-[13px] text-gray-500 mb-6 leading-relaxed">
+              Request accepted successfully. The contact person will be notified.
+            </p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => {
+                  setShowSuccess(false);
+                  navigate("/visitor/my-requests");
+                }}
+                className="px-6 py-2.5 bg-primary text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all hover:bg-primary/90 active:scale-95"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-5xl mx-auto space-y-4">
-        <button
-          onClick={() => navigate("/visitor/my-requests")}
-          className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary"
-        >
-          <ArrowLeft size={14} /> Back to My Requests
-        </button>
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => navigate("/visitor/my-requests")}
+            className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary"
+          >
+            <ArrowLeft size={14} /> Back to My Requests
+          </button>
+          
+          {summary.status === "Pending" && (
+            <button
+              onClick={handleAccept}
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-[11px] font-bold uppercase tracking-[0.16em] transition-all shadow-md active:scale-95"
+            >
+              Accepted
+            </button>
+          )}
+        </div>
 
         <SectionCard title="Request Summary" icon={Hash}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

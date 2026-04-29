@@ -49,6 +49,13 @@ const StatusBadge = ({ status }) => {
           <CheckCircle2 size={10} /> Accepted
         </div>
       );
+    case "SENT":
+    case "SENT_TO_ADMIN":
+      return (
+        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max">
+          <CheckCircle2 size={10} /> CP Accepted
+        </div>
+      );
     case "P":
     case "PENDING":
     default:
