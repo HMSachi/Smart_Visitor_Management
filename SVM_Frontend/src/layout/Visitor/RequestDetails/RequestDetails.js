@@ -99,7 +99,7 @@ const RequestDetails = () => {
   const [visitorRecord, setVisitorRecord] = useState(null);
   const [groupMembers, setGroupMembers] = useState([]);
   const [items, setItems] = useState([]);
-  const [vehicleRecord, setVehicleRecord] = useState(null);
+  const [vehicleRecords, setVehicleRecords] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
@@ -129,10 +129,10 @@ const RequestDetails = () => {
 
           const vehicleRes = await VehicleService.GetAllVehicles();
           const allVehicles = vehicleRes?.data?.ResultSet || vehicleRes?.data || [];
-          const matchedVehicle = (Array.isArray(allVehicles) ? allVehicles : []).find(
+          const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : []).filter(
             (v) => String(v.VVR_Request_id) === String(currentRequest.VVR_Request_id)
           );
-          setVehicleRecord(matchedVehicle || null);
+          setVehicleRecords(matchedVehicles);
         }
       } catch (error) {
         console.error("Failed to load full request details:", error);
@@ -147,7 +147,7 @@ const RequestDetails = () => {
   const summary = useMemo(() => {
     const req = currentRequest || {};
     const visitor = visitorRecord || {};
-    const vehicle = vehicleRecord || {};
+    const firstVehicle = vehicleRecords[0] || {};
 
     return {
       id: req.VVR_Request_id || requestId || "N/A",
@@ -161,10 +161,10 @@ const RequestDetails = () => {
       visitDate: toDisplayDate(req.VVR_Visit_Date),
       areas: req.VVR_Places_to_Visit || visitor.VV_Visiting_places || "N/A",
       purpose: req.VVR_Purpose || "N/A",
-      vehicleNo: req.VV_Vehicle_Number || visitor.VV_Vehicle_Number || vehicle.VV_Vehicle_Number || "N/A",
-      vehicleType: req.VV_Vehicle_Type || visitor.VV_Vehicle_Type || vehicle.VV_Vehicle_Type || "N/A",
+      vehicleNo: req.VV_Vehicle_Number || visitor.VV_Vehicle_Number || firstVehicle.VV_Vehicle_Number || "N/A",
+      vehicleType: req.VV_Vehicle_Type || visitor.VV_Vehicle_Type || firstVehicle.VV_Vehicle_Type || "N/A",
     };
-  }, [currentRequest, visitorRecord, vehicleRecord, requestId]);
+  }, [currentRequest, visitorRecord, vehicleRecords, requestId]);
 
   const rawFields = useMemo(() => {
     if (!currentRequest) return [];
@@ -274,10 +274,21 @@ const RequestDetails = () => {
         </SectionCard>
 
         <SectionCard title="Vehicle Registry" icon={Car}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SmallField label="Vehicle Number" value={summary.vehicleNo} icon={Car} />
-            <SmallField label="Vehicle Type" value={summary.vehicleType} icon={Car} />
-          </div>
+          {vehicleRecords.length > 0 ? (
+            <div className="space-y-3">
+              {vehicleRecords.map((vehicle, idx) => (
+                <div key={vehicle.VV_Vehicle_id || idx} className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 rounded-2xl border border-gray-200 bg-[#F8F9FA]">
+                  <SmallField label="Vehicle Number" value={vehicle.VV_Vehicle_Number} icon={Car} />
+                  <SmallField label="Vehicle Type" value={vehicle.VV_Vehicle_Type} icon={Car} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <SmallField label="Vehicle Number" value={summary.vehicleNo} icon={Car} />
+              <SmallField label="Vehicle Type" value={summary.vehicleType} icon={Car} />
+            </div>
+          )}
         </SectionCard>
 
         <SectionCard title="People Visiting" icon={Users}>

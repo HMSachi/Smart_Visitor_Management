@@ -266,7 +266,7 @@ const MyRequests = () => {
                               <Calendar size={11} className="text-primary/50" />
                               <span className="text-[12px] font-medium tracking-normal">
                                 {req.VVR_Visit_Date
-                                  ? req.VVR_Visit_Date.split("T")[0]
+                                  ? req.VVR_Visit_Date.split("T")[0].split(" ")[0]
                                   : "N/A"}
                               </span>
                             </div>
@@ -362,7 +362,7 @@ const MyRequests = () => {
                             />
                             <span className="text-[13px] font-medium tracking-normal">
                               {req.VVR_Visit_Date
-                                ? req.VVR_Visit_Date.split("T")[0]
+                                ? req.VVR_Visit_Date.split("T")[0].split(" ")[0]
                                 : "N/A"}
                             </span>
                           </div>
