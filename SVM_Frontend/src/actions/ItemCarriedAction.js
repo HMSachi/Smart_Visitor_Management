@@ -36,6 +36,8 @@ export const AddItem = (itemData) => {
                 response.data.ResultSet ||
                 response.data.Status === "Success" ||
                 response.data.Status === "OK" ||
+                response.data.Result === "Success!!" ||
+                response.data.StatusCode === 200 ||
                 response.status === 200
             );
             if (isSuccess) {

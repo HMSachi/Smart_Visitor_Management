@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
+import { FetchSecurityDashboardData } from "../../../actions/SecurityAction";
 import SecurityMetrics from "./SecurityMetrics";
 import SecurityQuickActions from "./SecurityQuickActions";
 import SecurityAlerts from "./SecurityAlerts";
@@ -11,6 +13,19 @@ import AccessLogs from "./AccessLogs";
 import SecurityStatus from "./SecurityStatus";
 
 const DashboardMain = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(FetchSecurityDashboardData());
+    
+    // Optional: Refresh every 30 seconds
+    const interval = setInterval(() => {
+      dispatch(FetchSecurityDashboardData());
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, [dispatch]);
+
   return (
     <div className="flex-1 p-4 sm:p-8 lg:p-4 md:p-10 space-y-6 md:space-y-10 animate-fade-in-slow overflow-y-auto min-h-full bg-[var(--color-bg-default)]">
       <div className="max-w-[1600px] mx-auto space-y-10">
@@ -36,19 +51,19 @@ const DashboardMain = () => {
         <SecurityQuickActions />
         
         {/* Security Alerts & Access Control */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+        {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           <motion.section initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="lg:col-span-2">
             <SecurityAlerts />
           </motion.section>
           <motion.section initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
             <AccessControl />
           </motion.section>
-        </div>
+        </div> */}
 
         {/* Security Status */}
-        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+        {/* <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <SecurityStatus />
-        </motion.section>
+        </motion.section> */}
 
         {/* Active Visitors & Incident Monitoring */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">

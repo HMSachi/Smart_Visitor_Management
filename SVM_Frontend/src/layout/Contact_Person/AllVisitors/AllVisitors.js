@@ -25,6 +25,9 @@ import {
   AlertCircle,
   Car,
 } from "lucide-react";
+import { 
+  validateName, validateNIC, validatePhone, validateEmail, validatePassword 
+} from "../../../utils/validation";
 
 const ContactAllVisitors = () => {
   const dispatch = useDispatch();
@@ -143,83 +146,55 @@ const ContactAllVisitors = () => {
   };
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+    
+    // Real-time filtering and length enforcement
+    if (name === "VV_Name") {
+      value = value.replace(/[^A-Za-z\s]/g, "");
+    } else if (name === "VV_Phone" || name === "VV_NIC_Passport_NO") {
+      value = value.replace(/[^0-9]/g, "").slice(0, 10);
+    } else if (name === "VA_Password") {
+      value = value.slice(0, 5);
+    }
+    
+    setFormData({ ...formData, [name]: value });
     // Clear error for this field when user starts typing
-    if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: "" });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    // Full Name validation
-    if (!formData.VV_Name?.trim()) {
-      newErrors.VV_Name = "Full name is required";
-    } else if (formData.VV_Name.trim().length < 2) {
-      newErrors.VV_Name = "Name must be at least 2 characters";
-    } else if (!/^[a-zA-Z\s'-]+$/.test(formData.VV_Name)) {
-      newErrors.VV_Name =
-        "Name can only contain letters, spaces, hyphens, and apostrophes";
-    }
+    const nameErr = validateName(formData.VV_Name);
+    if (nameErr) newErrors.VV_Name = nameErr;
 
-    // NIC/Passport validation
-    if (!formData.VV_NIC_Passport_NO?.trim()) {
-      newErrors.VV_NIC_Passport_NO = "ID or Passport number is required";
-    } else if (formData.VV_NIC_Passport_NO.trim().length < 5) {
-      newErrors.VV_NIC_Passport_NO =
-        "ID/Passport must be at least 5 characters";
-    }
+    const nicErr = validateNIC(formData.VV_NIC_Passport_NO);
+    if (nicErr) newErrors.VV_NIC_Passport_NO = nicErr;
 
-    // Email validation
-    if (!formData.VV_Email?.trim()) {
-      newErrors.VV_Email = "Email address is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.VV_Email)) {
-      newErrors.VV_Email = "Please enter a valid email address";
-    }
+    const emailErr = validateEmail(formData.VV_Email);
+    if (emailErr) newErrors.VV_Email = emailErr;
 
-    // Phone validation
-    if (!formData.VV_Phone?.trim()) {
-      newErrors.VV_Phone = "Phone number is required";
-    } else {
-      const digitsOnly = formData.VV_Phone.replace(/\D/g, "");
-      if (digitsOnly.length !== 10) {
-        newErrors.VV_Phone = "Phone number must contain exactly 10 digits";
-      }
-    }
+    const phoneErr = validatePhone(formData.VV_Phone);
+    if (phoneErr) newErrors.VV_Phone = phoneErr;
+
+    const passErr = validatePassword(formData.VA_Password);
+    if (passErr) newErrors.VA_Password = passErr;
 
     // Organization validation
     if (!formData.VV_Company?.trim()) {
       newErrors.VV_Company = "Organization name is required";
-    } else if (formData.VV_Company.trim().length < 2) {
-      newErrors.VV_Company = "Organization must be at least 2 characters";
     }
 
     // Purpose of Visit validation
     if (!formData.VV_Visitor_Type?.trim()) {
       newErrors.VV_Visitor_Type = "Purpose of visit is required";
-    } else if (formData.VV_Visitor_Type.trim().length < 2) {
-      newErrors.VV_Visitor_Type = "Purpose must be at least 2 characters";
     }
 
     // Where to Visit validation
     if (!formData.VV_Visiting_places?.trim()) {
       newErrors.VV_Visiting_places = "Visiting area is required";
-    } else if (formData.VV_Visiting_places.trim().length < 2) {
-      newErrors.VV_Visiting_places =
-        "Visiting area must be at least 2 characters";
-    }
-
-    // Password validation
-    if (!formData.VA_Password?.trim()) {
-      newErrors.VA_Password = "Password is required";
-    } else if (formData.VA_Password.length < 6) {
-      newErrors.VA_Password = "Password must be at least 6 characters";
-    } else if (
-      !/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(formData.VA_Password)
-    ) {
-      newErrors.VA_Password =
-        "Password must contain uppercase, lowercase, and numbers";
     }
 
     setErrors(newErrors);
@@ -568,6 +543,7 @@ const ContactAllVisitors = () => {
                       name="VV_NIC_Passport_NO"
                       value={formData.VV_NIC_Passport_NO}
                       onChange={handleInputChange}
+                      maxLength={10}
                       className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_NIC_Passport_NO
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
@@ -616,6 +592,7 @@ const ContactAllVisitors = () => {
                       name="VV_Phone"
                       value={formData.VV_Phone}
                       onChange={handleInputChange}
+                      maxLength={10}
                       className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_Phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
@@ -630,7 +607,7 @@ const ContactAllVisitors = () => {
                     )}
                     {!errors.VV_Phone && (
                       <p className="text-[9px] text-white/40 uppercase tracking-[0.12em] px-1 mt-1">
-                        Enter 10 digits (with or without formatting)
+                        Enter 10 digits (Numbers only)
                       </p>
                     )}
                   </div>
@@ -717,6 +694,7 @@ const ContactAllVisitors = () => {
                       name="VA_Password"
                       value={formData.VA_Password}
                       onChange={handleInputChange}
+                      maxLength={5}
                       className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VA_Password
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
@@ -730,7 +708,7 @@ const ContactAllVisitors = () => {
                       </p>
                     ) : (
                       <p className="text-[9px] text-white/35 uppercase tracking-[0.12em] px-1 mt-1">
-                        Min 6 chars, uppercase, lowercase &amp; numbers
+                        Max 5 chars, Capital &amp; Special Char
                       </p>
                     )}
                   </div>

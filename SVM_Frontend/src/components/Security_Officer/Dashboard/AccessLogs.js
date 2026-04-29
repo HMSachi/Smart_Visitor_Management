@@ -1,15 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { History, LogIn, LogOut, Shield } from 'lucide-react';
 
 const AccessLogs = () => {
-    const [logs, setLogs] = useState([
-        { id: 1, timestamp: '10:45 AM', visitorName: 'John Doe', action: 'Entry', location: 'Gate 1', status: 'Success', method: 'Badge Scan' },
-        { id: 2, timestamp: '10:32 AM', visitorName: 'Sarah Smith', action: 'Entry', location: 'Gate 2', status: 'Success', method: 'QR Code' },
-        { id: 3, timestamp: '10:15 AM', visitorName: 'Michael Chen', action: 'Exit', location: 'Gate 1', status: 'Success', method: 'QR Verification' },
-        { id: 4, timestamp: '09:58 AM', visitorName: 'Emma Wilson', action: 'Entry', location: 'Gate 3', status: 'Failed', method: 'Badge Scan' },
-        { id: 5, timestamp: '09:45 AM', visitorName: 'James Brown', action: 'Entry', location: 'Gate 2', status: 'Success', method: 'Badge Scan' },
-    ]);
+    const { accessLogs: logs } = useSelector((state) => state.security);
 
     const getActionIcon = (action) => {
         return action === 'Entry' ? <LogIn size={14} /> : <LogOut size={14} />;

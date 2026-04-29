@@ -14,6 +14,7 @@ import {
   ResetUserManagementSuccess
 } from '../../../actions/UserManagementAction';
 import { DeleteAdministrator } from '../../../actions/AdministratorAction';
+import { validateName, validateEmail, validatePhone } from '../../../utils/validation';
 
 const UserManagement = () => {
   const dispatch = useDispatch();
@@ -113,7 +114,15 @@ const UserManagement = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    
+    // Real-time filtering
+    if (name === 'name') {
+      value = value.replace(/[^A-Za-z\s]/g, "");
+    } else if (name === 'phone') {
+      value = value.replace(/[^0-9]/g, "").slice(0, 10);
+    }
+    
     setFormData((prev) => ({ ...prev, [name]: value }));
     dispatch(ClearUserManagementErrors());
   };
@@ -153,6 +162,25 @@ const UserManagement = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validation.phoneError || validation.emailError) return;
+
+    // Validation checks
+    const nameErr = validateName(formData.name);
+    if (nameErr) {
+      setError(nameErr);
+      return;
+    }
+
+    const emailErr = validateEmail(formData.email);
+    if (emailErr) {
+      setError(emailErr);
+      return;
+    }
+
+    const phoneErr = validatePhone(formData.phone);
+    if (phoneErr) {
+      setError(phoneErr);
+      return;
+    }
 
     if (isEditing) {
       dispatch(UpdateContactPerson(formData.id, formData.name, formData.department, formData.email, formData.phone));
@@ -274,6 +302,7 @@ const UserManagement = () => {
                   <TextField
                     fullWidth name="phone" value={formData.phone} onChange={handleChange} onBlur={handlePhoneBlur} required
                     error={!!validation.phoneError} helperText={validation.phoneError} variant="outlined" size="small"
+                    placeholder="e.g. 0712345678 (10 digits only)"
                     InputProps={{ className: "rounded-none bg-black/60 border-white/5 text-sm text-white transition-all focus-within:bg-black" }}
                     sx={{ "& .MuiOutlinedInput-root": { "& fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.1)" }, "&:hover fieldset": { borderColor: validation.phoneError ? "var(--color-primary)" : "rgba(255,255,255,0.2)" }, "&.Mui-focused fieldset": { borderColor: "var(--color-primary)" } } }}
                   />

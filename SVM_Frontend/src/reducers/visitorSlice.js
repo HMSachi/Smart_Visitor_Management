@@ -11,15 +11,17 @@ const initialState = {
   visitingArea: "",
   proposedVisitDate: "",
   purposeOfVisitation: "",
-  vehicleType: "Car",
-  plateNumber: "",
+  
+  // Stage 2: Detailed Logistics
+  vehicles: [{ id: Date.now(), vehicleType: "Car", plateNumber: "", isConfirmed: false, isSavedToServer: false }],
+  visitors: [{ id: Date.now(), fullName: "", nic: "", contact: "", isConfirmed: false }],
+  equipment: [{ id: Date.now(), itemName: "", quantity: "", description: "", isConfirmed: false }],
 
-  // Stage 2: Detailed Clearance
-  visitors: [{ id: Date.now(), fullName: "", nic: "", contact: "" }],
-  equipment: [{ id: Date.now(), itemName: "", quantity: "", description: "" }],
-
-  // Status & References
-  status: null, // 'step1_pending', 'step1_approved', 'step2_pending', 'fully_approved'
+  // Internal Workflow State
+  requestId: null,
+  isSubmitting: false,
+  error: null,
+  status: null, // 'step1_pending', 'step2_pending', etc.
   requestRef: "MAS-VAS-PENDING",
 };
 
@@ -42,13 +44,47 @@ const visitorSlice = createSlice({
     updateVisitorCount: (state, action) => {
       state.visitorCount = Math.max(1, state.visitorCount + action.payload);
     },
-    // Step 2 dynamic lists
+    // Vehicle actions
+    addVehicle: (state) => {
+      state.vehicles.push({
+        id: Date.now(),
+        vehicleType: "Car",
+        plateNumber: "",
+        isConfirmed: false,
+        isSavedToServer: false,
+      });
+    },
+    removeVehicle: (state, action) => {
+      if (state.vehicles.length > 1) {
+        state.vehicles = state.vehicles.filter((v) => v.id !== action.payload);
+      }
+    },
+    updateVehicleDetail: (state, action) => {
+      const { id, field, value } = action.payload;
+      const vehicle = state.vehicles.find((v) => v.id === id);
+      if (vehicle) vehicle[field] = value;
+    },
+    toggleVehicleConfirmed: (state, action) => {
+      const vehicle = state.vehicles.find((v) => v.id === action.payload);
+      if (vehicle) vehicle.isConfirmed = !vehicle.isConfirmed;
+    },
+    markVehicleSavedVisitor: (state, action) => {
+      const vehicle = state.vehicles.find((v) => v.id === action.payload);
+      if (vehicle) {
+        vehicle.isSavedToServer = true;
+        vehicle.isConfirmed = true;
+      }
+    },
+
+    // Step 2 dynamic lists enhancements
     addVisitor: (state) => {
       state.visitors.push({
         id: Date.now(),
         fullName: "",
         nic: "",
         contact: "",
+        isConfirmed: false,
+        isSavedToServer: false,
       });
     },
     removeVisitor: (state, action) => {
@@ -61,12 +97,23 @@ const visitorSlice = createSlice({
       const visitor = state.visitors.find((v) => v.id === id);
       if (visitor) visitor[field] = value;
     },
+    toggleVisitorConfirmed: (state, action) => {
+      const visitor = state.visitors.find((v) => v.id === action.payload);
+      if (visitor) visitor.isConfirmed = !visitor.isConfirmed;
+    },
+    markVisitorSaved: (state, action) => {
+      const visitor = state.visitors.find((v) => v.id === action.payload);
+      if (visitor) { visitor.isSavedToServer = true; visitor.isConfirmed = true; }
+    },
+
     addEquipment: (state) => {
       state.equipment.push({
         id: Date.now(),
         itemName: "",
         quantity: "",
         description: "",
+        isConfirmed: false,
+        isSavedToServer: false,
       });
     },
     removeEquipment: (state, action) => {
@@ -81,12 +128,30 @@ const visitorSlice = createSlice({
       const item = state.equipment.find((e) => e.id === id);
       if (item) item[field] = value;
     },
+    toggleEquipmentConfirmed: (state, action) => {
+      const item = state.equipment.find((e) => e.id === action.payload);
+      if (item) item.isConfirmed = !item.isConfirmed;
+    },
+    markEquipmentSaved: (state, action) => {
+      const item = state.equipment.find((e) => e.id === action.payload);
+      if (item) { item.isSavedToServer = true; item.isConfirmed = true; }
+    },
+
     // Status updates
     setStatus: (state, action) => {
       state.status = action.payload;
     },
+    setRequestId: (state, action) => {
+      state.requestId = action.payload;
+    },
     setRequestRef: (state, action) => {
       state.requestRef = action.payload;
+    },
+    setSubmitting: (state, action) => {
+      state.isSubmitting = action.payload;
+    },
+    setError: (state, action) => {
+      state.error = action.payload;
     },
     resetVisitorForm: () => initialState,
   },
@@ -96,14 +161,26 @@ export const {
   updateField,
   toggleArea,
   updateVisitorCount,
+  addVehicle,
+  removeVehicle,
+  updateVehicleDetail,
+  toggleVehicleConfirmed,
+  markVehicleSavedVisitor,
   addVisitor,
   removeVisitor,
   updateVisitorDetail,
+  toggleVisitorConfirmed,
+  markVisitorSaved,
   addEquipment,
   removeEquipment,
   updateEquipmentDetail,
+  toggleEquipmentConfirmed,
+  markEquipmentSaved,
   setStatus,
+  setRequestId,
   setRequestRef,
+  setSubmitting,
+  setError,
   resetVisitorForm,
 } = visitorSlice.actions;
 

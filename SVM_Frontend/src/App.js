@@ -32,7 +32,7 @@ import VisitorManagement from "./layout/Admin/VisitorManagement/VisitorManagemen
 import Login from "./layout/Login/Login";
 
 import ContactDashboard from "./layout/Contact_Person/Dashboard/Dashboard";
-import RequestsInbox from "./layout/Contact_Person/RequestsInbox/RequestsInbox";
+// import RequestsInbox from "./layout/Contact_Person/RequestsInbox/RequestsInbox";
 import RequestReview from "./layout/Contact_Person/RequestReview/RequestReview";
 import DeclinedRequests from "./layout/Contact_Person/RejectedRequests/RejectedRequests";
 import SentToAdmin from "./layout/Contact_Person/SentToAdmin/SentToAdmin";
@@ -41,6 +41,8 @@ import ProfileSettings from "./layout/Contact_Person/ProfileSettings/ProfileSett
 import ContactAllVisitors from "./layout/Contact_Person/AllVisitors/AllVisitors";
 import ContactVisitRequests from "./layout/Contact_Person/VisitRequests/VisitRequests";
 import CreateVisitRequest from "./layout/Contact_Person/VisitRequests/CreateVisitRequest";
+import CreateVisitRequestDetails from "./layout/Contact_Person/VisitRequests/CreateVisitRequestDetails";
+import VisitRequestSuccess from "./layout/Contact_Person/VisitRequests/VisitRequestSuccess";
 
 
 // Security Support Layouts
@@ -230,17 +232,17 @@ const AppContent = () => {
             path="/contact_person/dashboard"
             element={<ContactDashboard />}
           />
-          <Route
+          {/* <Route
             path="/contact_person/requests-inbox"
             element={<RequestsInbox />}
-          />
+          /> */}
           <Route
             path="/contact_person/request-review"
             element={<RequestReview />}
           />
           <Route
             path="/contact_person/approved-requests"
-            element={<Navigate to="/contact_person/requests-inbox" replace />}
+            element={<Navigate to="/contact_person/visit-requests" replace />}
           />
           <Route
             path="/contact_person/rejected-requests"
@@ -269,6 +271,14 @@ const AppContent = () => {
           <Route
             path="/contact_person/create-visit-request"
             element={<CreateVisitRequest />}
+          />
+          <Route
+            path="/contact_person/create-visit-request-details"
+            element={<CreateVisitRequestDetails />}
+          />
+          <Route
+            path="/contact_person/visit-request-success/:requestId"
+            element={<VisitRequestSuccess />}
           />
 
           {/* Security Support Routes */}

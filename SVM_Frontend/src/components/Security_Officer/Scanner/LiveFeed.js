@@ -15,6 +15,14 @@ import {
   ShieldCheck,
   AlertTriangle,
   ArrowRight,
+  User,
+  CreditCard,
+  Mail,
+  Phone,
+  Building2,
+  Target,
+  MapPin,
+  CheckCircle2,
 } from "lucide-react";
 import { GetGatePassById } from "../../../actions/GatePassAction";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,6 +30,43 @@ import {
   decodeSecureQrPayload,
   isSecureQrPayload,
 } from "../../../utils/secureQrPayload";
+
+// ── Helper: a single icon + label + value row ──────────────────────────────
+const InfoRow = ({ icon, label, value }) => (
+  <div className="flex items-start gap-3">
+    <div
+      className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+      style={{
+        background: "var(--color-surface-2)",
+        border: "1px solid var(--color-border-soft)",
+        color: "var(--color-text-secondary)",
+      }}
+    >
+      {icon}
+    </div>
+    <div className="min-w-0">
+      <p
+        className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5"
+        style={{ color: "var(--color-text-dim)" }}
+      >
+        {label}
+      </p>
+      <p
+        className="text-sm font-semibold break-words leading-snug"
+        style={{
+          color:
+            value === "N/A"
+              ? "var(--color-text-dim)"
+              : "var(--color-text-primary)",
+          fontStyle: value === "N/A" ? "italic" : "normal",
+          opacity: value === "N/A" ? 0.6 : 1,
+        }}
+      >
+        {value}
+      </p>
+    </div>
+  </div>
+);
 
 const LiveFeed = () => {
   const dispatch = useDispatch();
@@ -393,78 +438,174 @@ const LiveFeed = () => {
             key="details"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-lg mx-auto bg-[#121214] border border-white/10 rounded-[28px] overflow-hidden shadow-2xl relative"
+            className="w-full max-w-lg mx-auto overflow-hidden rounded-[28px] shadow-2xl transition-colors duration-300"
+            style={{
+              background: "var(--color-bg-paper)",
+              border: "1px solid var(--color-border-soft)",
+              boxShadow: "0 20px 50px rgba(0, 0, 0, 0.15)",
+            }}
           >
-            <div className="absolute top-0 left-0 w-full h-2 bg-green-500/50"></div>
+            {/* ── Header gradient strip ── */}
+            <div
+              className="relative px-6 pt-6 pb-8 overflow-hidden"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 60%, transparent 100%)",
+              }}
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-600 via-green-400 to-green-600 opacity-80" />
 
-            <div className="p-5 md:p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-              <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
-                <div className="w-11 h-11 md:w-12 md:h-12 bg-green-500/10 border border-green-500/30 rounded-2xl flex items-center justify-center text-green-500 shadow-lg">
-                  <ShieldCheck size={24} />
+              {/* Avatar + name block */}
+              <div className="flex items-center gap-4 mt-2">
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black flex-shrink-0"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.1))",
+                    border: "1px solid rgba(34, 197, 94, 0.25)",
+                    color: "var(--color-success)",
+                    boxShadow: "0 4px 12px rgba(34, 197, 94, 0.1)",
+                  }}
+                >
+                  {(profileData.Name !== "N/A" ? profileData.Name : "?")
+                    .split(" ")
+                    .map((w) => w[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase()}
                 </div>
-                <div>
-                  <h2 className="text-white text-lg md:text-xl font-black uppercase tracking-tight italic">
-                    Scan Complete
-                  </h2>
-                  <p className="text-green-500 font-bold uppercase tracking-[0.22em] text-[8px] mt-1">
-                    Status: Verified {passDetails?.VGP_Pass_id ? "✓" : ""}
+                <div className="min-w-0">
+                  <p className="text-[var(--color-text-primary)] text-base font-black tracking-tight truncate">
+                    {profileData.Name !== "N/A"
+                      ? profileData.Name
+                      : "Unknown Visitor"}
+                  </p>
+                  <p className="text-green-600 dark:text-green-400 text-[10px] uppercase tracking-[0.28em] font-bold mt-0.5 opacity-80">
+                    {profileData["NIC/Passport_No"] !== "N/A"
+                      ? profileData["NIC/Passport_No"]
+                      : "ID Not Available"}
                   </p>
                 </div>
-              </div>
-            </div>
-
-            <div className="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-              {hasFullQrProfile && (
-                <div className="col-span-1 md:col-span-2 space-y-3">
-                  <label className="flex flex-col md:flex-row items-center gap-3 md:gap-2 text-gray-500 uppercase text-[9px] font-bold tracking-[0.22em]">
-                    <QrCode size={12} className="text-primary" /> Visitor
-                    Details
-                  </label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 bg-white/5 p-3 rounded-2xl border border-white/10">
-                    {Object.entries(profileData).map(([label, value]) => (
-                      <div key={label} className="space-y-1">
-                        <p className="text-gray-400 uppercase text-[9px] tracking-[0.2em] font-bold">
-                          {label}
-                        </p>
-                        <p className="text-white text-xs md:text-sm font-semibold tracking-wide break-words">
-                          {value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <div className="col-span-1 md:col-span-2 space-y-3 pt-1 md:pt-3">
-                <label className="flex flex-col md:flex-row items-center gap-3 md:gap-2 text-gray-500 uppercase text-[9px] font-bold tracking-[0.22em]">
-                  <Zap size={12} className="text-primary" /> Access Status
-                </label>
-                <div className="bg-green-500/5 border border-green-500/10 rounded-2xl p-3.5 md:p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-4">
-                  <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-white/90 text-[10px] uppercase tracking-widest font-medium italic leading-relaxed">
-                      This QR code is valid and the visitor information was
-                      found.
-                    </span>
-                  </div>
-                  <div className="px-3.5 py-1.5 bg-green-500 text-white text-[9px] font-black uppercase tracking-[0.18em] rounded-full">
+                <div className="ml-auto flex-shrink-0">
+                  <div
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-green-600 dark:text-green-400 text-[9px] font-black uppercase tracking-[0.2em]"
+                    style={{
+                      background: "rgba(34, 197, 94, 0.1)",
+                      border: "1px solid rgba(34, 197, 94, 0.2)",
+                    }}
+                  >
+                    <CheckCircle2 size={11} />
                     Verified
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 md:p-6 bg-black/20 border-t border-white/5 flex flex-col md:flex-row gap-3 md:gap-4">
+            {/* ── Info sections ── */}
+            <div className="divide-y divide-[var(--color-border-soft)] transition-colors duration-300">
+              {/* Section: Identity */}
+              <div className="px-6 py-4">
+                <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
+                  Identity
+                </p>
+                <div className="space-y-3">
+                  <InfoRow
+                    icon={<User size={14} />}
+                    label="Full Name"
+                    value={profileData.Name}
+                  />
+                  <InfoRow
+                    icon={<CreditCard size={14} />}
+                    label="NIC / Passport"
+                    value={profileData["NIC/Passport_No"]}
+                  />
+                </div>
+              </div>
+
+              {/* Section: Contact */}
+              <div className="px-6 py-4">
+                <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
+                  Contact
+                </p>
+                <div className="space-y-3">
+                  <InfoRow
+                    icon={<Mail size={14} />}
+                    label="Email"
+                    value={profileData.Email}
+                  />
+                  <InfoRow
+                    icon={<Phone size={14} />}
+                    label="Phone"
+                    value={profileData["Phone number"]}
+                  />
+                  <InfoRow
+                    icon={<Building2 size={14} />}
+                    label="Company"
+                    value={profileData.Company}
+                  />
+                </div>
+              </div>
+
+              {/* Section: Visit Details */}
+              <div className="px-6 py-4">
+                <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
+                  Visit Details
+                </p>
+                <div className="space-y-3">
+                  <InfoRow
+                    icon={<Target size={14} />}
+                    label="Purpose"
+                    value={profileData["Visiting purpose"]}
+                  />
+                  <InfoRow
+                    icon={<MapPin size={14} />}
+                    label="Area"
+                    value={profileData["Visiting area"]}
+                  />
+                </div>
+              </div>
+
+              {/* Access status bar */}
+              <div
+                className="px-6 py-3 flex items-center justify-between transition-colors duration-300"
+                style={{ background: "var(--color-surface-1)" }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-[10px] uppercase tracking-widest font-medium text-[var(--color-text-secondary)]">
+                    QR is valid — visitor information found
+                  </span>
+                </div>
+                <ShieldCheck
+                  size={16}
+                  className="text-green-600 dark:text-green-400 flex-shrink-0"
+                />
+              </div>
+            </div>
+
+            {/* ── Footer actions ── */}
+            <div
+              className="px-6 py-4 flex flex-col md:flex-row gap-3 transition-colors duration-300"
+              style={{
+                background: "var(--color-surface-1)",
+                borderTop: "1px solid var(--color-border-soft)",
+              }}
+            >
               <button
                 onClick={() => alert("Verification Log Saved to Cluster")}
-                className="flex-1 bg-white text-black hover:bg-green-500 hover:text-white py-3.5 font-black uppercase text-[10px] tracking-[0.22em] rounded-2xl transition-all flex items-center justify-center gap-3"
+                className="flex-1 py-3.5 font-black uppercase text-[10px] tracking-[0.22em] rounded-2xl transition-all flex items-center justify-center gap-3 text-white"
+                style={{
+                  background: "linear-gradient(135deg, #16a34a, #22c55e)",
+                  boxShadow: "0 8px 20px rgba(34, 197, 94, 0.25)",
+                }}
               >
                 Allow Entry <ArrowRight size={16} />
               </button>
               <button
                 onClick={handleResetNode}
-                className="px-5 md:px-7 py-3.5 border border-white/10 text-white hover:bg-white/5 font-black uppercase text-[10px] tracking-[0.22em] rounded-2xl transition-all"
+                className="px-5 md:px-7 py-3.5 border border-[var(--color-border-medium)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-2)] font-black uppercase text-[10px] tracking-[0.22em] rounded-2xl transition-all"
               >
-                Scan Another QR Code
+                Scan Another
               </button>
             </div>
           </motion.div>

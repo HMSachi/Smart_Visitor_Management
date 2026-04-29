@@ -183,7 +183,12 @@ const VisitorManagement = () => {
                   </TableHead>
                   <TableBody>
                     {visitors && visitors.length > 0 ? (
-                      visitors.map((visitor) => {
+                      [...visitors]
+                        .sort(
+                          (a, b) =>
+                            (b.VV_Visitor_id || 0) - (a.VV_Visitor_id || 0),
+                        )
+                        .map((visitor) => {
                         const isActive =
                           (visitor.VV_Status || "")
                             .toString()
