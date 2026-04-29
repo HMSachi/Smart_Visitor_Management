@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
@@ -15,6 +15,7 @@ import VehicleService from "../../../services/VehicleService";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import { AnimatePresence, motion } from "framer-motion";
 
 const normalizeStatus = (status) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -281,18 +282,10 @@ const RequestReviewMain = () => {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
-            <div
-              className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/35 border-white/10"}`}
-            >
-              <p
-                className={`text-[10px] uppercase font-semibold tracking-[0.22em] mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}
-              >
-                Request Status
-              </p>
-              <span className="text-primary text-[12px] font-semibold uppercase tracking-[0.2em]">
-                {requestData?.status || "PENDING"}
-              </span>
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/35 border-white/10"}`}>
+              <p className={`text-[10px] uppercase font-semibold tracking-[0.22em] mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}>Request Status</p>
+              <span className="text-primary text-[12px] font-semibold uppercase tracking-[0.2em]">{requestData?.status || "PENDING"}</span>
             </div>
           </div>
         </div>
@@ -305,7 +298,7 @@ const RequestReviewMain = () => {
           ) : (
             <PersonnelAuthProtocol
               visitor={requestData}
-              onBack={() => navigate("/contact_person/requests-inbox")}
+              onBack={() => navigate(-1)}
               onAction={(visitor, type) => {
                 if (type === "Approve") setShowApproveModal(true);
                 if (type === "Reject") setShowRejectModal(true);
@@ -318,23 +311,8 @@ const RequestReviewMain = () => {
         </div>
       </div>
 
-      <ApprovalModal
-        isOpen={showApproveModal}
-        onClose={() => setShowApproveModal(false)}
-        onConfirm={confirmApprove}
-        comment={approvalComment}
-        setComment={setApprovalComment}
-      />
-
-      <RejectionModal
-        isOpen={showRejectModal}
-        onClose={() => setShowRejectModal(false)}
-        onConfirm={confirmReject}
-        reason={rejectionReason}
-        setReason={setRejectionReason}
-        comment={rejectionComment}
-        setComment={setRejectionComment}
-      />
+      <ApprovalModal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} onConfirm={confirmApprove} comment={approvalComment} setComment={setApprovalComment} />
+      <RejectionModal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} onConfirm={confirmReject} reason={rejectionReason} setReason={setRejectionReason} comment={rejectionComment} setComment={setRejectionComment} />
     </div>
   );
 };
