@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { CheckSquare, QrCode, Send, Loader2, Download } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { AddGatePass, GetAllGatePasses } from "../../../actions/GatePassAction";
+import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
 const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
   const dispatch = useDispatch();
@@ -11,6 +12,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [wasSent, setWasSent] = useState(false);
   const [error, setError] = useState(null);
+  const [encodedQrValue, setEncodedQrValue] = useState("");
 
   useEffect(() => {
     if (isOpen) setWasSent(false);
@@ -49,7 +51,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
       setGatePassId(newPassId);
       dispatch(GetAllGatePasses());
     } catch (err) {
-      console.error("Gate Pass generation failed:", err);
+      console.error("GatePass generation failed:", err);
       setError("Failed to generate digital gate pass protocol.");
     } finally {
       setIsGenerating(false);
@@ -98,28 +100,43 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
       visitorData?.raw?.VV_Visiting_places ||
       "N/A";
 
-  const qrPayload = {
-    // Keep pass id for the existing scanner verification flow.
-    id: gatePassId,
-    Name:
-      visitorData?.name ||
-      visitorData?.raw?.VV_Name ||
-      visitorData?.raw?.VVR_Name ||
-      "N/A",
-    "NIC/Passport_No":
-      visitorData?.nic || visitorData?.raw?.VV_NIC_Passport_NO || "N/A",
-    Email: visitorData?.email || visitorData?.raw?.VV_Email || "N/A",
-    "Phone number": visitorData?.contact || visitorData?.raw?.VV_Phone || "N/A",
-    Company:
-      visitorData?.representingCompany || visitorData?.raw?.VV_Company || "N/A",
-    "Visiting purpose":
-      visitorData?.visitingPurpose ||
-      visitorData?.raw?.VVR_Purpose ||
-      visitorData?.raw?.VVR_Visiting_Purpose ||
-      visitorData?.raw?.VV_Visiting_Purpose ||
-      "N/A",
-    "Visiting area": visitingArea,
-  };
+  const qrPayload = useMemo(
+    () => ({
+      // Keep payload intentionally minimal so encrypted QR stays easy to scan.
+      id: gatePassId,
+      v: 1,
+      iat: Date.now(),
+    }),
+    [gatePassId],
+  );
+
+  useEffect(() => {
+    const buildSecureQr = async () => {
+      if (!gatePassId) {
+        console.log("[QRSuccessModal] No gatePassId, skipping encoding");
+        setEncodedQrValue("");
+        return;
+      }
+
+      try {
+        console.log(
+          "[QRSuccessModal] Building secure QR for pass:",
+          gatePassId,
+        );
+        const encoded = await encodeSecureQrPayload(qrPayload);
+        console.log("[QRSuccessModal] QR encoded successfully");
+        setEncodedQrValue(encoded);
+      } catch (err) {
+        console.error(
+          "[QRSuccessModal] Failed to encode secure QR payload:",
+          err,
+        );
+        setEncodedQrValue("");
+      }
+    };
+
+    buildSecureQr();
+  }, [gatePassId, qrPayload]);
 
   return (
     <AnimatePresence>
@@ -137,13 +154,13 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="w-full max-w-lg bg-[#161618]/95 backdrop-blur-3xl border border-white/20 shadow-[0_30px_100px_rgba(0,0,0,1)] rounded-[48px] overflow-hidden relative"
+              className="w-full max-w-md bg-[#161618]/95 backdrop-blur-3xl border border-white/20 shadow-[0_30px_100px_rgba(0,0,0,1)] rounded-[40px] overflow-hidden relative"
             >
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-green-500/40 to-transparent"></div>
               <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-              <div className="p-8 border-b border-white/5 flex items-center justify-between relative z-10 bg-white/[0.01]">
-                <div className="flex items-center gap-4">
+              <div className="p-6 border-b border-white/5 flex items-center justify-between relative z-10 bg-white/[0.01]">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                   <div className="w-10 h-10 bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center rounded-xl shadow-lg">
                     {gatePassId ? (
                       <QrCode size={20} />
@@ -154,16 +171,16 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                   <div>
                     <p className="text-gray-300/90 text-[13px] font-medium capitalize tracking-widest mb-1">
                       {gatePassId
-                        ? "Gate Pass Intelligence"
+                        ? "GatePass Intelligence"
                         : "Security Protocol Concluded"}
                     </p>
                     <h2 className="text-white text-lg font-bold capitalize tracking-widest">
-                      {gatePassId ? "Gate Pass Generated" : "Clearance Granted"}
+                      {gatePassId ? "GatePass Generated" : "Clearance Granted"}
                     </h2>
                   </div>
                 </div>
                 {wasSent && (
-                  <div className="flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/30 rounded-full">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 px-3 py-1 bg-green-500/10 border border-green-500/30 rounded-full">
                     <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
                     <span className="text-green-500 text-[9px] font-black capitalize tracking-widest">
                       Dispatched
@@ -172,7 +189,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                 )}
               </div>
 
-              <div className="p-4 md:p-10 flex flex-col items-center justify-center text-center relative z-10">
+              <div className="p-4 md:p-7 flex flex-col items-center justify-center text-center relative z-10">
                 {!gatePassId ? (
                   <div className="space-y-8">
                     <div className="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center mx-auto border border-green-500/20 shadow-[0_0_30px_rgba(0,177,79,0.2)]">
@@ -206,16 +223,16 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                       ) : (
                         <>
                           <QrCode size={16} />
-                          Generate Digital Gate Pass
+                          Generate Digital GatePass
                         </>
                       )}
                     </button>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <div className="relative group/qr p-6 bg-white rounded-[32px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 qr-svg-container">
+                    <div className="relative group/qr p-6 mas-glass rounded-[32px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 qr-svg-container">
                       <QRCodeSVG
-                        value={JSON.stringify(qrPayload)}
+                        value={encodedQrValue || "SVMQR_PENDING"}
                         size={200}
                         level="H"
                         includeMargin={false}
@@ -246,7 +263,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                 )}
               </div>
 
-              <div className="p-8 border-t border-white/5 bg-white/[0.01] relative z-10 flex gap-4">
+              <div className="p-6 border-t border-white/5 bg-white/[0.01] relative z-10 flex flex-col md:flex-row gap-3 md:gap-3">
                 {gatePassId && (
                   <>
                     <button

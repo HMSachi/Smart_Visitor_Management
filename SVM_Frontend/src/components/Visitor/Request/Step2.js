@@ -1,195 +1,338 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShieldCheck, ArrowRight, Clock } from 'lucide-react';
+import {
+    ShieldCheck,
+    ArrowRight,
+    CheckCircle2,
+    AlertCircle,
+    Loader2
+} from 'lucide-react';
+import VehicleDetails from './Step2/VehicleDetails';
 import VisitorGroup from './Step2/VisitorGroup';
 import EquipmentDeclaration from './Step2/EquipmentDeclaration';
-import { updateVisitorRequestStep2 } from '../../../services/visitorRequestService';
-import { 
-    addVisitor, 
-    removeVisitor, 
+import {
+    addVehicle,
+    removeVehicle,
+    updateVehicleDetail,
+    toggleVehicleConfirmed,
+    markVehicleSavedVisitor,
+    addVisitor,
+    removeVisitor,
     updateVisitorDetail,
+    toggleVisitorConfirmed,
+    markVisitorSaved,
     addEquipment,
     removeEquipment,
     updateEquipmentDetail,
-    setStatus
+    toggleEquipmentConfirmed,
+    markEquipmentSaved,
+    setStatus,
+    setError,
+    setSubmitting
 } from '../../../reducers/visitorSlice';
+import { AddVehicle } from '../../../actions/VehicleAction';
+import { AddVisitGroup } from '../../../actions/VisitGroupAction';
 import { AddItem } from '../../../actions/ItemCarriedAction';
 
 const Step2Main = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const visitorState = useSelector(state => state.visitor);
-    const { 
-        visitors, 
-        equipment, 
-        status, 
-        requestRef 
+    const {
+        vehicles,
+        visitors,
+        equipment,
+        status,
+        requestId,
+        isSubmitting,
+        error: reduxError
     } = visitorState;
 
-    const handleAddVisitor = () => {
-        dispatch(addVisitor());
-    };
+    const [showFinalSuccess, setShowFinalSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
 
-    const handleRemoveVisitor = (id) => {
-        dispatch(removeVisitor(id));
-    };
+    // Saving spinners — track which row is currently in-flight
+    const [vehicleSavingId, setVehicleSavingId] = useState(null);
+    const [visitorSavingId, setVisitorSavingId] = useState(null);
+    const [equipmentSavingId, setEquipmentSavingId] = useState(null);
 
-    const handleAddEquipment = () => {
-        dispatch(addEquipment());
-    };
+    // Ensure at least one blank row exists per section
+    useEffect(() => {
+        if (!vehicles.length) dispatch(addVehicle());
+        if (!visitors.length) dispatch(addVisitor());
+        if (!equipment.length) dispatch(addEquipment());
+    }, [dispatch]);
 
-    const handleRemoveEquipment = (id) => {
-        dispatch(removeEquipment(id));
-    };
+    // ── VEHICLES ──────────────────────────────────────────────────────────────
+    const handleVehicleSave = async (vehicleId) => {
+        const vehicle = vehicles.find(v => v.id === vehicleId);
+        if (!vehicle) return;
 
-    const handleUpdateVisitor = (id, field, value) => {
-        dispatch(updateVisitorDetail({ id, field, value }));
-    };
+        if (vehicle.isConfirmed) {
+            dispatch(toggleVehicleConfirmed(vehicleId));   // toggle to edit mode
+            return;
+        }
+        if (!vehicle.plateNumber?.trim()) {
+            alert('Please enter a plate number before saving.');
+            return;
+        }
+        if (!requestId) {
+            alert('Visit request not found. Please go back to Step 1.');
+            return;
+        }
 
-    const handleUpdateEquipment = (id, field, value) => {
-        dispatch(updateEquipmentDetail({ id, field, value }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        dispatch(setStatus('submitting'));
-
+        setVehicleSavingId(vehicleId);
         try {
-            // Add Items Carried to Backend
-            if (equipment && equipment.length > 0) {
-                for (const item of equipment) {
-                    if (item.itemName) {
-                        await dispatch(AddItem({
-                            VVR_Request_id: requestRef,
-                            VIC_Item_Name: item.itemName,
-                            VIC_Quantity: item.quantity || 1,
-                            VIC_Designation: item.description || ""
-                        }));
-                    }
-                }
-            }
-
-            // Keep local storage update as fallback
-            updateVisitorRequestStep2(requestRef, {
-                visitors,
-                equipment,
-            });
-
-            setTimeout(() => {
-                dispatch(setStatus('step2_pending'));
-                window.location.href = '/status';
-            }, 1000);
-        } catch (error) {
-            console.error("Failed to add items:", error);
-            alert("Failed to synchronize asset declaration. Please try again.");
-            dispatch(setStatus(null));
+            await dispatch(AddVehicle({
+                VV_Vehicle_Type: vehicle.vehicleType || 'Car',
+                VV_Vehicle_Number: vehicle.plateNumber,
+                VVR_Request_id: requestId,
+            }));
+            dispatch(markVehicleSavedVisitor(vehicleId));
+        } catch (err) {
+            console.error('Failed to save vehicle:', err);
+            alert('Failed to save vehicle. Please try again.');
+        } finally {
+            setVehicleSavingId(null);
         }
     };
 
-    if (status === 'step2_pending') {
-        return (
-            <div className="min-h-[80vh] flex items-center justify-center p-6 bg-background border-t border-white/5">
-                <div className="max-w-xl w-full bg-white/[0.02] border border-white/5 p-6 md:p-12 text-center rounded-2xl shadow-xl">
-                    <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-xl mx-auto mb-8 flex items-center justify-center text-primary">
-                        <ShieldCheck size={24} />
-                    </div>
-                    
-                    <h2 className="text-xl font-bold text-white uppercase tracking-tight mb-3">Under Final Review</h2>
-                    <p className="text-gray-500 text-[13px] font-bold uppercase tracking-widest mb-10 leading-relaxed">
-                        Detailed documentation synchronized. <br />
-                        <span className="text-primary/80">Clearance protocol active</span>
-                    </p>
+    const handleAddVehicle = async () => {
+        const unsaved = vehicles.find(v => !v.isConfirmed && v.plateNumber?.trim());
+        if (unsaved) await handleVehicleSave(unsaved.id);
+        dispatch(addVehicle());
+    };
 
-                    <div className="bg-white/[0.01] border border-white/5 rounded-xl p-6 mb-10 text-left">
-                        <div className="flex justify-between items-center mb-4">
-                            <div className="flex items-center gap-2">
-                                <Clock size={14} className="text-primary" />
-                                <span className="text-gray-500 text-[12px] font-bold uppercase tracking-widest">Protocol Priority</span>
-                            </div>
-                            <span className="text-white text-[12px] font-bold uppercase tracking-widest bg-primary/20 border border-primary/20 px-2 py-0.5 rounded">High Node</span>
-                        </div>
-                        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                            <motion.div 
-                                initial={{ width: 0 }}
-                                animate={{ width: '75%' }}
-                                transition={{ duration: 2, ease: "easeOut" }}
-                                className="h-full bg-primary"
-                            />
-                        </div>
-                    </div>
+    // ── ADDITIONAL VISITORS ───────────────────────────────────────────────────
+    const handleVisitorSave = async (visitorId) => {
+        const person = visitors.find(v => v.id === visitorId);
+        if (!person) return;
 
-                    <div className="flex flex-col gap-3">
-                        <button 
-                            onClick={() => window.location.href = '/status'}
-                            className="compact-btn !w-full !py-4"
-                        >
-                            Digital Pass <ArrowRight size={14} className="ml-2" />
-                        </button>
-                        <button 
-                            onClick={() => window.location.href = '/home'}
-                            className="px-6 py-3 bg-white/[0.03] border border-white/10 text-white text-[13px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/[0.07] transition-all"
-                        >
-                            Return to Hub
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+        if (person.isConfirmed) {
+            dispatch(toggleVisitorConfirmed(visitorId));   // toggle to edit mode
+            return;
+        }
+        if (!person.fullName?.trim()) {
+            alert('Please enter a name before saving.');
+            return;
+        }
+        if (!requestId) {
+            alert('Visit request not found. Please go back to Step 1.');
+            return;
+        }
+
+        setVisitorSavingId(visitorId);
+        try {
+            await dispatch(AddVisitGroup({
+                VVG_Visitor_Name: person.fullName,
+                VVG_NIC_Passport_Number: person.nic || 'N/A',
+                VVG_Designation: person.contact || 'N/A',
+                VVG_Status: 'A',
+                VVR_Request_id: requestId,
+            }));
+            dispatch(markVisitorSaved(visitorId));
+        } catch (err) {
+            console.error('Failed to save visitor:', err);
+            alert('Failed to save visitor. Please try again.');
+        } finally {
+            setVisitorSavingId(null);
+        }
+    };
+
+    const handleAddVisitor = async () => {
+        const unsaved = visitors.find(v => !v.isConfirmed && v.fullName?.trim());
+        if (unsaved) await handleVisitorSave(unsaved.id);
+        dispatch(addVisitor());
+    };
+
+    // ── EQUIPMENT / ITEMS ─────────────────────────────────────────────────────
+    const handleEquipmentSave = async (itemId) => {
+        const item = equipment.find(e => e.id === itemId);
+        if (!item) return;
+
+        if (item.isConfirmed) {
+            dispatch(toggleEquipmentConfirmed(itemId));   // toggle to edit mode
+            return;
+        }
+        if (!item.itemName?.trim()) {
+            alert('Please enter an item name before saving.');
+            return;
+        }
+        if (!requestId) {
+            alert('Visit request not found. Please go back to Step 1.');
+            return;
+        }
+
+        setEquipmentSavingId(itemId);
+        try {
+            await dispatch(AddItem({
+                VVR_Request_id: requestId,
+                VIC_Item_Name: item.itemName,
+                VIC_Quantity: item.quantity || '1',
+                VIC_Designation: item.description || 'N/A',
+            }));
+            dispatch(markEquipmentSaved(itemId));
+        } catch (err) {
+            console.error('Failed to save item:', err);
+            alert('Failed to save item. Please try again.');
+        } finally {
+            setEquipmentSavingId(null);
+        }
+    };
+
+    const handleAddEquipment = async () => {
+        const unsaved = equipment.find(e => !e.isConfirmed && e.itemName?.trim());
+        if (unsaved) await handleEquipmentSave(unsaved.id);
+        dispatch(addEquipment());
+    };
+
+    // ── FINAL SUBMIT (skips already-saved rows to avoid duplicates) ───────────
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!requestId) {
+            alert('No Request ID found. Please go back to Step 1.');
+            navigate('/request-step-1');
+            return;
+        }
+
+        dispatch(setSubmitting(true));
+        setShowError(false);
+
+        try {
+            // Vehicles not yet saved row-by-row
+            for (const v of vehicles) {
+                if (v.plateNumber && v.isConfirmed && !v.isSavedToServer) {
+                    await dispatch(AddVehicle({
+                        VV_Vehicle_Type: v.vehicleType || 'Car',
+                        VV_Vehicle_Number: v.plateNumber,
+                        VVR_Request_id: requestId,
+                    }));
+                }
+            }
+
+            // Additional visitors not yet saved row-by-row
+            for (const p of visitors) {
+                if (p.fullName && p.isConfirmed && !p.isSavedToServer) {
+                    await dispatch(AddVisitGroup({
+                        VVG_Visitor_Name: p.fullName,
+                        VVG_NIC_Passport_Number: p.nic || 'N/A',
+                        VVG_Designation: p.contact || 'N/A',
+                        VVG_Status: 'A',
+                        VVR_Request_id: requestId,
+                    }));
+                }
+            }
+
+            // Items not yet saved row-by-row
+            for (const item of equipment) {
+                if (item.itemName && item.isConfirmed && !item.isSavedToServer) {
+                    await dispatch(AddItem({
+                        VVR_Request_id: requestId,
+                        VIC_Item_Name: item.itemName,
+                        VIC_Quantity: item.quantity || '1',
+                        VIC_Designation: item.description || 'N/A',
+                    }));
+                }
+            }
+
+            setShowFinalSuccess(true);
+            setTimeout(() => navigate('/status'), 3000);
+
+        } catch (err) {
+            console.error('Failed to save logistics:', err);
+            dispatch(setError(err.message));
+            setShowError(true);
+        } finally {
+            dispatch(setSubmitting(false));
+        }
+    };
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-2 pb-12 text-white bg-black">
-            {/* Phase Header */}
-            <div className="mb-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/5 pb-10">
-                <div>
-                    <h1 className="text-[24px] md:text-[24px] font-bold uppercase tracking-tight">
-                        Detailed <span className="text-primary">Clearance</span>
-                    </h1>
-                    <p className="text-gray-500 text-[12px] uppercase font-bold tracking-[0.4em] opacity-80 mt-1">Personnel & Asset Declaration Node</p>
-                </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 pb-20 text-white bg-black min-h-screen relative">
 
-            </div>
-
-            {/* Progress Visualization */}
-            <div className="mb-12 relative">
-                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                    <motion.div 
-                        initial={{ width: '50%' }}
-                        animate={{ width: '100%' }}
-                        className="h-full bg-primary"
-                    />
-                </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6 md:space-y-12">
-                <div className="relative group">
-                    <VisitorGroup visitors={visitors} onAdd={handleAddVisitor} onRemove={handleRemoveVisitor} onChange={handleUpdateVisitor} />
-                </div>
-                
-                <div className="relative group pt-12 border-t border-white/5">
-                    <EquipmentDeclaration items={equipment} onAdd={handleAddEquipment} onRemove={handleRemoveEquipment} onChange={handleUpdateEquipment} />
-                </div>
-                
-                <div className="space-y-10 pt-6">
-                    <div className="pt-8 pb-20 text-center">
-                        <button 
-                            type="submit"
-                            disabled={status === 'submitting'}
-                            className="compact-btn !w-full md:!w-auto !px-20 !py-5"
-                        >
-                            {status === 'submitting' ? (
-                                <div className="flex items-center gap-3">
-                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                    <span>Synchronizing Pass...</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-3">
-                                    <ShieldCheck size={18} />
-                                    <span>Submit</span>
-                                </div>
-                            )}
-                        </button>
+            {/* Step Indicator */}
+            <div className="flex items-center gap-6 mb-12 px-2">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center border border-green-500/30">
+                        <CheckCircle2 size={16} />
                     </div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-green-500">Core Info</span>
+                </div>
+                <div className="h-[1px] w-12 bg-white/10" />
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black text-[12px]">2</div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Details</span>
+                </div>
+            </div>
+
+            {/* Success Popup */}
+            {showFinalSuccess && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-2xl animate-fade-in" />
+                    <div className="relative bg-[#0A0A0A] p-12 rounded-[40px] shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-white/5 flex flex-col items-center text-center max-w-md w-full animate-scale-in">
+                        <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center text-white mb-8 shadow-[0_20px_50px_rgba(34,197,94,0.2)]">
+                            <ShieldCheck size={48} className="animate-pulse" />
+                        </div>
+                        <h3 className="text-3xl font-black text-white uppercase tracking-tighter mb-4 italic">REQUEST FINALIZED</h3>
+                        <p className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.25em] leading-relaxed mb-10">
+                            Your complete visit dossier has been synchronized.<br />Redirecting to security status hub...
+                        </p>
+                        <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div className="h-full bg-green-500 animate-progress-fast" />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-16">
+                <VehicleDetails
+                    vehicles={vehicles}
+                    onAdd={handleAddVehicle}
+                    onRemove={(id) => dispatch(removeVehicle(id))}
+                    onChange={(id, field, value) => dispatch(updateVehicleDetail({ id, field, value }))}
+                    onSave={handleVehicleSave}
+                    savingId={vehicleSavingId}
+                />
+
+                <VisitorGroup
+                    visitors={visitors}
+                    onAdd={handleAddVisitor}
+                    onRemove={(id) => dispatch(removeVisitor(id))}
+                    onChange={(id, field, value) => dispatch(updateVisitorDetail({ id, field, value }))}
+                    onSave={handleVisitorSave}
+                    savingId={visitorSavingId}
+                />
+
+                <EquipmentDeclaration
+                    items={equipment}
+                    onAdd={handleAddEquipment}
+                    onRemove={(id) => dispatch(removeEquipment(id))}
+                    onChange={(id, field, value) => dispatch(updateEquipmentDetail({ id, field, value }))}
+                    onSave={handleEquipmentSave}
+                    savingId={equipmentSavingId}
+                />
+
+                <div className="pt-12 pb-20 flex flex-col sm:flex-row gap-4">
+                    <button
+                        type="button"
+                        onClick={() => navigate('/request-step-1')}
+                        className="flex-1 py-6 bg-white/5 border border-white/10 text-white hover:bg-white/10 text-[13px] font-black uppercase tracking-[0.4em] rounded-none transition-all flex items-center justify-center gap-4"
+                    >
+                        <ArrowRight size={20} className="rotate-180" /> BACK TO CORE DETAILS
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="flex-[2] py-6 bg-white text-black hover:bg-gray-100 text-[13px] font-black uppercase tracking-[0.4em] rounded-none transition-all active:scale-[0.98] flex items-center justify-center gap-4 disabled:opacity-50"
+                    >
+                        {isSubmitting ? (
+                            <>SYNCHRONIZING... <Loader2 size={20} className="animate-spin" /></>
+                        ) : (
+                            <>FINALIZE REGISTRATION <ArrowRight size={20} /></>
+                        )}
+                    </button>
                 </div>
             </form>
         </div>

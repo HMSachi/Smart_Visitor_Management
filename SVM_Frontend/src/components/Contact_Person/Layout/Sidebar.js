@@ -1,60 +1,129 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { 
-  LayoutDashboard, 
-  Inbox, 
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  LayoutDashboard,
+  // Inbox,
   ChevronLeft,
   ChevronRight,
   LogOut,
-  CalendarDays
-} from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Drawer, Box, IconButton } from '@mui/material';
-import { toggleSidebar, setMobileMenu } from '../../../reducers/uiSlice';
-import { LOGOUT } from '../../../constants/LoginConstants';
+  CalendarDays,
+  Users,
+} from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Drawer, Box, IconButton } from "@mui/material";
+import { toggleSidebar, setMobileMenu } from "../../../reducers/uiSlice";
+import { LOGOUT } from "../../../constants/LoginConstants";
+
+const menuItems = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    path: "/contact_person/dashboard",
+  },
+  {
+    id: "visit-requests",
+    label: "Visit Requests",
+    icon: CalendarDays,
+    path: "/contact_person/visit-requests",
+  },
+  {
+    id: "all-visitors",
+    label: "All Visitors",
+    icon: Users,
+    path: "/contact_person/all-visitors",
+  },
+];
 
 const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
-  <div 
-    className={`flex items-center gap-4 px-4 py-3.5 cursor-pointer transition-all duration-500 rounded-xl mb-2 group relative
-      ${active ? 'bg-primary shadow-[0_0_20px_rgba(200,16,46,0.2)]' : 'hover:bg-[var(--color-surface-1)]'}
-      ${collapsed ? 'justify-center px-2' : ''}`}
+  <button
     onClick={onClick}
+    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 mb-1 group relative text-left
+      ${
+        active
+          ? "bg-primary/15 border border-primary/25 text-primary"
+          : "hover:bg-[var(--color-surface-2)] border border-transparent text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"
+      }
+      ${collapsed ? "justify-center px-2.5" : ""}`}
   >
-    <div className={`transition-transform duration-500 ${active ? 'text-white' : 'text-[var(--color-text-dim)] group-hover:text-primary group-hover:scale-110'}`}>
-      <Icon size={20} strokeWidth={active ? 2.5 : 2} />
+    <div
+      className={`shrink-0 transition-transform duration-300 ${!active && "group-hover:scale-110"}`}
+    >
+      <Icon size={19} strokeWidth={active ? 2.2 : 1.8} />
     </div>
-    
     {!collapsed && (
-      <span className={`uppercase text-[13px] font-medium tracking-[0.2em] transition-all duration-500 ${active ? 'text-white' : 'text-[var(--color-text-dim)] group-hover:text-[var(--color-text-primary)]'}`}>
+      <span className="text-[13.5px] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
         {label}
       </span>
     )}
-
-    {collapsed && (
-       <div className="absolute left-[120%] px-3 py-2 bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-lg text-[12px] font-medium text-[var(--color-text-primary)] uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none z-50 shadow-2xl">
-         {label}
-       </div>
+    {active && !collapsed && (
+      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
     )}
-  </div>
+    {collapsed && (
+      <div className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[var(--color-bg-elevated)] border border-[var(--color-border-medium)] rounded-lg text-[12px] font-semibold text-[var(--color-text-primary)] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none z-50 shadow-xl transition-all duration-200 translate-x-1 group-hover:translate-x-0">
+        {label}
+      </div>
+    )}
+  </button>
 );
 
-const SidebarContent = ({ isCollapsed, currentPath, onNavigate, onLogout }) => {
-  const menuItems = [
-      { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/contact_person/dashboard' },
-      { id: 'visit-requests', label: 'Visit Requests', icon: CalendarDays, path: '/contact_person/visit-requests' },
-      { id: 'inbox', label: 'Requests Inbox', icon: Inbox, path: '/contact_person/requests-inbox' },
-      { id: 'all-visitors', label: 'All Visitors', icon: Inbox, path: '/contact_person/all-visitors' },
-  ];
+const SidebarContent = ({
+  isCollapsed,
+  currentPath,
+  onNavigate,
+  onLogout,
+  user,
+}) => {
+  const displayName =
+    user?.ResultSet?.[0]?.VCP_Name ||
+    user?.ResultSet?.[0]?.VA_Name ||
+    "Contact Person";
+  const displayEmail =
+    user?.ResultSet?.[0]?.VCP_Email || user?.ResultSet?.[0]?.VA_Email || "";
+  const initials =
+    displayName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "HO";
 
   return (
-    <Box className="h-full flex flex-col pt-10 p-4 bg-[var(--color-bg-paper)] border-r border-[var(--color-border-soft)]">
-      {/* Sidebar Top: Logo */}
-      <div className={`mb-12 flex items-center ${isCollapsed ? 'justify-center' : 'px-4 gap-3'}`}>
-         <img src="/logo_mas.png" alt="Logo" className={`${isCollapsed ? 'h-5' : 'h-5'} w-auto transition-all duration-500`} />
-         {!isCollapsed && <span className="text-[var(--color-text-primary)] font-medium tracking-tighter text-sm flex-none uppercase animate-fade-in">Contact <span className="text-primary">Portal</span></span>}
+    <Box
+      className="h-full flex flex-col"
+      style={{
+        background: "var(--color-bg-paper)",
+        borderRight: "1px solid var(--color-border-soft)",
+      }}
+    >
+      {/* Logo */}
+      <div
+        className={`flex items-center gap-3 px-4 py-5 border-b border-[var(--color-border-soft)] ${isCollapsed ? "justify-center" : ""}`}
+      >
+        <img
+          src="/logo_mas.png"
+          alt="MAS Logo"
+          className="h-7 w-auto shrink-0 transition-all duration-300"
+        />
+        {!isCollapsed && (
+          <div className="min-w-0 animate-fade-in">
+            <p className="text-[var(--color-text-primary)] text-[13px] font-bold tracking-tight leading-tight">
+              Contact Person Portal
+            </p>
+            <p className="text-primary text-[11px] font-medium tracking-wide">
+              MAS Holdings
+            </p>
+          </div>
+        )}
       </div>
 
-      <nav className="flex-1 overflow-y-auto custom-scrollbar pb-10">
+      {/* Nav */}
+      <nav className="flex-1 px-3 py-4 overflow-y-auto no-scrollbar">
+        {!isCollapsed && (
+          <p className="text-[10.5px] uppercase font-semibold text-[var(--color-text-dim)] tracking-widest px-3 mb-3">
+            Navigation
+          </p>
+        )}
         {menuItems.map((item) => (
           <SidebarItem
             key={item.id}
@@ -67,28 +136,18 @@ const SidebarContent = ({ isCollapsed, currentPath, onNavigate, onLogout }) => {
         ))}
       </nav>
 
-      {/* Sidebar Bottom: User & Logout */}
-      <div className={`mt-auto pt-6 border-t border-[var(--color-border-soft)]`}>
+      {/* User & Logout */}
+      <div className="px-3 py-4 border-t border-[var(--color-border-soft)]">
         <button
           onClick={onLogout}
-          className={`w-full mb-4 flex items-center gap-3 px-3 py-2.5 rounded-xl border border-[var(--color-border-soft)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-primary/40 hover:bg-[var(--color-surface-1)] transition-all ${isCollapsed ? 'justify-center' : ''}`}
-          title="Logout"
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-[var(--color-border-soft)] text-[var(--color-text-secondary)] hover:text-[var(--color-error)] hover:border-[var(--color-error)]/30 transition-all duration-300 mb-3 ${isCollapsed ? "justify-center" : ""}`}
+          title="Sign Out"
         >
-          <LogOut size={16} />
-          {!isCollapsed && <span className="uppercase text-[12px] tracking-[0.2em] font-medium">Logout</span>}
+          <LogOut size={17} className="shrink-0" />
+          {!isCollapsed && (
+            <span className="text-[13px] font-medium">Sign Out</span>
+          )}
         </button>
-
-        <div className={`flex items-center gap-4 ${isCollapsed ? 'justify-center' : 'px-2'}`}>
-            <div className="w-10 h-10 rounded-xl bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] flex items-center justify-center shrink-0">
-                <span className="text-primary font-medium text-xs">SA</span>
-            </div>
-            {!isCollapsed && (
-                <div className="animate-fade-in overflow-hidden">
-                <p className="text-[var(--color-text-primary)] text-[13px] font-medium uppercase tracking-wider truncate">Sachi</p>
-                <p className="text-[var(--color-text-dim)] text-[14px] uppercase tracking-widest truncate">Contact Person</p>
-                </div>
-            )}
-        </div>
       </div>
     </Box>
   );
@@ -98,66 +157,70 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  
-  const isCollapsed = useSelector(state => state.ui.isSidebarCollapsed);
-  const isMobile = useSelector(state => state.ui.isMobile);
-  const isMobileMenuOpen = useSelector(state => state.ui.isMobileMenuOpen);
+  const user = useSelector((state) => state.login.user);
+  const isCollapsed = useSelector((state) => state.ui.isSidebarCollapsed);
+  const isMobile = useSelector((state) => state.ui.isMobile);
+  const isMobileMenuOpen = useSelector((state) => state.ui.isMobileMenuOpen);
 
   const handleNavigate = (path) => {
     navigate(path);
-    if (isMobile) {
-      dispatch(setMobileMenu(false));
-    }
+    if (isMobile) dispatch(setMobileMenu(false));
   };
 
   const handleLogout = () => {
-    const shouldLogout = window.confirm('Are you sure you want to logout?');
-    if (!shouldLogout) return;
-
-    localStorage.removeItem('user_session');
+    if (!window.confirm("Are you sure you want to sign out?")) return;
+    localStorage.removeItem("user_session");
     dispatch({ type: LOGOUT });
-    navigate('/login');
+    navigate("/login");
   };
 
-  // Mobile Version stays as a drawer
+  const contentProps = {
+    isCollapsed: false,
+    currentPath: location.pathname,
+    onNavigate: handleNavigate,
+    onLogout: handleLogout,
+    user,
+  };
+
   if (isMobile) {
     return (
       <Drawer
         anchor="left"
         open={isMobileMenuOpen}
         onClose={() => dispatch(setMobileMenu(false))}
-        PaperProps={{ sx: { width: 280, border: 'none' } }}
+        PaperProps={{
+          sx: { width: 280, border: "none", background: "transparent" },
+        }}
       >
-        <SidebarContent 
-          isCollapsed={false} 
-          currentPath={location.pathname} 
-          onNavigate={handleNavigate}
-          onLogout={handleLogout}
-        />
+        <SidebarContent {...contentProps} />
       </Drawer>
     );
   }
 
-  // Desktop version
   return (
-    <aside 
-      className={`flex-none relative h-screen transition-[width] duration-500 ease-in-out z-40 bg-[var(--color-bg-paper)] border-r border-[var(--color-border-soft)]
-        ${isCollapsed ? 'w-24' : 'w-72'}`}
+    <aside
+      className="flex-none relative h-screen transition-[width] duration-500 ease-in-out z-40"
+      style={{ width: isCollapsed ? "72px" : "256px" }}
     >
-      <SidebarContent 
-        isCollapsed={isCollapsed} 
-        currentPath={location.pathname} 
-        onNavigate={handleNavigate}
-        onLogout={handleLogout}
-      />
-
-      {/* Floating Toggle Button */}
-      <IconButton 
+      <SidebarContent {...contentProps} isCollapsed={isCollapsed} />
+      <IconButton
         onClick={() => dispatch(toggleSidebar())}
-        className="absolute -right-4 top-24 bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] text-primary hover:bg-primary hover:text-white transition-all shadow-xl z-50 p-1 rounded-full"
         size="small"
+        sx={{
+          position: "absolute",
+          right: -14,
+          top: 88,
+          width: 28,
+          height: 28,
+          background: "var(--color-bg-elevated)",
+          border: "1px solid var(--color-border-medium)",
+          color: "var(--color-primary)",
+          boxShadow: "var(--shadow-card)",
+          "&:hover": { background: "var(--color-primary)", color: "#fff" },
+          zIndex: 50,
+        }}
       >
-        {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+        {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </IconButton>
     </aside>
   );

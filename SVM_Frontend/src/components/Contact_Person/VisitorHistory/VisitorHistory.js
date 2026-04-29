@@ -9,7 +9,7 @@ const VisitorHistoryMain = () => {
     const historyData = [
         { id: '1', visitor: 'MICHAEL BROWN', date: 'OCT 20, 2024', category: 'MAINTENANCE', status: 'Approved' },
         { id: '2', visitor: 'EMMA WATSON', date: 'OCT 15, 2024', category: 'INTERVIEW', status: 'Approved' },
-        { id: '3', visitor: 'DAVID CLARK', date: 'OCT 12, 2024', category: 'VENDOR', status: 'Rejected' },
+        { id: '3', visitor: 'DAVID CLARK', date: 'OCT 12, 2024', category: 'VENDOR', status: 'Declined' },
         { id: '4', visitor: 'OLIVIA GREEN', date: 'OCT 08, 2024', category: 'VIP VISIT', status: 'Approved' },
         { id: '5', visitor: 'SAMUEL LEE', date: 'OCT 05, 2024', category: 'FACILITY TOUR', status: 'Approved' },
     ];
@@ -21,7 +21,7 @@ const VisitorHistoryMain = () => {
                   <h2 className={`text-lg font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>Visitor History</h2>
                   <p className={`text-[11px] font-bold uppercase tracking-[0.2em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/40"}`}>Verified personnel archive and entry logs</p>
                 </div>
-                <div className="flex items-center gap-4 w-full md:w-auto">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 w-full md:w-auto">
                     <div className="relative group flex-1 md:w-80">
                         <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${isLight ? "text-gray-400" : "text-white/40"} group-focus-within:text-primary`} size={14} />
                         <input
@@ -43,7 +43,7 @@ const VisitorHistoryMain = () => {
                 {[
                     { label: 'Total Logs', val: '1,492', color: isLight ? 'text-[#1A1A1A]' : 'text-white' },
                     { label: 'Approved Entries', val: '1,120', color: 'text-green-500' },
-                    { label: 'Rejected Forms', val: '00', color: 'text-primary' },
+                    { label: 'Declined Forms', val: '00', color: 'text-primary' },
                     { label: 'Pending Action', val: '12', color: isLight ? 'text-gray-500' : 'text-white/40' }
                 ].map((stat, i) => (
                     <div key={i} className={`p-6 rounded-2xl border shadow-sm group hover:border-primary/20 transition-all ${

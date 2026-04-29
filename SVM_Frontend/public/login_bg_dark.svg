@@ -1,0 +1,69 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1920" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#05070C"/>
+      <stop offset="0.45" stop-color="#0A111B"/>
+      <stop offset="1" stop-color="#121A27"/>
+    </linearGradient>
+    <radialGradient id="haloRed" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1500 180) rotate(129) scale(790 560)">
+      <stop stop-color="#C8102E" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#C8102E" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="haloBlue" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(340 900) rotate(24) scale(920 520)">
+      <stop stop-color="#1F5F92" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#1F5F92" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="spot" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(960 540) rotate(90) scale(760 980)">
+      <stop stop-color="#FFFFFF" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="54" height="54" patternUnits="userSpaceOnUse">
+      <path d="M54 0H0V54" stroke="#FFFFFF" stroke-opacity="0.045"/>
+    </pattern>
+    <linearGradient id="beamRed" x1="130" y1="60" x2="1780" y2="960" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C8102E" stop-opacity="0.28"/>
+      <stop offset="0.42" stop-color="#FFFFFF" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#2D7AB3" stop-opacity="0.21"/>
+    </linearGradient>
+    <linearGradient id="beamBlue" x1="-140" y1="980" x2="1810" y2="180" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2D7AB3" stop-opacity="0.16"/>
+      <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#C8102E" stop-opacity="0.23"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#grid)"/>
+  <rect width="1920" height="1080" fill="url(#spot)"/>
+  <rect width="1920" height="1080" fill="url(#haloRed)"/>
+  <rect width="1920" height="1080" fill="url(#haloBlue)"/>
+
+  <g opacity="0.8">
+    <path d="M-160 88L500 220L930 190L1320 250L2060 520" stroke="url(#beamRed)" stroke-width="1.6"/>
+    <path d="M-110 980L520 760L920 690L1370 750L2060 640" stroke="url(#beamBlue)" stroke-width="1.5"/>
+    <path d="M180 -70L480 240L700 310L940 420L1210 400L1510 520" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="1.1"/>
+    <path d="M330 960L640 790L900 700L1160 620L1480 620L1790 500" stroke="#FFFFFF" stroke-opacity="0.11" stroke-width="1.1"/>
+  </g>
+
+  <g stroke="#FFFFFF" stroke-opacity="0.08" stroke-linecap="round">
+    <path d="M470 220H640"/>
+    <path d="M640 220V330"/>
+    <path d="M930 190V90"/>
+    <path d="M930 90H1150"/>
+    <path d="M1370 750V900"/>
+    <path d="M1370 900H1620"/>
+    <path d="M520 760H330"/>
+    <path d="M330 760V600"/>
+  </g>
+
+  <g fill="#FFFFFF" fill-opacity="0.22">
+    <circle cx="500" cy="220" r="2.5"/>
+    <circle cx="930" cy="190" r="2.5"/>
+    <circle cx="520" cy="760" r="2.4"/>
+    <circle cx="1370" cy="750" r="2.4"/>
+    <circle cx="940" cy="420" r="2"/>
+    <circle cx="1480" cy="620" r="2"/>
+  </g>
+
+  <ellipse cx="960" cy="540" rx="1060" ry="560" fill="url(#spot)" opacity="0.35"/>
+</svg>

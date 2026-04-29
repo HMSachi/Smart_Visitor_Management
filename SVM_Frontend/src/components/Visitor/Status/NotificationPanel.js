@@ -19,7 +19,7 @@ const NotificationPanel = ({ status }) => {
             case 'step2_pending':
                 return [
                     { id: 1, type: 'SUBMITTED', msg: 'Form 02 (Vehicle & Equipment) data synchronized.', time: 'Just now', icon: CheckCircle2 },
-                    { id: 2, type: 'SECURITY', msg: 'Final review requested from Security Officer.', time: '1m ago', icon: ShieldAlert },
+                    { id: 2, type: 'SECURITY', msg: 'Final review requested from Security Support.', time: '1m ago', icon: ShieldAlert },
                     { id: 3, type: 'ALERT', msg: 'Vehicle details matching with Global Registry.', time: '2m ago', icon: Info }
                 ];
             case 'fully_approved':
@@ -40,13 +40,13 @@ const NotificationPanel = ({ status }) => {
     return (
         <section className="bg-white/[0.01] border border-white/5 p-6 rounded-xl">
             <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                     <div className="text-primary">
                         <Terminal size={14} />
                     </div>
                     <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-0 !mb-0">Security Log</h3>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
                     <span className="text-[12px] text-gray-500 font-bold uppercase tracking-widest">Protocol Sync</span>
                 </div>
@@ -59,7 +59,7 @@ const NotificationPanel = ({ status }) => {
                         className="pl-4 py-1.5 border-l border-white/5 hover:border-primary transition-all cursor-pointer group/item"
                     >
                         <div className="flex justify-between items-center mb-1">
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                                 <alert.icon size={12} className={alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500/60 group-hover/item:text-green-500' : 'text-primary/60 group-hover/item:text-primary transition-colors'} />
                                 <span className={`text-[12px] font-bold uppercase tracking-widest ${alert.type === 'APPROVED' || alert.type === 'CLEARED' ? 'text-green-500' : 'text-primary'}`}>{alert.type}</span>
                             </div>

@@ -26,12 +26,12 @@ const NotificationsMain = () => {
         <div className="p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-mas-border pb-12">
                 <div>
-                    <div className="flex items-center gap-4 mb-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-4">
                         <Bell size={14} className="text-primary" />
                         <span className="text-primary uppercase">Critical Node Feed</span>
                         <div className="h-[1px] w-12 bg-primary"></div>
                     </div>
-                    <h1 className="uppercase text-white flex items-center gap-6">
+                    <h1 className="uppercase text-white flex flex-col md:flex-row items-center gap-4 md:gap-6">
                         Alerts Center
                         <span className="px-4 py-2 mas-glass border-primary/30 text-primary inline-flex">
                             {notifications.filter(n => n.unread).length} New Alerts
@@ -39,8 +39,8 @@ const NotificationsMain = () => {
                     </h1>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <button onClick={markAllRead} className="flex items-center gap-3 px-8 py-3 mas-glass border-white/5 text-gray-300 uppercase hover:text-white hover:border-white/20 transition-all">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
+                    <button onClick={markAllRead} className="flex flex-col md:flex-row items-center gap-4 md:gap-3 px-8 py-3 mas-glass border-white/5 text-gray-300 uppercase hover:text-white hover:border-white/20 transition-all">
                         <CheckCircle2 size={14} />
                         Clear Alert Buffer
                     </button>
@@ -72,12 +72,12 @@ const NotificationsMain = () => {
                             <p className="text-gray-300 uppercase leading-6 max-w-2xl">
                                 {notif.message}
                             </p>
-                            <div className="pt-4 flex items-center gap-6">
-                                 <div className="flex items-center gap-2">
+                            <div className="pt-4 flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                                      <div className="w-1 h-1 bg-primary rounded-full"></div>
                                      <span className="text-gray-300 uppercase">Source: FRONT-DOOR-SCANNER-02</span>
                                  </div>
-                                 <div className="flex items-center gap-2">
+                                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                                      <div className="w-1 h-1 bg-primary rounded-full"></div>
                                      <span className="text-gray-300 uppercase">Verification Logged</span>
                                  </div>

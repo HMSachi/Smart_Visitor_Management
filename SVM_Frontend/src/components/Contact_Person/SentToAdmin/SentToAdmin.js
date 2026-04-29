@@ -7,7 +7,7 @@ const SentToAdminMain = () => {
         { id: 'FWD-900', name: 'John Doe', status: 'Under Review' },
         { id: 'FWD-901', name: 'Sarah Smith', status: 'Approved' },
         { id: 'FWD-902', name: 'Michael Chen', status: 'Under Review' },
-        { id: 'FWD-903', name: 'James Wilson', status: 'Rejected' },
+        { id: 'FWD-903', name: 'James Wilson', status: 'Declined' },
     ];
 
     return (
@@ -20,7 +20,7 @@ const SentToAdminMain = () => {
             </header>
 
             <div className="space-y-6">
-                                <div className="flex items-center gap-4 px-6 py-4 bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-xl shadow-sm">
+                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 px-6 py-4 bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-xl shadow-sm">
                                          <span className="uppercase text-[var(--color-text-primary)] text-[11px] font-bold tracking-[0.15em]">Total Escalated: {requests.length}</span>
                 </div>
                 <SentTable requests={requests} />

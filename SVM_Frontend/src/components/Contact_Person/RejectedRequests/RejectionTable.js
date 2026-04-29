@@ -9,7 +9,9 @@ const RejectionTable = ({ requests, onSelect }) => {
         <div className={`border rounded-3xl overflow-hidden shadow-xl sm:overflow-visible p-4 sm:p-0 transition-all duration-500 ${
             isLight ? "bg-white border-gray-200 shadow-gray-200/50" : "bg-black/40 border-white/10 shadow-black/50"
         }`}>
-            <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
+            
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
                 <thead className="hidden sm:table-header-group">
                     <tr className={`border-b text-[13px] font-bold uppercase tracking-[0.2em] transition-colors ${
                         isLight ? "bg-[#F8F9FA] border-gray-100 text-gray-400" : "bg-white/5 border-white/10 text-white/40"
@@ -37,7 +39,7 @@ const RejectionTable = ({ requests, onSelect }) => {
                             </td>
                             <td className={`block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b sm:border-none last:border-none ${isLight ? "border-gray-50" : "border-white/5"}`}>
                                 <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Visitor Identity</span>
-                                <div className="flex items-center gap-3">
+                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20 text-[13px] font-bold">
                                         {req.name[0]}
                                     </div>
@@ -50,14 +52,14 @@ const RejectionTable = ({ requests, onSelect }) => {
                             </td>
                             <td className={`block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b sm:border-none last:border-none ${isLight ? "border-gray-50" : "border-white/5"}`}>
                                 <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Root Cause</span>
-                                <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded-md border border-primary/20 bg-primary/10 text-primary uppercase text-[10px] font-bold tracking-widest break-words">
+                                <div className="inline-flex flex-col md:flex-row items-center gap-4 md:gap-2 px-2 py-0.5 rounded-md border border-primary/20 bg-primary/10 text-primary uppercase text-[10px] font-bold tracking-widest break-words">
                                     <Octagon size={10} />
                                     {req.reason}
                                 </div>
                             </td>
                             <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-right">
                                 <span className="text-[14px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Details</span>
-                                <button className={`inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors group/btn ${isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-primary"}`}>
+                                <button className={`inline-flex flex-col md:flex-row items-center gap-4 md:gap-2 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors group/btn ${isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-primary"}`}>
                                     VIEW
                                     <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
                                 </button>
@@ -66,6 +68,8 @@ const RejectionTable = ({ requests, onSelect }) => {
                     ))}
                 </tbody>
             </table>
+</div>
+
         </div>
     );
 };

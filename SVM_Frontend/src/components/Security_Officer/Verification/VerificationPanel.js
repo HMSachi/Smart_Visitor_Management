@@ -41,14 +41,14 @@ const VerificationPanel = () => {
                     <section className="pt-10 border-t border-white/5 space-y-6">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-primary uppercase">Access Protocol</h3>
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
                                     <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                                     <span className="uppercase text-green-500">Pre-Approved</span>
                                 </div>
                             </div>
                             <div className="flex flex-wrap gap-3">
                                 {visitorData.areas.map((area, i) => (
-                                    <div key={i} className="px-5 py-2 bg-white/[0.03] border border-white/10 uppercase text-white flex items-center gap-3">
+                                    <div key={i} className="px-5 py-2 bg-white/[0.03] border border-white/10 uppercase text-white flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                         <MapPin size={12} className="text-primary" />
                                         {area}
                                     </div>
@@ -60,7 +60,7 @@ const VerificationPanel = () => {
                     {/* Equipment & Vehicle */}
                     <div className="flex flex-col gap-8 h-full">
                     <div className="mas-glass p-4 md:p-10 border-mas-border relative overflow-hidden group flex-1">
-                        <div className="flex items-center gap-4 mb-8">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-8">
                             <Car size={18} className="text-primary" />
                             <h3 className="uppercase text-white">Vehicle Manifest</h3>
                         </div>
@@ -74,13 +74,13 @@ const VerificationPanel = () => {
                     </div>
 
                     <div className="mas-glass p-4 md:p-10 border-mas-border relative overflow-hidden group flex-1">
-                            <div className="flex items-center gap-4 mb-8">
+                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-8">
                             <Briefcase size={18} className="text-primary" />
                             <h3 className="uppercase text-white">Asset Registry</h3>
                         </div>
                         <div className="space-y-4">
                             {visitorData.equipment.map((item, i) => (
-                                <div key={i} className="p-4 bg-white/[0.02] border border-white/5 flex items-center gap-3">
+                                <div key={i} className="p-4 bg-white/[0.02] border border-white/5 flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                     <div className="w-1.5 h-1.5 bg-primary opacity-30"></div>
                                     <span className="uppercase text-white/80">{item}</span>
                                 </div>
@@ -109,7 +109,7 @@ const VerificationPanel = () => {
 
                             {visitorData.mismatch && (
                                 <div className="w-full p-6 bg-primary/5 border border-primary/20 space-y-4 text-left">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                         <div className="w-4 h-4 rounded-full bg-primary"></div>
                                         <span className="uppercase text-white">Manual Counter-Check Required</span>
                                     </div>

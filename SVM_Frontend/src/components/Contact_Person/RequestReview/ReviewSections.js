@@ -20,7 +20,7 @@ const readablePurpose = (purpose, purposeOther) => {
 const SectionWrapper = ({ icon: Icon, title, subtitle, children }) => (
     <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl transition-all hover:border-white/10 group">
         <div className="px-8 py-6 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-lg">
                     <Icon size={20} />
                 </div>
@@ -41,7 +41,7 @@ const SectionWrapper = ({ icon: Icon, title, subtitle, children }) => (
 
 const Field = ({ label, value, icon: Icon }) => (
     <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5 group/field hover:border-primary/20 transition-all">
-        <div className="flex items-center gap-2 opacity-80 group-hover/field:opacity-90 transition-opacity">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 opacity-80 group-hover/field:opacity-90 transition-opacity">
             {Icon && <Icon size={10} className="text-primary" />}
             <label className="text-gray-300 text-[12px] font-medium uppercase tracking-widest">{label}</label>
         </div>
@@ -51,7 +51,7 @@ const Field = ({ label, value, icon: Icon }) => (
 
 export const VisitorIdentification = ({ request }) => (
     <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] p-6 md:p-10 shadow-2xl">
-        <div className="flex items-center gap-4 mb-8 border-l-4 border-primary pl-6">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-8 border-l-4 border-primary pl-6">
             <div className="text-primary">
                 <User size={20} />
             </div>
@@ -77,7 +77,7 @@ export const VisitParameters = ({ request }) => (
         </div>
 
         <div className="space-y-4">
-            <div className="flex items-center gap-2 opacity-80">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 opacity-80">
                 <MapPin size={12} className="text-primary" />
                 <span className="text-[12px] font-medium uppercase tracking-widest text-gray-300">Authorized Access Zones</span>
             </div>

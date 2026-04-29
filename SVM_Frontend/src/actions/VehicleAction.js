@@ -38,19 +38,9 @@ export const AddVehicle = (vehicleData) => {
         dispatch({ type: ADD_VEHICLE_REQUEST });
         try {
             const response = await VehicleService.AddVehicle(vehicleData);
-            const isSuccess = response.data && (
-                response.data.ResultSet ||
-                response.data.Status === "Success" ||
-                response.data.Status === "OK" ||
-                response.status === 200
-            );
-            if (isSuccess) {
-                dispatch({ type: ADD_VEHICLE_SUCCESS, payload: response.data });
-                setTimeout(() => dispatch(GetAllVehicles()), 1500);
-                return response.data;
-            } else {
-                throw new Error(response.data?.Message || "Failed to add vehicle");
-            }
+            dispatch({ type: ADD_VEHICLE_SUCCESS, payload: response.data });
+            setTimeout(() => dispatch(GetAllVehicles()), 1500);
+            return response.data;
         } catch (error) {
             if (error.message === "Network Error") {
                 dispatch({ type: ADD_VEHICLE_SUCCESS });

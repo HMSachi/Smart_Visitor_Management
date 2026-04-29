@@ -2,88 +2,129 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useThemeMode } from '../../../theme/ThemeModeContext';
+import { ArrowRight, CalendarCheck, Clock } from 'lucide-react';
 
 const WelcomeSection = () => {
-    const navigate = useNavigate();
-    const { user } = useSelector(state => state.login);
-    const { themeMode } = useThemeMode();
-    const isVisitor = user?.ResultSet?.[0]?.VA_Role === 'Visitor';
-    const isLightMode = themeMode === 'light';
+  const navigate = useNavigate();
+  const { user } = useSelector(state => state.login);
+  const { themeMode } = useThemeMode();
+  const isVisitor = user?.ResultSet?.[0]?.VA_Role === 'Visitor';
+  const isLight = themeMode === 'light';
 
-    return (
-        <section className="relative min-h-screen flex items-center overflow-hidden pt-24 md:pt-0">
-            {/* Background Layer with Overlay */}
-            <div
-                className="absolute inset-0 z-0"
-                style={{
-                    backgroundImage: `url('/main.jpeg')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: '50% 30%',
-                    backgroundRepeat: 'no-repeat'
-                }}
+  return (
+    <section className="relative min-h-screen flex items-center overflow-hidden pt-[68px]">
+      {/* Background image */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url('/main.jpeg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: '50% 30%',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        {/* Overlay */}
+        <div className={`absolute inset-0 ${isLight ? 'bg-white/40' : 'bg-black/60'}`} />
+        {/* Left gradient */}
+        <div
+          className={`absolute inset-y-0 left-0 w-full lg:w-3/5 bg-gradient-to-r ${isLight ? 'from-white/90 via-white/50 to-transparent' : 'from-black/90 via-black/50 to-transparent'}`}
+        />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 w-full px-6 sm:px-12 md:px-16 lg:px-24 xl:px-32 py-16">
+        <div className="max-w-2xl">
+          {/* Eyebrow tag */}
+          <div className="mb-6">
+            <span
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-widest uppercase"
+              style={{
+                background: 'rgba(200,16,46,0.15)',
+                border: '1px solid rgba(200,16,46,0.3)',
+                color: '#C8102E',
+              }}
             >
-                <div className={`absolute inset-0 ${isLightMode ? 'bg-white/30' : 'bg-black/65'}`}></div>
-                <div
-                    className={`absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r ${
-                        isLightMode ? 'from-white/80 via-white/30 to-transparent' : 'from-black via-black/40 to-transparent'
-                    }`}
-                ></div>
-            </div>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              MAS Holdings — Visitor Portal
+            </span>
+          </div>
 
-            <div className="w-full px-6 md:px-16 lg:px-24 xl:px-32 relative z-10">
-                <div className="max-w-6xl">
-                    <div className="mb-8">
-                        <span className="text-primary font-black uppercase tracking-[0.35em] text-xs md:text-sm">Facility Intelligence</span>
-                    </div>
+          {/* Headline */}
+          <h1
+            className={`font-black leading-[1.1] tracking-tight mb-6 m-0 p-0 ${isLight ? 'text-[var(--color-text-primary)]' : 'text-white'}`}
+            style={{ fontSize: 'clamp(2.2rem, 5vw, 4.5rem)' }}
+          >
+            Book Your Visit<br />
+            <span className="text-primary">Fast &amp; Securely</span>
+          </h1>
 
-                    <div className="mb-10">
-                        <h1 className={`text-4xl md:text-6xl lg:text-[4.5vw] font-black leading-tight tracking-[-0.03em] uppercase m-0 p-0 ${isLightMode ? 'text-[var(--color-text-primary)]' : 'text-white drop-shadow-2xl'}`}>
-                            Visitor
-                        </h1>
-                        <h1 className="text-4xl md:text-5xl lg:text-[4vw] font-black leading-tight tracking-[-0.03em] uppercase m-0 p-0 drop-shadow-2xl">
-                            <span className="text-primary mr-4">Access</span>
-                            <span className={isLightMode ? 'text-[var(--color-text-primary)]' : 'text-white'}>Portal</span>
-                        </h1>
-                    </div>
+          {/* Subtext */}
+          <p
+            className={`text-base sm:text-lg font-medium leading-relaxed mb-10 max-w-xl ${isLight ? 'text-[var(--color-text-secondary)]' : 'text-white/75'}`}
+          >
+            A simple, smart, and secure way to request access to{' '}
+            <span className="text-primary font-bold">MAS Holdings</span> facilities.
+            Get in, get checked, and get going — in minutes.
+          </p>
 
-                    <div className="space-y-10 mb-14">
-                        <div className="relative">
-                            <div className="mt-1">
-                                <p className={`${isLightMode ? 'text-[var(--color-text-primary)]' : 'text-white'} text-base md:text-lg font-medium max-w-4xl leading-relaxed ${isLightMode ? '' : 'drop-shadow-md'}`}>
-                                    Secure, streamlined, and enterprise-grade access management <br className="hidden md:block" />
-                                    for <span className="text-primary font-black underline underline-offset-4 decoration-2">MAS Holdings</span> world-class manufacturing facilities.
-                                </p>
-                            </div>
-                        </div>
+          {/* Feature pills */}
+          <div className="flex flex-wrap gap-3 mb-10">
+            {[
+              { icon: CalendarCheck, label: 'Instant Request' },
+              { icon: Clock, label: 'Real-time Status' },
+            ].map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${isLight ? 'text-[var(--color-text-primary)] bg-white/70' : 'text-white/80 bg-white/10'}`}
+                style={{ backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}
+              >
+                <Icon size={14} className="text-primary" />
+                {label}
+              </span>
+            ))}
+          </div>
 
-                        <p className={`${isLightMode ? 'text-[var(--color-text-primary)]' : 'text-white/90'} text-base md:text-lg font-medium max-w-3xl leading-relaxed ${isLightMode ? '' : 'drop-shadow-md'}`}>
-                            Experience the next generation of facility access. A seamless, high-security digital gateway designed for the modern enterprise.
-                        </p>
-                    </div>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            {isVisitor ? (
+              <button
+                onClick={() => navigate('/visitor/my-requests')}
+                className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl text-white font-bold text-[15px] transition-all active:scale-95"
+                style={{
+                  background: 'linear-gradient(135deg, var(--color-primary), #A60D26)',
+                  boxShadow: '0 6px 24px rgba(200,16,46,0.4)',
+                }}
+              >
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                My Visit Requests
+                <ArrowRight size={18} />
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/request-step-1')}
+                className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl text-white font-bold text-[15px] transition-all active:scale-95"
+                style={{
+                  background: 'linear-gradient(135deg, var(--color-primary), #A60D26)',
+                  boxShadow: '0 6px 24px rgba(200,16,46,0.4)',
+                }}
+              >
+                Request a Visit
+                <ArrowRight size={18} />
+              </button>
+            )}
 
-                    <div className="flex flex-col sm:flex-row items-center gap-6">
-                        {isVisitor ? (
-                            <button
-                                onClick={() => navigate('/visitor/my-requests')}
-                                className="w-full sm:w-auto px-12 py-5 bg-primary text-white font-black uppercase text-sm md:text-base tracking-[0.2em] border border-primary hover:bg-[var(--color-primary-hover)] transition-all rounded-none shadow-lg shadow-primary/20 flex items-center justify-center gap-3 group"
-                            >
-                                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                                My Visit Requests
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => navigate('/request-step-1')}
-                                className="w-full sm:w-auto px-12 py-5 bg-primary text-white font-black uppercase text-sm md:text-base tracking-[0.2em] border border-primary hover:bg-[var(--color-primary-hover)] transition-all rounded-xl shadow-lg shadow-primary/20"
-                            >
-                                Request a Visit
-                            </button>
-                        )}
-
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+            {/* <button
+              onClick={() => navigate('/status')}
+              className={`flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold text-[15px] transition-all active:scale-95 ${isLight ? 'bg-white/80 text-gray-800' : 'bg-white/10 text-white'}`}
+              style={{ backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' }}
+            >
+              Check Visit Status
+            </button> */}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default WelcomeSection;

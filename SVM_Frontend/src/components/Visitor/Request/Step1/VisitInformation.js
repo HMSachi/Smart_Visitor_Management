@@ -4,7 +4,7 @@ import { Info, Minus, Plus } from 'lucide-react';
 const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
     return (
         <section className="animate-fade-in stagger-item">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 mb-6">
                 <div className="text-primary">
                     <Info size={14} />
                 </div>
@@ -54,7 +54,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                 {/* Person to Visit (New) */}
                 <div className="space-y-1.5">
                     <label className="text-[14px] font-medium text-gray-500 uppercase tracking-widest block">
-                        Person to Visit / Host
+                        Person to Visit / Contact Person
                     </label>
                     <div className="relative">
                         <input 
@@ -79,7 +79,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                         onClick={() => onToggle('isCompanyRelated')}
                         className={`w-10 h-5 flex items-center p-0.5 rounded-full transition-all duration-500 ${data.isCompanyRelated ? 'bg-primary' : 'bg-white/10'}`}
                     >
-                        <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${data.isCompanyRelated ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                        <div className={`w-4 h-4 mas-glass rounded-full transition-transform duration-300 ${data.isCompanyRelated ? 'translate-x-5' : 'translate-x-0'}`}></div>
                     </button>
                 </div>
 
@@ -89,7 +89,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                         <label className="text-[14px] font-medium text-gray-400 uppercase tracking-widest">Delegation Size</label>
                         <span className="text-[13px] text-gray-600 font-medium tracking-tight">Total persons entering</span>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                         <button 
                             type="button" 
                             onClick={(e) => { e.preventDefault(); onCountChange(-1); }}

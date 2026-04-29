@@ -6,13 +6,13 @@ const IncidentReportMain = () => {
         <div className="p-6 md:p-12 space-y-6 md:space-y-12 animate-fade-in text-white">
             <div className="flex items-end justify-between border-b border-mas-border pb-8">
                 <div>
-                    <div className="flex items-center gap-4 mb-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-4">
                         <AlertOctagon size={14} className="text-primary" />
                         <span className="text-primary uppercase">Reporting Node</span>
                         <div className="h-[1px] w-12 bg-primary"></div>
                     </div>
-                    <h1 className="uppercase text-white flex items-center gap-6">
-                        Incident Report
+                    <h1 className="uppercase text-white flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                        Help & Support
                     </h1>
                 </div>
             </div>
@@ -82,7 +82,7 @@ const IncidentReportMain = () => {
                     </section>
 
                     <div className="pt-12 border-t border-mas-border">
-                        <button className="flex items-center gap-6 px-16 py-5 bg-primary text-white uppercase shadow-[0_0_50px_rgba(200,16,46,0.3)] hover:scale-105 transition-all w-full md:w-auto">
+                        <button className="flex flex-col md:flex-row items-center gap-4 md:gap-6 px-16 py-5 bg-primary text-white uppercase shadow-[0_0_50px_rgba(200,16,46,0.3)] hover:scale-105 transition-all w-full md:w-auto">
                             <Send size={18} />
                             Transmit Incident Log
                         </button>

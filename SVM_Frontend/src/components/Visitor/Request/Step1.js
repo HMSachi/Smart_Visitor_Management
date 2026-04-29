@@ -1,558 +1,250 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Navigate } from "react-router-dom";
-import { ShieldCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { 
+  FileText, 
+  ArrowRight, 
+  Loader2, 
+  CheckCircle2, 
+  AlertCircle 
+} from "lucide-react";
 import VisitorOverview from "./Step1/VisitorOverview";
-import VehicleDetails from "./Step1/VehicleDetails";
-import { createVisitorRequest } from "../../../services/visitorRequestService";
-import { GetAdministratorById } from "../../../actions/AdministratorAction";
-import {
-  AddVisitRequest,
-  GetVisitRequestsByVisitor,
-  UpdateVisitRequest,
-  ApproveVisitRequest
-} from "../../../actions/VisitRequestAction";
+import { AddVisitRequest } from "../../../actions/VisitRequestAction";
 import VisitorService from "../../../services/VisitorService";
-import { AddVehicle, GetAllVehicles, UpdateVehicle } from "../../../actions/VehicleAction";
-import { AddVisitGroup } from "../../../actions/VisitGroupAction";
-import { AddItem } from "../../../actions/ItemCarriedAction";
+import VisitRequestService from "../../../services/VisitRequestService";
 import {
   updateField,
   setStatus,
-  setRequestRef,
-  addVisitor,
-  removeVisitor,
-  updateVisitorDetail,
-  addEquipment,
-  removeEquipment,
-  updateEquipmentDetail,
+  setRequestId,
+  setSubmitting,
+  setError,
 } from "../../../reducers/visitorSlice";
-import VisitorGroup from "./Step1/VisitorGroup";
-import ItemsCarried from "./Step1/ItemsCarried";
+import { validateName, validateNIC, validatePhone, validateEmail } from "../../../utils/validation";
 
 const Step1Main = () => {
   const navigate = useNavigate();
-  const formatDateForInput = (dateValue) => {
-    if (!dateValue) return "";
-
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) return dateValue;
-
-    const parsed = new Date(dateValue);
-    if (!isNaN(parsed.getTime())) {
-      const year = parsed.getFullYear();
-      const month = String(parsed.getMonth() + 1).padStart(2, "0");
-      const day = String(parsed.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    }
-
-    return "";
-  };
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.visitor);
-  const { status, requestRef, visitors, equipment } = formData;
+  const { isSubmitting, requestId, error: reduxError } = formData;
   const user = useSelector((state) => state.login.user);
-  const { administrators } = useSelector((state) => state.administrator);
-  const { visitRequestsByVis, isLoading: isRequestsLoading } = useSelector(
-    (state) => state.visitRequestsState,
-  );
-  const { vehicles } = useSelector((state) => state.vehicleState || {});
+  const userEmail = user?.ResultSet?.[0]?.VA_Email;
 
-  // Authenticated credentials
-  const authUser = user?.ResultSet?.[0];
-  const userEmail = authUser?.VA_Email;
-  const adminId = authUser?.VA_Admin_id;
-  const [visitorRecord, setVisitorRecord] = React.useState(null);
+  const [formErrors, setFormErrors] = useState({});
+  const [visitorRecord, setVisitorRecord] = useState(null);
+  const [showError, setShowError] = useState(false);
 
-  // Fetch Administrator, matched Visitor record, and Vehicles
+  // Load visitor profile on mount
   useEffect(() => {
     const loadVisitorRecord = async () => {
       try {
         const response = await VisitorService.GetAllVisitors();
         const visitors = response?.data?.ResultSet || [];
-
-        console.log("All Visitors:", visitors);
-        console.log("Logged user email:", userEmail);
-
         const match = visitors.find(
-          (v) =>
-            (v.VV_Email || "").trim().toLowerCase() ===
-            (userEmail || "").trim().toLowerCase(),
+          (v) => (v.VV_Email || "").trim().toLowerCase() === (userEmail || "").trim().toLowerCase()
         );
-
-        console.log("Matched visitorRecord:", match);
         setVisitorRecord(match || null);
-
-        if (match?.VV_Visitor_id) {
-          dispatch(GetVisitRequestsByVisitor(match.VV_Visitor_id));
-        }
       } catch (err) {
         console.error("Error loading visitor record:", err);
-        setVisitorRecord(null);
       }
     };
+    if (userEmail) loadVisitorRecord();
+  }, [userEmail]);
 
-    if (authUser && adminId) {
-      dispatch(GetAdministratorById(adminId));
-      dispatch(GetAllVehicles());
-    }
-
-    if (userEmail) {
-      loadVisitorRecord();
-    }
-  }, [dispatch, authUser, adminId, userEmail]);
-
-  // Pre-fill visitor profile data
+  // Pre-fill form with visitor record
   useEffect(() => {
     if (visitorRecord) {
-      if (!formData.fullName)
-        dispatch(
-          updateField({
-            name: "fullName",
-            value: visitorRecord.VV_Name || "",
-          }),
-        );
-
-      if (!formData.nic)
-        dispatch(
-          updateField({
-            name: "nic",
-            value: visitorRecord.VV_NIC_Passport_NO || "",
-          }),
-        );
-
-      if (!formData.phoneNumber)
-        dispatch(
-          updateField({
-            name: "phoneNumber",
-            value: visitorRecord.VV_Phone || "",
-          }),
-        );
-
-      if (!formData.emailAddress)
-        dispatch(
-          updateField({
-            name: "emailAddress",
-            value: visitorRecord.VV_Email || "",
-          }),
-        );
-
-      if (!formData.representingCompany)
-        dispatch(
-          updateField({
-            name: "representingCompany",
-            value: visitorRecord.VV_Company || "",
-          }),
-        );
-
-      if (!formData.visitorClassification)
-        dispatch(
-          updateField({
-            name: "visitorClassification",
-            value: visitorRecord.VV_Visitor_Type || "",
-          }),
-        );
-
-      return;
+      const fields = {
+        fullName: visitorRecord.VV_Name || "",
+        nic: visitorRecord.VV_NIC_Passport_NO || "",
+        phoneNumber: visitorRecord.VV_Phone || "",
+        emailAddress: visitorRecord.VV_Email || "",
+        representingCompany: visitorRecord.VV_Company || "",
+        visitorClassification: visitorRecord.VV_Visitor_Type || "",
+      };
+      Object.entries(fields).forEach(([name, value]) => {
+        if (!formData[name]) dispatch(updateField({ name, value }));
+      });
     }
-
-    if (administrators && administrators.length > 0) {
-      const admin = administrators[0];
-      if (!formData.fullName)
-        dispatch(updateField({ name: "fullName", value: admin.VA_Name || "" }));
-      if (!formData.emailAddress)
-        dispatch(
-          updateField({ name: "emailAddress", value: admin.VA_Email || "" }),
-        );
-    }
-  }, [
-    dispatch,
-    visitorRecord,
-    administrators,
-    formData.fullName,
-    formData.nic,
-    formData.phoneNumber,
-    formData.emailAddress,
-    formData.representingCompany,
-    formData.visitorClassification,
-  ]);
-
-  // Pre-fill request and vehicle data
-  useEffect(() => {
-    if (visitRequestsByVis && visitRequestsByVis.length > 0) {
-      const latestRequest = visitRequestsByVis[0];
-      console.log("Matched latestRequest:", latestRequest);
-
-      // Block access if already accepted
-      const normalizedStatus = (latestRequest.VVR_Status || "").toString().trim().toUpperCase();
-      if (normalizedStatus === "ACCEPTED" || normalizedStatus === "A" || normalizedStatus === "APPROVED") {
-        alert("This visit request has already been accepted and sent to the contact person.");
-        navigate("/home", { replace: true });
-        return;
-      }
-
-      if (!formData.proposedVisitDate)
-        dispatch(
-          updateField({
-            name: "proposedVisitDate",
-            value: formatDateForInput(latestRequest.VVR_Visit_Date),
-          }),
-        );
-
-      if (!formData.visitingArea)
-        dispatch(
-          updateField({
-            name: "visitingArea",
-            value: latestRequest.VVR_Places_to_Visit || "",
-          }),
-        );
-
-      if (!formData.purposeOfVisitation)
-        dispatch(
-          updateField({
-            name: "purposeOfVisitation",
-            value: latestRequest.VVR_Purpose || "",
-          }),
-        );
-
-        const visitorRequestIds = (visitRequestsByVis || []).map(r => String(r.VVR_Request_id));
-        
-        // Priority 1: Vehicle linked to THIS request (if it has a valid plate)
-        // Priority 2: Most recent vehicle from ANY of this visitor's requests (that isn't "N/A")
-        // Priority 3: Fallback to current request's record even if "N/A"
-        const matchedVehicle = 
-          vehicles.find(v => String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id) && v.VV_Vehicle_Number && v.VV_Vehicle_Number !== "N/A") ||
-          vehicles.find(v => visitorRequestIds.includes(String(v.VVR_Request_id)) && v.VV_Vehicle_Number && v.VV_Vehicle_Number !== "N/A") ||
-          vehicles.find(v => String(v.VVR_Request_id) === String(latestRequest.VVR_Request_id));
-
-        console.log("Improved matched vehicle lookup:", matchedVehicle);
-
-        if (matchedVehicle) {
-          if (!formData.vehicleType || formData.vehicleType === "Car")
-            dispatch(
-              updateField({
-                name: "vehicleType",
-                value: matchedVehicle.VV_Vehicle_Type && matchedVehicle.VV_Vehicle_Type !== "N/A" 
-                  ? matchedVehicle.VV_Vehicle_Type 
-                  : formData.vehicleType || "Car",
-              }),
-            );
-
-          if (!formData.plateNumber || formData.plateNumber === "N/A")
-            dispatch(
-              updateField({
-                name: "plateNumber",
-                value: matchedVehicle.VV_Vehicle_Number && matchedVehicle.VV_Vehicle_Number !== "N/A" 
-                  ? matchedVehicle.VV_Vehicle_Number 
-                  : "",
-              }),
-            );
-        }
-    }
-  }, [
-    dispatch,
-    visitRequestsByVis,
-    vehicles,
-    formData.proposedVisitDate,
-    formData.visitingArea,
-    formData.purposeOfVisitation,
-    formData.vehicleType,
-    formData.plateNumber,
-  ]);
+  }, [visitorRecord, dispatch]);
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    dispatch(
-      updateField({
-        name,
-        value: type === "checkbox" ? checked : value,
-      }),
-    );
+    const { name, value } = e.target;
+    dispatch(updateField({ name, value }));
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
   };
 
-  const handleAddVisitor = () => {
-    dispatch(addVisitor());
-  };
+  const validateForm = () => {
+    const errors = {};
+    const required = [
+      ["fullName", "Name is required"],
+      ["nic", "ID/Passport is required"],
+      ["emailAddress", "Email is required"],
+      ["phoneNumber", "Phone is required"],
+      ["representingCompany", "Company is required"],
+      ["visitorClassification", "Visitor type is required"],
+      ["proposedVisitDate", "Date is required"],
+      ["purposeOfVisitation", "Purpose is required"],
+      ["visitingArea", "Location is required"],
+    ];
 
-  const handleRemoveVisitor = (id) => {
-    dispatch(removeVisitor(id));
-  };
+    required.forEach(([field, msg]) => {
+      if (!String(formData[field] || "").trim()) errors[field] = msg;
+    });
 
-  const handleUpdateVisitor = (id, field, value) => {
-    dispatch(updateVisitorDetail({ id, field, value }));
-  };
+    // Custom validations from utility
+    if (!errors.fullName) {
+      const err = validateName(formData.fullName);
+      if (err) errors.fullName = err;
+    }
 
-  const handleAddEquipment = () => {
-    dispatch(addEquipment());
-  };
+    if (!errors.nic) {
+      const err = validateNIC(formData.nic);
+      if (err) errors.nic = err;
+    }
 
-  const handleRemoveEquipment = (id) => {
-    dispatch(removeEquipment(id));
-  };
+    if (!errors.phoneNumber) {
+      const err = validatePhone(formData.phoneNumber);
+      if (err) errors.phoneNumber = err;
+    }
 
-  const handleUpdateEquipment = (id, field, value) => {
-    dispatch(updateEquipmentDetail({ id, field, value }));
+    if (!errors.emailAddress) {
+      const err = validateEmail(formData.emailAddress);
+      if (err) errors.emailAddress = err;
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submit started. Equipment:", equipment);
-    dispatch(setStatus("submitting"));
+
+    if (!validateForm()) return;
+
+    if (requestId) {
+      navigate("/request-step-2");
+      return;
+    }
+
+    setShowError(false);
+    dispatch(setSubmitting(true));
 
     try {
-      const latestRequest = visitRequestsByVis?.[0];
+      const payload = {
+        VVR_Visitor_id: visitorRecord?.VV_Visitor_id,
+        VVR_Contact_person_id: visitorRecord?.VV_Contact_person_id || "4",
+        VVR_Visit_Date: formData.proposedVisitDate,
+        VVR_Places_to_Visit: formData.visitingArea,
+        VVR_Purpose: formData.purposeOfVisitation,
+        VVR_Status: "PENDING",
+      };
 
-      if (latestRequest?.VVR_Request_id) {
-        const payload = {
-          VVR_Request_id: latestRequest.VVR_Request_id,
-          VVR_Visit_Date:
-            formData.proposedVisitDate ||
-            formatDateForInput(latestRequest.VVR_Visit_Date),
-          VVR_Places_to_Visit:
-            formData.visitingArea || latestRequest.VVR_Places_to_Visit || "",
-          VVR_Purpose:
-            formData.purposeOfVisitation || latestRequest.VVR_Purpose || "",
-          VVR_Visitor_id:
-            visitorRecord?.VV_Visitor_id || latestRequest.VVR_Visitor_id,
-          VVR_Contact_person_id: latestRequest.VVR_Contact_person_id,
-          VVR_Status: "ACCEPTED",
-        };
+      console.log("AddVisitRequest Payload:", payload);
+      const response = await dispatch(AddVisitRequest(payload));
+      console.log("AddVisitRequest Raw Response:", response);
 
-        await dispatch(UpdateVisitRequest(payload));
-
-        // Refresh local requests to ensure state is up to date
-        if (visitorRecord?.VV_Visitor_id) {
-          dispatch(GetVisitRequestsByVisitor(visitorRecord.VV_Visitor_id));
+      // Extract ID logic...
+      const findId = (obj) => {
+        if (!obj || typeof obj !== "object") return null;
+        const direct = obj.VVR_Request_id || obj["VVR Request id"] ||
+                       obj.vvr_request_id || obj.requestId || obj.id || obj.VVR_ID;
+        if (direct) return direct;
+        if (obj.ResultSet) {
+          const res = Array.isArray(obj.ResultSet) ? obj.ResultSet[0] : obj.ResultSet;
+          const m = findId(res);
+          if (m) return m;
         }
-
-        const matchedVehicle = (vehicles || []).find(
-          (v) => String(v?.VVR_Request_id) === String(latestRequest.VVR_Request_id),
-        );
-
-        if (formData.plateNumber || formData.vehicleType) {
-          if (matchedVehicle?.VV_Vehicle_id) {
-            await dispatch(
-              UpdateVehicle({
-                VV_Vehicle_id: matchedVehicle.VV_Vehicle_id,
-                VV_Vehicle_Number: formData.plateNumber || matchedVehicle.VV_Vehicle_Number || "N/A",
-              }),
-            );
-          } else {
-            await dispatch(
-              AddVehicle({
-                VV_Vehicle_Type: formData.vehicleType || "N/A",
-                VV_Vehicle_Number: formData.plateNumber || "N/A",
-                VVR_Request_id: latestRequest.VVR_Request_id,
-              }),
-            );
-          }
+        for (const key of Object.keys(obj)) {
+          if (key.toLowerCase().includes("id") && key.toLowerCase().includes("request") && !isNaN(obj[key]))
+            return obj[key];
         }
+        if (obj.data) return findId(obj.data);
+        return null;
+      };
 
-        // Save Visitor Group members
-        if (formData.visitors && formData.visitors.length > 0) {
-          for (const visitor of formData.visitors) {
-            // Only add if name or NIC is provided to avoid empty records
-            if (visitor.fullName || visitor.nic) {
-              await dispatch(AddVisitGroup({
-                VVG_Visitor_Name: visitor.fullName || 'N/A',
-                VVG_NIC_Passport_Number: visitor.nic || 'N/A',
-                VVG_Designation: visitor.contact || 'N/A', // Using Designation field for contact as discussed
-                VVG_Status: 'A',
-                VVR_Request_id: latestRequest.VVR_Request_id
-              }));
-            }
-          }
-        }
+      let resolvedId = findId(response);
 
-        // Save Equipment (Items Carried)
-        if (formData.equipment && formData.equipment.length > 0) {
-          for (const item of formData.equipment) {
-            if (item.itemName) {
-              await dispatch(AddItem({
-                VVR_Request_id: latestRequest.VVR_Request_id,
-                VIC_Item_Name: item.itemName,
-                VIC_Quantity: item.quantity || '1',
-                VIC_Designation: 'GENERAL'
-              }));
-            }
-          }
-        }
-
-        dispatch(setRequestRef(String(latestRequest.VVR_Request_id)));
-      } else {
-        const createPayload = {
-          VVR_Visitor_id: visitorRecord?.VV_Visitor_id,
-          VVR_Contact_person_id: visitorRecord?.VV_Contact_person_id,
-          VVR_Visit_Date: formData.proposedVisitDate,
-          VVR_Places_to_Visit: formData.visitingArea,
-          VVR_Purpose: formData.purposeOfVisitation,
-          VVR_Status: "ACCEPTED",
-        };
-
-        const createResponse = await dispatch(AddVisitRequest(createPayload));
-        const createdRequestId =
-          createResponse?.ResultSet?.[0]?.VVR_Request_id ||
-          createResponse?.VVR_Request_id ||
-          null;
-
-        if (createdRequestId && (formData.plateNumber || formData.vehicleType)) {
-          await dispatch(
-            AddVehicle({
-              VV_Vehicle_Type: formData.vehicleType || "N/A",
-              VV_Vehicle_Number: formData.plateNumber || "N/A",
-              VVR_Request_id: createdRequestId,
-            }),
+      if (!resolvedId && visitorRecord?.VV_Visitor_id) {
+        try {
+          const listRes = await VisitRequestService.GetVisitRequestsByVisitor(
+            visitorRecord.VV_Visitor_id
           );
-        }
-
-        // Save Visitor Group members for new request
-        if (createdRequestId && formData.visitors && formData.visitors.length > 0) {
-          for (const visitor of formData.visitors) {
-            if (visitor.fullName || visitor.nic) {
-              await dispatch(AddVisitGroup({
-                VVG_Visitor_Name: visitor.fullName || 'N/A',
-                VVG_NIC_Passport_Number: visitor.nic || 'N/A',
-                VVG_Designation: visitor.contact || 'N/A',
-                VVG_Status: 'A',
-                VVR_Request_id: createdRequestId
-              }));
-            }
+          const allRequests = listRes?.data?.ResultSet || listRes?.data || [];
+          if (Array.isArray(allRequests) && allRequests.length > 0) {
+            const sorted = [...allRequests].sort(
+              (a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id)
+            );
+            resolvedId = sorted[0]?.VVR_Request_id;
           }
-        }
-
-        // Save Equipment for new request
-        if (createdRequestId && formData.equipment && formData.equipment.length > 0) {
-          for (const item of formData.equipment) {
-            if (item.itemName) {
-              await dispatch(AddItem({
-                VVR_Request_id: createdRequestId,
-                VIC_Item_Name: item.itemName,
-                VIC_Quantity: item.quantity || '1',
-                VIC_Designation: 'GENERAL'
-              }));
-            }
-          }
-        }
-
-        if (createdRequestId) {
-          dispatch(setRequestRef(String(createdRequestId)));
-
-          // Refresh local requests
-          if (visitorRecord?.VV_Visitor_id) {
-            dispatch(GetVisitRequestsByVisitor(visitorRecord.VV_Visitor_id));
-          }
-        } else {
-          const fallbackRequest = createVisitorRequest(formData);
-          if (fallbackRequest?.id) {
-            dispatch(setRequestRef(fallbackRequest.id));
-          }
+        } catch (fallbackErr) {
+          console.error("Fallback ID fetch failed:", fallbackErr);
         }
       }
 
-      navigate("/visitor/my-requests");
-    } catch (error) {
-      console.error("Failed to submit Step 1 request:", error);
-      alert("Failed to submit request. Please try again.");
-      dispatch(setStatus(null));
+      if (!resolvedId) {
+        alert("Could not confirm your visit request. Please try again.");
+        dispatch(setSubmitting(false));
+        return;
+      }
+
+      dispatch(setRequestId(resolvedId));
+      navigate("/request-step-2");
+
+    } catch (err) {
+      console.error("Submission error:", err);
+      dispatch(setError(err.message || "Submission failed."));
+      setShowError(true);
+    } finally {
+      dispatch(setSubmitting(false));
     }
   };
 
-  const latestRequest = visitRequestsByVis?.[0];
-  const normalizedStatus = (latestRequest?.VVR_Status || "").toString().trim().toUpperCase();
-  const isBlocked = ["ACCEPTED", "A", "APPROVED"].includes(normalizedStatus);
-
-  if (isRequestsLoading && !visitRequestsByVis.length) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (isBlocked && status !== "submitting") {
-    return null;
-  }
-
-  if (status === "step1_pending") {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-white/[0.02] border border-white/5 p-10 text-center rounded-none shadow-2xl relative">
-          <div className="absolute top-0 left-0 w-[2px] h-full bg-primary" />
-          <div className="w-16 h-16 bg-primary/10 border border-primary/20 rounded-none mx-auto mb-8 flex items-center justify-center text-primary">
-            <ShieldCheck size={32} />
-          </div>
-
-          <h2 className="text-xl font-bold text-white uppercase tracking-[0.2em] mb-3">
-            Identity Verified
-          </h2>
-          <p className="text-gray-500 text-[12px] font-medium uppercase tracking-[0.3em] mb-10 leading-relaxed">
-            Access record established for{" "}
-            <span className="text-white font-semibold">{requestRef}</span>
-          </p>
-
-          <div className="flex flex-col gap-4">
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-7xl mx-auto px-6 py-2 pb-12 text-white bg-black">
-      {/* Header Section */}
-      <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/5 pb-4">
-        <div>
-          <h1 className="text-[24px] md:text-[24px] font-black uppercase tracking-tight mb-2 leading-none">
-            Visitor Registration
-          </h1>
-          <p className="text-gray-500 text-[12px] uppercase font-bold tracking-[0.4em] opacity-80">
-            Facility Access Clearance Request
-          </p>
+    <div className="h-full min-h-0 flex flex-col max-w-5xl mx-auto px-4 sm:px-6 py-3 pb-10 text-white bg-black overflow-hidden relative">
+
+      {/* Error Popup */}
+      {showError && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-red-950/20 backdrop-blur-md animate-fade-in" onClick={() => setShowError(false)}></div>
+          <div className="relative bg-[#111] p-10 rounded-[40px] shadow-[0_30px_100px_rgba(239,68,68,0.15)] border border-red-500/10 flex flex-col items-center text-center max-w-sm w-full animate-shake">
+            <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center text-white mb-6">
+              <AlertCircle size={40} />
+            </div>
+            <h3 className="text-xl font-black text-red-500 uppercase tracking-tight mb-3 italic">SUBMISSION FAILED</h3>
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-relaxed mb-8">
+              {reduxError || "Check your network connection and try again."}
+            </p>
+            <button onClick={() => setShowError(false)} className="w-full py-4 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.25em] rounded-2xl transition-all border border-white/5">
+              TRY AGAIN
+            </button>
+          </div>
         </div>
+      )}
+
+      <div className="mb-8 border-b border-white/5 pb-6">
+        <h1 className="text-[22px] font-black uppercase tracking-tight italic">VISITOR REGISTRATION</h1>
+        <p className="text-gray-500 text-[10px] uppercase font-bold tracking-[0.3em] opacity-60">TELL US ABOUT YOUR VISIT</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <VisitorOverview data={formData} onChange={handleInputChange} />
-
-        <div className="border-t border-white/5 pt-6">
-          <VehicleDetails data={formData} onChange={handleInputChange} />
-        </div>
-
-        <div className="border-t border-white/5 pt-6">
-          <VisitorGroup 
-            visitors={visitors || []} 
-            onAdd={handleAddVisitor} 
-            onRemove={handleRemoveVisitor} 
-            onChange={handleUpdateVisitor} 
-          />
-        </div>
-
-        <div className="border-t border-white/5 pt-6">
-          <ItemsCarried 
-            items={equipment || []} 
-            onAdd={handleAddEquipment} 
-            onRemove={handleRemoveEquipment} 
-            onChange={handleUpdateEquipment} 
-          />
-        </div>
-
-        {/* Action Footer */}
-        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row gap-6 items-center justify-center">
-
+      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-12">
+        <VisitorOverview data={formData} onChange={handleInputChange} errors={formErrors} />
+        
+        <div className="pt-6 pb-12">
           <button
             type="submit"
-            disabled={status === "submitting"}
-            className="w-full sm:w-auto px-20 h-16 bg-primary hover:bg-primary-hover text-white font-black uppercase text-[12px] tracking-[0.3em] shadow-2xl shadow-primary/20 transition-all flex items-center justify-center gap-4 group disabled:opacity-50"
+            disabled={isSubmitting}
+            className="w-full py-5 bg-primary hover:bg-primary-dark text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-none transition-all active:scale-[0.98] flex items-center justify-center gap-3 shadow-2xl shadow-primary/20 disabled:opacity-50"
           >
-            {status === "submitting" ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            {isSubmitting ? (
+              <>INITIALIZING... <Loader2 size={18} className="animate-spin" /></>
             ) : (
-              <>
-                <ShieldCheck
-                  size={18}
-                  className="group-hover:scale-110 transition-transform"
-                />
-                ACCEPT
-              </>
+              <>NEXT STEP: LOGISTICS <ArrowRight size={18} /></>
             )}
           </button>
         </div>
@@ -562,6 +254,3 @@ const Step1Main = () => {
 };
 
 export default Step1Main;
-
-
-

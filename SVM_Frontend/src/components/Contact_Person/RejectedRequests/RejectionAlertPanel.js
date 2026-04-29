@@ -23,7 +23,7 @@ const RejectionAlertPanel = ({ visitor }) => {
              <div className={`p-4 md:p-10 border rounded-[32px] relative overflow-hidden transition-all duration-500 shadow-xl ${isLight ? "bg-white border-gray-200 shadow-gray-200/50" : "bg-black/40 border-primary/30"}`}>
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"></div>
                 
-                <div className="flex items-center gap-4 mb-8">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 mb-8">
                     <ShieldAlert size={18} className="text-primary" />
                     <h3 className={`uppercase underline underline-offset-8 decoration-primary/30 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>Protocol Violation Audit</h3>
                 </div>
@@ -36,7 +36,7 @@ const RejectionAlertPanel = ({ visitor }) => {
                 </div>
 
                 <div className="space-y-4">
-                     <p className={`uppercase mb-1 flex items-center gap-3 ${isLight ? "text-gray-500" : "text-gray-300"}`}>
+                     <p className={`uppercase mb-1 flex flex-col md:flex-row items-center gap-4 md:gap-3 ${isLight ? "text-gray-500" : "text-gray-300"}`}>
                         <MessageSquare size={14} />
                         Internal Observations
                      </p>

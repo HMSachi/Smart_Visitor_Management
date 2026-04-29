@@ -15,17 +15,17 @@ L.Icon.Default.mergeOptions({
 const AlertItem = ({ type, location, time, severity }) => (
   <div className="p-4 border border-mas-border bg-mas-dark hover:border-primary transition-all group">
     <div className="flex justify-between items-start mb-2">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2">
         <ShieldAlert size={16} className={severity === 'high' ? 'text-primary animate-pulse' : 'text-yellow-500'} />
         <span className="capitalize text-white">{type}</span>
       </div>
       <span className="text-gray-300 capitalize">{time}</span>
     </div>
-    <div className="flex items-center gap-2 mb-3">
+    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mb-3">
       <MapPin size={12} className="text-gray-300" />
       <span className="text-gray-300 capitalize">{location}</span>
     </div>
-    <div className="flex gap-2">
+    <div className="flex flex-col md:flex-row gap-4 md:gap-2">
       <button className="flex-1 bg-mas-gray capitalize py-1.5 border border-mas-border hover:border-primary hover:text-white transition-all">
         Investigate
       </button>
@@ -98,7 +98,7 @@ const SecurityMonitoring = () => {
           </div>
         </div>
 
-        <div className="absolute bottom-6 right-6 z-[500] flex gap-2">
+        <div className="absolute bottom-6 right-6 z-[500] flex flex-col md:flex-row gap-4 md:gap-2">
           <button className="p-2 mas-glass hover:text-primary transition-all border border-mas-border">
             <Eye size={16} />
           </button>

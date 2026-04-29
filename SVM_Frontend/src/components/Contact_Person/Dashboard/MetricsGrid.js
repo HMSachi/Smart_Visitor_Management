@@ -2,32 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { Clock, CheckSquare, XCircle, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { GetVisitRequestsByCP } from '../../../actions/VisitRequestAction';
 import ContactPersonService from '../../../services/ContactPersonService';
 
-
-const Panel = ({ icon, label, value, trend }) => {
+const Panel = ({ icon, label, value, trend, onClick }) => {
   const Icon = icon;
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-    className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] p-6 rounded-[24px] flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 relative overflow-hidden shadow-xl h-full"
+      onClick={onClick}
+      className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] p-3 sm:p-4 md:p-5 rounded-lg sm:rounded-xl md:rounded-2xl flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 relative overflow-hidden shadow-lg h-full"
     >
       <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all"></div>
 
       <div className="flex justify-between items-start relative z-10">
         <div>
-                    <p className="text-[var(--color-text-dim)] text-[11px] font-bold uppercase tracking-[0.2em] mb-4 group-hover:text-primary transition-opacity">{label}</p>
-                    <h3 className="text-[var(--color-text-primary)] text-2xl font-black tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
+          <p className="text-[var(--color-text-dim)] text-[10px] sm:text-[11px] md:text-[12px] font-bold uppercase tracking-[0.15em] mb-2 sm:mb-3 group-hover:text-primary transition-opacity">{label}</p>
+          <h3 className="text-[var(--color-text-primary)] text-xl sm:text-2xl md:text-3xl font-black tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
         </div>
-                <div className="p-3.5 rounded-xl bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-500 shadow-sm">
+        <div className="p-3.5 rounded-xl bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-500 shadow-sm">
           <Icon className="text-primary group-hover:scale-110 transition-transform" size={18} strokeWidth={2.5} />
         </div>
       </div>
-
-
 
       <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-700 shadow-[0_0_10px_var(--color-primary)]"></div>
     </motion.div>
@@ -36,6 +35,7 @@ const Panel = ({ icon, label, value, trend }) => {
 
 const MetricsGrid = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { visitRequestsByCP } = useSelector(state => state.visitRequestsState);
     const user = useSelector(state => state.login.user);
     const userEmail = user?.ResultSet?.[0]?.VA_Email;
@@ -92,23 +92,27 @@ const MetricsGrid = () => {
 
         const sent = visitRequestsByCP.filter(req => {
             const s = (req.VVR_Status || "").toString().trim().toUpperCase();
-            return s === 'SENT' || s === 'ESCALATED';
+            return s === 'SENT' || s === 'SENT_TO_ADMIN' || s === 'ESCALATED';
         }).length;
 
         return [
-            { label: 'Pending Requests', value: pending.toString(), icon: Clock, trend: 'Awaiting Action' },
-            { label: 'Accepted Forms', value: accepted.toString(), icon: CheckSquare, trend: 'Clearance Granted' },
-            { label: 'Rejected Forms', value: rejected.toString(), icon: XCircle, trend: 'Access Denied' },
-            { label: 'Sent to Admin', value: sent.toString(), icon: Send, trend: 'Escalated' },
+            { label: 'Pending Requests', value: pending.toString(), icon: Clock, trend: 'Awaiting Action', filter: 'P' },
+            { label: 'Accepted Forms', value: accepted.toString(), icon: CheckSquare, trend: 'Clearance Granted', filter: 'A' },
+            { label: 'Declined Forms', value: rejected.toString(), icon: XCircle, trend: 'Access Denied', filter: 'R' },
+            { label: 'Sent to Admin', value: sent.toString(), icon: Send, trend: 'Escalated', filter: 'SENT' },
         ];
     };
 
     const stats = calculateStats();
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-5 md:mb-6">
             {stats.map((stat, i) => (
-                <Panel key={i} {...stat} />
+                <Panel 
+                    key={i} 
+                    {...stat} 
+                    onClick={() => navigate('/contact_person/visit-requests', { state: { initialFilter: stat.filter } })}
+                />
             ))}
         </div>
     );

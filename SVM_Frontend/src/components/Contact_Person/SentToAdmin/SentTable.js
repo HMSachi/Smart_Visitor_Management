@@ -5,8 +5,8 @@ const ProgressionTimeline = ({ status }) => {
     const steps = [
         { label: 'Submission', done: true },
         { label: 'CP Review', done: true },
-        { label: 'Admin Node', current: status === 'Under Review', done: status === 'Approved' || status === 'Rejected' },
-        { label: 'Finalization', current: status === 'Approved' || status === 'Rejected', done: false }
+        { label: 'Admin Node', current: status === 'Under Review', done: status === 'Approved' || status === 'Declined' },
+        { label: 'Finalization', current: status === 'Approved' || status === 'Declined', done: false }
     ];
 
     return (
@@ -29,7 +29,9 @@ const ProgressionTimeline = ({ status }) => {
 const SentTable = ({ requests }) => {
     return (
         <div className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-3xl overflow-hidden shadow-xl shadow-black/20 animate-fade-in overflow-x-auto">
-            <table className="w-full text-left border-collapse text-[13px]">
+            
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full text-left border-collapse text-[13px]">
                 <thead>
                     <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] font-bold uppercase tracking-[0.2em]">
                         <th className="px-6 py-4 whitespace-nowrap">Forward ID</th>
@@ -54,8 +56,8 @@ const SentTable = ({ requests }) => {
                                 <ProgressionTimeline status={req.status} />
                             </td>
                             <td className="px-6 py-6 whitespace-nowrap">
-                                <div className={`inline-flex items-center gap-3 px-4 py-1.5 border uppercase ${req.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5' : req.status === 'Rejected' ? 'text-primary border-primary/20 bg-primary/5' : 'text-blue-400 border-blue-400/20 bg-blue-400/5 animate-pulse'}`}>
-                                    {req.status === 'Approved' ? <CheckCircle size={12} /> : req.status === 'Rejected' ? <XCircle size={12} /> : <Activity size={12} />}
+                                <div className={`inline-flex flex-col md:flex-row items-center gap-4 md:gap-3 px-4 py-1.5 border uppercase ${req.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5' : req.status === 'Declined' ? 'text-primary border-primary/20 bg-primary/5' : 'text-blue-400 border-blue-400/20 bg-blue-400/5 animate-pulse'}`}>
+                                    {req.status === 'Approved' ? <CheckCircle size={12} /> : req.status === 'Declined' ? <XCircle size={12} /> : <Activity size={12} />}
                                     {req.status}
                                 </div>
                             </td>
@@ -63,6 +65,8 @@ const SentTable = ({ requests }) => {
                     ))}
                 </tbody>
             </table>
+</div>
+
         </div>
     );
 };

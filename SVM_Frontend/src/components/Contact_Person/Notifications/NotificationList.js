@@ -13,7 +13,7 @@ const NotificationList = ({ notifications }) => {
                     transition={{ delay: index * 0.05 }}
                     className={`transition-all hover:bg-white/[0.01] flex flex-col sm:flex-row items-start sm:items-center bg-[#161618] sm:bg-transparent border border-white/5 sm:border-none rounded-2xl sm:rounded-none mb-4 sm:mb-0 p-5 sm:px-8 sm:py-5 group relative ${notif.unread ? 'border-primary/20 border-l-mas-red border-l-4' : 'border-white/5'}`}
                 >
-                    <div className="flex items-center gap-4 w-full">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4 w-full">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 border ${notif.unread ? 'bg-primary text-white border-primary' : 'bg-primary/10 text-primary border-primary/20'} group-hover:shadow-[0_0_15px_rgba(200,16,46,0.2)] shrink-0`}>
                             {notif.type === 'approval' ? <CheckCircle size={16} /> :
                                 notif.type === 'rejection' ? <XCircle size={16} /> :

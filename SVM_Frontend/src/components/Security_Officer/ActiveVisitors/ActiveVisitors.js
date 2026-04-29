@@ -39,18 +39,18 @@ const ActiveVisitorsMain = () => {
             {/* Tactical Monitor Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                         <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
                             <Activity size={16} className="text-primary animate-pulse" />
                         </div>
                         <span className="text-primary font-medium uppercase text-[13px] tracking-[0.4em]">Real-Time_Operational_Monitor</span>
                         <div className="h-[1px] w-12 bg-gradient-to-r from-primary/50 to-transparent"></div>
                     </div>
-                    <div className="flex items-center gap-8">
-                        <h1 className="text-5xl font-bold text-white tracking-tighter uppercase">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                        <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tighter uppercase">
                             Active_Visitors
                         </h1>
-                        <div className="px-5 py-2 mas-glass border-primary/30 bg-primary/5 text-primary text-xs font-medium shadow-[0_0_30px_rgba(200,16,46,0.1)] rounded-xl border flex items-center gap-3">
+                        <div className="px-5 py-2 mas-glass border-primary/30 bg-primary/5 text-primary text-xs font-medium shadow-[0_0_30px_rgba(200,16,46,0.1)] rounded-xl border flex flex-col md:flex-row items-center gap-4 md:gap-3">
                             <Users size={14} />
                             {activeVisitors.length} SENSORS_ACTIVE
                         </div>
@@ -88,7 +88,9 @@ const ActiveVisitorsMain = () => {
 
                 <div className="relative mas-glass border-white/5 bg-[var(--color-bg-paper)]/60 backdrop-blur-3xl rounded-[32px] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.4)] border border-white/10">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-white/[0.02] border-b border-white/5">
                                     <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Unit_Identification</th>
@@ -111,7 +113,7 @@ const ActiveVisitorsMain = () => {
                                                 onClick={() => toggleExpand(v.id)}
                                             >
                                                 <td className="px-10 py-8">
-                                                    <div className="flex items-center gap-6">
+                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
                                                         <div className="relative overflow-visible">
                                                             <div className="w-12 h-12 rounded-xl bg-mas-dark border border-white/10 flex items-center justify-center text-primary text-sm font-medium group-hover:border-primary group-hover:shadow-[0_0_20px_rgba(200,16,46,0.2)] transition-all duration-500">
                                                                 {v.name.split(' ').map(n => n[0]).join('')}
@@ -120,7 +122,7 @@ const ActiveVisitorsMain = () => {
                                                         </div>
                                                         <div>
                                                             <p className="text-[13px] font-medium text-white uppercase tracking-wider group-hover:text-primary transition-colors duration-300">{v.name}</p>
-                                                            <div className="flex items-center gap-2 mt-1">
+                                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mt-1">
                                                                 <Target size={10} className="text-primary opacity-90" />
                                                                 <p className="text-white/90 text-[12px] font-medium tracking-widest uppercase">{v.ref}</p>
                                                             </div>
@@ -129,13 +131,13 @@ const ActiveVisitorsMain = () => {
                                                 </td>
                                                 <td className="px-10 py-8">
                                                     <div className="space-y-1.5">
-                                                        <div className="flex items-center gap-2.5">
+                                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5">
                                                             <Calendar size={12} className="text-primary opacity-70" />
-                                                            <span className="text-white text-[13px] font-mono font-medium tracking-widest">{v.date}</span>
+                                                            <span className="text-white text-[13px] font-medium tracking-widest">{v.date}</span>
                                                         </div>
-                                                        <div className="flex items-center gap-2.5 ml-2">
+                                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5 ml-2">
                                                             <Clock size={10} className="text-primary opacity-50" />
-                                                            <span className="text-white/70 text-[13px] font-mono font-medium tracking-widest">{v.entryTime}</span>
+                                                            <span className="text-white/70 text-[13px] font-medium tracking-widest">{v.entryTime}</span>
                                                         </div>
                                                         <p className="text-white/80 text-[13px] font-medium uppercase tracking-widest ml-5">via_{v.node}</p>
                                                     </div>
@@ -179,28 +181,28 @@ const ActiveVisitorsMain = () => {
 
                                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
                                                                 <div className="space-y-2">
-                                                                    <div className="flex items-center gap-2 text-gray-300/90 mb-2">
+                                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
                                                                         <Car size={14} className="text-primary/80" />
                                                                         <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Vehicle Details</span>
                                                                     </div>
                                                                     <p className="text-white text-sm font-medium tracking-widest">{v.vehicle}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
-                                                                    <div className="flex items-center gap-2 text-gray-300/90 mb-2">
+                                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
                                                                         <Phone size={14} className="text-primary/80" />
                                                                         <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Contact Protocol</span>
                                                                     </div>
-                                                                    <p className="text-white text-sm font-mono tracking-widest">{v.phone}</p>
+                                                                    <p className="text-white text-sm tracking-widest">{v.phone}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
-                                                                    <div className="flex items-center gap-2 text-gray-300/90 mb-2">
+                                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
                                                                         <Building size={14} className="text-primary/80" />
                                                                         <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Organization</span>
                                                                     </div>
                                                                     <p className="text-white text-sm font-medium tracking-widest">{v.company}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
-                                                                    <div className="flex items-center gap-2 text-gray-300/90 mb-2">
+                                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
                                                                         <FileText size={14} className="text-primary/80" />
                                                                         <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Mission/Purpose</span>
                                                                     </div>
@@ -216,6 +218,8 @@ const ActiveVisitorsMain = () => {
                                 </AnimatePresence>
                             </tbody>
                         </table>
+</div>
+
                     </div>
                 </div>
             </div>

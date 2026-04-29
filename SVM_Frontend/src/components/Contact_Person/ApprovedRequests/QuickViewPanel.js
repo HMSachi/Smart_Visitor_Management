@@ -24,7 +24,7 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                         className="fixed right-0 top-0 h-full w-full max-w-lg bg-[#0F0F10] border-l border-primary/30 z-[101] shadow-2xl p-6 md:p-12 overflow-y-auto"
                     >
                         <div className="flex justify-between items-center mb-12">
-                            <div className="flex items-center gap-4">
+                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                                 <div className="p-3 bg-primary text-white">
                                     <ShieldCheck size={20} />
                                 </div>
@@ -42,7 +42,7 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                             <section>
                                 <label className="text-primary uppercase mb-6 block">Visitor Credentials</label>
                                 <div className="space-y-6">
-                                    <div className="flex items-center gap-6 p-6 bg-white/[0.02] border border-white/5">
+                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 p-6 bg-white/[0.02] border border-white/5">
                                         <div className="w-12 h-12 bg-white/5 flex items-center justify-center rounded-none border border-white/10 text-gray-300">
                                             <User size={20} />
                                         </div>
@@ -54,14 +54,14 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="p-6 bg-white/[0.02] border border-white/5">
                                             <p className="text-gray-300 uppercase mb-2">Visit Date</p>
-                                            <div className="flex items-center gap-2 text-white">
+                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-white">
                                                 <Calendar size={14} className="text-primary" />
                                                 <span className="">{visitor.date}</span>
                                             </div>
                                         </div>
                                         <div className="p-6 bg-white/[0.02] border border-white/5">
                                             <p className="text-gray-300 uppercase mb-2">Check-In</p>
-                                            <div className="flex items-center gap-2 text-white">
+                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-white">
                                                 <Clock size={14} className="text-primary" />
                                                 <span className="">09:15 AM</span>
                                             </div>
@@ -72,7 +72,7 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
 
                             <section>
                                 <label className="text-primary uppercase mb-6 block">Node Destination</label>
-                                <div className="p-6 bg-white/[0.02] border border-white/5 flex items-center gap-4">
+                                <div className="p-6 bg-white/[0.02] border border-white/5 flex flex-col md:flex-row items-center gap-4 md:gap-4">
                                     <MapPin size={18} className="text-primary" />
                                     <span className="uppercase text-white">MAS Fabric Park - Unit 08A</span>
                                 </div>
@@ -81,7 +81,7 @@ const QuickViewPanel = ({ isOpen, onClose, visitor }) => {
                             <section className="pt-8 border-t border-mas-border">
                                 <div className="flex items-center justify-between mb-8">
                                     <span className="uppercase text-gray-300">Admin Authorization</span>
-                                    <span className="text-green-500 uppercase flex items-center gap-2">
+                                    <span className="text-green-500 uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2">
                                         <ShieldCheck size={14} />
                                         QR Token Generated
                                     </span>

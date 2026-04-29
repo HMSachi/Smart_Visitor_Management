@@ -6,14 +6,16 @@ const HistoryTable = ({ history }) => {
 
     return (
         <div className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-3xl overflow-hidden shadow-xl shadow-black/20 animate-fade-in sm:overflow-visible p-4 sm:p-0">
-            <table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
+            
+<div className="overflow-x-auto w-full max-w-full pb-4">
+<table className="w-full text-left border-separate border-spacing-y-4 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[700px] block sm:table">
                 <thead className="hidden sm:table-header-group">
                     <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] text-[13px] font-bold uppercase tracking-[0.2em]">
-                        <th className="px-8 py-3 w-16"></th>
-                        <th className="px-8 py-3">Visitor Name</th>
-                        <th className="px-8 py-3">Visit Date</th>
-                        <th className="px-8 py-3">Purpose</th>
-                        <th className="px-8 py-3 text-right">Status</th>
+                        <th className="px-8 py-3 w-16 text-[13px]"> </th>
+                        <th className="px-8 py-3 text-[13px]">Visitor Name</th>
+                        <th className="px-8 py-3 text-[13px]">Visit Date</th>
+                        <th className="px-8 py-3 text-[13px]">Purpose</th>
+                        <th className="px-8 py-3 text-right text-[13px]">Status</th>
                     </tr>
                 </thead>
                 <tbody className="block sm:table-row-group">
@@ -33,7 +35,7 @@ const HistoryTable = ({ history }) => {
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 border-b border-[var(--color-border-soft)] sm:border-none last:border-none">
                                     <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Visitor Name</span>
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
                                         <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-[13px] font-bold">
                                             {item.visitor[0]}
                                         </div>
@@ -53,7 +55,7 @@ const HistoryTable = ({ history }) => {
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-4 sm:py-5 text-left sm:text-right">
                                     <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Status</span>
-                                    <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border ${item.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5' : 'text-primary border-primary/20 bg-primary/5'}`}>
+                                    <span className={`inline-flex flex-col md:flex-row items-center gap-4 md:gap-2 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border ${item.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5' : 'text-primary border-primary/20 bg-primary/5'}`}>
                                         {item.status}
                                     </span>
                                 </td>
@@ -63,7 +65,7 @@ const HistoryTable = ({ history }) => {
                                     <td colSpan="5" className="block sm:table-cell p-4 sm:p-4 md:p-10 sm:px-16 border-y-0 sm:border-y border-[var(--color-border-soft)]">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 animate-fade-in">
                                             <div className="space-y-6">
-                                                <div className="flex items-center gap-3">
+                                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                                     <div className="w-1 h-4 bg-primary rounded-full"></div>
                                                     <span className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--color-text-primary)]">Personnel Data</span>
                                                 </div>
@@ -79,13 +81,13 @@ const HistoryTable = ({ history }) => {
                                                 </div>
                                             </div>
                                             <div className="space-y-6">
-                                                <div className="flex items-center gap-3">
+                                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                                     <div className="w-1 h-4 bg-primary rounded-full"></div>
                                                     <span className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--color-text-primary)]">Mission Profile</span>
                                                 </div>
                                                 <div className="space-y-4">
                                                     <div className="p-4 rounded-2xl bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] space-y-1 group hover:border-primary/20 transition-colors">
-                                                        <p className="text-[var(--color-text-dim)] text-[12px] uppercase font-medium tracking-widest opacity-80">Designated Host</p>
+                                                        <p className="text-[var(--color-text-dim)] text-[12px] uppercase font-medium tracking-widest opacity-80">Designated Contact Person</p>
                                                         <p className="text-[var(--color-text-primary)] text-xs font-medium tracking-widest uppercase">Sachi (HR-04)</p>
                                                     </div>
                                                     <div className="p-4 rounded-2xl bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] space-y-1 group hover:border-primary/20 transition-colors">
@@ -95,7 +97,7 @@ const HistoryTable = ({ history }) => {
                                                 </div>
                                             </div>
                                             <div className="space-y-6">
-                                                <div className="flex items-center gap-3">
+                                                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                                                     <div className="w-1 h-4 bg-primary rounded-full"></div>
                                                     <span className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--color-text-primary)]">Security Protocol</span>
                                                 </div>
@@ -116,6 +118,8 @@ const HistoryTable = ({ history }) => {
                     ))}
                 </tbody>
             </table>
+</div>
+
         </div>
     );
 };
