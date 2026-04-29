@@ -84,6 +84,23 @@ const canReviewRequest = (status) => {
   return true;
 };
 
+const toDateInputValue = (value) => {
+  if (!value) return "";
+
+  if (typeof value === "string") {
+    const directMatch = value.match(/^\d{4}-\d{2}-\d{2}/);
+    if (directMatch) return directMatch[0];
+  }
+
+  const parsedDate = new Date(value);
+  if (Number.isNaN(parsedDate.getTime())) return "";
+
+  const year = parsedDate.getFullYear();
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 const MyRequests = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -105,10 +122,14 @@ const MyRequests = () => {
   // Edit modal state
   const [editingRequest, setEditingRequest] = useState(null);
   const [editLoadingData, setEditLoadingData] = useState(false);
-  const [editForm, setEditForm] = useState({ VVR_Visit_Date: "", VVR_Places_to_Visit: "", VVR_Purpose: "" });
-  const [editVehicles, setEditVehicles] = useState([]);        // [{ VV_Vehicle_id, VV_Vehicle_Number, VV_Vehicle_Type, _isNew? }]
+  const [editForm, setEditForm] = useState({
+    VVR_Visit_Date: "",
+    VVR_Places_to_Visit: "",
+    VVR_Purpose: "",
+  });
+  const [editVehicles, setEditVehicles] = useState([]); // [{ VV_Vehicle_id, VV_Vehicle_Number, VV_Vehicle_Type, _isNew? }]
   const [editGroupMembers, setEditGroupMembers] = useState([]); // [{ VVG_id, VVG_Visitor_Name, VVG_Designation, VVG_NIC_Passport_Number }]
-  const [editItems, setEditItems] = useState([]);              // [{ VIC_Item_id, VIC_Item_Name, VIC_Quantity, VIC_Designation }]
+  const [editItems, setEditItems] = useState([]); // [{ VIC_Item_id, VIC_Item_Name, VIC_Quantity, VIC_Designation }]
   const [editSaving, setEditSaving] = useState(false);
   const [vehicleSavingIdx, setVehicleSavingIdx] = useState(null);
   const [memberSavingIdx, setMemberSavingIdx] = useState(null);
@@ -118,9 +139,9 @@ const MyRequests = () => {
   const [newItemSavingIdx, setNewItemSavingIdx] = useState(null);
   const [rowSuccess, setRowSuccess] = useState({});
   const [editError, setEditError] = useState("");
-  const [dirtyRows, setDirtyRows] = useState(new Set());  // keys: 'vehicle-N','member-N','item-N'
-  const [warnDirty, setWarnDirty] = useState(false);     // true when Save is blocked by dirty rows
-  const rowRefs = useRef({});                             // { 'vehicle-0': domEl, 'member-1': domEl, ... }
+  const [dirtyRows, setDirtyRows] = useState(new Set()); // keys: 'vehicle-N','member-N','item-N'
+  const [warnDirty, setWarnDirty] = useState(false); // true when Save is blocked by dirty rows
+  const rowRefs = useRef({}); // { 'vehicle-0': domEl, 'member-1': domEl, ... }
 
   useEffect(() => {
     const loadVisitorId = async () => {
@@ -209,7 +230,7 @@ const MyRequests = () => {
     setEditError("");
     setEditLoadingData(true);
     setEditForm({
-      VVR_Visit_Date: req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0] : "",
+      VVR_Visit_Date: toDateInputValue(req.VVR_Visit_Date),
       VVR_Places_to_Visit: req.VVR_Places_to_Visit || "",
       VVR_Purpose: req.VVR_Purpose || "",
     });
@@ -229,19 +250,47 @@ const MyRequests = () => {
       setEditVehicles(
         (Array.isArray(allVehicles) ? allVehicles : [])
           .filter((v) => String(v.VVR_Request_id) === reqId)
-          .map((v) => ({ VV_Vehicle_id: v.VV_Vehicle_id, VV_Vehicle_Number: v.VV_Vehicle_Number || "", VV_Vehicle_Type: v.VV_Vehicle_Type || "", _original: { VV_Vehicle_Number: v.VV_Vehicle_Number || "", VV_Vehicle_Type: v.VV_Vehicle_Type || "" } }))
+          .map((v) => ({
+            VV_Vehicle_id: v.VV_Vehicle_id,
+            VV_Vehicle_Number: v.VV_Vehicle_Number || "",
+            VV_Vehicle_Type: v.VV_Vehicle_Type || "",
+            _original: {
+              VV_Vehicle_Number: v.VV_Vehicle_Number || "",
+              VV_Vehicle_Type: v.VV_Vehicle_Type || "",
+            },
+          })),
       );
       const allGroups = groupRes?.data?.ResultSet || groupRes?.data || [];
       setEditGroupMembers(
         (Array.isArray(allGroups) ? allGroups : [])
           .filter((m) => String(m.VVR_Request_id) === reqId)
-          .map((m) => ({ VVG_id: m.VVG_id, VVG_Visitor_Name: m.VVG_Visitor_Name || "", VVG_NIC_Passport_Number: m.VVG_NIC_Passport_Number || "", VVG_Designation: m.VVG_Designation || "", VVR_Request_id: m.VVR_Request_id, _original: { VVG_Visitor_Name: m.VVG_Visitor_Name || "", VVG_Designation: m.VVG_Designation || "" } }))
+          .map((m) => ({
+            VVG_id: m.VVG_id,
+            VVG_Visitor_Name: m.VVG_Visitor_Name || "",
+            VVG_NIC_Passport_Number: m.VVG_NIC_Passport_Number || "",
+            VVG_Designation: m.VVG_Designation || "",
+            VVR_Request_id: m.VVR_Request_id,
+            _original: {
+              VVG_Visitor_Name: m.VVG_Visitor_Name || "",
+              VVG_Designation: m.VVG_Designation || "",
+            },
+          })),
       );
       const allItems = itemsRes?.data?.ResultSet || itemsRes?.data || [];
       setEditItems(
         (Array.isArray(allItems) ? allItems : [])
           .filter((i) => String(i.VVR_Request_id) === reqId)
-          .map((i) => ({ VIC_Item_id: i.VIC_Item_id, VIC_Item_Name: i.VIC_Item_Name || "", VIC_Quantity: String(i.VIC_Quantity || ""), VIC_Designation: i.VIC_Designation || "", _original: { VIC_Item_Name: i.VIC_Item_Name || "", VIC_Quantity: String(i.VIC_Quantity || ""), VIC_Designation: i.VIC_Designation || "" } }))
+          .map((i) => ({
+            VIC_Item_id: i.VIC_Item_id,
+            VIC_Item_Name: i.VIC_Item_Name || "",
+            VIC_Quantity: String(i.VIC_Quantity || ""),
+            VIC_Designation: i.VIC_Designation || "",
+            _original: {
+              VIC_Item_Name: i.VIC_Item_Name || "",
+              VIC_Quantity: String(i.VIC_Quantity || ""),
+              VIC_Designation: i.VIC_Designation || "",
+            },
+          })),
       );
     } catch (err) {
       console.error("Failed to load edit data:", err);
@@ -251,7 +300,13 @@ const MyRequests = () => {
   };
 
   const handleCloseEdit = () => {
-    if (editSaving || vehicleSavingIdx !== null || memberSavingIdx !== null || itemSavingIdx !== null) return;
+    if (
+      editSaving ||
+      vehicleSavingIdx !== null ||
+      memberSavingIdx !== null ||
+      itemSavingIdx !== null
+    )
+      return;
     setEditingRequest(null);
     setEditError("");
     setRowSuccess({});
@@ -261,7 +316,12 @@ const MyRequests = () => {
 
   // Helper: mark a row as dirty (edited but not yet saved)
   const markDirty = (key) => setDirtyRows((prev) => new Set(prev).add(key));
-  const clearDirty = (key) => setDirtyRows((prev) => { const n = new Set(prev); n.delete(key); return n; });
+  const clearDirty = (key) =>
+    setDirtyRows((prev) => {
+      const n = new Set(prev);
+      n.delete(key);
+      return n;
+    });
 
   // Helper: check if a vehicle/member/item row has unsaved edits vs _original
   const isVehicleDirty = (v, idx) => {
@@ -272,36 +332,63 @@ const MyRequests = () => {
   const isMemberDirty = (m) => {
     if (m._isNew) return true;
     if (!m._original) return false;
-    return m.VVG_Visitor_Name !== m._original.VVG_Visitor_Name || m.VVG_Designation !== m._original.VVG_Designation;
+    return (
+      m.VVG_Visitor_Name !== m._original.VVG_Visitor_Name ||
+      m.VVG_Designation !== m._original.VVG_Designation
+    );
   };
   const isItemDirty = (it) => {
     if (it._isNew) return true;
     if (!it._original) return false;
-    return it.VIC_Item_Name !== it._original.VIC_Item_Name || it.VIC_Quantity !== it._original.VIC_Quantity || it.VIC_Designation !== it._original.VIC_Designation;
+    return (
+      it.VIC_Item_Name !== it._original.VIC_Item_Name ||
+      it.VIC_Quantity !== it._original.VIC_Quantity ||
+      it.VIC_Designation !== it._original.VIC_Designation
+    );
   };
 
   // Helper to flash a green tick on a row key then clear it after 2s
   const flashSuccess = (key) => {
     setRowSuccess((s) => ({ ...s, [key]: true }));
-    setTimeout(() => setRowSuccess((s) => { const n = { ...s }; delete n[key]; return n; }), 2000);
+    setTimeout(
+      () =>
+        setRowSuccess((s) => {
+          const n = { ...s };
+          delete n[key];
+          return n;
+        }),
+      2000,
+    );
   };
 
   // ── Core request fields (Visit Date, Places, Purpose) ──
   const handleSaveRequestCore = async () => {
     if (!editingRequest) return;
-    if (!editForm.VVR_Visit_Date || !editForm.VVR_Places_to_Visit || !editForm.VVR_Purpose) {
+    if (
+      !editForm.VVR_Visit_Date ||
+      !editForm.VVR_Places_to_Visit ||
+      !editForm.VVR_Purpose
+    ) {
       setEditError("Visit date, places, and purpose are required.");
       return;
     }
     // Check for unsaved row edits
     const unsavedKeys = [];
-    editVehicles.forEach((v, i) => { if (isVehicleDirty(v, i)) unsavedKeys.push(`vehicle-${i}`); });
-    editGroupMembers.forEach((m, i) => { if (isMemberDirty(m)) unsavedKeys.push(`member-${i}`); });
-    editItems.forEach((it, i) => { if (isItemDirty(it)) unsavedKeys.push(`item-${i}`); });
+    editVehicles.forEach((v, i) => {
+      if (isVehicleDirty(v, i)) unsavedKeys.push(`vehicle-${i}`);
+    });
+    editGroupMembers.forEach((m, i) => {
+      if (isMemberDirty(m)) unsavedKeys.push(`member-${i}`);
+    });
+    editItems.forEach((it, i) => {
+      if (isItemDirty(it)) unsavedKeys.push(`item-${i}`);
+    });
     if (unsavedKeys.length > 0) {
       setDirtyRows(new Set(unsavedKeys));
       setWarnDirty(true);
-      setEditError(`${unsavedKeys.length} row(s) have unsaved changes. Please click Update/Submit on each highlighted row first.`);
+      setEditError(
+        `${unsavedKeys.length} row(s) have unsaved changes. Please click Update/Submit on each highlighted row first.`,
+      );
       // Auto-scroll to the first dirty row
       const firstKey = unsavedKeys[0];
       const el = rowRefs.current[firstKey];
@@ -350,11 +437,26 @@ const MyRequests = () => {
         VV_Vehicle_Number: vehicle.VV_Vehicle_Number,
       });
       // Sync _original so row is no longer dirty
-      setEditVehicles((arr) => arr.map((v, i) => i === idx ? { ...v, _original: { VV_Vehicle_Number: v.VV_Vehicle_Number, VV_Vehicle_Type: v.VV_Vehicle_Type } } : v));
+      setEditVehicles((arr) =>
+        arr.map((v, i) =>
+          i === idx
+            ? {
+                ...v,
+                _original: {
+                  VV_Vehicle_Number: v.VV_Vehicle_Number,
+                  VV_Vehicle_Type: v.VV_Vehicle_Type,
+                },
+              }
+            : v,
+        ),
+      );
       clearDirty(`vehicle-${idx}`);
       flashSuccess(`vehicle-${idx}`);
-    } catch (err) { console.error(`Failed to update vehicle ${idx}:`, err); }
-    finally { setVehicleSavingIdx(null); }
+    } catch (err) {
+      console.error(`Failed to update vehicle ${idx}:`, err);
+    } finally {
+      setVehicleSavingIdx(null);
+    }
   };
 
   // ── Submit new vehicle row ──
@@ -362,20 +464,40 @@ const MyRequests = () => {
     const vehicle = editVehicles[idx];
     if (!vehicle?._isNew || newVehicleSavingIdx !== null) return;
     if (!vehicle.VV_Vehicle_Number || !vehicle.VV_Vehicle_Type) {
-      setEditError("Vehicle number and type are required."); return;
+      setEditError("Vehicle number and type are required.");
+      return;
     }
-    setNewVehicleSavingIdx(idx); setEditError("");
+    setNewVehicleSavingIdx(idx);
+    setEditError("");
     try {
       await VehicleService.AddVehicle({
         VV_Vehicle_Number: vehicle.VV_Vehicle_Number,
         VV_Vehicle_Type: vehicle.VV_Vehicle_Type,
         VVR_Request_id: editingRequest.VVR_Request_id,
       });
-      setEditVehicles((arr) => arr.map((v, i) => i === idx ? { ...v, _isNew: false, VV_Vehicle_id: "saved", _original: { VV_Vehicle_Number: v.VV_Vehicle_Number, VV_Vehicle_Type: v.VV_Vehicle_Type } } : v));
+      setEditVehicles((arr) =>
+        arr.map((v, i) =>
+          i === idx
+            ? {
+                ...v,
+                _isNew: false,
+                VV_Vehicle_id: "saved",
+                _original: {
+                  VV_Vehicle_Number: v.VV_Vehicle_Number,
+                  VV_Vehicle_Type: v.VV_Vehicle_Type,
+                },
+              }
+            : v,
+        ),
+      );
       clearDirty(`vehicle-${idx}`);
       flashSuccess(`vehicle-${idx}`);
-    } catch (err) { console.error(`Failed to add vehicle ${idx}:`, err); setEditError("Failed to add vehicle."); }
-    finally { setNewVehicleSavingIdx(null); }
+    } catch (err) {
+      console.error(`Failed to add vehicle ${idx}:`, err);
+      setEditError("Failed to add vehicle.");
+    } finally {
+      setNewVehicleSavingIdx(null);
+    }
   };
 
   // ── Update existing member ──
@@ -391,11 +513,26 @@ const MyRequests = () => {
         VVG_Status: "A",
         VVR_Request_id: member.VVR_Request_id,
       });
-      setEditGroupMembers((arr) => arr.map((m, i) => i === idx ? { ...m, _original: { VVG_Visitor_Name: m.VVG_Visitor_Name, VVG_Designation: m.VVG_Designation } } : m));
+      setEditGroupMembers((arr) =>
+        arr.map((m, i) =>
+          i === idx
+            ? {
+                ...m,
+                _original: {
+                  VVG_Visitor_Name: m.VVG_Visitor_Name,
+                  VVG_Designation: m.VVG_Designation,
+                },
+              }
+            : m,
+        ),
+      );
       clearDirty(`member-${idx}`);
       flashSuccess(`member-${idx}`);
-    } catch (err) { console.error(`Failed to update member ${idx}:`, err); }
-    finally { setMemberSavingIdx(null); }
+    } catch (err) {
+      console.error(`Failed to update member ${idx}:`, err);
+    } finally {
+      setMemberSavingIdx(null);
+    }
   };
 
   // ── Submit new member ──
@@ -403,9 +540,11 @@ const MyRequests = () => {
     const member = editGroupMembers[idx];
     if (!member?._isNew || newMemberSavingIdx !== null) return;
     if (!member.VVG_Visitor_Name || !member.VVG_NIC_Passport_Number) {
-      setEditError("Name and ID/Passport are required for new visitors."); return;
+      setEditError("Name and ID/Passport are required for new visitors.");
+      return;
     }
-    setNewMemberSavingIdx(idx); setEditError("");
+    setNewMemberSavingIdx(idx);
+    setEditError("");
     try {
       await VisitGroupService.AddVisitGroup({
         VVG_Visitor_Name: member.VVG_Visitor_Name,
@@ -415,11 +554,29 @@ const MyRequests = () => {
         VVR_Request_id: editingRequest.VVR_Request_id,
       });
       // Replace the _isNew row with a persisted placeholder (refresh marks it persisted)
-      setEditGroupMembers((arr) => arr.map((m, i) => i === idx ? { ...m, _isNew: false, VVG_id: "saved", _original: { VVG_Visitor_Name: m.VVG_Visitor_Name, VVG_Designation: m.VVG_Designation } } : m));
+      setEditGroupMembers((arr) =>
+        arr.map((m, i) =>
+          i === idx
+            ? {
+                ...m,
+                _isNew: false,
+                VVG_id: "saved",
+                _original: {
+                  VVG_Visitor_Name: m.VVG_Visitor_Name,
+                  VVG_Designation: m.VVG_Designation,
+                },
+              }
+            : m,
+        ),
+      );
       clearDirty(`member-${idx}`);
       flashSuccess(`member-${idx}`);
-    } catch (err) { console.error(`Failed to add member ${idx}:`, err); setEditError("Failed to add visitor."); }
-    finally { setNewMemberSavingIdx(null); }
+    } catch (err) {
+      console.error(`Failed to add member ${idx}:`, err);
+      setEditError("Failed to add visitor.");
+    } finally {
+      setNewMemberSavingIdx(null);
+    }
   };
 
   // ── Update existing item ──
@@ -434,19 +591,39 @@ const MyRequests = () => {
         VIC_Quantity: item.VIC_Quantity,
         VIC_Designation: item.VIC_Designation,
       });
-      setEditItems((arr) => arr.map((it, i) => i === idx ? { ...it, _original: { VIC_Item_Name: it.VIC_Item_Name, VIC_Quantity: it.VIC_Quantity, VIC_Designation: it.VIC_Designation } } : it));
+      setEditItems((arr) =>
+        arr.map((it, i) =>
+          i === idx
+            ? {
+                ...it,
+                _original: {
+                  VIC_Item_Name: it.VIC_Item_Name,
+                  VIC_Quantity: it.VIC_Quantity,
+                  VIC_Designation: it.VIC_Designation,
+                },
+              }
+            : it,
+        ),
+      );
       clearDirty(`item-${idx}`);
       flashSuccess(`item-${idx}`);
-    } catch (err) { console.error(`Failed to update item ${idx}:`, err); }
-    finally { setItemSavingIdx(null); }
+    } catch (err) {
+      console.error(`Failed to update item ${idx}:`, err);
+    } finally {
+      setItemSavingIdx(null);
+    }
   };
 
   // ── Submit new item ──
   const handleSubmitNewItem = async (idx) => {
     const item = editItems[idx];
     if (!item?._isNew || newItemSavingIdx !== null) return;
-    if (!item.VIC_Item_Name) { setEditError("Item name is required."); return; }
-    setNewItemSavingIdx(idx); setEditError("");
+    if (!item.VIC_Item_Name) {
+      setEditError("Item name is required.");
+      return;
+    }
+    setNewItemSavingIdx(idx);
+    setEditError("");
     try {
       await ItemCarriedService.AddItem({
         VIC_Item_Name: item.VIC_Item_Name,
@@ -454,27 +631,69 @@ const MyRequests = () => {
         VIC_Designation: item.VIC_Designation || "",
         VVR_Request_id: editingRequest.VVR_Request_id,
       });
-      setEditItems((arr) => arr.map((it, i) => i === idx ? { ...it, _isNew: false, VIC_Item_id: "saved", _original: { VIC_Item_Name: it.VIC_Item_Name, VIC_Quantity: it.VIC_Quantity, VIC_Designation: it.VIC_Designation } } : it));
+      setEditItems((arr) =>
+        arr.map((it, i) =>
+          i === idx
+            ? {
+                ...it,
+                _isNew: false,
+                VIC_Item_id: "saved",
+                _original: {
+                  VIC_Item_Name: it.VIC_Item_Name,
+                  VIC_Quantity: it.VIC_Quantity,
+                  VIC_Designation: it.VIC_Designation,
+                },
+              }
+            : it,
+        ),
+      );
       clearDirty(`item-${idx}`);
       flashSuccess(`item-${idx}`);
-    } catch (err) { console.error(`Failed to add item ${idx}:`, err); setEditError("Failed to add item."); }
-    finally { setNewItemSavingIdx(null); }
+    } catch (err) {
+      console.error(`Failed to add item ${idx}:`, err);
+      setEditError("Failed to add item.");
+    } finally {
+      setNewItemSavingIdx(null);
+    }
   };
 
   // ── Helper: add blank new rows ──
   const handleAddNewVehicleRow = () => {
-    setEditVehicles((arr) => [...arr, { _isNew: true, VV_Vehicle_Number: "", VV_Vehicle_Type: "" }]);
+    setEditVehicles((arr) => [
+      ...arr,
+      { _isNew: true, VV_Vehicle_Number: "", VV_Vehicle_Type: "" },
+    ]);
   };
   const handleAddNewMemberRow = () => {
-    setEditGroupMembers((arr) => [...arr, { _isNew: true, VVG_Visitor_Name: "", VVG_NIC_Passport_Number: "", VVG_Designation: "", VVR_Request_id: editingRequest?.VVR_Request_id }]);
+    setEditGroupMembers((arr) => [
+      ...arr,
+      {
+        _isNew: true,
+        VVG_Visitor_Name: "",
+        VVG_NIC_Passport_Number: "",
+        VVG_Designation: "",
+        VVR_Request_id: editingRequest?.VVR_Request_id,
+      },
+    ]);
   };
   const handleAddNewItemRow = () => {
-    setEditItems((arr) => [...arr, { _isNew: true, VIC_Item_Name: "", VIC_Quantity: "", VIC_Designation: "" }]);
+    setEditItems((arr) => [
+      ...arr,
+      {
+        _isNew: true,
+        VIC_Item_Name: "",
+        VIC_Quantity: "",
+        VIC_Designation: "",
+      },
+    ]);
   };
   const handleRemoveNewRow = (section, idx) => {
-    if (section === "vehicle") setEditVehicles((arr) => arr.filter((_, i) => i !== idx));
-    if (section === "member") setEditGroupMembers((arr) => arr.filter((_, i) => i !== idx));
-    if (section === "item") setEditItems((arr) => arr.filter((_, i) => i !== idx));
+    if (section === "vehicle")
+      setEditVehicles((arr) => arr.filter((_, i) => i !== idx));
+    if (section === "member")
+      setEditGroupMembers((arr) => arr.filter((_, i) => i !== idx));
+    if (section === "item")
+      setEditItems((arr) => arr.filter((_, i) => i !== idx));
   };
 
   const filteredRequests = visitRequestsByVis
@@ -572,7 +791,9 @@ const MyRequests = () => {
                               <Calendar size={11} className="text-primary/50" />
                               <span className="text-[12px] font-medium tracking-normal">
                                 {req.VVR_Visit_Date
-                                  ? req.VVR_Visit_Date.split("T")[0].split(" ")[0]
+                                  ? req.VVR_Visit_Date.split("T")[0].split(
+                                      " ",
+                                    )[0]
                                   : "N/A"}
                               </span>
                             </div>
@@ -785,17 +1006,36 @@ const MyRequests = () => {
               <div className="flex items-center gap-3">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center text-primary"
-                  style={{ background: "var(--color-primary-low)", border: "1px solid rgba(200,16,46,0.2)" }}
+                  style={{
+                    background: "var(--color-primary-low)",
+                    border: "1px solid rgba(200,16,46,0.2)",
+                  }}
                 >
                   <Pencil size={15} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span style={{ color: "var(--color-text-dim)", fontSize: 12 }} className="font-medium">My Requests</span>
+                    <span
+                      style={{ color: "var(--color-text-dim)", fontSize: 12 }}
+                      className="font-medium"
+                    >
+                      My Requests
+                    </span>
                     <span style={{ color: "var(--color-text-dim)" }}>/</span>
-                    <span style={{ color: "var(--color-text-primary)", fontSize: 13 }} className="font-semibold">Edit Request</span>
+                    <span
+                      style={{
+                        color: "var(--color-text-primary)",
+                        fontSize: 13,
+                      }}
+                      className="font-semibold"
+                    >
+                      Edit Request
+                    </span>
                   </div>
-                  <p style={{ color: "var(--color-text-dim)", fontSize: 10 }} className="font-semibold uppercase tracking-widest mt-0.5">
+                  <p
+                    style={{ color: "var(--color-text-dim)", fontSize: 10 }}
+                    className="font-semibold uppercase tracking-widest mt-0.5"
+                  >
                     ID #{editingRequest.VVR_Request_id}
                   </p>
                 </div>
@@ -806,7 +1046,12 @@ const MyRequests = () => {
                 {rowSuccess["core"] && (
                   <span
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold"
-                    style={{ background: "rgba(34,197,94,0.1)", color: "var(--color-success)", fontSize: 12, border: "1px solid rgba(34,197,94,0.2)" }}
+                    style={{
+                      background: "rgba(34,197,94,0.1)",
+                      color: "var(--color-success)",
+                      fontSize: 12,
+                      border: "1px solid rgba(34,197,94,0.2)",
+                    }}
                   >
                     <CheckCircle2 size={13} /> Saved successfully
                   </span>
@@ -814,114 +1059,411 @@ const MyRequests = () => {
                 {editError && (
                   <span
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold"
-                    style={{ background: "var(--color-primary-low)", color: "var(--color-primary)", fontSize: 12, border: "1px solid rgba(200,16,46,0.2)" }}
+                    style={{
+                      background: "var(--color-primary-low)",
+                      color: "var(--color-primary)",
+                      fontSize: 12,
+                      border: "1px solid rgba(200,16,46,0.2)",
+                    }}
                   >
                     <AlertCircle size={12} /> {editError}
                   </span>
                 )}
-                <button onClick={handleCloseEdit} disabled={editSaving} className="btn-outline disabled:opacity-40">
+                <button
+                  onClick={handleCloseEdit}
+                  disabled={editSaving}
+                  className="btn-outline disabled:opacity-40"
+                >
                   <X size={14} /> Cancel
                 </button>
-                <button onClick={handleSaveRequestCore} disabled={editSaving || editLoadingData} className="btn-primary disabled:opacity-60">
-                  {editSaving
-                    ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Saving…</>
-                    : <><Save size={13} /> Save Changes</>
-                  }
+                <button
+                  onClick={handleSaveRequestCore}
+                  disabled={editSaving || editLoadingData}
+                  className="btn-primary disabled:opacity-60"
+                >
+                  {editSaving ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                      Saving…
+                    </>
+                  ) : (
+                    <>
+                      <Save size={13} /> Save Changes
+                    </>
+                  )}
                 </button>
               </div>
             </div>
 
             {/* ─── SCROLLABLE BODY ─── */}
             <div className="flex-1 overflow-y-auto custom-scrollbar">
-              <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px 80px" }} className="space-y-5">
-
+              <div
+                style={{
+                  maxWidth: 900,
+                  margin: "0 auto",
+                  padding: "32px 24px 80px",
+                }}
+                className="space-y-5"
+              >
                 {/* ══ REQUEST SUMMARY ══ */}
-                <div className="rounded-3xl p-5 md:p-6 space-y-4" style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)" }}>
+                <div
+                  className="rounded-3xl p-5 md:p-6 space-y-4"
+                  style={{
+                    background: "var(--color-bg-paper)",
+                    border: "1px solid var(--color-border-soft)",
+                  }}
+                >
                   <div className="flex items-center gap-2">
                     <Hash size={14} className="text-primary" />
-                    <h3 style={{ color: "var(--color-text-primary)", fontSize: 11, margin: 0 }} className="font-bold uppercase tracking-[0.2em]">Request Summary</h3>
-                    <span style={{ color: "var(--color-text-dim)", fontSize: 10, marginLeft: "auto" }} className="font-semibold">Use <strong>Save Changes</strong> above to persist</span>
+                    <h3
+                      style={{
+                        color: "var(--color-text-primary)",
+                        fontSize: 11,
+                        margin: 0,
+                      }}
+                      className="font-bold uppercase tracking-[0.2em]"
+                    >
+                      Request Summary
+                    </h3>
+                    <span
+                      style={{
+                        color: "var(--color-text-dim)",
+                        fontSize: 10,
+                        marginLeft: "auto",
+                      }}
+                      className="font-semibold"
+                    >
+                      Use <strong>Save Changes</strong> above to persist
+                    </span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="flex items-center gap-2" style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>
-                        <Calendar size={11} className="text-primary" /> Visit Date
+                      <label
+                        className="flex items-center gap-2"
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.14em",
+                          color: "var(--color-text-dim)",
+                        }}
+                      >
+                        <Calendar size={11} className="text-primary" /> Visit
+                        Date
                       </label>
-                      <input type="date" value={editForm.VVR_Visit_Date} onChange={(e) => setEditForm((f) => ({ ...f, VVR_Visit_Date: e.target.value }))} className="mas-input" />
+                      <input
+                        type="date"
+                        value={editForm.VVR_Visit_Date}
+                        onChange={(e) =>
+                          setEditForm((f) => ({
+                            ...f,
+                            VVR_Visit_Date: e.target.value,
+                          }))
+                        }
+                        className="mas-input"
+                      />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="flex items-center gap-2" style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>
-                        <MapPin size={11} className="text-primary" /> Places to Visit
+                      <label
+                        className="flex items-center gap-2"
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.14em",
+                          color: "var(--color-text-dim)",
+                        }}
+                      >
+                        <MapPin size={11} className="text-primary" /> Places to
+                        Visit
                       </label>
-                      <input type="text" placeholder="e.g. Main Hall, Floor 3…" value={editForm.VVR_Places_to_Visit} onChange={(e) => setEditForm((f) => ({ ...f, VVR_Places_to_Visit: e.target.value }))} className="mas-input" />
+                      <input
+                        type="text"
+                        placeholder="e.g. Main Hall, Floor 3…"
+                        value={editForm.VVR_Places_to_Visit}
+                        onChange={(e) =>
+                          setEditForm((f) => ({
+                            ...f,
+                            VVR_Places_to_Visit: e.target.value,
+                          }))
+                        }
+                        className="mas-input"
+                      />
                     </div>
                     <div className="md:col-span-2 space-y-1.5">
-                      <label className="flex items-center gap-2" style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>
-                        <Briefcase size={11} className="text-primary" /> Purpose of Visit
+                      <label
+                        className="flex items-center gap-2"
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.14em",
+                          color: "var(--color-text-dim)",
+                        }}
+                      >
+                        <Briefcase size={11} className="text-primary" /> Purpose
+                        of Visit
                       </label>
-                      <textarea rows={3} placeholder="Briefly describe the purpose…" value={editForm.VVR_Purpose} onChange={(e) => setEditForm((f) => ({ ...f, VVR_Purpose: e.target.value }))} className="mas-input resize-none" />
+                      <textarea
+                        rows={3}
+                        placeholder="Briefly describe the purpose…"
+                        value={editForm.VVR_Purpose}
+                        onChange={(e) =>
+                          setEditForm((f) => ({
+                            ...f,
+                            VVR_Purpose: e.target.value,
+                          }))
+                        }
+                        className="mas-input resize-none"
+                      />
                     </div>
                   </div>
                 </div>
 
                 {/* ══ LOADING STATE ══ */}
                 {editLoadingData ? (
-                  <div className="rounded-3xl flex items-center justify-center gap-3 py-12" style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)" }}>
+                  <div
+                    className="rounded-3xl flex items-center justify-center gap-3 py-12"
+                    style={{
+                      background: "var(--color-bg-paper)",
+                      border: "1px solid var(--color-border-soft)",
+                    }}
+                  >
                     <Loader2 size={20} className="text-primary animate-spin" />
-                    <span style={{ color: "var(--color-text-secondary)", fontSize: 13 }} className="font-semibold">Loading related details…</span>
+                    <span
+                      style={{
+                        color: "var(--color-text-secondary)",
+                        fontSize: 13,
+                      }}
+                      className="font-semibold"
+                    >
+                      Loading related details…
+                    </span>
                   </div>
                 ) : (
                   <>
                     {/* ══ VEHICLE REGISTRY ══ */}
-                    <div className="rounded-3xl p-5 md:p-6 space-y-4" style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)" }}>
+                    <div
+                      className="rounded-3xl p-5 md:p-6 space-y-4"
+                      style={{
+                        background: "var(--color-bg-paper)",
+                        border: "1px solid var(--color-border-soft)",
+                      }}
+                    >
                       <div className="flex items-center gap-2">
                         <Car size={14} className="text-primary" />
-                        <h3 style={{ color: "var(--color-text-primary)", fontSize: 11, margin: 0 }} className="font-bold uppercase tracking-[0.2em]">Vehicle Registry</h3>
-                        {editVehicles.filter(v => !v._isNew).length > 0 && (
-                          <span style={{ color: "var(--color-text-dim)", fontSize: 10, marginLeft: 4 }}>{editVehicles.filter(v => !v._isNew).length} vehicle{editVehicles.filter(v => !v._isNew).length > 1 ? "s" : ""}</span>
+                        <h3
+                          style={{
+                            color: "var(--color-text-primary)",
+                            fontSize: 11,
+                            margin: 0,
+                          }}
+                          className="font-bold uppercase tracking-[0.2em]"
+                        >
+                          Vehicle Registry
+                        </h3>
+                        {editVehicles.filter((v) => !v._isNew).length > 0 && (
+                          <span
+                            style={{
+                              color: "var(--color-text-dim)",
+                              fontSize: 10,
+                              marginLeft: 4,
+                            }}
+                          >
+                            {editVehicles.filter((v) => !v._isNew).length}{" "}
+                            vehicle
+                            {editVehicles.filter((v) => !v._isNew).length > 1
+                              ? "s"
+                              : ""}
+                          </span>
                         )}
-                        <button onClick={handleAddNewVehicleRow} className="btn-outline ml-auto whitespace-nowrap" style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}>
+                        <button
+                          onClick={handleAddNewVehicleRow}
+                          className="btn-outline ml-auto whitespace-nowrap"
+                          style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                        >
                           <Plus size={12} /> Add Vehicle
                         </button>
                       </div>
                       {editVehicles.length === 0 && (
-                        <p style={{ color: "var(--color-text-dim)", fontSize: 11 }} className="font-medium">No vehicles registered. Click <strong>Add Vehicle</strong> to add one.</p>
+                        <p
+                          style={{
+                            color: "var(--color-text-dim)",
+                            fontSize: 11,
+                          }}
+                          className="font-medium"
+                        >
+                          No vehicles registered. Click{" "}
+                          <strong>Add Vehicle</strong> to add one.
+                        </p>
                       )}
                       <div className="space-y-3">
                         {editVehicles.map((vehicle, idx) => (
                           <div
                             key={vehicle.VV_Vehicle_id || idx}
-                            ref={(el) => { rowRefs.current[`vehicle-${idx}`] = el; }}
+                            ref={(el) => {
+                              rowRefs.current[`vehicle-${idx}`] = el;
+                            }}
                             className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
                             style={(() => {
-                              const isDirtyWarn = warnDirty && dirtyRows.has(`vehicle-${idx}`);
-                              if (isDirtyWarn) return { border: "2px solid rgba(239,68,68,0.7)", background: "rgba(239,68,68,0.05)", borderRadius: "16px" };
-                              if (vehicle._isNew) return { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" };
-                              return { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" };
+                              const isDirtyWarn =
+                                warnDirty && dirtyRows.has(`vehicle-${idx}`);
+                              if (isDirtyWarn)
+                                return {
+                                  border: "2px solid rgba(239,68,68,0.7)",
+                                  background: "rgba(239,68,68,0.05)",
+                                  borderRadius: "16px",
+                                };
+                              if (vehicle._isNew)
+                                return {
+                                  border: "1.5px dashed rgba(251,191,36,0.5)",
+                                  background: "rgba(251,191,36,0.04)",
+                                };
+                              return {
+                                background: "var(--color-surface-1)",
+                                border: "1px solid var(--color-border-soft)",
+                              };
                             })()}
                           >
                             <div className="space-y-1.5">
-                              <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>Vehicle Number</label>
-                              <input type="text" value={vehicle.VV_Vehicle_Number} onChange={(e) => setEditVehicles((arr) => arr.map((v, i) => i === idx ? { ...v, VV_Vehicle_Number: e.target.value } : v))} className="mas-input" placeholder="e.g. ABC-1234" />
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Vehicle Number
+                              </label>
+                              <input
+                                type="text"
+                                value={vehicle.VV_Vehicle_Number}
+                                onChange={(e) =>
+                                  setEditVehicles((arr) =>
+                                    arr.map((v, i) =>
+                                      i === idx
+                                        ? {
+                                            ...v,
+                                            VV_Vehicle_Number: e.target.value,
+                                          }
+                                        : v,
+                                    ),
+                                  )
+                                }
+                                className="mas-input"
+                                placeholder="e.g. ABC-1234"
+                              />
                             </div>
                             <div className="space-y-1.5">
-                              <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>
-                                Vehicle Type {!vehicle._isNew && <span style={{ fontSize: 9, opacity: 0.6 }}>(read-only)</span>}
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Vehicle Type{" "}
+                                {!vehicle._isNew && (
+                                  <span style={{ fontSize: 9, opacity: 0.6 }}>
+                                    (read-only)
+                                  </span>
+                                )}
                               </label>
-                              <input type="text" value={vehicle.VV_Vehicle_Type} onChange={(e) => vehicle._isNew && setEditVehicles((arr) => arr.map((v, i) => i === idx ? { ...v, VV_Vehicle_Type: e.target.value } : v))} readOnly={!vehicle._isNew} style={!vehicle._isNew ? { opacity: 0.5, cursor: "not-allowed" } : {}} className="mas-input" placeholder="e.g. Car, Van…" />
+                              <input
+                                type="text"
+                                value={vehicle.VV_Vehicle_Type}
+                                onChange={(e) =>
+                                  vehicle._isNew &&
+                                  setEditVehicles((arr) =>
+                                    arr.map((v, i) =>
+                                      i === idx
+                                        ? {
+                                            ...v,
+                                            VV_Vehicle_Type: e.target.value,
+                                          }
+                                        : v,
+                                    ),
+                                  )
+                                }
+                                readOnly={!vehicle._isNew}
+                                style={
+                                  !vehicle._isNew
+                                    ? { opacity: 0.5, cursor: "not-allowed" }
+                                    : {}
+                                }
+                                className="mas-input"
+                                placeholder="e.g. Car, Van…"
+                              />
                             </div>
                             <div className="flex flex-col items-end gap-1.5">
-                              {rowSuccess[`vehicle-${idx}`] && <span className="flex items-center gap-1 font-semibold whitespace-nowrap" style={{ color: "var(--color-success)", fontSize: 11 }}><CheckCircle2 size={12} /> Saved</span>}
+                              {rowSuccess[`vehicle-${idx}`] && (
+                                <span
+                                  className="flex items-center gap-1 font-semibold whitespace-nowrap"
+                                  style={{
+                                    color: "var(--color-success)",
+                                    fontSize: 11,
+                                  }}
+                                >
+                                  <CheckCircle2 size={12} /> Saved
+                                </span>
+                              )}
                               {vehicle._isNew ? (
                                 <div className="flex gap-2">
-                                  <button onClick={() => handleRemoveNewRow("vehicle", idx)} className="btn-outline whitespace-nowrap" style={{ padding: "9px 14px", fontSize: 11 }}><X size={12} /></button>
-                                  <button onClick={() => handleAddVehicle(idx)} disabled={newVehicleSavingIdx !== null} className="btn-primary disabled:opacity-60 whitespace-nowrap" style={{ padding: "9px 18px", fontSize: 12, background: "var(--color-success)" }}>
-                                    {newVehicleSavingIdx === idx ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting…</> : <><Plus size={12} /> Submit</>}
+                                  <button
+                                    onClick={() =>
+                                      handleRemoveNewRow("vehicle", idx)
+                                    }
+                                    className="btn-outline whitespace-nowrap"
+                                    style={{
+                                      padding: "9px 14px",
+                                      fontSize: 11,
+                                    }}
+                                  >
+                                    <X size={12} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleAddVehicle(idx)}
+                                    disabled={newVehicleSavingIdx !== null}
+                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                    style={{
+                                      padding: "9px 18px",
+                                      fontSize: 12,
+                                      background: "var(--color-success)",
+                                    }}
+                                  >
+                                    {newVehicleSavingIdx === idx ? (
+                                      <>
+                                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                        Submitting…
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Plus size={12} /> Submit
+                                      </>
+                                    )}
                                   </button>
                                 </div>
                               ) : (
-                                <button onClick={() => handleUpdateVehicle(idx)} disabled={vehicleSavingIdx !== null} className="btn-primary disabled:opacity-60 whitespace-nowrap" style={{ padding: "9px 18px", fontSize: 12 }}>
-                                  {vehicleSavingIdx === idx ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Updating…</> : <><Save size={12} /> Update</>}
+                                <button
+                                  onClick={() => handleUpdateVehicle(idx)}
+                                  disabled={vehicleSavingIdx !== null}
+                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                  style={{ padding: "9px 18px", fontSize: 12 }}
+                                >
+                                  {vehicleSavingIdx === idx ? (
+                                    <>
+                                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                      Updating…
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Save size={12} /> Update
+                                    </>
+                                  )}
                                 </button>
                               )}
                             </div>
@@ -931,59 +1473,258 @@ const MyRequests = () => {
                     </div>
 
                     {/* ══ PEOPLE VISITING ══ */}
-                    <div className="rounded-3xl p-5 md:p-6 space-y-4" style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)" }}>
+                    <div
+                      className="rounded-3xl p-5 md:p-6 space-y-4"
+                      style={{
+                        background: "var(--color-bg-paper)",
+                        border: "1px solid var(--color-border-soft)",
+                      }}
+                    >
                       <div className="flex items-center gap-2">
                         <Users size={14} className="text-primary" />
-                        <h3 style={{ color: "var(--color-text-primary)", fontSize: 11, margin: 0 }} className="font-bold uppercase tracking-[0.2em]">People Visiting</h3>
-                        {editGroupMembers.filter(m => !m._isNew).length > 0 && (
-                          <span style={{ color: "var(--color-text-dim)", fontSize: 10, marginLeft: 4 }}>{editGroupMembers.filter(m => !m._isNew).length} visitor{editGroupMembers.filter(m => !m._isNew).length > 1 ? "s" : ""}</span>
+                        <h3
+                          style={{
+                            color: "var(--color-text-primary)",
+                            fontSize: 11,
+                            margin: 0,
+                          }}
+                          className="font-bold uppercase tracking-[0.2em]"
+                        >
+                          People Visiting
+                        </h3>
+                        {editGroupMembers.filter((m) => !m._isNew).length >
+                          0 && (
+                          <span
+                            style={{
+                              color: "var(--color-text-dim)",
+                              fontSize: 10,
+                              marginLeft: 4,
+                            }}
+                          >
+                            {editGroupMembers.filter((m) => !m._isNew).length}{" "}
+                            visitor
+                            {editGroupMembers.filter((m) => !m._isNew).length >
+                            1
+                              ? "s"
+                              : ""}
+                          </span>
                         )}
-                        <button onClick={handleAddNewMemberRow} className="btn-outline ml-auto whitespace-nowrap" style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}>
+                        <button
+                          onClick={handleAddNewMemberRow}
+                          className="btn-outline ml-auto whitespace-nowrap"
+                          style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                        >
                           <Plus size={12} /> Add Visitor
                         </button>
                       </div>
                       {editGroupMembers.length === 0 && (
-                        <p style={{ color: "var(--color-text-dim)", fontSize: 11 }} className="font-medium">No additional visitors. Click <strong>Add Visitor</strong> to add one.</p>
+                        <p
+                          style={{
+                            color: "var(--color-text-dim)",
+                            fontSize: 11,
+                          }}
+                          className="font-medium"
+                        >
+                          No additional visitors. Click{" "}
+                          <strong>Add Visitor</strong> to add one.
+                        </p>
                       )}
                       <div className="space-y-3">
                         {editGroupMembers.map((member, idx) => (
                           <div
                             key={member.VVG_id || idx}
-                            ref={(el) => { rowRefs.current[`member-${idx}`] = el; }}
+                            ref={(el) => {
+                              rowRefs.current[`member-${idx}`] = el;
+                            }}
                             className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
                             style={(() => {
-                              const isDirtyWarn = warnDirty && dirtyRows.has(`member-${idx}`);
-                              if (isDirtyWarn) return { border: "2px solid rgba(239,68,68,0.7)", background: "rgba(239,68,68,0.05)", borderRadius: "16px" };
-                              if (member._isNew) return { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" };
-                              return { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" };
+                              const isDirtyWarn =
+                                warnDirty && dirtyRows.has(`member-${idx}`);
+                              if (isDirtyWarn)
+                                return {
+                                  border: "2px solid rgba(239,68,68,0.7)",
+                                  background: "rgba(239,68,68,0.05)",
+                                  borderRadius: "16px",
+                                };
+                              if (member._isNew)
+                                return {
+                                  border: "1.5px dashed rgba(251,191,36,0.5)",
+                                  background: "rgba(251,191,36,0.04)",
+                                };
+                              return {
+                                background: "var(--color-surface-1)",
+                                border: "1px solid var(--color-border-soft)",
+                              };
                             })()}
                           >
                             <div className="space-y-1.5">
-                              <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>Full Name</label>
-                              <input type="text" value={member.VVG_Visitor_Name} onChange={(e) => setEditGroupMembers((arr) => arr.map((m, i) => i === idx ? { ...m, VVG_Visitor_Name: e.target.value } : m))} className="mas-input" />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>Designation / Phone</label>
-                              <input type="text" value={member.VVG_Designation} onChange={(e) => setEditGroupMembers((arr) => arr.map((m, i) => i === idx ? { ...m, VVG_Designation: e.target.value } : m))} className="mas-input" />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>
-                                ID / Passport {!member._isNew && <span style={{ opacity: 0.6, fontSize: 9 }}>(read-only)</span>}
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Full Name
                               </label>
-                              <input type="text" value={member.VVG_NIC_Passport_Number} onChange={(e) => member._isNew && setEditGroupMembers((arr) => arr.map((m, i) => i === idx ? { ...m, VVG_NIC_Passport_Number: e.target.value } : m))} readOnly={!member._isNew} style={!member._isNew ? { opacity: 0.5, cursor: "not-allowed" } : {}} className="mas-input" />
+                              <input
+                                type="text"
+                                value={member.VVG_Visitor_Name}
+                                onChange={(e) =>
+                                  setEditGroupMembers((arr) =>
+                                    arr.map((m, i) =>
+                                      i === idx
+                                        ? {
+                                            ...m,
+                                            VVG_Visitor_Name: e.target.value,
+                                          }
+                                        : m,
+                                    ),
+                                  )
+                                }
+                                className="mas-input"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Designation / Phone
+                              </label>
+                              <input
+                                type="text"
+                                value={member.VVG_Designation}
+                                onChange={(e) =>
+                                  setEditGroupMembers((arr) =>
+                                    arr.map((m, i) =>
+                                      i === idx
+                                        ? {
+                                            ...m,
+                                            VVG_Designation: e.target.value,
+                                          }
+                                        : m,
+                                    ),
+                                  )
+                                }
+                                className="mas-input"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                ID / Passport{" "}
+                                {!member._isNew && (
+                                  <span style={{ opacity: 0.6, fontSize: 9 }}>
+                                    (read-only)
+                                  </span>
+                                )}
+                              </label>
+                              <input
+                                type="text"
+                                value={member.VVG_NIC_Passport_Number}
+                                onChange={(e) =>
+                                  member._isNew &&
+                                  setEditGroupMembers((arr) =>
+                                    arr.map((m, i) =>
+                                      i === idx
+                                        ? {
+                                            ...m,
+                                            VVG_NIC_Passport_Number:
+                                              e.target.value,
+                                          }
+                                        : m,
+                                    ),
+                                  )
+                                }
+                                readOnly={!member._isNew}
+                                style={
+                                  !member._isNew
+                                    ? { opacity: 0.5, cursor: "not-allowed" }
+                                    : {}
+                                }
+                                className="mas-input"
+                              />
                             </div>
                             <div className="flex flex-col items-end gap-1.5">
-                              {rowSuccess[`member-${idx}`] && <span className="flex items-center gap-1 font-semibold whitespace-nowrap" style={{ color: "var(--color-success)", fontSize: 11 }}><CheckCircle2 size={12} /> Saved</span>}
+                              {rowSuccess[`member-${idx}`] && (
+                                <span
+                                  className="flex items-center gap-1 font-semibold whitespace-nowrap"
+                                  style={{
+                                    color: "var(--color-success)",
+                                    fontSize: 11,
+                                  }}
+                                >
+                                  <CheckCircle2 size={12} /> Saved
+                                </span>
+                              )}
                               {member._isNew ? (
                                 <div className="flex gap-2">
-                                  <button onClick={() => handleRemoveNewRow("member", idx)} className="btn-outline whitespace-nowrap" style={{ padding: "9px 14px", fontSize: 11 }}><X size={12} /></button>
-                                  <button onClick={() => handleSubmitNewMember(idx)} disabled={newMemberSavingIdx !== null} className="btn-primary disabled:opacity-60 whitespace-nowrap" style={{ padding: "9px 18px", fontSize: 12, background: "var(--color-success)" }}>
-                                    {newMemberSavingIdx === idx ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting…</> : <><Plus size={12} /> Submit</>}
+                                  <button
+                                    onClick={() =>
+                                      handleRemoveNewRow("member", idx)
+                                    }
+                                    className="btn-outline whitespace-nowrap"
+                                    style={{
+                                      padding: "9px 14px",
+                                      fontSize: 11,
+                                    }}
+                                  >
+                                    <X size={12} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleSubmitNewMember(idx)}
+                                    disabled={newMemberSavingIdx !== null}
+                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                    style={{
+                                      padding: "9px 18px",
+                                      fontSize: 12,
+                                      background: "var(--color-success)",
+                                    }}
+                                  >
+                                    {newMemberSavingIdx === idx ? (
+                                      <>
+                                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                        Submitting…
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Plus size={12} /> Submit
+                                      </>
+                                    )}
                                   </button>
                                 </div>
                               ) : (
-                                <button onClick={() => handleUpdateMember(idx)} disabled={memberSavingIdx !== null} className="btn-primary disabled:opacity-60 whitespace-nowrap" style={{ padding: "9px 18px", fontSize: 12 }}>
-                                  {memberSavingIdx === idx ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Updating…</> : <><Save size={12} /> Update</>}
+                                <button
+                                  onClick={() => handleUpdateMember(idx)}
+                                  disabled={memberSavingIdx !== null}
+                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                  style={{ padding: "9px 18px", fontSize: 12 }}
+                                >
+                                  {memberSavingIdx === idx ? (
+                                    <>
+                                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                      Updating…
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Save size={12} /> Update
+                                    </>
+                                  )}
                                 </button>
                               )}
                             </div>
@@ -993,57 +1734,242 @@ const MyRequests = () => {
                     </div>
 
                     {/* ══ ITEMS TO BRING ══ */}
-                    <div className="rounded-3xl p-5 md:p-6 space-y-4" style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)" }}>
+                    <div
+                      className="rounded-3xl p-5 md:p-6 space-y-4"
+                      style={{
+                        background: "var(--color-bg-paper)",
+                        border: "1px solid var(--color-border-soft)",
+                      }}
+                    >
                       <div className="flex items-center gap-2">
                         <Package size={14} className="text-primary" />
-                        <h3 style={{ color: "var(--color-text-primary)", fontSize: 11, margin: 0 }} className="font-bold uppercase tracking-[0.2em]">Items to Bring</h3>
-                        {editItems.filter(it => !it._isNew).length > 0 && (
-                          <span style={{ color: "var(--color-text-dim)", fontSize: 10, marginLeft: 4 }}>{editItems.filter(it => !it._isNew).length} item{editItems.filter(it => !it._isNew).length > 1 ? "s" : ""}</span>
+                        <h3
+                          style={{
+                            color: "var(--color-text-primary)",
+                            fontSize: 11,
+                            margin: 0,
+                          }}
+                          className="font-bold uppercase tracking-[0.2em]"
+                        >
+                          Items to Bring
+                        </h3>
+                        {editItems.filter((it) => !it._isNew).length > 0 && (
+                          <span
+                            style={{
+                              color: "var(--color-text-dim)",
+                              fontSize: 10,
+                              marginLeft: 4,
+                            }}
+                          >
+                            {editItems.filter((it) => !it._isNew).length} item
+                            {editItems.filter((it) => !it._isNew).length > 1
+                              ? "s"
+                              : ""}
+                          </span>
                         )}
-                        <button onClick={handleAddNewItemRow} className="btn-outline ml-auto whitespace-nowrap" style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}>
+                        <button
+                          onClick={handleAddNewItemRow}
+                          className="btn-outline ml-auto whitespace-nowrap"
+                          style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                        >
                           <Plus size={12} /> Add Item
                         </button>
                       </div>
                       {editItems.length === 0 && (
-                        <p style={{ color: "var(--color-text-dim)", fontSize: 11 }} className="font-medium">No items declared. Click <strong>Add Item</strong> to add one.</p>
+                        <p
+                          style={{
+                            color: "var(--color-text-dim)",
+                            fontSize: 11,
+                          }}
+                          className="font-medium"
+                        >
+                          No items declared. Click <strong>Add Item</strong> to
+                          add one.
+                        </p>
                       )}
                       <div className="space-y-3">
                         {editItems.map((item, idx) => (
                           <div
                             key={item.VIC_Item_id || idx}
-                            ref={(el) => { rowRefs.current[`item-${idx}`] = el; }}
+                            ref={(el) => {
+                              rowRefs.current[`item-${idx}`] = el;
+                            }}
                             className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
                             style={(() => {
-                              const isDirtyWarn = warnDirty && dirtyRows.has(`item-${idx}`);
-                              if (isDirtyWarn) return { border: "2px solid rgba(239,68,68,0.7)", background: "rgba(239,68,68,0.05)", borderRadius: "16px" };
-                              if (item._isNew) return { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" };
-                              return { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" };
+                              const isDirtyWarn =
+                                warnDirty && dirtyRows.has(`item-${idx}`);
+                              if (isDirtyWarn)
+                                return {
+                                  border: "2px solid rgba(239,68,68,0.7)",
+                                  background: "rgba(239,68,68,0.05)",
+                                  borderRadius: "16px",
+                                };
+                              if (item._isNew)
+                                return {
+                                  border: "1.5px dashed rgba(251,191,36,0.5)",
+                                  background: "rgba(251,191,36,0.04)",
+                                };
+                              return {
+                                background: "var(--color-surface-1)",
+                                border: "1px solid var(--color-border-soft)",
+                              };
                             })()}
                           >
                             <div className="space-y-1.5">
-                              <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>Item Name</label>
-                              <input type="text" value={item.VIC_Item_Name} onChange={(e) => setEditItems((arr) => arr.map((it, i) => i === idx ? { ...it, VIC_Item_Name: e.target.value } : it))} className="mas-input" />
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Item Name
+                              </label>
+                              <input
+                                type="text"
+                                value={item.VIC_Item_Name}
+                                onChange={(e) =>
+                                  setEditItems((arr) =>
+                                    arr.map((it, i) =>
+                                      i === idx
+                                        ? {
+                                            ...it,
+                                            VIC_Item_Name: e.target.value,
+                                          }
+                                        : it,
+                                    ),
+                                  )
+                                }
+                                className="mas-input"
+                              />
                             </div>
                             <div className="space-y-1.5">
-                              <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>Quantity</label>
-                              <input type="text" value={item.VIC_Quantity} onChange={(e) => setEditItems((arr) => arr.map((it, i) => i === idx ? { ...it, VIC_Quantity: e.target.value } : it))} className="mas-input" />
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Quantity
+                              </label>
+                              <input
+                                type="text"
+                                value={item.VIC_Quantity}
+                                onChange={(e) =>
+                                  setEditItems((arr) =>
+                                    arr.map((it, i) =>
+                                      i === idx
+                                        ? {
+                                            ...it,
+                                            VIC_Quantity: e.target.value,
+                                          }
+                                        : it,
+                                    ),
+                                  )
+                                }
+                                className="mas-input"
+                              />
                             </div>
                             <div className="space-y-1.5">
-                              <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>Description</label>
-                              <input type="text" value={item.VIC_Designation} onChange={(e) => setEditItems((arr) => arr.map((it, i) => i === idx ? { ...it, VIC_Designation: e.target.value } : it))} className="mas-input" />
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Description
+                              </label>
+                              <input
+                                type="text"
+                                value={item.VIC_Designation}
+                                onChange={(e) =>
+                                  setEditItems((arr) =>
+                                    arr.map((it, i) =>
+                                      i === idx
+                                        ? {
+                                            ...it,
+                                            VIC_Designation: e.target.value,
+                                          }
+                                        : it,
+                                    ),
+                                  )
+                                }
+                                className="mas-input"
+                              />
                             </div>
                             <div className="flex flex-col items-end gap-1.5">
-                              {rowSuccess[`item-${idx}`] && <span className="flex items-center gap-1 font-semibold whitespace-nowrap" style={{ color: "var(--color-success)", fontSize: 11 }}><CheckCircle2 size={12} /> Saved</span>}
+                              {rowSuccess[`item-${idx}`] && (
+                                <span
+                                  className="flex items-center gap-1 font-semibold whitespace-nowrap"
+                                  style={{
+                                    color: "var(--color-success)",
+                                    fontSize: 11,
+                                  }}
+                                >
+                                  <CheckCircle2 size={12} /> Saved
+                                </span>
+                              )}
                               {item._isNew ? (
                                 <div className="flex gap-2">
-                                  <button onClick={() => handleRemoveNewRow("item", idx)} className="btn-outline whitespace-nowrap" style={{ padding: "9px 14px", fontSize: 11 }}><X size={12} /></button>
-                                  <button onClick={() => handleSubmitNewItem(idx)} disabled={newItemSavingIdx !== null} className="btn-primary disabled:opacity-60 whitespace-nowrap" style={{ padding: "9px 18px", fontSize: 12, background: "var(--color-success)" }}>
-                                    {newItemSavingIdx === idx ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting…</> : <><Plus size={12} /> Submit</>}
+                                  <button
+                                    onClick={() =>
+                                      handleRemoveNewRow("item", idx)
+                                    }
+                                    className="btn-outline whitespace-nowrap"
+                                    style={{
+                                      padding: "9px 14px",
+                                      fontSize: 11,
+                                    }}
+                                  >
+                                    <X size={12} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleSubmitNewItem(idx)}
+                                    disabled={newItemSavingIdx !== null}
+                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                    style={{
+                                      padding: "9px 18px",
+                                      fontSize: 12,
+                                      background: "var(--color-success)",
+                                    }}
+                                  >
+                                    {newItemSavingIdx === idx ? (
+                                      <>
+                                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                        Submitting…
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Plus size={12} /> Submit
+                                      </>
+                                    )}
                                   </button>
                                 </div>
                               ) : (
-                                <button onClick={() => handleUpdateItem(idx)} disabled={itemSavingIdx !== null} className="btn-primary disabled:opacity-60 whitespace-nowrap" style={{ padding: "9px 18px", fontSize: 12 }}>
-                                  {itemSavingIdx === idx ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Updating…</> : <><Save size={12} /> Update</>}
+                                <button
+                                  onClick={() => handleUpdateItem(idx)}
+                                  disabled={itemSavingIdx !== null}
+                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                  style={{ padding: "9px 18px", fontSize: 12 }}
+                                >
+                                  {itemSavingIdx === idx ? (
+                                    <>
+                                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                      Updating…
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Save size={12} /> Update
+                                    </>
+                                  )}
                                 </button>
                               )}
                             </div>
@@ -1053,7 +1979,6 @@ const MyRequests = () => {
                     </div>
                   </>
                 )}
-
               </div>
             </div>
           </motion.div>
