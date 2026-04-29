@@ -28,12 +28,6 @@ const menuItems = [
     path: "/contact_person/visit-requests",
   },
   {
-    id: "inbox",
-    label: "Requests Inbox",
-    icon: Inbox,
-    path: "/contact_person/requests-inbox",
-  },
-  {
     id: "all-visitors",
     label: "All Visitors",
     icon: Users,
