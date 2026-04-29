@@ -11,6 +11,7 @@ import {
 import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 import { GetLogin } from "../../actions/LoginAction";
 import { useThemeMode } from "../../theme/ThemeModeContext";
+import { validateEmail, validatePassword } from "../../utils/validation";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -84,6 +85,20 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLocalError("");
+
+    // Validation checks
+    const emailErr = validateEmail(formData.email);
+    if (emailErr) {
+      setLocalError(emailErr);
+      return;
+    }
+
+    const passErr = validatePassword(formData.password);
+    if (passErr) {
+      setLocalError(passErr);
+      return;
+    }
+
     dispatch(GetLogin(formData.email, formData.password));
   };
 

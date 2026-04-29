@@ -19,6 +19,7 @@ import {
   setSubmitting,
   setError,
 } from "../../../reducers/visitorSlice";
+import { validateName, validateNIC, validatePhone, validateEmail } from "../../../utils/validation";
 
 const Step1Main = () => {
   const navigate = useNavigate();
@@ -96,8 +97,25 @@ const Step1Main = () => {
       if (!String(formData[field] || "").trim()) errors[field] = msg;
     });
 
-    if (formData.emailAddress && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailAddress)) {
-      errors.emailAddress = "Invalid email format";
+    // Custom validations from utility
+    if (!errors.fullName) {
+      const err = validateName(formData.fullName);
+      if (err) errors.fullName = err;
+    }
+
+    if (!errors.nic) {
+      const err = validateNIC(formData.nic);
+      if (err) errors.nic = err;
+    }
+
+    if (!errors.phoneNumber) {
+      const err = validatePhone(formData.phoneNumber);
+      if (err) errors.phoneNumber = err;
+    }
+
+    if (!errors.emailAddress) {
+      const err = validateEmail(formData.emailAddress);
+      if (err) errors.emailAddress = err;
     }
 
     setFormErrors(errors);
@@ -106,6 +124,8 @@ const Step1Main = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
 
     if (requestId) {
       navigate("/request-step-2");
@@ -129,7 +149,7 @@ const Step1Main = () => {
       const response = await dispatch(AddVisitRequest(payload));
       console.log("AddVisitRequest Raw Response:", response);
 
-      // ── Step 1: try to extract the ID directly from the response ─────────
+      // Extract ID logic...
       const findId = (obj) => {
         if (!obj || typeof obj !== "object") return null;
         const direct = obj.VVR_Request_id || obj["VVR Request id"] ||
@@ -150,10 +170,8 @@ const Step1Main = () => {
 
       let resolvedId = findId(response);
 
-      // ── Step 2: fallback — fetch visitor's request list & pick latest ─────
       if (!resolvedId && visitorRecord?.VV_Visitor_id) {
         try {
-          console.log("ID not in response — fetching visitor request list as fallback...");
           const listRes = await VisitRequestService.GetVisitRequestsByVisitor(
             visitorRecord.VV_Visitor_id
           );
@@ -163,7 +181,6 @@ const Step1Main = () => {
               (a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id)
             );
             resolvedId = sorted[0]?.VVR_Request_id;
-            console.log("Resolved ID from visitor request list:", resolvedId);
           }
         } catch (fallbackErr) {
           console.error("Fallback ID fetch failed:", fallbackErr);
@@ -171,15 +188,12 @@ const Step1Main = () => {
       }
 
       if (!resolvedId) {
-        console.warn("Could not resolve a real Request ID — staying on Step 1.");
         alert("Could not confirm your visit request. Please try again.");
         dispatch(setSubmitting(false));
         return;
       }
 
-      console.log("Proceeding with Request ID:", resolvedId);
       dispatch(setRequestId(resolvedId));
-
       navigate("/request-step-2");
 
     } catch (err) {

@@ -101,7 +101,24 @@ const VisitorOverview = ({ data, onChange, errors = {} }) => {
                 type={field.type}
                 name={field.name}
                 value={data[field.name]}
-                onChange={onChange}
+                onChange={(e) => {
+                  let { value } = e.target;
+                  // Real-time filtering based on field requirements
+                  if (field.name === "fullName") {
+                    value = value.replace(/[^A-Za-z\s]/g, "");
+                  } else if (field.name === "phoneNumber" || field.name === "nic") {
+                    value = value.replace(/[^0-9]/g, "");
+                  }
+                  
+                  // Create a synthetic event or just call onChange with modified value
+                  const syntheticEvent = {
+                    target: {
+                      name: field.name,
+                      value: value
+                    }
+                  };
+                  onChange(syntheticEvent);
+                }}
                 aria-invalid={Boolean(errors[field.name])}
                 aria-describedby={
                   errors[field.name] ? `${field.name}-error` : undefined
