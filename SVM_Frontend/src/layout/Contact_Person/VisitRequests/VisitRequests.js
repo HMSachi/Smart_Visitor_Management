@@ -18,7 +18,7 @@ import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import ContactPersonService from "../../../services/ContactPersonService";
 import Header from "../../../components/Contact_Person/Layout/Header";
-import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
+
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
   Search,
@@ -864,15 +864,8 @@ const VisitRequests = () => {
   };
 
   return (
-    <div
-      className={`flex overflow-hidden h-screen w-full transition-colors duration-500 ${isLight ? "bg-[#F8F9FA] text-[#1A1A1A]" : "bg-[var(--color-bg-default)] text-white"}`}
-    >
-      <Sidebar />
-
-      <div
-        className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
-      >
-        <Header title="" />
+    <div className="flex flex-col min-w-0 h-full">
+      <Header title="" />
 
         <div className="p-3 md:p-5 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
           <header
@@ -1078,27 +1071,27 @@ const VisitRequests = () => {
                             </div>
                           </td>
                           <td className="px-4 py-4 text-center">
-                            <div className="flex items-center justify-center gap-2 opacity-45 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-center gap-2 opacity-100 md:opacity-45 md:group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => handleReview(req.VVR_Request_id)}
-                                className={`p-1.5 rounded-lg border border-transparent transition-all ${isLight ? "text-primary hover:bg-primary/10 hover:border-primary/20" : "text-blue-400 hover:bg-blue-400/10 hover:border-blue-400/20"}`}
+                                className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-transparent transition-all ${isLight ? "text-primary hover:bg-primary/10 hover:border-primary/20" : "text-blue-400 hover:bg-blue-400/10 hover:border-blue-400/20"}`}
                                 title="View Request Details"
                               >
-                                <Eye size={14} />
+                                <Eye size={16} className="shrink-0" />
                               </button>
                               <button
                                 onClick={() => handleOpenEdit(req)}
-                                className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-400/10 border border-transparent hover:border-blue-400/20 transition-all"
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-blue-400 hover:bg-blue-400/10 border border-transparent hover:border-blue-400/20 transition-all"
                                 title="Edit"
                               >
-                                <Edit size={12} />
+                                <Edit size={16} className="shrink-0" />
                               </button>
                               <button
                                 onClick={(e) => handleMenuOpen(e, req)}
-                                className={`p-1.5 rounded-lg border border-transparent transition-all ${isLight ? "text-gray-400 hover:bg-black/5 hover:border-black/10" : "text-gray-400 hover:bg-white/5 hover:border-white/10"}`}
+                                className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-transparent transition-all ${isLight ? "text-gray-500 hover:bg-black/5 hover:border-black/10" : "text-gray-300 hover:bg-white/5 hover:border-white/10"}`}
                                 title="Operational Menu"
                               >
-                                <MoreVertical size={14} />
+                                <MoreVertical size={16} className="shrink-0" />
                               </button>
                             </div>
                           </td>
@@ -1126,7 +1119,6 @@ const VisitRequests = () => {
               </div>
             )}
           </div>
-        </div>
 
         {/* Modal for Add/Update Visit Request */}
         {isModalOpen && (
@@ -1166,7 +1158,7 @@ const VisitRequests = () => {
 
               <form
                 onSubmit={handleSubmit}
-                className="p-5 space-y-5 relative z-10"
+                className="p-5 space-y-5 relative z-10 max-h-[70vh] overflow-y-auto custom-scrollbar"
               >
                 <div className="space-y-4">
                   {modalMode === "add" && (

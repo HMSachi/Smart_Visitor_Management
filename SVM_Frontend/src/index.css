@@ -807,6 +807,27 @@ a,
   .stack-mobile {
     flex-direction: column !important;
   }
+  
+  /* Normalize paddings for common containers */
+  .p-16, .py-16, .pt-16, .pb-16 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+  
+  .px-32, .px-24, .px-16 {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  /* Fix grid layouts on mobile */
+  .grid-cols-2, .grid-cols-3, .grid-cols-4 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  /* Custom scrollbar for mobile touch */
+  .custom-scrollbar {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* ——— Focus ring ——— */
@@ -907,7 +928,8 @@ textarea,
 .MuiDialog-paper,
 .MuiModal-root .rounded-3xl,
 .MuiModal-root .rounded-\[28px\] {
-  width: min(100%, 680px) !important;
+  width: min(95%, 680px) !important;
+  margin: 10px !important;
 }
 
 @media (max-width: 1024px) {
@@ -944,6 +966,11 @@ textarea,
 
   .MuiTableCell-root {
     padding: 8px 10px !important;
+  }
+  
+  /* Ensure modals don't overflow */
+  .MuiDialog-paper {
+    max-height: calc(100% - 20px) !important;
   }
 }
 
