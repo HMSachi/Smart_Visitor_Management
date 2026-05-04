@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import axios from "axios";
 
-const BACKEND_BASE_URL =
+export const BACKEND_BASE_URL =
   process.env.REACT_APP_API_BASE_URL ||
   "https://visitormanagement.dockyardsoftware.com";
 
