@@ -853,29 +853,20 @@ table button, table .compact-action {
   font-size: 11px !important;
 }
 
-/* Responsive: convert table rows into stacked cards on narrow screens */
+/* Responsive: keep table semantics and allow horizontal scroll on small screens */
 @media (max-width: 880px) {
-  .MuiTableContainer-root, .MuiTable-root {
-    display: block !important;
+  .MuiTableContainer-root {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
-  .MuiTableHead-root {
-    display: none !important;
+  .MuiTable-root {
+    min-width: 640px;
   }
-  .MuiTableBody-root .MuiTableRow-root {
-    display: block !important;
-    margin-bottom: 12px !important;
-    background: var(--color-bg-paper) !important;
-    border-radius: 8px !important;
-    padding: 8px !important;
-  }
-  .MuiTableCell-root {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 8px 12px !important;
-  }
-  .MuiTableCell-root p, .MuiTableCell-root span {
+  .MuiTableCell-root p,
+  .MuiTableCell-root span {
     white-space: normal !important;
+    word-break: break-word;
   }
 }
 
@@ -894,4 +885,83 @@ table button, table .compact-action {
   padding: 4px 8px !important;
   border-radius: 6px !important;
   font-size: 11px !important;
+}
+
+/* Responsive foundation for all pages/forms without changing flow logic */
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+select,
+textarea,
+.MuiInputBase-root,
+.MuiFormControl-root {
+  max-width: 100%;
+}
+
+.MuiDialog-paper,
+.MuiModal-root .rounded-3xl,
+.MuiModal-root .rounded-\[28px\] {
+  width: min(100%, 680px) !important;
+}
+
+@media (max-width: 1024px) {
+  .page-header {
+    padding: 1rem 0;
+    margin-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 13px !important;
+  }
+
+  .btn-primary,
+  .btn-outline,
+  .compact-btn {
+    width: 100%;
+    min-height: 40px;
+    padding-left: 0.875rem;
+    padding-right: 0.875rem;
+  }
+
+  .stat-card,
+  .premium-card,
+  .glass-card,
+  .glass-panel {
+    padding: 1rem;
+  }
+
+  .MuiTable-root {
+    min-width: 560px;
+  }
+
+  .MuiTableCell-root {
+    padding: 8px 10px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-heading {
+    margin-bottom: 1rem;
+    gap: 8px;
+  }
+
+  .section-heading::before {
+    height: 16px;
+  }
+
+  .MuiTable-root {
+    min-width: 520px;
+  }
+
+  .custom-scrollbar {
+    -webkit-overflow-scrolling: touch;
+  }
 }

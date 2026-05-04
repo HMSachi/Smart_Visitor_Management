@@ -976,10 +976,10 @@ const VisitRequests = () => {
               </div>
             ) : (
               <div
-                className="custom-scrollbar relative z-10 overflow-auto"
+                className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
                 style={{ height: "38rem" }}
               >
-                <table className="w-full min-w-[900px] border-collapse">
+                <table className="w-full min-w-[720px] md:min-w-[900px] border-collapse">
                   <thead className="sticky top-0 z-20">
                     <tr
                       className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
