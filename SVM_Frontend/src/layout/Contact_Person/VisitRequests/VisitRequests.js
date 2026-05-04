@@ -18,7 +18,7 @@ import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import ContactPersonService from "../../../services/ContactPersonService";
 import Header from "../../../components/Contact_Person/Layout/Header";
-import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
+
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
   Search,
@@ -864,15 +864,8 @@ const VisitRequests = () => {
   };
 
   return (
-    <div
-      className={`flex overflow-hidden h-screen w-full transition-colors duration-500 ${isLight ? "bg-[#F8F9FA] text-[#1A1A1A]" : "bg-[var(--color-bg-default)] text-white"}`}
-    >
-      <Sidebar />
-
-      <div
-        className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
-      >
-        <Header title="" />
+    <div className="flex flex-col min-w-0 h-full">
+      <Header title="" />
 
         <div className="p-3 md:p-5 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
           <header
@@ -1126,7 +1119,6 @@ const VisitRequests = () => {
               </div>
             )}
           </div>
-        </div>
 
         {/* Modal for Add/Update Visit Request */}
         {isModalOpen && (
@@ -1166,7 +1158,7 @@ const VisitRequests = () => {
 
               <form
                 onSubmit={handleSubmit}
-                className="p-5 space-y-5 relative z-10"
+                className="p-5 space-y-5 relative z-10 max-h-[70vh] overflow-y-auto custom-scrollbar"
               >
                 <div className="space-y-4">
                   {modalMode === "add" && (
