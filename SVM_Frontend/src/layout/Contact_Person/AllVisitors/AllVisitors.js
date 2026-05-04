@@ -161,7 +161,9 @@ const ContactAllVisitors = () => {
     // Real-time filtering and length enforcement
     if (name === "VV_Name") {
       value = value.replace(/[^A-Za-z\s]/g, "");
-    } else if (name === "VV_Phone" || name === "VV_NIC_Passport_NO") {
+    } else if (name === "VV_NIC_Passport_NO") {
+      value = value.replace(/[^0-9]/g, "").slice(0, 12);
+    } else if (name === "VV_Phone") {
       value = value.replace(/[^0-9]/g, "").slice(0, 10);
     } else if (name === "VA_Password") {
       value = value.slice(0, 5);
@@ -558,7 +560,7 @@ const ContactAllVisitors = () => {
                       name="VV_NIC_Passport_NO"
                       value={formData.VV_NIC_Passport_NO}
                       onChange={handleInputChange}
-                      maxLength={10}
+                      maxLength={12}
                       className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_NIC_Passport_NO
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"

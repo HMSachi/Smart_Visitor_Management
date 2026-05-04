@@ -329,7 +329,7 @@ const CreateVisitRequestDetails = () => {
                           label="NIC" 
                           value={p.nic} 
                           onChange={(e) => {
-                            const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+                            const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 12);
                             dispatch(updatePerson({ index, field: "nic", value: val }));
                           }} 
                           placeholder="ID Number" 

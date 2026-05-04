@@ -17,6 +17,7 @@ import VisitRequestService from "../../../services/VisitRequestService";
 import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import { validateNIC, validatePhone } from "../../../utils/validation";
 import {
   ClipboardList,
   Calendar,
@@ -542,6 +543,18 @@ const MyRequests = () => {
     if (!member?._isNew || newMemberSavingIdx !== null) return;
     if (!member.VVG_Visitor_Name || !member.VVG_NIC_Passport_Number) {
       setEditError("Name and ID/Passport are required for new visitors.");
+      return;
+    }
+    const nicErr = validateNIC(member.VVG_NIC_Passport_Number);
+    if (nicErr) {
+      setEditError(nicErr);
+      return;
+    }
+    
+    // Validate phone number (stored in Designation)
+    const phoneErr = validatePhone(member.VVG_Designation);
+    if (phoneErr) {
+      setEditError(phoneErr);
       return;
     }
     setNewMemberSavingIdx(idx);
@@ -1601,18 +1614,20 @@ const MyRequests = () => {
                               <input
                                 type="text"
                                 value={member.VVG_Designation}
-                                onChange={(e) =>
+                                maxLength={10}
+                                onChange={(e) => {
+                                  const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
                                   setEditGroupMembers((arr) =>
                                     arr.map((m, i) =>
                                       i === idx
                                         ? {
                                             ...m,
-                                            VVG_Designation: e.target.value,
+                                            VVG_Designation: val,
                                           }
                                         : m,
                                     ),
-                                  )
-                                }
+                                  );
+                                }}
                                 className="mas-input"
                               />
                             </div>
@@ -1636,20 +1651,22 @@ const MyRequests = () => {
                               <input
                                 type="text"
                                 value={member.VVG_NIC_Passport_Number}
-                                onChange={(e) =>
-                                  member._isNew &&
-                                  setEditGroupMembers((arr) =>
-                                    arr.map((m, i) =>
-                                      i === idx
-                                        ? {
-                                            ...m,
-                                            VVG_NIC_Passport_Number:
-                                              e.target.value,
-                                          }
-                                        : m,
-                                    ),
-                                  )
-                                }
+                                maxLength={12}
+                                onChange={(e) => {
+                                  if (member._isNew) {
+                                    const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 12);
+                                    setEditGroupMembers((arr) =>
+                                      arr.map((m, i) =>
+                                        i === idx
+                                          ? {
+                                              ...m,
+                                              VVG_NIC_Passport_Number: val,
+                                            }
+                                          : m,
+                                      ),
+                                    );
+                                  }
+                                }}
                                 readOnly={!member._isNew}
                                 style={
                                   !member._isNew

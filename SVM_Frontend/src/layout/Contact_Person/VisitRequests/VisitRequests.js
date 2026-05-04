@@ -2105,20 +2105,22 @@ const VisitRequests = () => {
                               <input
                                 type="text"
                                 value={m.VVG_NIC_Passport_Number}
-                                onChange={(e) =>
-                                  m._isNew &&
-                                  setEditGroupMembers((a) =>
-                                    a.map((x, i) =>
-                                      i === idx
-                                        ? {
-                                            ...x,
-                                            VVG_NIC_Passport_Number:
-                                              e.target.value,
-                                          }
-                                        : x,
-                                    ),
-                                  )
-                                }
+                                maxLength={12}
+                                onChange={(e) => {
+                                  if (m._isNew) {
+                                    const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 12);
+                                    setEditGroupMembers((a) =>
+                                      a.map((x, i) =>
+                                        i === idx
+                                          ? {
+                                              ...x,
+                                              VVG_NIC_Passport_Number: val,
+                                            }
+                                          : x,
+                                      ),
+                                    );
+                                  }
+                                }}
                                 readOnly={!m._isNew}
                                 style={
                                   !m._isNew

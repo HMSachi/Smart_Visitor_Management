@@ -32,6 +32,7 @@ import {
     setError,
     setSubmitting
 } from '../../../reducers/visitorSlice';
+import { validateNIC, validatePhone } from '../../../utils/validation';
 import { AddVehicle } from '../../../actions/VehicleAction';
 import { AddVisitGroup } from '../../../actions/VisitGroupAction';
 import { AddItem } from '../../../actions/ItemCarriedAction';
@@ -118,6 +119,19 @@ const Step2Main = () => {
             alert('Please enter a name before saving.');
             return;
         }
+
+        const nicErr = validateNIC(person.nic);
+        if (nicErr) {
+            alert(nicErr);
+            return;
+        }
+
+        const phoneErr = validatePhone(person.contact);
+        if (phoneErr) {
+            alert(phoneErr);
+            return;
+        }
+        
         if (!requestId) {
             alert('Visit request not found. Please go back to Step 1.');
             return;
