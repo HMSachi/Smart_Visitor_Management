@@ -7,9 +7,9 @@ import {
   AddVisitor,
 } from "../../../actions/VisitorAction";
 import { AddAdministrator } from "../../../actions/AdministratorAction";
+import { GetAllContactPersons } from "../../../actions/ContactPersonAction";
 import Header from "../../../components/Contact_Person/Layout/Header";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
-import ContactPersonService from "../../../services/ContactPersonService";
 import {
   User,
   Mail,
@@ -25,8 +25,12 @@ import {
   AlertCircle,
   Car,
 } from "lucide-react";
-import { 
-  validateName, validateNIC, validatePhone, validateEmail, validatePassword 
+import {
+  validateName,
+  validateNIC,
+  validatePhone,
+  validateEmail,
+  validatePassword,
 } from "../../../utils/validation";
 
 const ContactAllVisitors = () => {
@@ -34,6 +38,7 @@ const ContactAllVisitors = () => {
   const { visitorsByCP, isLoading, error } = useSelector(
     (state) => state.visitorManagement,
   );
+  const { contactPersons } = useSelector((state) => state.contactPerson);
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
@@ -63,37 +68,42 @@ const ContactAllVisitors = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const loadContactPersonId = async () => {
+    const loadContactPersonId = () => {
       try {
-        const response = await ContactPersonService.GetAllContactPersons();
-
-        const contactPersons = response?.data?.ResultSet || [];
-        console.log("All Contact Persons:", contactPersons);
-        console.log("Logged user email:", userEmail);
-
-        const match = contactPersons.find(
-          (cp) =>
-            cp?.VCP_Email?.trim().toLowerCase() ===
-            userEmail?.trim().toLowerCase(),
-        );
-
-        if (match) {
-          console.log("Matched Contact Person:", match);
-          setCpId(match.VCP_Contact_person_id);
-        } else {
-          console.error("No contact person found for:", userEmail);
-          setCpId(null);
-        }
+        // Dispatch Redux action to fetch all contact persons (only once)
+        dispatch(GetAllContactPersons());
       } catch (err) {
-        console.error("Error loading contact person:", err);
-        setCpId(null);
+        console.error("Error loading contact persons:", err);
       }
     };
 
-    if (userEmail) {
+    if (userEmail && !cpId) {
       loadContactPersonId();
     }
-  }, [userEmail]);
+  }, [userEmail, dispatch]);
+
+  // Separate effect to handle matching contact person once data is loaded
+  useEffect(() => {
+    if (contactPersons && contactPersons.length > 0 && userEmail && !cpId) {
+      const allContactPersons = contactPersons || [];
+      console.log("All Contact Persons:", allContactPersons);
+      console.log("Logged user email:", userEmail);
+
+      const match = allContactPersons.find(
+        (cp) =>
+          cp?.VCP_Email?.trim().toLowerCase() ===
+          userEmail?.trim().toLowerCase(),
+      );
+
+      if (match) {
+        console.log("Matched Contact Person:", match);
+        setCpId(match.VCP_Contact_person_id);
+      } else {
+        console.error("No contact person found for:", userEmail);
+        setCpId(null);
+      }
+    }
+  }, [contactPersons, userEmail]);
 
   useEffect(() => {
     if (cpId) {
@@ -147,7 +157,7 @@ const ContactAllVisitors = () => {
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
-    
+
     // Real-time filtering and length enforcement
     if (name === "VV_Name") {
       value = value.replace(/[^A-Za-z\s]/g, "");
@@ -156,7 +166,7 @@ const ContactAllVisitors = () => {
     } else if (name === "VA_Password") {
       value = value.slice(0, 5);
     }
-    
+
     setFormData({ ...formData, [name]: value });
     // Clear error for this field when user starts typing
     if (errors[name]) {
@@ -434,7 +444,9 @@ const ContactAllVisitors = () => {
                             </td>
                             <td className="px-4 py-4 text-left">
                               <span
-                                title={visitor.VV_Company || "No company specified"}
+                                title={
+                                  visitor.VV_Company || "No company specified"
+                                }
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Company || "-"}
@@ -442,7 +454,10 @@ const ContactAllVisitors = () => {
                             </td>
                             <td className="px-4 py-4 text-left">
                               <span
-                                title={visitor.VV_Visiting_places || "No visiting area specified"}
+                                title={
+                                  visitor.VV_Visiting_places ||
+                                  "No visiting area specified"
+                                }
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Visiting_places || "-"}
