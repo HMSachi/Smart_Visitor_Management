@@ -225,7 +225,6 @@ const CreateVisitRequestDetails = () => {
 
   return (
     <div className="contact-theme-root flex bg-[#F8F9FA] overflow-hidden text-[#1A1A1A] h-screen w-full">
-      <Sidebar />
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-hidden">
         <Header title="Additional Details" />
         

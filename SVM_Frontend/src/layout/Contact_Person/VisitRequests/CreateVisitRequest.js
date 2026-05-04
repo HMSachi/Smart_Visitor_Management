@@ -133,7 +133,6 @@ const CreateVisitRequest = () => {
 
   return (
     <div className="contact-theme-root flex bg-[#F8F9FA] overflow-hidden text-[#1A1A1A] h-screen w-full">
-      <Sidebar />
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-hidden">
         <Header title="Visitor Registration" />
         
@@ -155,7 +154,7 @@ const CreateVisitRequest = () => {
 
             <form onSubmit={handleNext} className="space-y-4">
               <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
-                <SectionHeader title="Visitation Details" subtitle="Step 1 of 2" icon={FileText} />
+                <SectionHeader title="Visitor Details" subtitle="Step 1 of 2" icon={FileText} />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="space-y-1.5 md:col-span-2">
