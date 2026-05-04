@@ -1071,27 +1071,27 @@ const VisitRequests = () => {
                             </div>
                           </td>
                           <td className="px-4 py-4 text-center">
-                            <div className="flex items-center justify-center gap-2 opacity-45 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-center gap-2 opacity-100 md:opacity-45 md:group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => handleReview(req.VVR_Request_id)}
-                                className={`p-1.5 rounded-lg border border-transparent transition-all ${isLight ? "text-primary hover:bg-primary/10 hover:border-primary/20" : "text-blue-400 hover:bg-blue-400/10 hover:border-blue-400/20"}`}
+                                className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-transparent transition-all ${isLight ? "text-primary hover:bg-primary/10 hover:border-primary/20" : "text-blue-400 hover:bg-blue-400/10 hover:border-blue-400/20"}`}
                                 title="View Request Details"
                               >
-                                <Eye size={14} />
+                                <Eye size={16} className="shrink-0" />
                               </button>
                               <button
                                 onClick={() => handleOpenEdit(req)}
-                                className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-400/10 border border-transparent hover:border-blue-400/20 transition-all"
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-blue-400 hover:bg-blue-400/10 border border-transparent hover:border-blue-400/20 transition-all"
                                 title="Edit"
                               >
-                                <Edit size={12} />
+                                <Edit size={16} className="shrink-0" />
                               </button>
                               <button
                                 onClick={(e) => handleMenuOpen(e, req)}
-                                className={`p-1.5 rounded-lg border border-transparent transition-all ${isLight ? "text-gray-400 hover:bg-black/5 hover:border-black/10" : "text-gray-400 hover:bg-white/5 hover:border-white/10"}`}
+                                className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-transparent transition-all ${isLight ? "text-gray-500 hover:bg-black/5 hover:border-black/10" : "text-gray-300 hover:bg-white/5 hover:border-white/10"}`}
                                 title="Operational Menu"
                               >
-                                <MoreVertical size={14} />
+                                <MoreVertical size={16} className="shrink-0" />
                               </button>
                             </div>
                           </td>
