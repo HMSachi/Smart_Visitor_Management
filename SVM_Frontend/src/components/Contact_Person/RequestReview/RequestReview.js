@@ -281,15 +281,15 @@ const RequestReviewMain = () => {
             </div>
             <div>
               <p
-                className={`text-[10px] uppercase font-semibold tracking-[0.28em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}
+                className={`text-[8px] md:text-[9px] uppercase font-semibold tracking-[0.28em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}
               >
-                Request Details
+                REQUEST DETAILS
               </p>
               <h2
-                className={`text-lg font-semibold uppercase tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                className={`text-[11px] md:text-[12px] font-bold uppercase tracking-[0.25em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
               >
-                Request ID{" "}
-                <span className="text-primary font-mono ml-2">
+                REQUEST ID{" "}
+                <span className="text-primary font-mono ml-1">
                   #{requestData?.id || selectedId || "ALPHA-000"}
                 </span>
               </h2>

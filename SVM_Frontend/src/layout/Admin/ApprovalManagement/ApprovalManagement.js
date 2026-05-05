@@ -211,55 +211,31 @@ const ApprovalManagement = () => {
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
-      <Header />
+      <Header 
+        title={viewMode === "details" ? "Approval Management" : undefined}
+        subtitle={viewMode === "details" ? "Monitor and authorize visitor access protocols" : undefined}
+        showBack={viewMode === "details"}
+        onBack={handleBackToList}
+      />
 
-      <div className="flex-1 p-4 md:p-8 !pt-2 space-y-3 md:space-y-6 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
+      <div className="flex-1 p-2 md:p-4 space-y-2 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
         {/* Dynamic Operational Aura */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
         <div className="max-w-[1700px] mx-auto relative z-10">
-          <header className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-3 gap-4 relative z-10">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full md:w-auto">
-              {viewMode === "details" && (
-                <button
-                  onClick={handleBackToList}
-                  className={`flex items-center justify-center w-10 h-10 rounded-xl border transition-all shrink-0 ${
-                    isLight
-                      ? "bg-white border-gray-200 hover:border-primary text-[#1A1A1A]"
-                      : "bg-black/30 border-white/10 hover:border-primary text-white"
-                  }`}
-                  title="Back to requests"
-                >
-                  <ArrowLeft size={18} />
-                </button>
-              )}
-              <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-3 py-2 rounded-r-2xl backdrop-blur-sm w-full sm:w-auto shadow-sm">
-                <div className="flex flex-col md:flex-row items-start sm:items-center gap-2 md:gap-2 mb-1">
-                  <div className="hidden sm:block w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
-                  <span className="text-[var(--color-text-primary)] text-[12px] font-bold uppercase tracking-[0.3em]">
-                    Approval Management
-                  </span>
-                </div>
-                <p className="text-[var(--color-text-secondary)] text-[10px] uppercase font-bold tracking-[0.2em] opacity-80 leading-tight">
-                  Monitor and authorize visitor access protocols
-                </p>
+          {viewMode === "details" && selectedVisitor && (
+            <div className="flex flex-wrap items-center gap-2 w-full justify-end mb-2">
+              <div
+                className={`px-3 py-1.5 rounded-lg border text-[10px] font-semibold flex items-center justify-center gap-1.5 whitespace-nowrap flex-grow sm:flex-grow-0 ${
+                  isLight
+                    ? "bg-white border-gray-200 text-[#1A1A1A]"
+                    : "bg-black/35 border-white/10 text-white"
+                }`}
+              >
+                <Shield size={14} className="text-primary" />
+                STATUS: {selectedVisitor.status || selectedVisitor.raw?.VVR_Status || "PENDING"}
               </div>
-            </div>
-
-            {viewMode === "details" && selectedVisitor && (
-              <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-start md:justify-end mt-2 md:mt-0">
-                <div
-                  className={`px-4 py-2 rounded-xl border text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center justify-center gap-2 whitespace-nowrap flex-grow sm:flex-grow-0 ${
-                    isLight
-                      ? "bg-gray-50 border-gray-200 text-[#1A1A1A]"
-                      : "bg-white/5 border-white/10 text-white"
-                  }`}
-                >
-                  <Shield size={14} className="text-primary shrink-0" />
-                  <span className="truncate">Status: {selectedVisitor.status || "Pending"}</span>
-                </div>
-                
-                {(selectedVisitor.status === "Accepted by Visitor" ||
+              {(selectedVisitor.status === "Accepted by Visitor" ||
                   selectedVisitor.status === "Accepted by Contact Person" ||
                   selectedVisitor.status === "Sent to Admin") && (
                   <div className="flex flex-row items-center gap-2 w-full sm:w-auto">
@@ -281,7 +257,6 @@ const ApprovalManagement = () => {
                 )}
               </div>
             )}
-          </header>
 
           <div className="space-y-3 md:space-y-6">
             <AnimatePresence mode="wait">
