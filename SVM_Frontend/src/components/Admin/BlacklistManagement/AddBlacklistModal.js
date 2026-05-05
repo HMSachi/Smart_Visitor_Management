@@ -6,7 +6,6 @@ import {
   UserPlus,
   User,
   Mail,
-  Shield,
   AlertTriangle,
   Save,
   Briefcase,
@@ -302,40 +301,6 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                       placeholder="Specify reasons for blacklisting..."
                       className={`w-full rounded-xl px-3.5 py-2.5 text-[12px] focus:outline-none focus:border-primary/50 transition-all min-h-[74px] resize-none border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20"}`}
                     />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label
-                      className={`text-[9px] font-bold uppercase tracking-[0.18em] flex items-center gap-2 ${isLight ? "text-gray-500" : "text-gray-300/70"}`}
-                    >
-                      <Shield size={12} className="text-primary/60" />
-                      Risk Level
-                    </label>
-                    <select
-                      name="VB_Alert_Type"
-                      value={formData.VB_Alert_Type}
-                      onChange={handleChange}
-                      className={`w-full rounded-xl px-3.5 py-2.5 text-[12px] focus:outline-none focus:border-primary/50 transition-all appearance-none border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20"}`}
-                    >
-                      <option
-                        value="Level 01"
-                        className={isLight ? "bg-white" : "bg-[#141416]"}
-                      >
-                        Level 01 - Monitoring Required
-                      </option>
-                      <option
-                        value="Level 02"
-                        className={isLight ? "bg-white" : "bg-[#141416]"}
-                      >
-                        Level 02 - Strict Access Control
-                      </option>
-                      <option
-                        value="Level 03"
-                        className={isLight ? "bg-white" : "bg-[#141416]"}
-                      >
-                        Level 03 - Denied Entry
-                      </option>
-                    </select>
                   </div>
                 </div>
 
