@@ -103,7 +103,7 @@ const Header = ({ title }) => {
     <header
       className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6"
       style={{
-        height: "64px",
+        height: "72px",
         background: "var(--color-bg-paper)",
         borderBottom: "1px solid var(--color-border-soft)",
         backdropFilter: "blur(12px)",

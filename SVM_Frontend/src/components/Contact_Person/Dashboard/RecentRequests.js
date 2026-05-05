@@ -57,24 +57,24 @@ const RecentRequests = () => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-2xl overflow-hidden hover:border-primary/20 transition-all duration-300 h-full flex flex-col"
+      className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-xl overflow-hidden hover:border-primary/20 transition-all duration-300 h-full flex flex-col"
     >
-      <div className="p-4 sm:p-5 border-b border-[var(--color-border-soft)] flex items-center justify-between flex-shrink-0">
+      <div className="p-3 border-b border-[var(--color-border-soft)] flex items-center justify-between flex-shrink-0">
         <div>
-          <h3 className="text-[var(--color-text-primary)] font-bold tracking-tight text-sm sm:text-base">
+          <h3 className="text-[var(--color-text-primary)] text-xs font-black uppercase tracking-widest leading-none">
             Recent Requests
           </h3>
-          <p className="text-[var(--color-text-secondary)] text-[10px] uppercase tracking-widest mt-1 opacity-75">
+          <p className="text-[var(--color-text-dim)] text-[9px] font-bold uppercase tracking-widest mt-0.5 opacity-75">
             Latest authorization activities
           </p>
         </div>
         <button
           onClick={() => navigate("/contact_person/visit-requests")}
-          className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-primary hover:text-primary/80 uppercase tracking-widest transition-colors group"
+          className="flex items-center gap-1.5 text-[10px] font-bold text-primary hover:text-primary/80 uppercase tracking-widest transition-colors group"
         >
           View All{" "}
           <ArrowUpRight
-            size={14}
+            size={12}
             className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
           />
         </button>
@@ -86,11 +86,11 @@ const RecentRequests = () => {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[11px] uppercase tracking-[0.2em] font-bold border-b border-[var(--color-border-soft)] sticky top-0">
-                  <th className="px-6 py-4">Visitor</th>
-                  <th className="px-6 py-4 text-center">Visit Date</th>
-                  <th className="px-6 py-4 text-center">Status</th>
-                  <th className="px-6 py-4 text-right">Action</th>
+                <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[9px] uppercase tracking-[0.2em] font-bold border-b border-[var(--color-border-soft)] sticky top-0">
+                  <th className="px-3 py-2">Visitor</th>
+                  <th className="px-3 py-2 text-center">Date</th>
+                  <th className="px-3 py-2 text-center">Status</th>
+                  <th className="px-3 py-2 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border-soft)]">
@@ -106,33 +106,31 @@ const RecentRequests = () => {
                       className="group hover:bg-primary/5 transition-all cursor-pointer"
                       onClick={() => navigate("/contact_person/request-review", { state: { requestId: req?.id } })}
                     >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                            <User size={14} />
+                      <td className="px-3 py-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary">
+                            <User size={11} />
                           </div>
-                          <p className="text-[var(--color-text-primary)] text-[13px] font-bold uppercase tracking-wider">
+                          <p className="text-[var(--color-text-primary)] text-[11px] font-bold uppercase tracking-wider">
                             {req?.name || "Unknown"}
                           </p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="flex flex-col items-center justify-center gap-1">
-                          <span className="text-[var(--color-text-primary)] text-[13px] font-bold flex items-center gap-2">
-                            <Calendar size={13} className="opacity-75 text-primary" />
-                            {req?.date || "-"}
-                          </span>
-                        </div>
+                      <td className="px-3 py-2 text-center">
+                        <span className="text-[var(--color-text-primary)] text-[11px] font-bold flex items-center justify-center gap-1">
+                          <Calendar size={10} className="opacity-75 text-primary" />
+                          {req?.date || "-"}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-3 py-2 text-center">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-sm inline-block ${getStatusColor(req?.status)}`}
+                          className={`px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider border shadow-sm inline-block ${getStatusColor(req?.status)}`}
                         >
                           {req?.status || "Unknown"}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <ArrowUpRight size={16} className="text-[var(--color-text-dim)] group-hover:text-primary transition-colors ml-auto" />
+                      <td className="px-3 py-2 text-right">
+                        <ArrowUpRight size={12} className="text-[var(--color-text-dim)] group-hover:text-primary transition-colors ml-auto" />
                       </td>
                     </motion.tr>
                   );
@@ -153,28 +151,28 @@ const RecentRequests = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
                   onClick={() => navigate("/contact_person/request-review", { state: { requestId: req?.id } })}
-                  className="p-4 active:bg-primary/5 flex items-center justify-between group"
+                  className="p-3 active:bg-primary/5 flex items-center justify-between group"
                 >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                      <User size={18} />
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                      <User size={14} />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-[var(--color-text-primary)] text-[13px] font-black uppercase tracking-tight truncate">
+                      <h4 className="text-[var(--color-text-primary)] text-[12px] font-black uppercase tracking-tight truncate">
                         {req?.name || "Unknown"}
                       </h4>
-                      <div className="flex items-center gap-3 mt-1.5">
-                        <span className="text-[var(--color-text-dim)] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                          <Calendar size={11} className="text-primary/70" />
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[var(--color-text-dim)] text-[9px] font-bold uppercase tracking-widest flex items-center gap-1">
+                          <Calendar size={10} className="text-primary/70" />
                           {req?.date}
                         </span>
-                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border ${getStatusColor(req?.status)}`}>
+                        <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider border ${getStatusColor(req?.status)}`}>
                           {req?.status}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <ArrowUpRight size={16} className="text-[var(--color-text-dim)] group-hover:text-primary shrink-0" />
+                  <ArrowUpRight size={14} className="text-[var(--color-text-dim)] group-hover:text-primary shrink-0" />
                 </motion.div>
               );
             })}

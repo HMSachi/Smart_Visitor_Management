@@ -73,10 +73,10 @@ const ActivityTimeline = () => {
             <Activity size={16} />
           </div>
           <div>
-            <h3 className="text-[var(--color-text-primary)] text-sm font-black uppercase tracking-widest leading-none">
+            <h3 className="text-[var(--color-text-primary)] text-xs font-black uppercase tracking-widest leading-none">
               Live Activity
             </h3>
-            <p className="text-[var(--color-text-dim)] text-[10px] font-bold uppercase tracking-widest mt-1 opacity-75">
+            <p className="text-[var(--color-text-dim)] text-[9px] font-bold uppercase tracking-widest mt-0.5 opacity-75">
               Real-time system feed
             </p>
           </div>
@@ -97,40 +97,33 @@ const ActivityTimeline = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.05 }}
-            className="flex items-center justify-between p-4 bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-xl hover:border-primary/30 hover:bg-primary/[0.02] transition-all group cursor-pointer shadow-sm"
+            className="flex items-center justify-between p-2.5 sm:p-3 bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-xl hover:border-primary/30 hover:bg-primary/[0.02] transition-all group cursor-pointer shadow-sm"
           >
             <div className="flex items-center gap-4 flex-1 min-w-0">
               <div className="relative flex-shrink-0">
                 <div
-                  className={`w-2.5 h-2.5 rounded-full ${
+                  className={`w-2 h-2 rounded-full ${
                     act.status === "priority" || act.status === "urgent"
-                      ? "bg-primary shadow-[0_0_10px_var(--color-primary)]"
-                      : "bg-green-500 shadow-[0_0_10px_#22c55e]"
-                  }`}
-                ></div>
-                <div
-                  className={`absolute -inset-1.5 rounded-full animate-ping opacity-30 ${
-                    act.status === "priority" || act.status === "urgent"
-                      ? "bg-primary"
-                      : "bg-green-500"
+                      ? "bg-primary shadow-[0_0_8px_var(--color-primary)]"
+                      : "bg-green-500 shadow-[0_0_8px_#22c55e]"
                   }`}
                 ></div>
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-[var(--color-text-primary)] text-[13px] font-black uppercase tracking-tight truncate mb-1">
+                <h4 className="text-[var(--color-text-primary)] text-[11.5px] font-bold tracking-tight truncate mb-0.5">
                   {act.visitor}
                 </h4>
-                <p className="text-[var(--color-text-dim)] text-[11px] font-bold uppercase tracking-widest opacity-80 leading-none">
+                <p className="text-[var(--color-text-dim)] text-[9.5px] font-medium tracking-wide opacity-80 leading-none">
                   {act.action}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4 flex-shrink-0 ml-4">
-              <span className="text-[var(--color-text-dim)] text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+            <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+              <span className="text-[var(--color-text-dim)] text-[9px] font-bold tracking-wider whitespace-nowrap">
                 {act.time}
               </span>
-              <div className="w-8 h-8 rounded-lg bg-[var(--color-surface-1)] flex items-center justify-center text-[var(--color-text-dim)] group-hover:text-primary group-hover:bg-primary/10 transition-all border border-transparent group-hover:border-primary/20">
-                <ArrowUpRight size={14} />
+              <div className="w-7 h-7 rounded-lg bg-[var(--color-surface-1)] flex items-center justify-center text-[var(--color-text-dim)] group-hover:text-primary group-hover:bg-primary/10 transition-all border border-transparent group-hover:border-primary/20">
+                <ArrowUpRight size={13} />
               </div>
             </div>
           </motion.div>
