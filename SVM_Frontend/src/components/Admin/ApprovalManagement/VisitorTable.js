@@ -48,7 +48,8 @@ const VisitorTable = ({
   gatePasses = [],
 }) => {
   const desktopTableViewportStyle = {
-    maxHeight: "min(31rem, calc(100vh - 24rem))",
+    height: "calc(100vh - 16rem)",
+    minHeight: "400px",
   };
 
   const [loading, setLoading] = useState(true);
@@ -120,11 +121,11 @@ const VisitorTable = ({
   }
 
   const statusOptions = [
-    { id: "All", label: "All Forms" },
-    { id: "Sent to Visitor", label: "Sent to Visitor" },
-    { id: "Accepted by Contact Person", label: "Contact Person Accepted" },
-    { id: "Accepted by Visitor", label: "Accepted by Visitor" },
-    { id: "Admin Approved", label: "Admin Approved" },
+    { id: "All", label: "All forms" },
+    { id: "Sent to Visitor", label: "Sent to visitor" },
+    { id: "Accepted by Contact Person", label: "Contact person accepted" },
+    { id: "Accepted by Visitor", label: "Accepted by visitor" },
+    { id: "Admin Approved", label: "Admin approved" },
     { id: "Rejected", label: "Rejected" },
   ];
 
@@ -133,13 +134,13 @@ const VisitorTable = ({
       <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
-        <div className="p-2 sm:p-3 md:p-4 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
-          <div className="grid w-full grid-cols-2 gap-0.5 bg-[var(--color-surface-2)] p-0.5 rounded-md border border-white/5 relative max-w-full sm:grid-cols-3 md:flex md:flex-wrap md:gap-0.5 md:overflow-x-auto md:no-scrollbar">
+        <div className="px-3 sm:px-4 md:px-5 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
+          <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto relative max-w-full overflow-x-auto no-scrollbar">
             {statusOptions.map((btn) => (
               <button
                 key={btn.id}
                 onClick={() => setStatusFilter(btn.id)}
-                className={`relative w-full md:w-auto md:flex-none px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-md text-[clamp(0.28rem,0.75vw,0.45rem)] font-bold uppercase tracking-[0.03em] sm:tracking-[0.06em] transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[11px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
               >
                 {statusFilter === btn.id && (
                   <motion.div
@@ -162,18 +163,6 @@ const VisitorTable = ({
 
       <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-
-        <div className="px-3 sm:px-4 md:px-5 py-2 sm:py-3 md:py-4 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col md:flex-row md:items-end md:justify-between gap-2 sm:gap-3">
-          <div>
-            <p className="text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.25em] md:tracking-[0.35em] text-[var(--color-text-secondary)]">
-              Approval Queue
-            </p>
-            <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] md:text-[12px] text-[var(--color-text-dim)]">
-              Five-row preview with vertical scrolling for the remaining
-              records.
-            </p>
-          </div>
-        </div>
 
         <div className="bg-transparent">
           <div

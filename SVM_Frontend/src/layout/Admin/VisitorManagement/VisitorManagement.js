@@ -83,7 +83,7 @@ const VisitorManagement = () => {
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
-      <Header title="Visitor Registry" subtitle="Monitor and manage database of registered visitors" />
+      <Header title="Visitor Registry" />
 
       <div className="flex-1 p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>

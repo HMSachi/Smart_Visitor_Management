@@ -213,7 +213,6 @@ const ApprovalManagement = () => {
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] h-screen">
       <Header 
         title={viewMode === "details" ? "Approval Management" : undefined}
-        subtitle={viewMode === "details" ? "Monitor and authorize visitor access protocols" : undefined}
         showBack={viewMode === "details"}
         onBack={handleBackToList}
       />

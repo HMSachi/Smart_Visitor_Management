@@ -235,7 +235,7 @@ const UserManagement = () => {
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
-      <Header title="User Administration" subtitle="Manage organizational roles and personnel database" />
+      <Header title="User Administration" />
 
       <div className="flex-1 p-8 overflow-y-auto w-full">
         <div className="max-w-[1600px] mx-auto">

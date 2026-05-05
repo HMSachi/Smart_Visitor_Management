@@ -5,7 +5,7 @@ import BlacklistTable from "../../../components/Admin/BlacklistManagement/Blackl
 const BlacklistManagement = () => {
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
-      <Header title="Restricted Visitor List" subtitle="Manage blocked persons and access restrictions" />
+      <Header title="Restricted Visitor List" />
 
       <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto w-full animate-fade-in">
         <div className="max-w-[1600px] mx-auto">
