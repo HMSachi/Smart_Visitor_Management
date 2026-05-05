@@ -206,7 +206,7 @@ const VisitRequests = () => {
           : "",
         VVR_Places_to_Visit: selectedReq.VVR_Places_to_Visit || "",
         VVR_Purpose: selectedReq.VVR_Purpose || "",
-        VVR_Status: "SENT",
+        VVR_Status: "SENT_TO_ADMIN",
         VVR_Contact_person_id: cpId,
       };
       await dispatch(UpdateVisitRequest(payload));
@@ -520,12 +520,12 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-                ...x,
-                _original: {
-                  VV_Vehicle_Number: x.VV_Vehicle_Number,
-                  VV_Vehicle_Type: x.VV_Vehicle_Type,
-                },
-              }
+              ...x,
+              _original: {
+                VV_Vehicle_Number: x.VV_Vehicle_Number,
+                VV_Vehicle_Type: x.VV_Vehicle_Type,
+              },
+            }
             : x,
         ),
       );
@@ -556,14 +556,14 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-                ...x,
-                _isNew: false,
-                VV_Vehicle_id: "saved",
-                _original: {
-                  VV_Vehicle_Number: x.VV_Vehicle_Number,
-                  VV_Vehicle_Type: x.VV_Vehicle_Type,
-                },
-              }
+              ...x,
+              _isNew: false,
+              VV_Vehicle_id: "saved",
+              _original: {
+                VV_Vehicle_Number: x.VV_Vehicle_Number,
+                VV_Vehicle_Type: x.VV_Vehicle_Type,
+              },
+            }
             : x,
         ),
       );
@@ -592,12 +592,12 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-                ...x,
-                _original: {
-                  VVG_Visitor_Name: x.VVG_Visitor_Name,
-                  VVG_Designation: x.VVG_Designation,
-                },
-              }
+              ...x,
+              _original: {
+                VVG_Visitor_Name: x.VVG_Visitor_Name,
+                VVG_Designation: x.VVG_Designation,
+              },
+            }
             : x,
         ),
       );
@@ -630,14 +630,14 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-                ...x,
-                _isNew: false,
-                VVG_id: "saved",
-                _original: {
-                  VVG_Visitor_Name: x.VVG_Visitor_Name,
-                  VVG_Designation: x.VVG_Designation,
-                },
-              }
+              ...x,
+              _isNew: false,
+              VVG_id: "saved",
+              _original: {
+                VVG_Visitor_Name: x.VVG_Visitor_Name,
+                VVG_Designation: x.VVG_Designation,
+              },
+            }
             : x,
         ),
       );
@@ -665,13 +665,13 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-                ...x,
-                _original: {
-                  VIC_Item_Name: x.VIC_Item_Name,
-                  VIC_Quantity: x.VIC_Quantity,
-                  VIC_Designation: x.VIC_Designation,
-                },
-              }
+              ...x,
+              _original: {
+                VIC_Item_Name: x.VIC_Item_Name,
+                VIC_Quantity: x.VIC_Quantity,
+                VIC_Designation: x.VIC_Designation,
+              },
+            }
             : x,
         ),
       );
@@ -703,15 +703,15 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-                ...x,
-                _isNew: false,
-                VIC_Item_id: "saved",
-                _original: {
-                  VIC_Item_Name: x.VIC_Item_Name,
-                  VIC_Quantity: x.VIC_Quantity,
-                  VIC_Designation: x.VIC_Designation,
-                },
-              }
+              ...x,
+              _isNew: false,
+              VIC_Item_id: "saved",
+              _original: {
+                VIC_Item_Name: x.VIC_Item_Name,
+                VIC_Quantity: x.VIC_Quantity,
+                VIC_Designation: x.VIC_Designation,
+              },
+            }
             : x,
         ),
       );
@@ -867,258 +867,257 @@ const VisitRequests = () => {
     <div className="flex flex-col min-w-0 h-full">
       <Header title="" />
 
-        <div className="p-3 md:p-5 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
-          <header
-            className={`mb-6 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-4 gap-3 relative ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}
-          >
-            <div>
-              <h2
-                className={`text-[15px] font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-              >
-                Active Visit Requests
-              </h2>
-              <p
-                className={`text-[10px] font-bold uppercase tracking-[0.18em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/50"}`}
-              >
-                Manage visitor applications
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
-              <div
-                className={`flex items-center border transition-all rounded-xl px-3 py-2 min-w-[220px] w-full sm:w-[240px] md:w-[250px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
-              >
-                <Search
-                  size={12}
-                  className={`transition-colors mr-2.5 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
-                />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="SEARCH VISITOR..."
-                  className={`bg-transparent text-[10px] sm:text-[11px] focus:outline-none w-full uppercase tracking-widest ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
-                />
-              </div>
-
-              <button
-                onClick={() => navigate("/contact_person/create-visit-request")}
-                className="flex flex-col md:flex-row items-center gap-2.5 md:gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.18em] transition-all shadow-[0_8px_20px_rgba(200,16,46,0.3)] active:scale-95 group"
-              >
-                <Plus
-                  size={15}
-                  className="group-hover:rotate-90 transition-transform"
-                />{" "}
-                Create Visit Request
-              </button>
-            </div>
-          </header>
-
-          {/* Status Filter Tabs - Modern Tab Bar Style */}
-          <div className="mb-6 overflow-x-auto no-scrollbar pb-2">
-            <div
-              className={`inline-flex p-1 rounded-2xl border transition-all ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}
+      <div className="p-3 md:p-5 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
+        <header
+          className={`mb-6 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-4 gap-3 relative ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}
+        >
+          <div>
+            <h2
+              className={`text-[15px] font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
             >
-              {statusOptions.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => setStatusFilter(option.id)}
-                  className={`relative px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300 whitespace-nowrap ${
-                    statusFilter === option.id
-                      ? "text-white"
-                      : isLight
-                        ? "text-gray-500 hover:text-primary"
-                        : "text-white/40 hover:text-white"
-                  }`}
-                >
-                  {statusFilter === option.id && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute inset-0 bg-primary rounded-xl shadow-[0_5px_15px_rgba(200,16,46,0.3)]"
-                      transition={{
-                        type: "spring",
-                        bounce: 0.2,
-                        duration: 0.6,
-                      }}
-                    />
-                  )}
-                  <span className="relative z-10">{option.label}</span>
-                </button>
-              ))}
-            </div>
+              Active Visit Requests
+            </h2>
+            <p
+              className={`text-[10px] font-bold uppercase tracking-[0.18em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/50"}`}
+            >
+              Manage visitor applications
+            </p>
           </div>
 
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+            <div
+              className={`flex items-center border transition-all rounded-xl px-3 py-2 min-w-[220px] w-full sm:w-[240px] md:w-[250px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+            >
+              <Search
+                size={12}
+                className={`transition-colors mr-2.5 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
+              />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="SEARCH VISITOR..."
+                className={`bg-transparent text-[10px] sm:text-[11px] focus:outline-none w-full uppercase tracking-widest ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
+              />
+            </div>
+
+            <button
+              onClick={() => navigate("/contact_person/create-visit-request")}
+              className="flex flex-col md:flex-row items-center gap-2.5 md:gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.18em] transition-all shadow-[0_8px_20px_rgba(200,16,46,0.3)] active:scale-95 group"
+            >
+              <Plus
+                size={15}
+                className="group-hover:rotate-90 transition-transform"
+              />{" "}
+              Create Visit Request
+            </button>
+          </div>
+        </header>
+
+        {/* Status Filter Tabs - Modern Capsule Style */}
+        <div className="mb-6 overflow-x-auto no-scrollbar pb-2">
           <div
-            className={`border rounded-[20px] overflow-hidden relative ${isLight ? "bg-white border-gray-200 shadow-lg shadow-gray-200/40" : "bg-[#0F0F10] border-white/5"}`}
+            className={`inline-flex p-1 rounded-full border transition-all ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}
           >
-            {isLoading ? (
-              <div className="p-24 flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 border-2 border-white/5 border-t-primary rounded-full animate-spin mb-8 shadow-[0_0_15px_var(--color-primary)]"></div>
-                <p className="text-gray-400 text-[11px] uppercase tracking-[0.4em] font-bold animate-pulse">
-                  Hang tight, we’re loading your visit requests.
-                </p>
-              </div>
-            ) : error ? (
-              <div className="p-24 text-center">
-                <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-primary/20 text-primary shadow-2xl">
-                  <AlertCircle size={32} />
-                </div>
-                <p className="text-primary text-[13px] font-bold uppercase tracking-[0.3em]">
-                  {error}
-                </p>
-              </div>
-            ) : (
-              <div
-                className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
-                style={{ height: "38rem" }}
+            {statusOptions.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => setStatusFilter(option.id)}
+                className={`relative px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
+                    ? "text-white"
+                    : isLight
+                      ? "text-gray-500 hover:text-primary"
+                      : "text-white/40 hover:text-white"
+                  }`}
               >
-                <table className="w-full min-w-[720px] md:min-w-[900px] border-collapse">
-                  <thead className="sticky top-0 z-20">
-                    <tr
-                      className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
+                {statusFilter === option.id && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-primary rounded-full shadow-[0_5px_15px_rgba(200,16,46,0.3)]"
+                    transition={{
+                      type: "spring",
+                      bounce: 0.15,
+                      duration: 0.5,
+                    }}
+                  />
+                )}
+                <span className="relative z-10">{option.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className={`border rounded-[20px] overflow-hidden relative ${isLight ? "bg-white border-gray-200 shadow-lg shadow-gray-200/40" : "bg-[#0F0F10] border-white/5"}`}
+        >
+          {isLoading ? (
+            <div className="p-8 space-y-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className={`h-16 rounded-2xl animate-pulse ${isLight ? "bg-gray-50" : "bg-white/[0.02]"}`} />
+              ))}
+            </div>
+          ) : error ? (
+            <div className="p-24 text-center">
+              <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-primary/20 text-primary shadow-2xl">
+                <AlertCircle size={32} />
+              </div>
+              <p className="text-primary text-[13px] font-bold uppercase tracking-[0.3em]">
+                {error}
+              </p>
+            </div>
+          ) : (
+            <div
+              className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
+              style={{ height: "38rem" }}
+            >
+              <table className="w-full min-w-[720px] md:min-w-[900px] border-collapse">
+                <thead className="sticky top-0 z-20">
+                  <tr
+                    className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
+                  >
+                    <th
+                      className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-primary/60" : "text-primary"}`}
                     >
-                      <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-primary/60" : "text-primary"}`}
+                      Request ID
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                    >
+                      Visitor
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                    >
+                      Visit Date
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                    >
+                      Purpose
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                    >
+                      Visit Areas
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                    >
+                      Status
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {filteredRequests && filteredRequests.length > 0 ? (
+                    filteredRequests.map((req) => (
+                      <tr
+                        key={req.VVR_Request_id}
+                        className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                       >
-                        Request ID
-                      </th>
-                      <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                      >
-                        Visitor
-                      </th>
-                      <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                      >
-                        Visit Date
-                      </th>
-                      <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                      >
-                        Purpose
-                      </th>
-                      <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                      >
-                        Visit Areas
-                      </th>
-                      <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                      >
-                        Status
-                      </th>
-                      <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                      >
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {filteredRequests && filteredRequests.length > 0 ? (
-                      filteredRequests.map((req) => (
-                        <tr
-                          key={req.VVR_Request_id}
-                          className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
-                        >
-                          <td className="px-4 py-4 text-center text-primary text-[11px] tracking-[0.14em] font-medium">
-                            #{req.VVR_Request_id}
-                          </td>
-                          <td className="px-4 py-4 text-left">
-                            <span
-                              className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                            >
-                              {getVisitorDisplayName(req)}
+                        <td className="px-4 py-4 text-center text-primary text-[11px] tracking-[0.14em] font-medium">
+                          #{req.VVR_Request_id}
+                        </td>
+                        <td className="px-4 py-4 text-left">
+                          <span
+                            className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                          >
+                            {getVisitorDisplayName(req)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <div
+                            className={`flex flex-col items-center justify-center gap-1.5 text-[12px] ${isLight ? "text-gray-500" : "text-white/70"}`}
+                          >
+                            <span className="font-medium tracking-wide">
+                              {req.VVR_Visit_Date
+                                ? req.VVR_Visit_Date.split("T")[0].split(
+                                  " ",
+                                )[0]
+                                : "N/A"}
                             </span>
-                          </td>
-                          <td className="px-4 py-4">
-                            <div
-                              className={`flex flex-col items-center justify-center gap-1.5 text-[12px] ${isLight ? "text-gray-500" : "text-white/70"}`}
-                            >
-                              <span className="font-medium tracking-wide">
-                                {req.VVR_Visit_Date
-                                  ? req.VVR_Visit_Date.split("T")[0].split(
-                                      " ",
-                                    )[0]
-                                  : "N/A"}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 text-left">
-                            <div className="max-w-[170px]">
-                              <p
-                                title={
-                                  req.VVR_Purpose || "No purpose specified"
-                                }
-                                className={`font-medium uppercase tracking-[0.14em] text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
-                              >
-                                {req.VVR_Purpose || "-"}
-                              </p>
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 align-top text-left">
-                            <div
-                              className={`flex flex-col gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
-                            >
-                              <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
-                                {renderVisitAreas(req)}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 text-center">
-                            <div className="flex items-center justify-center">
-                              <StatusBadge status={req.VVR_Status} />
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 text-center">
-                            <div className="flex items-center justify-center gap-2 opacity-100 md:opacity-45 md:group-hover:opacity-100 transition-opacity">
-                              <button
-                                onClick={() => handleReview(req.VVR_Request_id)}
-                                className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-transparent transition-all ${isLight ? "text-primary hover:bg-primary/10 hover:border-primary/20" : "text-blue-400 hover:bg-blue-400/10 hover:border-blue-400/20"}`}
-                                title="View Request Details"
-                              >
-                                <Eye size={16} className="shrink-0" />
-                              </button>
-                              <button
-                                onClick={() => handleOpenEdit(req)}
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-blue-400 hover:bg-blue-400/10 border border-transparent hover:border-blue-400/20 transition-all"
-                                title="Edit"
-                              >
-                                <Edit size={16} className="shrink-0" />
-                              </button>
-                              <button
-                                onClick={(e) => handleMenuOpen(e, req)}
-                                className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-transparent transition-all ${isLight ? "text-gray-500 hover:bg-black/5 hover:border-black/10" : "text-gray-300 hover:bg-white/5 hover:border-white/10"}`}
-                                title="Operational Menu"
-                              >
-                                <MoreVertical size={16} className="shrink-0" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={7} className="py-24 text-center">
-                          <div className="flex flex-col items-center justify-center opacity-20">
-                            <ClipboardList
-                              size={48}
-                              className={`mb-4 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                            />
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-left">
+                          <div className="max-w-[170px]">
                             <p
-                              className={`uppercase tracking-[0.4em] text-[10px] font-bold ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                              title={
+                                req.VVR_Purpose || "No purpose specified"
+                              }
+                              className={`font-medium uppercase tracking-[0.14em] text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
                             >
-                              No Active Visit Requests Detected
+                              {req.VVR_Purpose || "-"}
                             </p>
                           </div>
                         </td>
+                        <td className="px-4 py-4 align-top text-left">
+                          <div
+                            className={`flex flex-col gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
+                          >
+                            <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
+                              {renderVisitAreas(req)}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-center">
+                          <div className="flex items-center justify-center">
+                            <StatusBadge status={req.VVR_Status} />
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleReview(req.VVR_Request_id)}
+                              className={`inline-flex h-8.5 px-3 items-center justify-center rounded-xl border border-transparent transition-all gap-2 group/btn ${isLight ? "bg-primary/5 text-primary hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/25" : "bg-blue-400/5 text-blue-400 hover:bg-blue-400 hover:text-white hover:shadow-lg hover:shadow-blue-400/25"}`}
+                              title="View Request Details"
+                            >
+                              <Eye size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
+                              <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:inline">View</span>
+                            </button>
+                            <button
+                              onClick={() => handleOpenEdit(req)}
+                              className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 hover:bg-gray-200" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}
+                              title="Edit"
+                            >
+                              <Edit size={14} className="shrink-0" />
+                            </button>
+                            <button
+                              onClick={(e) => handleMenuOpen(e, req)}
+                              className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 hover:bg-gray-200" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}
+                              title="More Options"
+                            >
+                              <MoreVertical size={14} className="shrink-0" />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className="py-24 text-center">
+                        <div className="flex flex-col items-center justify-center opacity-20">
+                          <ClipboardList
+                            size={48}
+                            className={`mb-4 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                          />
+                          <p
+                            className={`uppercase tracking-[0.4em] text-[10px] font-bold ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                          >
+                            No Active Visit Requests Detected
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
         {/* Modal for Add/Update Visit Request */}
         {isModalOpen && (
@@ -1173,19 +1172,18 @@ const VisitRequests = () => {
                             setVisitorSearchOpen(!visitorSearchOpen);
                             setVisitorSearchTerm("");
                           }}
-                          className={`w-full border rounded-xl px-5 py-4 text-[13px] text-left focus:outline-none focus:border-primary/50 appearance-none cursor-pointer transition-all flex items-center justify-between ${
-                            isLight
+                          className={`w-full border rounded-xl px-5 py-4 text-[13px] text-left focus:outline-none focus:border-primary/50 appearance-none cursor-pointer transition-all flex items-center justify-between ${isLight
                               ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
                               : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                          } ${formData.VVR_Visitor_id ? (isLight ? "text-[#1A1A1A]" : "text-white") : isLight ? "text-gray-400" : "text-white/50"}`}
+                            } ${formData.VVR_Visitor_id ? (isLight ? "text-[#1A1A1A]" : "text-white") : isLight ? "text-gray-400" : "text-white/50"}`}
                         >
                           <span>
                             {formData.VVR_Visitor_id
                               ? activeVisitors.find(
-                                  (v) =>
-                                    String(v.VV_Visitor_id) ===
-                                    String(formData.VVR_Visitor_id),
-                                )?.VV_Name || "Select a visitor"
+                                (v) =>
+                                  String(v.VV_Visitor_id) ===
+                                  String(formData.VVR_Visitor_id),
+                              )?.VV_Name || "Select a visitor"
                               : "Select a visitor"}
                           </span>
                           <ChevronDown
@@ -1196,11 +1194,10 @@ const VisitRequests = () => {
 
                         {visitorSearchOpen && (
                           <div
-                            className={`absolute top-full left-0 right-0 z-50 mt-2 border rounded-xl shadow-lg ${
-                              isLight
+                            className={`absolute top-full left-0 right-0 z-50 mt-2 border rounded-xl shadow-lg ${isLight
                                 ? "bg-white border-gray-200 shadow-gray-200/40"
                                 : "bg-[#0A0A0B] border-white/10 shadow-black/50"
-                            }`}
+                              }`}
                           >
                             <div className="p-3 border-b border-white/5 sticky top-0 bg-inherit">
                               <input
@@ -1210,11 +1207,10 @@ const VisitRequests = () => {
                                 onChange={(e) =>
                                   setVisitorSearchTerm(e.target.value)
                                 }
-                                className={`w-full border rounded-lg px-3 py-2 text-[12px] focus:outline-none focus:border-primary/50 transition-all ${
-                                  isLight
+                                className={`w-full border rounded-lg px-3 py-2 text-[12px] focus:outline-none focus:border-primary/50 transition-all ${isLight
                                     ? "bg-gray-50 border-gray-200 text-[#1A1A1A]"
                                     : "bg-white/[0.02] border-white/10 text-white"
-                                }`}
+                                  }`}
                                 autoFocus
                               />
                             </div>
@@ -1237,35 +1233,33 @@ const VisitRequests = () => {
                                       setVisitorSearchOpen(false);
                                       setVisitorSearchTerm("");
                                     }}
-                                    className={`w-full px-4 py-3 text-left text-[12px] font-medium transition-all border-b border-white/5 last:border-b-0 flex items-center justify-between group ${
-                                      String(formData.VVR_Visitor_id) ===
-                                      String(v.VV_Visitor_id)
+                                    className={`w-full px-4 py-3 text-left text-[12px] font-medium transition-all border-b border-white/5 last:border-b-0 flex items-center justify-between group ${String(formData.VVR_Visitor_id) ===
+                                        String(v.VV_Visitor_id)
                                         ? isLight
                                           ? "bg-primary/10 text-primary"
                                           : "bg-primary/10 text-primary"
                                         : isLight
                                           ? "hover:bg-gray-50 text-[#1A1A1A]"
                                           : "hover:bg-white/[0.05] text-white/80"
-                                    }`}
+                                      }`}
                                   >
                                     <div className="flex flex-col">
                                       <span className="font-semibold">
                                         {v.VV_Name}
                                       </span>
                                       <span
-                                        className={`text-[10px] ${
-                                          isLight
+                                        className={`text-[10px] ${isLight
                                             ? "text-gray-500"
                                             : "text-white/40"
-                                        }`}
+                                          }`}
                                       >
                                         ID: {v.VV_Visitor_id}
                                       </span>
                                     </div>
                                     {String(formData.VVR_Visitor_id) ===
                                       String(v.VV_Visitor_id) && (
-                                      <CheckCircle2 size={16} />
-                                    )}
+                                        <CheckCircle2 size={16} />
+                                      )}
                                   </button>
                                 ))}
                               {activeVisitors.filter((v) =>
@@ -1273,14 +1267,13 @@ const VisitRequests = () => {
                                   .toLowerCase()
                                   .includes(visitorSearchTerm.toLowerCase()),
                               ).length === 0 && (
-                                <div
-                                  className={`px-4 py-6 text-center text-[11px] font-semibold tracking-[0.1em] uppercase ${
-                                    isLight ? "text-gray-400" : "text-white/40"
-                                  }`}
-                                >
-                                  No visitors found
-                                </div>
-                              )}
+                                  <div
+                                    className={`px-4 py-6 text-center text-[11px] font-semibold tracking-[0.1em] uppercase ${isLight ? "text-gray-400" : "text-white/40"
+                                      }`}
+                                  >
+                                    No visitors found
+                                  </div>
+                                )}
                             </div>
                           </div>
                         )}
@@ -1298,11 +1291,10 @@ const VisitRequests = () => {
                       name="VVR_Visit_Date"
                       value={formData.VVR_Visit_Date}
                       onChange={handleInputChange}
-                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${
-                        isLight
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${isLight
                           ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
                           : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                      }`}
+                        }`}
                       style={{ colorScheme: isLight ? "light" : "dark" }}
                     />
                   </div>
@@ -1317,11 +1309,10 @@ const VisitRequests = () => {
                       name="VVR_Places_to_Visit"
                       value={formData.VVR_Places_to_Visit}
                       onChange={handleInputChange}
-                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${
-                        isLight
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${isLight
                           ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
                           : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                      }`}
+                        }`}
                       placeholder="Enter the place or area name"
                     />
                   </div>
@@ -1336,11 +1327,10 @@ const VisitRequests = () => {
                       value={formData.VVR_Purpose}
                       onChange={handleInputChange}
                       rows="3"
-                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 resize-none transition-all ${
-                        isLight
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 resize-none transition-all ${isLight
                           ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
                           : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                      }`}
+                        }`}
                       placeholder="Tell us why the visitor is coming"
                     ></textarea>
                   </div>
@@ -1418,14 +1408,16 @@ const VisitRequests = () => {
               <XCircle size={7} /> Disable Request
             </div>
           </MenuItem>
-          <MenuItem
-            onClick={handleSendToAdmin}
-            className="px-1.5 py-0.5 text-[3px] uppercase font-semibold tracking-[0.006em] text-green-500 hover:bg-green-500/5 transition-colors min-h-0 leading-none"
-          >
-            <div className="flex flex-col md:flex-row items-center gap-0.5 md:gap-0.5">
-              <CheckCircle2 size={7} /> Send for Approval
-            </div>
-          </MenuItem>
+          {(selectedReq?.VVR_Status === "ACCEPTED" || selectedReq?.VVR_Status === "Accepted by Visitor") && (
+            <MenuItem
+              onClick={handleSendToAdmin}
+              className="px-1.5 py-0.5 text-[3px] uppercase font-semibold tracking-[0.006em] text-green-500 hover:bg-green-500/5 transition-colors min-h-0 leading-none"
+            >
+              <div className="flex flex-col md:flex-row items-center gap-0.5 md:gap-0.5">
+                <CheckCircle2 size={7} /> Send for Approval
+              </div>
+            </MenuItem>
+          )}
         </Menu>
       </div>
 
@@ -1793,9 +1785,9 @@ const VisitRequests = () => {
                                     a.map((x, i) =>
                                       i === idx
                                         ? {
-                                            ...x,
-                                            VV_Vehicle_Number: e.target.value,
-                                          }
+                                          ...x,
+                                          VV_Vehicle_Number: e.target.value,
+                                        }
                                         : x,
                                     ),
                                   )
@@ -1831,9 +1823,9 @@ const VisitRequests = () => {
                                     a.map((x, i) =>
                                       i === idx
                                         ? {
-                                            ...x,
-                                            VV_Vehicle_Type: e.target.value,
-                                          }
+                                          ...x,
+                                          VV_Vehicle_Type: e.target.value,
+                                        }
                                         : x,
                                     ),
                                   )
@@ -1942,21 +1934,21 @@ const VisitRequests = () => {
                         </h3>
                         {editGroupMembers.filter((m) => !m._isNew).length >
                           0 && (
-                          <span
-                            style={{
-                              color: "var(--color-text-dim)",
-                              fontSize: 10,
-                              marginLeft: 4,
-                            }}
-                          >
-                            {editGroupMembers.filter((m) => !m._isNew).length}{" "}
-                            visitor
-                            {editGroupMembers.filter((m) => !m._isNew).length >
-                            1
-                              ? "s"
-                              : ""}
-                          </span>
-                        )}
+                            <span
+                              style={{
+                                color: "var(--color-text-dim)",
+                                fontSize: 10,
+                                marginLeft: 4,
+                              }}
+                            >
+                              {editGroupMembers.filter((m) => !m._isNew).length}{" "}
+                              visitor
+                              {editGroupMembers.filter((m) => !m._isNew).length >
+                                1
+                                ? "s"
+                                : ""}
+                            </span>
+                          )}
                         <button
                           onClick={() =>
                             setEditGroupMembers((a) => [
@@ -2036,9 +2028,9 @@ const VisitRequests = () => {
                                     a.map((x, i) =>
                                       i === idx
                                         ? {
-                                            ...x,
-                                            VVG_Visitor_Name: e.target.value,
-                                          }
+                                          ...x,
+                                          VVG_Visitor_Name: e.target.value,
+                                        }
                                         : x,
                                     ),
                                   )
@@ -2066,9 +2058,9 @@ const VisitRequests = () => {
                                     a.map((x, i) =>
                                       i === idx
                                         ? {
-                                            ...x,
-                                            VVG_Designation: e.target.value,
-                                          }
+                                          ...x,
+                                          VVG_Designation: e.target.value,
+                                        }
                                         : x,
                                     ),
                                   )
@@ -2105,9 +2097,9 @@ const VisitRequests = () => {
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
-                                              ...x,
-                                              VVG_NIC_Passport_Number: val,
-                                            }
+                                            ...x,
+                                            VVG_NIC_Passport_Number: val,
+                                          }
                                           : x,
                                       ),
                                     );
@@ -2305,9 +2297,9 @@ const VisitRequests = () => {
                                     a.map((x, i) =>
                                       i === idx
                                         ? {
-                                            ...x,
-                                            VIC_Item_Name: e.target.value,
-                                          }
+                                          ...x,
+                                          VIC_Item_Name: e.target.value,
+                                        }
                                         : x,
                                     ),
                                   )
@@ -2362,9 +2354,9 @@ const VisitRequests = () => {
                                     a.map((x, i) =>
                                       i === idx
                                         ? {
-                                            ...x,
-                                            VIC_Designation: e.target.value,
-                                          }
+                                          ...x,
+                                          VIC_Designation: e.target.value,
+                                        }
                                         : x,
                                     ),
                                   )

@@ -6,7 +6,7 @@ import VisitorTable from "../../../components/Admin/ApprovalManagement/VisitorTa
 import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
 import ApprovalModal from "../../../components/Admin/ApprovalManagement/ApprovalModal";
 import QRSuccessModal from "../../../components/Admin/ApprovalManagement/QRSuccessModal";
-import { ArrowLeft, Shield, CheckCircle2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Shield, CheckCircle2, AlertCircle, QrCode } from "lucide-react";
 import {
   setSearchTerm as setAdminSearchTerm,
   updateVisitorStatus,
@@ -253,6 +253,26 @@ const ApprovalManagement = () => {
                     ref={formScrollRef}
                     className="flex-1 flex flex-col space-y-2"
                   >
+                      <div className="flex items-center justify-end gap-2">
+                        {selectedVisitor?.status === "Accepted by Contact Person" && (
+                          <div className="flex flex-row items-center gap-2">
+                            <button
+                              onClick={() => handleAction(selectedVisitor, "Approve")}
+                              className="px-4 py-2 bg-[#00B14F] hover:bg-[#009e46] text-white text-[9px] font-bold tracking-[0.15em] uppercase rounded-lg transition-all shadow-sm flex items-center gap-2"
+                            >
+                              <CheckCircle2 size={12} />
+                              ACCEPT
+                            </button>
+                            <button
+                              onClick={() => handleAction(selectedVisitor, "Reject")}
+                              className="px-4 py-2 bg-primary hover:bg-[#A00D25] text-white text-[9px] font-bold tracking-[0.15em] uppercase rounded-lg transition-all shadow-sm flex items-center gap-2"
+                            >
+                              <AlertCircle size={12} />
+                              REJECT
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     {detailsLoading ? (
                       <div className="flex items-center justify-center py-16">
                         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
