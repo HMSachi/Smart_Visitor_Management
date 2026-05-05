@@ -408,7 +408,7 @@ const AllUsers = () => {
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="max-w-[1500px] mx-auto">
           <header className="mb-4 md:mb-5 flex flex-col xl:flex-row justify-between items-start xl:items-center pb-4 md:pb-5 gap-4 relative z-10">
-            <div className="flex bg-white dark:bg-[var(--color-surface-2)] p-1 rounded-xl border border-gray-200 dark:border-white/5 relative max-w-full shadow-sm gap-1 w-full xl:w-auto overflow-x-auto no-scrollbar">
+            <div className="flex bg-white dark:bg-[var(--color-surface-2)] p-1.5 rounded-xl border border-gray-200 dark:border-white/5 relative max-w-full shadow-sm gap-1 w-full xl:w-auto overflow-x-auto no-scrollbar">
               {[
                 ...categories.map((cat) => ({
                   id: cat.id,
@@ -419,7 +419,7 @@ const AllUsers = () => {
                   key={btn.id}
                   type="button"
                   onClick={() => setTableFilter(btn.id)}
-                  className={`relative px-3 md:px-4 py-1 rounded-lg text-[11.5px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-gray-500 dark:text-[var(--color-text-dim)] hover:text-gray-800 dark:hover:text-[var(--color-text-primary)]"}`}
+                  className={`relative px-3 md:px-4 py-2 rounded-lg text-[13px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-gray-500 dark:text-[var(--color-text-dim)] hover:text-gray-800 dark:hover:text-[var(--color-text-primary)]"}`}
                 >
                   {tableFilter === btn.id && (
                     <motion.div
@@ -555,7 +555,7 @@ const AllUsers = () => {
                         component={Paper}
                         className="bg-transparent border-none z-10 relative"
                         sx={{
-                          maxHeight: "calc(100vh - 16rem)",
+                          maxHeight: "calc(100vh - 10rem)",
                           minHeight: "400px",
                           overflow: "auto",
                           overflowX: "auto",

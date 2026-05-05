@@ -49,20 +49,20 @@ const Dashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-start gap-3">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 flex-shrink-0 mt-0.5"
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0 flex-shrink-0 mt-0.5"
                 style={{
                   background:
                     "linear-gradient(135deg, rgba(200,16,46,0.9), rgba(200,16,46,0.7))",
                   boxShadow: "0 4px 12px rgba(200,16,46,0.2)",
                 }}
               >
-                <BarChart3 size={20} strokeWidth={2} />
+                <BarChart3 size={18} strokeWidth={2} />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)] leading-tight m-0">
+                <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)] leading-tight m-0">
                   Dashboard
                 </h1>
-                <p className="text-[var(--color-text-secondary)] text-sm mt-1">
+                <p className="text-[var(--color-text-secondary)] text-xs mt-1">
                   Real-time system overview and metrics
                 </p>
               </div>

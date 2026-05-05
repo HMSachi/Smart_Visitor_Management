@@ -37,7 +37,7 @@ const RestrictionLevel = ({ level }) => {
 
   return (
     <div
-      className={`px-4 py-1.5 rounded-full text-[12px] font-medium tracking-[0.2em] capitalize border flex items-center gap-2 w-fit mx-auto ${
+      className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest capitalize border flex items-center gap-1.5 w-fit mx-auto ${
         styles[level] || styles["Level 01"]
       }`}
     >
@@ -151,28 +151,28 @@ const BlacklistTable = () => {
       >
         {/* ── Toolbar ── */}
         <div
-          className={`flex flex-col md:flex-row justify-between items-center gap-3 p-4 md:p-5 rounded-[28px] border shadow-xl ${isLight ? "bg-white border-gray-200 shadow-gray-200/50" : "bg-[var(--color-bg-paper)] border-white/5 shadow-black/20"}`}
+          className={`flex flex-col md:flex-row justify-between items-center gap-3 p-2 px-3 rounded-xl border shadow-sm ${isLight ? "bg-white border-gray-200" : "bg-[var(--color-bg-paper)] border-white/5 shadow-black/20"}`}
         >
-          <div className="relative w-full md:w-96">
+          <div className="relative w-full md:w-80">
             <Search
-              className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${isLight ? "text-gray-400" : "text-gray-400"}`}
-              size={16}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 ${isLight ? "text-gray-400" : "text-gray-400"}`}
+              size={14}
             />
             <input
               type="text"
               placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full rounded-2xl pl-11 pr-4 py-2.5 text-[13px] focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-500 shadow-inner border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-gray-100" : "bg-white/[0.03] border-white/10 text-white shadow-black/20"}`}
+              className={`w-full rounded-lg pl-9 pr-4 h-[34px] text-[11.5px] focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-400 border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A]" : "bg-white/[0.03] border-white/10 text-white shadow-black/20"}`}
             />
           </div>
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="w-full md:w-auto px-6 py-3 bg-primary text-white text-[11px] font-bold uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-2.5 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 active:scale-[0.98] group"
+            className="w-full md:w-auto px-5 h-[34px] bg-primary hover:bg-primary/90 text-white text-[11.5px] font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm active:scale-[0.98] group"
           >
             <UserPlus
-              size={16}
+              size={14}
               className="group-hover:rotate-12 transition-transform"
             />
             Add to Blacklist
@@ -181,14 +181,14 @@ const BlacklistTable = () => {
 
         {/* ── Table card ── */}
         <div
-          className={`rounded-[32px] overflow-hidden flex flex-col shadow-3xl relative border ${isLight ? "bg-white border-gray-200" : "bg-[var(--color-bg-paper)] border-white/5"}`}
+          className={`rounded-2xl overflow-hidden flex flex-col shadow-xl relative border ${isLight ? "bg-white border-gray-200" : "bg-[var(--color-bg-paper)] border-white/5"}`}
         >
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
           <div
             className={`flex-1 overflow-x-auto sm:overflow-visible p-3 sm:p-0 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
           >
-            <table className="w-full text-left border-separate border-spacing-y-2.5 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[680px] block sm:table">
+            <table className="w-full text-left sm:border-collapse min-w-0 sm:min-w-[680px] block sm:table">
               <thead className="hidden sm:table-header-group">
                 <tr
                   className={
@@ -198,26 +198,26 @@ const BlacklistTable = () => {
                   }
                 >
                   <th
-                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-3 text-[9px] font-bold tracking-widest uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Visitor
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-3 text-[9px] font-bold tracking-widest uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Blacklist Reason
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-3 text-[9px] font-bold tracking-widest uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Date Added
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-3 text-[9px] font-bold tracking-widest uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Risk Level
                   </th>
-                  <th className="px-4 md:px-5 py-4 text-[10px] font-bold tracking-[0.2em] uppercase text-primary text-right whitespace-nowrap">
+                  <th className="px-4 md:px-5 py-3 text-[9px] font-bold tracking-widest uppercase text-primary text-right whitespace-nowrap">
                     Action
                   </th>
                 </tr>
@@ -251,20 +251,20 @@ const BlacklistTable = () => {
                       >
                         {/* Visitor */}
                         <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
+                          className={`block sm:table-cell px-3.5 sm:px-5 py-2 sm:py-3 border-b sm:border-none text-[11.5px] ${isLight ? "border-gray-200" : "border-white/5"}`}
                         >
-                          <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
+                          <span className="text-[10px] font-bold tracking-widest text-primary/60 uppercase block sm:hidden mb-2">
                             Visitor
                           </span>
                           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                             <div>
                               <p
-                                className={`capitalize text-[12px] font-medium tracking-widest mb-1 group-hover:text-primary transition-colors break-words ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                                className={`capitalize text-[12px] font-medium tracking-wide mb-0.5 group-hover:text-primary transition-colors break-words ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                               >
                                 {item.VB_Name}
                               </p>
                               <p
-                                className={`text-[12px] font-medium tracking-[0.2em] lowercase ${isLight ? "text-gray-500" : "text-gray-300/80"}`}
+                                className={`text-[11px] tracking-wide ${isLight ? "text-gray-500" : "text-gray-400"}`}
                               >
                                 {item.VB_Email || "no-email"}
                               </p>
@@ -274,14 +274,14 @@ const BlacklistTable = () => {
 
                         {/* Reason */}
                         <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
+                          className={`block sm:table-cell px-3.5 sm:px-5 py-2 sm:py-3 border-b sm:border-none text-[11.5px] ${isLight ? "border-gray-200" : "border-white/5"}`}
                         >
-                          <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
+                          <span className="text-[10px] font-bold tracking-widest text-primary/60 uppercase block sm:hidden mb-2">
                             Blacklist Reason
                           </span>
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-1.5">
                             <p
-                              className={`capitalize text-[12px] font-medium tracking-widest leading-relaxed max-w-full sm:max-w-md break-words ${isLight ? "text-gray-700" : "text-white/80"}`}
+                              className={`capitalize text-[11.5px] font-medium tracking-wide leading-relaxed max-w-full sm:max-w-md break-words ${isLight ? "text-gray-700" : "text-white/80"}`}
                             >
                               {item.VB_Description || "—"}
                             </p>
@@ -290,22 +290,22 @@ const BlacklistTable = () => {
 
                         {/* Date Added */}
                         <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-center text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
+                          className={`block sm:table-cell px-3.5 sm:px-5 py-2 sm:py-3 border-b sm:border-none text-center text-[11.5px] ${isLight ? "border-gray-200" : "border-white/5"}`}
                         >
-                          <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5 text-left">
+                          <span className="text-[10px] font-bold tracking-widest text-primary/60 uppercase block sm:hidden mb-2 text-left">
                             Date Added
                           </span>
-                          <div className="flex flex-col items-center gap-2">
+                          <div className="flex flex-col items-center gap-1">
                             <p
-                              className={`capitalize text-[12px] font-medium tracking-[0.2em] flex items-center gap-2 ${isLight ? "text-gray-600" : "text-gray-300/90"}`}
+                              className={`capitalize text-[11.5px] font-medium tracking-wide flex items-center gap-1.5 ${isLight ? "text-gray-600" : "text-gray-300/90"}`}
                             >
-                              <Clock size={12} className="text-primary/40" />{" "}
+                              <Clock size={11} className="text-primary/40" />{" "}
                               {item.VB_Created_Date
                                 ? item.VB_Created_Date.split(" ")[0]
                                 : "—"}
                             </p>
                             <span
-                              className={`text-[9px] font-bold tracking-widest uppercase px-2.5 py-0.5 rounded-full ${item.VB_Status === "I" ? "bg-gray-500/20 border border-gray-500/30 text-gray-400" : "bg-green-500/10 border border-green-500/20 text-green-400"}`}
+                              className={`text-[8.5px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full ${item.VB_Status === "I" ? "bg-gray-500/20 border border-gray-500/30 text-gray-400" : "bg-green-500/10 border border-green-500/20 text-green-400"}`}
                             >
                               {item.VB_Status === "I" ? "Inactive" : "Active"}
                             </span>
@@ -314,9 +314,9 @@ const BlacklistTable = () => {
 
                         {/* Risk Level */}
                         <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
+                          className={`block sm:table-cell px-3.5 sm:px-5 py-2 sm:py-3 border-b sm:border-none text-[11.5px] ${isLight ? "border-gray-200" : "border-white/5"}`}
                         >
-                          <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
+                          <span className="text-[10px] font-bold tracking-widest text-primary/60 uppercase block sm:hidden mb-2">
                             Risk Level
                           </span>
                           <RestrictionLevel
@@ -325,19 +325,19 @@ const BlacklistTable = () => {
                         </td>
 
                         {/* Actions */}
-                        <td className="block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 text-right">
-                          <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5 text-left">
+                        <td className="block sm:table-cell px-3.5 sm:px-5 py-2 sm:py-3 text-right">
+                          <span className="text-[10px] font-bold tracking-widest text-primary/60 uppercase block sm:hidden mb-2 text-left">
                             Action
                           </span>
-                          <div className="flex justify-start sm:justify-end gap-2.5">
+                          <div className="flex justify-start sm:justify-end gap-2">
                             {/* ── View Details button ── */}
                             <button
                               onClick={() => handleViewDetails(item)}
                               title="View Details"
-                              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${isLight ? "bg-primary/5 border-primary/15 text-primary hover:text-white hover:bg-primary hover:border-primary" : "bg-blue-500/5 border-blue-500/20 text-blue-400 hover:text-white hover:bg-blue-500 hover:border-blue-500"}`}
+                              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-500 shadow-sm group/btn border ${isLight ? "bg-primary/5 border-primary/15 text-primary hover:text-white hover:bg-primary hover:border-primary" : "bg-blue-500/5 border-blue-500/20 text-blue-400 hover:text-white hover:bg-blue-500 hover:border-blue-500"}`}
                             >
                               <Eye
-                                size={15}
+                                size={13}
                                 className="group-hover/btn:scale-110 transition-transform"
                               />
                             </button>
@@ -346,12 +346,12 @@ const BlacklistTable = () => {
                             <button
                               onClick={() => handleEditClick(item)}
                               title="Edit Blacklist"
-                              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${isLight ? "bg-amber-500/5 border-amber-500/20 text-amber-500 hover:text-white hover:bg-amber-500 hover:border-amber-500" : "bg-yellow-500/5 border-yellow-500/20 text-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-yellow-500"}`}
+                              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-500 shadow-sm group/btn border ${isLight ? "bg-amber-500/5 border-amber-500/20 text-amber-500 hover:text-white hover:bg-amber-500 hover:border-amber-500" : "bg-yellow-500/5 border-yellow-500/20 text-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-yellow-500"}`}
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                width="15"
-                                height="15"
+                                width="13"
+                                height="13"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -373,7 +373,7 @@ const BlacklistTable = () => {
                                   ? "Activate Blacklist"
                                   : "Deactivate Blacklist"
                               }
-                              className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-all duration-500 shadow-xl group/btn ${
+                              className={`w-7 h-7 rounded-lg flex items-center justify-center border transition-all duration-500 shadow-sm group/btn ${
                                 item.VB_Status === "I"
                                   ? "bg-green-500/5 border-green-500/20 text-green-400 hover:text-white hover:bg-green-500 hover:border-green-500"
                                   : "bg-red-500/5 border-red-500/20 text-red-400 hover:text-white hover:bg-red-500 hover:border-red-500"
@@ -381,12 +381,12 @@ const BlacklistTable = () => {
                             >
                               {item.VB_Status === "I" ? (
                                 <CheckCircle
-                                  size={15}
+                                  size={13}
                                   className="group-hover/btn:scale-110 transition-transform"
                                 />
                               ) : (
                                 <Power
-                                  size={15}
+                                  size={13}
                                   className="group-hover/btn:scale-110 transition-transform"
                                 />
                               )}
