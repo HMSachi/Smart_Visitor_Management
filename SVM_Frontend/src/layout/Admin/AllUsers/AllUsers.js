@@ -328,7 +328,7 @@ const AllUsers = () => {
     () => [
       {
         id: "ADMIN",
-        title: "System Administrators",
+        title: "Admin",
         icon: ShieldAlert,
         data: administrators
           .filter((a) => a.VA_Role === "Admin")
@@ -337,7 +337,7 @@ const AllUsers = () => {
       },
       {
         id: "SECURITY",
-        title: "Security Supports",
+        title: "Security",
         icon: Shield,
         data: administrators
           .filter((a) => a.VA_Role === "Security")
@@ -346,7 +346,7 @@ const AllUsers = () => {
       },
       {
         id: "CONTACT",
-        title: "Contact Persons",
+        title: "Contact person",
         icon: Users,
         data: contactPersons
           .slice()
@@ -357,7 +357,7 @@ const AllUsers = () => {
       },
       {
         id: "VISITOR",
-        title: "Visitor Accounts",
+        title: "Visitor",
         icon: UserCheck,
         data: administrators
           .filter((a) => a.VA_Role === "Visitor")
@@ -407,44 +407,68 @@ const AllUsers = () => {
       <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="max-w-[1500px] mx-auto">
-          <header className="mb-4 md:mb-5 flex flex-col md:flex-row justify-end items-start md:items-center pb-4 md:pb-5 gap-4 relative z-10">
+          <header className="mb-4 md:mb-5 flex flex-col xl:flex-row justify-between items-start xl:items-center pb-4 md:pb-5 gap-4 relative z-10">
+            <div className="flex bg-white dark:bg-[var(--color-surface-2)] p-1 rounded-xl border border-gray-200 dark:border-white/5 relative max-w-full shadow-sm gap-1 w-full xl:w-auto overflow-x-auto no-scrollbar">
+              {[
+                ...categories.map((cat) => ({
+                  id: cat.id,
+                  label: cat.title,
+                })),
+              ].map((btn) => (
+                <button
+                  key={btn.id}
+                  type="button"
+                  onClick={() => setTableFilter(btn.id)}
+                  className={`relative px-3 md:px-4 py-1.5 rounded-lg text-[12px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-gray-500 dark:text-[var(--color-text-dim)] hover:text-gray-800 dark:hover:text-[var(--color-text-primary)]"}`}
+                >
+                  {tableFilter === btn.id && (
+                    <motion.div
+                      layoutId="userTableFilter"
+                      className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
+                      transition={{
+                        type: "spring",
+                        bounce: 0.2,
+                        duration: 0.6,
+                      }}
+                    />
+                  )}
+                  <span className="relative z-10">{btn.label}</span>
+                </button>
+              ))}
+            </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-stretch sm:items-center">
+            <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto items-stretch sm:items-center">
               {/* Search Form */}
               <form
                 onSubmit={handleSearch}
-                className="flex items-center bg-black/30 border border-white/15 hover:border-primary/40 transition-all duration-300 rounded-lg px-3 py-2 w-full sm:min-w-[240px] sm:w-auto shadow-sm"
+                className="flex items-center bg-[var(--color-surface-1)] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-all duration-300 rounded-lg px-3 h-[38px] w-full sm:min-w-[200px] sm:w-auto shadow-sm"
               >
-                <Search size={14} className="text-gray-500 mr-2.5" />
+                <Search size={14} className="text-gray-400 mr-2" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search users..."
-                  className="bg-transparent text-[12px] text-white placeholder-gray-500 focus:outline-none w-full"
+                  className="bg-transparent text-[12px] text-[var(--color-text-primary)] placeholder-gray-400 focus:outline-none w-full"
                 />
                 {searchTerm && (
                   <button
-                    type="button"
-                    onClick={() => setSearchTerm("")}
-                    className="text-gray-600 hover:text-gray-400 transition-colors"
+                     type="button"
+                     onClick={() => setSearchTerm("")}
+                     className="text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    <X size={12} />
+                     <X size={12} />
                   </button>
                 )}
               </form>
 
               <div
-                className="flex items-center transition-all rounded-lg px-2.5 py-1.5 w-full sm:min-w-[160px] sm:w-auto border border-white/15 hover:border-primary/40 shadow-sm"
-                style={{
-                  background:
-                    themeMode === "light" ? "#ffffff" : "rgba(0,0,0,0.3)",
-                }}
+                className="flex items-center transition-all bg-[var(--color-surface-1)] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 rounded-lg px-3 h-[38px] w-full sm:min-w-[140px] sm:w-auto shadow-sm"
               >
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`text-[11px] focus:outline-none w-full transition-colors ${themeMode === "light" ? "text-black bg-white" : "bg-transparent text-gray-300 hover:text-white"}`}
+                  className={`text-[12px] bg-transparent focus:outline-none w-full transition-colors text-[var(--color-text-primary)]`}
                 >
                   <option
                     value="ALL"
@@ -481,43 +505,12 @@ const AllUsers = () => {
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/85 text-white px-4 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-primary/30 w-full sm:w-auto"
+                className="flex items-center justify-center gap-1.5 bg-primary hover:bg-primary/85 text-white px-4 h-[38px] rounded-lg text-[12px] font-semibold tracking-wide transition-all duration-300 shadow-sm hover:shadow-primary/30 w-full sm:w-auto"
               >
                 <Plus size={14} strokeWidth={2.5} /> Add User
               </button>
             </div>
           </header>
-
-          <div className="flex flex-col gap-3 mb-6 md:mb-7">
-            <div className="flex flex-wrap bg-[var(--color-surface-2)] p-1 rounded-xl border border-white/5 relative max-w-full shadow-sm gap-1 w-full sm:w-auto">
-              {[
-                ...categories.map((cat) => ({
-                  id: cat.id,
-                  label: cat.title,
-                })),
-              ].map((btn) => (
-                <button
-                  key={btn.id}
-                  type="button"
-                  onClick={() => setTableFilter(btn.id)}
-                  className={`relative px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
-                >
-                  {tableFilter === btn.id && (
-                    <motion.div
-                      layoutId="userTableFilter"
-                      className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
-                      transition={{
-                        type: "spring",
-                        bounce: 0.2,
-                        duration: 0.6,
-                      }}
-                    />
-                  )}
-                  <span className="relative z-10">{btn.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
 
           <div className="space-y-10">
             {loading ? (
@@ -562,7 +555,8 @@ const AllUsers = () => {
                         component={Paper}
                         className="bg-transparent border-none z-10 relative"
                         sx={{
-                          maxHeight: "453px",
+                          maxHeight: "calc(100vh - 16rem)",
+                          minHeight: "400px",
                           overflow: "auto",
                           overflowX: "auto",
                         }}

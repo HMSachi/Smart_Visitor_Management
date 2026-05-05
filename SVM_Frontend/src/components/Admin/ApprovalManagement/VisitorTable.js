@@ -48,8 +48,8 @@ const VisitorTable = ({
   gatePasses = [],
 }) => {
   const desktopTableViewportStyle = {
-    height: "calc(100vh - 16rem)",
-    minHeight: "400px",
+    height: "calc(100vh - 8rem)",
+    minHeight: "600px",
   };
 
   const [loading, setLoading] = useState(true);
