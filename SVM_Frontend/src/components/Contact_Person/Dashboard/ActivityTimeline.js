@@ -65,22 +65,31 @@ const ActivityTimeline = () => {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      className="space-y-3 md:space-y-4 h-full flex flex-col"
+      className="space-y-4 h-full flex flex-col"
     >
-      <div className="flex items-center justify-between border-b border-[var(--color-border-soft)] pb-2 sm:pb-3 md:pb-4">
-        <h3 className="uppercase flex flex-col md:flex-row items-center gap-2 sm:gap-3 md:gap-4 text-[var(--color-text-primary)] text-[10px] sm:text-xs font-bold tracking-widest">
-          <Activity size={14} className="text-primary" />
-          Real-Time Activity
-        </h3>
+      <div className="flex items-center justify-between border-b border-[var(--color-border-soft)] pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+            <Activity size={16} />
+          </div>
+          <div>
+            <h3 className="text-[var(--color-text-primary)] text-xs font-black uppercase tracking-widest leading-none">
+              Live Activity
+            </h3>
+            <p className="text-[var(--color-text-dim)] text-[9px] font-bold uppercase tracking-widest mt-0.5 opacity-75">
+              Real-time system feed
+            </p>
+          </div>
+        </div>
         <button 
           onClick={() => navigate("/contact_person/visit-requests")}
-          className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] font-bold uppercase tracking-widest hover:text-primary transition-colors"
+          className="text-primary text-[10px] font-black uppercase tracking-[0.2em] hover:opacity-80 transition-opacity"
         >
           View All
         </button>
       </div>
 
-      <div className="space-y-2 md:space-y-3 flex-1 overflow-y-auto">
+      <div className="space-y-3 flex-1 overflow-y-auto pr-1 custom-scrollbar">
         {activities.map((act, index) => (
           <motion.div
             key={act.id}
@@ -88,42 +97,34 @@ const ActivityTimeline = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.05 }}
-            className="flex items-center justify-between p-2 sm:p-3 md:p-4 bg-[var(--color-bg-primary)] border border-[var(--color-border-soft)] rounded-lg hover:border-primary/30 transition-all group cursor-pointer"
+            className="flex items-center justify-between p-2.5 sm:p-3 bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-xl hover:border-primary/30 hover:bg-primary/[0.02] transition-all group cursor-pointer shadow-sm"
           >
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-2 sm:gap-3 md:gap-4 flex-1">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
               <div className="relative flex-shrink-0">
                 <div
-                  className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${
+                  className={`w-2 h-2 rounded-full ${
                     act.status === "priority" || act.status === "urgent"
                       ? "bg-primary shadow-[0_0_8px_var(--color-primary)]"
                       : "bg-green-500 shadow-[0_0_8px_#22c55e]"
                   }`}
                 ></div>
-                <div
-                  className={`absolute -inset-1 sm:-inset-1.5 rounded-full animate-ping opacity-50 ${
-                    act.status === "priority" || act.status === "urgent"
-                      ? "bg-primary"
-                      : "bg-green-500"
-                  }`}
-                ></div>
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-[var(--color-text-primary)] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-0.5 sm:mb-1">
+                <h4 className="text-[var(--color-text-primary)] text-[11.5px] font-bold tracking-tight truncate mb-0.5">
                   {act.visitor}
                 </h4>
-                <p className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] font-bold uppercase tracking-widest opacity-75">
+                <p className="text-[var(--color-text-dim)] text-[9.5px] font-medium tracking-wide opacity-80 leading-none">
                   {act.action}
                 </p>
               </div>
             </div>
-            <div className="flex flex-col md:flex-row items-center gap-2 sm:gap-3 md:gap-4 flex-shrink-0 ml-2 sm:ml-4">
-              <span className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap opacity-75">
+            <div className="flex items-center gap-3 flex-shrink-0 ml-3">
+              <span className="text-[var(--color-text-dim)] text-[9px] font-bold tracking-wider whitespace-nowrap">
                 {act.time}
               </span>
-              <ArrowUpRight
-                size={12}
-                className="text-[var(--color-text-secondary)] group-hover:text-primary transition-colors flex-shrink-0"
-              />
+              <div className="w-7 h-7 rounded-lg bg-[var(--color-surface-1)] flex items-center justify-center text-[var(--color-text-dim)] group-hover:text-primary group-hover:bg-primary/10 transition-all border border-transparent group-hover:border-primary/20">
+                <ArrowUpRight size={13} />
+              </div>
             </div>
           </motion.div>
         ))}

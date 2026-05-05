@@ -6,6 +6,7 @@ import VisitorTable from "../../../components/Admin/ApprovalManagement/VisitorTa
 import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
 import ApprovalModal from "../../../components/Admin/ApprovalManagement/ApprovalModal";
 import QRSuccessModal from "../../../components/Admin/ApprovalManagement/QRSuccessModal";
+import { ArrowLeft, Shield, CheckCircle2, AlertCircle, QrCode } from "lucide-react";
 import {
   setSearchTerm as setAdminSearchTerm,
   updateVisitorStatus,
@@ -209,29 +210,20 @@ const ApprovalManagement = () => {
   };
 
   return (
-    <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
-      <Header />
+    <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] h-screen">
+      <Header 
+        title={viewMode === "details" ? "Approval Management" : undefined}
+        showBack={viewMode === "details"}
+        onBack={handleBackToList}
+      />
 
-      <div className="flex-1 p-4 md:p-8 !pt-2 space-y-3 md:space-y-6 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
+      <div className="flex-1 p-2 md:p-4 space-y-2 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
         {/* Dynamic Operational Aura */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
-        <div className="max-w-[1700px] mx-auto relative z-10">
-          <header className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-3 gap-4 relative z-10">
-            <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-3 py-2 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
-              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2 mb-1">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
-                <span className="text-[var(--color-text-primary)] text-[12px] font-bold uppercase tracking-[0.3em]">
-                  Approval Management
-                </span>
-              </div>
-              <p className="text-[var(--color-text-secondary)] text-[10px] uppercase font-bold tracking-[0.2em] opacity-80 leading-tight">
-                Monitor and authorize visitor access protocols
-              </p>
-            </div>
-          </header>
+        <div className="max-w-[1700px] mx-auto relative z-10 flex flex-col min-h-full">
 
-          <div className="space-y-3 md:space-y-6">
+          <div className="flex-1 flex flex-col space-y-3 md:space-y-6">
             <AnimatePresence mode="wait">
               {viewMode === "list" ? (
                 <motion.div
@@ -255,11 +247,32 @@ const ApprovalManagement = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex-1 flex flex-col"
                 >
                   <div
                     ref={formScrollRef}
-                    className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-2 custom-scrollbar"
+                    className="flex-1 flex flex-col space-y-2"
                   >
+                      <div className="flex items-center justify-end gap-2">
+                        {selectedVisitor?.status === "Accepted by Contact Person" && (
+                          <div className="flex flex-row items-center gap-2">
+                            <button
+                              onClick={() => handleAction(selectedVisitor, "Approve")}
+                              className="px-4 py-2 bg-[#00B14F] hover:bg-[#009e46] text-white text-[9px] font-bold tracking-[0.15em] uppercase rounded-lg transition-all shadow-sm flex items-center gap-2"
+                            >
+                              <CheckCircle2 size={12} />
+                              ACCEPT
+                            </button>
+                            <button
+                              onClick={() => handleAction(selectedVisitor, "Reject")}
+                              className="px-4 py-2 bg-primary hover:bg-[#A00D25] text-white text-[9px] font-bold tracking-[0.15em] uppercase rounded-lg transition-all shadow-sm flex items-center gap-2"
+                            >
+                              <AlertCircle size={12} />
+                              REJECT
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     {detailsLoading ? (
                       <div className="flex items-center justify-center py-16">
                         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />

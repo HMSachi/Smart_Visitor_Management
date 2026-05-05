@@ -8,10 +8,25 @@ import TotalVisitsCard from "../../../components/Admin/Dashboard/TotalVisitsCard
 import SystemStatusNode from "../../../components/Admin/Dashboard/SystemStatusNode";
 import { LayoutDashboard, TrendingUp, Settings, BarChart3, CheckSquare, ShieldAlert, UserX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { FetchAdminDashboardMetrics } from "../../../actions/AdminDashboardAction";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(null);
+
+  useEffect(() => {
+    dispatch(FetchAdminDashboardMetrics());
+    
+    // Refresh dashboard every 30 seconds
+    const interval = setInterval(() => {
+      dispatch(FetchAdminDashboardMetrics());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [dispatch]);
 
   const handleQuickAccess = (section) => {
     const routes = {
@@ -34,20 +49,20 @@ const Dashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-start gap-3">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 flex-shrink-0 mt-0.5"
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0 flex-shrink-0 mt-0.5"
                 style={{
                   background:
                     "linear-gradient(135deg, rgba(200,16,46,0.9), rgba(200,16,46,0.7))",
                   boxShadow: "0 4px 12px rgba(200,16,46,0.2)",
                 }}
               >
-                <BarChart3 size={20} strokeWidth={2} />
+                <BarChart3 size={18} strokeWidth={2} />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)] leading-tight m-0">
+                <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)] leading-tight m-0">
                   Dashboard
                 </h1>
-                <p className="text-[var(--color-text-secondary)] text-sm mt-1">
+                <p className="text-[var(--color-text-secondary)] text-xs mt-1">
                   Real-time system overview and metrics
                 </p>
               </div>
@@ -130,7 +145,7 @@ const Dashboard = () => {
               {/* Approval Management */}
               <button
                 onClick={() => navigate("/admin/approval-management")}
-                className="group relative overflow-hidden p-5 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
+                className="group relative overflow-hidden p-4 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
                 style={{
                   background: "var(--color-bg-paper)",
                 }}
@@ -144,15 +159,15 @@ const Dashboard = () => {
                 />
                 <div className="relative z-10">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 text-white transition-all duration-300 group-hover:scale-110"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-white transition-all duration-300 group-hover:scale-110"
                     style={{ background: "rgba(200,16,46,0.15)" }}
                   >
-                    <CheckSquare size={18} />
+                    <CheckSquare size={16} />
                   </div>
-                  <h3 className="font-semibold text-[var(--color-text-primary)] text-sm mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-[var(--color-text-primary)] text-[12.5px] mb-0.5 group-hover:text-primary transition-colors">
                     Approval Management
                   </h3>
-                  <p className="text-[var(--color-text-secondary)] text-xs leading-relaxed">
+                  <p className="text-[var(--color-text-secondary)] text-[11px] leading-relaxed">
                     Review and process visitor approval requests
                   </p>
                 </div>
@@ -161,7 +176,7 @@ const Dashboard = () => {
               {/* Security Monitoring */}
               <button
                 onClick={() => navigate("/admin/security-monitoring")}
-                className="group relative overflow-hidden p-5 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
+                className="group relative overflow-hidden p-4 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
                 style={{
                   background: "var(--color-bg-paper)",
                 }}
@@ -175,15 +190,15 @@ const Dashboard = () => {
                 />
                 <div className="relative z-10">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 text-white transition-all duration-300 group-hover:scale-110"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-white transition-all duration-300 group-hover:scale-110"
                     style={{ background: "rgba(200,16,46,0.15)" }}
                   >
-                    <ShieldAlert size={18} />
+                    <ShieldAlert size={16} />
                   </div>
-                  <h3 className="font-semibold text-[var(--color-text-primary)] text-sm mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-[var(--color-text-primary)] text-[12.5px] mb-0.5 group-hover:text-primary transition-colors">
                     Security Monitoring
                   </h3>
-                  <p className="text-[var(--color-text-secondary)] text-xs leading-relaxed">
+                  <p className="text-[var(--color-text-secondary)] text-[11px] leading-relaxed">
                     Monitor system security and access logs
                   </p>
                 </div>
@@ -192,7 +207,7 @@ const Dashboard = () => {
               {/* Blacklist Management */}
               <button
                 onClick={() => navigate("/admin/blacklist-management")}
-                className="group relative overflow-hidden p-5 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
+                className="group relative overflow-hidden p-4 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
                 style={{
                   background: "var(--color-bg-paper)",
                 }}
@@ -206,15 +221,15 @@ const Dashboard = () => {
                 />
                 <div className="relative z-10">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 text-white transition-all duration-300 group-hover:scale-110"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-white transition-all duration-300 group-hover:scale-110"
                     style={{ background: "rgba(200,16,46,0.15)" }}
                   >
-                    <UserX size={18} />
+                    <UserX size={16} />
                   </div>
-                  <h3 className="font-semibold text-[var(--color-text-primary)] text-sm mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-[var(--color-text-primary)] text-[12.5px] mb-0.5 group-hover:text-primary transition-colors">
                     Restricted List
                   </h3>
-                  <p className="text-[var(--color-text-secondary)] text-xs leading-relaxed">
+                  <p className="text-[var(--color-text-secondary)] text-[11px] leading-relaxed">
                     Manage and maintain blocked visitor lists
                   </p>
                 </div>

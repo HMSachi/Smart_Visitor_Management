@@ -40,18 +40,18 @@ const SystemStatus = () => {
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      className="flex-1 bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 hover:border-primary/20 transition-all duration-300 group"
+      className="flex-1 bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-lg sm:rounded-xl p-2.5 sm:p-3 hover:border-primary/20 transition-all duration-300 group"
     >
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <span className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em]">
           {label}
         </span>
-        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/15 transition-all">
+        <div className="w-7 h-7 sm:w-8 h-8 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center group-hover:bg-primary/10 transition-all">
           <Icon size={14} className={color} strokeWidth={2} />
         </div>
       </div>
-      <div className="flex items-baseline gap-1 sm:gap-2">
-        <span className="text-[var(--color-text-primary)] text-lg sm:text-xl md:text-2xl font-bold">
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-[var(--color-text-primary)] text-base sm:text-lg font-bold">
           {value}
         </span>
         {unit && (
@@ -72,11 +72,11 @@ const SystemStatus = () => {
     >
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-3 sm:mb-4 md:mb-5">
         <div>
-          <h2 className="text-[var(--color-text-primary)] text-base sm:text-lg md:text-xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
-            <Activity size={18} className="text-primary" />
+          <h2 className="text-[var(--color-text-primary)] text-sm sm:text-base font-bold tracking-tight flex items-center gap-2">
+            <Activity size={16} className="text-primary" />
             System Status
           </h2>
-          <p className="text-[var(--color-text-secondary)] text-[10px] sm:text-xs opacity-75 mt-1 uppercase tracking-[0.2em]">
+          <p className="text-[var(--color-text-secondary)] text-[9px] opacity-75 mt-0.5 uppercase tracking-[0.2em]">
             Real-time infrastructure metrics
           </p>
         </div>
@@ -99,11 +99,11 @@ const SystemStatus = () => {
         className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-lg sm:rounded-xl md:rounded-2xl p-4 md:p-5"
       >
         <div className="mb-3 sm:mb-4">
-          <div className="flex justify-between items-baseline mb-2 sm:mb-3">
-            <span className="text-[var(--color-text-primary)] text-xs sm:text-sm font-bold uppercase tracking-[0.2em]">
+          <div className="flex justify-between items-baseline mb-2">
+            <span className="text-[var(--color-text-primary)] text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]">
               Overall Performance
             </span>
-            <span className={`text-xl sm:text-2xl font-bold ${healthColor}`}>
+            <span className={`text-lg sm:text-xl font-bold ${healthColor}`}>
               {systemHealth}%
             </span>
           </div>
@@ -129,7 +129,7 @@ const SystemStatus = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <StatCard
           icon={Zap}
           label="Response Time"

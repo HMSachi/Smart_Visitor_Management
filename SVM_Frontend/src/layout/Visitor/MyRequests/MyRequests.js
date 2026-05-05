@@ -17,6 +17,7 @@ import VisitRequestService from "../../../services/VisitRequestService";
 import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import { validateNIC, validatePhone } from "../../../utils/validation";
 import {
   ClipboardList,
   Calendar,
@@ -36,6 +37,7 @@ import {
   Briefcase,
   Loader2,
   Plus,
+  Eye,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -543,6 +545,18 @@ const MyRequests = () => {
       setEditError("Name and ID/Passport are required for new visitors.");
       return;
     }
+    const nicErr = validateNIC(member.VVG_NIC_Passport_Number);
+    if (nicErr) {
+      setEditError(nicErr);
+      return;
+    }
+    
+    // Validate phone number (stored in Designation)
+    const phoneErr = validatePhone(member.VVG_Designation);
+    if (phoneErr) {
+      setEditError(phoneErr);
+      return;
+    }
     setNewMemberSavingIdx(idx);
     setEditError("");
     try {
@@ -838,19 +852,18 @@ const MyRequests = () => {
                               {canReviewRequest(req.VVR_Status) && (
                                 <button
                                   onClick={() => handleOpenReviewPage(req)}
-                                  className="px-3 py-1.5 border border-primary/30 bg-primary/10 text-primary rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] hover:bg-primary hover:text-white transition-all"
-                                  title="Review Submitted Details"
+                                  className="p-2 border border-primary/30 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all"
+                                  title="Review"
                                 >
-                                  Review
+                                  <Eye size={14} />
                                 </button>
                               )}
                               <button
                                 onClick={() => handleOpenEdit(req)}
-                                className="flex items-center gap-1.5 px-3 py-1.5 border border-white/10 bg-white/5 text-gray-300 rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] hover:bg-white/10 hover:text-white transition-all"
-                                title="Edit Request"
+                                className="p-2 border border-white/10 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 hover:text-white transition-all"
+                                title="Edit"
                               >
-                                <Pencil size={10} />
-                                Edit
+                                <Pencil size={14} />
                               </button>
                             </div>
                           </TableCell>
@@ -934,19 +947,18 @@ const MyRequests = () => {
                         {canReviewRequest(req.VVR_Status) && (
                           <button
                             onClick={() => handleOpenReviewPage(req)}
-                            className="flex-1 px-3 py-2 border border-primary/30 bg-primary/10 text-primary rounded-xl text-[10px] font-bold uppercase tracking-[0.12em] hover:bg-primary hover:text-white transition-all"
-                            title="Review Submitted Details"
+                            className="flex-1 flex items-center justify-center p-2 border border-primary/30 bg-primary/10 text-primary rounded-xl hover:bg-primary hover:text-white transition-all"
+                            title="Review"
                           >
-                            Review
+                            <Eye size={16} />
                           </button>
                         )}
                         <button
                           onClick={() => handleOpenEdit(req)}
-                          className="flex items-center justify-center gap-1.5 flex-1 px-3 py-2 border border-white/10 bg-white/5 text-gray-300 rounded-xl text-[10px] font-bold uppercase tracking-[0.12em] hover:bg-white/10 hover:text-white transition-all"
-                          title="Edit Request"
+                          className="flex-1 flex items-center justify-center p-2 border border-white/10 bg-white/5 text-gray-300 rounded-xl hover:bg-white/10 hover:text-white transition-all"
+                          title="Edit"
                         >
-                          <Pencil size={11} />
-                          Edit
+                          <Pencil size={16} />
                         </button>
                         {hasGatePass(req.VVR_Request_id) &&
                           (req.VVR_Status === "A" ||
@@ -1602,18 +1614,20 @@ const MyRequests = () => {
                               <input
                                 type="text"
                                 value={member.VVG_Designation}
-                                onChange={(e) =>
+                                maxLength={10}
+                                onChange={(e) => {
+                                  const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
                                   setEditGroupMembers((arr) =>
                                     arr.map((m, i) =>
                                       i === idx
                                         ? {
                                             ...m,
-                                            VVG_Designation: e.target.value,
+                                            VVG_Designation: val,
                                           }
                                         : m,
                                     ),
-                                  )
-                                }
+                                  );
+                                }}
                                 className="mas-input"
                               />
                             </div>
@@ -1637,20 +1651,22 @@ const MyRequests = () => {
                               <input
                                 type="text"
                                 value={member.VVG_NIC_Passport_Number}
-                                onChange={(e) =>
-                                  member._isNew &&
-                                  setEditGroupMembers((arr) =>
-                                    arr.map((m, i) =>
-                                      i === idx
-                                        ? {
-                                            ...m,
-                                            VVG_NIC_Passport_Number:
-                                              e.target.value,
-                                          }
-                                        : m,
-                                    ),
-                                  )
-                                }
+                                maxLength={12}
+                                onChange={(e) => {
+                                  if (member._isNew) {
+                                    const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 12);
+                                    setEditGroupMembers((arr) =>
+                                      arr.map((m, i) =>
+                                        i === idx
+                                          ? {
+                                              ...m,
+                                              VVG_NIC_Passport_Number: val,
+                                            }
+                                          : m,
+                                      ),
+                                    );
+                                  }
+                                }}
                                 readOnly={!member._isNew}
                                 style={
                                   !member._isNew

@@ -70,11 +70,11 @@ const RequestDistribution = () => {
           >
             <Icon size={14} className={color} strokeWidth={2} />
           </div>
-          <span className="text-[var(--color-text-primary)] text-xs sm:text-sm font-bold uppercase tracking-wide">
+          <span className="text-[var(--color-text-primary)] text-[11.5px] font-bold uppercase tracking-wide">
             {label}
           </span>
         </div>
-        <span className="text-[var(--color-text-primary)] text-base sm:text-lg font-bold">
+        <span className="text-[var(--color-text-primary)] text-sm font-bold">
           {value}
         </span>
       </div>
@@ -85,21 +85,8 @@ const RequestDistribution = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className={`h-full rounded-full ${color.replace("text-", "bg-")}`}
-        >
-          {percentage > 15 && (
-            <div
-              className={`h-full flex items-center justify-end pr-1 sm:pr-2 text-[8px] sm:text-[10px] font-bold text-white`}
-            >
-              {percentage}%
-            </div>
-          )}
-        </motion.div>
+        />
       </div>
-      {percentage <= 15 && (
-        <p className="text-[9px] sm:text-[10px] text-[var(--color-text-secondary)] opacity-75">
-          {percentage}%
-        </p>
-      )}
     </motion.div>
   );
 
@@ -108,21 +95,21 @@ const RequestDistribution = () => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-lg sm:rounded-xl md:rounded-2xl p-4 md:p-5 hover:border-primary/20 transition-all duration-300"
+      className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-xl p-3 md:p-4 hover:border-primary/20 transition-all duration-300"
     >
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6">
         <div>
-          <h2 className="text-[var(--color-text-primary)] text-base sm:text-lg md:text-xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
-            <BarChart3 size={18} className="text-primary" />
+          <h2 className="text-[var(--color-text-primary)] text-sm font-bold tracking-tight flex items-center gap-2">
+            <BarChart3 size={16} className="text-primary" />
             Request Distribution
           </h2>
-          <p className="text-[var(--color-text-secondary)] text-[10px] sm:text-xs opacity-75 mt-1 uppercase tracking-[0.2em]">
+          <p className="text-[var(--color-text-secondary)] text-[9px] opacity-75 mt-0.5 uppercase tracking-[0.2em]">
             Breakdown by status
           </p>
         </div>
         <div className="flex items-center gap-2 mt-3 md:mt-0">
           <TrendingUp size={16} className="text-green-500" />
-          <span className="text-xs sm:text-sm font-bold text-[var(--color-text-primary)]">
+          <span className="text-[11.5px] font-bold text-[var(--color-text-primary)]">
             Total: {stats.total}
           </span>
         </div>
@@ -161,10 +148,10 @@ const RequestDistribution = () => {
       <div className="mt-4 md:mt-6 pt-4 md:pt-5 border-t border-[var(--color-border-soft)]">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
           <div className="text-center">
-            <p className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest mb-1 sm:mb-2 text-[var(--color-text-secondary)]">
+            <p className="text-[8.5px] uppercase font-bold tracking-widest mb-1 text-[var(--color-text-secondary)]">
               Approval Rate
             </p>
-            <p className="text-lg sm:text-2xl font-bold text-green-500">
+            <p className="text-lg font-bold text-green-500">
               {stats.total > 0
                 ? Math.round((stats.approved / stats.total) * 100)
                 : 0}
@@ -172,10 +159,10 @@ const RequestDistribution = () => {
             </p>
           </div>
           <div className="text-center">
-            <p className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest mb-1 sm:mb-2 text-[var(--color-text-secondary)]">
+            <p className="text-[8.5px] uppercase font-bold tracking-widest mb-1 text-[var(--color-text-secondary)]">
               Rejection Rate
             </p>
-            <p className="text-lg sm:text-2xl font-bold text-primary">
+            <p className="text-lg font-bold text-primary">
               {stats.total > 0
                 ? Math.round((stats.rejected / stats.total) * 100)
                 : 0}
@@ -183,10 +170,10 @@ const RequestDistribution = () => {
             </p>
           </div>
           <div className="text-center">
-            <p className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest mb-1 sm:mb-2 text-[var(--color-text-secondary)]">
+            <p className="text-[8.5px] uppercase font-bold tracking-widest mb-1 text-[var(--color-text-secondary)]">
               Pending Rate
             </p>
-            <p className="text-lg sm:text-2xl font-bold text-yellow-500">
+            <p className="text-lg font-bold text-yellow-500">
               {stats.total > 0
                 ? Math.round((stats.pending / stats.total) * 100)
                 : 0}

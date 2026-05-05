@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
+import ContactPersonAuthProtocol from "../../../components/common/ContactPersonAuthProtocol";
 import RejectionModal from "./RejectionModal";
 import ApprovalModal from "./ApprovalModal";
 import {
@@ -15,6 +15,8 @@ import VehicleService from "../../../services/VehicleService";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
 
 const normalizeStatus = (status) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -96,8 +98,8 @@ const RequestReviewMain = () => {
 
     const fromById = Array.isArray(visitRequests)
       ? visitRequests.find(
-          (item) => String(item?.VVR_Request_id) === String(selectedId),
-        )
+        (item) => String(item?.VVR_Request_id) === String(selectedId),
+      )
       : null;
 
     return fromById || null;
@@ -140,8 +142,7 @@ const RequestReviewMain = () => {
         const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
           .filter(
             (v) =>
-              String(v?.VVR_Request_id) ===
-              String(apiRequest?.VVR_Request_id),
+              String(v?.VVR_Request_id) === String(apiRequest?.VVR_Request_id),
           )
           .map((v) => ({
             id: v.VV_Vehicle_id,
@@ -184,6 +185,7 @@ const RequestReviewMain = () => {
             id: i.VIC_Item_id,
             itemName: i.VIC_Item_Name,
             quantity: i.VIC_Quantity,
+            description: i.VIC_Designation,
           }));
         if (!cancelled) setItemsCarried(matchedItems);
       } catch (error) {
@@ -220,7 +222,7 @@ const RequestReviewMain = () => {
         VVR_Visit_Date: apiRequest.VVR_Visit_Date,
         VVR_Places_to_Visit: apiRequest.VVR_Places_to_Visit,
         VVR_Purpose: apiRequest.VVR_Purpose,
-        VVR_Status: "SENT",
+        VVR_Status: "SENT_TO_ADMIN",
         VVR_Contact_person_id: apiRequest.VVR_Contact_person_id,
         approvalComment,
       }),
@@ -258,58 +260,63 @@ const RequestReviewMain = () => {
 
   return (
     <div
-      className={`flex-1 p-4 md:p-6 space-y-4 animate-fade-in-slow overflow-y-auto relative transition-colors duration-500 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
+      className={`flex-1 p-2 md:p-4 space-y-4 animate-fade-in-slow overflow-y-auto relative transition-colors duration-500 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
     >
-      <div className="max-w-[1700px] mx-auto relative z-10 w-full">
-        <div className="flex flex-col md:flex-row items-center justify-between pb-6 animate-fade-in transition-all gap-4">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
-            <div className="w-1.5 h-8 bg-primary rounded-full"></div>
-            <div>
-              <p
-                className={`text-[10px] uppercase font-semibold tracking-[0.28em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}
-              >
-                Request Details
-              </p>
+      <div className="max-w-[1700px] mx-auto relative z-10 w-full flex flex-col min-h-full">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between py-4 animate-fade-in transition-all gap-4">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className={`flex items-center justify-center w-8 h-8 rounded-lg border transition-all shrink-0 ${isLight
+                ? "bg-white border-gray-200 hover:border-primary text-[#1A1A1A]"
+                : "bg-black/30 border-white/10 hover:border-primary text-white"
+                }`}
+              title="Go Back"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <div className="flex items-center gap-2.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]"></div>
               <h2
-                className={`text-lg font-semibold uppercase tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                className={`text-[12px] font-bold uppercase tracking-[0.2em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
               >
-                Request ID{" "}
-                <span className="text-primary font-mono ml-2">
-                  #{requestData?.id || selectedId || "ALPHA-000"}
-                </span>
+                APPROVAL MANAGEMENT
               </h2>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
-            <div
-              className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/35 border-white/10"}`}
-            >
-              <p
-                className={`text-[10px] uppercase font-semibold tracking-[0.22em] mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}
-              >
-                Request Status
-              </p>
-              <span className="text-primary text-[12px] font-semibold uppercase tracking-[0.2em]">
-                {requestData?.status || "PENDING"}
-              </span>
-            </div>
+          <div className="flex items-center gap-2">
+            {requestData?.status === "Accepted by Visitor" && (
+                <div className="flex flex-row items-center gap-2">
+                  <button
+                    onClick={() => setShowApproveModal(true)}
+                    className="px-4 py-2 bg-[#00B14F] hover:bg-[#009e46] text-white text-[9px] font-bold tracking-[0.15em] uppercase rounded-lg transition-all shadow-sm flex items-center gap-2"
+                  >
+                    <CheckCircle2 size={12} />
+                    ACCEPT
+                  </button>
+                  <button
+                    onClick={() => setShowRejectModal(true)}
+                    className="px-4 py-2 bg-primary hover:bg-[#A00D25] text-white text-[9px] font-bold tracking-[0.15em] uppercase rounded-lg transition-all shadow-sm flex items-center gap-2"
+                  >
+                    <AlertCircle size={12} />
+                    REJECT
+                  </button>
+                </div>
+              )}
           </div>
         </div>
 
-        <div className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-2 custom-scrollbar">
+        <div className="space-y-1.5 max-h-[calc(100vh-140px)] overflow-y-auto pr-1 custom-scrollbar">
           {detailsLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <div className="space-y-4 animate-pulse">
+              <div className={`h-48 rounded-[12px] ${isLight ? "bg-gray-100/50" : "bg-white/5"}`} />
+              <div className={`h-32 rounded-[12px] ${isLight ? "bg-gray-100/50" : "bg-white/5"}`} />
+              <div className={`h-32 rounded-[12px] ${isLight ? "bg-gray-100/50" : "bg-white/5"}`} />
             </div>
           ) : (
-            <PersonnelAuthProtocol
+            <ContactPersonAuthProtocol
               visitor={requestData}
-              onBack={() => navigate("/contact_person/requests-inbox")}
-              onAction={(visitor, type) => {
-                if (type === "Approve") setShowApproveModal(true);
-                if (type === "Reject") setShowRejectModal(true);
-              }}
               groupMembers={visitorGroupMembers}
               itemsCarried={itemsCarried}
               vehiclesList={vehiclesList}
@@ -325,7 +332,6 @@ const RequestReviewMain = () => {
         comment={approvalComment}
         setComment={setApprovalComment}
       />
-
       <RejectionModal
         isOpen={showRejectModal}
         onClose={() => setShowRejectModal(false)}

@@ -54,7 +54,11 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onSave, savingId })
                                     placeholder="ID Number"
                                     disabled={visitor.isConfirmed}
                                     value={visitor.nic}
-                                    onChange={(e) => onChange(visitor.id, 'nic', e.target.value)}
+                                    maxLength={12}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 12);
+                                        onChange(visitor.id, 'nic', val);
+                                    }}
                                     className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white outline-none disabled:opacity-50"
                                 />
                             </div>
@@ -66,7 +70,11 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onSave, savingId })
                                     placeholder="07XXXXXXXX"
                                     disabled={visitor.isConfirmed}
                                     value={visitor.contact}
-                                    onChange={(e) => onChange(visitor.id, 'contact', e.target.value)}
+                                    maxLength={10}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                                        onChange(visitor.id, 'contact', val);
+                                    }}
                                     className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white outline-none disabled:opacity-50"
                                 />
                             </div>

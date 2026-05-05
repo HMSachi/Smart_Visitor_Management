@@ -26,12 +26,12 @@ const menuItems = [
     icon: QrCode,
     path: "/Security_Officer/scanner",
   },
-  {
-    id: "approval",
-    label: "Review Entry Requests",
-    icon: UserCheck,
-    path: "/Security_Officer/entry-approval",
-  },
+//   {
+//     id: "approval",
+//     label: "Review Entry Requests",
+//     icon: UserCheck,
+//     path: "/Security_Officer/entry-approval",
+//   },
 ];
 
 const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (

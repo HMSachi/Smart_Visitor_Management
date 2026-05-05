@@ -31,10 +31,10 @@ const StatusBadge = ({ status }) => {
 
   return (
     <div
-      className={`px-3 py-1 rounded-full text-[10px] font-medium tracking-[0.15em] uppercase border flex items-center gap-1.5 w-fit mx-auto ${styles[status] || styles.Pending}`}
+      className={`px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[9px] md:text-[10px] font-medium tracking-[0.08em] sm:tracking-[0.1em] md:tracking-[0.15em] uppercase border flex items-center gap-1 md:gap-1.5 w-fit mx-auto ${styles[status] || styles.Pending}`}
     >
       <span
-        className={`w-1.5 h-1.5 rounded-full ${status === "Admin Approved" || status === "Accepted by Admin" || status === "Checked In" ? "bg-green-500 shadow-[0_0_5px_#22c55e]" : status === "Accepted" ? "bg-purple-500 shadow-[0_0_5px_#a855f7]" : status === "Sent to Admin" ? "bg-orange-500 shadow-[0_0_5px_#f97316] animate-pulse" : status === "Pending" ? "bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse" : "bg-mas-text-dim opacity-80"}`}
+        className={`w-1 md:w-1.5 h-1 md:h-1.5 rounded-full ${status === "Admin Approved" || status === "Accepted by Admin" || status === "Checked In" ? "bg-green-500 shadow-[0_0_5px_#22c55e]" : status === "Accepted" ? "bg-purple-500 shadow-[0_0_5px_#a855f7]" : status === "Sent to Admin" ? "bg-orange-500 shadow-[0_0_5px_#f97316] animate-pulse" : status === "Pending" ? "bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse" : "bg-mas-text-dim opacity-80"}`}
       />
       {status}
     </div>
@@ -48,7 +48,8 @@ const VisitorTable = ({
   gatePasses = [],
 }) => {
   const desktopTableViewportStyle = {
-    maxHeight: "min(31rem, calc(100vh - 24rem))",
+    height: "calc(100vh - 8rem)",
+    minHeight: "600px",
   };
 
   const [loading, setLoading] = useState(true);
@@ -120,26 +121,26 @@ const VisitorTable = ({
   }
 
   const statusOptions = [
-    { id: "All", label: "All Forms" },
-    { id: "Sent to Visitor", label: "Sent to Visitor" },
-    { id: "Accepted by Contact Person", label: "Contact Person Accepted" },
-    { id: "Accepted by Visitor", label: "Accepted by Visitor" },
-    { id: "Admin Approved", label: "Admin Approved" },
+    { id: "All", label: "All forms" },
+    { id: "Sent to Visitor", label: "Sent to visitor" },
+    { id: "Accepted by Contact Person", label: "Contact person accepted" },
+    { id: "Accepted by Visitor", label: "Accepted by visitor" },
+    { id: "Admin Approved", label: "Admin approved" },
     { id: "Rejected", label: "Rejected" },
   ];
 
   return (
-    <div className="space-y-4 animate-fade-in-slow">
-      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] shadow-xl relative overflow-hidden">
+    <div className="space-y-2 sm:space-y-3 md:space-y-4 animate-fade-in-slow">
+      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
-        <div className="p-4 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 relative z-10">
-          <div className="flex bg-[var(--color-surface-2)] p-0.5 rounded-xl border border-white/5 relative overflow-x-auto no-scrollbar max-w-full">
+        <div className="px-3 sm:px-4 md:px-5 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
+          <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto relative max-w-full overflow-x-auto no-scrollbar">
             {statusOptions.map((btn) => (
               <button
                 key={btn.id}
                 onClick={() => setStatusFilter(btn.id)}
-                className={`relative px-1.5 sm:px-2 md:px-3 lg:px-3 py-1 sm:py-1.5 rounded-lg text-[6px] xs:text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[11px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
               >
                 {statusFilter === btn.id && (
                   <motion.div
@@ -160,20 +161,8 @@ const VisitorTable = ({
         </div>
       </div>
 
-      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] shadow-2xl relative overflow-hidden">
+      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-
-        <div className="px-5 py-4 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-[var(--color-text-secondary)]">
-              Approval Queue
-            </p>
-            <p className="mt-1 text-[12px] text-[var(--color-text-dim)]">
-              Five-row preview with vertical scrolling for the remaining
-              records.
-            </p>
-          </div>
-        </div>
 
         <div className="bg-transparent">
           <div
@@ -183,25 +172,25 @@ const VisitorTable = ({
             <table className="w-full min-w-[920px] text-left border-collapse">
               <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)]">
                 <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
-                  <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-20 opacity-60">
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-16 md:w-20 opacity-60">
                     NO.
                   </th>
-                  <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] opacity-60">
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] opacity-60">
                     VISITOR NAME
                   </th>
                   <th
-                    className="px-6 py-3 text-[12px] font-medium tracking-[0.3em] capitalize text-white/70 cursor-pointer hover:text-primary transition-colors group"
+                    className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[9px] md:text-[10px] lg:text-[12px] font-medium tracking-[0.2em] md:tracking-[0.3em] capitalize text-white/70 cursor-pointer hover:text-primary transition-colors group"
                     onClick={() =>
                       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
                     }
                   >
-                    <div className="flex flex-col md:flex-row items-center gap-3 md:gap-2">
+                    <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2">
                       VISIT DATE & TIME
                       <div
                         className={`transition-transform duration-300 ${sortOrder === "asc" ? "rotate-180" : ""}`}
                       >
                         <ChevronDown
-                          size={14}
+                          size={12}
                           className={
                             sortOrder
                               ? "text-primary"
@@ -211,10 +200,10 @@ const VisitorTable = ({
                       </div>
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center">
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center">
                     STATUS
                   </th>
-                  <th className="px-6 py-3 text-[11px] font-bold tracking-[0.3em] uppercase text-primary text-right pr-6">
+                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[8px] md:text-[9px] lg:text-[11px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-primary text-right md:pr-4 lg:pr-6">
                     ACTIONS
                   </th>
                 </tr>
@@ -231,50 +220,53 @@ const VisitorTable = ({
                       <tr
                         className={`group transition-colors duration-300 ${isExpanded ? "bg-primary/[0.03]" : "hover:bg-white/[0.02]"}`}
                       >
-                        <td className="px-6 py-4 text-center align-middle">
+                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 text-center align-middle">
                           {memberList.length > 0 ? (
                             <button
                               onClick={() => toggleBatch(visitor.batchId)}
-                              className={`w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-500 shadow-lg ${isExpanded ? "bg-primary text-white border-primary rotate-180" : "bg-[var(--color-bg-default)] border-white/5 text-gray-300 hover:text-white hover:border-primary/50"}`}
+                              className={`w-8 h-8 md:w-9 md:h-9 rounded-lg border flex items-center justify-center transition-all duration-500 shadow-lg ${isExpanded ? "bg-primary text-white border-primary rotate-180" : "bg-[var(--color-bg-default)] border-white/5 text-gray-300 hover:text-white hover:border-primary/50"}`}
                             >
                               {isExpanded ? (
-                                <ChevronUp size={14} />
+                                <ChevronUp
+                                  size={12}
+                                  className="md:w-[14px] md:h-[14px]"
+                                />
                               ) : (
-                                <div className="text-[12px] font-medium">
+                                <div className="text-[11px] md:text-[12px] font-medium">
                                   {index + 1}
                                 </div>
                               )}
                             </button>
                           ) : (
-                            <div className="w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-500 shadow-lg bg-[var(--color-bg-default)] border-white/5 text-gray-300 mx-auto">
-                              <div className="text-[12px] font-medium">
+                            <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg border flex items-center justify-center transition-all duration-500 shadow-lg bg-[var(--color-bg-default)] border-white/5 text-gray-300 mx-auto">
+                              <div className="text-[11px] md:text-[12px] font-medium">
                                 {index + 1}
                               </div>
                             </div>
                           )}
                         </td>
-                        <td className="px-6 py-4 align-middle">
-                          <p className="text-white capitalize text-[12px] font-medium tracking-widest mb-0.5">
+                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 align-middle">
+                          <p className="text-white capitalize text-[11px] md:text-[12px] font-medium tracking-widest mb-0.5">
                             {visitor.name}
                           </p>
                         </td>
-                        <td className="px-6 py-4 align-middle">
+                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 align-middle">
                           <div className="flex flex-col gap-1">
-                            <div className="flex flex-col md:flex-row items-center gap-3 md:gap-2">
-                              <Calendar size={11} className="text-primary/60" />
-                              <span className="text-white capitalize text-[12px] font-medium tracking-widest">
+                            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2">
+                              <Calendar size={10} className="text-primary/60" />
+                              <span className="text-white capitalize text-[10px] md:text-[12px] font-medium tracking-widest">
                                 {visitor.date}
                               </span>
                             </div>
-                            <p className="text-white/70 capitalize text-[11px] font-medium tracking-widest truncate max-w-[200px] flex flex-col md:flex-row items-center gap-3 md:gap-2">
-                              <MapPin size={10} className="text-primary/70" />
+                            <p className="text-white/70 capitalize text-[10px] md:text-[11px] font-medium tracking-widest truncate max-w-[180px] md:max-w-[200px] flex flex-col md:flex-row items-center gap-2 md:gap-2">
+                              <MapPin size={9} className="text-primary/70" />
                               {Array.isArray(visitor.areas)
                                 ? visitor.areas.join(" | ")
                                 : visitor.areas}
                             </p>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-center align-middle">
+                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 text-center align-middle">
                           <div className="flex flex-col items-center gap-1.5">
                             <StatusBadge status={visitor.status} />
                             {hasGatePass(visitor.id) &&
@@ -294,8 +286,8 @@ const VisitorTable = ({
                               )}
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-right pr-6 align-middle">
-                          <div className="flex justify-end gap-2">
+                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 text-right md:pr-4 lg:pr-6 align-middle">
+                          <div className="flex justify-end gap-1 md:gap-2">
                             {(visitor.status === "Pending" ||
                               visitor.status === "Sent to Admin" ||
                               visitor.status === "Accepted by Visitor" ||
@@ -416,24 +408,21 @@ const VisitorTable = ({
             </table>
           </div>
 
-          <div className="md:hidden flex flex-col p-4 sm:p-8 gap-8">
+          <div className="md:hidden flex flex-col p-3 sm:p-4 gap-3 sm:gap-4">
             {filteredVisitors.map((visitor, index) => {
               const memberList = visitor.members || [];
               const isExpanded = expandedBatches.includes(visitor.batchId);
 
               return (
-                <div
-                  key={visitor.batchId || visitor.id || index}
-                  className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative group"
-                >
+                <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg md:rounded-[32px] overflow-hidden shadow-2xl relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                  <div className="p-4 border-b border-white/5 flex justify-between items-start bg-black/20 relative z-10">
+                  <div className="p-3 sm:p-4 border-b border-white/5 flex justify-between items-start bg-black/20 relative z-10">
                     <div>
-                      <p className="text-white capitalize text-[12px] font-medium tracking-widest mb-0.5 leading-tight">
+                      <p className="text-white capitalize text-[11px] sm:text-[12px] font-medium tracking-widest mb-0.5 leading-tight">
                         {visitor.name}
                       </p>
-                      <p className="text-gray-300/80 capitalize text-[11px] font-medium tracking-widest">
+                      <p className="text-gray-300/80 capitalize text-[10px] sm:text-[11px] font-medium tracking-widest">
                         {visitor.batchId}
                       </p>
                     </div>
@@ -443,10 +432,10 @@ const VisitorTable = ({
                         visitor.status === "Admin Approved" && (
                           <button
                             onClick={() => onAction(visitor, "ViewGatePass")}
-                            className="flex items-center gap-2 text-[10px] font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
+                            className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold capitalize tracking-[0.15em] text-primary hover:text-white transition-colors group/gp"
                           >
                             <QrCode
-                              size={11}
+                              size={10}
                               className="group-hover/gp:scale-110 transition-transform"
                             />
                             View Pass
@@ -455,35 +444,35 @@ const VisitorTable = ({
                     </div>
                   </div>
 
-                  <div className="p-4 space-y-4 relative z-10">
-                    <div className="flex justify-between items-center text-[12px] font-medium capitalize tracking-[0.2em] border-b border-white/[0.03] pb-3">
+                  <div className="p-3 sm:p-4 space-y-3 sm:space-y-4 relative z-10">
+                    <div className="flex justify-between items-center text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] border-b border-white/[0.03] pb-2 sm:pb-3">
                       <span className="text-gray-300/80 flex items-center gap-2">
-                        <Calendar size={11} className="text-primary/60" />
+                        <Calendar size={10} className="text-primary/60" />
                         Deployed
                       </span>
-                      <span className="text-white text-[11px]">
+                      <span className="text-white text-[10px] sm:text-[11px]">
                         {visitor.date}{" "}
                         <span className="text-primary mx-1">//</span>{" "}
                         {visitor.timeIn}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-[12px] font-medium capitalize tracking-[0.2em] border-b border-white/[0.03] pb-3">
+                    <div className="flex justify-between items-center text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] border-b border-white/[0.03] pb-2 sm:pb-3">
                       <span className="text-gray-300/80 flex items-center gap-2">
-                        <MapPin size={11} className="text-primary/60" />
+                        <MapPin size={10} className="text-primary/60" />
                         Zones
                       </span>
-                      <span className="text-white text-right max-w-[150px] truncate text-[11px]">
+                      <span className="text-white text-right max-w-[120px] sm:max-w-[150px] truncate text-[10px] sm:text-[11px]">
                         {Array.isArray(visitor.areas)
                           ? visitor.areas.join(" | ")
                           : visitor.areas}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-[12px] font-medium capitalize tracking-[0.2em]">
+                    <div className="flex justify-between items-center text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em]">
                       <span className="text-gray-300/80 flex items-center gap-2">
-                        <Shield size={11} className="text-primary/60" />
+                        <Shield size={10} className="text-primary/60" />
                         Request
                       </span>
-                      <span className="text-primary bg-primary/10 px-3 py-1 rounded-full text-[11px]">
+                      <span className="text-primary bg-primary/10 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px]">
                         {index + 1}
                       </span>
                     </div>
@@ -493,13 +482,13 @@ const VisitorTable = ({
                     <div className="relative z-10">
                       <button
                         onClick={() => toggleBatch(visitor.batchId)}
-                        className={`w-full py-3 px-4 flex justify-between items-center text-[12px] font-medium capitalize tracking-[0.3em] border-t transition-all ${isExpanded ? "bg-primary/5 border-primary/20 text-primary" : "bg-black/20 border-white/5 text-gray-300/80 hover:text-white"}`}
+                        className={`w-full py-2 sm:py-3 px-3 sm:px-4 flex justify-between items-center text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.2em] sm:tracking-[0.3em] border-t transition-all ${isExpanded ? "bg-primary/5 border-primary/20 text-primary" : "bg-black/20 border-white/5 text-gray-300/80 hover:text-white"}`}
                       >
                         <span>Unit Breakdown</span>
                         {isExpanded ? (
-                          <ChevronUp size={16} />
+                          <ChevronUp size={14} />
                         ) : (
-                          <ChevronDown size={16} />
+                          <ChevronDown size={14} />
                         )}
                       </button>
 
@@ -511,25 +500,25 @@ const VisitorTable = ({
                             exit={{ height: 0, opacity: 0 }}
                             className="overflow-hidden bg-black/40 relative"
                           >
-                            <div className="p-4 space-y-3">
+                            <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
                               {memberList.map((member, idx) => (
                                 <div
                                   key={idx}
-                                  className="bg-[var(--color-bg-default)] border border-white/5 p-4 rounded-lg flex justify-between items-center shadow-lg group/mem"
+                                  className="bg-[var(--color-bg-default)] border border-white/5 p-3 sm:p-4 rounded-lg flex justify-between items-center shadow-lg group/mem"
                                 >
                                   <div>
-                                    <span className="text-white text-[12px] font-medium capitalize tracking-widest block mb-0.5 group-hover/mem:text-primary transition-colors">
+                                    <span className="text-white text-[11px] sm:text-[12px] font-medium capitalize tracking-widest block mb-0.5 group-hover/mem:text-primary transition-colors">
                                       {idx + 2}. {member.name}
                                     </span>
-                                    <span className="text-gray-300/30 text-[11px] font-medium capitalize tracking-[0.2em] block">
+                                    <span className="text-gray-300/30 text-[10px] sm:text-[11px] font-medium capitalize tracking-[0.15em] block">
                                       NIC_: {member.nic}
                                     </span>
                                   </div>
                                   <div className="text-right">
-                                    <span className="text-[12px] text-gray-300/80 font-medium capitalize tracking-widest block mb-0.5">
+                                    <span className="text-[11px] sm:text-[12px] text-gray-300/80 font-medium capitalize tracking-widest block mb-0.5">
                                       Contact
                                     </span>
-                                    <span className="text-white/90 text-[11px] font-medium">
+                                    <span className="text-white/90 text-[10px] sm:text-[11px] font-medium">
                                       {member.contact}
                                     </span>
                                   </div>
@@ -550,24 +539,34 @@ const VisitorTable = ({
                       <>
                         <button
                           onClick={() => onAction(visitor, "Approve")}
-                          className="flex-1 h-12 flex justify-center items-center gap-3 bg-green-500/5 border border-green-500/20 text-green-500 text-[12px] font-medium capitalize tracking-[0.2em] rounded-lg hover:bg-green-500 hover:text-white transition-all shadow-lg"
+                          className="flex-1 h-10 sm:h-12 flex justify-center items-center gap-2 sm:gap-3 bg-green-500/5 border border-green-500/20 text-green-500 text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] rounded-lg hover:bg-green-500 hover:text-white transition-all shadow-lg"
                         >
-                          <Check size={14} strokeWidth={3} />{" "}
+                          <Check
+                            size={12}
+                            className="sm:w-[14px] sm:h-[14px]"
+                            strokeWidth={3}
+                          />
                           <span>Approve</span>
                         </button>
                         <button
                           onClick={() => onAction(visitor, "Reject")}
-                          className="flex-1 h-12 flex justify-center items-center gap-3 bg-primary/5 border border-primary/20 text-primary text-[12px] font-medium capitalize tracking-[0.2em] rounded-lg hover:bg-primary hover:text-white transition-all shadow-lg"
+                          className="flex-1 h-10 sm:h-12 flex justify-center items-center gap-2 sm:gap-3 bg-primary/5 border border-primary/20 text-primary text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] rounded-lg hover:bg-primary hover:text-white transition-all shadow-lg"
                         >
-                          <X size={14} strokeWidth={3} /> <span>Reject</span>
+                          <X
+                            size={12}
+                            className="sm:w-[14px] sm:h-[14px]"
+                            strokeWidth={3}
+                          />
+                          <span>Reject</span>
                         </button>
                       </>
                     )}
                     <button
                       onClick={() => onViewDetails(visitor)}
-                      className="flex-1 h-12 flex justify-center items-center gap-3 bg-white/[0.02] border border-white/5 text-white text-[12px] font-medium capitalize tracking-[0.2em] rounded-lg hover:bg-white hover:text-black transition-all shadow-lg"
+                      className="flex-1 h-10 sm:h-12 flex justify-center items-center gap-2 sm:gap-3 bg-white/[0.02] border border-white/5 text-white text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] rounded-lg hover:bg-white hover:text-black transition-all shadow-lg"
                     >
-                      <Eye size={14} /> <span>Inspect</span>
+                      <Eye size={12} className="sm:w-[14px] sm:h-[14px]" />{" "}
+                      <span>Inspect</span>
                     </button>
                   </div>
                 </div>
@@ -575,11 +574,14 @@ const VisitorTable = ({
             })}
 
             {filteredVisitors.length === 0 && (
-              <div className="p-6 md:p-10 text-center bg-white/[0.01] border border-white/5 rounded-[32px] shadow-lg">
-                <div className="w-14 h-14 bg-[var(--color-bg-paper)] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
-                  <Shield size={20} className="text-primary opacity-70" />
+              <div className="p-4 sm:p-8 md:p-10 text-center bg-white/[0.01] border border-white/5 rounded-lg md:rounded-[32px] shadow-lg">
+                <div className="w-12 sm:w-14 h-12 sm:h-14 bg-[var(--color-bg-paper)] rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 border border-white/5">
+                  <Shield
+                    size={18}
+                    className="sm:w-[20px] sm:h-[20px] text-primary opacity-70"
+                  />
                 </div>
-                <p className="text-gray-300 text-[12px] font-medium capitalize tracking-[0.3em] opacity-80">
+                <p className="text-gray-300 text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.2em] sm:tracking-[0.3em] opacity-80">
                   No matching records found
                 </p>
               </div>

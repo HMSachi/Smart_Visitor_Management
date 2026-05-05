@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { toggleMobileMenu } from "../../../reducers/uiSlice";
 import ThemeToggleButton from "../../common/ThemeToggleButton";
 
-const Header = () => {
+const Header = ({ title, subtitle, showBack, onBack }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isMobile = useSelector((state) => state.ui.isMobile);
@@ -35,12 +35,12 @@ const Header = () => {
         WebkitBackdropFilter: "blur(12px)",
       }}
     >
-      {/* Left: Mobile hamburger / Back button */}
-      <div className="flex items-center gap-3">
+      {/* Left: Mobile hamburger / Back button / Title */}
+      <div className="flex items-center gap-3 min-w-0">
         {isMobile ? (
           <button
             onClick={() => dispatch(toggleMobileMenu())}
-            className="w-9 h-9 flex items-center justify-center rounded-xl text-primary"
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-primary shrink-0"
             style={{
               background: "var(--color-primary-low)",
               border: "1px solid rgba(200,16,46,0.2)",
@@ -48,10 +48,10 @@ const Header = () => {
           >
             {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
-        ) : (
+        ) : showBack ? (
           <button
-            onClick={() => navigate(-1)}
-            className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors group"
+            onClick={onBack || (() => navigate(-1))}
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors group shrink-0"
             style={{
               background: "var(--color-surface-1)",
               border: "1px solid var(--color-border-soft)",
@@ -63,6 +63,24 @@ const Header = () => {
               className="group-hover:-translate-x-0.5 transition-transform"
             />
           </button>
+        ) : null}
+
+        {(title || subtitle) && (
+          <div className="flex flex-col truncate">
+            {title && (
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)] shrink-0"></div>
+                <h2 className="text-[var(--color-text-primary)] text-[10px] md:text-[11px] font-bold uppercase tracking-[0.25em] truncate m-0">
+                  {title}
+                </h2>
+              </div>
+            )}
+            {subtitle && (
+              <p className="text-[var(--color-text-secondary)] text-[8px] md:text-[9px] font-semibold uppercase tracking-[0.2em] truncate mt-0.5 ml-3">
+                {subtitle}
+              </p>
+            )}
+          </div>
         )}
       </div>
 
