@@ -45,8 +45,8 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '16px',
-        padding: '1.5rem',
+        borderRadius: '12px',
+        padding: '1.25rem',
         boxShadow: 'var(--shadow-card)',
         transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
       }}
@@ -59,13 +59,13 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
       />
 
       {/* Top row */}
-      <div className="flex items-start justify-between relative z-10 mb-4">
+      <div className="flex items-start justify-between relative z-10 mb-3">
         <div>
-          <p className="text-[var(--color-text-secondary)] text-[12.5px] font-medium tracking-wide mb-1">
+          <p className="text-[var(--color-text-secondary)] text-[11.5px] font-medium tracking-wide mb-1">
             {label}
           </p>
           <p
-            className="text-3xl font-bold tracking-tight transition-colors duration-300"
+            className="text-2xl font-bold tracking-tight transition-colors duration-300"
             style={{ color: 'var(--color-text-primary)' }}
           >
             {value}
@@ -73,21 +73,21 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
         </div>
 
         <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300"
+          className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300"
           style={{ background: color.bg, border: `1px solid ${color.border}`, color: color.text }}
         >
-          <Icon size={20} strokeWidth={2} />
+          <Icon size={18} strokeWidth={2} />
         </div>
       </div>
 
       {/* Trend row */}
       {trend && (
-        <div className="flex items-center gap-1.5 relative z-10">
-          <TrendingUp size={13} style={{ color: color.text }} />
-          <span className="text-[12px] font-medium" style={{ color: color.text }}>
+        <div className="flex items-center gap-1.5 relative z-10 mt-1">
+          <TrendingUp size={12} style={{ color: color.text }} />
+          <span className="text-[11.5px] font-medium" style={{ color: color.text }}>
             {trend}
           </span>
-          <span className="text-[var(--color-text-dim)] text-[12px]">vs last week</span>
+          <span className="text-[var(--color-text-dim)] text-[11px]">vs last week</span>
         </div>
       )}
 

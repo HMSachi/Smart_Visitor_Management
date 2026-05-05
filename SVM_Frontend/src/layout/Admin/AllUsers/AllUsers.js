@@ -419,7 +419,7 @@ const AllUsers = () => {
                   key={btn.id}
                   type="button"
                   onClick={() => setTableFilter(btn.id)}
-                  className={`relative px-3 md:px-4 py-1.5 rounded-lg text-[12px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-gray-500 dark:text-[var(--color-text-dim)] hover:text-gray-800 dark:hover:text-[var(--color-text-primary)]"}`}
+                  className={`relative px-3 md:px-4 py-1 rounded-lg text-[11.5px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-gray-500 dark:text-[var(--color-text-dim)] hover:text-gray-800 dark:hover:text-[var(--color-text-primary)]"}`}
                 >
                   {tableFilter === btn.id && (
                     <motion.div
@@ -441,15 +441,15 @@ const AllUsers = () => {
               {/* Search Form */}
               <form
                 onSubmit={handleSearch}
-                className="flex items-center bg-[var(--color-surface-1)] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-all duration-300 rounded-lg px-3 h-[38px] w-full sm:min-w-[200px] sm:w-auto shadow-sm"
+                className="flex items-center bg-[var(--color-surface-1)] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-all duration-300 rounded-lg px-3 h-[34px] w-full sm:min-w-[200px] sm:w-auto shadow-sm"
               >
-                <Search size={14} className="text-gray-400 mr-2" />
+                <Search size={13} className="text-gray-400 mr-2" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search users..."
-                  className="bg-transparent text-[12px] text-[var(--color-text-primary)] placeholder-gray-400 focus:outline-none w-full"
+                  className="bg-transparent text-[11.5px] text-[var(--color-text-primary)] placeholder-gray-400 focus:outline-none w-full"
                 />
                 {searchTerm && (
                   <button
@@ -463,12 +463,12 @@ const AllUsers = () => {
               </form>
 
               <div
-                className="flex items-center transition-all bg-[var(--color-surface-1)] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 rounded-lg px-3 h-[38px] w-full sm:min-w-[140px] sm:w-auto shadow-sm"
+                className="flex items-center transition-all bg-[var(--color-surface-1)] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 rounded-lg px-3 h-[34px] w-full sm:min-w-[140px] sm:w-auto shadow-sm"
               >
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`text-[12px] bg-transparent focus:outline-none w-full transition-colors text-[var(--color-text-primary)]`}
+                  className={`text-[11.5px] bg-transparent focus:outline-none w-full transition-colors text-[var(--color-text-primary)]`}
                 >
                   <option
                     value="ALL"
@@ -505,9 +505,9 @@ const AllUsers = () => {
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center justify-center gap-1.5 bg-primary hover:bg-primary/85 text-white px-4 h-[38px] rounded-lg text-[12px] font-semibold tracking-wide transition-all duration-300 shadow-sm hover:shadow-primary/30 w-full sm:w-auto"
+                className="flex items-center justify-center gap-1.5 bg-primary hover:bg-primary/85 text-white px-4 h-[34px] rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-300 shadow-sm hover:shadow-primary/30 w-full sm:w-auto"
               >
-                <Plus size={14} strokeWidth={2.5} /> Add User
+                <Plus size={13} strokeWidth={2.5} /> Add User
               </button>
             </div>
           </header>

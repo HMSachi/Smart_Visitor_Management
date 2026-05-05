@@ -145,7 +145,7 @@ const Dashboard = () => {
               {/* Approval Management */}
               <button
                 onClick={() => navigate("/admin/approval-management")}
-                className="group relative overflow-hidden p-5 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
+                className="group relative overflow-hidden p-4 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
                 style={{
                   background: "var(--color-bg-paper)",
                 }}
@@ -159,15 +159,15 @@ const Dashboard = () => {
                 />
                 <div className="relative z-10">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 text-white transition-all duration-300 group-hover:scale-110"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-white transition-all duration-300 group-hover:scale-110"
                     style={{ background: "rgba(200,16,46,0.15)" }}
                   >
-                    <CheckSquare size={18} />
+                    <CheckSquare size={16} />
                   </div>
-                  <h3 className="font-semibold text-[var(--color-text-primary)] text-sm mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-[var(--color-text-primary)] text-[12.5px] mb-0.5 group-hover:text-primary transition-colors">
                     Approval Management
                   </h3>
-                  <p className="text-[var(--color-text-secondary)] text-xs leading-relaxed">
+                  <p className="text-[var(--color-text-secondary)] text-[11px] leading-relaxed">
                     Review and process visitor approval requests
                   </p>
                 </div>
@@ -176,7 +176,7 @@ const Dashboard = () => {
               {/* Security Monitoring */}
               <button
                 onClick={() => navigate("/admin/security-monitoring")}
-                className="group relative overflow-hidden p-5 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
+                className="group relative overflow-hidden p-4 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
                 style={{
                   background: "var(--color-bg-paper)",
                 }}
@@ -190,15 +190,15 @@ const Dashboard = () => {
                 />
                 <div className="relative z-10">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 text-white transition-all duration-300 group-hover:scale-110"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-white transition-all duration-300 group-hover:scale-110"
                     style={{ background: "rgba(200,16,46,0.15)" }}
                   >
-                    <ShieldAlert size={18} />
+                    <ShieldAlert size={16} />
                   </div>
-                  <h3 className="font-semibold text-[var(--color-text-primary)] text-sm mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-[var(--color-text-primary)] text-[12.5px] mb-0.5 group-hover:text-primary transition-colors">
                     Security Monitoring
                   </h3>
-                  <p className="text-[var(--color-text-secondary)] text-xs leading-relaxed">
+                  <p className="text-[var(--color-text-secondary)] text-[11px] leading-relaxed">
                     Monitor system security and access logs
                   </p>
                 </div>
@@ -207,7 +207,7 @@ const Dashboard = () => {
               {/* Blacklist Management */}
               <button
                 onClick={() => navigate("/admin/blacklist-management")}
-                className="group relative overflow-hidden p-5 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
+                className="group relative overflow-hidden p-4 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
                 style={{
                   background: "var(--color-bg-paper)",
                 }}
@@ -221,15 +221,15 @@ const Dashboard = () => {
                 />
                 <div className="relative z-10">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 text-white transition-all duration-300 group-hover:scale-110"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-white transition-all duration-300 group-hover:scale-110"
                     style={{ background: "rgba(200,16,46,0.15)" }}
                   >
-                    <UserX size={18} />
+                    <UserX size={16} />
                   </div>
-                  <h3 className="font-semibold text-[var(--color-text-primary)] text-sm mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-[var(--color-text-primary)] text-[12.5px] mb-0.5 group-hover:text-primary transition-colors">
                     Restricted List
                   </h3>
-                  <p className="text-[var(--color-text-secondary)] text-xs leading-relaxed">
+                  <p className="text-[var(--color-text-secondary)] text-[11px] leading-relaxed">
                     Manage and maintain blocked visitor lists
                   </p>
                 </div>
