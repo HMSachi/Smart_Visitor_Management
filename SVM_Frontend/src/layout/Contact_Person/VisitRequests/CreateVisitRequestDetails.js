@@ -7,6 +7,7 @@ import { AddVehicle } from "../../../actions/VehicleAction";
 import { AddVisitGroup } from "../../../actions/VisitGroupAction";
 import { AddItem } from "../../../actions/ItemCarriedAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
+import { GetAllVisitors } from "../../../actions/VisitorAction";
 
 import { 
   addVehicle, toggleVehicleConfirmed, removeVehicle, updateVehicle, markVehicleSaved,
@@ -32,6 +33,7 @@ const CreateVisitRequestDetails = () => {
     isSubmitting 
   } = useSelector((state) => state.visitRequestForm);
   const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+  const { visitors: allVisitors } = useSelector((state) => state.visitorManagement || { visitors: [] });
 
 
   const lastCreatedRequestId = useSelector((state) => state.visitRequestsState?.lastCreatedRequestId);
@@ -43,6 +45,7 @@ const CreateVisitRequestDetails = () => {
 
   useEffect(() => {
     dispatch(GetAllBlacklist());
+    dispatch(GetAllVisitors());
   }, [dispatch]);
 
 
@@ -135,6 +138,26 @@ const CreateVisitRequestDetails = () => {
       alert("Failed to save visitor. Please try again.");
     } finally {
       setPersonSavingIndex(null);
+    }
+  };
+
+  const handlePersonNameChange = (index, value) => {
+    dispatch(updatePerson({ index, field: "name", value }));
+    
+    // Find if the entered name matches a known visitor for autocomplete
+    const matchedVisitor = allVisitors.find(v => 
+      v.VV_Name?.trim().toLowerCase() === value?.trim().toLowerCase()
+    );
+    if (matchedVisitor) {
+      // Auto-fill NIC and Phone if matched
+      if (matchedVisitor.VV_NIC_Passport_NO) {
+        dispatch(updatePerson({ index, field: "nic", value: matchedVisitor.VV_NIC_Passport_NO }));
+      }
+      if (matchedVisitor.VV_Phone) {
+        dispatch(updatePerson({ index, field: "phone", value: matchedVisitor.VV_Phone }));
+      } else if (matchedVisitor.VV_Designation && matchedVisitor.VV_Designation !== 'N/A') {
+        dispatch(updatePerson({ index, field: "phone", value: matchedVisitor.VV_Designation }));
+      }
     }
   };
 
@@ -328,6 +351,13 @@ const CreateVisitRequestDetails = () => {
                 </div>
 
                 <div className="space-y-3">
+                  <datalist id="visitor-names">
+                    {allVisitors.map((v, idx) => (
+                      <option key={`${v.VV_Visitor_id}-${idx}`} value={v.VV_Name}>
+                        {v.VV_NIC_Passport_NO ? `ID: ${v.VV_NIC_Passport_NO}` : ''}
+                      </option>
+                    ))}
+                  </datalist>
                   {people.map((p, index) => (
                     <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 rounded-xl border transition-all ${p.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"}`}>
                       <div className="md:col-span-3">
@@ -335,9 +365,10 @@ const CreateVisitRequestDetails = () => {
                           disabled={p.isConfirmed} 
                           label="Name" 
                           value={p.name} 
+                          list="visitor-names"
                           onChange={(e) => {
-                            const val = e.target.value.replace(/[^A-Za-z\s]/g, "");
-                            dispatch(updatePerson({ index, field: "name", value: val }));
+                            const val = e.target.value;
+                            handlePersonNameChange(index, val);
                           }} 
                           placeholder="Full Name" 
                         />

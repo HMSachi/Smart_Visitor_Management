@@ -10,9 +10,13 @@ import {
   Save,
   Briefcase,
   Loader2,
+  Shield,
+  Users,
 } from "lucide-react";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import VisitorService from "../../../services/VisitorService";
+import VisitRequestService from "../../../services/VisitRequestService";
+import VisitGroupService from "../../../services/VisitGroupService";
 
 const InputField = ({
   label,
@@ -94,6 +98,54 @@ const SelectVisitorField = ({
   </div>
 );
 
+const SelectSubVisitorField = ({
+  label,
+  icon: Icon,
+  subVisitors,
+  selectedSubVisitor,
+  onSelectSubVisitor,
+  isLight,
+  isLoading,
+}) => (
+  <div className="space-y-2">
+    <label
+      className={`text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 ${isLight ? "text-gray-500" : "text-gray-300/70"}`}
+    >
+      <Icon size={12} className="text-primary/60" />
+      {label} <span className="text-gray-400 text-[9px]">(Optional)</span>
+    </label>
+    <select
+      value={selectedSubVisitor ? String(selectedSubVisitor.VVG_id) : ""}
+      onChange={(e) => {
+        if (e.target.value === "") {
+          onSelectSubVisitor(null);
+        } else {
+          const selectedId = e.target.value;
+          const subVisitor = subVisitors.find(
+            (v) => String(v.VVG_id) === selectedId,
+          );
+          onSelectSubVisitor(subVisitor);
+        }
+      }}
+      disabled={isLoading || subVisitors.length === 0}
+      className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all appearance-none border cursor-pointer ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50 disabled:bg-gray-50 disabled:cursor-not-allowed" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20 disabled:opacity-50 disabled:cursor-not-allowed"}`}
+    >
+      <option value="">
+        {isLoading ? "Loading companions..." : subVisitors.length === 0 ? "No companions found" : "Select a companion (optional)..."}
+      </option>
+      {subVisitors.map((subVisitor) => (
+        <option
+          key={subVisitor.VVG_id}
+          value={String(subVisitor.VVG_id)}
+          className={isLight ? "bg-white" : "bg-[#141416]"}
+        >
+          {subVisitor.VVG_Visitor_Name}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
 const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
@@ -107,6 +159,9 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
   const [selectedVisitor, setSelectedVisitor] = useState(null);
   const [visitors, setVisitors] = useState([]);
   const [isLoadingVisitors, setIsLoadingVisitors] = useState(false);
+  const [selectedSubVisitor, setSelectedSubVisitor] = useState(null);
+  const [subVisitors, setSubVisitors] = useState([]);
+  const [isLoadingSubVisitors, setIsLoadingSubVisitors] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -128,14 +183,88 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
     }
   };
 
+  const loadSubVisitors = async (visitorId) => {
+    setIsLoadingSubVisitors(true);
+    setSubVisitors([]);
+    setSelectedSubVisitor(null);
+    try {
+      // Get all visit requests for this visitor
+      const requestsResponse = await VisitRequestService.GetVisitRequestsByVisitor(visitorId);
+      const requests = Array.isArray(requestsResponse?.data?.ResultSet)
+        ? requestsResponse.data.ResultSet
+        : Array.isArray(requestsResponse?.data)
+          ? requestsResponse.data
+          : [];
+
+      if (!requests.length) {
+        setSubVisitors([]);
+        return;
+      }
+
+      // Get all visit groups
+      const groupsResponse = await VisitGroupService.GetAllVisitGroup();
+      const allGroups = Array.isArray(groupsResponse?.data?.ResultSet)
+        ? groupsResponse.data.ResultSet
+        : Array.isArray(groupsResponse?.data)
+          ? groupsResponse.data
+          : [];
+
+      // Get request IDs for the selected visitor
+      const requestIds = requests.map((r) => r.VVR_Request_id);
+
+      // Filter groups by those request IDs
+      const visitorGroups = allGroups.filter((g) =>
+        requestIds.includes(g.VVR_Request_id)
+      );
+
+      setSubVisitors(visitorGroups);
+    } catch (error) {
+      console.error("Error loading sub-visitors:", error);
+      setSubVisitors([]);
+    } finally {
+      setIsLoadingSubVisitors(false);
+    }
+  };
+
   const handleSelectVisitor = (visitor) => {
     setSelectedVisitor(visitor);
-    setFormData((prev) => ({
-      ...prev,
-      VB_Name: visitor?.VV_Name || "",
-      VB_Email: visitor?.VV_Email || "",
-      VB_Role: "Visitor",
-    }));
+    setSelectedSubVisitor(null);
+    if (visitor) {
+      setFormData((prev) => ({
+        ...prev,
+        VB_Name: visitor.VV_Name || "",
+        VB_Email: visitor.VV_Email || "",
+        VB_Role: "Visitor",
+      }));
+      loadSubVisitors(visitor.VV_Visitor_id);
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        VB_Name: "",
+        VB_Email: "",
+        VB_Role: "Visitor",
+      }));
+      setSubVisitors([]);
+    }
+  };
+
+  const handleSelectSubVisitor = (subVisitor) => {
+    setSelectedSubVisitor(subVisitor);
+    if (subVisitor) {
+      setFormData((prev) => ({
+        ...prev,
+        VB_Name: subVisitor.VVG_Visitor_Name || "",
+        VB_Email: subVisitor.VVG_NIC_Passport_Number || "N/A", 
+        VB_Role: "Visitor Companion",
+      }));
+    } else if (selectedVisitor) {
+      setFormData((prev) => ({
+        ...prev,
+        VB_Name: selectedVisitor.VV_Name || "",
+        VB_Email: selectedVisitor.VV_Email || "",
+        VB_Role: "Visitor",
+      }));
+    }
   };
 
   const handleChange = (e) => {
@@ -163,6 +292,7 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
       VB_Alert_Type: "Level 01",
     });
     setSelectedVisitor(null);
+    setSelectedSubVisitor(null);
   };
 
   return createPortal(
@@ -251,6 +381,31 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                     )}
                   </div>
 
+                  {selectedVisitor && (
+                    <div className="col-span-full">
+                      {isLoadingSubVisitors ? (
+                        <div className="flex items-center justify-center py-4 gap-2">
+                          <Loader2 size={14} className="animate-spin text-primary" />
+                          <span
+                            className={`text-sm ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                          >
+                            Loading companions...
+                          </span>
+                        </div>
+                      ) : (
+                        <SelectSubVisitorField
+                          label="Add a Companion to Blacklist"
+                          icon={Users}
+                          subVisitors={subVisitors}
+                          selectedSubVisitor={selectedSubVisitor}
+                          onSelectSubVisitor={handleSelectSubVisitor}
+                          isLight={isLight}
+                          isLoading={isLoadingSubVisitors}
+                        />
+                      )}
+                    </div>
+                  )}
+
                   <InputField
                     isLight={isLight}
                     label="Full Name"
@@ -263,14 +418,14 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                   />
                   <InputField
                     isLight={isLight}
-                    label="Email Address"
-                    icon={Mail}
+                    label={selectedSubVisitor ? "NIC / Passport" : "Email Address"}
+                    icon={selectedSubVisitor ? Briefcase : Mail}
                     name="VB_Email"
                     value={formData.VB_Email}
                     onChange={handleChange}
                     readOnly={true}
-                    type="email"
-                    placeholder="Auto-filled from selected visitor"
+                    type={selectedSubVisitor ? "text" : "email"}
+                    placeholder={selectedSubVisitor ? "Auto-filled NIC from companion" : "Auto-filled from selected visitor"}
                   />
                 </div>
 

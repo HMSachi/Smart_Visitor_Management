@@ -19,7 +19,7 @@ export const SectionHeader = ({ icon: Icon, title, subtitle }) => (
   </div>
 );
 
-export const InputField = ({ label, name, type = "text", placeholder, value, onChange, error, icon: Icon, disabled = false }) => (
+export const InputField = ({ label, name, type = "text", placeholder, value, onChange, error, icon: Icon, disabled = false, list }) => (
   <div className="space-y-1.5">
     <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] flex items-center gap-1.5 px-0.5">
       {Icon && <Icon size={11} />} {label}
@@ -31,6 +31,7 @@ export const InputField = ({ label, name, type = "text", placeholder, value, onC
       onChange={onChange}
       placeholder={placeholder}
       disabled={disabled}
+      list={list}
       className={`w-full bg-white border rounded-lg px-3 py-2 text-[12px] font-medium transition-all placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/5 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed ${
         error ? "border-red-500" : "border-gray-200 focus:border-primary/50"
       }`}

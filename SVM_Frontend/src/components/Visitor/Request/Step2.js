@@ -37,6 +37,7 @@ import { AddVehicle } from '../../../actions/VehicleAction';
 import { AddVisitGroup } from '../../../actions/VisitGroupAction';
 import { AddItem } from '../../../actions/ItemCarriedAction';
 import { GetAllBlacklist } from '../../../actions/BlacklistAction';
+import { GetAllVisitors } from '../../../actions/VisitorAction';
 
 
 const Step2Main = () => {
@@ -53,6 +54,7 @@ const Step2Main = () => {
         error: reduxError
     } = visitorState;
     const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+    const { visitors: allVisitors } = useSelector((state) => state.visitorManagement || { visitors: [] });
 
 
     const [showFinalSuccess, setShowFinalSuccess] = useState(false);
@@ -69,6 +71,7 @@ const Step2Main = () => {
         if (!visitors.length) dispatch(addVisitor());
         if (!equipment.length) dispatch(addEquipment());
         dispatch(GetAllBlacklist());
+        dispatch(GetAllVisitors());
     }, [dispatch]);
 
 
@@ -329,6 +332,7 @@ const Step2Main = () => {
 
                 <VisitorGroup
                     visitors={visitors}
+                    allVisitors={allVisitors}
                     onAdd={handleAddVisitor}
                     onRemove={(id) => dispatch(removeVisitor(id))}
                     onChange={(id, field, value) => dispatch(updateVisitorDetail({ id, field, value }))}

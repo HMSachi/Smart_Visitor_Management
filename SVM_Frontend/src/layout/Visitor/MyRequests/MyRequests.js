@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { GetVisitRequestsByVisitor } from "../../../actions/VisitRequestAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
+import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 import VisitorService from "../../../services/VisitorService";
 import VisitRequestService from "../../../services/VisitRequestService";
 import VehicleService from "../../../services/VehicleService";
@@ -112,6 +113,9 @@ const MyRequests = () => {
   const { gatePasses } = useSelector(
     (state) => state.gatePassState || { gatePasses: [] },
   );
+  const { blacklists } = useSelector(
+    (state) => state.blacklistState || { blacklists: [] }
+  );
 
   // Extract Visitor ID from login session
   const user = useSelector((state) => state.login.user);
@@ -170,6 +174,7 @@ const MyRequests = () => {
       loadVisitorId();
     }
     dispatch(GetAllGatePasses());
+    dispatch(GetAllBlacklist());
   }, [userEmail, dispatch]);
 
   useEffect(() => {
@@ -506,6 +511,19 @@ const MyRequests = () => {
   const handleUpdateMember = async (idx) => {
     const member = editGroupMembers[idx];
     if (!member?.VVG_id || memberSavingIdx !== null) return;
+    
+    // Check blacklist before updating
+    const isBlacklisted = (blacklists || []).some(
+      (b) =>
+        b.VB_Name &&
+        b.VB_Name.toLowerCase() === member.VVG_Visitor_Name?.toLowerCase() &&
+        b.VB_Status === "A"
+    );
+    if (isBlacklisted) {
+      setEditError(`Access Restricted for ${member.VVG_Visitor_Name}. They are blacklisted.`);
+      return;
+    }
+
     setMemberSavingIdx(idx);
     try {
       await VisitGroupService.UpdateVisitGroup({
@@ -557,6 +575,19 @@ const MyRequests = () => {
       setEditError(phoneErr);
       return;
     }
+    
+    // Check blacklist before adding
+    const isBlacklisted = (blacklists || []).some(
+      (b) =>
+        b.VB_Name &&
+        b.VB_Name.toLowerCase() === member.VVG_Visitor_Name?.toLowerCase() &&
+        b.VB_Status === "A"
+    );
+    if (isBlacklisted) {
+      setEditError(`Access Restricted for ${member.VVG_Visitor_Name}. They are blacklisted.`);
+      return;
+    }
+
     setNewMemberSavingIdx(idx);
     setEditError("");
     try {
