@@ -37,7 +37,7 @@ const Header = () => {
     >
       {/* Left: Mobile hamburger / Back button */}
       <div className="flex items-center gap-3">
-        {isMobile ? (
+        {isMobile && (
           <button
             onClick={() => dispatch(toggleMobileMenu())}
             className="w-9 h-9 flex items-center justify-center rounded-xl text-primary"
@@ -47,21 +47,6 @@ const Header = () => {
             }}
           >
             {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
-        ) : (
-          <button
-            onClick={() => navigate(-1)}
-            className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors group"
-            style={{
-              background: "var(--color-surface-1)",
-              border: "1px solid var(--color-border-soft)",
-            }}
-            title="Go Back"
-          >
-            <ArrowLeft
-              size={17}
-              className="group-hover:-translate-x-0.5 transition-transform"
-            />
           </button>
         )}
       </div>

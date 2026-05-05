@@ -6,6 +6,7 @@ import VisitorTable from "../../../components/Admin/ApprovalManagement/VisitorTa
 import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
 import ApprovalModal from "../../../components/Admin/ApprovalManagement/ApprovalModal";
 import QRSuccessModal from "../../../components/Admin/ApprovalManagement/QRSuccessModal";
+import { ArrowLeft, Shield, CheckCircle2, AlertCircle } from "lucide-react";
 import {
   setSearchTerm as setAdminSearchTerm,
   updateVisitorStatus,
@@ -218,17 +219,68 @@ const ApprovalManagement = () => {
 
         <div className="max-w-[1700px] mx-auto relative z-10">
           <header className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-3 gap-4 relative z-10">
-            <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-3 py-2 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
-              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2 mb-1">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
-                <span className="text-[var(--color-text-primary)] text-[12px] font-bold uppercase tracking-[0.3em]">
-                  Approval Management
-                </span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full md:w-auto">
+              {viewMode === "details" && (
+                <button
+                  onClick={handleBackToList}
+                  className={`flex items-center justify-center w-10 h-10 rounded-xl border transition-all shrink-0 ${
+                    isLight
+                      ? "bg-white border-gray-200 hover:border-primary text-[#1A1A1A]"
+                      : "bg-black/30 border-white/10 hover:border-primary text-white"
+                  }`}
+                  title="Back to requests"
+                >
+                  <ArrowLeft size={18} />
+                </button>
+              )}
+              <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-3 py-2 rounded-r-2xl backdrop-blur-sm w-full sm:w-auto shadow-sm">
+                <div className="flex flex-col md:flex-row items-start sm:items-center gap-2 md:gap-2 mb-1">
+                  <div className="hidden sm:block w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
+                  <span className="text-[var(--color-text-primary)] text-[12px] font-bold uppercase tracking-[0.3em]">
+                    Approval Management
+                  </span>
+                </div>
+                <p className="text-[var(--color-text-secondary)] text-[10px] uppercase font-bold tracking-[0.2em] opacity-80 leading-tight">
+                  Monitor and authorize visitor access protocols
+                </p>
               </div>
-              <p className="text-[var(--color-text-secondary)] text-[10px] uppercase font-bold tracking-[0.2em] opacity-80 leading-tight">
-                Monitor and authorize visitor access protocols
-              </p>
             </div>
+
+            {viewMode === "details" && selectedVisitor && (
+              <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-start md:justify-end mt-2 md:mt-0">
+                <div
+                  className={`px-4 py-2 rounded-xl border text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center justify-center gap-2 whitespace-nowrap flex-grow sm:flex-grow-0 ${
+                    isLight
+                      ? "bg-gray-50 border-gray-200 text-[#1A1A1A]"
+                      : "bg-white/5 border-white/10 text-white"
+                  }`}
+                >
+                  <Shield size={14} className="text-primary shrink-0" />
+                  <span className="truncate">Status: {selectedVisitor.status || "Pending"}</span>
+                </div>
+                
+                {(selectedVisitor.status === "Accepted by Visitor" ||
+                  selectedVisitor.status === "Accepted by Contact Person" ||
+                  selectedVisitor.status === "Sent to Admin") && (
+                  <div className="flex flex-row items-center gap-2 w-full sm:w-auto">
+                    <button
+                      onClick={() => handleAction(selectedVisitor, "Approve")}
+                      className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[10px] font-semibold tracking-[0.2em] uppercase rounded-xl transition-all shadow-sm flex justify-center items-center gap-2"
+                    >
+                      <CheckCircle2 size={14} />
+                      ACCEPT
+                    </button>
+                    <button
+                      onClick={() => handleAction(selectedVisitor, "Reject")}
+                      className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 bg-primary hover:bg-[#A00D25] text-white text-[10px] font-semibold tracking-[0.2em] uppercase rounded-xl transition-all shadow-sm flex justify-center items-center gap-2"
+                    >
+                      <AlertCircle size={14} />
+                      REJECT
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </header>
 
           <div className="space-y-3 md:space-y-6">

@@ -16,6 +16,7 @@ import { useThemeMode } from "../../../theme/ThemeModeContext";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
 
 const normalizeStatus = (status) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -262,9 +263,22 @@ const RequestReviewMain = () => {
       className={`flex-1 p-4 md:p-6 space-y-4 animate-fade-in-slow overflow-y-auto relative transition-colors duration-500 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
     >
       <div className="max-w-[1700px] mx-auto relative z-10 w-full">
-        <div className="flex flex-col md:flex-row items-center justify-between pb-6 animate-fade-in transition-all gap-4">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
-            <div className="w-1.5 h-8 bg-primary rounded-full"></div>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-6 animate-fade-in transition-all gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div className="flex flex-row items-center gap-3 sm:gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className={`flex items-center justify-center w-10 h-10 rounded-xl border transition-all shrink-0 ${
+                  isLight
+                    ? "bg-white border-gray-200 hover:border-primary text-[#1A1A1A]"
+                    : "bg-black/30 border-white/10 hover:border-primary text-white"
+                }`}
+                title="Go Back"
+              >
+                <ArrowLeft size={18} />
+              </button>
+              <div className="hidden sm:block w-1.5 h-8 bg-primary rounded-full"></div>
+            </div>
             <div>
               <p
                 className={`text-[10px] uppercase font-semibold tracking-[0.28em] mb-0.5 opacity-80 ${isLight ? "text-gray-400" : "text-white/40"}`}
@@ -282,19 +296,41 @@ const RequestReviewMain = () => {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-start md:justify-end">
             <div
-              className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/35 border-white/10"}`}
+              className={`border px-5 py-3 rounded-2xl shadow-sm text-left sm:text-right flex-grow sm:flex-grow-0 ${isLight ? "bg-white border-gray-200" : "bg-black/35 border-white/10"}`}
             >
               <p
                 className={`text-[10px] uppercase font-semibold tracking-[0.22em] mb-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}
               >
                 Request Status
               </p>
-              <span className="text-primary text-[12px] font-semibold uppercase tracking-[0.2em]">
+              <span className="text-primary text-[12px] font-semibold uppercase tracking-[0.2em] truncate block">
                 {requestData?.status || "PENDING"}
               </span>
             </div>
+            
+            {(requestData?.status === "Accepted by Visitor" ||
+              requestData?.status === "Accepted by Contact Person" ||
+              requestData?.status === "Sent to Admin" ||
+              requestData?.status === "Sent to Visitor") && (
+              <div className="flex flex-row items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={() => setShowApproveModal(true)}
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-3 bg-[#00B14F] hover:bg-[#009e46] text-white text-[10px] font-semibold tracking-[0.2em] uppercase rounded-xl transition-all shadow-sm flex justify-center items-center gap-2"
+                >
+                  <CheckCircle2 size={14} />
+                  ACCEPT
+                </button>
+                <button
+                  onClick={() => setShowRejectModal(true)}
+                  className="flex-1 sm:flex-none px-4 sm:px-6 py-3 bg-primary hover:bg-[#A00D25] text-white text-[10px] font-semibold tracking-[0.2em] uppercase rounded-xl transition-all shadow-sm flex justify-center items-center gap-2"
+                >
+                  <AlertCircle size={14} />
+                  REJECT
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
