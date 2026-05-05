@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
@@ -6,6 +6,8 @@ import Header from "../../../components/Contact_Person/Layout/Header";
 import { AddVehicle } from "../../../actions/VehicleAction";
 import { AddVisitGroup } from "../../../actions/VisitGroupAction";
 import { AddItem } from "../../../actions/ItemCarriedAction";
+import { GetAllBlacklist } from "../../../actions/BlacklistAction";
+
 import { 
   addVehicle, toggleVehicleConfirmed, removeVehicle, updateVehicle, markVehicleSaved,
   addPerson, togglePersonConfirmed, removePerson, updatePerson, markPersonSaved,
@@ -29,6 +31,8 @@ const CreateVisitRequestDetails = () => {
     items, 
     isSubmitting 
   } = useSelector((state) => state.visitRequestForm);
+  const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+
 
   const lastCreatedRequestId = useSelector((state) => state.visitRequestsState?.lastCreatedRequestId);
   const effectiveRequestId = savedRequestId || lastCreatedRequestId;
@@ -36,6 +40,11 @@ const CreateVisitRequestDetails = () => {
   const [vehicleSavingIndex, setVehicleSavingIndex] = useState(null);
   const [personSavingIndex, setPersonSavingIndex] = useState(null);
   const [itemSavingIndex, setItemSavingIndex] = useState(null);
+
+  useEffect(() => {
+    dispatch(GetAllBlacklist());
+  }, [dispatch]);
+
 
   const handleVehicleSave = async (index) => {
     const vehicle = vehicles[index];
@@ -93,6 +102,17 @@ const CreateVisitRequestDetails = () => {
     if (nicErr) { alert(nicErr); return; }
     const phoneErr = validatePhone(person.phone);
     if (phoneErr) { alert(phoneErr); return; }
+
+    // Check blacklist
+    const isBlacklisted = blacklists.some(
+      (b) => 
+        (b.VB_Name && b.VB_Name.toLowerCase() === person.name?.toLowerCase() && b.VB_Status === "A")
+    );
+
+    if (isBlacklisted) {
+      alert(`Access Restricted for ${person.name}. Please connect with the system administrator.`);
+      return;
+    }
 
     if (!effectiveRequestId) {
       alert("Visit request not found. Please go back to Step 1.");

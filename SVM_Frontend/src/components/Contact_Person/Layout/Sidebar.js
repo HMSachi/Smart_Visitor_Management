@@ -8,6 +8,7 @@ import {
   LogOut,
   CalendarDays,
   Users,
+  ShieldAlert,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Drawer, Box, IconButton } from "@mui/material";
@@ -32,6 +33,12 @@ const menuItems = [
     label: "All Visitors",
     icon: Users,
     path: "/contact_person/all-visitors",
+  },
+  {
+    id: "blacklist",
+    label: "Restricted Visitors",
+    icon: ShieldAlert,
+    path: "/contact_person/blacklist-management",
   },
 ];
 

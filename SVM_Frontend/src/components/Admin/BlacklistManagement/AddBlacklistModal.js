@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import {
@@ -10,8 +10,10 @@ import {
   AlertTriangle,
   Save,
   Briefcase,
+  Loader2,
 } from "lucide-react";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
+import VisitorService from "../../../services/VisitorService";
 
 const InputField = ({
   label,
@@ -23,6 +25,7 @@ const InputField = ({
   placeholder,
   required = false,
   isLight,
+  readOnly = false,
 }) => (
   <div className="space-y-2">
     <label
@@ -36,10 +39,59 @@ const InputField = ({
       name={name}
       value={value}
       onChange={onChange}
+      readOnly={readOnly}
       required={required}
       placeholder={placeholder}
-      className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-500 border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20"}`}
+      className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-500 border ${readOnly ? (isLight ? "bg-gray-50 border-gray-200 text-gray-500 cursor-not-allowed" : "bg-white/[0.01] border-white/5 text-gray-400 cursor-not-allowed") : (isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20")}`}
     />
+  </div>
+);
+
+const SelectVisitorField = ({
+  label,
+  icon: Icon,
+  visitors,
+  selectedVisitor,
+  onSelectVisitor,
+  isLight,
+  isLoading,
+}) => (
+  <div className="space-y-2">
+    <label
+      className={`text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 ${isLight ? "text-gray-500" : "text-gray-300/70"}`}
+    >
+      <Icon size={12} className="text-primary/60" />
+      {label} <span className="text-primary">*</span>
+    </label>
+    <select
+      value={selectedVisitor ? String(selectedVisitor.VV_Visitor_id) : ""}
+      onChange={(e) => {
+        if (e.target.value === "") {
+          onSelectVisitor(null);
+        } else {
+          const selectedId = e.target.value;
+          const visitor = visitors.find(
+            (v) => String(v.VV_Visitor_id) === selectedId,
+          );
+          onSelectVisitor(visitor);
+        }
+      }}
+      disabled={isLoading || visitors.length === 0}
+      className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all appearance-none border cursor-pointer ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50 disabled:bg-gray-50 disabled:cursor-not-allowed" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20 disabled:opacity-50 disabled:cursor-not-allowed"}`}
+    >
+      <option value="">
+        {isLoading ? "Loading visitors..." : visitors.length === 0 ? "No visitors available" : "Select a visitor..."}
+      </option>
+      {visitors.map((visitor) => (
+        <option
+          key={visitor.VV_Visitor_id}
+          value={String(visitor.VV_Visitor_id)}
+          className={isLight ? "bg-white" : "bg-[#141416]"}
+        >
+          {visitor.VV_Name} - {visitor.VV_Email || "No email"}
+        </option>
+      ))}
+    </select>
   </div>
 );
 
@@ -48,38 +100,70 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
   const isLight = themeMode === "light";
   const [formData, setFormData] = useState({
     VB_Name: "",
-    VB_Role: "visitor",
+    VB_Role: "Visitor",
     VB_Email: "",
     VB_Description: "",
     VB_Alert_Type: "Level 01",
   });
+  const [selectedVisitor, setSelectedVisitor] = useState(null);
+  const [visitors, setVisitors] = useState([]);
+  const [isLoadingVisitors, setIsLoadingVisitors] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadVisitors();
+    }
+  }, [isOpen]);
+
+  const loadVisitors = async () => {
+    setIsLoadingVisitors(true);
+    try {
+      const response = await VisitorService.GetAllVisitors();
+      const visitorList = response?.data?.ResultSet || response?.data || [];
+      setVisitors(visitorList);
+    } catch (error) {
+      console.error("Error loading visitors:", error);
+      setVisitors([]);
+    } finally {
+      setIsLoadingVisitors(false);
+    }
+  };
+
+  const handleSelectVisitor = (visitor) => {
+    setSelectedVisitor(visitor);
+    setFormData((prev) => ({
+      ...prev,
+      VB_Name: visitor?.VV_Name || "",
+      VB_Email: visitor?.VV_Email || "",
+      VB_Role: "Visitor",
+    }));
+  };
 
   const handleChange = (e) => {
-    let { name, value } = e.target;
-    
-    // Real-time filtering
-    if (name === "VB_Name") {
-      value = value.replace(/[^A-Za-z\s]/g, "");
-    }
-    
+    const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!selectedVisitor) {
+      alert("Please select a visitor from the list");
+      return;
+    }
     onAdd({
       ...formData,
       VB_Admin_id: localStorage.getItem("admin_id") || "1",
-      VB_Visitor_id: "", // Empty string instead of '0' avoids foreign key conflicts
+      VB_Visitor_id: selectedVisitor.VV_Visitor_id,
     });
     onClose();
     setFormData({
       VB_Name: "",
-      VB_Role: "visitor",
+      VB_Role: "Visitor",
       VB_Email: "",
       VB_Description: "",
       VB_Alert_Type: "Level 01",
     });
+    setSelectedVisitor(null);
   };
 
   return createPortal(
@@ -118,7 +202,7 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                     <p
                       className={`text-[10px] tracking-wider ${isLight ? "text-gray-500" : "text-gray-400"}`}
                     >
-                      Add a visitor to the restricted access list
+                      Add an existing visitor to the restricted access list
                     </p>
                   </div>
                 </div>
@@ -136,13 +220,36 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                 onSubmit={handleSubmit}
                 className={`overflow-y-auto p-5 space-y-5 ${isLight ? "bg-[#F8F9FA] scrollbar-thin scrollbar-thumb-gray-300" : "bg-[var(--color-bg-default)] scrollbar-thin scrollbar-thumb-white/10"}`}
               >
-                {/* Section 1: Subject Identity */}
+                {/* Section 1: Select Visitor */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                   <div className="col-span-full flex items-center gap-2.5">
                     <div className="w-1 h-3.5 bg-primary rounded-full shadow-[0_0_6px_var(--color-primary)]"></div>
                     <h3 className="text-primary text-[10px] font-bold uppercase tracking-[0.28em]">
-                      Visitor Details
+                      Visitor Selection
                     </h3>
+                  </div>
+
+                  <div className="col-span-full">
+                    {isLoadingVisitors ? (
+                      <div className="flex items-center justify-center py-6 gap-2">
+                        <Loader2 size={16} className="animate-spin text-primary" />
+                        <span
+                          className={`text-sm ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                        >
+                          Loading visitors...
+                        </span>
+                      </div>
+                    ) : (
+                      <SelectVisitorField
+                        label="Select Visitor"
+                        icon={User}
+                        visitors={visitors}
+                        selectedVisitor={selectedVisitor}
+                        onSelectVisitor={handleSelectVisitor}
+                        isLight={isLight}
+                        isLoading={isLoadingVisitors}
+                      />
+                    )}
                   </div>
 
                   <InputField
@@ -152,8 +259,8 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                     name="VB_Name"
                     value={formData.VB_Name}
                     onChange={handleChange}
-                    placeholder="Visitor's full name"
-                    required
+                    readOnly={true}
+                    placeholder="Auto-filled from selected visitor"
                   />
                   <InputField
                     isLight={isLight}
@@ -162,17 +269,9 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                     name="VB_Email"
                     value={formData.VB_Email}
                     onChange={handleChange}
+                    readOnly={true}
                     type="email"
-                    placeholder="email@example.com"
-                  />
-                  <InputField
-                    isLight={isLight}
-                    label="Role"
-                    icon={Briefcase}
-                    name="VB_Role"
-                    value={formData.VB_Role}
-                    onChange={handleChange}
-                    placeholder="e.g. visitor, contractor"
+                    placeholder="Auto-filled from selected visitor"
                   />
                 </div>
 
@@ -253,7 +352,8 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-[2] py-3 bg-primary rounded-2xl text-white text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2.5 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20"
+                    disabled={!selectedVisitor || isLoadingVisitors}
+                    className="flex-[2] py-3 bg-primary rounded-2xl text-white text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2.5 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     <Save size={15} />
                     Add to Blacklist

@@ -8,6 +8,7 @@ import {
 } from "../../../actions/VisitorAction";
 import { AddAdministrator } from "../../../actions/AdministratorAction";
 import { GetAllContactPersons } from "../../../actions/ContactPersonAction";
+import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 import Header from "../../../components/Contact_Person/Layout/Header";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
 import {
@@ -39,6 +40,7 @@ const ContactAllVisitors = () => {
     (state) => state.visitorManagement,
   );
   const { contactPersons } = useSelector((state) => state.contactPerson);
+  const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
@@ -72,6 +74,7 @@ const ContactAllVisitors = () => {
       try {
         // Dispatch Redux action to fetch all contact persons (only once)
         dispatch(GetAllContactPersons());
+        dispatch(GetAllBlacklist());
       } catch (err) {
         console.error("Error loading contact persons:", err);
       }
@@ -207,6 +210,18 @@ const ContactAllVisitors = () => {
     // Where to Visit validation
     if (!formData.VV_Visiting_places?.trim()) {
       newErrors.VV_Visiting_places = "Visiting area is required";
+    }
+
+    // Blacklist validation
+    const isBlacklisted = blacklists.some(
+      (b) =>
+        (b.VB_Email && b.VB_Email.toLowerCase() === formData.VV_Email?.toLowerCase() && b.VB_Status === "A") ||
+        (b.VB_Name && b.VB_Name.toLowerCase() === formData.VV_Name?.toLowerCase() && b.VB_Status === "A")
+    );
+
+    if (isBlacklisted) {
+      newErrors.VV_Name = "⚠️ This person is in the restricted list. Please contact the system administrator.";
+      newErrors.VV_Email = "⚠️ This person is in the restricted list. Please contact the system administrator.";
     }
 
     setErrors(newErrors);

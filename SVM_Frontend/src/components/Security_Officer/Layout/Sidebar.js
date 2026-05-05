@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  ShieldAlert,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Drawer, Box, IconButton } from "@mui/material";
@@ -25,6 +26,12 @@ const menuItems = [
     label: "Scan a QR Code",
     icon: QrCode,
     path: "/Security_Officer/scanner",
+  },
+  {
+    id: "blacklist",
+    label: "Restricted Visitors",
+    icon: ShieldAlert,
+    path: "/Security_Officer/blacklist-management",
   },
 //   {
 //     id: "approval",
