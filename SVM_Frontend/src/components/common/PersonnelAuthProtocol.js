@@ -88,6 +88,36 @@ const Field = ({ label, value, icon: Icon, isLight }) => (
   </div>
 );
 
+const SimpleTable = ({ columns, data, isLight }) => (
+  <div className={`overflow-x-auto rounded-lg border shadow-sm ${isLight ? "border-gray-200" : "border-white/10"}`}>
+    <table className="w-full text-left border-collapse min-w-max">
+      <thead>
+        <tr className={`border-b ${isLight ? "bg-gray-50 border-gray-200" : "bg-black/40 border-white/10"}`}>
+          {columns.map((col, idx) => (
+            <th key={idx} className={`p-2.5 text-[11px] font-semibold ${isLight ? "text-gray-500" : "text-white/60"}`}>
+              <div className="flex items-center gap-1.5">
+                {col.icon && <col.icon size={11} className="text-primary/40" />}
+                {col.label}
+              </div>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row, rowIdx) => (
+          <tr key={rowIdx} className={`border-b last:border-b-0 ${isLight ? "border-gray-100 hover:bg-gray-50/50" : "border-white/5 hover:bg-white/[0.02]"}`}>
+            {columns.map((col, colIdx) => (
+              <td key={colIdx} className={`p-2.5 px-3 text-[12px] font-medium ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}>
+                {row[col.key] || "—"}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
 const PersonnelAuthProtocol = ({
   visitor,
   onBack,
@@ -245,34 +275,14 @@ const PersonnelAuthProtocol = ({
               isLight={isLight}
             >
               {vehiclesList && vehiclesList.length > 0 ? (
-                <div className="space-y-4">
-                  {vehiclesList.map((v, idx) => (
-                    <motion.div
-                      key={v.id || idx}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.08 }}
-                      className={`grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl border ${
-                        isLight
-                          ? "bg-gray-50 border-gray-200"
-                          : "bg-black/35 border-white/10"
-                      }`}
-                    >
-                      <Field
-                        label="Vehicle Registration Number"
-                        value={v.plateNumber}
-                        icon={Car}
-                        isLight={isLight}
-                      />
-                      <Field
-                        label="Vehicle Type"
-                        value={v.vehicleType}
-                        icon={Hash}
-                        isLight={isLight}
-                      />
-                    </motion.div>
-                  ))}
-                </div>
+                <SimpleTable
+                  isLight={isLight}
+                  columns={[
+                    { label: "Vehicle Registration Number", key: "plateNumber", icon: Car },
+                    { label: "Vehicle Type", key: "vehicleType", icon: Hash }
+                  ]}
+                  data={vehiclesList}
+                />
               ) : (
                 <div
                   className={`border border-dashed rounded-2xl p-5 text-center ${
@@ -304,40 +314,15 @@ const PersonnelAuthProtocol = ({
               isLight={isLight}
             >
               {groupMembers && groupMembers.length > 0 ? (
-                <div className="space-y-4">
-                  {groupMembers.map((member, idx) => (
-                    <motion.div
-                      key={member.id || idx}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 md:p-5 border rounded-2xl hover:border-primary/20 transition-all ${
-                        isLight
-                          ? "bg-gray-50 border-gray-200"
-                          : "bg-black/35 border-white/10"
-                      }`}
-                    >
-                      <Field
-                        label="Full Name"
-                        value={member.fullName}
-                        icon={User}
-                        isLight={isLight}
-                      />
-                      <Field
-                        label="NIC / Passport Number"
-                        value={member.nic}
-                        icon={Hash}
-                        isLight={isLight}
-                      />
-                      <Field
-                        label="Designation / Contact"
-                        value={member.contact}
-                        icon={Phone}
-                        isLight={isLight}
-                      />
-                    </motion.div>
-                  ))}
-                </div>
+                <SimpleTable
+                  isLight={isLight}
+                  columns={[
+                    { label: "Full Name", key: "fullName", icon: User },
+                    { label: "NIC / Passport Number", key: "nic", icon: Hash },
+                    { label: "Designation / Contact", key: "contact", icon: Phone }
+                  ]}
+                  data={groupMembers}
+                />
               ) : (
                 <div
                   className={`border border-dashed rounded-2xl p-5 text-center ${
@@ -372,40 +357,15 @@ const PersonnelAuthProtocol = ({
               isLight={isLight}
             >
               {itemsCarried && itemsCarried.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4">
-                  {itemsCarried.map((item, idx) => (
-                    <motion.div
-                      key={item.id || idx}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 md:p-5 border rounded-[24px] group/item hover:border-primary/20 transition-all ${
-                        isLight
-                          ? "bg-gray-50 border-gray-200"
-                          : "bg-[var(--color-bg-paper)]/40 border-white/5"
-                      }`}
-                    >
-                      <Field
-                        label="Item Name"
-                        value={item.itemName}
-                        icon={Package}
-                        isLight={isLight}
-                      />
-                      <Field
-                        label="Quantity"
-                        value={item.quantity ? String(item.quantity) : "—"}
-                        icon={Hash}
-                        isLight={isLight}
-                      />
-                      <Field
-                        label="Description"
-                        value={item.description || "—"}
-                        icon={Briefcase}
-                        isLight={isLight}
-                      />
-                    </motion.div>
-                  ))}
-                </div>
+                <SimpleTable
+                  isLight={isLight}
+                  columns={[
+                    { label: "Item Name", key: "itemName", icon: Package },
+                    { label: "Quantity", key: "quantity", icon: Hash },
+                    { label: "Description", key: "description", icon: Briefcase }
+                  ]}
+                  data={itemsCarried}
+                />
               ) : (
                 <div
                   className={`border border-dashed rounded-2xl p-5 text-center ${

@@ -402,23 +402,12 @@ const AllUsers = () => {
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
-      <Header />
+      <Header title="All System Users" subtitle="User Directory" />
 
       <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="max-w-[1500px] mx-auto">
-          <header className="mb-4 md:mb-5 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.06] pb-4 md:pb-5 gap-4 relative z-10">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-7 h-[2.5px] bg-gradient-to-r from-primary to-primary/50 rounded-full"></div>
-                <span className="text-primary/90 uppercase tracking-widest text-[9px] font-semibold letter-spacing-1">
-                  User Directory
-                </span>
-              </div>
-              <h1 className="text-white uppercase text-base font-semibold tracking-wide">
-                All System Users
-              </h1>
-            </div>
+          <header className="mb-4 md:mb-5 flex flex-col md:flex-row justify-end items-start md:items-center pb-4 md:pb-5 gap-4 relative z-10">
 
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-stretch sm:items-center">
               {/* Search Form */}
