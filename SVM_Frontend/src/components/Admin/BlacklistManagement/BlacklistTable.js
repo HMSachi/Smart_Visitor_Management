@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
-  Trash2,
   Shield,
   User,
   Clock,
-  ChevronRight,
   Eye,
   UserPlus,
   Search,
@@ -23,35 +21,6 @@ import BlacklistDetailModal from "./BlacklistDetailModal";
 import AddBlacklistModal from "./AddBlacklistModal";
 import EditBlacklistModal from "./EditBlacklistModal";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
-
-/* ─────────────────────────────────────────────
-   Risk Level badge
-───────────────────────────────────────────── */
-const RestrictionLevel = ({ level }) => {
-  const styles = {
-    "Level 01": "border border-blue-500/30 text-blue-400 bg-blue-500/8",
-    "Level 02": "border border-primary/30 text-primary/90 bg-primary/8",
-    "Level 03":
-      "border border-red-500/40 text-red-400 bg-red-500/10 shadow-[0_0_12px_rgba(255,100,100,0.1)]",
-  };
-
-  return (
-    <div
-      className={`px-4 py-1.5 rounded-full text-[12px] font-medium tracking-[0.2em] capitalize border flex items-center gap-2 w-fit mx-auto ${
-        styles[level] || styles["Level 01"]
-      }`}
-    >
-      <div
-        className={`w-1 h-1 rounded-full ${
-          level === "Level 03"
-            ? "bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse"
-            : "bg-current opacity-90"
-        }`}
-      />
-      {level}
-    </div>
-  );
-};
 
 /* ─────────────────────────────────────────────
    Main table component
@@ -212,11 +181,6 @@ const BlacklistTable = () => {
                   >
                     Date Added
                   </th>
-                  <th
-                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                  >
-                    Risk Level
-                  </th>
                   <th className="px-4 md:px-5 py-4 text-[10px] font-bold tracking-[0.2em] uppercase text-primary text-right whitespace-nowrap">
                     Action
                   </th>
@@ -232,7 +196,7 @@ const BlacklistTable = () => {
                       className="block sm:table-row"
                     >
                       <td
-                        colSpan="5"
+                        colSpan="4"
                         className="px-6 py-14 text-center block sm:table-cell"
                       >
                         <div className="flex justify-center items-center h-full">
@@ -312,17 +276,6 @@ const BlacklistTable = () => {
                           </div>
                         </td>
 
-                        {/* Risk Level */}
-                        <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
-                        >
-                          <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
-                            Risk Level
-                          </span>
-                          <RestrictionLevel
-                            level={item.VB_Alert_Type || "Level 01"}
-                          />
-                        </td>
 
                         {/* Actions */}
                         <td className="block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 text-right">
@@ -402,7 +355,7 @@ const BlacklistTable = () => {
                       className="block sm:table-row"
                     >
                       <td
-                        colSpan="5"
+                        colSpan="4"
                         className="px-6 py-14 text-center block sm:table-cell"
                       >
                         <div className="flex flex-col items-center gap-4">

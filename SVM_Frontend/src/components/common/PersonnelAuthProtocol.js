@@ -345,13 +345,17 @@ const PersonnelAuthProtocol = ({
                   ))}
                 </div>
               ) : (
-                <div className={`border border-dashed rounded-2xl p-5 text-center ${
-                  isLight ? "border-gray-200" : "border-white/10"
-                }`}>
+                <div
+                  className={`border border-dashed rounded-2xl p-5 text-center ${
+                    isLight ? "border-gray-200" : "border-white/10"
+                  }`}
+                >
                   <Car size={28} className="mx-auto mb-2 opacity-20" />
-                  <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
-                    isLight ? "text-gray-400" : "text-gray-500"
-                  }`}>
+                  <p
+                    className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
+                      isLight ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
                     No vehicles declared for this visit
                   </p>
                 </div>
@@ -407,13 +411,17 @@ const PersonnelAuthProtocol = ({
                   ))}
                 </div>
               ) : (
-                <div className={`border border-dashed rounded-2xl p-5 text-center ${
-                  isLight ? "border-gray-200" : "border-white/10"
-                }`}>
+                <div
+                  className={`border border-dashed rounded-2xl p-5 text-center ${
+                    isLight ? "border-gray-200" : "border-white/10"
+                  }`}
+                >
                   <Users size={28} className="mx-auto mb-2 opacity-20" />
-                  <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
-                    isLight ? "text-gray-400" : "text-gray-500"
-                  }`}>
+                  <p
+                    className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
+                      isLight ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
                     No additional visitors
                   </p>
                 </div>
@@ -425,7 +433,10 @@ const PersonnelAuthProtocol = ({
 
       {/* Material Intake Protocol */}
       <div className="mb-8">
-        <SectionCard isLight={isLight} darkClassName="bg-[var(--color-bg-default)]">
+        <SectionCard
+          isLight={isLight}
+          darkClassName="bg-[var(--color-bg-default)]"
+        >
           <div className="p-4 md:p-5">
             <SplitSection
               title="Items Carried"
@@ -441,7 +452,7 @@ const PersonnelAuthProtocol = ({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className={`grid grid-cols-1 md:grid-cols-2 gap-4 p-4 md:p-5 border rounded-[24px] group/item hover:border-primary/20 transition-all ${
+                      className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 md:p-5 border rounded-[24px] group/item hover:border-primary/20 transition-all ${
                         isLight
                           ? "bg-gray-50 border-gray-200"
                           : "bg-[var(--color-bg-paper)]/40 border-white/5"
@@ -459,17 +470,27 @@ const PersonnelAuthProtocol = ({
                         icon={Hash}
                         isLight={isLight}
                       />
+                      <Field
+                        label="Description"
+                        value={item.description || "—"}
+                        icon={Briefcase}
+                        isLight={isLight}
+                      />
                     </motion.div>
                   ))}
                 </div>
               ) : (
-                <div className={`border border-dashed rounded-2xl p-5 text-center ${
-                  isLight ? "border-gray-200" : "border-white/10"
-                }`}>
+                <div
+                  className={`border border-dashed rounded-2xl p-5 text-center ${
+                    isLight ? "border-gray-200" : "border-white/10"
+                  }`}
+                >
                   <Package size={28} className="mx-auto mb-2 opacity-20" />
-                  <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
-                    isLight ? "text-gray-400" : "text-gray-500"
-                  }`}>
+                  <p
+                    className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
+                      isLight ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
                     No items declared
                   </p>
                 </div>

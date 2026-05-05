@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
@@ -6,6 +6,9 @@ import Header from "../../../components/Contact_Person/Layout/Header";
 import { AddVehicle } from "../../../actions/VehicleAction";
 import { AddVisitGroup } from "../../../actions/VisitGroupAction";
 import { AddItem } from "../../../actions/ItemCarriedAction";
+import { GetAllBlacklist } from "../../../actions/BlacklistAction";
+import { GetAllVisitors } from "../../../actions/VisitorAction";
+
 import { 
   addVehicle, toggleVehicleConfirmed, removeVehicle, updateVehicle, markVehicleSaved,
   addPerson, togglePersonConfirmed, removePerson, updatePerson, markPersonSaved,
@@ -29,6 +32,9 @@ const CreateVisitRequestDetails = () => {
     items, 
     isSubmitting 
   } = useSelector((state) => state.visitRequestForm);
+  const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+  const { visitors: allVisitors } = useSelector((state) => state.visitorManagement || { visitors: [] });
+
 
   const lastCreatedRequestId = useSelector((state) => state.visitRequestsState?.lastCreatedRequestId);
   const effectiveRequestId = savedRequestId || lastCreatedRequestId;
@@ -36,6 +42,12 @@ const CreateVisitRequestDetails = () => {
   const [vehicleSavingIndex, setVehicleSavingIndex] = useState(null);
   const [personSavingIndex, setPersonSavingIndex] = useState(null);
   const [itemSavingIndex, setItemSavingIndex] = useState(null);
+
+  useEffect(() => {
+    dispatch(GetAllBlacklist());
+    dispatch(GetAllVisitors());
+  }, [dispatch]);
+
 
   const handleVehicleSave = async (index) => {
     const vehicle = vehicles[index];
@@ -94,6 +106,17 @@ const CreateVisitRequestDetails = () => {
     const phoneErr = validatePhone(person.phone);
     if (phoneErr) { alert(phoneErr); return; }
 
+    // Check blacklist
+    const isBlacklisted = blacklists.some(
+      (b) => 
+        (b.VB_Name && b.VB_Name.toLowerCase() === person.name?.toLowerCase() && b.VB_Status === "A")
+    );
+
+    if (isBlacklisted) {
+      alert(`Access Restricted for ${person.name}. Please connect with the system administrator.`);
+      return;
+    }
+
     if (!effectiveRequestId) {
       alert("Visit request not found. Please go back to Step 1.");
       return;
@@ -115,6 +138,26 @@ const CreateVisitRequestDetails = () => {
       alert("Failed to save visitor. Please try again.");
     } finally {
       setPersonSavingIndex(null);
+    }
+  };
+
+  const handlePersonNameChange = (index, value) => {
+    dispatch(updatePerson({ index, field: "name", value }));
+    
+    // Find if the entered name matches a known visitor for autocomplete
+    const matchedVisitor = allVisitors.find(v => 
+      v.VV_Name?.trim().toLowerCase() === value?.trim().toLowerCase()
+    );
+    if (matchedVisitor) {
+      // Auto-fill NIC and Phone if matched
+      if (matchedVisitor.VV_NIC_Passport_NO) {
+        dispatch(updatePerson({ index, field: "nic", value: matchedVisitor.VV_NIC_Passport_NO }));
+      }
+      if (matchedVisitor.VV_Phone) {
+        dispatch(updatePerson({ index, field: "phone", value: matchedVisitor.VV_Phone }));
+      } else if (matchedVisitor.VV_Designation && matchedVisitor.VV_Designation !== 'N/A') {
+        dispatch(updatePerson({ index, field: "phone", value: matchedVisitor.VV_Designation }));
+      }
     }
   };
 
@@ -225,7 +268,6 @@ const CreateVisitRequestDetails = () => {
 
   return (
     <div className="contact-theme-root flex bg-[#F8F9FA] overflow-hidden text-[#1A1A1A] h-screen w-full">
-      <Sidebar />
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-hidden">
         <Header title="Additional Details" />
         
@@ -309,6 +351,13 @@ const CreateVisitRequestDetails = () => {
                 </div>
 
                 <div className="space-y-3">
+                  <datalist id="visitor-names">
+                    {allVisitors.map((v, idx) => (
+                      <option key={`${v.VV_Visitor_id}-${idx}`} value={v.VV_Name}>
+                        {v.VV_NIC_Passport_NO ? `ID: ${v.VV_NIC_Passport_NO}` : ''}
+                      </option>
+                    ))}
+                  </datalist>
                   {people.map((p, index) => (
                     <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 rounded-xl border transition-all ${p.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"}`}>
                       <div className="md:col-span-3">
@@ -316,9 +365,10 @@ const CreateVisitRequestDetails = () => {
                           disabled={p.isConfirmed} 
                           label="Name" 
                           value={p.name} 
+                          list="visitor-names"
                           onChange={(e) => {
-                            const val = e.target.value.replace(/[^A-Za-z\s]/g, "");
-                            dispatch(updatePerson({ index, field: "name", value: val }));
+                            const val = e.target.value;
+                            handlePersonNameChange(index, val);
                           }} 
                           placeholder="Full Name" 
                         />
@@ -329,7 +379,7 @@ const CreateVisitRequestDetails = () => {
                           label="NIC" 
                           value={p.nic} 
                           onChange={(e) => {
-                            const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+                            const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 12);
                             dispatch(updatePerson({ index, field: "nic", value: val }));
                           }} 
                           placeholder="ID Number" 

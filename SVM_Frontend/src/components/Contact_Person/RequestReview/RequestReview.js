@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
@@ -15,6 +15,7 @@ import VehicleService from "../../../services/VehicleService";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import { AnimatePresence, motion } from "framer-motion";
 
 const normalizeStatus = (status) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -140,8 +141,7 @@ const RequestReviewMain = () => {
         const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
           .filter(
             (v) =>
-              String(v?.VVR_Request_id) ===
-              String(apiRequest?.VVR_Request_id),
+              String(v?.VVR_Request_id) === String(apiRequest?.VVR_Request_id),
           )
           .map((v) => ({
             id: v.VV_Vehicle_id,
@@ -184,6 +184,7 @@ const RequestReviewMain = () => {
             id: i.VIC_Item_id,
             itemName: i.VIC_Item_Name,
             quantity: i.VIC_Quantity,
+            description: i.VIC_Designation,
           }));
         if (!cancelled) setItemsCarried(matchedItems);
       } catch (error) {
@@ -281,7 +282,7 @@ const RequestReviewMain = () => {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
+          <div className="flex flex-col md:flex-row items-center gap-4">
             <div
               className={`border px-5 py-3 rounded-2xl shadow-sm text-right ${isLight ? "bg-white border-gray-200" : "bg-black/35 border-white/10"}`}
             >
@@ -305,7 +306,7 @@ const RequestReviewMain = () => {
           ) : (
             <PersonnelAuthProtocol
               visitor={requestData}
-              onBack={() => navigate("/contact_person/requests-inbox")}
+              onBack={() => navigate(-1)}
               onAction={(visitor, type) => {
                 if (type === "Approve") setShowApproveModal(true);
                 if (type === "Reject") setShowRejectModal(true);
@@ -325,7 +326,6 @@ const RequestReviewMain = () => {
         comment={approvalComment}
         setComment={setApprovalComment}
       />
-
       <RejectionModal
         isOpen={showRejectModal}
         onClose={() => setShowRejectModal(false)}
