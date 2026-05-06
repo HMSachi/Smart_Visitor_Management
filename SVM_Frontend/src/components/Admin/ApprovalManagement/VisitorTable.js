@@ -331,7 +331,7 @@ const VisitorTable = ({
                             )}
                             <button
                               onClick={() => onViewDetails(visitor)}
-                              title="INSPECT PROTOCOL"
+                              title="View Details"
                               className="w-9 h-9 rounded-lg flex items-center justify-center bg-white/[0.02] border border-white/5 text-gray-300 hover:text-white hover:bg-[var(--color-bg-paper)] hover:border-white/20 transition-all duration-500 shadow-lg group/btn"
                             >
                               <Eye

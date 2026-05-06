@@ -123,9 +123,9 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
   const visitingArea = Array.isArray(visitorData?.areas)
     ? visitorData.areas.join(" | ")
     : visitorData?.areas ||
-      visitorData?.raw?.VVR_Places_to_Visit ||
-      visitorData?.raw?.VV_Visiting_places ||
-      "N/A";
+    visitorData?.raw?.VVR_Places_to_Visit ||
+    visitorData?.raw?.VV_Visiting_places ||
+    "N/A";
 
   // Extract sub-visitor information from joint data
   const subVisitors = useMemo(() => {
