@@ -172,27 +172,11 @@ const VisitorTable = ({
                   <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
                     VISITOR NAME
                   </th>
-                  <th
-                    className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left cursor-pointer group/h"
-                    onClick={() =>
-                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-                    }
-                  >
-                    <div className="flex items-center gap-2">
-                      VISIT DATE & TIME
-                      <div
-                        className={`transition-transform duration-300 ${sortOrder === "asc" ? "rotate-180" : ""}`}
-                      >
-                        <ChevronDown
-                          size={11}
-                          className={
-                            sortOrder
-                              ? "text-primary"
-                              : "text-[var(--color-text-dim)]"
-                          }
-                        />
-                      </div>
-                    </div>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-40">
+                    VISIT DATE
+                  </th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
+                    VISITING PLACE
                   </th>
                   <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
                     STATUS
@@ -230,21 +214,19 @@ const VisitorTable = ({
                             </p>
                           </div>
                         </td>
+                        <td className="px-3 md:px-4 lg:px-6 py-1 text-center align-middle">
+                          <span className="text-white/90 text-[12px] font-medium tracking-wide">
+                            {visitor.date?.split(" ")[0]}
+                          </span>
+                        </td>
                         <td className="px-3 md:px-4 lg:px-6 py-1 align-middle">
-                          <div className="flex items-center gap-4 text-[12px] font-medium tracking-wide">
-                            <div className="flex items-center gap-1.5 text-white/90">
-                              <Calendar size={12} className="text-primary/70 shrink-0" />
-                              <span>{visitor.date}</span>
-                            </div>
-                            <div className="w-px h-3 bg-white/10 hidden md:block" />
-                            <div className="flex items-center gap-1.5 text-white/60 truncate max-w-[300px]">
-                              <MapPin size={11} className="text-primary/50 shrink-0" />
-                              <span className="truncate">
-                                {Array.isArray(visitor.areas)
-                                  ? visitor.areas.join(" | ")
-                                  : visitor.areas}
-                              </span>
-                            </div>
+                          <div className="flex items-center gap-1.5 text-white/60 text-[12px] font-medium tracking-wide truncate max-w-[250px]">
+                            <MapPin size={11} className="text-primary/50 shrink-0" />
+                            <span className="truncate">
+                              {Array.isArray(visitor.areas)
+                                ? visitor.areas.join(" | ")
+                                : visitor.areas}
+                            </span>
                           </div>
                         </td>
                         <td className="px-3 md:px-4 lg:px-6 py-1 text-center align-middle">
@@ -317,7 +299,7 @@ const VisitorTable = ({
                             className="bg-[var(--color-bg-default)] border-b border-primary/10"
                           >
                             <td
-                              colSpan="5"
+                              colSpan="6"
                               className="px-0 py-0 overflow-hidden"
                             >
                               <div className="p-4 md:p-6 pl-24 space-y-4 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
@@ -427,7 +409,7 @@ const VisitorTable = ({
                         Date
                       </span>
                       <span className="text-white/90">
-                        {visitor.date}
+                        {visitor.date?.split(" ")[0]}
                       </span>
                     </div>
                     <div className="flex justify-between items-start text-[12px] font-medium tracking-wide border-b border-white/[0.03] pb-1.5">
