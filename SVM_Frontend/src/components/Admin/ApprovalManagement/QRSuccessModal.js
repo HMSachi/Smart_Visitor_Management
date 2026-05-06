@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { CheckSquare, QrCode, Send, Loader2, Download } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { AddGatePass, GetAllGatePasses } from "../../../actions/GatePassAction";
+import VisitorService from "../../../services/VisitorService";
 import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
 const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
@@ -13,6 +14,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
   const [wasSent, setWasSent] = useState(false);
   const [error, setError] = useState(null);
   const [encodedQrValue, setEncodedQrValue] = useState("");
+  const [visitorJointData, setVisitorJointData] = useState(null);
 
   useEffect(() => {
     if (isOpen) setWasSent(false);
@@ -33,6 +35,30 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
       }
     }
   }, [isOpen, visitorData, gatePasses]);
+
+  // Fetch visitor joint data when modal opens
+  useEffect(() => {
+    const fetchVisitorJoint = async () => {
+      if (!isOpen || !visitorData?.id) {
+        console.log("[QRSuccessModal] Not fetching joint - isOpen:", isOpen, "visitorData.id:", visitorData?.id);
+        return;
+      }
+
+      try {
+        console.log("[QRSuccessModal] Fetching joint visitor data for request ID:", visitorData.id);
+        const response = await VisitorService.GetVisitorJoint(visitorData.id);
+        console.log("[QRSuccessModal] Joint visitor data response:", response.data);
+        if (response?.data) {
+          setVisitorJointData(response.data);
+        }
+      } catch (err) {
+        console.warn("[QRSuccessModal] Error fetching visitor joint data:", err);
+        // Non-critical error
+      }
+    };
+
+    fetchVisitorJoint();
+  }, [isOpen, visitorData?.id]);
 
   const handleGenerateGatePass = async () => {
     if (!visitorData?.raw?.VVR_Visitor_id || !visitorData?.id) return;
@@ -90,6 +116,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
     setGatePassId(null);
     setError(null);
     setWasSent(false);
+    setVisitorJointData(null);
     onClose();
   };
 
@@ -100,20 +127,78 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
       visitorData?.raw?.VV_Visiting_places ||
       "N/A";
 
-  const qrPayload = useMemo(
-    () => ({
-      // Keep payload intentionally minimal so encrypted QR stays easy to scan.
+  // Extract sub-visitor information from joint data
+  const subVisitors = useMemo(() => {
+    if (!visitorJointData) {
+      console.log("[QRSuccessModal] No visitorJointData available");
+      return [];
+    }
+
+    console.log("[QRSuccessModal] Processing visitorJointData:", visitorJointData);
+
+    let visitors = [];
+
+    if (Array.isArray(visitorJointData)) {
+      visitors = visitorJointData;
+      console.log("[QRSuccessModal] Response is direct array, length:", visitors.length);
+    } else if (visitorJointData.ResultSet && Array.isArray(visitorJointData.ResultSet)) {
+      visitors = visitorJointData.ResultSet;
+      console.log("[QRSuccessModal] Response has ResultSet, length:", visitors.length);
+    } else if (visitorJointData.data && Array.isArray(visitorJointData.data)) {
+      visitors = visitorJointData.data;
+      console.log("[QRSuccessModal] Response has data array, length:", visitors.length);
+    } else if (typeof visitorJointData === "object" && !Array.isArray(visitorJointData)) {
+      visitors = [visitorJointData];
+      console.log("[QRSuccessModal] Response is object, treating as single visitor");
+    }
+
+    console.log("[QRSuccessModal] Extracted visitors:", visitors);
+    return visitors;
+  }, [visitorJointData]);
+
+  const qrPayload = useMemo(() => {
+    console.log("[QRSuccessModal] Building QR Payload. gatePassId:", gatePassId, "subVisitors.length:", subVisitors?.length);
+
+    if (!gatePassId) {
+      console.log("[QRSuccessModal] No gatePassId, returning null payload");
+      return null;
+    }
+
+    const payload = {
       id: gatePassId,
       v: 1,
       iat: Date.now(),
-    }),
-    [gatePassId],
-  );
+    };
+
+    // Add sub-visitor information if available
+    if (subVisitors && subVisitors.length > 0) {
+      console.log("[QRSuccessModal] Adding subVisitors to QR payload. Count:", subVisitors.length);
+      const mapped = subVisitors.map((sv) => {
+        console.log("[QRSuccessModal] Processing sub-visitor:", sv);
+        const mapped_name = sv.Group_Members || sv.Visitor_Group_Name || sv.VVG_Visitor_Name || sv.name || "N/A";
+        const mapped_nic = sv.Members_NIC_Passport_Number || sv.Visit_Group_NIC_Passport_Number || sv.VVG_NIC_Passport_Number || sv.nic || "N/A";
+        console.log("[QRSuccessModal] Mapped to - name:", mapped_name, "nic:", mapped_nic);
+        return {
+          name: mapped_name,
+          nic: mapped_nic,
+        };
+      });
+      payload.subVisitors = mapped;
+      console.log("[QRSuccessModal] Mapped subVisitors for QR:", mapped);
+    } else {
+      console.log("[QRSuccessModal] No sub-visitors to add. subVisitors is:", subVisitors);
+    }
+
+    console.log("[QRSuccessModal] FINAL QR Payload before encoding:", payload);
+    return payload;
+  }, [gatePassId, subVisitors]);
 
   useEffect(() => {
     const buildSecureQr = async () => {
-      if (!gatePassId) {
-        console.log("[QRSuccessModal] No gatePassId, skipping encoding");
+      console.log("[QRSuccessModal] buildSecureQr effect triggered. qrPayload:", qrPayload);
+
+      if (!qrPayload) {
+        console.log("[QRSuccessModal] No qrPayload, skipping encoding");
         setEncodedQrValue("");
         return;
       }
@@ -121,10 +206,11 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
       try {
         console.log(
           "[QRSuccessModal] Building secure QR for pass:",
-          gatePassId,
+          qrPayload.id,
         );
+        console.log("[QRSuccessModal] Payload has subVisitors:", !!qrPayload.subVisitors, "count:", qrPayload.subVisitors?.length);
         const encoded = await encodeSecureQrPayload(qrPayload);
-        console.log("[QRSuccessModal] QR encoded successfully");
+        console.log("[QRSuccessModal] QR encoded successfully. Encoded length:", encoded.length);
         setEncodedQrValue(encoded);
       } catch (err) {
         console.error(
@@ -136,7 +222,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
     };
 
     buildSecureQr();
-  }, [gatePassId, qrPayload]);
+  }, [qrPayload]);
 
   return (
     <AnimatePresence>

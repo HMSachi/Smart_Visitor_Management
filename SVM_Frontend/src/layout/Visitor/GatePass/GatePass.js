@@ -9,18 +9,20 @@ import {
   Loader2,
 } from "lucide-react";
 import GatePassService from "../../../services/GatePassService";
+import VisitorService from "../../../services/VisitorService";
 import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
 const GatePass = () => {
   const { gatePassId } = useParams();
   const navigate = useNavigate();
   const [gatePassData, setGatePassData] = useState(null);
+  const [visitorJointData, setVisitorJointData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [encodedQrValue, setEncodedQrValue] = useState("");
 
   useEffect(() => {
-    const fetchGatePass = async () => {
+    const fetchGatePassWithJointData = async () => {
       if (!gatePassId) {
         setError("Gate pass ID not found");
         setIsLoading(false);
@@ -47,8 +49,44 @@ const GatePass = () => {
       }
     };
 
-    fetchGatePass();
+    fetchGatePassWithJointData();
   }, [gatePassId]);
+
+  // Fetch visitor joint data when we have the request ID
+  useEffect(() => {
+    const fetchVisitorJoint = async () => {
+      if (!gatePassData) {
+        console.log("[GatePass] No gatePassData yet, skipping joint fetch");
+        return;
+      }
+
+      const requestId = gatePassData.VGP_Request_id || gatePassData.VVR_Request_id;
+      console.log("[GatePass] Looking for request ID. VGP_Request_id:", gatePassData.VGP_Request_id, "VVR_Request_id:", gatePassData.VVR_Request_id);
+      
+      if (!requestId) {
+        console.log("[GatePass] No request ID available. Full gatePassData keys:", Object.keys(gatePassData));
+        console.log("[GatePass] Full gatePassData:", gatePassData);
+        return;
+      }
+
+      try {
+        console.log("[GatePass] Fetching joint visitor data for request ID:", requestId);
+        const response = await VisitorService.GetVisitorJoint(requestId);
+        console.log("[GatePass] Got response:", response);
+        if (response?.data) {
+          console.log("[GatePass] Joint visitor data response.data:", response.data);
+          setVisitorJointData(response.data);
+        } else {
+          console.log("[GatePass] Response has no data property. Full response:", response);
+        }
+      } catch (err) {
+        console.warn("[GatePass] Error fetching visitor joint data:", err);
+        // Don't treat this as a critical error - gate pass can still work without joint data
+      }
+    };
+
+    fetchVisitorJoint();
+  }, [gatePassData]);
 
   const visitingArea = useMemo(() => {
     if (!gatePassData) return "N/A";
@@ -71,18 +109,81 @@ const GatePass = () => {
     );
   }, [gatePassData]);
 
+  // Extract sub-visitor information from joint data
+  const subVisitors = useMemo(() => {
+    console.log("[GatePass] subVisitors useMemo triggered. visitorJointData:", visitorJointData);
+    
+    if (!visitorJointData) {
+      console.log("[GatePass] No visitorJointData available");
+      return [];
+    }
+    
+    console.log("[GatePass] Processing visitorJointData structure. Type:", typeof visitorJointData, "Is Array:", Array.isArray(visitorJointData));
+    console.log("[GatePass] visitorJointData keys:", Object.keys(visitorJointData));
+    
+    // Handle different response structures
+    let visitors = [];
+    
+    if (Array.isArray(visitorJointData)) {
+      visitors = visitorJointData;
+      console.log("[GatePass] Response is direct array, length:", visitors.length);
+    } else if (visitorJointData.ResultSet && Array.isArray(visitorJointData.ResultSet)) {
+      visitors = visitorJointData.ResultSet;
+      console.log("[GatePass] Response has ResultSet, length:", visitors.length);
+    } else if (visitorJointData.data && Array.isArray(visitorJointData.data)) {
+      visitors = visitorJointData.data;
+      console.log("[GatePass] Response has data array, length:", visitors.length);
+    } else if (Array.isArray(visitorJointData) === false && typeof visitorJointData === 'object') {
+      // Try to extract first object as a single visitor
+      console.log("[GatePass] Response is object, treating as single visitor");
+      visitors = [visitorJointData];
+    }
+    
+    console.log("[GatePass] Extracted visitors:", visitors);
+    return visitors;
+  }, [visitorJointData]);
+
   const qrPayload = useMemo(() => {
-    if (!gatePassData) return null;
-    return {
-      // Keep payload intentionally minimal so encrypted QR stays easy to scan.
+    console.log("[GatePass] Building QR Payload. gatePassData:", !!gatePassData, "subVisitors.length:", subVisitors?.length);
+    
+    if (!gatePassData) {
+      console.log("[GatePass] No gatePassData, returning null payload");
+      return null;
+    }
+    
+    const payload = {
       id: gatePassId,
       v: 1,
       iat: Date.now(),
     };
-  }, [gatePassData, gatePassId]);
+
+    // Add sub-visitor information if available
+    if (subVisitors && subVisitors.length > 0) {
+      console.log("[GatePass] Adding subVisitors to QR payload. Count:", subVisitors.length);
+      const mapped = subVisitors.map((sv) => {
+        console.log("[GatePass] Processing sub-visitor:", sv);
+        const mapped_name = sv.Group_Members || sv.Visitor_Group_Name || sv.VVG_Visitor_Name || sv.name || "N/A";
+        const mapped_nic = sv.Members_NIC_Passport_Number || sv.Visit_Group_NIC_Passport_Number || sv.VVG_NIC_Passport_Number || sv.nic || "N/A";
+        console.log("[GatePass] Mapped to - name:", mapped_name, "nic:", mapped_nic);
+        return {
+          name: mapped_name,
+          nic: mapped_nic,
+        };
+      });
+      payload.subVisitors = mapped;
+      console.log("[GatePass] Mapped subVisitors for QR:", mapped);
+    } else {
+      console.log("[GatePass] No sub-visitors to add. subVisitors is:", subVisitors);
+    }
+
+    console.log("[GatePass] FINAL QR Payload before encoding:", payload);
+    return payload;
+  }, [gatePassData, gatePassId, subVisitors]);
 
   useEffect(() => {
     const buildSecureQr = async () => {
+      console.log("[GatePass] buildSecureQr effect triggered. qrPayload:", qrPayload);
+      
       if (!qrPayload) {
         console.log("[GatePass] No qrPayload, skipping encoding");
         setEncodedQrValue("");
@@ -91,6 +192,7 @@ const GatePass = () => {
 
       try {
         console.log("[GatePass] Building secure QR with payload:", qrPayload);
+        console.log("[GatePass] Payload has subVisitors:", !!qrPayload.subVisitors, "count:", qrPayload.subVisitors?.length);
         const encoded = await encodeSecureQrPayload(qrPayload);
         console.log(
           "[GatePass] QR encoded successfully, length:",

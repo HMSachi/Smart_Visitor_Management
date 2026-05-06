@@ -177,9 +177,11 @@ const LiveFeed = () => {
       if (isSecureQrPayload(data)) {
         console.log("[LiveFeed] Detected secure QR format");
         const decoded = await decodeSecureQrPayload(data);
+        console.log("[LiveFeed] Decoded secure QR payload:", decoded);
         if (decoded && typeof decoded === "object") {
           parsedQrData = decoded;
           setQrData(decoded);
+          console.log("[LiveFeed] Set parsed QR data with subVisitors:", decoded.subVisitors);
         }
         if (decoded?.id) {
           passId = decoded.id;
@@ -288,11 +290,20 @@ const LiveFeed = () => {
         passDetails?.VGP_Visiting_Area ||
         "N/A",
     };
+    
+    // Add sub-visitors from QR data if available
+    if (qrData?.subVisitors && Array.isArray(qrData.subVisitors)) {
+      console.log("[LiveFeed] Found subVisitors in qrData:", qrData.subVisitors);
+      merged.subVisitors = qrData.subVisitors;
+    } else {
+      console.log("[LiveFeed] No subVisitors in qrData. qrData:", qrData);
+    }
+    
     return merged;
   }, [qrData, passDetails]);
 
   const hasFullQrProfile = Object.values(profileData).some(
-    (value) => value !== "N/A",
+    (value) => value !== "N/A" && !Array.isArray(value),
   );
 
   const handleResetNode = () => {
@@ -564,6 +575,43 @@ const LiveFeed = () => {
                   />
                 </div>
               </div>
+
+              {/* Section: Sub Visitors (Group Members) */}
+              {profileData.subVisitors && profileData.subVisitors.length > 0 && (
+                <div className="px-6 py-4 border-t border-[var(--color-border-soft)]">
+                  <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
+                    Sub Visitors
+                  </p>
+                  <div className="space-y-3">
+                    {profileData.subVisitors.map((subVisitor, index) => (
+                      <div key={index} className="p-3 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border-soft)]">
+                        <div className="flex items-start gap-3 mb-2">
+                          <User size={14} className="text-[var(--color-text-secondary)] flex-shrink-0 mt-0.5" />
+                          <div className="min-w-0">
+                            <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
+                              Name
+                            </p>
+                            <p className="text-sm font-semibold break-words leading-snug" style={{ color: "var(--color-text-primary)" }}>
+                              {subVisitor.name || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <CreditCard size={14} className="text-[var(--color-text-secondary)] flex-shrink-0 mt-0.5" />
+                          <div className="min-w-0">
+                            <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
+                              NIC / Passport
+                            </p>
+                            <p className="text-sm font-semibold break-words leading-snug" style={{ color: "var(--color-text-primary)" }}>
+                              {subVisitor.nic || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Access status bar */}
               <div
