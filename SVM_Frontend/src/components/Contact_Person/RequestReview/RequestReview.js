@@ -234,7 +234,7 @@ const RequestReviewMain = () => {
 
     alert("Request updated successfully.");
     setShowApproveModal(false);
-    navigate("/contact_person/requests-inbox");
+    navigate("/contact_person/visit-requests");
   };
 
   const confirmReject = async () => {
@@ -255,7 +255,7 @@ const RequestReviewMain = () => {
 
     alert(`Request Declined: ${rejectionReason}`);
     setShowRejectModal(false);
-    navigate("/contact_person/requests-inbox");
+    navigate("/contact_person/visit-requests");
   };
 
   return (
