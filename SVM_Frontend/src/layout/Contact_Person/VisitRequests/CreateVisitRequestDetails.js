@@ -60,7 +60,6 @@ const CreateVisitRequestDetails = () => {
       }));
       dispatch(markVehicleSaved(index));
       dispatch(toggleVehicleConfirmed(index));
-      dispatch(addVehicle());
     } catch (err) {
       console.error("Failed to save vehicle:", err);
       alert("Failed to save vehicle. Please try again.");
@@ -109,7 +108,6 @@ const CreateVisitRequestDetails = () => {
       }));
       dispatch(markPersonSaved(index));
       dispatch(togglePersonConfirmed(index));
-      dispatch(addPerson());
     } catch (err) {
       console.error("Failed to save person:", err);
       alert("Failed to save visitor. Please try again.");
@@ -151,7 +149,6 @@ const CreateVisitRequestDetails = () => {
       }));
       dispatch(markItemSaved(index));
       dispatch(toggleItemConfirmed(index));
-      dispatch(addItem());
     } catch (err) {
       console.error("Failed to save item:", err);
       alert("Failed to save item. Please try again.");
