@@ -611,18 +611,18 @@ const UserManagement = () => {
                           {item.VCP_Name || item.VA_Name || "-"}
                         </TableCell>
                         <TableCell
-                          className={font-normal text-[12px]`border-b-white/5 transition-colors text-[12px] py-1 ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white/70" : "text-white/20"}`}
+                          className={`font-normal text-[12px] border-b-white/5 transition-colors py-1 ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white/70" : "text-white/20"}`}
                         >
                           {item.VCP_Department || item.VA_Role || "-"}
                         </TableCell>
                         <TableCell
-                          className={font-normal text-[12px]`border-b-white/5 transition-colors text-[12px] py-1 ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white/70" : "text-white/20"}`}
+                          className={`font-normal text-[12px] border-b-white/5 transition-colors py-1 ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white/70" : "text-white/20"}`}
                         >
                           {item.VCP_Email || item.VA_Email || "-"}
                         </TableCell>
                         {activeTab === "CONTACT" && (
                           <TableCell
-                            className={font-normal text-[12px]`border-b-white/5 transition-colors text-[12px] py-1 ${item.VCP_Status === "A" ? "text-white/70" : "text-white/20"}`}
+                            className={`font-normal text-[12px] border-b-white/5 transition-colors py-1 ${item.VCP_Status === "A" ? "text-white/70" : "text-white/20"}`}
                           >
                             {item.VCP_Phone || "-"}
                           </TableCell>

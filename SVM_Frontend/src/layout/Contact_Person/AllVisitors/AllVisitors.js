@@ -567,7 +567,7 @@ const ContactAllVisitors = () => {
                       <tr>
                         <td
                           colSpan={6}
-                          className={text-[12px] font-normal`px-4 py-12 text-center uppercase tracking-[0.24em] text-[12px] font-normal ${isLight ? "text-gray-400" : "text-white/40"}`}
+                          className={`text-[12px] font-normal px-4 py-12 text-center uppercase tracking-[0.24em] ${isLight ? "text-gray-400" : "text-white/40"}`}
                         >
                           No Visitors detected matching criteria
                         </td>

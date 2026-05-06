@@ -203,17 +203,17 @@ const VisitorManagement = () => {
                               {visitor.VV_Name || "-"}
                             </TableCell>
                             <TableCell
-                              className={font-normal text-[12px]`border-b-white/5 transition-colors py-1 text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={`font-normal text-[12px] border-b-white/5 transition-colors py-1 ${isActive ? "text-white/70" : "text-white/20"}`}
                             >
                               {visitor.VV_NIC_Passport_NO || "-"}
                             </TableCell>
                             <TableCell
-                              className={font-normal text-[12px]`border-b-white/5 transition-colors py-1 text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={`font-normal text-[12px] border-b-white/5 transition-colors py-1 ${isActive ? "text-white/70" : "text-white/20"}`}
                             >
                               {visitor.VV_Company || "-"}
                             </TableCell>
                             <TableCell
-                              className={font-normal text-[12px]`border-b-white/5 transition-colors py-1 text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={`font-normal text-[12px] border-b-white/5 transition-colors py-1 ${isActive ? "text-white/70" : "text-white/20"}`}
                             >
                               {visitor.VV_Visiting_places || "-"}
                             </TableCell>
