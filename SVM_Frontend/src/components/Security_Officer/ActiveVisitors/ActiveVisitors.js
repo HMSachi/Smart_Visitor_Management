@@ -93,11 +93,11 @@ const ActiveVisitorsMain = () => {
 <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-white/[0.02] border-b border-white/5">
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Unit_Identification</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Node_Sync_Entry</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Operational_Grid</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em] text-center">Live_Pulse</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em] text-right">Control</th>
+                                    <th className="px-10 py-2 uppercase text-white/90 text-[12px] font-normal tracking-[0.3em]">Unit Identification</th>
+                                    <th className="px-10 py-2 uppercase text-white/90 text-[12px] font-normal tracking-[0.3em]">Entry Node</th>
+                                    <th className="px-10 py-2 uppercase text-white/90 text-[12px] font-normal tracking-[0.3em]">Operational Grid</th>
+                                    <th className="px-10 py-2 uppercase text-white/90 text-[12px] font-normal tracking-[0.3em] text-center">Live Pulse</th>
+                                    <th className="px-10 py-2 uppercase text-white/90 text-[12px] font-normal tracking-[0.3em] text-right">Control</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/[0.03]">
@@ -112,57 +112,55 @@ const ActiveVisitorsMain = () => {
                                                 className={`group transition-all cursor-pointer ${expandedVisitor === v.id ? 'bg-primary/[0.04]' : ''}`}
                                                 onClick={() => toggleExpand(v.id)}
                                             >
-                                                <td className="px-10 py-8">
+                                                <td className="px-10 py-1 font-normal text-[12px]">
                                                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
                                                         <div className="relative overflow-visible">
-                                                            <div className="w-12 h-12 rounded-xl bg-mas-dark border border-white/10 flex items-center justify-center text-primary text-sm font-medium group-hover:border-primary group-hover:shadow-[0_0_20px_rgba(200,16,46,0.2)] transition-all duration-500">
+                                                            <div className="w-8 h-8 rounded-lg bg-mas-dark border border-white/10 flex items-center justify-center text-primary text-[12px] font-normal group-hover:border-primary group-hover:shadow-[0_0_20px_rgba(200,16,46,0.2)] transition-all duration-500">
                                                                 {v.name.split(' ').map(n => n[0]).join('')}
                                                             </div>
-                                                            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-mas-dark shadow-[0_0_8px_#22c55e]"></div>
+                                                            <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-mas-dark shadow-[0_0_8px_#22c55e]"></div>
                                                         </div>
                                                         <div>
-                                                            <p className="text-[13px] font-medium text-white uppercase tracking-wider group-hover:text-primary transition-colors duration-300">{v.name}</p>
-                                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mt-1">
+                                                            <p className="text-[12px] font-normal text-white uppercase tracking-wider group-hover:text-primary transition-colors duration-300">{v.name}</p>
+                                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mt-0.5">
                                                                 <Target size={10} className="text-primary opacity-90" />
-                                                                <p className="text-white/90 text-[12px] font-medium tracking-widest uppercase">{v.ref}</p>
+                                                                <p className="text-white/90 text-[11px] font-normal tracking-widest uppercase">{v.ref}</p>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-10 py-8">
-                                                    <div className="space-y-1.5">
+                                                <td className="px-10 py-1 font-normal text-[12px]">
+                                                    <div className="space-y-0.5">
                                                         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5">
                                                             <Calendar size={12} className="text-primary opacity-70" />
-                                                            <span className="text-white text-[13px] font-medium tracking-widest">{v.date}</span>
+                                                            <span className="text-white text-[12px] font-normal tracking-widest">{v.date}</span>
                                                         </div>
                                                         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5 ml-2">
                                                             <Clock size={10} className="text-primary opacity-50" />
-                                                            <span className="text-white/70 text-[13px] font-medium tracking-widest">{v.entryTime}</span>
+                                                            <span className="text-white/70 text-[12px] font-normal tracking-widest">{v.entryTime}</span>
                                                         </div>
-                                                        <p className="text-white/80 text-[13px] font-medium uppercase tracking-widest ml-5">via_{v.node}</p>
                                                     </div>
                                                 </td>
-                                                <td className="px-10 py-8">
-                                                    <div className="flex flex-wrap gap-2.5 max-w-[280px]">
+                                                <td className="px-10 py-1 font-normal text-[12px]">
+                                                    <div className="flex flex-wrap gap-1.5 max-w-[280px]">
                                                         {v.areas.map((area, i) => (
-                                                            <span key={i} className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-white/70 text-[13px] font-medium uppercase tracking-widest group-hover:border-primary/40 group-hover:text-white transition-all duration-300">
+                                                            <span key={i} className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-white/70 text-[11px] font-normal uppercase tracking-widest group-hover:border-primary/40 group-hover:text-white transition-all duration-300">
                                                                 {area}
                                                             </span>
                                                         ))}
                                                     </div>
                                                 </td>
-                                                <td className="px-10 py-8">
-                                                    <div className="flex flex-col items-center gap-2">
+                                                <td className="px-10 py-1 font-normal text-[12px]">
+                                                    <div className="flex flex-col items-center gap-1">
                                                         <div className="relative">
-                                                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_12px_#22c55e]"></div>
-                                                            <div className="absolute inset-x-[-8px] inset-y-[-8px] border border-green-500/20 rounded-full scale-150 animate-ping opacity-30"></div>
+                                                            <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse shadow-[0_0_12px_#22c55e]"></div>
                                                         </div>
-                                                        <span className="text-green-500/80 text-[13px] font-medium uppercase tracking-widest">INSIDE_DOME</span>
+                                                        <span className="text-green-500/80 text-[11px] font-normal uppercase tracking-widest">INSIDE DOME</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-10 py-8 text-right">
-                                                    <button onClick={(e) => { e.stopPropagation(); toggleExpand(v.id); }} className={`p-3 mas-glass border-white/5 text-white/70 hover:text-white hover:border-primary/40 transition-all rounded-xl shadow-lg ${expandedVisitor === v.id ? 'bg-primary border-primary text-white' : 'hover:bg-primary/5'}`}>
-                                                        {expandedVisitor === v.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                                                <td className="px-10 py-1 text-right font-normal text-[12px]">
+                                                    <button onClick={(e) => { e.stopPropagation(); toggleExpand(v.id); }} className={`p-2 mas-glass border-white/5 text-white/70 hover:text-white hover:border-primary/40 transition-all rounded-lg shadow-lg ${expandedVisitor === v.id ? 'bg-primary border-primary text-white' : 'hover:bg-primary/5'}`}>
+                                                        {expandedVisitor === v.id ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                                                     </button>
                                                 </td>
                                             </motion.tr>
@@ -173,7 +171,7 @@ const ActiveVisitorsMain = () => {
                                                     exit={{ opacity: 0, height: 0 }}
                                                     className="bg-[var(--color-bg-default)] border-b border-primary/20"
                                                 >
-                                                    <td colSpan="5" className="px-0 py-0">
+                                                    <td colSpan="5" className="px-0 py-0 font-normal text-[12px]">
                                                         <div className="p-4 md:p-10 pl-24 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
                                                             {/* Detailed View Decorations */}
                                                             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
@@ -183,30 +181,30 @@ const ActiveVisitorsMain = () => {
                                                                 <div className="space-y-2">
                                                                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
                                                                         <Car size={14} className="text-primary/80" />
-                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Vehicle Details</span>
+                                                                        <span className="text-[12px] font-normal uppercase tracking-[0.3em]">Vehicle Details</span>
                                                                     </div>
-                                                                    <p className="text-white text-sm font-medium tracking-widest">{v.vehicle}</p>
+                                                                    <p className="text-white text-[12px] font-normal tracking-widest">{v.vehicle}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
                                                                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
                                                                         <Phone size={14} className="text-primary/80" />
-                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Contact Protocol</span>
+                                                                        <span className="text-[12px] font-normal uppercase tracking-[0.3em]">Contact Protocol</span>
                                                                     </div>
-                                                                    <p className="text-white text-sm tracking-widest">{v.phone}</p>
+                                                                    <p className="text-white text-[12px] tracking-widest">{v.phone}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
                                                                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
                                                                         <Building size={14} className="text-primary/80" />
-                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Organization</span>
+                                                                        <span className="text-[12px] font-normal uppercase tracking-[0.3em]">Organization</span>
                                                                     </div>
-                                                                    <p className="text-white text-sm font-medium tracking-widest">{v.company}</p>
+                                                                    <p className="text-white text-[12px] font-normal tracking-widest">{v.company}</p>
                                                                 </div>
                                                                 <div className="space-y-2">
                                                                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
                                                                         <FileText size={14} className="text-primary/80" />
-                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Mission/Purpose</span>
+                                                                        <span className="text-[12px] font-normal uppercase tracking-[0.3em]">Mission/Purpose</span>
                                                                     </div>
-                                                                    <p className="text-white text-sm font-medium tracking-widest">{v.purpose}</p>
+                                                                    <p className="text-white text-[12px] font-normal tracking-widest">{v.purpose}</p>
                                                                 </div>
                                                             </div>
                                                         </div>

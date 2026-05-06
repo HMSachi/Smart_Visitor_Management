@@ -47,37 +47,37 @@ const LogsHistoryMain = () => {
 <div className="overflow-x-auto w-full max-w-full pb-4">
 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-white/[0.02] border-b border-white/5 text-[13px]">
-                            <th className="px-10 py-6 uppercase text-gray-300"> personnel</th>
-                            <th className="px-10 py-6 uppercase text-gray-300">entry protocol</th>
-                            <th className="px-10 py-6 uppercase text-gray-300">exit protocol</th>
-                            <th className="px-10 py-6 uppercase text-gray-300">validation</th>
-                            <th className="px-10 py-6 uppercase text-gray-300 text-right">registry</th>
+                        <tr className="bg-white/[0.02] border-b border-white/5 text-[12px]">
+                            <th className="px-10 py-2 uppercase text-gray-300 font-normal tracking-[0.3em] text-[12px]"> personnel</th>
+                            <th className="px-10 py-2 uppercase text-gray-300 font-normal tracking-[0.3em] text-[12px]">entry protocol</th>
+                            <th className="px-10 py-2 uppercase text-gray-300 font-normal tracking-[0.3em] text-[12px]">exit protocol</th>
+                            <th className="px-10 py-2 uppercase text-gray-300 font-normal tracking-[0.3em] text-[12px]">validation</th>
+                            <th className="px-10 py-2 uppercase text-gray-300 font-normal tracking-[0.3em] text-right text-[12px]">registry</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.03]">
                         {logs.map((log) => (
-                            <tr key={log.id} className="group hover:bg-white/[0.01] transition-all">
-                                <td className="px-10 py-8">
-                                    <div className="text-[13px]">
-                                        <p className="uppercase text-white mb-1">{log.name}</p>
-                                        <p className="text-gray-300 uppercase">{log.date}</p>
+                            <tr key={log.id} className="group hover:bg-white/[0.01] transition-all border-b border-white/[0.03]">
+                                <td className="px-10 py-1 font-normal text-[12px]">
+                                    <div className="text-[12px]">
+                                        <p className="uppercase text-white mb-0.5">{log.name}</p>
+                                        <p className="text-gray-300/60 uppercase text-[10px] tracking-widest">{log.date}</p>
                                     </div>
                                 </td>
-                                <td className="px-10 py-8 text-[13px]">
-                                    <span className="text-white">{log.entry}</span>
+                                <td className="px-10 py-1 text-[12px] font-normal">
+                                    <span className="text-white font-normal">{log.entry}</span>
                                 </td>
-                                <td className="px-10 py-8 text-[13px]">
-                                    <span className={`${log.exit === '--:--:--' ? 'text-gray-300 opacity-30' : 'text-white'}`}>{log.exit}</span>
+                                <td className="px-10 py-1 text-[12px] font-normal">
+                                    <span className={`${log.exit === '--:--:--' ? 'text-gray-300/30' : 'text-white font-normal'}`}>{log.exit}</span>
                                 </td>
-                                <td className="px-10 py-8">
-                                    <span className={`px-4 py-1.5 border uppercase text-[12px] ${log.status === 'Active' ? 'border-primary text-primary bg-primary/5 animate-pulse' : 'border-mas-text-dim/20 text-gray-300 bg-white/[0.02]'}`}>
+                                <td className="px-10 py-1 font-normal text-[12px]">
+                                    <span className={`px-2 py-0.5 border uppercase text-[10px] font-normal tracking-widest ${log.status === 'Active' ? 'border-primary text-primary bg-primary/5 animate-pulse' : 'border-mas-text-dim/20 text-gray-300 bg-white/[0.02]'}`}>
                                         {log.status}
                                     </span>
                                 </td>
-                                <td className="px-10 py-8 text-right">
-                                    <button className="text-gray-300 hover:text-primary transition-all">
-                                        <ChevronRight size={18} />
+                                <td className="px-10 py-1 text-right font-normal text-[12px]">
+                                    <button className="text-gray-300/40 hover:text-primary transition-all">
+                                        <ChevronRight size={14} />
                                     </button>
                                 </td>
                             </tr>

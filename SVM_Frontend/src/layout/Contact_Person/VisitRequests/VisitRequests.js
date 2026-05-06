@@ -1043,7 +1043,7 @@ const VisitRequests = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3 text-gray-400">
                             <MapPin size={14} className="text-primary/70" />
-                            <span className="text-[9px] font-black uppercase tracking-[0.15em]">Zones</span>
+                            <span className="text-[9px] font-black uppercase tracking-[0.15em]">Areas</span>
                           </div>
                           <span className={`text-[10px] font-bold truncate max-w-[160px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
                             {req.VVR_Purpose || "General Access"}
@@ -1081,16 +1081,16 @@ const VisitRequests = () => {
                 <table className="w-full">
                   <thead>
                     <tr
-                      className={`text-[10px] uppercase font-bold tracking-[0.25em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
+                      className={`text-[12px] uppercase font-normal tracking-[0.3em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
                     >
-                      <th className="px-3 py-4 text-center w-[60px]">ID</th>
-                      <th className="px-3 py-4 text-left">Visitor Details</th>
-                      <th className="px-3 py-4 text-center">Visit Date</th>
-                      <th className="px-3 py-4 text-left">Purpose</th>
-                      <th className="px-3 py-4 text-left">Visit Areas</th>
-                      <th className="px-3 py-4 text-center">Status</th>
-                      <th className="px-3 py-4 text-center w-[80px]">Pass</th>
-                      <th className="px-3 py-4 text-center w-[120px]">Actions</th>
+                      <th className="px-3 py-2 text-center w-[60px] font-normal text-[12px]">ID</th>
+                      <th className="px-3 py-2 text-left font-normal text-[12px]">Visitor</th>
+                      <th className="px-3 py-2 text-center font-normal text-[12px]">Date</th>
+                      <th className="px-3 py-2 text-left font-normal text-[12px]">Reason</th>
+                      <th className="px-3 py-2 text-left font-normal text-[12px]">Areas</th>
+                      <th className="px-3 py-2 text-center font-normal text-[12px]">Status</th>
+                      <th className="px-3 py-2 text-center w-[80px] font-normal text-[12px]">Pass</th>
+                      <th className="px-3 py-2 text-center w-[120px] font-normal text-[12px]">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
@@ -1100,21 +1100,21 @@ const VisitRequests = () => {
                           key={req.VVR_Request_id}
                           className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                         >
-                          <td className="px-3 py-1.5 text-center text-primary text-[12px] tracking-wide font-medium">
+                          <td className="px-3 py-1 text-center text-primary text-[12px] tracking-wide font-normal">
                             #{req.VVR_Request_id}
                           </td>
-                          <td className="px-3 py-1.5 text-left">
+                          <td className="px-3 py-1 text-left font-normal text-[12px]">
                             <span
-                              className={`font-medium text-[12px] tracking-wide ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                              className={`font-normal text-[12px] tracking-wide ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                             >
                               {getVisitorDisplayName(req)}
                             </span>
                           </td>
-                          <td className="px-3 py-1.5">
+                          <td className="px-3 py-1 font-normal text-[12px]">
                             <div
                               className={`flex flex-col items-center justify-center gap-1.5 text-[12px] ${isLight ? "text-gray-500" : "text-white/70"}`}
                             >
-                              <span className="font-medium tracking-wide">
+                              <span className="font-normal tracking-wide">
                                 {req.VVR_Visit_Date
                                   ? req.VVR_Visit_Date.split("T")[0].split(
                                     " ",
@@ -1123,33 +1123,33 @@ const VisitRequests = () => {
                               </span>
                             </div>
                           </td>
-                          <td className="px-3 py-1.5 text-left">
+                          <td className="px-3 py-1 text-left font-normal text-[12px]">
                             <div className="max-w-[170px]">
                               <p
                                 title={
                                   req.VVR_Purpose || "No purpose specified"
                                 }
-                                className={`font-medium tracking-wide text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
+                                className={`font-normal tracking-wide text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
                               >
                                 {req.VVR_Purpose || "-"}
                               </p>
                             </div>
                           </td>
-                          <td className="px-3 py-1.5 align-top text-left">
+                          <td className="px-3 py-1 align-top text-left font-normal text-[12px]">
                             <div
-                              className={`flex flex-col gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
+                              className={`flex flex-col gap-2 text-[12px] font-normal tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
                             >
                               <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
                                 {renderVisitAreas(req)}
                               </div>
                             </div>
                           </td>
-                          <td className="px-3 py-1.5 text-center">
+                          <td className="px-3 py-1 text-center font-normal text-[12px]">
                             <div className="flex items-center justify-center">
                               <StatusBadge status={req.VVR_Status} />
                             </div>
                           </td>
-                          <td className="px-3 py-1.5 text-center">
+                          <td className="px-3 py-1 text-center font-normal text-[12px]">
                             <div className="flex items-center justify-center">
                               {hasGatePass(req.VVR_Request_id) && (
                                 <button
@@ -1162,7 +1162,7 @@ const VisitRequests = () => {
                               )}
                             </div>
                           </td>
-                          <td className="px-3 py-1.5 text-center">
+                          <td className="px-3 py-1 text-center font-normal text-[12px]">
                             <div className="flex items-center justify-center gap-2">
                               <button
                                 onClick={() => handleReview(req.VVR_Request_id)}
@@ -1184,14 +1184,14 @@ const VisitRequests = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={7} className="py-24 text-center">
+                        <td colSpan={7} className="py-24 text-center font-normal text-[12px]">
                           <div className="flex flex-col items-center justify-center opacity-20">
                             <ClipboardList
                               size={48}
                               className={`mb-4 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                             />
                             <p
-                              className={`uppercase tracking-[0.4em] text-[10px] font-bold ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                              className={`uppercase tracking-[0.4em] text-[10px] font-normal ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                             >
                               No Active Visit Requests Detected
                             </p>

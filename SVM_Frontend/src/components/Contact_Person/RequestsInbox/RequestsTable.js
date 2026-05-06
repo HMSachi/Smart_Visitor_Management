@@ -8,45 +8,45 @@ const StatusBadge = ({ status }) => {
   switch (s) {
     case "ADMIN APPROVED":
       return (
-        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
           Admin Approved
         </div>
       );
     case "REJECTED":
       return (
-        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
           Rejected
         </div>
       );
     case "ACCEPTED BY VISITOR":
       return (
-        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
           Accepted by Visitor
         </div>
       );
     case "ACCEPTED BY CONTACT PERSON":
     case "SENT TO ADMIN":
       return (
-        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
           Sent to Admin
         </div>
       );
     case "CHECKED IN":
       return (
-        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
           Checked In
         </div>
       );
     case "CHECKED OUT":
       return (
-        <div className="px-2 py-0.5 bg-gray-500/10 border border-gray-500/20 text-gray-400 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="px-2 py-0.5 bg-gray-500/10 border border-gray-500/20 text-gray-400 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
           Checked Out
         </div>
       );
     case "SENT TO VISITOR":
     default:
       return (
-        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
           Sent to Visitor
         </div>
       );
@@ -70,7 +70,7 @@ const RequestsTable = ({ requests, onReview }) => {
         style={{ height: "38rem" }}
       >
         <table className="w-full min-w-[900px] border-collapse">
-          <thead className="sticky top-0 z-20">
+          <thead className="sticky top-0 z-20 font-normal text-[12px]">
             <tr
               className={`border-b ${
                 isLight
@@ -79,42 +79,42 @@ const RequestsTable = ({ requests, onReview }) => {
               }`}
             >
               <th
-                className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${
+                className={`px-4 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-primary/60" : "text-primary"
                 }`}
               >
-                Request ID
+                ID
               </th>
               <th
-                className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${
+                className={`px-4 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
                 Visitor
               </th>
               <th
-                className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${
+                className={`px-4 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
-                Visit Date
+                Date
               </th>
               <th
-                className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${
+                className={`px-4 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
                 Purpose
               </th>
               <th
-                className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${
+                className={`px-4 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
                 Status
               </th>
               <th
-                className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${
+                className={`px-4 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
@@ -134,14 +134,14 @@ const RequestsTable = ({ requests, onReview }) => {
                   }`}
                 >
                   {/* Request ID */}
-                  <td className="px-4 py-4 text-center text-primary text-[11px] tracking-[0.14em] font-medium">
+                  <td className="px-4 py-1 text-center text-primary text-[12px] tracking-wide font-normal">
                     #{visitor.id || "N/A"}
                   </td>
 
                   {/* Visitor Name */}
-                  <td className="px-4 py-4 text-left">
+                  <td className="px-4 py-1 text-left font-normal text-[12px]">
                     <span
-                      className={`font-medium text-[12px] uppercase tracking-[0.14em] ${
+                      className={`font-normal text-[12px] uppercase tracking-wide ${
                         isLight ? "text-[#1A1A1A]" : "text-white"
                       }`}
                     >
@@ -150,9 +150,9 @@ const RequestsTable = ({ requests, onReview }) => {
                   </td>
 
                   {/* Visit Date */}
-                  <td className="px-4 py-4 text-center">
+                  <td className="px-4 py-1 text-center font-normal text-[12px]">
                     <span
-                      className={`text-[12px] font-medium tracking-wide ${
+                      className={`text-[12px] font-normal tracking-wide ${
                         isLight ? "text-gray-500" : "text-white/70"
                       }`}
                     >
@@ -161,7 +161,7 @@ const RequestsTable = ({ requests, onReview }) => {
                   </td>
 
                   {/* Purpose */}
-                  <td className="px-4 py-4 text-left">
+                  <td className="px-4 py-1 text-left font-normal text-[12px]">
                     <div className="max-w-[200px]">
                       <p
                         title={
@@ -169,7 +169,7 @@ const RequestsTable = ({ requests, onReview }) => {
                           visitor.purpose ||
                           "No purpose specified"
                         }
-                        className={`font-medium uppercase tracking-[0.14em] text-[12px] truncate ${
+                        className={`font-normal uppercase tracking-wide text-[12px] truncate ${
                           isLight ? "text-[#1A1A1A]" : "text-white/90"
                         }`}
                       >
@@ -181,26 +181,26 @@ const RequestsTable = ({ requests, onReview }) => {
                   </td>
 
                   {/* Status */}
-                  <td className="px-4 py-4 text-center">
+                  <td className="px-4 py-1 text-center font-normal text-[12px]">
                     <div className="flex items-center justify-center">
                       <StatusBadge status={visitor.status} />
                     </div>
                   </td>
 
                   {/* Actions */}
-                  <td className="px-4 py-4 text-center">
+                  <td className="px-4 py-1 text-center font-normal text-[12px]">
                     <div className="flex items-center justify-center">
                       <button
                         onClick={() => onReview(visitor.id)}
                         title="Review Request"
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${
                           isLight
                             ? "bg-primary/5 border-primary/15 text-primary hover:text-white hover:bg-primary hover:border-primary"
                             : "bg-blue-500/5 border-blue-500/20 text-blue-400 hover:text-white hover:bg-blue-500 hover:border-blue-500"
                         }`}
                       >
                         <Eye
-                          size={15}
+                          size={14}
                           className="group-hover/btn:scale-110 transition-transform"
                         />
                       </button>
@@ -212,7 +212,7 @@ const RequestsTable = ({ requests, onReview }) => {
               <tr>
                 <td
                   colSpan={6}
-                  className={`px-4 py-12 text-center uppercase tracking-[0.24em] text-[11px] font-medium ${
+                  className={`px-4 py-12 text-center uppercase tracking-[0.24em] text-[11px] font-normal ${
                     isLight ? "text-gray-400" : "text-white/40"
                   }`}
                 >

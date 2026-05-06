@@ -14,7 +14,7 @@ const ActiveVisitors = () => {
             transition={{ delay: index * 0.05 }}
             className="group hover:bg-primary/5 transition-all border-b border-[var(--color-border-soft)]"
         >
-            <td className="px-4 md:px-6 py-3">
+            <td className="px-4 md:px-6 py-3 font-normal text-[12px]">
                 <div className="flex items-center gap-3">
                     <div className={`w-2.5 h-2.5 rounded-full ${
                         visitor.status === 'approved' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-yellow-500 shadow-[0_0_8px_#f59e0b]'
@@ -24,17 +24,17 @@ const ActiveVisitors = () => {
                     </span>
                 </div>
             </td>
-            <td className="px-4 md:px-6 py-3 text-[var(--color-text-secondary)] text-xs flex items-center gap-2">
+            <td className="px-4 md:px-6 py-3 text-[var(--color-text-secondary)] flex items-center gap-2 font-normal text-[12px]">
                 <MapPin size={14} className="opacity-75" />
                 {visitor.location}
             </td>
-            <td className="px-4 md:px-6 py-3 text-[var(--color-text-secondary)] text-xs">
+            <td className="px-4 md:px-6 py-3 text-[var(--color-text-secondary)] font-normal text-[12px]">
                 <div className="flex items-center gap-2">
                     <Clock size={14} className="opacity-75" />
                     {visitor.duration}
                 </div>
             </td>
-            <td className="px-4 md:px-6 py-3 text-center">
+            <td className="px-4 md:px-6 py-3 text-center font-normal text-[12px]">
                 <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border shadow-sm ${
                     visitor.status === 'approved'
                         ? 'text-green-500 bg-green-500/10 border-green-500/20'
@@ -43,7 +43,7 @@ const ActiveVisitors = () => {
                     {visitor.status}
                 </span>
             </td>
-            <td className="px-4 md:px-6 py-3 text-right">
+            <td className="px-4 md:px-6 py-3 text-right font-normal text-[12px]">
                 <span className="text-[var(--color-text-secondary)] text-xs font-mono">{visitor.badge}</span>
             </td>
         </motion.tr>
@@ -75,12 +75,12 @@ const ActiveVisitors = () => {
             <div className="overflow-x-auto">
                 <table className="w-full text-left">
                     <thead>
-                        <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[12px] uppercase tracking-[0.2em] font-bold border-b border-[var(--color-border-soft)] sticky top-0">
-                            <th className="px-4 md:px-6 py-3">Visitor Name</th>
-                            <th className="px-4 md:px-6 py-3">Location</th>
-                            <th className="px-4 md:px-6 py-3">Duration</th>
-                            <th className="px-4 md:px-6 py-3 text-center">Status</th>
-                            <th className="px-4 md:px-6 py-3 text-right">Badge ID</th>
+                        <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[12px] uppercase tracking-[0.2em] font-normal border-b border-[var(--color-border-soft)] sticky top-0">
+                            <th className="px-4 md:px-6 py-3 font-normal text-[12px]">Visitor Name</th>
+                            <th className="px-4 md:px-6 py-3 font-normal text-[12px]">Location</th>
+                            <th className="px-4 md:px-6 py-3 font-normal text-[12px]">Duration</th>
+                            <th className="px-4 md:px-6 py-3 text-center font-normal text-[12px]">Status</th>
+                            <th className="px-4 md:px-6 py-3 text-right font-normal text-[12px]">Badge ID</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-border-soft)]">

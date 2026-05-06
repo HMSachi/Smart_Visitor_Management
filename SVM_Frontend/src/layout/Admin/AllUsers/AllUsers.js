@@ -579,7 +579,7 @@ const AllUsers = () => {
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "8%",
                                 }}
-                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 User ID
                               </TableCell>
@@ -589,7 +589,7 @@ const AllUsers = () => {
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "15%",
                                 }}
-                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 Name
                               </TableCell>
@@ -599,7 +599,7 @@ const AllUsers = () => {
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "20%",
                                 }}
-                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 Email
                               </TableCell>
@@ -609,7 +609,7 @@ const AllUsers = () => {
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "12%",
                                 }}
-                                className="hidden sm:table-cell text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="hidden sm:table-cell text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 {cat.id === "CONTACT" ? "Department" : "Role"}
                               </TableCell>
@@ -619,7 +619,7 @@ const AllUsers = () => {
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "15%",
                                 }}
-                                className="hidden md:table-cell text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="hidden md:table-cell text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 {cat.id === "CONTACT" ? "Contact" : "Joined"}
                               </TableCell>
@@ -629,7 +629,7 @@ const AllUsers = () => {
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "10%",
                                 }}
-                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 Status
                               </TableCell>
@@ -640,7 +640,7 @@ const AllUsers = () => {
                                   width: "10%",
                                 }}
                                 align="right"
-                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 Actions
                               </TableCell>
@@ -662,7 +662,7 @@ const AllUsers = () => {
                                     borderBottom:
                                       "1px solid rgba(255,255,255,0.05)",
                                   }}
-                                  className="text-white/30 text-[11px] font-medium"
+                                  className="text-white/30 text-[11px] font-normal text-[12px]"
                                 >
                                   No users in this category
                                 </TableCell>
@@ -698,7 +698,7 @@ const AllUsers = () => {
                                   >
                                     <TableCell
                                       sx={{ padding: "6px 14px", width: "8%" }}
-                                      className="text-white/80 font-medium text-[12px] whitespace-nowrap"
+                                      className="text-white/80 font-normal text-[12px] whitespace-nowrap"
                                     >
                                       <div className="flex items-center gap-1.5">
                                         <Hash
@@ -713,19 +713,19 @@ const AllUsers = () => {
                                     </TableCell>
                                     <TableCell
                                       sx={{ padding: "6px 14px", width: "15%" }}
-                                      className={`font-semibold transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40"}`}
+                                      className={`font-normal transition-colors text-[12px] ${isActive ?"text-white" : "text-white/40"}`}
                                     >
                                       {item.VA_Name || item.VCP_Name || "-"}
                                     </TableCell>
                                     <TableCell
                                       sx={{ padding: "6px 14px", width: "20%" }}
-                                      className={`font-medium transition-colors text-[12px] whitespace-nowrap ${isActive ? "text-gray-400 opacity-60" : "text-gray-500 opacity-30"}`}
+                                      className={`font-normal transition-colors text-[12px] whitespace-nowrap ${isActive ?"text-gray-400 opacity-60" : "text-gray-500 opacity-30"}`}
                                     >
                                       {item.VA_Email || item.VCP_Email}
                                     </TableCell>
                                     <TableCell
                                       sx={{ padding: "6px 14px", width: "12%" }}
-                                      className={`hidden sm:table-cell transition-colors font-medium text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                      className={`hidden sm:table-cell transition-colors font-normal text-[12px] ${isActive ?"text-white/70" : "text-white/20"}`}
                                     >
                                       {item.VA_Role ||
                                         item.VCP_Department ||
@@ -733,7 +733,7 @@ const AllUsers = () => {
                                     </TableCell>
                                     <TableCell
                                       sx={{ padding: "6px 14px", width: "15%" }}
-                                      className={`hidden md:table-cell transition-colors font-medium text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                      className={`hidden md:table-cell transition-colors font-normal text-[12px] ${isActive ?"text-white/70" : "text-white/20"}`}
                                     >
                                       {item.VA_Created_Date
                                         ? item.VA_Created_Date.split(" ")[0]
@@ -741,14 +741,14 @@ const AllUsers = () => {
                                     </TableCell>
                                     <TableCell
                                       sx={{ padding: "6px 14px", width: "10%" }}
-                                    >
+                                     className="text-[12px] font-normal">
                                       <button
                                         onClick={() =>
                                           handleToggleStatus(item, cat.id)
                                         }
                                         disabled={loading}
                                         title="Click to toggle status"
-                                        className={`px-3 py-0.5 text-[9px] uppercase tracking-[0.05em] font-bold transition-all cursor-pointer rounded-lg border ${isActive ? "bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500 hover:text-white" : "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500 hover:text-white"}`}
+                                        className={`px-3 py-0.5 text-[9px] uppercase tracking-[0.05em] font-normal transition-all cursor-pointer rounded-lg border ${isActive ? "bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500 hover:text-white" : "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500 hover:text-white"}`}
                                       >
                                         {isActive ? "ACTIVE" : "INACTIVE"}
                                       </button>
@@ -756,7 +756,7 @@ const AllUsers = () => {
                                     <TableCell
                                       sx={{ padding: "6px 14px", width: "10%" }}
                                       align="right"
-                                    >
+                                     className="text-[12px] font-normal">
                                       <IconButton
                                         onClick={() =>
                                           openModal("edit", item, cat.id)
@@ -984,7 +984,7 @@ const AllUsers = () => {
                       <option value="">Select a role</option>
                       <option value="Admin">Admin</option>
                       <option value="Security">Security</option>
-                      <option value="Contact_Person">Contact Person</option>
+                      <option value="Contact_Person">Host</option>
                     </select>
                     {errors.role && (
                       <p className="text-[10px] text-red-400 font-semibold mt-1">

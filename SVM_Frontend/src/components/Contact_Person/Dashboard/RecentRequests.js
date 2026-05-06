@@ -86,11 +86,11 @@ const RecentRequests = () => {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[9px] uppercase tracking-[0.2em] font-bold border-b border-[var(--color-border-soft)] sticky top-0">
-                  <th className="px-3 py-2">Visitor</th>
-                  <th className="px-3 py-2 text-center">Date</th>
-                  <th className="px-3 py-2 text-center">Status</th>
-                  <th className="px-3 py-2 text-right">Action</th>
+                <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[9px] uppercase tracking-[0.2em] font-normal border-b border-[var(--color-border-soft)] sticky top-0">
+                  <th className="px-3 py-2 font-normal text-[12px]">Visitor</th>
+                  <th className="px-3 py-2 text-center font-normal text-[12px]">Date</th>
+                  <th className="px-3 py-2 text-center font-normal text-[12px]">Status</th>
+                  <th className="px-3 py-2 text-right font-normal text-[12px]">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border-soft)]">
@@ -106,30 +106,30 @@ const RecentRequests = () => {
                       className="group hover:bg-primary/5 transition-all cursor-pointer"
                       onClick={() => navigate("/contact_person/request-review", { state: { requestId: req?.id } })}
                     >
-                      <td className="px-3 py-2">
+                      <td className="px-3 py-2 font-normal text-[12px]">
                         <div className="flex items-center gap-2">
                           <div className="w-6 h-6 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary">
                             <User size={11} />
                           </div>
-                          <p className="text-[var(--color-text-primary)] text-[11px] font-bold uppercase tracking-wider">
+                          <p className="text-[var(--color-text-primary)] text-[11px] font-normal uppercase tracking-wider">
                             {req?.name || "Unknown"}
                           </p>
                         </div>
                       </td>
-                      <td className="px-3 py-2 text-center">
-                        <span className="text-[var(--color-text-primary)] text-[11px] font-bold flex items-center justify-center gap-1">
+                      <td className="px-3 py-2 text-center font-normal text-[12px]">
+                        <span className="text-[var(--color-text-primary)] text-[11px] font-normal flex items-center justify-center gap-1">
                           <Calendar size={10} className="opacity-75 text-primary" />
                           {req?.date || "-"}
                         </span>
                       </td>
-                      <td className="px-3 py-2 text-center">
+                      <td className="px-3 py-2 text-center font-normal text-[12px]">
                         <span
-                          className={`px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider border shadow-sm inline-block ${getStatusColor(req?.status)}`}
+                          className={`px-1.5 py-0.5 rounded-full text-[8px] font-normal uppercase tracking-wider border shadow-sm inline-block ${getStatusColor(req?.status)}`}
                         >
                           {req?.status || "Unknown"}
                         </span>
                       </td>
-                      <td className="px-3 py-2 text-right">
+                      <td className="px-3 py-2 text-right font-normal text-[12px]">
                         <ArrowUpRight size={12} className="text-[var(--color-text-dim)] group-hover:text-primary transition-colors ml-auto" />
                       </td>
                     </motion.tr>

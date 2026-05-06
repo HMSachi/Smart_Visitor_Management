@@ -17,33 +17,24 @@ import {
 } from "../../../actions/VisitorAction";
 import Header from "../../../components/Admin/Layout/Header";
 import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Building,
-  Shield,
   Search,
   RefreshCw,
-  X,
-  Hash,
   CheckCircle2,
   AlertCircle,
-  Briefcase,
 } from "lucide-react";
 
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
   if (s === "ACTIVE" || s === "A") {
     return (
-      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
-        <CheckCircle2 size={12} /> Active
+      <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <CheckCircle2 size={10} className="mr-1" /> Active
       </div>
     );
   }
   return (
-    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
-      <AlertCircle size={12} /> Inactive
+    <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+      <AlertCircle size={10} className="mr-1" /> Inactive
     </div>
   );
 };
@@ -79,7 +70,6 @@ const VisitorManagement = () => {
   };
 
   const handleToggleStatus = (visitor) => {
-    // Robust check for active status (case-insensitive)
     const statusValue = (visitor.VV_Status || "")
       .toString()
       .trim()
@@ -98,9 +88,7 @@ const VisitorManagement = () => {
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="max-w-[1600px] mx-auto">
           <header className="mb-6 flex flex-col md:flex-row justify-end items-start md:items-end pb-4 gap-6 relative z-10">
-
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
-              {/* Search Form */}
               <form
                 onSubmit={handleSearch}
                 className="flex items-center bg-[var(--color-surface-1)] border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[280px] shadow-sm"
@@ -159,23 +147,23 @@ const VisitorManagement = () => {
                 <Table sx={{ minWidth: 650 }} aria-label="visitors table">
                   <TableHead className="bg-black/40">
                     <TableRow>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        <span className="text-[13px]">ID</span>
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                        ID
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        <span className="text-[13px]">Visitor</span>
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                        Visitor
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        <span className="text-[13px]">Credentials</span>
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                        Credentials
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        <span className="text-[13px]">Company</span>
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                        Company
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        <span className="text-[13px]">Destination</span>
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                        Destination
                       </TableCell>
-                      <TableCell className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b-white/5">
-                        <span className="text-[13px]">Status</span>
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2 text-center">
+                        Status
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -206,35 +194,35 @@ const VisitorManagement = () => {
                               },
                             }}
                           >
-                            <TableCell className="text-white/70 font-medium border-b-white/5">
+                            <TableCell className="text-white/70 font-normal border-b-white/5 py-1 text-[12px]">
                               {visitor.VV_Visitor_id}
                             </TableCell>
                             <TableCell
-                              className={`font-medium border-b-white/5 transition-colors ${isActive ? "text-white" : "text-white/30 line-through"}`}
+                              className={`font-normal border-b-white/5 transition-colors py-1 text-[12px] ${isActive ?"text-white" : "text-white/30 line-through"}`}
                             >
                               {visitor.VV_Name || "-"}
                             </TableCell>
                             <TableCell
-                              className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={font-normal text-[12px]`border-b-white/5 transition-colors py-1 text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
                             >
                               {visitor.VV_NIC_Passport_NO || "-"}
                             </TableCell>
                             <TableCell
-                              className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={font-normal text-[12px]`border-b-white/5 transition-colors py-1 text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
                             >
                               {visitor.VV_Company || "-"}
                             </TableCell>
                             <TableCell
-                              className={`border-b-white/5 transition-colors ${isActive ? "text-white/70" : "text-white/20"}`}
+                              className={font-normal text-[12px]`border-b-white/5 transition-colors py-1 text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
                             >
                               {visitor.VV_Visiting_places || "-"}
                             </TableCell>
-                            <TableCell className="border-b-white/5">
+                            <TableCell className="border-b-white/5 py-1 text-center font-normal text-[12px]">
                               <button
                                 onClick={() => handleToggleStatus(visitor)}
                                 disabled={isLoading}
                                 title="Click to toggle status"
-                                className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-normal transition-all cursor-pointer ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
                               >
                                 {isActive ? "ACTIVE" : "INACTIVE"}
                               </button>
@@ -247,7 +235,7 @@ const VisitorManagement = () => {
                         <TableCell
                           colSpan={6}
                           align="center"
-                          className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5"
+                          className="py-12 text-white/40 uppercase tracking-widest border-b-white/5 font-normal text-[12px]"
                         >
                           No Visitors detected in registry
                         </TableCell>
@@ -260,8 +248,6 @@ const VisitorManagement = () => {
           </div>
         </div>
       </div>
-
-      {/* Removed Modal for Add Visitor */}
     </div>
   );
 };

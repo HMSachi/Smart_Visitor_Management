@@ -762,23 +762,23 @@ const MyRequests = () => {
                   <Table size="small" sx={{ minWidth: 560 }}>
                     <TableHead className="bg-white/[0.02]">
                       <TableRow>
-                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
                           Protocol ID
                         </TableCell>
-                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
                           Date
                         </TableCell>
-                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
                           Destination
                         </TableCell>
-                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
                           Purpose
                         </TableCell>
-                        <TableCell className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
                           Status
                         </TableCell>
                         <TableCell
-                          className="text-gray-400 font-semibold uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4"
+                          className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]"
                           align="right"
                         >
                           Controls
@@ -792,7 +792,7 @@ const MyRequests = () => {
                           hover
                           className="hover:bg-white/[0.02] transition-all"
                         >
-                          <TableCell className="px-4 py-3 border-b-white/5">
+                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center gap-2.5">
                               <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                                 <Hash size={11} />
@@ -802,10 +802,10 @@ const MyRequests = () => {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="px-4 py-3 border-b-white/5">
+                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center gap-2 text-gray-300">
                               <Calendar size={11} className="text-primary/50" />
-                              <span className="text-[12px] font-medium tracking-normal">
+                              <span className="text-[12px] font-normal tracking-normal">
                                 {req.VVR_Visit_Date
                                   ? req.VVR_Visit_Date.split("T")[0].split(
                                       " ",
@@ -814,26 +814,26 @@ const MyRequests = () => {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="px-4 py-3 border-b-white/5">
+                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center gap-2 text-gray-300">
                               <MapPin size={11} className="text-primary/50" />
-                              <span className="text-[12px] font-medium tracking-normal">
+                              <span className="text-[12px] font-normal tracking-normal">
                                 {req.VVR_Places_to_Visit || "-"}
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="px-4 py-3 border-b-white/5">
-                            <p className="text-white font-medium tracking-wide text-[12px] opacity-80 line-clamp-1">
+                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
+                            <p className="text-white font-normal tracking-wide text-[12px] opacity-80 line-clamp-1">
                               {req.VVR_Purpose || "-"}
                             </p>
                           </TableCell>
-                          <TableCell className="px-4 py-3 border-b-white/5">
+                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center justify-center">
                               <StatusBadge status={req.VVR_Status} />
                             </div>
                           </TableCell>
                           <TableCell
-                            className="px-4 py-3 border-b-white/5"
+                            className="px-4 py-3 border-b-white/5 font-normal text-[12px]"
                             align="right"
                           >
                             <div className="flex items-center justify-end gap-2">

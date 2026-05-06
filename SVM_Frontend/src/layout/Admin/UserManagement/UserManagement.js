@@ -532,33 +532,33 @@ const UserManagement = () => {
             >
               <Table sx={{ minWidth: 650 }} aria-label="user management table">
                 <TableHead className="bg-black/40">
-                  <TableRow>
-                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">
-                      ID
-                    </th>
-                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">
-                      Name
-                    </th>
-                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">
-                      {activeTab === "CONTACT" ? "Department" : "System Role"}
-                    </th>
-                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">
-                      {activeTab === "CONTACT"
-                        ? "Email"
-                        : "Authentication Origin"}
-                    </th>
-                    {activeTab === "CONTACT" && (
-                      <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">
-                        Phone
+                    <TableRow>
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                        ID
                       </th>
-                    )}
-                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-left">
-                      Status
-                    </th>
-                    <th className="text-white/40 font-bold uppercase tracking-wider text-[11px] border-b border-b-white/5 px-4 py-3 text-right">
-                      Actions
-                    </th>
-                  </TableRow>
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                        Name
+                      </th>
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                        {activeTab === "CONTACT" ? "Department" : "System Role"}
+                      </th>
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                        {activeTab === "CONTACT"
+                          ? "Email"
+                          : "Authentication Origin"}
+                      </th>
+                      {activeTab === "CONTACT" && (
+                        <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                          Phone
+                        </th>
+                      )}
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                        Status
+                      </th>
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-right">
+                        Actions
+                      </th>
+                    </TableRow>
                 </TableHead>
                 <TableBody>
                   {isLoading &&
@@ -570,7 +570,7 @@ const UserManagement = () => {
                       <TableCell
                         colSpan={7}
                         align="center"
-                        className="py-12 border-b-white/5"
+                        className="py-12 border-b-white/5 font-normal text-[12px]"
                       >
                         <CircularProgress size={30} className="text-primary" />
                       </TableCell>
@@ -583,7 +583,7 @@ const UserManagement = () => {
                       <TableCell
                         colSpan={7}
                         align="center"
-                        className="py-12 text-white/40 uppercase tracking-widest text-sm border-b-white/5"
+                        className="py-12 text-white/40 uppercase tracking-widest border-b-white/5 font-normal text-[12px]"
                       >
                         No {activeTab} accounts found
                       </TableCell>
@@ -602,37 +602,37 @@ const UserManagement = () => {
                           },
                         }}
                       >
-                        <TableCell className="text-white/70 font-medium border-b-white/5">
+                        <TableCell className="text-white/70 font-normal border-b-white/5 text-[12px] py-1">
                           {item.VCP_Contact_person_id || item.VA_Admin_id}
                         </TableCell>
                         <TableCell
-                          className={`font-medium border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white" : "text-white/30 line-through"}`}
+                          className={`font-normal border-b-white/5 transition-colors text-[12px] py-1 ${(item.VCP_Status || item.VA_Status) ==="A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white" : "text-white/30 line-through"}`}
                         >
                           {item.VCP_Name || item.VA_Name || "-"}
                         </TableCell>
                         <TableCell
-                          className={`border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white/70" : "text-white/20"}`}
+                          className={font-normal text-[12px]`border-b-white/5 transition-colors text-[12px] py-1 ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white/70" : "text-white/20"}`}
                         >
                           {item.VCP_Department || item.VA_Role || "-"}
                         </TableCell>
                         <TableCell
-                          className={`border-b-white/5 transition-colors ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white/70" : "text-white/20"}`}
+                          className={font-normal text-[12px]`border-b-white/5 transition-colors text-[12px] py-1 ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white/70" : "text-white/20"}`}
                         >
                           {item.VCP_Email || item.VA_Email || "-"}
                         </TableCell>
                         {activeTab === "CONTACT" && (
                           <TableCell
-                            className={`border-b-white/5 transition-colors ${item.VCP_Status === "A" ? "text-white/70" : "text-white/20"}`}
+                            className={font-normal text-[12px]`border-b-white/5 transition-colors text-[12px] py-1 ${item.VCP_Status === "A" ? "text-white/70" : "text-white/20"}`}
                           >
                             {item.VCP_Phone || "-"}
                           </TableCell>
                         )}
-                        <TableCell className="border-b-white/5">
+                        <TableCell className="border-b-white/5 py-1 font-normal text-[12px]">
                           <button
                             onClick={() => handleToggleStatus(item)}
                             disabled={isLoading}
                             title="Click to toggle status"
-                            className={`px-2 py-1 text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-normal transition-all cursor-pointer ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
                           >
                             {(item.VCP_Status || item.VA_Status) === "A" ||
                             (item.VCP_Status || item.VA_Status) === "ACTIVE"
@@ -640,7 +640,7 @@ const UserManagement = () => {
                               : "INACTIVE"}
                           </button>
                         </TableCell>
-                        <TableCell align="right" className="border-b-white/5">
+                        <TableCell align="right" className="border-b-white/5 py-1 font-normal text-[12px]">
                           {activeTab === "CONTACT" ? (
                             <IconButton
                               onClick={() => handleOpenForm(item)}

@@ -320,7 +320,7 @@ const ContactAllVisitors = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search visitor..."
-                  className={`bg-transparent text-[9.5px] font-medium tracking-wide focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
+                  className={`bg-transparent text-[12px] font-normal tracking-wide focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
                 />
                 {searchTerm && (
                   <button
@@ -335,7 +335,7 @@ const ContactAllVisitors = () => {
 
               <button
                 onClick={openModal}
-                className="flex items-center justify-center gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-5 h-9 rounded-lg text-[9.5px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group"
+                className="flex items-center justify-center gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-5 h-9 rounded-lg text-[12px] font-normal uppercase tracking-widest transition-all shadow-lg active:scale-95 group"
               >
                 <Plus size={16} className="group-hover:rotate-90 transition-transform" />
                 New Pre-Approval
@@ -349,7 +349,7 @@ const ContactAllVisitors = () => {
             {isLoading ? (
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin mb-6"></div>
-                <p className="text-gray-500 text-[13px] uppercase tracking-[0.3em] font-medium">
+                <p className="text-gray-500 text-[12px] uppercase tracking-[0.3em] font-normal">
                   Hang tight, we’re loading visitor records.
                 </p>
               </div>
@@ -358,7 +358,7 @@ const ContactAllVisitors = () => {
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 text-primary">
                   <AlertCircle size={24} />
                 </div>
-                <p className="text-primary text-[14px] uppercase tracking-widest font-bold">
+                <p className="text-primary text-[12px] uppercase tracking-widest font-normal">
                   {error}
                 </p>
               </div>
@@ -383,10 +383,10 @@ const ContactAllVisitors = () => {
                         >
                           <div className="flex justify-between items-start mb-6">
                             <div>
-                              <h4 className={`text-[13px] font-black uppercase tracking-tight ${isActive ? (isLight ? "text-gray-900" : "text-white") : "text-gray-400"}`}>
+                              <h4 className={`text-[12px] font-black uppercase tracking-tight ${isActive ? (isLight ? "text-gray-900" : "text-white") : "text-gray-400"}`}>
                                 {visitor.VV_Name || "Unknown"}
                               </h4>
-                              <p className="text-gray-400 text-[9px] font-bold tracking-[0.2em] mt-1 uppercase opacity-70">
+                              <p className="text-gray-400 text-[12px] font-normal tracking-[0.2em] mt-1 uppercase opacity-70">
                                 VISITOR-{visitor.VV_Visitor_id.toString().padStart(3, '0')}
                               </p>
                             </div>
@@ -394,7 +394,7 @@ const ContactAllVisitors = () => {
                               <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border ${isActive ? "text-green-500 bg-green-500/10 border-green-500/20" : "text-primary bg-primary/10 border-primary/20"}`}>
                                 {isActive ? "Active" : "Inactive"}
                               </div>
-                              <button className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest ${isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-primary"} transition-colors`}>
+                              <button className={`flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest ${isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-primary"} transition-colors`}>
                                 <Eye size={14} /> View History
                               </button>
                             </div>
@@ -404,9 +404,9 @@ const ContactAllVisitors = () => {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3 text-gray-400">
                                 <Users size={14} className="text-primary/70" />
-                                <span className="text-[9px] font-black uppercase tracking-[0.15em]">Company</span>
+                                <span className="text-[12px] font-black uppercase tracking-[0.15em]">Company</span>
                               </div>
-                              <span className={`text-[10px] font-bold truncate max-w-[150px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                              <span className={`text-[12px] font-normal truncate max-w-[150px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
                                 {visitor.VV_Company || "-"}
                               </span>
                             </div>
@@ -414,9 +414,9 @@ const ContactAllVisitors = () => {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3 text-gray-400">
                                 <MapPin size={14} className="text-primary/70" />
-                                <span className="text-[9px] font-black uppercase tracking-[0.15em]">Zones</span>
+                                <span className="text-[12px] font-black uppercase tracking-[0.15em]">Areas</span>
                               </div>
-                              <span className={`text-[10px] font-bold truncate max-w-[150px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                              <span className={`text-[12px] font-normal truncate max-w-[150px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
                                 {visitor.VV_Visiting_places || "N/A"}
                               </span>
                             </div>
@@ -424,16 +424,16 @@ const ContactAllVisitors = () => {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3 text-gray-400">
                                 <AlertCircle size={14} className="text-primary/70" />
-                                <span className="text-[9px] font-black uppercase tracking-[0.15em]">NIC/Passport</span>
+                                <span className="text-[12px] font-black uppercase tracking-[0.15em]">NIC/Passport</span>
                               </div>
-                              <span className={`text-[10px] font-bold ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                              <span className={`text-[12px] font-normal ${isLight ? "text-gray-700" : "text-gray-200"}`}>
                                 {visitor.VV_NIC_Passport_NO || "-"}
                               </span>
                             </div>
                           </div>
 
                           <button
-                            className={`w-full py-3 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
+                            className={`w-full py-3 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
                           >
                             <Eye size={15} /> Details
                           </button>
@@ -443,7 +443,7 @@ const ContactAllVisitors = () => {
                   ) : (
                     <div className="py-20 text-center opacity-40">
                       <Users size={40} className="mx-auto mb-3" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest">No Visitors Detected</p>
+                      <p className="text-[12px] font-normal uppercase tracking-widest">No Visitors Detected</p>
                     </div>
                   )}
                 </div>
@@ -453,39 +453,39 @@ const ContactAllVisitors = () => {
                   style={{ height: "38rem" }}
                 >
                 <table className="w-full min-w-[720px] md:min-w-[900px] border-collapse">
-                  <thead className="sticky top-0 z-20">
+                  <thead className="sticky top-0 z-20 font-normal text-[12px]">
                     <tr
                       className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
                     >
                       <th
-                        className={`px-3 py-2 text-center font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-primary/60" : "text-primary"}`}
+                        className={`px-3 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-primary/60" : "text-primary"}`}
                       >
-                        Visitor ID
+                        ID
                       </th>
                       <th
-                        className={`px-3 py-2 text-left font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
-                        Visitor Name
+                        Visitor
                       </th>
                       <th
-                        className={`px-3 py-2 text-left font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
-                        NIC / Passport
+                        Credentials
                       </th>
                       <th
-                        className={`px-3 py-2 text-left font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
-                        Company Name
+                        Company
                       </th>
                       <th
-                        className={`px-3 py-2 text-left font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
                         Visiting Area
                       </th>
                       <th
-                        className={`px-3 py-2 text-center font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
-                        Account Status
+                        Status
                       </th>
                     </tr>
                   </thead>
@@ -506,51 +506,51 @@ const ContactAllVisitors = () => {
                             key={visitor.VV_Visitor_id}
                             className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                           >
-                            <td className="px-3 py-1.5 text-center text-primary text-[11px] tracking-wide font-medium">
+                            <td className="px-3 py-1 text-center text-primary text-[12px] tracking-wide font-normal">
                               #{visitor.VV_Visitor_id}
                             </td>
-                            <td className="px-3 py-1.5 text-left">
+                            <td className="px-3 py-1 text-left font-normal text-[12px]">
                               <span
-                                className={`font-medium text-[12px] tracking-wide ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
+                                className={`font-normal text-[12px] tracking-wide ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
                               >
                                 {visitor.VV_Name || "-"}
                               </span>
                             </td>
-                            <td className="px-3 py-1.5 text-left">
+                            <td className="px-3 py-1 text-left font-normal text-[12px]">
                               <span
-                                className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
+                                className={`text-[12px] font-normal ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_NIC_Passport_NO || "-"}
                               </span>
                             </td>
-                            <td className="px-3 py-1.5 text-left">
+                            <td className="px-3 py-1 text-left font-normal text-[12px]">
                               <span
                                 title={
                                   visitor.VV_Company || "No company specified"
                                 }
-                                className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
+                                className={`text-[12px] font-normal ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Company || "-"}
                               </span>
                             </td>
-                            <td className="px-3 py-1.5 text-left">
+                            <td className="px-3 py-1 text-left font-normal text-[12px]">
                               <span
                                 title={
                                   visitor.VV_Visiting_places ||
                                   "No visiting area specified"
                                 }
-                                className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
+                                className={`text-[12px] font-normal ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_Visiting_places || "-"}
                               </span>
                             </td>
-                            <td className="px-3 py-1.5 text-center">
+                            <td className="px-3 py-1 text-center font-normal text-[12px]">
                               <div className="flex items-center justify-center">
                                 <button
                                   onClick={() => handleToggleStatus(visitor)}
                                   disabled={isLoading}
                                   title="Click to toggle status"
-                                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm border transition-all cursor-pointer ${
+                                  className={`px-2 py-0.5 rounded-md text-[12px] font-normal tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm border transition-all cursor-pointer ${
                                     isActive
                                       ? "bg-green-500/10 border-green-500/20 text-green-500 hover:bg-green-500/20"
                                       : "bg-primary/10 border-primary/20 text-primary hover:bg-primary/20"
@@ -567,7 +567,7 @@ const ContactAllVisitors = () => {
                       <tr>
                         <td
                           colSpan={6}
-                          className={`px-4 py-12 text-center uppercase tracking-[0.24em] text-[9px] font-medium ${isLight ? "text-gray-400" : "text-white/40"}`}
+                          className={text-[12px] font-normal`px-4 py-12 text-center uppercase tracking-[0.24em] text-[12px] font-normal ${isLight ? "text-gray-400" : "text-white/40"}`}
                         >
                           No Visitors detected matching criteria
                         </td>
@@ -590,7 +590,7 @@ const ContactAllVisitors = () => {
               <div className="flex justify-between items-center p-4 md:p-5 border-b border-white/5 relative z-10 bg-black/20">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                   <div className="w-1.5 h-6 bg-primary rounded-full"></div>
-                  <h2 className="text-base md:text-lg font-bold text-white uppercase tracking-[0.16em]">
+                  <h2 className="text-[12px] md:text-[12px] font-normal text-white uppercase tracking-[0.16em]">
                     Pre-Approve Visitor
                   </h2>
                 </div>
@@ -608,7 +608,7 @@ const ContactAllVisitors = () => {
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <User size={11} className="text-primary/60" /> Full Name
                     </label>
                     <input
@@ -624,14 +624,14 @@ const ContactAllVisitors = () => {
                       placeholder="e.g., John Smith"
                     />
                     {errors.VV_Name && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Name}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Hash size={11} className="text-primary/60" /> ID or
                       Passport
                     </label>
@@ -649,14 +649,14 @@ const ContactAllVisitors = () => {
                       placeholder="e.g., 123456789"
                     />
                     {errors.VV_NIC_Passport_NO && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_NIC_Passport_NO}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Mail size={11} className="text-primary/60" /> Email
                       Address
                     </label>
@@ -673,14 +673,14 @@ const ContactAllVisitors = () => {
                       placeholder="john@example.com"
                     />
                     {errors.VV_Email && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Email}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Phone size={11} className="text-primary/60" /> Phone
                       Number
                     </label>
@@ -698,19 +698,19 @@ const ContactAllVisitors = () => {
                       placeholder="1234567890"
                     />
                     {errors.VV_Phone && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Phone}
                       </p>
                     )}
                     {!errors.VV_Phone && (
-                      <p className="text-[9px] text-white/40 uppercase tracking-[0.12em] px-1 mt-1">
+                      <p className="text-[12px] text-white/40 uppercase tracking-[0.12em] px-1 mt-1">
                         Enter 10 digits (Numbers only)
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Building size={11} className="text-primary/60" />{" "}
                       Organization
                     </label>
@@ -727,14 +727,14 @@ const ContactAllVisitors = () => {
                       placeholder="e.g., Acme Corporation"
                     />
                     {errors.VV_Company && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Company}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Briefcase size={11} className="text-primary/60" />{" "}
                       Purpose of Visit
                     </label>
@@ -751,14 +751,14 @@ const ContactAllVisitors = () => {
                       placeholder="e.g., Meeting, Delivery, Interview"
                     />
                     {errors.VV_Visitor_Type && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Visitor_Type}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <MapPin size={11} className="text-primary/60" /> Where to
                       Visit
                     </label>
@@ -775,14 +775,14 @@ const ContactAllVisitors = () => {
                       placeholder="e.g., Building A, Floor 3, Room 301"
                     />
                     {errors.VV_Visiting_places && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Visiting_places}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-primary uppercase tracking-[0.14em] font-semibold flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-primary uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <AlertCircle size={11} className="text-primary/60" />{" "}
                       Create Password
                     </label>
@@ -800,11 +800,11 @@ const ContactAllVisitors = () => {
                       placeholder="••••••••"
                     />
                     {errors.VA_Password ? (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[12px] text-red-400 font-normal mt-1">
                         {errors.VA_Password}
                       </p>
                     ) : (
-                      <p className="text-[9px] text-white/35 uppercase tracking-[0.12em] px-1 mt-1">
+                      <p className="text-[12px] text-white/35 uppercase tracking-[0.12em] px-1 mt-1">
                         Max 5 chars, Capital &amp; Special Char
                       </p>
                     )}
@@ -815,14 +815,14 @@ const ContactAllVisitors = () => {
                 {/* <div className="pt-4 border-t border-white/5 space-y-3">
                   <div className="flex flex-col md:flex-row items-center gap-3 md:gap-3">
                     <Car size={13} className="text-primary" />
-                    <h3 className="text-[11px] font-bold text-white uppercase tracking-[0.16em] mb-0">
+                    <h3 className="text-[12px] font-normal text-white uppercase tracking-[0.16em] mb-0">
                       Vehicle Logistics
                     </h3>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold px-1">
+                      <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal px-1">
                         Vehicle Type
                       </label>
                       <input
@@ -835,7 +835,7 @@ const ContactAllVisitors = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] text-gray-400 uppercase tracking-[0.14em] font-semibold px-1">
+                      <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal px-1">
                         Plate Number
                       </label>
                       <input
@@ -854,13 +854,13 @@ const ContactAllVisitors = () => {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-6 py-2.5 rounded-lg text-[12px] font-bold text-gray-400 hover:bg-white/5 uppercase tracking-[0.14em] transition-all"
+                    className="px-6 py-2.5 rounded-lg text-[12px] font-normal text-gray-400 hover:bg-white/5 uppercase tracking-[0.14em] transition-all"
                   >
                     Close
                   </button>
                   <button
                     type="submit"
-                    className="px-7 py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-bold uppercase tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
+                    className="px-7 py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal uppercase tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
                   >
                     Send Pre-Approval
                   </button>
