@@ -12,6 +12,7 @@ import {
 } from "../../../actions/VisitRequestAction";
 import { GetVisitorsByCP } from "../../../actions/VisitorAction";
 import { AddVehicle } from "../../../actions/VehicleAction";
+import { GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitRequestService from "../../../services/VisitRequestService";
 import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
@@ -46,6 +47,7 @@ import {
   Users,
   Pencil,
   Briefcase,
+  QrCode,
 } from "lucide-react";
 import { setSelectedRequest } from "../../../reducers/contactPersonSlice";
 
@@ -55,20 +57,20 @@ const StatusBadge = ({ status }) => {
     case "A":
     case "APPROVED":
       return (
-        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
           Admin Approved
         </div>
       );
     case "R":
     case "REJECTED":
       return (
-        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
           Declined
         </div>
       );
     case "ACCEPTED":
       return (
-        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
           Accepted by Visitor
         </div>
       );
@@ -76,7 +78,7 @@ const StatusBadge = ({ status }) => {
     case "SENT_TO_ADMIN":
     case "SENT TO ADMIN":
       return (
-        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
           Accepted by Contact Person
         </div>
       );
@@ -84,7 +86,7 @@ const StatusBadge = ({ status }) => {
     case "PENDING":
     default:
       return (
-        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
           Sent to Visitor
         </div>
       );
@@ -115,6 +117,9 @@ const VisitRequests = () => {
 
   const { visitRequestsByCP, isLoading, error } = useSelector(
     (state) => state.visitRequestsState,
+  );
+  const { gatePasses } = useSelector(
+    (state) => state.gatePassState || { gatePasses: [] },
   );
   const { visitorsByCP } = useSelector((state) => state.visitorManagement);
   const { themeMode } = useThemeMode();
@@ -255,7 +260,8 @@ const VisitRequests = () => {
     } else {
       setCpId(user?.ResultSet?.[0]?.VCP_Contact_person_id || null);
     }
-  }, [userEmail, user]);
+    dispatch(GetAllGatePasses());
+  }, [userEmail, user, dispatch]);
 
   useEffect(() => {
     if (!cpId) return;
@@ -336,6 +342,39 @@ const VisitRequests = () => {
   const handleAction = (id, status) => {
     dispatch(ApproveVisitRequest(id, status));
     setTimeout(() => dispatch(GetVisitRequestsByCP(cpId)), 2000);
+  };
+
+  const handleViewGatePass = (req) => {
+    const list = Array.isArray(gatePasses)
+      ? gatePasses
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
+    const gatePass = list.find((gp) => {
+      const gpRequestId =
+        gp.VVR_Request_id ||
+        gp.VGP_Request_id ||
+        gp.vvr_Request_id ||
+        gp.vgp_Request_id;
+      return String(gpRequestId) === String(req.VVR_Request_id);
+    });
+
+    const gatePassId = gatePass?.VGP_Pass_id || gatePass?.vgp_Pass_id;
+    if (!gatePassId) return;
+    navigate(`/contact_person/gate-pass/${gatePassId}`);
+  };
+
+  const hasGatePass = (requestId) => {
+    if (!requestId) return false;
+    const list = Array.isArray(gatePasses)
+      ? gatePasses
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
+    return list.some((gp) => {
+      const gpRequestId =
+        gp.VVR_Request_id ||
+        gp.VGP_Request_id ||
+        gp.vvr_Request_id ||
+        gp.vgp_Request_id;
+      return String(gpRequestId) === String(requestId);
+    });
   };
 
   // ─── Edit Form Helpers ────────────────────────────────────────────────────────
@@ -918,7 +957,7 @@ const VisitRequests = () => {
               <button
                 key={option.id}
                 onClick={() => setStatusFilter(option.id)}
-                className={`relative px-12 py-1.5 rounded-full text-[7.5px] font-bold tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
+                className={`relative px-10 py-1.5 rounded-full text-[6.5px] font-bold tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
                     ? "text-white"
                     : isLight
                       ? "text-gray-500 hover:text-primary"
@@ -1044,13 +1083,14 @@ const VisitRequests = () => {
                     <tr
                       className={`text-[10px] uppercase font-bold tracking-[0.25em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
                     >
-                      <th className="px-3 py-4 text-center w-[80px]">ID</th>
+                      <th className="px-3 py-4 text-center w-[60px]">ID</th>
                       <th className="px-3 py-4 text-left">Visitor Details</th>
                       <th className="px-3 py-4 text-center">Visit Date</th>
                       <th className="px-3 py-4 text-left">Purpose</th>
                       <th className="px-3 py-4 text-left">Visit Areas</th>
                       <th className="px-3 py-4 text-center">Status</th>
-                      <th className="px-3 py-4 text-center">Actions</th>
+                      <th className="px-3 py-4 text-center w-[80px]">Pass</th>
+                      <th className="px-3 py-4 text-center w-[120px]">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
@@ -1060,7 +1100,7 @@ const VisitRequests = () => {
                           key={req.VVR_Request_id}
                           className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                         >
-                          <td className="px-3 py-1.5 text-center text-primary text-[11px] tracking-wide font-medium">
+                          <td className="px-3 py-1.5 text-center text-primary text-[12px] tracking-wide font-medium">
                             #{req.VVR_Request_id}
                           </td>
                           <td className="px-3 py-1.5 text-left">
@@ -1110,28 +1150,33 @@ const VisitRequests = () => {
                             </div>
                           </td>
                           <td className="px-3 py-1.5 text-center">
+                            <div className="flex items-center justify-center">
+                              {hasGatePass(req.VVR_Request_id) && (
+                                <button
+                                  onClick={() => handleViewGatePass(req)}
+                                  className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all group/btn ${isLight ? "bg-green-500/5 text-green-600 border-green-500/20 hover:bg-green-500 hover:text-white hover:shadow-lg hover:shadow-green-500/25" : "bg-green-400/5 text-green-400 border-green-400/20 hover:bg-green-400 hover:text-white hover:shadow-lg hover:shadow-green-400/25"}`}
+                                  title="View Gate Pass"
+                                >
+                                  <QrCode size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-3 py-1.5 text-center">
                             <div className="flex items-center justify-center gap-2">
                               <button
                                 onClick={() => handleReview(req.VVR_Request_id)}
-                                className={`inline-flex h-8.5 px-3 items-center justify-center rounded-xl border border-transparent transition-all gap-2 group/btn ${isLight ? "bg-primary/5 text-primary hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/25" : "bg-blue-400/5 text-blue-400 hover:bg-blue-400 hover:text-white hover:shadow-lg hover:shadow-blue-400/25"}`}
+                                className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all group/btn ${isLight ? "bg-primary/5 text-primary border-primary/20 hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/25" : "bg-blue-400/5 text-blue-400 border-blue-400/20 hover:bg-blue-400 hover:text-white hover:shadow-lg hover:shadow-blue-400/25"}`}
                                 title="View Request Details"
                               >
                                 <Eye size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:inline">View</span>
                               </button>
                               <button
                                 onClick={() => handleOpenEdit(req)}
-                                className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 hover:bg-gray-200" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}
+                                className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200" : "bg-white/5 text-gray-300 border-white/10 hover:bg-white/10"}`}
                                 title="Edit"
                               >
                                 <Edit size={14} className="shrink-0" />
-                              </button>
-                              <button
-                                onClick={(e) => handleMenuOpen(e, req)}
-                                className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 hover:bg-gray-200" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}
-                                title="More Options"
-                              >
-                                <MoreVertical size={14} className="shrink-0" />
                               </button>
                             </div>
                           </td>

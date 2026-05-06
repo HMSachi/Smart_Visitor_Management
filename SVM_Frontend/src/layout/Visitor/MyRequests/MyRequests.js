@@ -828,22 +828,8 @@ const MyRequests = () => {
                             </p>
                           </TableCell>
                           <TableCell className="px-4 py-3 border-b-white/5">
-                            <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center justify-center">
                               <StatusBadge status={req.VVR_Status} />
-                              {hasGatePass(req.VVR_Request_id) &&
-                                (req.VVR_Status === "A" ||
-                                  req.VVR_Status === "APPROVED") && (
-                                  <button
-                                    onClick={() => handleViewGatePass(req)}
-                                    className="flex items-center gap-1.5 text-[9px] justify-center font-black uppercase tracking-[0.12em] text-primary hover:text-white transition-all group/gp"
-                                  >
-                                    <QrCode
-                                      size={10}
-                                      className="group-hover/gp:scale-110 transition-transform"
-                                    />
-                                    View GatePass
-                                  </button>
-                                )}
                             </div>
                           </TableCell>
                           <TableCell
@@ -851,18 +837,27 @@ const MyRequests = () => {
                             align="right"
                           >
                             <div className="flex items-center justify-end gap-2">
+                              {hasGatePass(req.VVR_Request_id) && (
+                                <button
+                                  onClick={() => handleViewGatePass(req)}
+                                  className="w-8.5 h-8.5 flex items-center justify-center border border-green-500/30 bg-green-500/10 text-green-500 rounded-lg hover:bg-green-500 hover:text-white transition-all"
+                                  title="Gate Pass"
+                                >
+                                  <QrCode size={14} />
+                                </button>
+                              )}
                               {canReviewRequest(req.VVR_Status) && (
                                 <button
                                   onClick={() => handleOpenReviewPage(req)}
-                                  className="p-2 border border-primary/30 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all"
-                                  title="Review"
+                                  className="w-8.5 h-8.5 flex items-center justify-center border border-primary/30 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-all"
+                                  title="View Details"
                                 >
                                   <Eye size={14} />
                                 </button>
                               )}
                               <button
                                 onClick={() => handleOpenEdit(req)}
-                                className="p-2 border border-white/10 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 hover:text-white transition-all"
+                                className="w-8.5 h-8.5 flex items-center justify-center border border-white/10 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 hover:text-white transition-all"
                                 title="Edit"
                               >
                                 <Pencil size={14} />

@@ -257,13 +257,13 @@ const VisitorTable = ({
                                 onClick={() =>
                                   onAction(visitor, "ViewGatePass")
                                 }
-                                className="flex items-center justify-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.15em] text-green-500 hover:text-green-400 transition-all group/gp py-0.5 whitespace-nowrap mx-auto"
+                                className="w-8 h-8 rounded-lg flex items-center justify-center bg-green-500/5 border border-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all group/gp mx-auto shadow-sm"
+                                title="View Gate Pass"
                               >
                                 <QrCode
-                                  size={11}
+                                  size={13}
                                   className="group-hover/gp:scale-110 transition-transform"
                                 />
-                                Gate Pass
                               </button>
                             )}
                         </td>
