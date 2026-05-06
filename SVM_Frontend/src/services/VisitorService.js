@@ -58,10 +58,29 @@ const GetVisitorsByContactPerson = async (cpId) => {
   return axios.request(config).then((response) => response);
 };
 
+const GetVisitorJoint = async (requestId) => {
+  let config = {
+    method: "get",
+    url: getApiUrl(
+      `/ItemCarried/GetItemJoinByGroupMember?VVR_Request_id=${encodeURIComponent(requestId)}`,
+    ),
+  };
+  console.log("[VisitorService] GetVisitorJoint - URL:", config.url);
+  try {
+    const response = await axios.request(config);
+    console.log("[VisitorService] GetVisitorJoint response:", response.data);
+    return response;
+  } catch (err) {
+    console.error("[VisitorService] GetVisitorJoint error:", err.message);
+    throw err;
+  }
+};
+
 export default {
   GetAllVisitors,
   AddVisitor,
   GetVisitorById,
   ActivateVisitor,
   GetVisitorsByContactPerson,
+  GetVisitorJoint,
 };

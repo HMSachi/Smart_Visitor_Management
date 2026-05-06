@@ -12,6 +12,7 @@ import {
 } from "../../../actions/VisitRequestAction";
 import { GetVisitorsByCP } from "../../../actions/VisitorAction";
 import { AddVehicle } from "../../../actions/VehicleAction";
+import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 import VisitRequestService from "../../../services/VisitRequestService";
 import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
@@ -117,6 +118,9 @@ const VisitRequests = () => {
     (state) => state.visitRequestsState,
   );
   const { visitorsByCP } = useSelector((state) => state.visitorManagement);
+  const { blacklists } = useSelector(
+    (state) => state.blacklistState || { blacklists: [] }
+  );
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
@@ -261,6 +265,7 @@ const VisitRequests = () => {
     if (!cpId) return;
     dispatch(GetVisitRequestsByCP(cpId));
     dispatch(GetVisitorsByCP(cpId));
+    dispatch(GetAllBlacklist());
     setFormData((prev) => ({ ...prev, VVR_Contact_person_id: cpId }));
   }, [dispatch, cpId]);
 
@@ -589,6 +594,19 @@ const VisitRequests = () => {
   const handleUpdateMember = async (idx) => {
     const m = editGroupMembers[idx];
     if (!m?.VVG_id || memberSavingIdx !== null) return;
+    
+    // Check blacklist before updating
+    const isBlacklisted = (blacklists || []).some(
+      (b) =>
+        b.VB_Name &&
+        b.VB_Name.toLowerCase() === m.VVG_Visitor_Name?.toLowerCase() &&
+        b.VB_Status === "A"
+    );
+    if (isBlacklisted) {
+      setEditError(`Access Restricted for ${m.VVG_Visitor_Name}. They are blacklisted.`);
+      return;
+    }
+
     setMemberSavingIdx(idx);
     try {
       await VisitGroupService.UpdateVisitGroup({
@@ -626,6 +644,19 @@ const VisitRequests = () => {
       setEditError("Name and ID required.");
       return;
     }
+    
+    // Check blacklist before adding
+    const isBlacklisted = (blacklists || []).some(
+      (b) =>
+        b.VB_Name &&
+        b.VB_Name.toLowerCase() === m.VVG_Visitor_Name?.toLowerCase() &&
+        b.VB_Status === "A"
+    );
+    if (isBlacklisted) {
+      setEditError(`Access Restricted for ${m.VVG_Visitor_Name}. They are blacklisted.`);
+      return;
+    }
+
     setNewMemberSavingIdx(idx);
     setEditError("");
     try {
