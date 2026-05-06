@@ -244,7 +244,7 @@ const PersonnelAuthProtocol = ({
       )}
       {onAction && (
         <div className={`mt-6 pt-6 border-t ${isLight ? "border-gray-100" : "border-white/5"} flex items-center justify-end gap-3`}>
-          {visitor.status === "Accepted by Contact Person" && (
+          {(visitor.status === "Accepted by Contact Person" || visitor.status === "Accepted by Visitor") && (
               <>
                 <button
                   onClick={() => onAction(visitor, "Reject")}

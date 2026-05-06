@@ -24,6 +24,8 @@ import {
   Briefcase,
   AlertCircle,
   Car,
+  Eye,
+  Users,
 } from "lucide-react";
 import {
   validateName,
@@ -48,7 +50,14 @@ const ContactAllVisitors = () => {
 
   const userEmail = user?.ResultSet?.[0]?.VA_Email;
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -294,39 +303,24 @@ const ContactAllVisitors = () => {
       <div
         className={`flex-1 flex flex-col min-w-0 overflow-y-auto relative ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
       >
-        <Header />
+        <Header title="Authorized Visitors" />
 
         <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full z-10">
-          <header
-            className={`mb-6 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-4 gap-4 relative z-10 ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}
-          >
-            <div>
-              <h2
-                className={`text-[15px] md:text-base font-bold tracking-[0.12em] uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-              >
-                All Authorized Visitors
-              </h2>
-              <p
-                className={`text-[10px] md:text-[11px] font-bold uppercase tracking-[0.18em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/50"}`}
-              >
-                Manage personal visitor registry
-              </p>
-            </div>
-
+          <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
               <div
-                className={`flex items-center transition-colors border rounded-lg px-2.5 py-1.5 min-w-[180px] max-w-[220px] shadow-sm ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10 focus-within:border-primary"}`}
+                className={`flex items-center transition-colors border rounded-lg px-2.5 h-9 min-w-[180px] w-full sm:w-[220px] md:w-[250px] shadow-sm group ${isLight ? "bg-white border-gray-200" : "bg-black/40 border-white/10 focus-within:border-primary"}`}
               >
                 <Search
-                  size={12}
-                  className={`mr-3 ${isLight ? "text-gray-400" : "text-white/20"}`}
+                  size={14}
+                  className={`mr-3 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
                 />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="SEARCH VISITOR..."
-                  className={`bg-transparent text-[5px] font-medium tracking-[0.16em] uppercase focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
+                  placeholder="Search visitor..."
+                  className={`bg-transparent text-[9.5px] font-medium tracking-wide focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
                 />
                 {searchTerm && (
                   <button
@@ -341,12 +335,13 @@ const ContactAllVisitors = () => {
 
               <button
                 onClick={openModal}
-                className="flex flex-col md:flex-row items-center gap-3 md:gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-4 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-[0.18em] transition-all shadow-lg hover:shadow-primary/20"
+                className="flex items-center justify-center gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-5 h-9 rounded-lg text-[9.5px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group"
               >
-                <Plus size={14} /> New Pre-Approval
+                <Plus size={16} className="group-hover:rotate-90 transition-transform" />
+                New Pre-Approval
               </button>
             </div>
-          </header>
+          </div>
 
           <div
             className={`border rounded-[32px] overflow-hidden relative z-10 ${isLight ? "bg-white border-gray-200 shadow-xl shadow-gray-200/50" : "bg-[#0F0F10] border-white/5"}`}
@@ -368,42 +363,127 @@ const ContactAllVisitors = () => {
                 </p>
               </div>
             ) : (
-              <div
-                className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
-                style={{ height: "38rem" }}
-              >
+              isMobile ? (
+                <div className="p-4 space-y-6">
+                  {filteredVisitors && filteredVisitors.length > 0 ? (
+                    filteredVisitors.map((visitor) => {
+                      const isActive =
+                        (visitor.VV_Status || "")
+                          .toString()
+                          .trim()
+                          .toUpperCase() === "A" ||
+                        (visitor.VV_Status || "")
+                          .toString()
+                          .trim()
+                          .toUpperCase() === "ACTIVE";
+                      return (
+                        <div
+                          key={visitor.VV_Visitor_id}
+                          className={`p-5 rounded-[28px] border transition-all ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-white/5 border-white/5"}`}
+                        >
+                          <div className="flex justify-between items-start mb-6">
+                            <div>
+                              <h4 className={`text-[13px] font-black uppercase tracking-tight ${isActive ? (isLight ? "text-gray-900" : "text-white") : "text-gray-400"}`}>
+                                {visitor.VV_Name || "Unknown"}
+                              </h4>
+                              <p className="text-gray-400 text-[9px] font-bold tracking-[0.2em] mt-1 uppercase opacity-70">
+                                VISITOR-{visitor.VV_Visitor_id.toString().padStart(3, '0')}
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-end gap-3">
+                              <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border ${isActive ? "text-green-500 bg-green-500/10 border-green-500/20" : "text-primary bg-primary/10 border-primary/20"}`}>
+                                {isActive ? "Active" : "Inactive"}
+                              </div>
+                              <button className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest ${isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-primary"} transition-colors`}>
+                                <Eye size={14} /> View History
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="space-y-4 mb-6 px-1">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3 text-gray-400">
+                                <Users size={14} className="text-primary/70" />
+                                <span className="text-[9px] font-black uppercase tracking-[0.15em]">Company</span>
+                              </div>
+                              <span className={`text-[10px] font-bold truncate max-w-[150px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                                {visitor.VV_Company || "-"}
+                              </span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3 text-gray-400">
+                                <MapPin size={14} className="text-primary/70" />
+                                <span className="text-[9px] font-black uppercase tracking-[0.15em]">Zones</span>
+                              </div>
+                              <span className={`text-[10px] font-bold truncate max-w-[150px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                                {visitor.VV_Visiting_places || "N/A"}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3 text-gray-400">
+                                <AlertCircle size={14} className="text-primary/70" />
+                                <span className="text-[9px] font-black uppercase tracking-[0.15em]">NIC/Passport</span>
+                              </div>
+                              <span className={`text-[10px] font-bold ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                                {visitor.VV_NIC_Passport_NO || "-"}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            className={`w-full py-3 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
+                          >
+                            <Eye size={15} /> Details
+                          </button>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="py-20 text-center opacity-40">
+                      <Users size={40} className="mx-auto mb-3" />
+                      <p className="text-[10px] font-bold uppercase tracking-widest">No Visitors Detected</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div
+                  className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
+                  style={{ height: "38rem" }}
+                >
                 <table className="w-full min-w-[720px] md:min-w-[900px] border-collapse">
                   <thead className="sticky top-0 z-20">
                     <tr
                       className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
                     >
                       <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-primary/60" : "text-primary"}`}
+                        className={`px-3 py-2 text-center font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-primary/60" : "text-primary"}`}
                       >
                         Visitor ID
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-left font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Visitor Name
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-left font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         NIC / Passport
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-left font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Company Name
                       </th>
                       <th
-                        className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-left font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Visiting Area
                       </th>
                       <th
-                        className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-center font-bold uppercase tracking-widest text-[10px] ${isLight ? "text-gray-400" : "text-white/40"}`}
                       >
                         Account Status
                       </th>
@@ -426,24 +506,24 @@ const ContactAllVisitors = () => {
                             key={visitor.VV_Visitor_id}
                             className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                           >
-                            <td className="px-4 py-4 text-center text-primary text-[11px] tracking-[0.14em] font-medium">
+                            <td className="px-3 py-1.5 text-center text-primary text-[11px] tracking-wide font-medium">
                               #{visitor.VV_Visitor_id}
                             </td>
-                            <td className="px-4 py-4 text-left">
+                            <td className="px-3 py-1.5 text-left">
                               <span
-                                className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
+                                className={`font-medium text-[12px] tracking-wide ${isActive ? (isLight ? "text-[#1A1A1A]" : "text-white") : "text-gray-400 line-through"}`}
                               >
                                 {visitor.VV_Name || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-left">
+                            <td className="px-3 py-1.5 text-left">
                               <span
                                 className={`text-[12px] font-medium ${isActive ? (isLight ? "text-gray-500" : "text-white/70") : "text-gray-400"}`}
                               >
                                 {visitor.VV_NIC_Passport_NO || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-left">
+                            <td className="px-3 py-1.5 text-left">
                               <span
                                 title={
                                   visitor.VV_Company || "No company specified"
@@ -453,7 +533,7 @@ const ContactAllVisitors = () => {
                                 {visitor.VV_Company || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-left">
+                            <td className="px-3 py-1.5 text-left">
                               <span
                                 title={
                                   visitor.VV_Visiting_places ||
@@ -464,7 +544,7 @@ const ContactAllVisitors = () => {
                                 {visitor.VV_Visiting_places || "-"}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-center">
+                            <td className="px-3 py-1.5 text-center">
                               <div className="flex items-center justify-center">
                                 <button
                                   onClick={() => handleToggleStatus(visitor)}
@@ -496,7 +576,8 @@ const ContactAllVisitors = () => {
                   </tbody>
                 </table>
               </div>
-            )}
+            )
+          )}
           </div>
         </div>
 

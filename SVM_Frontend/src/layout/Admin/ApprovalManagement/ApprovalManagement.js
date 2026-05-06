@@ -53,10 +53,19 @@ const ApprovalManagement = () => {
   const formScrollRef = React.useRef(null);
 
   React.useEffect(() => {
-    dispatch(GetAllVisitRequests());
-    dispatch(GetAllVisitors());
-    dispatch(GetAllVehicles());
-    dispatch(GetAllGatePasses());
+    const fetchData = () => {
+      dispatch(GetAllVisitRequests());
+      dispatch(GetAllVisitors());
+      dispatch(GetAllVehicles());
+      dispatch(GetAllGatePasses());
+    };
+
+    fetchData();
+
+    // Polling: Refresh data every 30 seconds to keep the admin view current
+    const intervalId = setInterval(fetchData, 30000);
+
+    return () => clearInterval(intervalId);
   }, [dispatch]);
 
   // Load visitor group, items, and vehicles when a visitor is selected
@@ -128,9 +137,11 @@ const ApprovalManagement = () => {
           status === "A" ||
           status === "R" ||
           status === "ACCEPTED" ||
+          status === "ACCEPTED BY VISITOR" ||
           status === "P" ||
           status === "PENDING" ||
-          status === "SENT_TO_ADMIN"
+          status === "SENT_TO_ADMIN" ||
+          status === "SENT TO ADMIN"
         );
       })
       .map((req) => {
@@ -143,12 +154,12 @@ const ApprovalManagement = () => {
         const s = (req.VVR_Status || "").toString().trim().toUpperCase();
 
         let displayStatus = "Sent to Visitor";
-        if (s === "SENT" || s === "SENT_TO_ADMIN")
+        if (s === "SENT" || s === "SENT_TO_ADMIN" || s === "SENT TO ADMIN")
           displayStatus = "Accepted by Contact Person";
         else if (s === "A" || s === "APPROVED")
           displayStatus = "Admin Approved";
         else if (s === "R" || s === "REJECTED") displayStatus = "Rejected";
-        else if (s === "ACCEPTED") displayStatus = "Accepted by Visitor";
+        else if (s === "ACCEPTED" || s === "ACCEPTED BY VISITOR") displayStatus = "Accepted by Visitor";
 
         return {
           id: req.VVR_Request_id?.toString() || "",
@@ -212,7 +223,7 @@ const ApprovalManagement = () => {
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] h-screen">
       <Header 
-        title={viewMode === "details" ? "Approval Management" : undefined}
+        title={viewMode === "details" ? "Review Visit Request" : undefined}
         showBack={viewMode === "details"}
         onBack={handleBackToList}
       />
@@ -254,7 +265,7 @@ const ApprovalManagement = () => {
                     className="flex-1 flex flex-col space-y-2"
                   >
                       <div className="flex items-center justify-end gap-2">
-                        {selectedVisitor?.status === "Accepted by Contact Person" && (
+                        {(selectedVisitor?.status === "Accepted by Contact Person" || selectedVisitor?.status === "Accepted by Visitor") && (
                           <div className="flex flex-row items-center gap-2">
                             <button
                               onClick={() => handleAction(selectedVisitor, "Approve")}

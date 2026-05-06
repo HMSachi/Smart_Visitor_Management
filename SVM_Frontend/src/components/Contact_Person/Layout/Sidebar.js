@@ -98,7 +98,8 @@ const SidebarContent = ({
     >
       {/* Logo */}
       <div
-        className={`flex items-center gap-3 px-4 py-5 border-b border-[var(--color-border-soft)] ${isCollapsed ? "justify-center" : ""}`}
+        className={`flex items-center gap-3 px-4 border-b border-[var(--color-border-soft)] ${isCollapsed ? "justify-center" : ""}`}
+        style={{ height: '64px' }}
       >
         <img
           src="/logo_mas.png"
@@ -209,7 +210,7 @@ const Sidebar = () => {
         sx={{
           position: "absolute",
           right: -14,
-          top: 88,
+          top: 64,
           width: 28,
           height: 28,
           background: "var(--color-bg-elevated)",

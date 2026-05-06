@@ -20,8 +20,8 @@ const Panel = ({ icon, label, value, trend, onClick }) => {
 
       <div className="flex justify-between items-start relative z-10">
         <div>
-          <p className="text-[var(--color-text-dim)] text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] mb-1 sm:mb-2 group-hover:text-primary transition-opacity">{label}</p>
-          <h3 className="text-[var(--color-text-primary)] text-lg sm:text-xl md:text-2xl font-black tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
+          <p className="text-[var(--color-text-dim)] text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.15em] mb-1 sm:mb-2 group-hover:text-primary transition-opacity">{label}</p>
+          <h3 className="text-[var(--color-text-primary)] text-lg sm:text-xl md:text-2xl font-semibold tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
         </div>
         <div className="p-2.5 rounded-xl bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-500 shadow-sm">
           <Icon className="text-primary group-hover:scale-110 transition-transform" size={16} strokeWidth={2.5} />

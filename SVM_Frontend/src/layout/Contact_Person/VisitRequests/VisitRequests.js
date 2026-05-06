@@ -74,6 +74,7 @@ const StatusBadge = ({ status }) => {
       );
     case "SENT":
     case "SENT_TO_ADMIN":
+    case "SENT TO ADMIN":
       return (
         <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[10px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
           Accepted by Contact Person
@@ -158,6 +159,15 @@ const VisitRequests = () => {
   const [editItems, setEditItems] = useState([]);
   const [editSaving, setEditSaving] = useState(false);
   const [editLoadingData, setEditLoadingData] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const [isLoadingMain, setIsLoadingMain] = useState(true);
   const [vehicleSavingIdx, setVehicleSavingIdx] = useState(null);
   const [memberSavingIdx, setMemberSavingIdx] = useState(null);
   const [itemSavingIdx, setItemSavingIdx] = useState(null);
@@ -206,7 +216,7 @@ const VisitRequests = () => {
           : "",
         VVR_Places_to_Visit: selectedReq.VVR_Places_to_Visit || "",
         VVR_Purpose: selectedReq.VVR_Purpose || "",
-        VVR_Status: "SENT_TO_ADMIN",
+        VVR_Status: "SENT",
         VVR_Contact_person_id: cpId,
       };
       await dispatch(UpdateVisitRequest(payload));
@@ -740,10 +750,10 @@ const VisitRequests = () => {
   };
 
   const statusOptions = [
-    { id: "All", label: "All Requests" },
-    { id: "P", label: "Sent to Visitor" },
-    { id: "ACCEPTED", label: "Visitor Accepted" },
-    { id: "SENT", label: "Sent to Admin" },
+    { id: "All", label: "All requests" },
+    { id: "P", label: "Sent to visitor" },
+    { id: "ACCEPTED", label: "Visitor accepted" },
+    { id: "SENT", label: "Sent to admin" },
     { id: "A", label: "Approved" },
     { id: "R", label: "Rejected" },
   ];
@@ -839,7 +849,7 @@ const VisitRequests = () => {
           {visibleAreas.map((area, index) => (
             <span
               key={`${requestKey}-${area}-${index}`}
-              className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] max-w-full ${isLight ? "bg-[#F8F9FA] border-gray-200 text-[#1A1A1A]" : "bg-white/5 border-white/10 text-white/85"}`}
+              className={`inline-flex items-center text-[10px] font-medium tracking-wide max-w-full ${isLight ? "text-[#1A1A1A]" : "text-white/85"}`}
             >
               <span className="truncate">{area}</span>
             </span>
@@ -865,65 +875,50 @@ const VisitRequests = () => {
 
   return (
     <div className="flex flex-col min-w-0 h-full">
-      <Header title="" />
+      <Header title="Active Visit Requests" />
 
       <div className="p-3 md:p-5 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
-        <header
-          className={`mb-6 flex flex-col md:flex-row justify-between items-start md:items-end border-b pb-4 gap-3 relative ${isLight ? "border-gray-100" : "border-white/[0.03]"}`}
-        >
-          <div>
-            <h2
-              className={`text-[15px] font-bold tracking-tight uppercase ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-            >
-              Active Visit Requests
-            </h2>
-            <p
-              className={`text-[10px] font-bold uppercase tracking-[0.18em] mt-1 opacity-90 ${isLight ? "text-gray-500" : "text-white/50"}`}
-            >
-              Manage visitor applications
-            </p>
-          </div>
-
+        <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
             <div
-              className={`flex items-center border transition-all rounded-xl px-3 py-2 min-w-[220px] w-full sm:w-[240px] md:w-[250px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+              className={`flex items-center border transition-all rounded-xl px-3 h-9 min-w-[220px] w-full sm:w-[240px] md:w-[280px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
             >
               <Search
-                size={12}
+                size={14}
                 className={`transition-colors mr-2.5 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
               />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="SEARCH VISITOR..."
-                className={`bg-transparent text-[10px] sm:text-[11px] focus:outline-none w-full uppercase tracking-widest ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
+                placeholder="Search visitor..."
+                className={`bg-transparent text-[9.5px] focus:outline-none w-full tracking-wide ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
               />
             </div>
 
             <button
               onClick={() => navigate("/contact_person/create-visit-request")}
-              className="flex flex-col md:flex-row items-center gap-2.5 md:gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.18em] transition-all shadow-[0_8px_20px_rgba(200,16,46,0.3)] active:scale-95 group"
+              className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 h-9 rounded-xl text-[9.5px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group"
             >
               <Plus
-                size={15}
+                size={16}
                 className="group-hover:rotate-90 transition-transform"
-              />{" "}
+              />
               Create Visit Request
             </button>
           </div>
-        </header>
+        </div>
 
         {/* Status Filter Tabs - Modern Capsule Style */}
-        <div className="mb-6 overflow-x-auto no-scrollbar pb-2">
+        <div className="mb-6 overflow-x-auto no-scrollbar pb-2 px-1">
           <div
-            className={`inline-flex p-1 rounded-full border transition-all ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}
+            className={`inline-flex p-1 rounded-full border transition-all gap-6 ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}
           >
             {statusOptions.map((option) => (
               <button
                 key={option.id}
                 onClick={() => setStatusFilter(option.id)}
-                className={`relative px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
+                className={`relative px-12 py-1.5 rounded-full text-[7.5px] font-bold tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
                     ? "text-white"
                     : isLight
                       ? "text-gray-500 hover:text-primary"
@@ -970,154 +965,203 @@ const VisitRequests = () => {
               className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
               style={{ height: "38rem" }}
             >
-              <table className="w-full min-w-[720px] md:min-w-[900px] border-collapse">
-                <thead className="sticky top-0 z-20">
-                  <tr
-                    className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
-                  >
-                    <th
-                      className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-primary/60" : "text-primary"}`}
+            {isMobile ? (
+              <div className="p-4 space-y-6">
+                {filteredRequests && filteredRequests.length > 0 ? (
+                  filteredRequests.map((req) => (
+                    <div
+                      key={req.VVR_Request_id}
+                      className={`p-5 rounded-[28px] border transition-all ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-white/5 border-white/5"}`}
                     >
-                      Request ID
-                    </th>
-                    <th
-                      className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                    >
-                      Visitor
-                    </th>
-                    <th
-                      className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                    >
-                      Visit Date
-                    </th>
-                    <th
-                      className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                    >
-                      Purpose
-                    </th>
-                    <th
-                      className={`px-4 py-3 text-left font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                    >
-                      Visit Areas
-                    </th>
-                    <th
-                      className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                    >
-                      Status
-                    </th>
-                    <th
-                      className={`px-4 py-3 text-center font-bold uppercase tracking-[0.18em] text-[11px] ${isLight ? "text-gray-400" : "text-white/40"}`}
-                    >
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {filteredRequests && filteredRequests.length > 0 ? (
-                    filteredRequests.map((req) => (
-                      <tr
-                        key={req.VVR_Request_id}
-                        className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
-                      >
-                        <td className="px-4 py-4 text-center text-primary text-[11px] tracking-[0.14em] font-medium">
-                          #{req.VVR_Request_id}
-                        </td>
-                        <td className="px-4 py-4 text-left">
-                          <span
-                            className={`font-medium text-[12px] uppercase tracking-[0.14em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                          >
+                      <div className="flex justify-between items-start mb-6">
+                        <div>
+                          <h4 className={`text-[13px] font-black uppercase tracking-tight ${isLight ? "text-gray-900" : "text-white"}`}>
                             {getVisitorDisplayName(req)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4">
-                          <div
-                            className={`flex flex-col items-center justify-center gap-1.5 text-[12px] ${isLight ? "text-gray-500" : "text-white/70"}`}
-                          >
-                            <span className="font-medium tracking-wide">
-                              {req.VVR_Visit_Date
-                                ? req.VVR_Visit_Date.split("T")[0].split(
-                                  " ",
-                                )[0]
-                                : "N/A"}
-                            </span>
+                          </h4>
+                          <p className="text-gray-400 text-[9px] font-bold tracking-[0.2em] mt-1 uppercase opacity-70">
+                            BATCH-{new Date().getFullYear()}-{req.VVR_Request_id.toString().padStart(3, '0')}
+                          </p>
+                        </div>
+                        <div className="flex flex-col items-end gap-3">
+                          <StatusBadge status={req.VVR_Status} />
+                          <button className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest ${isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-primary"} transition-colors`}>
+                            <Eye size={14} /> View Pass
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 mb-6 px-1">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 text-gray-400">
+                            <Calendar size={14} className="text-primary/70" />
+                            <span className="text-[9px] font-black uppercase tracking-[0.15em]">Deployed</span>
                           </div>
-                        </td>
-                        <td className="px-4 py-4 text-left">
-                          <div className="max-w-[170px]">
-                            <p
-                              title={
-                                req.VVR_Purpose || "No purpose specified"
-                              }
-                              className={`font-medium uppercase tracking-[0.14em] text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
+                          <span className={`text-[10px] font-bold ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                            {req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0] : "N/A"} // {req.VVR_Visit_Time || "08:30 AM"}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 text-gray-400">
+                            <MapPin size={14} className="text-primary/70" />
+                            <span className="text-[9px] font-black uppercase tracking-[0.15em]">Zones</span>
+                          </div>
+                          <span className={`text-[10px] font-bold truncate max-w-[160px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                            {req.VVR_Purpose || "General Access"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 text-gray-400">
+                            <AlertCircle size={14} className="text-primary/70" />
+                            <span className="text-[9px] font-black uppercase tracking-[0.15em]">Request</span>
+                          </div>
+                          <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[9px] font-black border border-primary/20">
+                            1
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleReview(req.VVR_Request_id)}
+                        className={`w-full py-3 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
+                      >
+                        <Eye size={15} /> Inspect
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-20 text-center opacity-40">
+                    <ClipboardList size={40} className="mx-auto mb-3" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest">No Requests Found</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr
+                      className={`text-[10px] uppercase font-bold tracking-[0.25em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
+                    >
+                      <th className="px-3 py-4 text-center w-[80px]">ID</th>
+                      <th className="px-3 py-4 text-left">Visitor Details</th>
+                      <th className="px-3 py-4 text-center">Visit Date</th>
+                      <th className="px-3 py-4 text-left">Purpose</th>
+                      <th className="px-3 py-4 text-left">Visit Areas</th>
+                      <th className="px-3 py-4 text-center">Status</th>
+                      <th className="px-3 py-4 text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {filteredRequests && filteredRequests.length > 0 ? (
+                      filteredRequests.map((req) => (
+                        <tr
+                          key={req.VVR_Request_id}
+                          className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
+                        >
+                          <td className="px-3 py-1.5 text-center text-primary text-[11px] tracking-wide font-medium">
+                            #{req.VVR_Request_id}
+                          </td>
+                          <td className="px-3 py-1.5 text-left">
+                            <span
+                              className={`font-medium text-[12px] tracking-wide ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                             >
-                              {req.VVR_Purpose || "-"}
+                              {getVisitorDisplayName(req)}
+                            </span>
+                          </td>
+                          <td className="px-3 py-1.5">
+                            <div
+                              className={`flex flex-col items-center justify-center gap-1.5 text-[12px] ${isLight ? "text-gray-500" : "text-white/70"}`}
+                            >
+                              <span className="font-medium tracking-wide">
+                                {req.VVR_Visit_Date
+                                  ? req.VVR_Visit_Date.split("T")[0].split(
+                                    " ",
+                                  )[0]
+                                  : "N/A"}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-3 py-1.5 text-left">
+                            <div className="max-w-[170px]">
+                              <p
+                                title={
+                                  req.VVR_Purpose || "No purpose specified"
+                                }
+                                className={`font-medium tracking-wide text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
+                              >
+                                {req.VVR_Purpose || "-"}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-3 py-1.5 align-top text-left">
+                            <div
+                              className={`flex flex-col gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
+                            >
+                              <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
+                                {renderVisitAreas(req)}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-3 py-1.5 text-center">
+                            <div className="flex items-center justify-center">
+                              <StatusBadge status={req.VVR_Status} />
+                            </div>
+                          </td>
+                          <td className="px-3 py-1.5 text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => handleReview(req.VVR_Request_id)}
+                                className={`inline-flex h-8.5 px-3 items-center justify-center rounded-xl border border-transparent transition-all gap-2 group/btn ${isLight ? "bg-primary/5 text-primary hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/25" : "bg-blue-400/5 text-blue-400 hover:bg-blue-400 hover:text-white hover:shadow-lg hover:shadow-blue-400/25"}`}
+                                title="View Request Details"
+                              >
+                                <Eye size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
+                                <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:inline">View</span>
+                              </button>
+                              <button
+                                onClick={() => handleOpenEdit(req)}
+                                className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 hover:bg-gray-200" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}
+                                title="Edit"
+                              >
+                                <Edit size={14} className="shrink-0" />
+                              </button>
+                              <button
+                                onClick={(e) => handleMenuOpen(e, req)}
+                                className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 hover:bg-gray-200" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}
+                                title="More Options"
+                              >
+                                <MoreVertical size={14} className="shrink-0" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="py-24 text-center">
+                          <div className="flex flex-col items-center justify-center opacity-20">
+                            <ClipboardList
+                              size={48}
+                              className={`mb-4 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                            />
+                            <p
+                              className={`uppercase tracking-[0.4em] text-[10px] font-bold ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                            >
+                              No Active Visit Requests Detected
                             </p>
                           </div>
                         </td>
-                        <td className="px-4 py-4 align-top text-left">
-                          <div
-                            className={`flex flex-col gap-2 text-[12px] font-medium tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
-                          >
-                            <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
-                              {renderVisitAreas(req)}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-center">
-                          <div className="flex items-center justify-center">
-                            <StatusBadge status={req.VVR_Status} />
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <button
-                              onClick={() => handleReview(req.VVR_Request_id)}
-                              className={`inline-flex h-8.5 px-3 items-center justify-center rounded-xl border border-transparent transition-all gap-2 group/btn ${isLight ? "bg-primary/5 text-primary hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/25" : "bg-blue-400/5 text-blue-400 hover:bg-blue-400 hover:text-white hover:shadow-lg hover:shadow-blue-400/25"}`}
-                              title="View Request Details"
-                            >
-                              <Eye size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
-                              <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:inline">View</span>
-                            </button>
-                            <button
-                              onClick={() => handleOpenEdit(req)}
-                              className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 hover:bg-gray-200" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}
-                              title="Edit"
-                            >
-                              <Edit size={14} className="shrink-0" />
-                            </button>
-                            <button
-                              onClick={(e) => handleMenuOpen(e, req)}
-                              className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 hover:bg-gray-200" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}
-                              title="More Options"
-                            >
-                              <MoreVertical size={14} className="shrink-0" />
-                            </button>
-                          </div>
-                        </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={7} className="py-24 text-center">
-                        <div className="flex flex-col items-center justify-center opacity-20">
-                          <ClipboardList
-                            size={48}
-                            className={`mb-4 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                          />
-                          <p
-                            className={`uppercase tracking-[0.4em] text-[10px] font-bold ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                          >
-                            No Active Visit Requests Detected
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
+                    )}
                 </tbody>
               </table>
             </div>
           )}
-        </div>
+          </div>
+        )
+      }
+    </div>
 
         {/* Modal for Add/Update Visit Request */}
         {isModalOpen && (

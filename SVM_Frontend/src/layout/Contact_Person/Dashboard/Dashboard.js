@@ -5,7 +5,7 @@ import DashboardMain from '../../../components/Contact_Person/Dashboard/Dashboar
 const Dashboard = () => {
     return (
         <div className="flex flex-col min-w-0 h-full">
-            <Header title="Contact Person Hub"/>
+            <Header title="Visitor Overview"/>
             <DashboardMain />
         </div>
     );

@@ -70,11 +70,11 @@ const RequestDistribution = () => {
           >
             <Icon size={14} className={color} strokeWidth={2} />
           </div>
-          <span className="text-[var(--color-text-primary)] text-[11.5px] font-bold uppercase tracking-wide">
+          <span className="text-[var(--color-text-primary)] text-[11.5px] font-medium uppercase tracking-wide">
             {label}
           </span>
         </div>
-        <span className="text-[var(--color-text-primary)] text-sm font-bold">
+        <span className="text-[var(--color-text-primary)] text-sm font-medium">
           {value}
         </span>
       </div>
@@ -109,7 +109,7 @@ const RequestDistribution = () => {
         </div>
         <div className="flex items-center gap-2 mt-3 md:mt-0">
           <TrendingUp size={16} className="text-green-500" />
-          <span className="text-[11.5px] font-bold text-[var(--color-text-primary)]">
+          <span className="text-[11.5px] font-medium text-[var(--color-text-primary)]">
             Total: {stats.total}
           </span>
         </div>
@@ -148,10 +148,10 @@ const RequestDistribution = () => {
       <div className="mt-4 md:mt-6 pt-4 md:pt-5 border-t border-[var(--color-border-soft)]">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
           <div className="text-center">
-            <p className="text-[8.5px] uppercase font-bold tracking-widest mb-1 text-[var(--color-text-secondary)]">
+            <p className="text-[8.5px] uppercase font-medium tracking-widest mb-1 text-[var(--color-text-secondary)]">
               Approval Rate
             </p>
-            <p className="text-lg font-bold text-green-500">
+            <p className="text-lg font-medium text-green-500">
               {stats.total > 0
                 ? Math.round((stats.approved / stats.total) * 100)
                 : 0}
@@ -159,10 +159,10 @@ const RequestDistribution = () => {
             </p>
           </div>
           <div className="text-center">
-            <p className="text-[8.5px] uppercase font-bold tracking-widest mb-1 text-[var(--color-text-secondary)]">
+            <p className="text-[8.5px] uppercase font-medium tracking-widest mb-1 text-[var(--color-text-secondary)]">
               Rejection Rate
             </p>
-            <p className="text-lg font-bold text-primary">
+            <p className="text-lg font-medium text-primary">
               {stats.total > 0
                 ? Math.round((stats.rejected / stats.total) * 100)
                 : 0}
@@ -170,10 +170,10 @@ const RequestDistribution = () => {
             </p>
           </div>
           <div className="text-center">
-            <p className="text-[8.5px] uppercase font-bold tracking-widest mb-1 text-[var(--color-text-secondary)]">
+            <p className="text-[8.5px] uppercase font-medium tracking-widest mb-1 text-[var(--color-text-secondary)]">
               Pending Rate
             </p>
-            <p className="text-lg font-bold text-yellow-500">
+            <p className="text-lg font-medium text-yellow-500">
               {stats.total > 0
                 ? Math.round((stats.pending / stats.total) * 100)
                 : 0}

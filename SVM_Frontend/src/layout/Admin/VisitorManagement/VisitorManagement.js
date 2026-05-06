@@ -57,7 +57,16 @@ const VisitorManagement = () => {
   const [searchId, setSearchId] = useState("");
 
   useEffect(() => {
-    dispatch(GetAllVisitors());
+    const fetchData = () => {
+      dispatch(GetAllVisitors());
+    };
+
+    fetchData();
+
+    // Polling: Refresh visitor registry every 30 seconds
+    const intervalId = setInterval(fetchData, 30000);
+
+    return () => clearInterval(intervalId);
   }, [dispatch]);
 
   const handleSearch = (e) => {

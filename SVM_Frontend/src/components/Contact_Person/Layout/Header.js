@@ -101,13 +101,15 @@ const Header = ({ title }) => {
 
   return (
     <header
-      className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6"
+      className="sticky top-0 z-40 flex items-center justify-between px-4 md:px-10 h-[64px] min-h-[64px]"
       style={{
-        height: "72px",
+        height: "64px !important",
+        minHeight: "64px !important",
         background: "var(--color-bg-paper)",
         borderBottom: "1px solid var(--color-border-soft)",
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
       }}
     >
       {/* Left: Hamburger / Back + Title */}
@@ -115,11 +117,7 @@ const Header = ({ title }) => {
         {isMobile ? (
           <button
             onClick={() => dispatch(toggleMobileMenu())}
-            className="w-9 h-9 flex items-center justify-center rounded-xl text-primary shrink-0"
-            style={{
-              background: "var(--color-primary-low)",
-              border: "1px solid rgba(200,16,46,0.2)",
-            }}
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-primary shrink-0 transition-all hover:bg-primary/5"
           >
             {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -128,8 +126,8 @@ const Header = ({ title }) => {
             onClick={() => navigate(-1)}
             className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors group shrink-0"
             style={{
-              background: "var(--color-surface-1)",
-              border: "1px solid var(--color-border-soft)",
+              background: "transparent",
+              border: "none",
             }}
             title="Go Back"
           >
@@ -141,7 +139,7 @@ const Header = ({ title }) => {
         )}
 
         {title && (
-          <h2 className="text-[var(--color-text-primary)] text-[13px] md:text-[15px] font-black uppercase tracking-tight truncate m-0">
+          <h2 className="text-[var(--color-text-primary)] text-[9px] md:text-[10.5px] font-bold uppercase tracking-[0.25em] truncate m-0 opacity-80">
             {title}
           </h2>
         )}
@@ -154,7 +152,7 @@ const Header = ({ title }) => {
         <div className="relative" ref={notifRef}>
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-1)] transition-colors relative"
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors relative"
             title="Notifications"
           >
             <Bell size={18} />

@@ -25,7 +25,7 @@ const normalizeStatus = (status) => {
   if (s === "C" || s === "CHECKED OUT" || s === "CHECKED_OUT")
     return "Checked Out";
   if (s === "ACCEPTED") return "Accepted by Visitor";
-  if (s === "SENT" || s === "SENT_TO_ADMIN")
+  if (s === "SENT" || s === "SENT_TO_ADMIN" || s === "SENT TO ADMIN")
     return "Accepted by Contact Person";
   return "Sent to Visitor";
 };
@@ -222,7 +222,7 @@ const RequestReviewMain = () => {
         VVR_Visit_Date: apiRequest.VVR_Visit_Date,
         VVR_Places_to_Visit: apiRequest.VVR_Places_to_Visit,
         VVR_Purpose: apiRequest.VVR_Purpose,
-        VVR_Status: "SENT_TO_ADMIN",
+        VVR_Status: "SENT",
         VVR_Contact_person_id: apiRequest.VVR_Contact_person_id,
         approvalComment,
       }),
@@ -260,27 +260,27 @@ const RequestReviewMain = () => {
 
   return (
     <div
-      className={`flex-1 p-2 md:p-4 space-y-4 animate-fade-in-slow overflow-y-auto relative transition-colors duration-500 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
+      className={`flex-1 p-2 md:p-4 animate-fade-in-slow overflow-y-auto relative transition-colors duration-500 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
     >
-      <div className="max-w-[1700px] mx-auto relative z-10 w-full flex flex-col min-h-full">
+      <div className="max-w-[1700px] mx-auto relative z-10 w-full flex flex-col min-h-full space-y-8">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between py-4 animate-fade-in transition-all gap-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className={`flex items-center justify-center w-8 h-8 rounded-lg border transition-all shrink-0 ${isLight
-                ? "bg-white border-gray-200 hover:border-primary text-[#1A1A1A]"
-                : "bg-black/30 border-white/10 hover:border-primary text-white"
+              className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all shrink-0 ${isLight
+                ? "hover:text-primary text-[#1A1A1A]"
+                : "hover:text-primary text-white"
                 }`}
               title="Go Back"
             >
               <ArrowLeft size={16} />
             </button>
             <div className="flex items-center gap-2.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]"></div>
+
               <h2
                 className={`text-[12px] font-bold uppercase tracking-[0.2em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
               >
-                APPROVAL MANAGEMENT
+                Review Visit Request
               </h2>
             </div>
           </div>

@@ -43,7 +43,7 @@ const SystemStatus = () => {
       className="flex-1 bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-lg sm:rounded-xl p-2.5 sm:p-3 hover:border-primary/20 transition-all duration-300 group"
     >
       <div className="flex items-center justify-between mb-2 sm:mb-3">
-        <span className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em]">
+        <span className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] md:text-[11px] font-medium uppercase tracking-[0.2em]">
           {label}
         </span>
         <div className="w-7 h-7 sm:w-8 h-8 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center group-hover:bg-primary/10 transition-all">
@@ -51,7 +51,7 @@ const SystemStatus = () => {
         </div>
       </div>
       <div className="flex items-baseline gap-1.5">
-        <span className="text-[var(--color-text-primary)] text-base sm:text-lg font-bold">
+        <span className="text-[var(--color-text-primary)] text-base sm:text-lg font-medium">
           {value}
         </span>
         {unit && (
@@ -100,14 +100,14 @@ const SystemStatus = () => {
       >
         <div className="mb-3 sm:mb-4">
           <div className="flex justify-between items-baseline mb-2">
-            <span className="text-[var(--color-text-primary)] text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]">
+            <span className="text-[var(--color-text-primary)] text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em]">
               Overall Performance
             </span>
-            <span className={`text-lg sm:text-xl font-bold ${healthColor}`}>
+            <span className={`text-lg sm:text-xl font-medium ${healthColor}`}>
               {systemHealth}%
             </span>
           </div>
-          <div className="h-2 sm:h-3 bg-[var(--color-border-soft)] rounded-full overflow-hidden">
+          <div className="h-1.5 bg-[var(--color-border-soft)] rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               whileInView={{ width: `${systemHealth}%` }}
@@ -132,26 +132,26 @@ const SystemStatus = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <StatCard
           icon={Zap}
-          label="Response Time"
+          label="Speed"
           value={responseTime}
           unit="ms"
           color="text-primary"
         />
         <StatCard
           icon={Server}
-          label="Active Nodes"
+          label="Active Systems"
           value={activeNodes}
           color="text-green-500"
         />
         <StatCard
           icon={Activity}
-          label="Sync Status"
+          label="Connection"
           value="✓"
           color="text-green-500"
         />
         <StatCard
           icon={RefreshCw}
-          label="Last Sync"
+          label="Updated"
           value="OK"
           color="text-green-500"
         />

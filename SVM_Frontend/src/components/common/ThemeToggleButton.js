@@ -16,11 +16,11 @@ const ThemeToggleButton = ({ className = "" }) => {
         className={className}
         sx={{
           color: "var(--color-text-primary)",
-          backgroundColor: "var(--color-surface-1)",
-          border: "1px solid var(--color-border-soft)",
-          borderRadius: "10px",
+          backgroundColor: "transparent",
+          border: "none",
           "&:hover": {
-            backgroundColor: "var(--color-surface-2)",
+            backgroundColor: "transparent",
+            color: "var(--color-primary)",
           },
         }}
       >
