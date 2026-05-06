@@ -233,8 +233,7 @@ const VisitorTable = ({
                           <StatusBadge status={visitor.status} />
                         </td>
                         <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
-                          {hasGatePass(visitor.id) &&
-                            visitor.status === "Admin Approved" && (
+                          {hasGatePass(visitor.id) && (
                               <button
                                 onClick={() =>
                                   onAction(visitor, "ViewGatePass")
