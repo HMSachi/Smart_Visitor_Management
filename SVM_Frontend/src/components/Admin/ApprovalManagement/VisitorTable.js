@@ -14,28 +14,25 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const StatusBadge = ({ status }) => {
   const styles = {
-    "Admin Approved": "border-green-500/20 text-green-500 bg-green-500/5",
-    "Accepted by Admin": "border-green-500/20 text-green-500 bg-green-500/5",
+    "Admin Approved": "border-green-500/30 text-green-600 bg-green-500/10",
+    "Accepted by Admin": "border-green-500/30 text-green-600 bg-green-500/10",
     "Accepted by Visitor":
-      "border-yellow-500/20 text-yellow-500 bg-yellow-500/5",
-    "Sent to Visitor": "border-blue-500/20 text-blue-500 bg-blue-500/5",
+      "border-yellow-500/30 text-yellow-600 bg-yellow-500/10",
+    "Sent to Visitor": "border-blue-500/30 text-blue-600 bg-blue-500/10",
     "Accepted by Contact Person":
-      "border-orange-500/20 text-orange-500 bg-orange-500/5",
-    "Sent to Admin": "border-orange-500/20 text-orange-500 bg-orange-500/5",
-    Accepted: "border-purple-500/20 text-purple-500 bg-purple-500/5",
-    Rejected: "border-white/10 text-gray-300 bg-white/5",
-    "Checked In": "border-blue-500/20 text-blue-500 bg-blue-500/5",
-    "Checked Out": "border-white/5 text-gray-300/80 bg-transparent",
-    Pending: "border-white/10 text-gray-300 bg-white/5",
+      "border-orange-500/30 text-orange-600 bg-orange-500/10",
+    "Sent to Admin": "border-orange-500/30 text-orange-600 bg-orange-500/10",
+    Accepted: "border-purple-500/30 text-purple-600 bg-purple-500/10",
+    Rejected: "border-primary/30 text-primary bg-primary/10",
+    "Checked In": "border-blue-500/30 text-blue-600 bg-blue-500/10",
+    "Checked Out": "border-white/10 text-gray-400 bg-white/5",
+    Pending: "border-white/20 text-gray-400 bg-white/5",
   };
 
   return (
     <div
-      className={`px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[9px] md:text-[10px] font-medium tracking-[0.08em] sm:tracking-[0.1em] md:tracking-[0.15em] uppercase border flex items-center gap-1 md:gap-1.5 w-fit mx-auto ${styles[status] || styles.Pending}`}
+      className={`px-2 py-1 rounded-lg text-[9px] font-bold tracking-[0.05em] uppercase border flex items-center justify-center w-[200px] mx-auto shadow-sm ${styles[status] || styles.Pending}`}
     >
-      <span
-        className={`w-1 md:w-1.5 h-1 md:h-1.5 rounded-full ${status === "Admin Approved" || status === "Accepted by Admin" || status === "Checked In" ? "bg-green-500 shadow-[0_0_5px_#22c55e]" : status === "Accepted" ? "bg-purple-500 shadow-[0_0_5px_#a855f7]" : status === "Sent to Admin" ? "bg-orange-500 shadow-[0_0_5px_#f97316] animate-pulse" : status === "Pending" ? "bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse" : "bg-mas-text-dim opacity-80"}`}
-      />
       {status}
     </div>
   );
@@ -172,25 +169,22 @@ const VisitorTable = ({
             <table className="w-full min-w-[920px] text-left border-collapse">
               <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)]">
                 <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
-                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-16 md:w-20 opacity-60">
-                    NO.
-                  </th>
-                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] opacity-60">
+                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] opacity-60">
                     VISITOR NAME
                   </th>
                   <th
-                    className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[9px] md:text-[10px] lg:text-[12px] font-medium tracking-[0.2em] md:tracking-[0.3em] capitalize text-white/70 cursor-pointer hover:text-primary transition-colors group"
+                    className="px-3 md:px-4 lg:px-6 py-2 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] opacity-60 cursor-pointer hover:text-primary transition-colors group"
                     onClick={() =>
                       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
                     }
                   >
-                    <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2">
+                    <div className="flex items-center gap-2">
                       VISIT DATE & TIME
                       <div
                         className={`transition-transform duration-300 ${sortOrder === "asc" ? "rotate-180" : ""}`}
                       >
                         <ChevronDown
-                          size={12}
+                          size={11}
                           className={
                             sortOrder
                               ? "text-primary"
@@ -200,10 +194,13 @@ const VisitorTable = ({
                       </div>
                     </div>
                   </th>
-                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center">
+                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
                     STATUS
                   </th>
-                  <th className="px-3 md:px-4 lg:px-6 py-2 md:py-3 text-[8px] md:text-[9px] lg:text-[11px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-primary text-right md:pr-4 lg:pr-6">
+                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[8px] md:text-[9px] lg:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-28">
+                    GATE PASS
+                  </th>
+                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[8px] md:text-[9px] lg:text-[11px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-primary text-right md:pr-4 lg:pr-6 w-32">
                     ACTIONS
                   </th>
                 </tr>
@@ -217,77 +214,61 @@ const VisitorTable = ({
                     <React.Fragment
                       key={visitor.batchId || visitor.id || index}
                     >
-                      <tr
-                        className={`group transition-colors duration-300 ${isExpanded ? "bg-primary/[0.03]" : "hover:bg-white/[0.02]"}`}
-                      >
-                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 text-center align-middle">
-                          {memberList.length > 0 ? (
-                            <button
-                              onClick={() => toggleBatch(visitor.batchId)}
-                              className={`w-8 h-8 md:w-9 md:h-9 rounded-lg border flex items-center justify-center transition-all duration-500 shadow-lg ${isExpanded ? "bg-primary text-white border-primary rotate-180" : "bg-[var(--color-bg-default)] border-white/5 text-gray-300 hover:text-white hover:border-primary/50"}`}
-                            >
-                              {isExpanded ? (
-                                <ChevronUp
-                                  size={12}
-                                  className="md:w-[14px] md:h-[14px]"
-                                />
-                              ) : (
-                                <div className="text-[11px] md:text-[12px] font-medium">
-                                  {index + 1}
-                                </div>
-                              )}
-                            </button>
-                          ) : (
-                            <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg border flex items-center justify-center transition-all duration-500 shadow-lg bg-[var(--color-bg-default)] border-white/5 text-gray-300 mx-auto">
-                              <div className="text-[11px] md:text-[12px] font-medium">
-                                {index + 1}
-                              </div>
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 align-middle">
-                          <p className="text-white capitalize text-[11px] md:text-[12px] font-medium tracking-widest mb-0.5">
-                            {visitor.name}
-                          </p>
-                        </td>
-                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 align-middle">
-                          <div className="flex flex-col gap-1">
-                            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2">
-                              <Calendar size={10} className="text-primary/60" />
-                              <span className="text-white capitalize text-[10px] md:text-[12px] font-medium tracking-widest">
-                                {visitor.date}
-                              </span>
-                            </div>
-                            <p className="text-white/70 capitalize text-[10px] md:text-[11px] font-medium tracking-widest truncate max-w-[180px] md:max-w-[200px] flex flex-col md:flex-row items-center gap-2 md:gap-2">
-                              <MapPin size={9} className="text-primary/70" />
-                              {Array.isArray(visitor.areas)
-                                ? visitor.areas.join(" | ")
-                                : visitor.areas}
+                      <tr className={`group transition-colors duration-200 ${isExpanded ? "bg-primary/[0.03]" : "hover:bg-white/[0.02]"}`}>
+                        <td className="px-3 md:px-4 lg:px-6 py-1.5 align-middle">
+                          <div className="flex items-center gap-2">
+                            {memberList.length > 0 && (
+                              <button
+                                onClick={() => toggleBatch(visitor.batchId)}
+                                className={`w-5 h-5 rounded flex items-center justify-center transition-all duration-300 ${isExpanded ? "bg-primary text-white" : "bg-white/5 text-gray-400 hover:text-white hover:bg-primary/20"}`}
+                              >
+                                <ChevronDown size={10} className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                              </button>
+                            )}
+                            <p className="text-white capitalize text-[10.5px] font-semibold tracking-wider mb-0">
+                              {visitor.name}
                             </p>
                           </div>
                         </td>
-                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 text-center align-middle">
-                          <div className="flex flex-col items-center gap-1.5">
-                            <StatusBadge status={visitor.status} />
-                            {hasGatePass(visitor.id) &&
-                              visitor.status === "Admin Approved" && (
-                                <button
-                                  onClick={() =>
-                                    onAction(visitor, "ViewGatePass")
-                                  }
-                                  className="flex items-center justify-center gap-2 text-[10px] font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
-                                >
-                                  <QrCode
-                                    size={11}
-                                    className="group-hover/gp:scale-110 transition-transform"
-                                  />
-                                  View Gate Pass
-                                </button>
-                              )}
+                        <td className="px-3 md:px-4 lg:px-6 py-1.5 align-middle">
+                          <div className="flex items-center gap-4 text-[10.5px] font-medium tracking-wide">
+                            <div className="flex items-center gap-1.5 text-white/90">
+                              <Calendar size={11} className="text-primary/70 shrink-0" />
+                              <span>{visitor.date}</span>
+                            </div>
+                            <div className="w-px h-3 bg-white/10 hidden md:block" />
+                            <div className="flex items-center gap-1.5 text-white/60 truncate max-w-[300px]">
+                              <MapPin size={10} className="text-primary/50 shrink-0" />
+                              <span className="truncate">
+                                {Array.isArray(visitor.areas)
+                                  ? visitor.areas.join(" | ")
+                                  : visitor.areas}
+                              </span>
+                            </div>
                           </div>
                         </td>
-                        <td className="px-3 md:px-4 lg:px-6 py-2 md:py-4 text-right md:pr-4 lg:pr-6 align-middle">
-                          <div className="flex justify-end gap-1 md:gap-2">
+                        <td className="px-3 md:px-4 lg:px-6 py-1.5 text-center align-middle">
+                          <StatusBadge status={visitor.status} />
+                        </td>
+                        <td className="px-3 md:px-4 lg:px-6 py-1.5 text-center align-middle">
+                          {hasGatePass(visitor.id) &&
+                            visitor.status === "Admin Approved" && (
+                              <button
+                                onClick={() =>
+                                  onAction(visitor, "ViewGatePass")
+                                }
+                                className="flex items-center justify-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.15em] text-green-500 hover:text-green-400 transition-all group/gp py-0.5 whitespace-nowrap mx-auto"
+                              >
+                                <QrCode
+                                  size={11}
+                                  className="group-hover/gp:scale-110 transition-transform"
+                                />
+                                Gate Pass
+                              </button>
+                            )}
+                        </td>
+                        <td className="px-3 md:px-4 lg:px-6 py-1.5 text-right md:pr-4 lg:pr-6 align-middle">
+                          <div className="flex justify-end gap-1.5">
                             {(visitor.status === "Pending" ||
                               visitor.status === "Sent to Admin" ||
                               visitor.status === "Accepted by Visitor" ||
@@ -296,37 +277,32 @@ const VisitorTable = ({
                               <>
                                 <button
                                   onClick={() => onAction(visitor, "Approve")}
-                                  title="AUTHORIZE BATCH"
-                                  className="w-9 h-9 rounded-lg flex items-center justify-center bg-green-500/5 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-500 shadow-lg group/btn"
+                                  title="APPROVE"
+                                  className="w-7 h-7 rounded-md flex items-center justify-center bg-green-500/5 border border-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all duration-300 group/btn"
                                 >
                                   <Check
-                                    size={14}
+                                    size={13}
                                     strokeWidth={3}
-                                    className="group-hover/btn:scale-110 transition-transform"
                                   />
                                 </button>
                                 <button
                                   onClick={() => onAction(visitor, "Reject")}
-                                  title="DENY BATCH"
-                                  className="w-9 h-9 rounded-lg flex items-center justify-center bg-primary/5 border border-primary/20 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-500 shadow-lg group/btn"
+                                  title="REJECT"
+                                  className="w-7 h-7 rounded-md flex items-center justify-center bg-primary/5 border border-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 group/btn"
                                 >
                                   <X
-                                    size={14}
+                                    size={13}
                                     strokeWidth={3}
-                                    className="group-hover/btn:scale-110 transition-transform"
                                   />
                                 </button>
                               </>
                             )}
                             <button
                               onClick={() => onViewDetails(visitor)}
-                              title="INSPECT PROTOCOL"
-                              className="w-9 h-9 rounded-lg flex items-center justify-center bg-white/[0.02] border border-white/5 text-gray-300 hover:text-white hover:bg-[var(--color-bg-paper)] hover:border-white/20 transition-all duration-500 shadow-lg group/btn"
+                              title="VIEW DETAILS"
+                              className="w-7 h-7 rounded-md flex items-center justify-center bg-white/[0.03] border border-white/5 text-gray-400 hover:text-white hover:border-white/20 transition-all duration-300"
                             >
-                              <Eye
-                                size={14}
-                                className="group-hover/btn:rotate-12 transition-transform"
-                              />
+                              <Eye size={13} />
                             </button>
                           </div>
                         </td>
@@ -408,130 +384,66 @@ const VisitorTable = ({
             </table>
           </div>
 
-          <div className="md:hidden flex flex-col p-3 sm:p-4 gap-3 sm:gap-4">
+          <div className="md:hidden flex flex-col p-2 gap-2">
             {filteredVisitors.map((visitor, index) => {
               const memberList = visitor.members || [];
               const isExpanded = expandedBatches.includes(visitor.batchId);
 
               return (
-                <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg md:rounded-[32px] overflow-hidden shadow-2xl relative group">
+                <div 
+                  key={visitor.id || index}
+                  className="bg-[var(--color-bg-paper)] border border-white/5 rounded-xl overflow-hidden shadow-lg relative group"
+                >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                  <div className="p-3 sm:p-4 border-b border-white/5 flex justify-between items-start bg-black/20 relative z-10">
+                  <div className="p-3 border-b border-white/5 flex justify-between items-start bg-black/10 relative z-10">
                     <div>
-                      <p className="text-white capitalize text-[11px] sm:text-[12px] font-medium tracking-widest mb-0.5 leading-tight">
+                      <p className="text-white capitalize text-[11px] font-semibold tracking-wide mb-0.5 leading-tight">
                         {visitor.name}
                       </p>
-                      <p className="text-gray-300/80 capitalize text-[10px] sm:text-[11px] font-medium tracking-widest">
-                        {visitor.batchId}
+                      <p className="text-gray-400 text-[9px] font-medium tracking-widest uppercase">
+                        {visitor.batchId || `ID: ${visitor.id}`}
                       </p>
                     </div>
-                    <div className="flex flex-col items-end gap-1.5">
+                    <div className="flex flex-col items-end gap-1">
                       <StatusBadge status={visitor.status} />
                       {hasGatePass(visitor.id) &&
                         visitor.status === "Admin Approved" && (
                           <button
                             onClick={() => onAction(visitor, "ViewGatePass")}
-                            className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold capitalize tracking-[0.15em] text-primary hover:text-white transition-colors group/gp"
+                            className="flex items-center gap-1 text-[8px] font-bold uppercase tracking-[0.1em] text-primary/80 hover:text-primary transition-colors"
                           >
-                            <QrCode
-                              size={10}
-                              className="group-hover/gp:scale-110 transition-transform"
-                            />
-                            View Pass
+                            <QrCode size={9} />
+                            Gate Pass
                           </button>
                         )}
                     </div>
                   </div>
 
-                  <div className="p-3 sm:p-4 space-y-3 sm:space-y-4 relative z-10">
-                    <div className="flex justify-between items-center text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] border-b border-white/[0.03] pb-2 sm:pb-3">
-                      <span className="text-gray-300/80 flex items-center gap-2">
+                  <div className="p-3 space-y-2 relative z-10">
+                    <div className="flex justify-between items-center text-[10px] font-medium tracking-wide border-b border-white/[0.03] pb-1.5">
+                      <span className="text-gray-400 flex items-center gap-1.5">
                         <Calendar size={10} className="text-primary/60" />
-                        Deployed
+                        Date
                       </span>
-                      <span className="text-white text-[10px] sm:text-[11px]">
-                        {visitor.date}{" "}
-                        <span className="text-primary mx-1">//</span>{" "}
-                        {visitor.timeIn}
+                      <span className="text-white/90">
+                        {visitor.date}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] border-b border-white/[0.03] pb-2 sm:pb-3">
-                      <span className="text-gray-300/80 flex items-center gap-2">
+                    <div className="flex justify-between items-start text-[10px] font-medium tracking-wide border-b border-white/[0.03] pb-1.5">
+                      <span className="text-gray-400 flex items-center gap-1.5 shrink-0">
                         <MapPin size={10} className="text-primary/60" />
                         Zones
                       </span>
-                      <span className="text-white text-right max-w-[120px] sm:max-w-[150px] truncate text-[10px] sm:text-[11px]">
+                      <span className="text-white/70 text-right truncate max-w-[150px]">
                         {Array.isArray(visitor.areas)
                           ? visitor.areas.join(" | ")
                           : visitor.areas}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em]">
-                      <span className="text-gray-300/80 flex items-center gap-2">
-                        <Shield size={10} className="text-primary/60" />
-                        Request
-                      </span>
-                      <span className="text-primary bg-primary/10 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px]">
-                        {index + 1}
-                      </span>
-                    </div>
                   </div>
 
-                  {memberList.length > 0 && (
-                    <div className="relative z-10">
-                      <button
-                        onClick={() => toggleBatch(visitor.batchId)}
-                        className={`w-full py-2 sm:py-3 px-3 sm:px-4 flex justify-between items-center text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.2em] sm:tracking-[0.3em] border-t transition-all ${isExpanded ? "bg-primary/5 border-primary/20 text-primary" : "bg-black/20 border-white/5 text-gray-300/80 hover:text-white"}`}
-                      >
-                        <span>Unit Breakdown</span>
-                        {isExpanded ? (
-                          <ChevronUp size={14} />
-                        ) : (
-                          <ChevronDown size={14} />
-                        )}
-                      </button>
-
-                      <AnimatePresence>
-                        {isExpanded && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden bg-black/40 relative"
-                          >
-                            <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
-                              {memberList.map((member, idx) => (
-                                <div
-                                  key={idx}
-                                  className="bg-[var(--color-bg-default)] border border-white/5 p-3 sm:p-4 rounded-lg flex justify-between items-center shadow-lg group/mem"
-                                >
-                                  <div>
-                                    <span className="text-white text-[11px] sm:text-[12px] font-medium capitalize tracking-widest block mb-0.5 group-hover/mem:text-primary transition-colors">
-                                      {idx + 2}. {member.name}
-                                    </span>
-                                    <span className="text-gray-300/30 text-[10px] sm:text-[11px] font-medium capitalize tracking-[0.15em] block">
-                                      NIC_: {member.nic}
-                                    </span>
-                                  </div>
-                                  <div className="text-right">
-                                    <span className="text-[11px] sm:text-[12px] text-gray-300/80 font-medium capitalize tracking-widest block mb-0.5">
-                                      Contact
-                                    </span>
-                                    <span className="text-white/90 text-[10px] sm:text-[11px] font-medium">
-                                      {member.contact}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  )}
-
-                  <div className="p-4 border-t border-white/5 bg-black/40 flex flex-col md:flex-row gap-3 md:gap-3 relative z-10">
+                  <div className="p-2 bg-black/30 flex gap-2 relative z-10">
                     {(visitor.status === "Pending" ||
                       visitor.status === "Sent to Admin" ||
                       visitor.status === "Accepted by Visitor" ||
@@ -539,34 +451,26 @@ const VisitorTable = ({
                       <>
                         <button
                           onClick={() => onAction(visitor, "Approve")}
-                          className="flex-1 h-10 sm:h-12 flex justify-center items-center gap-2 sm:gap-3 bg-green-500/5 border border-green-500/20 text-green-500 text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] rounded-lg hover:bg-green-500 hover:text-white transition-all shadow-lg"
+                          className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-green-500 hover:text-white transition-all"
                         >
-                          <Check
-                            size={12}
-                            className="sm:w-[14px] sm:h-[14px]"
-                            strokeWidth={3}
-                          />
-                          <span>Approve</span>
+                          <Check size={11} strokeWidth={3} />
+                          Approve
                         </button>
                         <button
                           onClick={() => onAction(visitor, "Reject")}
-                          className="flex-1 h-10 sm:h-12 flex justify-center items-center gap-2 sm:gap-3 bg-primary/5 border border-primary/20 text-primary text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] rounded-lg hover:bg-primary hover:text-white transition-all shadow-lg"
+                          className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-primary hover:text-white transition-all"
                         >
-                          <X
-                            size={12}
-                            className="sm:w-[14px] sm:h-[14px]"
-                            strokeWidth={3}
-                          />
-                          <span>Reject</span>
+                          <X size={11} strokeWidth={3} />
+                          Reject
                         </button>
                       </>
                     )}
                     <button
                       onClick={() => onViewDetails(visitor)}
-                      className="flex-1 h-10 sm:h-12 flex justify-center items-center gap-2 sm:gap-3 bg-white/[0.02] border border-white/5 text-white text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.15em] sm:tracking-[0.2em] rounded-lg hover:bg-white hover:text-black transition-all shadow-lg"
+                      className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-white/[0.03] border border-white/5 text-gray-300 text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-white hover:text-black transition-all"
                     >
-                      <Eye size={12} className="sm:w-[14px] sm:h-[14px]" />{" "}
-                      <span>Inspect</span>
+                      <Eye size={11} />
+                      Inspect
                     </button>
                   </div>
                 </div>
