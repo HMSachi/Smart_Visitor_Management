@@ -710,13 +710,15 @@ const MyRequests = () => {
       setEditItems((arr) => arr.filter((_, i) => i !== idx));
   };
 
-  const filteredRequests = visitRequestsByVis
-    ? visitRequestsByVis.filter(
-        (req) =>
-          String(req.VVR_Request_id).includes(searchTerm) ||
-          req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-    : [];
+  const filteredRequests = (visitRequestsByVis || [])
+    .filter(
+      (req) =>
+        String(req.VVR_Request_id).includes(searchTerm) ||
+        req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+    .sort(
+      (a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id)
+    );
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-default)] text-white px-4 md:px-8 pt-24 md:pt-28 pb-6 md:pb-8 font-sans relative overflow-hidden">
