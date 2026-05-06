@@ -52,14 +52,14 @@ const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
   if (s === "ACTIVE" || s === "A") {
     return (
-      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
-        <CheckCircle2 size={12} /> Active
+      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[9px] font-bold tracking-[0.05em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
+        <CheckCircle2 size={11} /> Active
       </div>
     );
   }
   return (
-    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
-      <AlertCircle size={12} /> Inactive
+    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[9px] font-bold tracking-[0.05em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
+      <AlertCircle size={11} /> Inactive
     </div>
   );
 };
@@ -569,78 +569,78 @@ const AllUsers = () => {
                           <TableHead>
                             <TableRow
                               sx={{
-                                height: "40px",
+                                height: "34px",
                                 backgroundColor: "rgba(255,255,255,0.03)",
                               }}
                             >
                               <TableCell
                                 sx={{
-                                  padding: "10px 14px",
+                                  padding: "6px 14px",
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "8%",
                                 }}
-                                className="text-white/40 font-bold text-[10px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 User ID
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "10px 14px",
+                                  padding: "6px 14px",
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "15%",
                                 }}
-                                className="text-white/40 font-bold text-[10px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 Name
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "10px 14px",
+                                  padding: "6px 14px",
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "20%",
                                 }}
-                                className="text-white/40 font-bold text-[10px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 Email
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "10px 14px",
+                                  padding: "6px 14px",
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "12%",
                                 }}
-                                className="hidden sm:table-cell text-white/40 font-bold text-[10px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="hidden sm:table-cell text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 {cat.id === "CONTACT" ? "Department" : "Role"}
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "10px 14px",
+                                  padding: "6px 14px",
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "15%",
                                 }}
-                                className="hidden md:table-cell text-white/40 font-bold text-[10px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="hidden md:table-cell text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 {cat.id === "CONTACT" ? "Contact" : "Joined"}
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "10px 14px",
+                                  padding: "6px 14px",
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "10%",
                                 }}
-                                className="text-white/40 font-bold text-[10px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 Status
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "10px 14px",
+                                  padding: "6px 14px",
                                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                                   width: "10%",
                                 }}
                                 align="right"
-                                className="text-white/40 font-bold text-[10px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className="text-white/40 font-bold text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
                               >
                                 Actions
                               </TableCell>
@@ -690,14 +690,14 @@ const AllUsers = () => {
                                         backgroundColor:
                                           "rgba(255,255,255,0.04)",
                                       },
-                                      height: "44px",
+                                      height: "36px",
                                       borderBottom:
                                         "1px solid rgba(255,255,255,0.05)",
                                       transition: "background-color 0.2s ease",
                                     }}
                                   >
                                     <TableCell
-                                      sx={{ padding: "10px 14px", width: "8%" }}
+                                      sx={{ padding: "6px 14px", width: "8%" }}
                                       className="text-white/80 font-medium text-[12px] whitespace-nowrap"
                                     >
                                       <div className="flex items-center gap-1.5">
@@ -712,19 +712,19 @@ const AllUsers = () => {
                                       </div>
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "10px 14px", width: "15%" }}
+                                      sx={{ padding: "6px 14px", width: "15%" }}
                                       className={`font-semibold transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40"}`}
                                     >
                                       {item.VA_Name || item.VCP_Name || "-"}
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "10px 14px", width: "20%" }}
-                                      className={`font-medium transition-colors text-[12px] ${isActive ? "text-gray-400 opacity-60" : "text-gray-500 opacity-30"}`}
+                                      sx={{ padding: "6px 14px", width: "20%" }}
+                                      className={`font-medium transition-colors text-[12px] whitespace-nowrap ${isActive ? "text-gray-400 opacity-60" : "text-gray-500 opacity-30"}`}
                                     >
                                       {item.VA_Email || item.VCP_Email}
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "10px 14px", width: "12%" }}
+                                      sx={{ padding: "6px 14px", width: "12%" }}
                                       className={`hidden sm:table-cell transition-colors font-medium text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                     >
                                       {item.VA_Role ||
@@ -732,7 +732,7 @@ const AllUsers = () => {
                                         "-"}
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "10px 14px", width: "15%" }}
+                                      sx={{ padding: "6px 14px", width: "15%" }}
                                       className={`hidden md:table-cell transition-colors font-medium text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                     >
                                       {item.VA_Created_Date
@@ -740,7 +740,7 @@ const AllUsers = () => {
                                         : item.VCP_Phone || "AUTHEN.SYSTEM"}
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "10px 14px", width: "10%" }}
+                                      sx={{ padding: "6px 14px", width: "10%" }}
                                     >
                                       <button
                                         onClick={() =>
@@ -748,13 +748,13 @@ const AllUsers = () => {
                                         }
                                         disabled={loading}
                                         title="Click to toggle status"
-                                        className={`px-3 py-1 text-[10px] uppercase tracking-[0.1em] font-bold transition-all cursor-pointer rounded-lg border ${isActive ? "bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500 hover:text-white" : "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500 hover:text-white"}`}
+                                        className={`px-3 py-0.5 text-[9px] uppercase tracking-[0.05em] font-bold transition-all cursor-pointer rounded-lg border ${isActive ? "bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500 hover:text-white" : "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500 hover:text-white"}`}
                                       >
                                         {isActive ? "ACTIVE" : "INACTIVE"}
                                       </button>
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "10px 14px", width: "10%" }}
+                                      sx={{ padding: "6px 14px", width: "10%" }}
                                       align="right"
                                     >
                                       <IconButton
