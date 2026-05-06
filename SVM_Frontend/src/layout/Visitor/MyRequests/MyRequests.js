@@ -765,10 +765,10 @@ const MyRequests = () => {
                         <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
                           ID
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px] min-w-[150px]">
                           Date
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px] min-w-[200px]">
                           Going To
                         </TableCell>
                         <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">

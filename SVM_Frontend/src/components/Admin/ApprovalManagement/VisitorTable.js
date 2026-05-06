@@ -172,10 +172,10 @@ const VisitorTable = ({
                   <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
                     VISITOR NAME
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-40">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center min-w-[180px]">
                     VISIT DATE
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left min-w-[300px]">
                     VISITING PLACE
                   </th>
                   <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
@@ -220,7 +220,7 @@ const VisitorTable = ({
                           </span>
                         </td>
                         <td className="px-3 md:px-2.5 lg:px-6 py-1 align-middle font-normal text-[12px]">
-                          <div className="flex items-center gap-1.5 text-white/60 text-[12px] font-normal tracking-wide truncate max-w-[250px]">
+                          <div className="flex items-center gap-1.5 text-white/60 text-[12px] font-normal tracking-wide max-w-[350px]">
                             <MapPin size={11} className="text-primary/50 shrink-0" />
                             <span className="truncate">
                               {Array.isArray(visitor.areas)

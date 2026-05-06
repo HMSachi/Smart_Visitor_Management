@@ -478,7 +478,7 @@ const ContactAllVisitors = () => {
                         Company
                       </th>
                       <th
-                        className={`px-3 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] min-w-[250px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
                         Visiting Area
                       </th>
@@ -533,7 +533,7 @@ const ContactAllVisitors = () => {
                                 {visitor.VV_Company || "-"}
                               </span>
                             </td>
-                            <td className="px-3 py-1 text-left font-normal text-[12px]">
+                            <td className="px-3 py-1.5 text-left font-normal text-[12px] min-w-[250px]">
                               <span
                                 title={
                                   visitor.VV_Visiting_places ||

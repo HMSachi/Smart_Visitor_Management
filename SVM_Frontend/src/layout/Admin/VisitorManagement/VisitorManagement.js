@@ -159,7 +159,7 @@ const VisitorManagement = () => {
                       <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
                         Company
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2 min-w-[200px]">
                         Going To
                       </TableCell>
                       <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2 text-center">
