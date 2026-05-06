@@ -89,7 +89,7 @@ const WelcomeSection = () => {
             {isVisitor ? (
               <button
                 onClick={() => navigate('/visitor/my-requests')}
-                className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl text-white font-bold text-[15px] transition-all active:scale-95"
+                className="flex items-center justify-center gap-1.5 px-8 py-4 rounded-2xl text-white font-bold text-[15px] transition-all active:scale-95"
                 style={{
                   background: 'linear-gradient(135deg, var(--color-primary), #A60D26)',
                   boxShadow: '0 6px 24px rgba(200,16,46,0.4)',
@@ -102,7 +102,7 @@ const WelcomeSection = () => {
             ) : (
               // <button
               //   onClick={() => navigate('/request-step-1')}
-              //   className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl text-white font-bold text-[15px] transition-all active:scale-95"
+              //   className="flex items-center justify-center gap-1.5 px-8 py-4 rounded-2xl text-white font-bold text-[15px] transition-all active:scale-95"
               //   style={{
               //     background: 'linear-gradient(135deg, var(--color-primary), #A60D26)',
               //     boxShadow: '0 6px 24px rgba(200,16,46,0.4)',

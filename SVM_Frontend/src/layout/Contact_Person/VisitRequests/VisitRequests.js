@@ -1063,7 +1063,7 @@ const VisitRequests = () => {
 
                       <button
                         onClick={() => handleReview(req.VVR_Request_id)}
-                        className={`w-full py-3 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
+                        className={`w-full py-1.5 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
                       >
                         <Eye size={15} /> Inspect
                       </button>
@@ -1322,7 +1322,7 @@ const VisitRequests = () => {
                                       setVisitorSearchOpen(false);
                                       setVisitorSearchTerm("");
                                     }}
-                                    className={`w-full px-4 py-3 text-left text-[12px] font-medium transition-all border-b border-white/5 last:border-b-0 flex items-center justify-between group ${String(formData.VVR_Visitor_id) ===
+                                    className={`w-full px-4 py-1.5 text-left text-[12px] font-medium transition-all border-b border-white/5 last:border-b-0 flex items-center justify-between group ${String(formData.VVR_Visitor_id) ===
                                         String(v.VV_Visitor_id)
                                         ? isLight
                                           ? "bg-primary/10 text-primary"
@@ -1461,13 +1461,13 @@ const VisitRequests = () => {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-5 py-3 rounded-xl text-[11px] font-bold text-gray-500 hover:text-white hover:bg-white/5 uppercase tracking-[0.2em] transition-all"
+                    className="px-5 py-1.5 rounded-xl text-[11px] font-bold text-gray-500 hover:text-white hover:bg-white/5 uppercase tracking-[0.2em] transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-7 py-3 rounded-xl bg-primary hover:bg-primary-hover text-white text-[11px] font-bold uppercase tracking-[0.2em] shadow-[0_8px_25px_rgba(200,16,46,0.3)] transition-all"
+                    className="px-7 py-1.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-[11px] font-bold uppercase tracking-[0.2em] shadow-[0_8px_25px_rgba(200,16,46,0.3)] transition-all"
                   >
                     {modalMode === "add" ? "Submit Request" : "Save Changes"}
                   </button>

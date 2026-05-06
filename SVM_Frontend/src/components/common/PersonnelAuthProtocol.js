@@ -95,7 +95,7 @@ const SimpleTable = ({ columns, data, isLight }) => (
       <thead>
         <tr className={`border-b ${isLight ? "bg-gray-50/50 border-gray-100" : "bg-black/20 border-white/5"}`}>
           {columns.map((col, idx) => (
-            <th key={idx} className={`py-2 px-4 text-[9px] font-normal tracking-[0.2em] uppercase ${isLight ? "text-gray-400" : "text-white/30"}`}>
+            <th key={idx} className={`py-2 px-2.5 text-[9px] font-normal tracking-[0.2em] uppercase ${isLight ? "text-gray-400" : "text-white/30"}`}>
               {col.label}
             </th>
           ))}
@@ -105,7 +105,7 @@ const SimpleTable = ({ columns, data, isLight }) => (
         {data.map((row, rowIdx) => (
           <tr key={rowIdx} className={`border-b last:border-b-0 transition-colors ${isLight ? "border-gray-50 hover:bg-gray-50/30" : "border-white/[0.02] hover:bg-white/[0.01]"}`}>
             {columns.map((col, colIdx) => (
-              <td key={colIdx} className={`py-2 px-4 text-[11px] font-normal tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}>
+              <td key={colIdx} className={`py-2 px-2.5 text-[11px] font-normal tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}>
                 {row[col.key] || "—"}
               </td>
             ))}
@@ -248,7 +248,7 @@ const PersonnelAuthProtocol = ({
               <>
                 <button
                   onClick={() => onAction(visitor, "Reject")}
-                  className={`px-6 py-2.5 border font-bold text-[11px] tracking-[0.15em] uppercase rounded-xl transition-all flex items-center gap-2.5 active:scale-95 ${isLight
+                  className={`px-6 py-2.5 border font-bold text-[11px] tracking-[0.15em] uppercase rounded-xl transition-all flex items-center gap-1.5 active:scale-95 ${isLight
                     ? "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
                     : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
                     }`}
@@ -258,7 +258,7 @@ const PersonnelAuthProtocol = ({
                 </button>
                 <button
                   onClick={() => onAction(visitor, "Approve")}
-                  className="px-8 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[11px] font-bold tracking-[0.15em] uppercase rounded-xl transition-all shadow-lg shadow-green-500/20 flex items-center gap-2.5 active:scale-95"
+                  className="px-8 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[11px] font-bold tracking-[0.15em] uppercase rounded-xl transition-all shadow-lg shadow-green-500/20 flex items-center gap-1.5 active:scale-95"
                 >
                   <CheckCircle2 size={14} />
                   Approve Entry

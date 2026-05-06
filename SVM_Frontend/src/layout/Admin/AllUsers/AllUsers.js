@@ -392,13 +392,13 @@ const AllUsers = () => {
   const formSpacingClass = isCompactAddForm ? "p-4 space-y-3" : "p-6 space-y-4";
   const fieldSizeClass = isCompactAddForm
     ? "px-3 py-2.5 text-[12px]"
-    : "px-4 py-3 text-[13px]";
+    : "px-4 py-1.5 text-[13px]";
   const actionsPaddingClass = isCompactAddForm
     ? "pt-4 mt-2 gap-2"
     : "pt-6 mt-4 gap-3";
   const actionButtonSizeClass = isCompactAddForm
     ? "px-4 py-2.5 text-[12px]"
-    : "px-6 py-3 text-[13px]";
+    : "px-6 py-1.5 text-[13px]";
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">

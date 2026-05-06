@@ -762,26 +762,26 @@ const MyRequests = () => {
                   <Table size="small" sx={{ minWidth: 560 }}>
                     <TableHead className="bg-white/[0.02]">
                       <TableRow>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
-                          Protocol ID
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
+                          ID
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
                           Date
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
-                          Destination
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
+                          Going To
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
-                          Purpose
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
+                          Reason
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
                           Status
                         </TableCell>
                         <TableCell
-                          className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-3 px-4 text-[12px]"
+                          className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]"
                           align="right"
                         >
-                          Controls
+                          Actions
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -792,8 +792,8 @@ const MyRequests = () => {
                           hover
                           className="hover:bg-white/[0.02] transition-all"
                         >
-                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
-                            <div className="flex items-center gap-2.5">
+                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
+                            <div className="flex items-center gap-1.5">
                               <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                                 <Hash size={11} />
                               </div>
@@ -802,7 +802,7 @@ const MyRequests = () => {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
+                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center gap-2 text-gray-300">
                               <Calendar size={11} className="text-primary/50" />
                               <span className="text-[12px] font-normal tracking-normal">
@@ -814,7 +814,7 @@ const MyRequests = () => {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
+                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center gap-2 text-gray-300">
                               <MapPin size={11} className="text-primary/50" />
                               <span className="text-[12px] font-normal tracking-normal">
@@ -822,18 +822,18 @@ const MyRequests = () => {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
+                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
                             <p className="text-white font-normal tracking-wide text-[12px] opacity-80 line-clamp-1">
                               {req.VVR_Purpose || "-"}
                             </p>
                           </TableCell>
-                          <TableCell className="px-4 py-3 border-b-white/5 font-normal text-[12px]">
+                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center justify-center">
                               <StatusBadge status={req.VVR_Status} />
                             </div>
                           </TableCell>
                           <TableCell
-                            className="px-4 py-3 border-b-white/5 font-normal text-[12px]"
+                            className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]"
                             align="right"
                           >
                             <div className="flex items-center justify-end gap-2">
@@ -882,7 +882,7 @@ const MyRequests = () => {
                   >
                     <div className="p-5 md:p-6 space-y-4">
                       <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-1 min-w-0">
                           <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20 flex-shrink-0">
                             <Hash size={11} />
                           </div>
@@ -1210,8 +1210,8 @@ const MyRequests = () => {
                           color: "var(--color-text-dim)",
                         }}
                       >
-                        <Briefcase size={11} className="text-primary" /> Purpose
-                        of Visit
+                        <Briefcase size={11} className="text-primary" /> What Is
+                        The Reason?
                       </label>
                       <textarea
                         rows={3}

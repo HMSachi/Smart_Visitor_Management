@@ -31,11 +31,11 @@ const LogsHistoryMain = () => {
                             className="mas-input w-80 pl-12 bg-white/[0.02] border-white/5 focus:border-primary uppercase"
                         />
                     </div>
-                    <button className="flex flex-col md:flex-row items-center gap-4 md:gap-3 px-6 py-3 mas-glass border-white/5 text-gray-300 hover:text-white transition-all uppercase">
+                    <button className="flex flex-col md:flex-row items-center gap-4 md:gap-3 px-6 py-1.5 mas-glass border-white/5 text-gray-300 hover:text-white transition-all uppercase">
                         <Filter size={14} />
                         Filter
                     </button>
-                    <button className="flex flex-col md:flex-row items-center gap-4 md:gap-3 px-6 py-3 bg-primary text-white uppercase shadow-[0_0_20px_rgba(200,16,46,0.2)]">
+                    <button className="flex flex-col md:flex-row items-center gap-4 md:gap-3 px-6 py-1.5 bg-primary text-white uppercase shadow-[0_0_20px_rgba(200,16,46,0.2)]">
                         <Download size={14} />
                         Export
                     </button>

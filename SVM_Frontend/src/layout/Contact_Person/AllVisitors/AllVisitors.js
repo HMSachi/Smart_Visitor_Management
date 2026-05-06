@@ -433,7 +433,7 @@ const ContactAllVisitors = () => {
                           </div>
 
                           <button
-                            className={`w-full py-3 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
+                            className={`w-full py-1.5 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
                           >
                             <Eye size={15} /> Details
                           </button>
@@ -567,7 +567,7 @@ const ContactAllVisitors = () => {
                       <tr>
                         <td
                           colSpan={6}
-                          className={`text-[12px] font-normal px-4 py-12 text-center uppercase tracking-[0.24em] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                          className={`text-[12px] font-normal px-2.5 py-12 text-center uppercase tracking-[0.24em] ${isLight ? "text-gray-400" : "text-white/40"}`}
                         >
                           No Visitors detected matching criteria
                         </td>
@@ -736,7 +736,7 @@ const ContactAllVisitors = () => {
                   <div className="space-y-1.5">
                     <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Briefcase size={11} className="text-primary/60" />{" "}
-                      Purpose of Visit
+                      What Is The Reason?
                     </label>
                     <input
                       type="text"

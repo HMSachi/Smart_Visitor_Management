@@ -401,7 +401,7 @@ const CreateVisitRequestDetails = () => {
               </div>
 
               <div className="flex flex-col md:flex-row items-center gap-4 pt-6">
-                <button type="button" onClick={() => navigate("/contact_person/create-visit-request")} className="w-full md:w-auto px-10 py-3 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all">
+                <button type="button" onClick={() => navigate("/contact_person/create-visit-request")} className="w-full md:w-auto px-10 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all">
                   Back to Core Info
                 </button>
                 <button type="submit" disabled={isSubmitting} className="w-full md:w-auto flex-1 px-10 py-3.5 bg-[#C8102E] hover:bg-[#A60D26] text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-xl shadow-[0_10px_25px_rgba(200,16,46,0.15)] transition-all active:scale-95 disabled:opacity-50">

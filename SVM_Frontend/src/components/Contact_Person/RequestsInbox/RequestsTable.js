@@ -79,42 +79,42 @@ const RequestsTable = ({ requests, onReview }) => {
               }`}
             >
               <th
-                className={`px-4 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
+                className={`px-2.5 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-primary/60" : "text-primary"
                 }`}
               >
                 ID
               </th>
               <th
-                className={`px-4 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${
+                className={`px-2.5 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
                 Visitor
               </th>
               <th
-                className={`px-4 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
+                className={`px-2.5 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
                 Date
               </th>
               <th
-                className={`px-4 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${
+                className={`px-2.5 py-2 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
                 Purpose
               </th>
               <th
-                className={`px-4 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
+                className={`px-2.5 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
                 Status
               </th>
               <th
-                className={`px-4 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
+                className={`px-2.5 py-2 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${
                   isLight ? "text-gray-400" : "text-white/40"
                 }`}
               >
@@ -134,12 +134,12 @@ const RequestsTable = ({ requests, onReview }) => {
                   }`}
                 >
                   {/* Request ID */}
-                  <td className="px-4 py-1 text-center text-primary text-[12px] tracking-wide font-normal">
+                  <td className="px-2.5 py-1 text-center text-primary text-[12px] tracking-wide font-normal">
                     #{visitor.id || "N/A"}
                   </td>
 
                   {/* Visitor Name */}
-                  <td className="px-4 py-1 text-left font-normal text-[12px]">
+                  <td className="px-2.5 py-1 text-left font-normal text-[12px]">
                     <span
                       className={`font-normal text-[12px] uppercase tracking-wide ${
                         isLight ? "text-[#1A1A1A]" : "text-white"
@@ -150,7 +150,7 @@ const RequestsTable = ({ requests, onReview }) => {
                   </td>
 
                   {/* Visit Date */}
-                  <td className="px-4 py-1 text-center font-normal text-[12px]">
+                  <td className="px-2.5 py-1 text-center font-normal text-[12px]">
                     <span
                       className={`text-[12px] font-normal tracking-wide ${
                         isLight ? "text-gray-500" : "text-white/70"
@@ -161,7 +161,7 @@ const RequestsTable = ({ requests, onReview }) => {
                   </td>
 
                   {/* Purpose */}
-                  <td className="px-4 py-1 text-left font-normal text-[12px]">
+                  <td className="px-2.5 py-1 text-left font-normal text-[12px]">
                     <div className="max-w-[200px]">
                       <p
                         title={
@@ -181,14 +181,14 @@ const RequestsTable = ({ requests, onReview }) => {
                   </td>
 
                   {/* Status */}
-                  <td className="px-4 py-1 text-center font-normal text-[12px]">
+                  <td className="px-2.5 py-1 text-center font-normal text-[12px]">
                     <div className="flex items-center justify-center">
                       <StatusBadge status={visitor.status} />
                     </div>
                   </td>
 
                   {/* Actions */}
-                  <td className="px-4 py-1 text-center font-normal text-[12px]">
+                  <td className="px-2.5 py-1 text-center font-normal text-[12px]">
                     <div className="flex items-center justify-center">
                       <button
                         onClick={() => onReview(visitor.id)}
@@ -212,7 +212,7 @@ const RequestsTable = ({ requests, onReview }) => {
               <tr>
                 <td
                   colSpan={6}
-                  className={`px-4 py-12 text-center uppercase tracking-[0.24em] text-[11px] font-normal ${
+                  className={`px-2.5 py-12 text-center uppercase tracking-[0.24em] text-[11px] font-normal ${
                     isLight ? "text-gray-400" : "text-white/40"
                   }`}
                 >

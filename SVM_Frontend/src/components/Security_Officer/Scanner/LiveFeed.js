@@ -567,10 +567,10 @@ const LiveFeed = () => {
 
               {/* Access status bar */}
               <div
-                className="px-6 py-3 flex items-center justify-between transition-colors duration-300"
+                className="px-6 py-1.5 flex items-center justify-between transition-colors duration-300"
                 style={{ background: "var(--color-surface-1)" }}
               >
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
                   <span className="text-[10px] uppercase tracking-widest font-medium text-[var(--color-text-secondary)]">
                     QR is valid — visitor information found

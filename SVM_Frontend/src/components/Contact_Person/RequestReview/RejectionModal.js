@@ -116,7 +116,7 @@ const RejectionModal = ({
             <textarea
               rows="4"
               placeholder="Briefly explain why this request is being rejected..."
-              className={`w-full border rounded-xl px-3.5 py-3 text-[12px] font-medium placeholder:opacity-70 focus:outline-none focus:border-primary transition-all resize-none ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] focus:bg-gray-50 placeholder:text-gray-400" : "bg-white/[0.02] border-white/10 text-white focus:bg-white/[0.04] placeholder:text-white/50"}`}
+              className={`w-full border rounded-xl px-3.5 py-1.5 text-[12px] font-medium placeholder:opacity-70 focus:outline-none focus:border-primary transition-all resize-none ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] focus:bg-gray-50 placeholder:text-gray-400" : "bg-white/[0.02] border-white/10 text-white focus:bg-white/[0.04] placeholder:text-white/50"}`}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             ></textarea>
@@ -126,13 +126,13 @@ const RejectionModal = ({
         <div className="flex flex-col sm:flex-row gap-3 relative z-10">
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 bg-primary text-white text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl shadow-[0_4px_24px_rgba(200,16,46,0.25)] hover:bg-primary-dark transition-all transform active:scale-95"
+            className="flex-1 py-1.5 bg-primary text-white text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl shadow-[0_4px_24px_rgba(200,16,46,0.25)] hover:bg-primary-dark transition-all transform active:scale-95"
           >
             Reject Request
           </button>
           <button
             onClick={onClose}
-            className={`flex-1 py-3 border text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl transition-all ${isLight ? "bg-white border-gray-200 text-gray-600 hover:text-[#1A1A1A] hover:border-gray-300" : "bg-white/[0.03] border-white/10 text-gray-300 hover:text-white hover:border-white/20"}`}
+            className={`flex-1 py-1.5 border text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl transition-all ${isLight ? "bg-white border-gray-200 text-gray-600 hover:text-[#1A1A1A] hover:border-gray-300" : "bg-white/[0.03] border-white/10 text-gray-300 hover:text-white hover:border-white/20"}`}
           >
             Cancel
           </button>

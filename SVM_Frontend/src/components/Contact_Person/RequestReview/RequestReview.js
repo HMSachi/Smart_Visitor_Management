@@ -275,7 +275,7 @@ const RequestReviewMain = () => {
             >
               <ArrowLeft size={16} />
             </button>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-1.5">
 
               <h2
                 className={`text-[12px] font-bold uppercase tracking-[0.2em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}

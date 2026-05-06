@@ -168,7 +168,7 @@ const HeaderComponent = () => {
           {userEmail && (
             <>
               <div className="w-px h-6 bg-[var(--color-border-soft)] mx-1" />
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-1.5">
                 <p className="text-[var(--color-text-primary)] text-[12px] font-semibold truncate max-w-[130px]">
                   {userName || userEmail}
                 </p>
@@ -273,7 +273,7 @@ const HeaderComponent = () => {
               <button
                 key={item.path}
                 onClick={() => handleNavigate(item.path)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-[var(--color-text-primary)] text-[14px] font-medium transition-all"
+                className="w-full flex items-center gap-3 px-4 py-1.5 rounded-xl text-left text-[var(--color-text-primary)] text-[14px] font-medium transition-all"
                 style={{
                   background: "var(--color-surface-1)",
                   border: "1px solid var(--color-border-soft)",
@@ -290,7 +290,7 @@ const HeaderComponent = () => {
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-[var(--color-text-secondary)] text-[14px] font-medium transition-all hover:bg-red-500/10"
+              className="w-full flex items-center gap-3 px-4 py-1.5 rounded-xl text-left text-[var(--color-text-secondary)] text-[14px] font-medium transition-all hover:bg-red-500/10"
               style={{ border: "1px solid var(--color-border-soft)" }}
             >
               <LogOut size={18} className="text-primary" />

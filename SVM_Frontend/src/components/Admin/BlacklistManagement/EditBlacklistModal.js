@@ -29,7 +29,7 @@ const InputField = ({
       onChange={onChange}
       required={required}
       placeholder={placeholder}
-      className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-500 border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20"}`}
+      className={`w-full rounded-xl px-4 py-1.5 text-sm focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-500 border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20"}`}
     />
   </div>
 );
@@ -97,7 +97,7 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
               <div
                 className={`p-4 border-b flex justify-between items-center ${isLight ? "border-gray-200 bg-[#F8F9FA]" : "border-white/5 bg-white/[0.01]"}`}
               >
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-1.5">
                   <div className="w-9 h-9 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
                     <Edit3 size={18} />
                   </div>
@@ -130,7 +130,7 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
               >
                 {/* Section 1: Subject Identity */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="col-span-full flex items-center gap-2.5">
+                  <div className="col-span-full flex items-center gap-1.5">
                     <div className="w-1 h-3.5 bg-primary rounded-full shadow-[0_0_6px_var(--color-primary)]"></div>
                     <h3 className="text-primary text-[10px] font-bold uppercase tracking-[0.28em]">
                       Visitor Details
@@ -172,7 +172,7 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
                 <div
                   className={`grid grid-cols-1 md:grid-cols-2 gap-4 pt-3.5 border-t ${isLight ? "border-gray-200" : "border-white/5"}`}
                 >
-                  <div className="col-span-full flex items-center gap-2.5">
+                  <div className="col-span-full flex items-center gap-1.5">
                     <div className="w-1 h-3.5 bg-primary rounded-full shadow-[0_0_6px_var(--color-primary)]"></div>
                     <h3 className="text-primary text-[10px] font-bold uppercase tracking-[0.28em]">
                       Blacklist Details
@@ -216,18 +216,18 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
 
                 {/* Footer */}
                 <div
-                  className={`flex gap-2.5 pt-4 border-t ${isLight ? "border-gray-200" : "border-white/5"}`}
+                  className={`flex gap-1.5 pt-4 border-t ${isLight ? "border-gray-200" : "border-white/5"}`}
                 >
                   <button
                     type="button"
                     onClick={onClose}
-                    className={`flex-1 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all border ${isLight ? "border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-[#1A1A1A]" : "border-white/10 text-gray-400 hover:bg-white/5 hover:text-white"}`}
+                    className={`flex-1 py-1.5 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all border ${isLight ? "border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-[#1A1A1A]" : "border-white/10 text-gray-400 hover:bg-white/5 hover:text-white"}`}
                   >
                     Discard Changes
                   </button>
                   <button
                     type="submit"
-                    className="flex-[2] py-3 bg-primary hover:bg-primary-hover rounded-2xl text-white text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2.5 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20"
+                    className="flex-[2] py-1.5 bg-primary hover:bg-primary-hover rounded-2xl text-white text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20"
                   >
                     <Save size={15} />
                     Update Details

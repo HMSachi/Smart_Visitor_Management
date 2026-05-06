@@ -64,7 +64,7 @@ const SmallField = ({ label, value, icon: Icon }) => (
       {Icon && <Icon size={11} className="text-primary/70" />}
       {label}
     </label>
-    <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-5 py-3 text-[#1A1A1A] text-[11px] font-semibold tracking-[0.06em] break-words min-h-[44px] flex items-center">
+    <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-5 py-1.5 text-[#1A1A1A] text-[11px] font-semibold tracking-[0.06em] break-words min-h-[44px] flex items-center">
       {value || "N/A"}
     </div>
   </div>
@@ -321,7 +321,7 @@ const RequestDetails = () => {
         <SectionCard title="All Submitted Raw Fields" icon={Hash}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {rawFields.map(([key, value]) => (
-              <div key={key} className="rounded-2xl border border-gray-200 bg-[#F8F9FA] px-4 py-3">
+              <div key={key} className="rounded-2xl border border-gray-200 bg-[#F8F9FA] px-4 py-1.5">
                 <p className="text-[9px] font-semibold text-gray-500 uppercase tracking-[0.14em] mb-1">{toFriendlyFieldName(key)}</p>
                 <p className="text-[11px] font-semibold text-[#1A1A1A] break-words">{formatRawFieldValue(key, value)}</p>
               </div>

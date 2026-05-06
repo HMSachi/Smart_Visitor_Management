@@ -25,7 +25,7 @@ const VisitorGroup = ({
   return (
     <section className="animate-fade-in stagger-item grid grid-cols-1 gap-3 xl:grid-cols-[190px_minmax(0,1fr)]">
       <div className="xl:sticky xl:top-28 self-start">
-        <div className="flex items-center gap-2.5 mb-3">
+        <div className="flex items-center gap-1.5 mb-3">
           <div className="w-1.5 h-8 bg-primary rounded-full"></div>
           <Users size={14} className="text-primary/70" />
           <h3

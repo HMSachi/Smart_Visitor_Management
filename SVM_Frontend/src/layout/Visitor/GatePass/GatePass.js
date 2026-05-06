@@ -157,7 +157,7 @@ const GatePass = () => {
           </p>
           <button
             onClick={() => navigate("/visitor/my-requests")}
-            className="mt-8 px-6 py-3 bg-primary hover:bg-[var(--color-primary-hover)] text-white rounded-xl text-xs font-bold uppercase tracking-[0.2em]"
+            className="mt-8 px-6 py-1.5 bg-primary hover:bg-[var(--color-primary-hover)] text-white rounded-xl text-xs font-bold uppercase tracking-[0.2em]"
           >
             Back to My Requests
           </button>
@@ -242,13 +242,13 @@ const GatePass = () => {
           <div className="p-4 border-t border-white/5 bg-white/[0.01] relative z-10 flex flex-col md:flex-row gap-3 md:gap-3">
             <button
               onClick={handleDownloadQR}
-              className="flex-1 py-3 bg-green-500/10 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl transition-all shadow-xl flex items-center justify-center gap-2"
+              className="flex-1 py-1.5 bg-green-500/10 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl transition-all shadow-xl flex items-center justify-center gap-2"
             >
               <Download size={13} /> Save
             </button>
             <button
               onClick={() => navigate("/visitor/my-requests")}
-              className="py-3 px-6 border border-white/10 text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl hover:bg-white/5 transition-all"
+              className="py-1.5 px-6 border border-white/10 text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl hover:bg-white/5 transition-all"
             >
               Conclude
             </button>

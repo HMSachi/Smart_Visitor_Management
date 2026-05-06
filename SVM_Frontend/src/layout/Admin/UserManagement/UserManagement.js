@@ -533,29 +533,29 @@ const UserManagement = () => {
               <Table sx={{ minWidth: 650 }} aria-label="user management table">
                 <TableHead className="bg-black/40">
                     <TableRow>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
                         ID
                       </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
                         Name
                       </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
                         {activeTab === "CONTACT" ? "Department" : "System Role"}
                       </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
                         {activeTab === "CONTACT"
                           ? "Email"
                           : "Authentication Origin"}
                       </th>
                       {activeTab === "CONTACT" && (
-                        <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                        <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
                           Phone
                         </th>
                       )}
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
                         Status
                       </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-4 py-2 text-right">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-right">
                         Actions
                       </th>
                     </TableRow>

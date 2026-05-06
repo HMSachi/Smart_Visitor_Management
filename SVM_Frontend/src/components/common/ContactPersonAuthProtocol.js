@@ -94,7 +94,7 @@ const SimpleTable = ({ columns, data, isLight }) => (
       <thead>
         <tr className={`border-b ${isLight ? "bg-gray-50/50 border-gray-100" : "bg-black/20 border-white/5"}`}>
           {columns.map((col, idx) => (
-            <th key={idx} className={`py-2 px-4 text-[9px] font-normal tracking-[0.2em] uppercase ${isLight ? "text-gray-400" : "text-white/30"}`}>
+            <th key={idx} className={`py-2 px-2.5 text-[9px] font-normal tracking-[0.2em] uppercase ${isLight ? "text-gray-400" : "text-white/30"}`}>
               <div className="flex items-center gap-2">
                 {col.icon && <col.icon size={11} className="text-primary/60" />}
                 {col.label}
@@ -107,7 +107,7 @@ const SimpleTable = ({ columns, data, isLight }) => (
         {data.map((row, rowIdx) => (
           <tr key={rowIdx} className={`border-b last:border-b-0 transition-colors ${isLight ? "border-gray-50 hover:bg-gray-50/30" : "border-white/[0.02] hover:bg-white/[0.01]"}`}>
             {columns.map((col, colIdx) => (
-              <td key={colIdx} className={`py-2 px-4 text-[11px] font-normal tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}>
+              <td key={colIdx} className={`py-2 px-2.5 text-[11px] font-normal tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}>
                 {row[col.key] || "—"}
               </td>
             ))}

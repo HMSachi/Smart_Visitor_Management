@@ -43,13 +43,13 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
         <div className="flex flex-col sm:flex-row gap-3 relative z-10">
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 bg-[#00B14F] text-white text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl shadow-[0_4px_24px_rgba(0,177,79,0.25)] hover:bg-[#009845] transition-all transform active:scale-95"
+            className="flex-1 py-1.5 bg-[#00B14F] text-white text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl shadow-[0_4px_24px_rgba(0,177,79,0.25)] hover:bg-[#009845] transition-all transform active:scale-95"
           >
             Send Approval
           </button>
           <button
             onClick={onClose}
-            className="flex-1 py-3 bg-white/[0.03] border border-white/10 text-gray-300 text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all"
+            className="flex-1 py-1.5 bg-white/[0.03] border border-white/10 text-gray-300 text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all"
           >
             Cancel
           </button>

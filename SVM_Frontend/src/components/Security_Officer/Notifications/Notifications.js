@@ -40,7 +40,7 @@ const NotificationsMain = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
-                    <button onClick={markAllRead} className="flex flex-col md:flex-row items-center gap-4 md:gap-3 px-8 py-3 mas-glass border-white/5 text-gray-300 uppercase hover:text-white hover:border-white/20 transition-all">
+                    <button onClick={markAllRead} className="flex flex-col md:flex-row items-center gap-4 md:gap-3 px-8 py-1.5 mas-glass border-white/5 text-gray-300 uppercase hover:text-white hover:border-white/20 transition-all">
                         <CheckCircle2 size={14} />
                         Clear Alert Buffer
                     </button>

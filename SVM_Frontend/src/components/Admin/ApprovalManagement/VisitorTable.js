@@ -169,22 +169,22 @@ const VisitorTable = ({
             <table className="w-full min-w-[920px] text-left border-collapse">
               <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)] font-normal text-[12px]">
                 <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
-                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
                     VISITOR NAME
                   </th>
-                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-40">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-40">
                     VISIT DATE
                   </th>
-                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
                     VISITING PLACE
                   </th>
-                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
                     STATUS
                   </th>
-                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-28">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-28">
                     GATE PASS
                   </th>
-                  <th className="px-3 md:px-4 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-primary text-right md:pr-4 lg:pr-6 w-32">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-primary text-right md:pr-4 lg:pr-6 w-32">
                     ACTIONS
                   </th>
                 </tr>
@@ -199,7 +199,7 @@ const VisitorTable = ({
                       key={visitor.batchId || visitor.id || index}
                     >
                       <tr className={`group transition-colors duration-200 ${isExpanded ? "bg-primary/[0.03]" : "hover:bg-white/[0.02]"}`}>
-                        <td className="px-3 md:px-4 lg:px-6 py-1 align-middle font-normal text-[12px]">
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 align-middle font-normal text-[12px]">
                           <div className="flex items-center gap-2">
                             {memberList.length > 0 && (
                               <button
@@ -214,12 +214,12 @@ const VisitorTable = ({
                             </p>
                           </div>
                         </td>
-                        <td className="px-3 md:px-4 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
                           <span className="text-white/90 text-[12px] font-normal tracking-wide">
                             {visitor.date?.split(" ")[0]}
                           </span>
                         </td>
-                        <td className="px-3 md:px-4 lg:px-6 py-1 align-middle font-normal text-[12px]">
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 align-middle font-normal text-[12px]">
                           <div className="flex items-center gap-1.5 text-white/60 text-[12px] font-normal tracking-wide truncate max-w-[250px]">
                             <MapPin size={11} className="text-primary/50 shrink-0" />
                             <span className="truncate">
@@ -229,10 +229,10 @@ const VisitorTable = ({
                             </span>
                           </div>
                         </td>
-                        <td className="px-3 md:px-4 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
                           <StatusBadge status={visitor.status} />
                         </td>
-                        <td className="px-3 md:px-4 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
                           {hasGatePass(visitor.id) &&
                             visitor.status === "Admin Approved" && (
                               <button
@@ -249,7 +249,7 @@ const VisitorTable = ({
                               </button>
                             )}
                         </td>
-                        <td className="px-3 md:px-4 lg:px-6 py-1 text-right md:pr-4 lg:pr-6 align-middle font-normal text-[12px]">
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-right md:pr-4 lg:pr-6 align-middle font-normal text-[12px]">
                           <div className="flex justify-end gap-1.5">
                             {(visitor.status === "Pending" ||
                               visitor.status === "Sent to Admin" ||

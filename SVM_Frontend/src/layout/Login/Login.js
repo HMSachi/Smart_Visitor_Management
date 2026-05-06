@@ -333,7 +333,7 @@ const Login = () => {
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-primary/10 border border-primary/25 text-primary text-sm"
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-primary/10 border border-primary/25 text-primary text-sm"
                   >
                     <ShieldCheck size={15} className="shrink-0" />
                     <span>{localError || reduxError}</span>

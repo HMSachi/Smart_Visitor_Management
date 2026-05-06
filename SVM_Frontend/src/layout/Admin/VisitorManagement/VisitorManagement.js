@@ -91,7 +91,7 @@ const VisitorManagement = () => {
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
               <form
                 onSubmit={handleSearch}
-                className="flex items-center bg-[var(--color-surface-1)] border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-3 min-w-[280px] shadow-sm"
+                className="flex items-center bg-[var(--color-surface-1)] border border-white/10 hover:border-white/20 transition-colors rounded-xl px-4 py-1.5 min-w-[280px] shadow-sm"
               >
                 <Search
                   size={16}
@@ -160,7 +160,7 @@ const VisitorManagement = () => {
                         Company
                       </TableCell>
                       <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
-                        Destination
+                        Going To
                       </TableCell>
                       <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2 text-center">
                         Status

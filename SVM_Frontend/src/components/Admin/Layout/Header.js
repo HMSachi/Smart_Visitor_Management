@@ -94,7 +94,7 @@ const Header = ({ title, subtitle, showBack, onBack }) => {
 
         {/* User profile */}
         <button
-          className="flex items-center gap-2.5 group cursor-default"
+          className="flex items-center gap-1.5 group cursor-default"
           title={displayName}
         >
           {/* Name (desktop) */}

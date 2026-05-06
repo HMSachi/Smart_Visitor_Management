@@ -131,11 +131,11 @@ const ActiveVisitorsMain = () => {
                                                 </td>
                                                 <td className="px-10 py-1 font-normal text-[12px]">
                                                     <div className="space-y-0.5">
-                                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5">
+                                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-1.5">
                                                             <Calendar size={12} className="text-primary opacity-70" />
                                                             <span className="text-white text-[12px] font-normal tracking-widest">{v.date}</span>
                                                         </div>
-                                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5 ml-2">
+                                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-1.5 ml-2">
                                                             <Clock size={10} className="text-primary opacity-50" />
                                                             <span className="text-white/70 text-[12px] font-normal tracking-widest">{v.entryTime}</span>
                                                         </div>

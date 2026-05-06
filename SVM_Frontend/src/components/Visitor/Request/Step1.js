@@ -206,7 +206,7 @@ const Step1Main = () => {
   };
 
   return (
-    <div className="h-full min-h-0 flex flex-col max-w-5xl mx-auto px-4 sm:px-6 py-3 pb-10 text-white bg-black overflow-hidden relative">
+    <div className="h-full min-h-0 flex flex-col max-w-5xl mx-auto px-4 sm:px-6 py-1.5 pb-10 text-white bg-black overflow-hidden relative">
 
       {/* Error Popup */}
       {showError && (

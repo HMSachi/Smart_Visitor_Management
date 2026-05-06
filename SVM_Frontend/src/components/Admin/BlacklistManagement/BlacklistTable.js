@@ -198,26 +198,26 @@ const BlacklistTable = () => {
                   }
                 >
                   <th
-                    className={`px-4 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-2.5 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Visitor
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-2.5 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Restriction
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-2.5 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Date
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-2.5 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Risk
                   </th>
-                  <th className="px-4 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-primary text-right whitespace-nowrap">
+                  <th className="px-2.5 md:px-5 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-primary text-right whitespace-nowrap">
                     Control
                   </th>
                 </tr>

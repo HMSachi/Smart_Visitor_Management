@@ -201,13 +201,13 @@ const CreateVisitRequest = () => {
                   <InputField label="Visit Date" name="VVR_Visit_Date" type="date" value={formData.VVR_Visit_Date} onChange={handleInputChange} error={errors.VVR_Visit_Date} icon={Calendar} />
                   <InputField label="Places to Visit" name="VVR_Places_to_Visit" placeholder="e.g. Server Room, Finance" value={formData.VVR_Places_to_Visit} onChange={handleInputChange} error={errors.VVR_Places_to_Visit} icon={MapPin} />
                   <div className="md:col-span-2">
-                    <InputField label="Purpose of Visit" name="VVR_Purpose" placeholder="e.g. Maintenance, Meeting" value={formData.VVR_Purpose} onChange={handleInputChange} error={errors.VVR_Purpose} icon={HelpCircle} />
+                    <InputField label="What Is The Reason?" name="VVR_Purpose" placeholder="e.g. Maintenance, Meeting" value={formData.VVR_Purpose} onChange={handleInputChange} error={errors.VVR_Purpose} icon={HelpCircle} />
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-col md:flex-row items-center gap-4 pt-4">
-                <button type="button" disabled={isSubmitting} onClick={() => { dispatch(resetForm()); navigate("/contact_person/visit-requests"); }} className="w-full md:w-auto px-10 py-3 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all disabled:opacity-40">
+                <button type="button" disabled={isSubmitting} onClick={() => { dispatch(resetForm()); navigate("/contact_person/visit-requests"); }} className="w-full md:w-auto px-10 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all disabled:opacity-40">
                   Cancel
                 </button>
                 <button type="submit" disabled={isSubmitting} className="w-full md:w-auto flex-1 px-10 py-3.5 bg-[#C8102E] hover:bg-[#A60D26] text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-xl shadow-[0_10px_25px_rgba(200,16,46,0.15)] transition-all active:scale-95 disabled:opacity-60 group flex items-center justify-center gap-2">

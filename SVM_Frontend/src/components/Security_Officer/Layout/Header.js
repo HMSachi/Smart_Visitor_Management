@@ -85,7 +85,7 @@ const Header = ({ title }) => {
 
         <div className="hidden sm:block w-px h-5 bg-[var(--color-border-soft)]" />
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5">
           <div className="hidden md:block text-right">
             <p className="text-[var(--color-text-primary)] text-[13px] font-semibold leading-tight">
               {displayName}

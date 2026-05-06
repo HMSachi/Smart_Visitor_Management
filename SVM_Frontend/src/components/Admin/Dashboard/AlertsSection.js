@@ -40,7 +40,7 @@ const AlertsSection = () => {
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-5 pb-4" style={{ borderBottom: '1px solid var(--color-border-soft)' }}>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5">
           <div
             className="w-8 h-8 rounded-xl flex items-center justify-center text-primary"
             style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.2)' }}

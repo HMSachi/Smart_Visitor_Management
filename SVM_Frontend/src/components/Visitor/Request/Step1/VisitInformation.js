@@ -69,7 +69,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                 </div>
 
                 {/* Company Related Toggle */}
-                <div className="flex items-center justify-between px-5 py-3 rounded-xl border border-white/5 bg-white/[0.01]">
+                <div className="flex items-center justify-between px-5 py-1.5 rounded-xl border border-white/5 bg-white/[0.01]">
                     <div className="flex flex-col">
                         <label className="text-[14px] font-medium text-gray-400 uppercase tracking-widest">Corporate Business?</label>
                         <span className="text-[13px] text-gray-600 font-medium tracking-tight">MAS Holdings Related</span>
@@ -84,7 +84,7 @@ const VisitInformation = ({ data, onChange, onToggle, onCountChange }) => {
                 </div>
 
                 {/* Visitor Count */}
-                <div className="flex items-center justify-between px-5 py-3 rounded-xl border border-white/5 bg-white/[0.01]">
+                <div className="flex items-center justify-between px-5 py-1.5 rounded-xl border border-white/5 bg-white/[0.01]">
                     <div className="flex flex-col">
                         <label className="text-[14px] font-medium text-gray-400 uppercase tracking-widest">Delegation Size</label>
                         <span className="text-[13px] text-gray-600 font-medium tracking-tight">Total persons entering</span>
