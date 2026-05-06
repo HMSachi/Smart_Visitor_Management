@@ -32,7 +32,7 @@ const visitRequestFormSlice = createSlice({
       state.vehicles = action.payload;
     },
     addVehicle: (state) => {
-      state.vehicles = [...state.vehicles, { type: "Car", number: "", isConfirmed: false, isSavedToServer: false }];
+      state.vehicles = [{ type: "Car", number: "", isConfirmed: false, isSavedToServer: false }, ...state.vehicles];
     },
     markVehicleSaved: (state, action) => {
       state.vehicles[action.payload].isSavedToServer = true;
@@ -52,7 +52,7 @@ const visitRequestFormSlice = createSlice({
       state.people = action.payload;
     },
     addPerson: (state) => {
-      state.people = [...state.people, { name: "", nic: "", phone: "", isConfirmed: false, isSavedToServer: false }];
+      state.people = [{ name: "", nic: "", phone: "", isConfirmed: false, isSavedToServer: false }, ...state.people];
     },
     markPersonSaved: (state, action) => {
       state.people[action.payload].isSavedToServer = true;
@@ -72,7 +72,7 @@ const visitRequestFormSlice = createSlice({
       state.items = action.payload;
     },
     addItem: (state) => {
-      state.items = [...state.items, { name: "", quantity: "", description: "", isConfirmed: false, isSavedToServer: false }];
+      state.items = [{ name: "", quantity: "", description: "", isConfirmed: false, isSavedToServer: false }, ...state.items];
     },
     markItemSaved: (state, action) => {
       state.items[action.payload].isSavedToServer = true;

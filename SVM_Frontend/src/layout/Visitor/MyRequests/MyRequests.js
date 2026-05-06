@@ -674,13 +674,12 @@ const MyRequests = () => {
   // ── Helper: add blank new rows ──
   const handleAddNewVehicleRow = () => {
     setEditVehicles((arr) => [
-      ...arr,
       { _isNew: true, VV_Vehicle_Number: "", VV_Vehicle_Type: "" },
+      ...arr,
     ]);
   };
   const handleAddNewMemberRow = () => {
     setEditGroupMembers((arr) => [
-      ...arr,
       {
         _isNew: true,
         VVG_Visitor_Name: "",
@@ -688,17 +687,18 @@ const MyRequests = () => {
         VVG_Designation: "",
         VVR_Request_id: editingRequest?.VVR_Request_id,
       },
+      ...arr,
     ]);
   };
   const handleAddNewItemRow = () => {
     setEditItems((arr) => [
-      ...arr,
       {
         _isNew: true,
         VIC_Item_Name: "",
         VIC_Quantity: "",
         VIC_Designation: "",
       },
+      ...arr,
     ]);
   };
   const handleRemoveNewRow = (section, idx) => {
