@@ -354,7 +354,7 @@ const PersonnelAuthProtocol = ({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className={`grid grid-cols-1 ${hasGatePass() ? "md:grid-cols-[1fr_1fr_1fr_auto]" : "md:grid-cols-3"} gap-4 p-4 md:p-5 border rounded-2xl hover:border-primary/20 transition-all ${
+                      className={`grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-4 p-4 md:p-5 border rounded-2xl hover:border-primary/20 transition-all ${
                         isLight ? "bg-gray-50 border-gray-200" : "bg-black/35 border-white/10"
                       }`}
                     >

@@ -302,13 +302,15 @@ const ContactPersonAuthProtocol = ({
                       <span className={`text-[11px] font-medium uppercase flex-1 sm:text-center ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{member.nic}</span>
                       <span className={`text-[11px] font-medium flex-1 sm:text-center ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{member.contact || "-"}</span>
                       <div className="w-12 flex justify-center">
-                        <button
-                          onClick={() => handleOpenSubVisitorQR(member, idx)}
-                          title="View QR Code"
-                          className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all border ${isLight ? "bg-white border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary" : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"}`}
-                        >
-                          <QrCode size={13} />
-                        </button>
+                        {hasGatePass() && (
+                          <button
+                            onClick={() => handleOpenSubVisitorQR(member, idx)}
+                            title="View QR Code"
+                            className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all border ${isLight ? "bg-white border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary" : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"}`}
+                          >
+                            <QrCode size={13} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
