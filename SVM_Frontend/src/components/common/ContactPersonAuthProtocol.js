@@ -72,9 +72,26 @@ const ContactPersonAuthProtocol = ({
   itemsCarried = [],
   vehiclesList = [],
   jointItems = [],
+  gatePasses = [],
 }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
+
+  // Check whether the main visitor has a gate pass (mirrors VisitorTable logic)
+  const hasGatePass = () => {
+    if (!visitor?.id) return false;
+    const list = Array.isArray(gatePasses)
+      ? gatePasses
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
+    return list.some((gp) => {
+      const gpRequestId =
+        gp.VVR_Request_id ||
+        gp.VGP_Request_id ||
+        gp.vvr_Request_id ||
+        gp.vgp_Request_id;
+      return String(gpRequestId) === String(visitor.id);
+    });
+  };
 
   // QR popup state
   const [popupQR, setPopupQR] = useState({ open: false, member: null, idx: null, loading: false, qrCode: null, error: null });

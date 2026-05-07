@@ -10,6 +10,7 @@ import {
   GetVisitRequestsByCP,
   UpdateVisitRequest,
 } from "../../../actions/VisitRequestAction";
+import { GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
 import VehicleService from "../../../services/VehicleService";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
@@ -66,6 +67,9 @@ const RequestReviewMain = () => {
   const { visitRequestsByCP, visitRequests } = useSelector(
     (state) => state.visitRequestsState,
   );
+  const { gatePasses } = useSelector(
+    (state) => state.gatePassState || { gatePasses: [] },
+  );
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
@@ -86,6 +90,7 @@ const RequestReviewMain = () => {
   useEffect(() => {
     if (!selectedId) return;
     dispatch(GetVisitRequestById(selectedId));
+    dispatch(GetAllGatePasses());
   }, [dispatch, selectedId]);
 
   const apiRequest = useMemo(() => {
@@ -331,6 +336,7 @@ const RequestReviewMain = () => {
               itemsCarried={itemsCarried}
               vehiclesList={vehiclesList}
               jointItems={jointItems}
+              gatePasses={gatePasses}
             />
           )}
         </div>

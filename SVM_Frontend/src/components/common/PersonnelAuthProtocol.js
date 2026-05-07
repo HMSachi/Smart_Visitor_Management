@@ -130,9 +130,26 @@ const PersonnelAuthProtocol = ({
   itemsCarried = [],
   vehiclesList = [],
   jointItems = [],
+  gatePasses = [],
 }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
+
+  // Check whether the main visitor has a gate pass (same logic as VisitorTable)
+  const hasGatePass = () => {
+    if (!visitor?.id) return false;
+    const list = Array.isArray(gatePasses)
+      ? gatePasses
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
+    return list.some((gp) => {
+      const gpRequestId =
+        gp.VVR_Request_id ||
+        gp.VGP_Request_id ||
+        gp.vvr_Request_id ||
+        gp.vgp_Request_id;
+      return String(gpRequestId) === String(visitor.id);
+    });
+  };
 
   // Single popup state for whichever sub-visitor QR is open
   // { open, member, idx, loading, qrCode, error }
@@ -337,26 +354,28 @@ const PersonnelAuthProtocol = ({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className={`grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-4 p-4 md:p-5 border rounded-2xl hover:border-primary/20 transition-all ${
+                      className={`grid grid-cols-1 ${hasGatePass() ? "md:grid-cols-[1fr_1fr_1fr_auto]" : "md:grid-cols-3"} gap-4 p-4 md:p-5 border rounded-2xl hover:border-primary/20 transition-all ${
                         isLight ? "bg-gray-50 border-gray-200" : "bg-black/35 border-white/10"
                       }`}
                     >
                       <Field label="Full Name" value={member.fullName} icon={User} isLight={isLight} />
                       <Field label="NIC / Passport Number" value={member.nic} icon={Hash} isLight={isLight} />
                       <Field label="Designation / Contact" value={member.contact} icon={Phone} isLight={isLight} />
-                      <div className="flex flex-col justify-end">
-                        <button
-                          onClick={() => handleOpenSubVisitorQR(member, idx)}
-                          title="View QR Code"
-                          className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all border ${
-                            isLight
-                              ? "bg-white border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary"
-                              : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"
-                          }`}
-                        >
-                          <QrCode size={15} />
-                        </button>
-                      </div>
+                      {hasGatePass() && (
+                        <div className="flex flex-col justify-end">
+                          <button
+                            onClick={() => handleOpenSubVisitorQR(member, idx)}
+                            title="View QR Code"
+                            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all border ${
+                              isLight
+                                ? "bg-white border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary"
+                                : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"
+                            }`}
+                          >
+                            <QrCode size={15} />
+                          </button>
+                        </div>
+                      )}
                     </motion.div>
                   ))}
                 </div>
