@@ -108,6 +108,7 @@ const PersonnelAuthProtocol = ({
   groupMembers = [],
   itemsCarried = [],
   vehiclesList = [],
+  jointItems = [],
 }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
@@ -272,6 +273,46 @@ const PersonnelAuthProtocol = ({
                   icon={Mail}
                   isLight={isLight}
                 />
+              </div>
+
+              {/* Items carried by the main visitor — embedded as a subsection */}
+              <div className={`mt-6 pt-5 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}>
+                <div className="flex items-center gap-2 mb-4">
+                  <Package size={13} className="text-primary/70" />
+                  <p className={`uppercase text-[10px] font-bold tracking-[0.2em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                    Items Carried
+                  </p>
+                  <span className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${isLight ? "text-gray-400" : "text-white/35"}`}>
+                    — declared by the primary visitor
+                  </span>
+                </div>
+                {itemsCarried && itemsCarried.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-3">
+                    {itemsCarried.map((item, idx) => (
+                      <motion.div
+                        key={item.id || idx}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.07 }}
+                        className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-[20px] ${
+                          isLight
+                            ? "bg-gray-50 border-gray-200"
+                            : "bg-black/30 border-white/8"
+                        }`}
+                      >
+                        <Field label="Item Name" value={item.itemName} icon={Package} isLight={isLight} />
+                        <Field label="Quantity" value={item.quantity ? String(item.quantity) : "—"} icon={Hash} isLight={isLight} />
+                        <Field label="Description" value={item.description || "—"} icon={Briefcase} isLight={isLight} />
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={`border border-dashed rounded-xl p-3 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}>
+                    <p className={`text-[10px] font-semibold uppercase tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}>
+                      No items declared by the primary visitor
+                    </p>
+                  </div>
+                )}
               </div>
             </SplitSection>
           </div>
@@ -485,7 +526,7 @@ const PersonnelAuthProtocol = ({
         </SectionCard>
       </div>
 
-      {/* Material Intake Protocol */}
+      {/* Items Carried In — grouped by sub-visitor (Group_Members) */}
       <div className="mb-8">
         <SectionCard
           isLight={isLight}
@@ -493,47 +534,63 @@ const PersonnelAuthProtocol = ({
         >
           <div className="p-4 md:p-5">
             <SplitSection
-              title="Items Carried"
+              title="Items Carried In"
               icon={Package}
-              description="Declared items and quantities for the visit."
+              description="Items brought in by each member of the visiting group."
               isLight={isLight}
             >
-              {itemsCarried && itemsCarried.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4">
-                  {itemsCarried.map((item, idx) => (
-                    <motion.div
-                      key={item.id || idx}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 md:p-5 border rounded-[24px] group/item hover:border-primary/20 transition-all ${
-                        isLight
-                          ? "bg-gray-50 border-gray-200"
-                          : "bg-[var(--color-bg-paper)]/40 border-white/5"
-                      }`}
-                    >
-                      <Field
-                        label="Item Name"
-                        value={item.itemName}
-                        icon={Package}
-                        isLight={isLight}
-                      />
-                      <Field
-                        label="Quantity"
-                        value={item.quantity ? String(item.quantity) : "—"}
-                        icon={Hash}
-                        isLight={isLight}
-                      />
-                      <Field
-                        label="Description"
-                        value={item.description || "—"}
-                        icon={Briefcase}
-                        isLight={isLight}
-                      />
-                    </motion.div>
-                  ))}
-                </div>
-              ) : (
+              {jointItems && jointItems.length > 0 ? (() => {
+                // Group rows by sub-visitor name
+                const grouped = jointItems.reduce((acc, row) => {
+                  const name = row.Group_Members || "Unknown Member";
+                  if (!acc[name]) acc[name] = [];
+                  acc[name].push(row);
+                  return acc;
+                }, {});
+                return (
+                  <div className="space-y-6">
+                    {Object.entries(grouped).map(([memberName, memberItems], gIdx) => (
+                      <div key={gIdx}>
+                        {/* Sub-visitor name header */}
+                        <div className={`flex items-center gap-2 mb-3 pb-2 border-b ${
+                          isLight ? "border-gray-100" : "border-white/10"
+                        }`}>
+                          <User size={12} className="text-primary/60" />
+                          <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
+                            isLight ? "text-[#1A1A1A]" : "text-white"
+                          }`}>
+                            {memberName}
+                          </span>
+                          <span className={`ml-auto text-[9px] font-semibold uppercase tracking-[0.14em] px-2 py-0.5 rounded-full border ${
+                            isLight ? "bg-gray-50 border-gray-200 text-gray-400" : "bg-white/5 border-white/10 text-white/40"
+                          }`}>
+                            {memberItems.length} {memberItems.length === 1 ? "item" : "items"}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-3">
+                          {memberItems.map((item, idx) => (
+                            <motion.div
+                              key={idx}
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: idx * 0.07 }}
+                              className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-[20px] hover:border-primary/20 transition-all ${
+                                isLight
+                                  ? "bg-gray-50 border-gray-200"
+                                  : "bg-[var(--color-bg-paper)]/40 border-white/5"
+                              }`}
+                            >
+                              <Field label="Item Name" value={item.VIC_Item_Name || item.itemName} icon={Package} isLight={isLight} />
+                              <Field label="Quantity" value={item.VIC_Quantity ? String(item.VIC_Quantity) : (item.quantity ? String(item.quantity) : "—")} icon={Hash} isLight={isLight} />
+                              <Field label="Description" value={item.VIC_Designation || item.description || "—"} icon={Briefcase} isLight={isLight} />
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })() : (
                 <div
                   className={`border border-dashed rounded-2xl p-5 text-center ${
                     isLight ? "border-gray-200" : "border-white/10"
@@ -545,7 +602,7 @@ const PersonnelAuthProtocol = ({
                       isLight ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    No items declared
+                    No items carried in by the visiting group
                   </p>
                 </div>
               )}

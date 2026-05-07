@@ -21,6 +21,7 @@ import { useThemeMode } from "../../../theme/ThemeModeContext";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
+import VisitorService from "../../../services/VisitorService";
 
 const ApprovalManagement = () => {
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ const ApprovalManagement = () => {
   const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
   const [itemsCarried, setItemsCarried] = useState([]);
   const [vehiclesForVisitor, setVehiclesForVisitor] = useState([]);
+  const [jointItems, setJointItems] = useState([]);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const formScrollRef = React.useRef(null);
 
@@ -106,6 +108,15 @@ const ApprovalManagement = () => {
               plateNumber: v.VV_Vehicle_Number,
             }));
           setVehiclesForVisitor(matchedVehicles);
+
+          // Load joint items (items grouped by sub-visitor) for "Items Carried In"
+          try {
+            const jointRes = await VisitorService.GetVisitorJoint(selectedVisitor.id);
+            const jointData = jointRes?.data?.ResultSet || jointRes?.data || [];
+            setJointItems(Array.isArray(jointData) ? jointData : []);
+          } catch {
+            setJointItems([]);
+          }
         } catch (err) {
           console.error("Error loading details in Admin view:", err);
         } finally {
@@ -273,6 +284,7 @@ const ApprovalManagement = () => {
                         groupMembers={visitorGroupMembers}
                         itemsCarried={itemsCarried}
                         vehiclesList={vehiclesForVisitor}
+                        jointItems={jointItems}
                       />
                     )}
                   </div>

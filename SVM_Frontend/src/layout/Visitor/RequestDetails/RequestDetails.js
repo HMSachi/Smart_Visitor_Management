@@ -100,6 +100,7 @@ const RequestDetails = () => {
   const [groupMembers, setGroupMembers] = useState([]);
   const [items, setItems] = useState([]);
   const [vehicleRecords, setVehicleRecords] = useState([]);
+  const [jointItems, setJointItems] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
@@ -133,6 +134,15 @@ const RequestDetails = () => {
             (v) => String(v.VVR_Request_id) === String(currentRequest.VVR_Request_id)
           );
           setVehicleRecords(matchedVehicles);
+
+          // Load joint items (items paired with sub-visitor names)
+          try {
+            const jointRes = await VisitorService.GetVisitorJoint(currentRequest.VVR_Request_id);
+            const jointData = jointRes?.data?.ResultSet || jointRes?.data || [];
+            setJointItems(Array.isArray(jointData) ? jointData : []);
+          } catch {
+            setJointItems([]);
+          }
         }
       } catch (error) {
         console.error("Failed to load full request details:", error);
@@ -269,6 +279,27 @@ const RequestDetails = () => {
             <SmallField label="Company" value={summary.company} icon={Building2} />
             <SmallField label="Visitor Type" value={summary.visitorType} icon={Briefcase} />
           </div>
+
+          {/* Items carried by the main visitor */}
+          <div className="mt-5 pt-5 border-t border-gray-100">
+            <div className="flex items-center gap-2 mb-3">
+              <Package size={13} className="text-primary" />
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1A1A1A]">Items Carried</p>
+            </div>
+            {items.length > 0 ? (
+              <div className="space-y-3">
+                {items.map((item) => (
+                  <div key={item.VIC_Item_id} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-2xl border border-gray-200 bg-[#F8F9FA]">
+                    <SmallField label="Item Name" value={item.VIC_Item_Name} icon={Package} />
+                    <SmallField label="Quantity" value={String(item.VIC_Quantity || "N/A")} icon={Hash} />
+                    <SmallField label="Description" value={item.VIC_Designation || "N/A"} icon={Briefcase} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No items declared by the main visitor.</p>
+            )}
+          </div>
         </SectionCard>
 
         <SectionCard title="Vehicle Registry" icon={Car}>
@@ -286,7 +317,7 @@ const RequestDetails = () => {
           )}
         </SectionCard>
 
-        <SectionCard title="People Visiting" icon={Users}>
+        <SectionCard title="Visiting Group" icon={Users}>
           {groupMembers.length > 0 ? (
             <div className="space-y-3">
               {groupMembers.map((member) => (
@@ -302,19 +333,46 @@ const RequestDetails = () => {
           )}
         </SectionCard>
 
-        <SectionCard title="Items to Bring" icon={Package}>
-          {items.length > 0 ? (
-            <div className="space-y-3">
-              {items.map((item) => (
-                <div key={item.VIC_Item_id} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-2xl border border-gray-200 bg-[#F8F9FA]">
-                  <SmallField label="Item Name" value={item.VIC_Item_Name} icon={Package} />
-                  <SmallField label="Quantity" value={String(item.VIC_Quantity || "N/A")} icon={Hash} />
-                  <SmallField label="Description" value={item.VIC_Designation || "N/A"} icon={Briefcase} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No items submitted.</p>
+        {/* Items carried in — grouped by sub-visitor (Group_Members from API) */}
+        <SectionCard title="Items Carried In" icon={Package}>
+          <p className="text-[10px] text-gray-400 font-medium uppercase tracking-[0.12em] mb-4">
+            Items brought in by each member of the visiting group
+          </p>
+          {jointItems.length > 0 ? (() => {
+            const grouped = jointItems.reduce((acc, row) => {
+              const name = row.Group_Members || "Unknown Member";
+              if (!acc[name]) acc[name] = [];
+              acc[name].push(row);
+              return acc;
+            }, {});
+            return (
+              <div className="space-y-5">
+                {Object.entries(grouped).map(([memberName, memberItems], gIdx) => (
+                  <div key={gIdx}>
+                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
+                      <User size={11} className="text-primary/60" />
+                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1A1A1A]">
+                        {memberName}
+                      </span>
+                      <span className="ml-auto text-[9px] font-semibold uppercase tracking-[0.12em] px-2 py-0.5 rounded-full bg-gray-100 border border-gray-200 text-gray-400">
+                        {memberItems.length} {memberItems.length === 1 ? "item" : "items"}
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      {memberItems.map((item, idx) => (
+                        <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-2xl border border-gray-200 bg-[#F8F9FA]">
+                          <SmallField label="Item Name" value={item.VIC_Item_Name} icon={Package} />
+                          <SmallField label="Quantity" value={String(item.VIC_Quantity || "N/A")} icon={Hash} />
+                          <SmallField label="Description" value={item.VIC_Designation || "N/A"} icon={Briefcase} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })() : (
+            <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No items carried in by the visiting group.</p>
           )}
         </SectionCard>
 
