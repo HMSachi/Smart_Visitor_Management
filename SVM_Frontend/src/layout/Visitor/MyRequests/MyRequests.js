@@ -24,8 +24,6 @@ import {
   Calendar,
   MapPin,
   CheckCircle2,
-  XCircle,
-  Clock,
   Hash,
   AlertCircle,
   QrCode,
@@ -48,37 +46,27 @@ const StatusBadge = ({ status }) => {
     case "A":
     case "APPROVED":
       return (
-        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max shadow-[0_0_12px_rgba(34,197,94,0.1)]">
-          <CheckCircle2 size={10} /> Approved
-        </div>
+        <div className="svm-status-pill svm-status-pill--success">Approved</div>
       );
     case "R":
     case "REJECTED":
       return (
-        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max">
-          <XCircle size={10} /> Declined
-        </div>
+        <div className="svm-status-pill svm-status-pill--danger">Declined</div>
       );
     case "ACCEPTED":
       return (
-        <div className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 text-purple-500 rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max">
-          <CheckCircle2 size={10} /> Accepted
-        </div>
+        <div className="svm-status-pill svm-status-pill--purple">Accepted</div>
       );
     case "SENT":
     case "SENT_TO_ADMIN":
       return (
-        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max">
-          <CheckCircle2 size={10} /> CP Accepted
-        </div>
+        <div className="svm-status-pill svm-status-pill--warning">CP Accepted</div>
       );
     case "P":
     case "PENDING":
     default:
       return (
-        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[9px] font-bold tracking-[0.08em] uppercase flex items-center gap-1.5 w-max">
-          <Clock size={10} /> Pending
-        </div>
+        <div className="svm-status-pill svm-status-pill--info">Pending</div>
       );
   }
 };
@@ -114,7 +102,7 @@ const MyRequests = () => {
     (state) => state.gatePassState || { gatePasses: [] },
   );
   const { blacklists } = useSelector(
-    (state) => state.blacklistState || { blacklists: [] }
+    (state) => state.blacklistState || { blacklists: [] },
   );
 
   // Extract Visitor ID from login session
@@ -511,16 +499,18 @@ const MyRequests = () => {
   const handleUpdateMember = async (idx) => {
     const member = editGroupMembers[idx];
     if (!member?.VVG_id || memberSavingIdx !== null) return;
-    
+
     // Check blacklist before updating
     const isBlacklisted = (blacklists || []).some(
       (b) =>
         b.VB_Name &&
         b.VB_Name.toLowerCase() === member.VVG_Visitor_Name?.toLowerCase() &&
-        b.VB_Status === "A"
+        b.VB_Status === "A",
     );
     if (isBlacklisted) {
-      setEditError(`Access Restricted for ${member.VVG_Visitor_Name}. They are blacklisted.`);
+      setEditError(
+        `Access Restricted for ${member.VVG_Visitor_Name}. They are blacklisted.`,
+      );
       return;
     }
 
@@ -575,16 +565,18 @@ const MyRequests = () => {
       setEditError(phoneErr);
       return;
     }
-    
+
     // Check blacklist before adding
     const isBlacklisted = (blacklists || []).some(
       (b) =>
         b.VB_Name &&
         b.VB_Name.toLowerCase() === member.VVG_Visitor_Name?.toLowerCase() &&
-        b.VB_Status === "A"
+        b.VB_Status === "A",
     );
     if (isBlacklisted) {
-      setEditError(`Access Restricted for ${member.VVG_Visitor_Name}. They are blacklisted.`);
+      setEditError(
+        `Access Restricted for ${member.VVG_Visitor_Name}. They are blacklisted.`,
+      );
       return;
     }
 

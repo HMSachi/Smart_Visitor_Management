@@ -1,5 +1,4 @@
 import React from 'react';
-import {  CheckCircle, XCircle,  Activity } from 'lucide-react';
 
 const ProgressionTimeline = ({ status }) => {
     const steps = [
@@ -56,10 +55,17 @@ const SentTable = ({ requests }) => {
                                 <ProgressionTimeline status={req.status} />
                             </td>
                             <td className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">
-                                <div className={`inline-flex flex-col md:flex-row items-center gap-4 md:gap-3 px-3 py-0.5 border uppercase text-[9px] ${req.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5' : req.status === 'Declined' ? 'text-primary border-primary/20 bg-primary/5' : 'text-blue-400 border-blue-400/20 bg-blue-400/5 animate-pulse'}`}>
-                                    {req.status === 'Approved' ? <CheckCircle size={10} /> : req.status === 'Declined' ? <XCircle size={10} /> : <Activity size={10} />}
-                                    {req.status}
-                                </div>
+                                                                <div
+                                                                    className={`svm-status-pill ${
+                                                                        req.status === 'Approved'
+                                                                            ? 'svm-status-pill--success'
+                                                                            : req.status === 'Declined'
+                                                                                ? 'svm-status-pill--danger'
+                                                                                : 'svm-status-pill--info animate-pulse'
+                                                                    }`}
+                                                                >
+                                                                    {req.status}
+                                                                </div>
                             </td>
                         </tr>
                     ))}

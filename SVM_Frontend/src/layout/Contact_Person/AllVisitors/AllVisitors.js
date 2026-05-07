@@ -406,7 +406,9 @@ const ContactAllVisitors = () => {
                               </p>
                             </div>
                             <div className="flex flex-col items-end gap-3">
-                              <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border ${isActive ? "text-green-500 bg-green-500/10 border-green-500/20" : "text-primary bg-primary/10 border-primary/20"}`}>
+                              <div
+                                className={`svm-status-pill ${isActive ? "svm-status-pill--success" : "svm-status-pill--danger"}`}
+                              >
                                 {isActive ? "Active" : "Inactive"}
                               </div>
                               <button className={`flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest ${isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-primary"} transition-colors`}>
@@ -565,10 +567,10 @@ const ContactAllVisitors = () => {
                                   onClick={() => handleToggleStatus(visitor)}
                                   disabled={isLoading}
                                   title="Click to toggle status"
-                                  className={`px-2 py-0.5 rounded-md text-[12px] font-normal tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm border transition-all cursor-pointer ${
+                                  className={`svm-status-pill transition-colors cursor-pointer ${
                                     isActive
-                                      ? "bg-green-500/10 border-green-500/20 text-green-500 hover:bg-green-500/20"
-                                      : "bg-primary/10 border-primary/20 text-primary hover:bg-primary/20"
+                                      ? "svm-status-pill--success hover:bg-green-500/20"
+                                      : "svm-status-pill--danger hover:bg-primary/20"
                                   }`}
                                 >
                                   {isActive ? "Active" : "Inactive"}

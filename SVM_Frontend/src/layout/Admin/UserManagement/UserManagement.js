@@ -632,7 +632,7 @@ const UserManagement = () => {
                             onClick={() => handleToggleStatus(item)}
                             disabled={isLoading}
                             title="Click to toggle status"
-                            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-normal transition-all cursor-pointer ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                            className={`svm-status-pill transition-colors cursor-pointer ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"}`}
                           >
                             {(item.VCP_Status || item.VA_Status) === "A" ||
                             (item.VCP_Status || item.VA_Status) === "ACTIVE"

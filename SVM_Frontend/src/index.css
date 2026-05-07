@@ -309,6 +309,42 @@
    COMPONENT LAYER
    ============================================================ */
 @layer components {
+  /* ——— Status Pill (Tables) ——— */
+  .svm-status-pill {
+    @apply inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded-lg border uppercase tracking-[0.12em] font-normal text-[7px] leading-none whitespace-nowrap;
+    font-size: 7px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+  }
+
+  .svm-status-pill--success {
+    @apply bg-green-500/10 border-green-500/20 text-green-500;
+  }
+
+  .svm-status-pill--warning {
+    @apply bg-yellow-500/10 border-yellow-500/20 text-yellow-500;
+  }
+
+  .svm-status-pill--info {
+    @apply bg-blue-500/10 border-blue-500/20 text-blue-500;
+  }
+
+  .svm-status-pill--danger {
+    @apply bg-primary/10 border-primary/20 text-primary;
+  }
+
+  .svm-status-pill--orange {
+    @apply bg-orange-500/10 border-orange-500/20 text-orange-500;
+  }
+
+  .svm-status-pill--purple {
+    @apply bg-purple-500/10 border-purple-500/20 text-purple-500;
+  }
+
+  .svm-status-pill--muted {
+    @apply bg-white/5 border-white/10 text-gray-400;
+  }
+
   /* ——— Glass Card ——— */
   .glass-card {
     background: var(--color-surface-1);
@@ -557,9 +593,9 @@
 
   /* ——— Page Header ——— */
   .page-header {
-    padding: 1.5rem 0;
+    padding: 1rem 0;
     border-bottom: 1px solid var(--color-border-soft);
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.25rem;
   }
 
   /* ——— Table Styles ——— */
@@ -567,23 +603,23 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 13.5px;
+    font-size: 12px;
   }
 
   .mas-table th {
     background: var(--color-surface-1);
     color: var(--color-text-secondary);
-    font-weight: 600;
-    font-size: 11.5px;
+    font-weight: 400;
+    font-size: 12px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 0.75rem 1rem;
+    padding: 0.45rem 0.65rem;
     border-bottom: 1px solid var(--color-border-soft);
     white-space: nowrap;
   }
 
   .mas-table td {
-    padding: 0.875rem 1rem;
+    padding: 0.5rem 0.65rem;
     border-bottom: 1px solid var(--color-border-soft);
     color: var(--color-text-primary);
     vertical-align: middle;
@@ -866,8 +902,8 @@ code {
 /* Make buttons smaller and remove heavy border radius as requested */
 button, .MuiButton-root, .MuiIconButton-root {
   border-radius: 4px !important;
-  padding: 6px 10px !important;
-  font-size: 13px !important;
+  padding: 5px 8px !important;
+  font-size: 12px !important;
 }
 
 /* Compact icon buttons */
@@ -877,20 +913,20 @@ button, .MuiButton-root, .MuiIconButton-root {
 
 /* Make MUI table cells more compact */
 .MuiTableCell-root {
-  padding: 10px 12px !important;
+  padding: 6px 8px !important;
   border-bottom: 1px solid rgba(255,255,255,0.03) !important;
 }
 
 /* Smaller header labels */
 .MuiTableHead-root .MuiTableCell-root {
-  padding: 8px 12px !important;
-  font-size: 11px !important;
+  padding: 6px 8px !important;
+  font-size: 12px !important;
 }
 
 /* Compact action button inside table */
-table button, table .compact-action {
-  padding: 6px 8px !important;
-  font-size: 11px !important;
+table button:not(.svm-status-pill), table .compact-action {
+  padding: 4px 6px !important;
+  font-size: 12px !important;
 }
 
 /* Responsive: keep table semantics and allow horizontal scroll on small screens */

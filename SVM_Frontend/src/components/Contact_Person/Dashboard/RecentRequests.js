@@ -124,7 +124,7 @@ const RecentRequests = () => {
                       </td>
                       <td className="px-3 py-2 text-center font-normal text-[12px]">
                         <span
-                          className={`px-1.5 py-0.5 rounded-full text-[8px] font-normal uppercase tracking-wider border shadow-sm inline-block ${getStatusColor(req?.status)}`}
+                          className={`svm-status-pill ${getStatusColor(req?.status)}`}
                         >
                           {req?.status || "Unknown"}
                         </span>
@@ -166,7 +166,7 @@ const RecentRequests = () => {
                           <Calendar size={10} className="text-primary/70" />
                           {req?.date}
                         </span>
-                        <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider border ${getStatusColor(req?.status)}`}>
+                        <span className={`svm-status-pill ${getStatusColor(req?.status)}`}>
                           {req?.status}
                         </span>
                       </div>

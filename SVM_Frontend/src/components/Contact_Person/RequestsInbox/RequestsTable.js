@@ -8,47 +8,39 @@ const StatusBadge = ({ status }) => {
   switch (s) {
     case "ADMIN APPROVED":
       return (
-        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="svm-status-pill svm-status-pill--success mx-auto">
           Admin Approved
         </div>
       );
     case "REJECTED":
       return (
-        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
-          Rejected
-        </div>
+        <div className="svm-status-pill svm-status-pill--danger mx-auto">Rejected</div>
       );
     case "ACCEPTED BY VISITOR":
       return (
-        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="svm-status-pill svm-status-pill--warning mx-auto">
           Accepted by Visitor
         </div>
       );
     case "ACCEPTED BY CONTACT PERSON":
     case "SENT TO ADMIN":
       return (
-        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
+        <div className="svm-status-pill svm-status-pill--orange mx-auto">
           Sent to Admin
         </div>
       );
     case "CHECKED IN":
       return (
-        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
-          Checked In
-        </div>
+        <div className="svm-status-pill svm-status-pill--info mx-auto">Checked In</div>
       );
     case "CHECKED OUT":
       return (
-        <div className="px-2 py-0.5 bg-gray-500/10 border border-gray-500/20 text-gray-400 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
-          Checked Out
-        </div>
+        <div className="svm-status-pill svm-status-pill--muted mx-auto">Checked Out</div>
       );
     case "SENT TO VISITOR":
     default:
       return (
-        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
-          Sent to Visitor
-        </div>
+        <div className="svm-status-pill svm-status-pill--info mx-auto">Sent to Visitor</div>
       );
   }
 };

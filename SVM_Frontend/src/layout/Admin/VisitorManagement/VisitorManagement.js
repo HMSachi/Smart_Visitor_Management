@@ -19,7 +19,6 @@ import Header from "../../../components/Admin/Layout/Header";
 import {
   Search,
   RefreshCw,
-  CheckCircle2,
   AlertCircle,
 } from "lucide-react";
 
@@ -27,15 +26,11 @@ const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
   if (s === "ACTIVE" || s === "A") {
     return (
-      <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
-        <CheckCircle2 size={10} className="mr-1" /> Active
-      </div>
+      <div className="svm-status-pill svm-status-pill--success mx-auto">Active</div>
     );
   }
   return (
-    <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max mx-auto shadow-sm">
-      <AlertCircle size={10} className="mr-1" /> Inactive
-    </div>
+    <div className="svm-status-pill svm-status-pill--danger mx-auto">Inactive</div>
   );
 };
 

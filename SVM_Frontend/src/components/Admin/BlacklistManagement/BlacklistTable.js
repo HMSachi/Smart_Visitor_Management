@@ -269,7 +269,11 @@ const BlacklistTable = () => {
                                 : "—"}
                             </p>
                             <span
-                              className={`text-[9px] font-bold tracking-widest uppercase px-2.5 py-0.5 rounded-full ${item.VB_Status === "I" ? "bg-gray-500/20 border border-gray-500/30 text-gray-400" : "bg-green-500/10 border border-green-500/20 text-green-400"}`}
+                              className={`svm-status-pill ${
+                                item.VB_Status === "I"
+                                  ? "bg-gray-500/10 border-gray-500/20 text-gray-400"
+                                  : "svm-status-pill--success"
+                              }`}
                             >
                               {item.VB_Status === "I" ? "Inactive" : "Active"}
                             </span>

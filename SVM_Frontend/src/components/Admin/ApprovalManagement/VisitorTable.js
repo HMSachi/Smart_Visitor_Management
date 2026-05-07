@@ -11,28 +11,25 @@ import {
   QrCode,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useThemeMode } from "../../../theme/ThemeModeContext";
 
 const StatusBadge = ({ status }) => {
-  const styles = {
-    "Admin Approved": "border-green-500/30 text-green-600 bg-green-500/10",
-    "Accepted by Admin": "border-green-500/30 text-green-600 bg-green-500/10",
-    "Accepted by Visitor":
-      "border-yellow-500/30 text-yellow-600 bg-yellow-500/10",
-    "Sent to Visitor": "border-blue-500/30 text-blue-600 bg-blue-500/10",
-    "Accepted by Contact Person":
-      "border-orange-500/30 text-orange-600 bg-orange-500/10",
-    "Sent to Admin": "border-orange-500/30 text-orange-600 bg-orange-500/10",
-    Accepted: "border-purple-500/30 text-purple-600 bg-purple-500/10",
-    Rejected: "border-primary/30 text-primary bg-primary/10",
-    "Checked In": "border-blue-500/30 text-blue-600 bg-blue-500/10",
-    "Checked Out": "border-white/10 text-gray-400 bg-white/5",
-    Pending: "border-white/20 text-gray-400 bg-white/5",
+  const variants = {
+    "Admin Approved": "svm-status-pill--success",
+    "Accepted by Admin": "svm-status-pill--success",
+    "Accepted by Visitor": "svm-status-pill--warning",
+    "Sent to Visitor": "svm-status-pill--info",
+    "Accepted by Contact Person": "svm-status-pill--orange",
+    "Sent to Admin": "svm-status-pill--orange",
+    Accepted: "svm-status-pill--purple",
+    Rejected: "svm-status-pill--danger",
+    "Checked In": "svm-status-pill--info",
+    "Checked Out": "svm-status-pill--muted",
+    Pending: "svm-status-pill--muted",
   };
 
   return (
     <div
-      className={`px-2 py-1 rounded-lg text-[9px] font-bold tracking-[0.05em] uppercase border flex items-center justify-center w-[200px] mx-auto shadow-sm ${styles[status] || styles.Pending}`}
+      className={`svm-status-pill w-[200px] mx-auto ${variants[status] || variants.Pending}`}
     >
       {status}
     </div>
@@ -45,8 +42,6 @@ const VisitorTable = ({
   onAction,
   gatePasses = [],
 }) => {
-  const { themeMode } = useThemeMode();
-
   const desktopTableViewportStyle = {
     height: "calc(100vh - 8rem)",
     minHeight: "600px",
@@ -130,30 +125,34 @@ const VisitorTable = ({
   ];
 
   return (
-    <div className="space-y-3 animate-fade-in-slow">
-      <div className="mb-4 flex flex-col xl:flex-row xl:items-center justify-between gap-3 relative z-10">
-        <div className="overflow-x-auto no-scrollbar w-full xl:w-auto pb-1">
-          <div className={`inline-flex p-1 rounded-full border transition-all gap-0.5 ${themeMode === "light" ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}>
+    <div className="space-y-2 sm:space-y-3 md:space-y-4 animate-fade-in-slow">
+      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+
+        <div className="px-3 sm:px-4 md:px-5 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
+          <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto relative max-w-full overflow-x-auto no-scrollbar">
             {statusOptions.map((btn) => (
               <button
                 key={btn.id}
                 onClick={() => setStatusFilter(btn.id)}
-                className={`relative px-4 py-2 rounded-full text-[11px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${statusFilter === btn.id
-                  ? "bg-primary text-white shadow-lg shadow-primary/20"
-                  : themeMode === "light"
-                    ? "text-gray-500 hover:text-primary"
-                    : "text-white/40 hover:text-white"
-                  }`}
+                className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[11px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
               >
-                {btn.label}
+                {statusFilter === btn.id && (
+                  <motion.div
+                    layoutId="activeFilter"
+                    className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <span className="relative z-10">{btn.label}</span>
               </button>
             ))}
           </div>
-        </div>
 
-        <div className="inline-flex items-center gap-2 rounded-[8px] border border-white/8 bg-black/20 h-9 px-4 text-[11px] font-medium tracking-wide text-white/80 shrink-0">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
-          {filteredVisitors.length} records
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-black/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-white/80">
+            <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
+            {filteredVisitors.length} records
+          </div>
         </div>
       </div>
 
@@ -167,23 +166,23 @@ const VisitorTable = ({
           >
             <table className="w-full min-w-[920px] text-left border-collapse">
               <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)] font-normal text-[12px]">
-                <tr className={`border-b ${themeMode === "light" ? "border-gray-100 bg-gray-50" : "border-white/5 bg-[var(--color-bg-paper)]"}`}>
-                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-left">
+                <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
                     VISITOR NAME
                   </th>
-                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-center min-w-[180px]">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center min-w-[180px]">
                     VISIT DATE
                   </th>
-                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-left min-w-[300px]">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left min-w-[300px]">
                     VISITING PLACE
                   </th>
-                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
                     STATUS
                   </th>
-                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-center w-28">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-28">
                     GATE PASS
                   </th>
-                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-primary text-right pr-6 w-32">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-primary text-right md:pr-4 lg:pr-6 w-32">
                     ACTIONS
                   </th>
                 </tr>
@@ -198,7 +197,7 @@ const VisitorTable = ({
                       key={visitor.batchId || visitor.id || index}
                     >
                       <tr className={`group transition-colors duration-200 ${isExpanded ? "bg-primary/[0.03]" : "hover:bg-white/[0.02]"}`}>
-                        <td className="px-6 py-1 align-middle font-normal text-[12px]">
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 align-middle font-normal text-[12px]">
                           <div className="flex items-center gap-2">
                             {memberList.length > 0 && (
                               <button
@@ -208,18 +207,18 @@ const VisitorTable = ({
                                 <ChevronDown size={10} className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
                               </button>
                             )}
-                            <p className={`${themeMode === "light" ? "text-gray-900" : "text-white"} capitalize text-[12px] font-normal tracking-wide mb-0`}>
+                            <p className="text-white capitalize text-[12px] font-normal tracking-wide mb-0">
                               {visitor.name}
                             </p>
                           </div>
                         </td>
-                        <td className="px-6 py-1 text-center align-middle font-normal text-[12px]">
-                          <span className={`${themeMode === "light" ? "text-gray-600" : "text-white/90"} text-[12px] font-normal tracking-wide`}>
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
+                          <span className="text-white/90 text-[12px] font-normal tracking-wide">
                             {visitor.date?.split(" ")[0]}
                           </span>
                         </td>
-                        <td className="px-6 py-1 align-middle font-normal text-[12px]">
-                          <div className={`flex items-center gap-1.5 ${themeMode === "light" ? "text-gray-500" : "text-white/60"} text-[12px] font-normal tracking-wide max-w-[350px]`}>
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 align-middle font-normal text-[12px]">
+                          <div className="flex items-center gap-1.5 text-white/60 text-[12px] font-normal tracking-wide max-w-[350px]">
                             <MapPin size={11} className="text-primary/50 shrink-0" />
                             <span className="truncate">
                               {Array.isArray(visitor.areas)
@@ -228,7 +227,7 @@ const VisitorTable = ({
                             </span>
                           </div>
                         </td>
-                        <td className="px-6 py-1 text-center align-middle font-normal text-[12px]">
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
                           <StatusBadge status={visitor.status} />
                         </td>
                         <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">

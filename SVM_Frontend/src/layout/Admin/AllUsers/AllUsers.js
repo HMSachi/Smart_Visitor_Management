@@ -31,7 +31,6 @@ import {
   Mail,
   Calendar,
   Hash,
-  CheckCircle2,
   AlertCircle,
   Search,
   Plus,
@@ -51,17 +50,9 @@ import {
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
   if (s === "ACTIVE" || s === "A") {
-    return (
-      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[9px] font-bold tracking-[0.05em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
-        <CheckCircle2 size={11} /> Active
-      </div>
-    );
+    return <div className="svm-status-pill svm-status-pill--success">Active</div>;
   }
-  return (
-    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[9px] font-bold tracking-[0.05em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
-      <AlertCircle size={11} /> Inactive
-    </div>
-  );
+  return <div className="svm-status-pill svm-status-pill--danger">Inactive</div>;
 };
 
 const AllUsers = () => {
@@ -704,7 +695,7 @@ const AllUsers = () => {
                                           }
                                           disabled={loading}
                                           title="Click to toggle status"
-                                          className={`px-2 py-0.5 text-[8px] uppercase tracking-[0.05em] font-bold transition-all cursor-pointer rounded-[5px] border ${isActive ? "bg-green-500/10 text-green-600 border-green-500/20 hover:bg-green-500 hover:text-white" : "bg-red-500/10 text-red-600 border-red-500/20 hover:bg-red-500 hover:text-white"}`}
+                                          className={`svm-status-pill transition-colors cursor-pointer ${isActive ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"}`}
                                         >
                                           {isActive ? "ACTIVE" : "INACTIVE"}
                                         </button>
