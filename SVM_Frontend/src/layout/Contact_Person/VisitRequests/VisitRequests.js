@@ -19,6 +19,7 @@ import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import ContactPersonService from "../../../services/ContactPersonService";
+import VisitorService from "../../../services/VisitorService";
 import Header from "../../../components/Contact_Person/Layout/Header";
 
 import { useThemeMode } from "../../../theme/ThemeModeContext";
@@ -51,6 +52,7 @@ import {
   QrCode,
   Download,
   ShieldCheck,
+  Phone,
 } from "lucide-react";
 import { setSelectedRequest } from "../../../reducers/contactPersonSlice";
 import { QRCodeSVG } from "qrcode.react";
@@ -170,6 +172,7 @@ const VisitRequests = () => {
   const [editVehicles, setEditVehicles] = useState([]);
   const [editGroupMembers, setEditGroupMembers] = useState([]);
   const [editItems, setEditItems] = useState([]);
+  const [editJointItems, setEditJointItems] = useState([]);
   const [editSaving, setEditSaving] = useState(false);
   const [editLoadingData, setEditLoadingData] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
@@ -187,6 +190,8 @@ const VisitRequests = () => {
   const [newVehicleSavingIdx, setNewVehicleSavingIdx] = useState(null);
   const [newMemberSavingIdx, setNewMemberSavingIdx] = useState(null);
   const [newItemSavingIdx, setNewItemSavingIdx] = useState(null);
+  const [subItemSavingIdx, setSubItemSavingIdx] = useState(null);
+  const [newSubItemSavingIdx, setNewSubItemSavingIdx] = useState(null);
   const [rowSuccess, setRowSuccess] = useState({});
   const [editError, setEditError] = useState("");
   const [dirtyRows, setDirtyRows] = useState(new Set());
@@ -474,6 +479,16 @@ const VisitRequests = () => {
       it.VIC_Designation !== it._original.VIC_Designation
     );
   };
+  const isSubItemDirty = (it) => {
+    if (it._isNew) return true;
+    if (!it._original) return false;
+    return (
+      it.subVisitorName !== it._original.subVisitorName ||
+      it.VIC_Item_Name !== it._original.VIC_Item_Name ||
+      it.VIC_Quantity !== it._original.VIC_Quantity ||
+      it.VIC_Designation !== it._original.VIC_Designation
+    );
+  };
 
   const handleOpenEdit = async (req) => {
     setEditingRequest(req);
@@ -488,13 +503,15 @@ const VisitRequests = () => {
     setEditVehicles([]);
     setEditGroupMembers([]);
     setEditItems([]);
+    setEditJointItems([]);
     setEditLoadingData(true);
     try {
       const reqId = String(req.VVR_Request_id);
-      const [vRes, gRes, iRes] = await Promise.all([
+      const [vRes, gRes, iRes, jRes] = await Promise.all([
         VehicleService.GetAllVehicles(),
         VisitGroupService.GetAllVisitGroup(),
         ItemCarriedService.GetAllItemsCarried(),
+        VisitorService.GetVisitorJoint(req.VVR_Request_id).catch(() => null),
       ]);
       const allV = vRes?.data?.ResultSet || vRes?.data || [];
       setEditVehicles(
@@ -542,6 +559,22 @@ const VisitRequests = () => {
             },
           })),
       );
+      const rawJoint = jRes?.data?.ResultSet || jRes?.data || [];
+      setEditJointItems(Array.isArray(rawJoint) ? rawJoint.map(i => ({
+        ...i,
+        subVisitorName: i.Group_Members || "",
+        subVisitorNic: i.VVG_NIC_Passport_Number || i.NIC || "",
+        subVisitorPhone: i.VVG_Designation || i.Contact || "",
+        VIC_Item_Name: i.VIC_Item_Name || i.itemName || "",
+        VIC_Quantity: String(i.VIC_Quantity || i.quantity || "1"),
+        VIC_Designation: i.VIC_Designation || i.description || "",
+        _original: {
+          subVisitorName: i.Group_Members || "",
+          VIC_Item_Name: i.VIC_Item_Name || i.itemName || "",
+          VIC_Quantity: String(i.VIC_Quantity || i.quantity || "1"),
+          VIC_Designation: i.VIC_Designation || i.description || "",
+        }
+      })) : []);
     } catch (e) {
       console.error(e);
     } finally {
@@ -555,6 +588,7 @@ const VisitRequests = () => {
     setRowSuccess({});
     setDirtyRows(new Set());
     setWarnDirty(false);
+    setEditJointItems([]);
   };
   const handleSaveCore = async () => {
     if (!editingRequest) return;
@@ -575,6 +609,9 @@ const VisitRequests = () => {
     });
     editItems.forEach((it, i) => {
       if (isItemDirty(it)) unsaved.push(`item-${i}`);
+    });
+    editJointItems.forEach((it, i) => {
+      if (isSubItemDirty(it)) unsaved.push(`subItem-${i}`);
     });
     if (unsaved.length > 0) {
       setDirtyRows(new Set(unsaved));
@@ -684,7 +721,7 @@ const VisitRequests = () => {
   const handleUpdateMember = async (idx) => {
     const m = editGroupMembers[idx];
     if (!m?.VVG_id || memberSavingIdx !== null) return;
-    
+
     // Check blacklist before updating
     const isBlacklisted = (blacklists || []).some(
       (b) =>
@@ -734,7 +771,7 @@ const VisitRequests = () => {
       setEditError("Name and ID required.");
       return;
     }
-    
+
     // Check blacklist before adding
     const isBlacklisted = (blacklists || []).some(
       (b) =>
@@ -856,11 +893,77 @@ const VisitRequests = () => {
     }
   };
   const handleRemoveNewRow = (section, idx) => {
-    if (section === "vehicle")
-      setEditVehicles((a) => a.filter((_, i) => i !== idx));
-    if (section === "member")
-      setEditGroupMembers((a) => a.filter((_, i) => i !== idx));
+    if (section === "vehicle") setEditVehicles((a) => a.filter((_, i) => i !== idx));
+    if (section === "member") setEditGroupMembers((a) => a.filter((_, i) => i !== idx));
     if (section === "item") setEditItems((a) => a.filter((_, i) => i !== idx));
+    if (section === "subItem") setEditJointItems((a) => a.filter((_, i) => i !== idx));
+  };
+
+  const handleUpdateSubItem = async (idx) => {
+    const it = editJointItems[idx];
+    if (it._isNew || subItemSavingIdx !== null) return;
+    setSubItemSavingIdx(idx);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API Call
+      setEditJointItems((a) =>
+        a.map((x, i) =>
+          i === idx
+            ? {
+              ...x,
+              _original: {
+                subVisitorName: x.subVisitorName,
+                VIC_Item_Name: x.VIC_Item_Name,
+                VIC_Quantity: x.VIC_Quantity,
+                VIC_Designation: x.VIC_Designation,
+              },
+            }
+            : x,
+        ),
+      );
+      clearDirty(`subItem-${idx}`);
+      flashSuccess(`subItem-${idx}`);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSubItemSavingIdx(null);
+    }
+  };
+
+  const handleSubmitNewSubItem = async (idx) => {
+    const it = editJointItems[idx];
+    if (!it?._isNew || newSubItemSavingIdx !== null) return;
+    if (!it.subVisitorName || !it.VIC_Item_Name) {
+      setEditError("Sub-Visitor Name and Item Name are required.");
+      return;
+    }
+    setNewSubItemSavingIdx(idx);
+    setEditError("");
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API Call
+      setEditJointItems((a) =>
+        a.map((x, i) =>
+          i === idx
+            ? {
+              ...x,
+              _isNew: false,
+              _original: {
+                subVisitorName: x.subVisitorName,
+                VIC_Item_Name: x.VIC_Item_Name,
+                VIC_Quantity: x.VIC_Quantity,
+                VIC_Designation: x.VIC_Designation,
+              },
+            }
+            : x,
+        ),
+      );
+      clearDirty(`subItem-${idx}`);
+      flashSuccess(`subItem-${idx}`);
+    } catch (e) {
+      console.error(e);
+      setEditError("Failed to add sub-visitor item.");
+    } finally {
+      setNewSubItemSavingIdx(null);
+    }
   };
 
   const handleReview = (requestId) => {
@@ -1811,116 +1914,93 @@ const VisitRequests = () => {
                   margin: "0 auto",
                   padding: "32px 24px 80px",
                 }}
-                className="space-y-5"
+                className="space-y-2"
               >
-                {/* Request Summary */}
-                <div
-                  className="rounded-3xl p-5 md:p-6 space-y-4"
-                  style={{
-                    background: "var(--color-bg-paper)",
-                    border: "1px solid var(--color-border-soft)",
-                  }}
-                >
-                  <div className="flex items-center gap-2">
-                    <Hash size={14} className="text-primary" />
-                    <h3
-                      style={{
-                        color: "var(--color-text-primary)",
-                        fontSize: 11,
-                        margin: 0,
-                      }}
-                      className="font-bold uppercase tracking-[0.2em]"
-                    >
-                      Request Summary
-                    </h3>
-                    <span
-                      style={{
-                        color: "var(--color-text-dim)",
-                        fontSize: 10,
-                        marginLeft: "auto",
-                      }}
-                      className="font-semibold"
-                    >
-                      Use <strong>Save Changes</strong> above to persist
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 600,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.14em",
-                          color: "var(--color-text-dim)",
-                        }}
-                        className="flex items-center gap-2"
-                      >
-                        <Calendar size={11} className="text-primary" /> Visit
-                        Date
-                      </label>
-                      <input
-                        type="date"
-                        value={editForm.VVR_Visit_Date}
-                        onChange={(e) =>
-                          setEditForm((f) => ({
-                            ...f,
-                            VVR_Visit_Date: e.target.value,
-                          }))
-                        }
-                        className="mas-input"
-                      />
+                {/* ── Request Summary card (mirrors View "Visit Details" section) ── */}
+                <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                  <div className="p-4 md:p-5">
+                    {/* SplitSection header */}
+                    <div className="flex flex-col gap-2 mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-[3px] h-3.5 bg-primary rounded-full" />
+                        <div className="flex items-center gap-1.5">
+                          <Hash size={13} className="text-primary/70" />
+                          <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                            Request Summary
+                          </h3>
+                        </div>
+                        <span
+                          className={`ml-auto text-[10px] font-semibold ${isLight ? "text-gray-400" : "text-white/30"}`}
+                        >
+                          Use <strong>Save Changes</strong> above to persist
+                        </span>
+                      </div>
                     </div>
-                    <div className="space-y-1.5">
-                      <label
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 600,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.14em",
-                          color: "var(--color-text-dim)",
-                        }}
-                        className="flex items-center gap-2"
-                      >
-                        <MapPin size={11} className="text-primary" /> Places to
-                        Visit
-                      </label>
-                      <input
-                        type="text"
-                        value={editForm.VVR_Places_to_Visit}
-                        onChange={(e) =>
-                          setEditForm((f) => ({
-                            ...f,
-                            VVR_Places_to_Visit: e.target.value,
-                          }))
-                        }
-                        className="mas-input"
-                      />
-                    </div>
-                    <div className="md:col-span-2 space-y-1.5">
-                      <label
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 600,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.14em",
-                          color: "var(--color-text-dim)",
-                        }}
-                        className="flex items-center gap-2"
-                      >
-                        <Briefcase size={11} className="text-primary" /> Purpose
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={editForm.VVR_Purpose}
-                        onChange={(e) =>
-                          setEditForm((f) => ({
-                            ...f,
-                            VVR_Purpose: e.target.value,
-                          }))
-                        }
-                        className="mas-input resize-none"
-                      />
+                    {/* Fields grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Visit Date */}
+                      <div className="group/field flex flex-col gap-1">
+                        <div className="flex items-center gap-1.5 px-0.5">
+                          <Calendar size={11} className="text-primary/50" />
+                          <label className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}>
+                            Visit Date
+                          </label>
+                        </div>
+                        <input
+                          type="date"
+                          value={editForm.VVR_Visit_Date}
+                          onChange={(e) =>
+                            setEditForm((f) => ({
+                              ...f,
+                              VVR_Visit_Date: e.target.value,
+                            }))
+                          }
+                          className="mas-input"
+                          style={{ colorScheme: isLight ? "light" : "dark" }}
+                        />
+                      </div>
+                      {/* Places to Visit */}
+                      <div className="group/field flex flex-col gap-1">
+                        <div className="flex items-center gap-1.5 px-0.5">
+                          <MapPin size={11} className="text-primary/50" />
+                          <label className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}>
+                            Places to Visit
+                          </label>
+                        </div>
+                        <input
+                          type="text"
+                          value={editForm.VVR_Places_to_Visit}
+                          onChange={(e) =>
+                            setEditForm((f) => ({
+                              ...f,
+                              VVR_Places_to_Visit: e.target.value,
+                            }))
+                          }
+                          className="mas-input"
+                          placeholder="Enter the place or area name"
+                        />
+                      </div>
+                      {/* Purpose */}
+                      <div className="md:col-span-2 group/field flex flex-col gap-1">
+                        <div className="flex items-center gap-1.5 px-0.5">
+                          <Briefcase size={11} className="text-primary/50" />
+                          <label className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}>
+                            Purpose
+                          </label>
+                        </div>
+                        <textarea
+                          rows={3}
+                          value={editForm.VVR_Purpose}
+                          onChange={(e) =>
+                            setEditForm((f) => ({
+                              ...f,
+                              VVR_Purpose: e.target.value,
+                            }))
+                          }
+                          className="mas-input resize-none"
+                          placeholder="Tell us why the visitor is coming"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1945,767 +2025,857 @@ const VisitRequests = () => {
                   </div>
                 ) : (
                   <>
-                    {/* Vehicles */}
-                    <div
-                      className="rounded-3xl p-5 md:p-6 space-y-4"
-                      style={{
-                        background: "var(--color-bg-paper)",
-                        border: "1px solid var(--color-border-soft)",
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Car size={14} className="text-primary" />
-                        <h3
-                          style={{
-                            color: "var(--color-text-primary)",
-                            fontSize: 11,
-                            margin: 0,
-                          }}
-                          className="font-bold uppercase tracking-[0.2em]"
-                        >
-                          Vehicle Registry
-                        </h3>
-                        {editVehicles.filter((v) => !v._isNew).length > 0 && (
-                          <span
-                            style={{
-                              color: "var(--color-text-dim)",
-                              fontSize: 10,
-                              marginLeft: 4,
-                            }}
-                          >
-                            {editVehicles.filter((v) => !v._isNew).length}{" "}
-                            vehicle
-                            {editVehicles.filter((v) => !v._isNew).length > 1
-                              ? "s"
-                              : ""}
-                          </span>
-                        )}
-                        <button
-                          onClick={() =>
-                            setEditVehicles((a) => [
-                              ...a,
-                              {
-                                _isNew: true,
-                                VV_Vehicle_Number: "",
-                                VV_Vehicle_Type: "",
-                              },
-                            ])
-                          }
-                          className="btn-outline ml-auto whitespace-nowrap"
-                          style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
-                        >
-                          <Plus size={12} /> Add Vehicle
-                        </button>
-                      </div>
-                      {editVehicles.length === 0 && (
-                        <p
-                          style={{
-                            color: "var(--color-text-dim)",
-                            fontSize: 11,
-                          }}
-                          className="font-medium"
-                        >
-                          No vehicles. Click <strong>Add Vehicle</strong> to add
-                          one.
-                        </p>
-                      )}
-                      <div className="space-y-3">
-                        {editVehicles.map((v, idx) => (
-                          <div
-                            key={v.VV_Vehicle_id || idx}
-                            ref={(el) => {
-                              rowRefs.current[`vehicle-${idx}`] = el;
-                            }}
-                            className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
-                            style={(() => {
-                              const w =
-                                warnDirty && dirtyRows.has(`vehicle-${idx}`);
-                              if (w)
-                                return {
-                                  border: "2px solid rgba(239,68,68,0.7)",
-                                  background: "rgba(239,68,68,0.05)",
-                                  borderRadius: 16,
-                                };
-                              if (v._isNew)
-                                return {
-                                  border: "1.5px dashed rgba(251,191,36,0.5)",
-                                  background: "rgba(251,191,36,0.04)",
-                                };
-                              return {
-                                background: "var(--color-surface-1)",
-                                border: "1px solid var(--color-border-soft)",
-                              };
-                            })()}
-                          >
-                            <div className="space-y-1.5">
-                              <label
-                                style={{
-                                  fontSize: 10,
-                                  fontWeight: 600,
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.14em",
-                                  color: "var(--color-text-dim)",
-                                }}
-                              >
-                                Vehicle Number
-                              </label>
-                              <input
-                                type="text"
-                                value={v.VV_Vehicle_Number}
-                                onChange={(e) =>
-                                  setEditVehicles((a) =>
-                                    a.map((x, i) =>
-                                      i === idx
-                                        ? {
-                                          ...x,
-                                          VV_Vehicle_Number: e.target.value,
-                                        }
-                                        : x,
-                                    ),
-                                  )
-                                }
-                                className="mas-input"
-                                placeholder="e.g. ABC-1234"
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label
-                                style={{
-                                  fontSize: 10,
-                                  fontWeight: 600,
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.14em",
-                                  color: "var(--color-text-dim)",
-                                }}
-                              >
-                                Vehicle Type
-                                {!v._isNew && (
-                                  <span style={{ fontSize: 9, opacity: 0.6 }}>
-                                    {" "}
-                                    (read-only)
-                                  </span>
-                                )}
-                              </label>
-                              <input
-                                type="text"
-                                value={v.VV_Vehicle_Type}
-                                onChange={(e) =>
-                                  v._isNew &&
-                                  setEditVehicles((a) =>
-                                    a.map((x, i) =>
-                                      i === idx
-                                        ? {
-                                          ...x,
-                                          VV_Vehicle_Type: e.target.value,
-                                        }
-                                        : x,
-                                    ),
-                                  )
-                                }
-                                readOnly={!v._isNew}
-                                style={
-                                  !v._isNew
-                                    ? { opacity: 0.5, cursor: "not-allowed" }
-                                    : {}
-                                }
-                                className="mas-input"
-                                placeholder="e.g. Car"
-                              />
-                            </div>
-                            <div className="flex flex-col items-end gap-1.5">
-                              {rowSuccess[`vehicle-${idx}`] && (
-                                <span
-                                  className="flex items-center gap-1 font-semibold whitespace-nowrap"
-                                  style={{
-                                    color: "var(--color-success)",
-                                    fontSize: 11,
-                                  }}
-                                >
-                                  <CheckCircle2 size={12} /> Saved
+                    {/* ── Vehicle Registry card (mirrors View "Vehicle Registry" section) ── */}
+                    <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                      <div className="p-4 md:p-5 space-y-4">
+                        {/* SplitSection header */}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-[3px] h-3.5 bg-primary rounded-full" />
+                            <div className="flex items-center gap-1.5">
+                              <Car size={13} className="text-primary/70" />
+                              <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                                Vehicle Registry
+                              </h3>
+                              {editVehicles.filter((v) => !v._isNew).length > 0 && (
+                                <span className={`text-[10px] font-semibold ml-1 ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                                  {editVehicles.filter((v) => !v._isNew).length} vehicle
+                                  {editVehicles.filter((v) => !v._isNew).length > 1 ? "s" : ""}
                                 </span>
                               )}
-                              {v._isNew ? (
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() =>
-                                      handleRemoveNewRow("vehicle", idx)
-                                    }
-                                    className="btn-outline whitespace-nowrap"
+                            </div>
+                            <button
+                              onClick={() =>
+                                setEditVehicles((a) => [
+                                  ...a,
+                                  {
+                                    _isNew: true,
+                                    VV_Vehicle_Number: "",
+                                    VV_Vehicle_Type: "",
+                                  },
+                                ])
+                              }
+                              className="btn-outline ml-auto whitespace-nowrap"
+                              style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                            >
+                              <Plus size={12} /> Add Vehicle
+                            </button>
+                          </div>
+                        </div>
+                        {editVehicles.length === 0 && (
+                          <p className={`text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                            No vehicles. Click <strong>Add Vehicle</strong> to add one.
+                          </p>
+                        )}
+                        <div className="space-y-3">
+                          {editVehicles.map((v, idx) => (
+                            <div
+                              key={v.VV_Vehicle_id || idx}
+                              ref={(el) => {
+                                rowRefs.current[`vehicle-${idx}`] = el;
+                              }}
+                              className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
+                              style={(() => {
+                                const w =
+                                  warnDirty && dirtyRows.has(`vehicle-${idx}`);
+                                if (w)
+                                  return {
+                                    border: "2px solid rgba(239,68,68,0.7)",
+                                    background: "rgba(239,68,68,0.05)",
+                                    borderRadius: 16,
+                                  };
+                                if (v._isNew)
+                                  return {
+                                    border: "1.5px dashed rgba(251,191,36,0.5)",
+                                    background: "rgba(251,191,36,0.04)",
+                                  };
+                                return {
+                                  background: "var(--color-surface-1)",
+                                  border: "1px solid var(--color-border-soft)",
+                                };
+                              })()}
+                            >
+                              <div className="space-y-1.5">
+                                <label
+                                  style={{
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.14em",
+                                    color: "var(--color-text-dim)",
+                                  }}
+                                >
+                                  Vehicle Number
+                                </label>
+                                <input
+                                  type="text"
+                                  value={v.VV_Vehicle_Number}
+                                  onChange={(e) =>
+                                    setEditVehicles((a) =>
+                                      a.map((x, i) =>
+                                        i === idx
+                                          ? {
+                                            ...x,
+                                            VV_Vehicle_Number: e.target.value,
+                                          }
+                                          : x,
+                                      ),
+                                    )
+                                  }
+                                  className="mas-input"
+                                  placeholder="e.g. ABC-1234"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label
+                                  style={{
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.14em",
+                                    color: "var(--color-text-dim)",
+                                  }}
+                                >
+                                  Vehicle Type
+                                  {!v._isNew && (
+                                    <span style={{ fontSize: 9, opacity: 0.6 }}>
+                                      {" "}
+                                      (read-only)
+                                    </span>
+                                  )}
+                                </label>
+                                <input
+                                  type="text"
+                                  value={v.VV_Vehicle_Type}
+                                  onChange={(e) =>
+                                    v._isNew &&
+                                    setEditVehicles((a) =>
+                                      a.map((x, i) =>
+                                        i === idx
+                                          ? {
+                                            ...x,
+                                            VV_Vehicle_Type: e.target.value,
+                                          }
+                                          : x,
+                                      ),
+                                    )
+                                  }
+                                  readOnly={!v._isNew}
+                                  style={
+                                    !v._isNew
+                                      ? { opacity: 0.5, cursor: "not-allowed" }
+                                      : {}
+                                  }
+                                  className="mas-input"
+                                  placeholder="e.g. Car"
+                                />
+                              </div>
+                              <div className="flex flex-col items-end gap-1.5">
+                                {rowSuccess[`vehicle-${idx}`] && (
+                                  <span
+                                    className="flex items-center gap-1 font-semibold whitespace-nowrap"
                                     style={{
-                                      padding: "9px 14px",
+                                      color: "var(--color-success)",
                                       fontSize: 11,
                                     }}
                                   >
-                                    <X size={12} />
-                                  </button>
+                                    <CheckCircle2 size={12} /> Saved
+                                  </span>
+                                )}
+                                {v._isNew ? (
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() =>
+                                        handleRemoveNewRow("vehicle", idx)
+                                      }
+                                      className="btn-outline whitespace-nowrap"
+                                      style={{
+                                        padding: "9px 14px",
+                                        fontSize: 11,
+                                      }}
+                                    >
+                                      <X size={12} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleAddVehicle(idx)}
+                                      disabled={newVehicleSavingIdx !== null}
+                                      className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                      style={{
+                                        padding: "9px 18px",
+                                        fontSize: 12,
+                                        background: "var(--color-success)",
+                                      }}
+                                    >
+                                      {newVehicleSavingIdx === idx ? (
+                                        <>
+                                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                          Submitting…
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Plus size={12} /> Submit
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                ) : (
                                   <button
-                                    onClick={() => handleAddVehicle(idx)}
-                                    disabled={newVehicleSavingIdx !== null}
+                                    onClick={() => handleUpdateVehicle(idx)}
+                                    disabled={vehicleSavingIdx !== null}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                    style={{
-                                      padding: "9px 18px",
-                                      fontSize: 12,
-                                      background: "var(--color-success)",
-                                    }}
+                                    style={{ padding: "9px 18px", fontSize: 12 }}
                                   >
-                                    {newVehicleSavingIdx === idx ? (
+                                    {vehicleSavingIdx === idx ? (
                                       <>
                                         <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
-                                        Submitting…
+                                        Updating…
                                       </>
                                     ) : (
                                       <>
-                                        <Plus size={12} /> Submit
+                                        <Save size={12} /> Update
                                       </>
                                     )}
                                   </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => handleUpdateVehicle(idx)}
-                                  disabled={vehicleSavingIdx !== null}
-                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                  style={{ padding: "9px 18px", fontSize: 12 }}
-                                >
-                                  {vehicleSavingIdx === idx ? (
-                                    <>
-                                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
-                                      Updating…
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Save size={12} /> Update
-                                    </>
-                                  )}
-                                </button>
-                              )}
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    {/* People */}
-                    <div
-                      className="rounded-3xl p-5 md:p-6 space-y-4"
-                      style={{
-                        background: "var(--color-bg-paper)",
-                        border: "1px solid var(--color-border-soft)",
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Users size={14} className="text-primary" />
-                        <h3
-                          style={{
-                            color: "var(--color-text-primary)",
-                            fontSize: 11,
-                            margin: 0,
-                          }}
-                          className="font-bold uppercase tracking-[0.2em]"
-                        >
-                          People Visiting
-                        </h3>
-                        {editGroupMembers.filter((m) => !m._isNew).length >
-                          0 && (
-                            <span
-                              style={{
-                                color: "var(--color-text-dim)",
-                                fontSize: 10,
-                                marginLeft: 4,
-                              }}
+
+                    {/* ── Visiting People card (mirrors View "Visiting People" section) ── */}
+                    <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                      <div className="p-4 md:p-5 space-y-4">
+                        {/* SplitSection header */}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-[3px] h-3.5 bg-primary rounded-full" />
+                            <div className="flex items-center gap-1.5">
+                              <Users size={13} className="text-primary/70" />
+                              <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                                People Visiting
+                              </h3>
+                              {editGroupMembers.filter((m) => !m._isNew).length > 0 && (
+                                <span className={`text-[10px] font-semibold ml-1 ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                                  {editGroupMembers.filter((m) => !m._isNew).length} visitor
+                                  {editGroupMembers.filter((m) => !m._isNew).length > 1 ? "s" : ""}
+                                </span>
+                              )}
+                            </div>
+                            <button
+                              onClick={() =>
+                                setEditGroupMembers((a) => [
+                                  ...a,
+                                  {
+                                    _isNew: true,
+                                    VVG_Visitor_Name: "",
+                                    VVG_NIC_Passport_Number: "",
+                                    VVG_Designation: "",
+                                    VVR_Request_id: editingRequest?.VVR_Request_id,
+                                  },
+                                ])
+                              }
+                              className="btn-outline ml-auto whitespace-nowrap"
+                              style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
                             >
-                              {editGroupMembers.filter((m) => !m._isNew).length}{" "}
-                              visitor
-                              {editGroupMembers.filter((m) => !m._isNew).length >
-                                1
-                                ? "s"
-                                : ""}
-                            </span>
-                          )}
-                        <button
-                          onClick={() =>
-                            setEditGroupMembers((a) => [
-                              ...a,
-                              {
-                                _isNew: true,
-                                VVG_Visitor_Name: "",
-                                VVG_NIC_Passport_Number: "",
-                                VVG_Designation: "",
-                                VVR_Request_id: editingRequest?.VVR_Request_id,
-                              },
-                            ])
-                          }
-                          className="btn-outline ml-auto whitespace-nowrap"
-                          style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
-                        >
-                          <Plus size={12} /> Add Visitor
-                        </button>
-                      </div>
-                      {editGroupMembers.length === 0 && (
-                        <p
-                          style={{
-                            color: "var(--color-text-dim)",
-                            fontSize: 11,
-                          }}
-                          className="font-medium"
-                        >
-                          No visitors. Click <strong>Add Visitor</strong> to add
-                          one.
-                        </p>
-                      )}
-                      <div className="space-y-3">
-                        {editGroupMembers.map((m, idx) => (
-                          <div
-                            key={m.VVG_id || idx}
-                            ref={(el) => {
-                              rowRefs.current[`member-${idx}`] = el;
-                            }}
-                            className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
-                            style={(() => {
-                              const w =
-                                warnDirty && dirtyRows.has(`member-${idx}`);
-                              if (w)
+                              <Plus size={12} /> Add Visitor
+                            </button>
+                          </div>
+                        </div>
+                        {editGroupMembers.length === 0 && (
+                          <p className={`text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                            No visitors. Click <strong>Add Visitor</strong> to add one.
+                          </p>
+                        )}
+                        <div className="space-y-3">
+                          {editGroupMembers.map((m, idx) => (
+                            <div
+                              key={m.VVG_id || idx}
+                              ref={(el) => {
+                                rowRefs.current[`member-${idx}`] = el;
+                              }}
+                              className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
+                              style={(() => {
+                                const w =
+                                  warnDirty && dirtyRows.has(`member-${idx}`);
+                                if (w)
+                                  return {
+                                    border: "2px solid rgba(239,68,68,0.7)",
+                                    background: "rgba(239,68,68,0.05)",
+                                    borderRadius: 16,
+                                  };
+                                if (m._isNew)
+                                  return {
+                                    border: "1.5px dashed rgba(251,191,36,0.5)",
+                                    background: "rgba(251,191,36,0.04)",
+                                  };
                                 return {
-                                  border: "2px solid rgba(239,68,68,0.7)",
-                                  background: "rgba(239,68,68,0.05)",
-                                  borderRadius: 16,
+                                  background: "var(--color-surface-1)",
+                                  border: "1px solid var(--color-border-soft)",
                                 };
-                              if (m._isNew)
-                                return {
-                                  border: "1.5px dashed rgba(251,191,36,0.5)",
-                                  background: "rgba(251,191,36,0.04)",
-                                };
-                              return {
-                                background: "var(--color-surface-1)",
-                                border: "1px solid var(--color-border-soft)",
-                              };
-                            })()}
-                          >
-                            <div className="space-y-1.5">
-                              <label
-                                style={{
-                                  fontSize: 10,
-                                  fontWeight: 600,
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.14em",
-                                  color: "var(--color-text-dim)",
-                                }}
-                              >
-                                Full Name
-                              </label>
-                              <input
-                                type="text"
-                                value={m.VVG_Visitor_Name}
-                                onChange={(e) =>
-                                  setEditGroupMembers((a) =>
-                                    a.map((x, i) =>
-                                      i === idx
-                                        ? {
-                                          ...x,
-                                          VVG_Visitor_Name: e.target.value,
-                                        }
-                                        : x,
-                                    ),
-                                  )
-                                }
-                                className="mas-input"
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label
-                                style={{
-                                  fontSize: 10,
-                                  fontWeight: 600,
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.14em",
-                                  color: "var(--color-text-dim)",
-                                }}
-                              >
-                                Designation / Phone
-                              </label>
-                              <input
-                                type="text"
-                                value={m.VVG_Designation}
-                                onChange={(e) =>
-                                  setEditGroupMembers((a) =>
-                                    a.map((x, i) =>
-                                      i === idx
-                                        ? {
-                                          ...x,
-                                          VVG_Designation: e.target.value,
-                                        }
-                                        : x,
-                                    ),
-                                  )
-                                }
-                                className="mas-input"
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label
-                                style={{
-                                  fontSize: 10,
-                                  fontWeight: 600,
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.14em",
-                                  color: "var(--color-text-dim)",
-                                }}
-                              >
-                                ID / Passport
-                                {!m._isNew && (
-                                  <span style={{ opacity: 0.6, fontSize: 9 }}>
-                                    {" "}
-                                    (read-only)
-                                  </span>
-                                )}
-                              </label>
-                              <input
-                                type="text"
-                                value={m.VVG_NIC_Passport_Number}
-                                maxLength={12}
-                                onChange={(e) => {
-                                  if (m._isNew) {
-                                    const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 12);
+                              })()}
+                            >
+                              <div className="space-y-1.5">
+                                <label
+                                  style={{
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.14em",
+                                    color: "var(--color-text-dim)",
+                                  }}
+                                >
+                                  Full Name
+                                </label>
+                                <input
+                                  type="text"
+                                  value={m.VVG_Visitor_Name}
+                                  onChange={(e) =>
                                     setEditGroupMembers((a) =>
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
                                             ...x,
-                                            VVG_NIC_Passport_Number: val,
+                                            VVG_Visitor_Name: e.target.value,
                                           }
                                           : x,
                                       ),
-                                    );
+                                    )
                                   }
-                                }}
-                                readOnly={!m._isNew}
-                                style={
-                                  !m._isNew
-                                    ? { opacity: 0.5, cursor: "not-allowed" }
-                                    : {}
-                                }
-                                className="mas-input"
-                              />
-                            </div>
-                            <div className="flex flex-col items-end gap-1.5">
-                              {rowSuccess[`member-${idx}`] && (
-                                <span
-                                  className="flex items-center gap-1 font-semibold whitespace-nowrap"
+                                  className="mas-input"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label
                                   style={{
-                                    color: "var(--color-success)",
-                                    fontSize: 11,
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.14em",
+                                    color: "var(--color-text-dim)",
                                   }}
                                 >
-                                  <CheckCircle2 size={12} /> Saved
-                                </span>
-                              )}
-                              {m._isNew ? (
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() =>
-                                      handleRemoveNewRow("member", idx)
+                                  Designation / Phone
+                                </label>
+                                <input
+                                  type="text"
+                                  value={m.VVG_Designation}
+                                  onChange={(e) =>
+                                    setEditGroupMembers((a) =>
+                                      a.map((x, i) =>
+                                        i === idx
+                                          ? {
+                                            ...x,
+                                            VVG_Designation: e.target.value,
+                                          }
+                                          : x,
+                                      ),
+                                    )
+                                  }
+                                  className="mas-input"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label
+                                  style={{
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.14em",
+                                    color: "var(--color-text-dim)",
+                                  }}
+                                >
+                                  ID / Passport
+                                  {!m._isNew && (
+                                    <span style={{ opacity: 0.6, fontSize: 9 }}>
+                                      {" "}
+                                      (read-only)
+                                    </span>
+                                  )}
+                                </label>
+                                <input
+                                  type="text"
+                                  value={m.VVG_NIC_Passport_Number}
+                                  maxLength={12}
+                                  onChange={(e) => {
+                                    if (m._isNew) {
+                                      const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 12);
+                                      setEditGroupMembers((a) =>
+                                        a.map((x, i) =>
+                                          i === idx
+                                            ? {
+                                              ...x,
+                                              VVG_NIC_Passport_Number: val,
+                                            }
+                                            : x,
+                                        ),
+                                      );
                                     }
-                                    className="btn-outline whitespace-nowrap"
+                                  }}
+                                  readOnly={!m._isNew}
+                                  style={
+                                    !m._isNew
+                                      ? { opacity: 0.5, cursor: "not-allowed" }
+                                      : {}
+                                  }
+                                  className="mas-input"
+                                />
+                              </div>
+                              <div className="flex flex-col items-end gap-1.5">
+                                {rowSuccess[`member-${idx}`] && (
+                                  <span
+                                    className="flex items-center gap-1 font-semibold whitespace-nowrap"
                                     style={{
-                                      padding: "9px 14px",
+                                      color: "var(--color-success)",
                                       fontSize: 11,
                                     }}
                                   >
-                                    <X size={12} />
-                                  </button>
+                                    <CheckCircle2 size={12} /> Saved
+                                  </span>
+                                )}
+                                {m._isNew ? (
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() =>
+                                        handleRemoveNewRow("member", idx)
+                                      }
+                                      className="btn-outline whitespace-nowrap"
+                                      style={{
+                                        padding: "9px 14px",
+                                        fontSize: 11,
+                                      }}
+                                    >
+                                      <X size={12} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleSubmitNewMember(idx)}
+                                      disabled={newMemberSavingIdx !== null}
+                                      className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                      style={{
+                                        padding: "9px 18px",
+                                        fontSize: 12,
+                                        background: "var(--color-success)",
+                                      }}
+                                    >
+                                      {newMemberSavingIdx === idx ? (
+                                        <>
+                                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                          Submitting…
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Plus size={12} /> Submit
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                ) : (
                                   <button
-                                    onClick={() => handleSubmitNewMember(idx)}
-                                    disabled={newMemberSavingIdx !== null}
+                                    onClick={() => handleUpdateMember(idx)}
+                                    disabled={memberSavingIdx !== null}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                    style={{
-                                      padding: "9px 18px",
-                                      fontSize: 12,
-                                      background: "var(--color-success)",
-                                    }}
+                                    style={{ padding: "9px 18px", fontSize: 12 }}
                                   >
-                                    {newMemberSavingIdx === idx ? (
+                                    {memberSavingIdx === idx ? (
                                       <>
                                         <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
-                                        Submitting…
+                                        Updating…
                                       </>
                                     ) : (
                                       <>
-                                        <Plus size={12} /> Submit
+                                        <Save size={12} /> Update
                                       </>
                                     )}
                                   </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => handleUpdateMember(idx)}
-                                  disabled={memberSavingIdx !== null}
-                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                  style={{ padding: "9px 18px", fontSize: 12 }}
-                                >
-                                  {memberSavingIdx === idx ? (
-                                    <>
-                                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
-                                      Updating…
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Save size={12} /> Update
-                                    </>
-                                  )}
-                                </button>
-                              )}
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    {/* Items */}
-                    <div
-                      className="rounded-3xl p-5 md:p-6 space-y-4"
-                      style={{
-                        background: "var(--color-bg-paper)",
-                        border: "1px solid var(--color-border-soft)",
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Package size={14} className="text-primary" />
-                        <h3
-                          style={{
-                            color: "var(--color-text-primary)",
-                            fontSize: 11,
-                            margin: 0,
-                          }}
-                          className="font-bold uppercase tracking-[0.2em]"
-                        >
-                          Items to Bring
-                        </h3>
-                        {editItems.filter((it) => !it._isNew).length > 0 && (
-                          <span
-                            style={{
-                              color: "var(--color-text-dim)",
-                              fontSize: 10,
-                              marginLeft: 4,
-                            }}
-                          >
-                            {editItems.filter((it) => !it._isNew).length} item
-                            {editItems.filter((it) => !it._isNew).length > 1
-                              ? "s"
-                              : ""}
-                          </span>
-                        )}
-                        <button
-                          onClick={() =>
-                            setEditItems((a) => [
-                              ...a,
-                              {
-                                _isNew: true,
-                                VIC_Item_Name: "",
-                                VIC_Quantity: "",
-                                VIC_Designation: "",
-                              },
-                            ])
-                          }
-                          className="btn-outline ml-auto whitespace-nowrap"
-                          style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
-                        >
-                          <Plus size={12} /> Add Item
-                        </button>
-                      </div>
-                      {editItems.length === 0 && (
-                        <p
-                          style={{
-                            color: "var(--color-text-dim)",
-                            fontSize: 11,
-                          }}
-                          className="font-medium"
-                        >
-                          No items. Click <strong>Add Item</strong> to add one.
-                        </p>
-                      )}
-                      <div className="space-y-3">
-                        {editItems.map((it, idx) => (
-                          <div
-                            key={it.VIC_Item_id || idx}
-                            ref={(el) => {
-                              rowRefs.current[`item-${idx}`] = el;
-                            }}
-                            className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
-                            style={(() => {
-                              const w =
-                                warnDirty && dirtyRows.has(`item-${idx}`);
-                              if (w)
-                                return {
-                                  border: "2px solid rgba(239,68,68,0.7)",
-                                  background: "rgba(239,68,68,0.05)",
-                                  borderRadius: 16,
-                                };
-                              if (it._isNew)
-                                return {
-                                  border: "1.5px dashed rgba(251,191,36,0.5)",
-                                  background: "rgba(251,191,36,0.04)",
-                                };
-                              return {
-                                background: "var(--color-surface-1)",
-                                border: "1px solid var(--color-border-soft)",
-                              };
-                            })()}
-                          >
-                            <div className="space-y-1.5">
-                              <label
-                                style={{
-                                  fontSize: 10,
-                                  fontWeight: 600,
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.14em",
-                                  color: "var(--color-text-dim)",
-                                }}
-                              >
-                                Item Name
-                              </label>
-                              <input
-                                type="text"
-                                value={it.VIC_Item_Name}
-                                onChange={(e) =>
-                                  setEditItems((a) =>
-                                    a.map((x, i) =>
-                                      i === idx
-                                        ? {
-                                          ...x,
-                                          VIC_Item_Name: e.target.value,
-                                        }
-                                        : x,
-                                    ),
-                                  )
-                                }
-                                className="mas-input"
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label
-                                style={{
-                                  fontSize: 10,
-                                  fontWeight: 600,
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.14em",
-                                  color: "var(--color-text-dim)",
-                                }}
-                              >
-                                Quantity
-                              </label>
-                              <input
-                                type="text"
-                                value={it.VIC_Quantity}
-                                onChange={(e) =>
-                                  setEditItems((a) =>
-                                    a.map((x, i) =>
-                                      i === idx
-                                        ? { ...x, VIC_Quantity: e.target.value }
-                                        : x,
-                                    ),
-                                  )
-                                }
-                                className="mas-input"
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label
-                                style={{
-                                  fontSize: 10,
-                                  fontWeight: 600,
-                                  textTransform: "uppercase",
-                                  letterSpacing: "0.14em",
-                                  color: "var(--color-text-dim)",
-                                }}
-                              >
-                                Description
-                              </label>
-                              <input
-                                type="text"
-                                value={it.VIC_Designation}
-                                onChange={(e) =>
-                                  setEditItems((a) =>
-                                    a.map((x, i) =>
-                                      i === idx
-                                        ? {
-                                          ...x,
-                                          VIC_Designation: e.target.value,
-                                        }
-                                        : x,
-                                    ),
-                                  )
-                                }
-                                className="mas-input"
-                              />
-                            </div>
-                            <div className="flex flex-col items-end gap-1.5">
-                              {rowSuccess[`item-${idx}`] && (
-                                <span
-                                  className="flex items-center gap-1 font-semibold whitespace-nowrap"
-                                  style={{
-                                    color: "var(--color-success)",
-                                    fontSize: 11,
-                                  }}
-                                >
-                                  <CheckCircle2 size={12} /> Saved
+
+                    {/* ── Items to Bring card (mirrors View "Items Carried" section) ── */}
+                    <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                      <div className="p-4 md:p-5 space-y-4">
+                        {/* SplitSection header */}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-[3px] h-3.5 bg-primary rounded-full" />
+                            <div className="flex items-center gap-1.5">
+                              <Package size={13} className="text-primary/70" />
+                              <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                                Items to Bring (Main Visitor)
+                              </h3>
+                              {editItems.filter((it) => !it._isNew).length > 0 && (
+                                <span className={`text-[10px] font-semibold ml-1 ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                                  {editItems.filter((it) => !it._isNew).length} item
+                                  {editItems.filter((it) => !it._isNew).length > 1 ? "s" : ""}
                                 </span>
                               )}
-                              {it._isNew ? (
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() =>
-                                      handleRemoveNewRow("item", idx)
-                                    }
-                                    className="btn-outline whitespace-nowrap"
+                            </div>
+                            <button
+                              onClick={() =>
+                                setEditItems((a) => [
+                                  ...a,
+                                  {
+                                    _isNew: true,
+                                    VIC_Item_Name: "",
+                                    VIC_Quantity: "",
+                                    VIC_Designation: "",
+                                  },
+                                ])
+                              }
+                              className="btn-outline ml-auto whitespace-nowrap"
+                              style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                            >
+                              <Plus size={12} /> Add Item
+                            </button>
+                          </div>
+                        </div>
+                        {editItems.length === 0 && (
+                          <p className={`text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                            No items. Click <strong>Add Item</strong> to add one.
+                          </p>
+                        )}
+                        <div className="space-y-3">
+                          {editItems.map((it, idx) => (
+                            <div
+                              key={it.VIC_Item_id || idx}
+                              ref={(el) => {
+                                rowRefs.current[`item-${idx}`] = el;
+                              }}
+                              className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end p-4 rounded-2xl"
+                              style={(() => {
+                                const w =
+                                  warnDirty && dirtyRows.has(`item-${idx}`);
+                                if (w)
+                                  return {
+                                    border: "2px solid rgba(239,68,68,0.7)",
+                                    background: "rgba(239,68,68,0.05)",
+                                    borderRadius: 16,
+                                  };
+                                if (it._isNew)
+                                  return {
+                                    border: "1.5px dashed rgba(251,191,36,0.5)",
+                                    background: "rgba(251,191,36,0.04)",
+                                  };
+                                return {
+                                  background: "var(--color-surface-1)",
+                                  border: "1px solid var(--color-border-soft)",
+                                };
+                              })()}
+                            >
+                              <div className="space-y-1.5">
+                                <label
+                                  style={{
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.14em",
+                                    color: "var(--color-text-dim)",
+                                  }}
+                                >
+                                  Item Name
+                                </label>
+                                <input
+                                  type="text"
+                                  value={it.VIC_Item_Name}
+                                  onChange={(e) =>
+                                    setEditItems((a) =>
+                                      a.map((x, i) =>
+                                        i === idx
+                                          ? {
+                                            ...x,
+                                            VIC_Item_Name: e.target.value,
+                                          }
+                                          : x,
+                                      ),
+                                    )
+                                  }
+                                  className="mas-input"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label
+                                  style={{
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.14em",
+                                    color: "var(--color-text-dim)",
+                                  }}
+                                >
+                                  Quantity
+                                </label>
+                                <input
+                                  type="text"
+                                  value={it.VIC_Quantity}
+                                  onChange={(e) =>
+                                    setEditItems((a) =>
+                                      a.map((x, i) =>
+                                        i === idx
+                                          ? { ...x, VIC_Quantity: e.target.value }
+                                          : x,
+                                      ),
+                                    )
+                                  }
+                                  className="mas-input"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label
+                                  style={{
+                                    fontSize: 10,
+                                    fontWeight: 600,
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.14em",
+                                    color: "var(--color-text-dim)",
+                                  }}
+                                >
+                                  Description
+                                </label>
+                                <input
+                                  type="text"
+                                  value={it.VIC_Designation}
+                                  onChange={(e) =>
+                                    setEditItems((a) =>
+                                      a.map((x, i) =>
+                                        i === idx
+                                          ? {
+                                            ...x,
+                                            VIC_Designation: e.target.value,
+                                          }
+                                          : x,
+                                      ),
+                                    )
+                                  }
+                                  className="mas-input"
+                                />
+                              </div>
+                              <div className="flex flex-col items-end gap-1.5">
+                                {rowSuccess[`item-${idx}`] && (
+                                  <span
+                                    className="flex items-center gap-1 font-semibold whitespace-nowrap"
                                     style={{
-                                      padding: "9px 14px",
+                                      color: "var(--color-success)",
                                       fontSize: 11,
                                     }}
                                   >
-                                    <X size={12} />
-                                  </button>
+                                    <CheckCircle2 size={12} /> Saved
+                                  </span>
+                                )}
+                                {it._isNew ? (
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() =>
+                                        handleRemoveNewRow("item", idx)
+                                      }
+                                      className="btn-outline whitespace-nowrap"
+                                      style={{
+                                        padding: "9px 14px",
+                                        fontSize: 11,
+                                      }}
+                                    >
+                                      <X size={12} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleSubmitNewItem(idx)}
+                                      disabled={newItemSavingIdx !== null}
+                                      className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                      style={{
+                                        padding: "9px 18px",
+                                        fontSize: 12,
+                                        background: "var(--color-success)",
+                                      }}
+                                    >
+                                      {newItemSavingIdx === idx ? (
+                                        <>
+                                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                          Submitting…
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Plus size={12} /> Submit
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                ) : (
                                   <button
-                                    onClick={() => handleSubmitNewItem(idx)}
-                                    disabled={newItemSavingIdx !== null}
+                                    onClick={() => handleUpdateItem(idx)}
+                                    disabled={itemSavingIdx !== null}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                    style={{
-                                      padding: "9px 18px",
-                                      fontSize: 12,
-                                      background: "var(--color-success)",
-                                    }}
+                                    style={{ padding: "9px 18px", fontSize: 12 }}
                                   >
-                                    {newItemSavingIdx === idx ? (
+                                    {itemSavingIdx === idx ? (
                                       <>
                                         <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
-                                        Submitting…
+                                        Updating…
                                       </>
                                     ) : (
                                       <>
-                                        <Plus size={12} /> Submit
+                                        <Save size={12} /> Update
                                       </>
                                     )}
                                   </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => handleUpdateItem(idx)}
-                                  disabled={itemSavingIdx !== null}
-                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                  style={{ padding: "9px 18px", fontSize: 12 }}
-                                >
-                                  {itemSavingIdx === idx ? (
-                                    <>
-                                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
-                                      Updating…
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Save size={12} /> Update
-                                    </>
-                                  )}
-                                </button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ── Sub-Visitor Items Carried ── */}
+                    <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                      <div className="p-4 md:p-5 space-y-4">
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-[3px] h-3.5 bg-primary rounded-full" />
+                            <div className="flex items-center gap-1.5">
+                              <Package size={13} className="text-primary/70" />
+                              <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                                Sub-Visitor Items Carried
+                              </h3>
+                              {editJointItems.filter((it) => !it._isNew).length > 0 && (
+                                <span className={`text-[10px] font-semibold ml-1 ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                                  {editJointItems.filter((it) => !it._isNew).length} item
+                                  {editJointItems.filter((it) => !it._isNew).length > 1 ? "s" : ""}
+                                </span>
                               )}
                             </div>
+                            <button
+                              onClick={() =>
+                                setEditJointItems((a) => [
+                                  ...a,
+                                  {
+                                    _isNew: true,
+                                    subVisitorName: "",
+                                    VIC_Item_Name: "",
+                                    VIC_Quantity: "",
+                                    VIC_Designation: "",
+                                  },
+                                ])
+                              }
+                              className="btn-outline ml-auto whitespace-nowrap"
+                              style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                            >
+                              <Plus size={12} /> Add Item
+                            </button>
                           </div>
-                        ))}
+                        </div>
+                        {editJointItems.length === 0 && (
+                          <p className={`text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                            No items. Click <strong>Add Sub-Visitor Item</strong> to add one.
+                          </p>
+                        )}
+                        <div className="space-y-3">
+                          {editJointItems.map((it, idx) => (
+                            <div
+                              key={`subItem-${idx}`}
+                              ref={(el) => { rowRefs.current[`subItem-${idx}`] = el; }}
+                              className="grid grid-cols-1 md:grid-cols-[1.2fr_1.2fr_0.8fr_1.2fr_auto] gap-3 items-end p-4 rounded-2xl"
+                              style={(() => {
+                                const w = warnDirty && dirtyRows.has(`subItem-${idx}`);
+                                if (w) return { border: "2px solid rgba(239,68,68,0.7)", background: "rgba(239,68,68,0.05)", borderRadius: 16 };
+                                if (it._isNew) return { border: "1.5px dashed rgba(251,191,36,0.5)", background: "rgba(251,191,36,0.04)" };
+                                return { background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)" };
+                              })()}
+                            >
+                              <div className="space-y-1.5">
+                                <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>
+                                  Sub-Visitor
+                                </label>
+                                <select
+                                  value={it.subVisitorName || ""}
+                                  onChange={(e) => setEditJointItems((a) => a.map((x, i) => i === idx ? { ...x, subVisitorName: e.target.value } : x))}
+                                  className="mas-input appearance-none"
+                                >
+                                  <option value="" className="text-black">Select...</option>
+                                  {editGroupMembers.map((p, pIdx) => (
+                                    <option key={pIdx} value={p.VVG_Visitor_Name || p._original?.VVG_Visitor_Name} className="text-black">
+                                      {p.VVG_Visitor_Name || p._original?.VVG_Visitor_Name || `Visitor ${pIdx + 1}`}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="space-y-1.5">
+                                <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>
+                                  Item Name
+                                </label>
+                                <input
+                                  type="text"
+                                  value={it.VIC_Item_Name || ""}
+                                  onChange={(e) => setEditJointItems((a) => a.map((x, i) => i === idx ? { ...x, VIC_Item_Name: e.target.value } : x))}
+                                  className="mas-input"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>
+                                  Quantity
+                                </label>
+                                <input
+                                  type="text"
+                                  value={it.VIC_Quantity || ""}
+                                  onChange={(e) => setEditJointItems((a) => a.map((x, i) => i === idx ? { ...x, VIC_Quantity: e.target.value } : x))}
+                                  className="mas-input"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-text-dim)" }}>
+                                  Description
+                                </label>
+                                <input
+                                  type="text"
+                                  value={it.VIC_Designation || ""}
+                                  onChange={(e) => setEditJointItems((a) => a.map((x, i) => i === idx ? { ...x, VIC_Designation: e.target.value } : x))}
+                                  className="mas-input"
+                                />
+                              </div>
+                              <div className="flex flex-col items-end gap-1.5">
+                                {rowSuccess[`subItem-${idx}`] && (
+                                  <span className="flex items-center gap-1 font-semibold whitespace-nowrap" style={{ color: "var(--color-success)", fontSize: 11 }}>
+                                    <CheckCircle2 size={12} /> Saved
+                                  </span>
+                                )}
+                                {it._isNew ? (
+                                  <div className="flex gap-2">
+                                    <button onClick={() => handleRemoveNewRow("subItem", idx)} className="btn-outline whitespace-nowrap" style={{ padding: "9px 14px", fontSize: 11 }}>
+                                      <X size={12} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleSubmitNewSubItem(idx)}
+                                      disabled={newSubItemSavingIdx !== null}
+                                      className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                      style={{ padding: "9px 18px", fontSize: 12, background: "var(--color-success)" }}
+                                    >
+                                      {newSubItemSavingIdx === idx ? (
+                                        <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting…</>
+                                      ) : (
+                                        <><Plus size={12} /> Submit</>
+                                      )}
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={() => handleUpdateSubItem(idx)}
+                                    disabled={subItemSavingIdx !== null}
+                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                    style={{ padding: "9px 18px", fontSize: 12 }}
+                                  >
+                                    {subItemSavingIdx === idx ? (
+                                      <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Updating…</>
+                                    ) : (
+                                      <><Save size={12} /> Update</>
+                                    )}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </>
