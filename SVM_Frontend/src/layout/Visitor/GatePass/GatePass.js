@@ -205,7 +205,7 @@ const GatePass = () => {
                 <div className="relative group/qr p-4 mas-glass rounded-[22px] mb-5 shadow-[0_0_35px_rgba(255,255,255,0.08)] transition-all hover:scale-105 visitor-qr-svg-container">
                   <QRCodeSVG
                     value={encodedQrValue || "SVMQR_PENDING"}
-                    size={156}
+                    size={160}
                     level="H"
                     includeMargin={false}
                   />

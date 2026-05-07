@@ -11,6 +11,7 @@ import {
   QrCode,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useThemeMode } from "../../../theme/ThemeModeContext";
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -44,6 +45,8 @@ const VisitorTable = ({
   onAction,
   gatePasses = [],
 }) => {
+  const { themeMode } = useThemeMode();
+
   const desktopTableViewportStyle = {
     height: "calc(100vh - 8rem)",
     minHeight: "600px",
@@ -127,32 +130,32 @@ const VisitorTable = ({
   ];
 
   return (
-    <div className="space-y-2 sm:space-y-3 md:space-y-4 animate-fade-in-slow">
-      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-xl relative overflow-hidden">
+    <div className="space-y-3 animate-fade-in-slow">
+      <div className={`border transition-all rounded-[32px] shadow-xl relative overflow-hidden ${themeMode === "light" ? "bg-white border-gray-100" : "bg-[var(--color-bg-paper)] border-white/5"}`}>
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
-        <div className="px-3 sm:px-4 md:px-5 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
-          <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto relative max-w-full overflow-x-auto no-scrollbar">
-            {statusOptions.map((btn) => (
-              <button
-                key={btn.id}
-                onClick={() => setStatusFilter(btn.id)}
-                className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[11px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
-              >
-                {statusFilter === btn.id && (
-                  <motion.div
-                    layoutId="activeFilter"
-                    className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="relative z-10">{btn.label}</span>
-              </button>
-            ))}
+        <div className="px-4 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-center gap-3 relative z-10">
+          <div className="overflow-x-auto no-scrollbar w-full xl:w-auto">
+            <div className={`inline-flex p-1 rounded-full border transition-all gap-0.5 ${themeMode === "light" ? "bg-white border-gray-100" : "bg-black/20 border-white/5"}`}>
+              {statusOptions.map((btn) => (
+                <button
+                  key={btn.id}
+                  onClick={() => setStatusFilter(btn.id)}
+                  className={`relative px-2 py-1.5 rounded-full text-[2px] tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${statusFilter === btn.id
+                    ? "bg-primary text-white shadow-lg shadow-primary/20"
+                    : themeMode === "light"
+                      ? "text-gray-500 hover:text-primary"
+                      : "text-white/40 hover:text-white"
+                    }`}
+                >
+                  {btn.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-black/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-white/80">
-            <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
+          <div className="inline-flex items-center gap-2 rounded-[5px] border border-white/8 bg-black/20 h-8 px-3 text-[2px] font-bold uppercase tracking-[0.25em] text-white/80 shrink-0">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
             {filteredVisitors.length} records
           </div>
         </div>
@@ -168,23 +171,23 @@ const VisitorTable = ({
           >
             <table className="w-full min-w-[920px] text-left border-collapse">
               <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)] font-normal text-[12px]">
-                <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
+                <tr className={`border-b ${themeMode === "light" ? "border-gray-100 bg-gray-50" : "border-white/5 bg-[var(--color-bg-paper)]"}`}>
+                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-left">
                     VISITOR NAME
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center min-w-[180px]">
+                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-center min-w-[180px]">
                     VISIT DATE
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left min-w-[300px]">
+                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-left min-w-[300px]">
                     VISITING PLACE
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
+                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
                     STATUS
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-28">
+                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-[var(--color-text-secondary)] text-center w-28">
                     GATE PASS
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-primary text-right md:pr-4 lg:pr-6 w-32">
+                  <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-primary text-right pr-6 w-32">
                     ACTIONS
                   </th>
                 </tr>
@@ -199,7 +202,7 @@ const VisitorTable = ({
                       key={visitor.batchId || visitor.id || index}
                     >
                       <tr className={`group transition-colors duration-200 ${isExpanded ? "bg-primary/[0.03]" : "hover:bg-white/[0.02]"}`}>
-                        <td className="px-3 md:px-2.5 lg:px-6 py-1 align-middle font-normal text-[12px]">
+                        <td className="px-6 py-1 align-middle font-normal text-[12px]">
                           <div className="flex items-center gap-2">
                             {memberList.length > 0 && (
                               <button
@@ -209,18 +212,18 @@ const VisitorTable = ({
                                 <ChevronDown size={10} className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
                               </button>
                             )}
-                            <p className="text-white capitalize text-[12px] font-normal tracking-wide mb-0">
+                            <p className={`${themeMode === "light" ? "text-gray-900" : "text-white"} capitalize text-[12px] font-normal tracking-wide mb-0`}>
                               {visitor.name}
                             </p>
                           </div>
                         </td>
-                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
-                          <span className="text-white/90 text-[12px] font-normal tracking-wide">
+                        <td className="px-6 py-1 text-center align-middle font-normal text-[12px]">
+                          <span className={`${themeMode === "light" ? "text-gray-600" : "text-white/90"} text-[12px] font-normal tracking-wide`}>
                             {visitor.date?.split(" ")[0]}
                           </span>
                         </td>
-                        <td className="px-3 md:px-2.5 lg:px-6 py-1 align-middle font-normal text-[12px]">
-                          <div className="flex items-center gap-1.5 text-white/60 text-[12px] font-normal tracking-wide max-w-[350px]">
+                        <td className="px-6 py-1 align-middle font-normal text-[12px]">
+                          <div className={`flex items-center gap-1.5 ${themeMode === "light" ? "text-gray-500" : "text-white/60"} text-[12px] font-normal tracking-wide max-w-[350px]`}>
                             <MapPin size={11} className="text-primary/50 shrink-0" />
                             <span className="truncate">
                               {Array.isArray(visitor.areas)
@@ -229,7 +232,7 @@ const VisitorTable = ({
                             </span>
                           </div>
                         </td>
-                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
+                        <td className="px-6 py-1 text-center align-middle font-normal text-[12px]">
                           <StatusBadge status={visitor.status} />
                         </td>
                         <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
@@ -388,16 +391,15 @@ const VisitorTable = ({
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       <StatusBadge status={visitor.status} />
-                      {hasGatePass(visitor.id) &&
-                        visitor.status === "Admin Approved" && (
-                          <button
-                            onClick={() => onAction(visitor, "ViewGatePass")}
-                            className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.1em] text-primary/80 hover:text-primary transition-colors"
-                          >
-                            <QrCode size={10} />
-                            Gate Pass
-                          </button>
-                        )}
+                      {hasGatePass(visitor.id) && (
+                        <button
+                          onClick={() => onAction(visitor, "ViewGatePass")}
+                          className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.1em] text-primary/80 hover:text-primary transition-colors"
+                        >
+                          <QrCode size={10} />
+                          Gate Pass
+                        </button>
+                      )}
                     </div>
                   </div>
 

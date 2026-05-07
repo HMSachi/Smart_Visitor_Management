@@ -407,107 +407,65 @@ const AllUsers = () => {
       <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="max-w-[1500px] mx-auto">
-          <header className="mb-4 md:mb-5 flex flex-col xl:flex-row justify-between items-start xl:items-center pb-4 md:pb-5 gap-4 relative z-10">
-            <div className="flex bg-white dark:bg-[var(--color-surface-2)] p-1.5 rounded-xl border border-gray-200 dark:border-white/5 relative max-w-full shadow-sm gap-1 w-full xl:w-auto overflow-x-auto no-scrollbar">
-              {[
-                ...categories.map((cat) => ({
-                  id: cat.id,
-                  label: cat.title,
-                })),
-              ].map((btn) => (
-                <button
-                  key={btn.id}
-                  type="button"
-                  onClick={() => setTableFilter(btn.id)}
-                  className={`relative px-3 md:px-4 py-2 rounded-lg text-[13px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-gray-500 dark:text-[var(--color-text-dim)] hover:text-gray-800 dark:hover:text-[var(--color-text-primary)]"}`}
-                >
-                  {tableFilter === btn.id && (
-                    <motion.div
-                      layoutId="userTableFilter"
-                      className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
-                      transition={{
-                        type: "spring",
-                        bounce: 0.2,
-                        duration: 0.6,
-                      }}
-                    />
-                  )}
-                  <span className="relative z-10">{btn.label}</span>
-                </button>
-              ))}
+          <header className="mb-6 flex flex-col xl:flex-row justify-between items-center gap-3 relative z-10">
+            <div className="overflow-x-auto no-scrollbar w-full xl:w-auto">
+              <div className={`inline-flex p-1 rounded-full border transition-all gap-0.5 ${themeMode === "light" ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}>
+                {[
+                  ...categories.map((cat) => ({
+                    id: cat.id,
+                    label: cat.title,
+                  })),
+                ].map((btn) => (
+                  <button
+                    key={btn.id}
+                    onClick={() => setTableFilter(btn.id)}
+                    className={`relative px-2 py-1.5 rounded-full text-[2px] tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${tableFilter === btn.id
+                      ? "bg-primary text-white shadow-lg shadow-primary/20"
+                      : themeMode === "light"
+                        ? "text-gray-500 hover:text-primary"
+                        : "text-white/40 hover:text-white"
+                      }`}
+                  >
+                    {btn.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto items-stretch sm:items-center">
-              {/* Search Form */}
-              <form
-                onSubmit={handleSearch}
-                className="flex items-center bg-[var(--color-surface-1)] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-all duration-300 rounded-lg px-3 h-[34px] w-full sm:min-w-[200px] sm:w-auto shadow-sm"
+            <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full xl:w-auto">
+              <div
+                className={`flex items-center border transition-all rounded-[5px] px-2 h-8 min-w-[180px] w-full sm:w-[220px] md:w-[260px] group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
               >
-                <Search size={13} className="text-gray-400 mr-2" />
+                <Search size={10} className={`transition-colors mr-1.5 ${themeMode === "light" ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`} />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search users..."
-                  className="bg-transparent text-[11.5px] text-[var(--color-text-primary)] placeholder-gray-400 focus:outline-none w-full"
+                  className={`bg-transparent text-[2px] focus:outline-none w-full tracking-wide ${themeMode === "light" ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
                 />
-                {searchTerm && (
-                  <button
-                     type="button"
-                     onClick={() => setSearchTerm("")}
-                     className="text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                     <X size={12} />
-                  </button>
-                )}
-              </form>
+              </div>
 
               <div
-                className="flex items-center transition-all bg-[var(--color-surface-1)] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 rounded-lg px-3 h-[34px] w-full sm:min-w-[140px] sm:w-auto shadow-sm"
+                className={`flex items-center border transition-all rounded-[5px] px-2 h-8 min-w-[120px] w-full sm:w-auto group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
               >
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`text-[11.5px] bg-transparent focus:outline-none w-full transition-colors text-[var(--color-text-primary)]`}
+                  className={`text-[2px] bg-transparent focus:outline-none w-full tracking-wide ${themeMode === "light" ? "text-[#1A1A1A]" : "text-white"}`}
                 >
-                  <option
-                    value="ALL"
-                    className={
-                      themeMode === "light"
-                        ? "bg-white text-black"
-                        : "bg-[#0f0f10] text-white"
-                    }
-                  >
-                    All Statuses
-                  </option>
-                  <option
-                    value="ACTIVE"
-                    className={
-                      themeMode === "light"
-                        ? "bg-white text-black"
-                        : "bg-[#0f0f10] text-white"
-                    }
-                  >
-                    Active
-                  </option>
-                  <option
-                    value="INACTIVE"
-                    className={
-                      themeMode === "light"
-                        ? "bg-white text-black"
-                        : "bg-[#0f0f10] text-white"
-                    }
-                  >
-                    Inactive
-                  </option>
+                  <option value="ALL">All Statuses</option>
+                  <option value="ACTIVE">Active</option>
+                  <option value="INACTIVE">Inactive</option>
                 </select>
               </div>
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center justify-center gap-1.5 bg-primary hover:bg-primary/85 text-white px-4 h-[34px] rounded-lg text-[11.5px] font-semibold tracking-wide transition-all duration-300 shadow-sm hover:shadow-primary/30 w-full sm:w-auto"
+                className="flex items-center justify-center gap-1 bg-primary hover:bg-primary-hover text-white px-3 h-8 rounded-[5px] text-[2px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group shrink-0"
               >
-                <Plus size={13} strokeWidth={2.5} /> Add User
+                <Plus size={12} className="group-hover:rotate-90 transition-transform" />
+                Add User
               </button>
             </div>
           </header>
@@ -569,78 +527,78 @@ const AllUsers = () => {
                           <TableHead>
                             <TableRow
                               sx={{
-                                height: "34px",
-                                backgroundColor: "rgba(255,255,255,0.03)",
+                                height: "30px",
+                                backgroundColor: themeMode === "light" ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.03)",
                               }}
                             >
                               <TableCell
                                 sx={{
-                                  padding: "6px 14px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                                  padding: "4px 12px",
+                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "8%",
                                 }}
-                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
                               >
                                 User ID
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "6px 14px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                                  padding: "4px 12px",
+                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "15%",
                                 }}
-                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
                               >
                                 Name
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "6px 14px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                                  padding: "4px 12px",
+                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "20%",
                                 }}
-                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
                               >
                                 Email
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "6px 14px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                                  padding: "4px 12px",
+                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "12%",
                                 }}
-                                className="hidden sm:table-cell text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className={`hidden sm:table-cell ${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
                               >
                                 {cat.id === "CONTACT" ? "Department" : "Role"}
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "6px 14px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                                  padding: "4px 12px",
+                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "15%",
                                 }}
-                                className="hidden md:table-cell text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className={`hidden md:table-cell ${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
                               >
                                 {cat.id === "CONTACT" ? "Contact" : "Joined"}
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "6px 14px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                                  padding: "4px 12px",
+                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "10%",
                                 }}
-                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
                               >
                                 Status
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "6px 14px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                                  padding: "4px 12px",
+                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "10%",
                                 }}
                                 align="right"
-                                className="text-white/40 font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap"
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
                               >
                                 Actions
                               </TableCell>
@@ -680,94 +638,92 @@ const AllUsers = () => {
                                     .toUpperCase() === "ACTIVE";
 
                                 return (
-                                  <TableRow
-                                    key={
-                                      item.VA_Admin_id ||
-                                      item.VCP_Contact_person_id
-                                    }
-                                    sx={{
-                                      "&:hover": {
-                                        backgroundColor:
-                                          "rgba(255,255,255,0.04)",
-                                      },
-                                      height: "36px",
-                                      borderBottom:
-                                        "1px solid rgba(255,255,255,0.05)",
-                                      transition: "background-color 0.2s ease",
-                                    }}
-                                  >
-                                    <TableCell
-                                      sx={{ padding: "6px 14px", width: "8%" }}
-                                      className="text-white/80 font-normal text-[12px] whitespace-nowrap"
+                                    <TableRow
+                                      key={
+                                        item.VA_Admin_id ||
+                                        item.VCP_Contact_person_id
+                                      }
+                                      sx={{
+                                        "&:hover": {
+                                          backgroundColor: themeMode === "light" ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.04)",
+                                        },
+                                        height: "32px",
+                                        borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.04)" : "1px solid rgba(255,255,255,0.05)",
+                                        transition: "background-color 0.2s ease",
+                                      }}
                                     >
-                                      <div className="flex items-center gap-1.5">
-                                        <Hash
-                                          size={11}
-                                          className="text-primary/40"
-                                        />
-                                        <span>
-                                          {item.VA_Admin_id ||
-                                            item.VCP_Contact_person_id}
-                                        </span>
-                                      </div>
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ padding: "6px 14px", width: "15%" }}
-                                      className={`font-normal transition-colors text-[12px] ${isActive ?"text-white" : "text-white/40"}`}
-                                    >
-                                      {item.VA_Name || item.VCP_Name || "-"}
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ padding: "6px 14px", width: "20%" }}
-                                      className={`font-normal transition-colors text-[12px] whitespace-nowrap ${isActive ?"text-gray-400 opacity-60" : "text-gray-500 opacity-30"}`}
-                                    >
-                                      {item.VA_Email || item.VCP_Email}
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ padding: "6px 14px", width: "12%" }}
-                                      className={`hidden sm:table-cell transition-colors font-normal text-[12px] ${isActive ?"text-white/70" : "text-white/20"}`}
-                                    >
-                                      {item.VA_Role ||
-                                        item.VCP_Department ||
-                                        "-"}
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ padding: "6px 14px", width: "15%" }}
-                                      className={`hidden md:table-cell transition-colors font-normal text-[12px] ${isActive ?"text-white/70" : "text-white/20"}`}
-                                    >
-                                      {item.VA_Created_Date
-                                        ? item.VA_Created_Date.split(" ")[0]
-                                        : item.VCP_Phone || "AUTHEN.SYSTEM"}
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ padding: "6px 14px", width: "10%" }}
-                                     className="text-[12px] font-normal">
-                                      <button
-                                        onClick={() =>
-                                          handleToggleStatus(item, cat.id)
-                                        }
-                                        disabled={loading}
-                                        title="Click to toggle status"
-                                        className={`px-3 py-0.5 text-[9px] uppercase tracking-[0.05em] font-normal transition-all cursor-pointer rounded-lg border ${isActive ? "bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500 hover:text-white" : "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500 hover:text-white"}`}
+                                      <TableCell
+                                        sx={{ padding: "4px 12px", width: "8%" }}
+                                        className={`${themeMode === "light" ? "text-gray-800" : "text-white/80"} font-normal text-[12px] whitespace-nowrap`}
                                       >
-                                        {isActive ? "ACTIVE" : "INACTIVE"}
-                                      </button>
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ padding: "6px 14px", width: "10%" }}
-                                      align="right"
-                                     className="text-[12px] font-normal">
-                                      <IconButton
-                                        onClick={() =>
-                                          openModal("edit", item, cat.id)
-                                        }
-                                        size="small"
-                                        className="text-white/40 hover:text-white p-1"
+                                        <div className="flex items-center gap-1">
+                                          <Hash
+                                            size={10}
+                                            className="text-primary/40"
+                                          />
+                                          <span>
+                                            {item.VA_Admin_id ||
+                                              item.VCP_Contact_person_id}
+                                          </span>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell
+                                        sx={{ padding: "4px 12px", width: "15%" }}
+                                        className={`font-normal transition-colors text-[12px] ${isActive ? (themeMode === "light" ? "text-gray-900" : "text-white") : (themeMode === "light" ? "text-gray-400" : "text-white/40")}`}
                                       >
-                                        <Edit size={13} />
-                                      </IconButton>
-                                    </TableCell>
-                                  </TableRow>
+                                        {item.VA_Name || item.VCP_Name || "-"}
+                                      </TableCell>
+                                      <TableCell
+                                        sx={{ padding: "4px 12px", width: "20%" }}
+                                        className={`font-normal transition-colors text-[12px] whitespace-nowrap ${isActive ? (themeMode === "light" ? "text-gray-600" : "text-gray-400 opacity-60") : (themeMode === "light" ? "text-gray-400" : "text-gray-500 opacity-30")}`}
+                                      >
+                                        {item.VA_Email || item.VCP_Email}
+                                      </TableCell>
+                                      <TableCell
+                                        sx={{ padding: "4px 12px", width: "12%" }}
+                                        className={`hidden sm:table-cell transition-colors font-normal text-[12px] ${isActive ? (themeMode === "light" ? "text-gray-700" : "text-white/70") : (themeMode === "light" ? "text-gray-300" : "text-white/20")}`}
+                                      >
+                                        {item.VA_Role ||
+                                          item.VCP_Department ||
+                                          "-"}
+                                      </TableCell>
+                                      <TableCell
+                                        sx={{ padding: "4px 12px", width: "15%" }}
+                                        className={`hidden md:table-cell transition-colors font-normal text-[12px] ${isActive ? (themeMode === "light" ? "text-gray-700" : "text-white/70") : (themeMode === "light" ? "text-gray-300" : "text-white/20")}`}
+                                      >
+                                        {item.VA_Created_Date
+                                          ? item.VA_Created_Date.split(" ")[0]
+                                          : item.VCP_Phone || "AUTHEN.SYSTEM"}
+                                      </TableCell>
+                                      <TableCell
+                                        sx={{ padding: "4px 12px", width: "10%" }}
+                                       className="text-[12px] font-normal">
+                                        <button
+                                          onClick={() =>
+                                            handleToggleStatus(item, cat.id)
+                                          }
+                                          disabled={loading}
+                                          title="Click to toggle status"
+                                          className={`px-2 py-0.5 text-[8px] uppercase tracking-[0.05em] font-bold transition-all cursor-pointer rounded-[5px] border ${isActive ? "bg-green-500/10 text-green-600 border-green-500/20 hover:bg-green-500 hover:text-white" : "bg-red-500/10 text-red-600 border-red-500/20 hover:bg-red-500 hover:text-white"}`}
+                                        >
+                                          {isActive ? "ACTIVE" : "INACTIVE"}
+                                        </button>
+                                      </TableCell>
+                                      <TableCell
+                                        sx={{ padding: "4px 12px", width: "10%" }}
+                                        align="right"
+                                       className="text-[12px] font-normal">
+                                        <IconButton
+                                          onClick={() =>
+                                            openModal("edit", item, cat.id)
+                                          }
+                                          size="small"
+                                          className={`${themeMode === "light" ? "text-gray-400 hover:text-primary" : "text-white/40 hover:text-white"} p-1`}
+                                        >
+                                          <Edit size={12} />
+                                        </IconButton>
+                                      </TableCell>
+                                    </TableRow>
                                 );
                               })
                             )}

@@ -48,8 +48,12 @@ import {
   Pencil,
   Briefcase,
   QrCode,
+  Download,
+  ShieldCheck,
 } from "lucide-react";
 import { setSelectedRequest } from "../../../reducers/contactPersonSlice";
+import { QRCodeSVG } from "qrcode.react";
+import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -184,6 +188,12 @@ const VisitRequests = () => {
   const [dirtyRows, setDirtyRows] = useState(new Set());
   const [warnDirty, setWarnDirty] = useState(false);
   const rowRefs = useRef({});
+
+  // ─── Gate Pass Modal State ──────────────────────────────────────────────────
+  const [isGatePassModalOpen, setIsGatePassModalOpen] = useState(false);
+  const [selectedGatePass, setSelectedGatePass] = useState(null);
+  const [isGeneratingQr, setIsGeneratingQr] = useState(false);
+  const [encodedQr, setEncodedQr] = useState("");
 
   const handleMenuOpen = (event, req) => {
     setAnchorEl(event.currentTarget);
@@ -344,7 +354,7 @@ const VisitRequests = () => {
     setTimeout(() => dispatch(GetVisitRequestsByCP(cpId)), 2000);
   };
 
-  const handleViewGatePass = (req) => {
+  const handleViewGatePass = async (req) => {
     const list = Array.isArray(gatePasses)
       ? gatePasses
       : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
@@ -359,7 +369,48 @@ const VisitRequests = () => {
 
     const gatePassId = gatePass?.VGP_Pass_id || gatePass?.vgp_Pass_id;
     if (!gatePassId) return;
-    navigate(`/contact_person/gate-pass/${gatePassId}`);
+
+    // Instead of navigating, open the modal
+    setSelectedGatePass({ ...gatePass, visitorName: getVisitorDisplayName(req) });
+    setIsGatePassModalOpen(true);
+    setIsGeneratingQr(true);
+
+    try {
+      const payload = {
+        id: gatePassId,
+        v: 1,
+        iat: Date.now(),
+      };
+      const encoded = await encodeSecureQrPayload(payload);
+      setEncodedQr(encoded);
+    } catch (err) {
+      console.error("Failed to generate secure QR:", err);
+      setEncodedQr("");
+    } finally {
+      setIsGeneratingQr(false);
+    }
+  };
+
+  const handleDownloadQR = () => {
+    const svg = document.querySelector(".gate-pass-modal-qr svg");
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `GatePass_${selectedGatePass?.VGP_Pass_id || "Visitor"}.png`;
+      downloadLink.href = `${pngFile}`;
+      downloadLink.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
   const hasGatePass = (requestId) => {
@@ -917,67 +968,66 @@ const VisitRequests = () => {
       <Header title="Active Visit Requests" />
 
       <div className="p-3 md:p-5 animate-fade-in-slow relative max-w-[1700px] mx-auto w-full z-10">
-        <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+        <div className="mb-8 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+          <div className="overflow-x-auto no-scrollbar pb-1">
             <div
-              className={`flex items-center border transition-all rounded-xl px-3 h-9 min-w-[220px] w-full sm:w-[240px] md:w-[280px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+              className={`inline-flex p-1 rounded-full border transition-all gap-0.5 ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}
+            >
+              {statusOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setStatusFilter(option.id)}
+                  className={`relative px-0.5 py-1.5 rounded-full text-[2px] tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
+                    ? "text-white"
+                    : isLight
+                      ? "text-gray-500 hover:text-primary"
+                      : "text-white/40 hover:text-white"
+                    }`}
+                >
+                  {statusFilter === option.id && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-primary rounded-full shadow-[0_5px_15px_rgba(200,16,46,0.3)]"
+                      transition={{
+                        type: "spring",
+                        bounce: 0.15,
+                        duration: 0.5,
+                      }}
+                    />
+                  )}
+                  <span className="relative z-10">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0">
+            <div
+              className={`flex items-center border transition-all rounded-[5px] px-2 h-8 min-w-[180px] w-full sm:w-[220px] md:w-[260px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
             >
               <Search
-                size={14}
-                className={`transition-colors mr-2.5 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
+                size={10}
+                className={`transition-colors mr-1.5 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
               />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search visitor..."
-                className={`bg-transparent text-[9.5px] focus:outline-none w-full tracking-wide ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
+                placeholder="Search..."
+                className={`bg-transparent text-[2px] focus:outline-none w-full tracking-wide ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
               />
             </div>
 
             <button
               onClick={() => navigate("/contact_person/create-visit-request")}
-              className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 h-9 rounded-xl text-[9.5px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group"
+              className="flex items-center justify-center gap-1 bg-primary hover:bg-primary-hover text-white px-2 h-8 rounded-[5px] text-[2px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group"
             >
               <Plus
-                size={16}
+                size={12}
                 className="group-hover:rotate-90 transition-transform"
               />
-              Create Visit Request
+              Create Request
             </button>
-          </div>
-        </div>
-
-        {/* Status Filter Tabs - Modern Capsule Style */}
-        <div className="mb-6 overflow-x-auto no-scrollbar pb-2 px-1">
-          <div
-            className={`inline-flex p-1 rounded-full border transition-all gap-6 ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}
-          >
-            {statusOptions.map((option) => (
-              <button
-                key={option.id}
-                onClick={() => setStatusFilter(option.id)}
-                className={`relative px-10 py-1.5 rounded-full text-[6.5px] font-bold tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
-                    ? "text-white"
-                    : isLight
-                      ? "text-gray-500 hover:text-primary"
-                      : "text-white/40 hover:text-white"
-                  }`}
-              >
-                {statusFilter === option.id && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-primary rounded-full shadow-[0_5px_15px_rgba(200,16,46,0.3)]"
-                    transition={{
-                      type: "spring",
-                      bounce: 0.15,
-                      duration: 0.5,
-                    }}
-                  />
-                )}
-                <span className="relative z-10">{option.label}</span>
-              </button>
-            ))}
           </div>
         </div>
 
@@ -1004,209 +1054,212 @@ const VisitRequests = () => {
               className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
               style={{ height: "38rem" }}
             >
-            {isMobile ? (
-              <div className="p-4 space-y-6">
-                {filteredRequests && filteredRequests.length > 0 ? (
-                  filteredRequests.map((req) => (
-                    <div
-                      key={req.VVR_Request_id}
-                      className={`p-5 rounded-[28px] border transition-all ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-white/5 border-white/5"}`}
-                    >
-                      <div className="flex justify-between items-start mb-6">
-                        <div>
-                          <h4 className={`text-[13px] font-black uppercase tracking-tight ${isLight ? "text-gray-900" : "text-white"}`}>
-                            {getVisitorDisplayName(req)}
-                          </h4>
-                          <p className="text-gray-400 text-[9px] font-bold tracking-[0.2em] mt-1 uppercase opacity-70">
-                            BATCH-{new Date().getFullYear()}-{req.VVR_Request_id.toString().padStart(3, '0')}
-                          </p>
-                        </div>
-                        <div className="flex flex-col items-end gap-3">
-                          <StatusBadge status={req.VVR_Status} />
-                          <button className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest ${isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-primary"} transition-colors`}>
-                            <Eye size={14} /> View Pass
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4 mb-6 px-1">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3 text-gray-400">
-                            <Calendar size={14} className="text-primary/70" />
-                            <span className="text-[9px] font-black uppercase tracking-[0.15em]">Deployed</span>
-                          </div>
-                          <span className={`text-[10px] font-bold ${isLight ? "text-gray-700" : "text-gray-200"}`}>
-                            {req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0] : "N/A"} // {req.VVR_Visit_Time || "08:30 AM"}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3 text-gray-400">
-                            <MapPin size={14} className="text-primary/70" />
-                            <span className="text-[9px] font-black uppercase tracking-[0.15em]">Areas</span>
-                          </div>
-                          <span className={`text-[10px] font-bold truncate max-w-[160px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
-                            {req.VVR_Purpose || "General Access"}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3 text-gray-400">
-                            <AlertCircle size={14} className="text-primary/70" />
-                            <span className="text-[9px] font-black uppercase tracking-[0.15em]">Request</span>
-                          </div>
-                          <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[9px] font-black border border-primary/20">
-                            1
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => handleReview(req.VVR_Request_id)}
-                        className={`w-full py-1.5 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
+              {isMobile ? (
+                <div className="p-4 space-y-6">
+                  {filteredRequests && filteredRequests.length > 0 ? (
+                    filteredRequests.map((req) => (
+                      <div
+                        key={req.VVR_Request_id}
+                        className={`p-5 rounded-[28px] border transition-all ${isLight ? "bg-white border-gray-100 shadow-sm" : "bg-white/5 border-white/5"}`}
                       >
-                        <Eye size={15} /> Inspect
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-20 text-center opacity-40">
-                    <ClipboardList size={40} className="mx-auto mb-3" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest">No Requests Found</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr
-                      className={`text-[12px] uppercase font-normal tracking-[0.3em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
-                    >
-                      <th className="px-3 py-2 text-center w-[60px] font-normal text-[12px]">ID</th>
-                      <th className="px-3 py-2 text-left font-normal text-[12px]">Visitor</th>
-                      <th className="px-3 py-2 text-center font-normal text-[12px]">Date</th>
-                      <th className="px-3 py-2 text-left font-normal text-[12px]">Reason</th>
-                      <th className="px-3 py-2 text-left font-normal text-[12px]">Areas</th>
-                      <th className="px-3 py-2 text-center font-normal text-[12px]">Status</th>
-                      <th className="px-3 py-2 text-center w-[80px] font-normal text-[12px]">Pass</th>
-                      <th className="px-3 py-2 text-center w-[120px] font-normal text-[12px]">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {filteredRequests && filteredRequests.length > 0 ? (
-                      filteredRequests.map((req) => (
-                        <tr
-                          key={req.VVR_Request_id}
-                          className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
-                        >
-                          <td className="px-3 py-1 text-center text-primary text-[12px] tracking-wide font-normal">
-                            #{req.VVR_Request_id}
-                          </td>
-                          <td className="px-3 py-1 text-left font-normal text-[12px]">
-                            <span
-                              className={`font-normal text-[12px] tracking-wide ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                            >
+                        <div className="flex justify-between items-start mb-6">
+                          <div>
+                            <h4 className={`text-[13px] font-black uppercase tracking-tight ${isLight ? "text-gray-900" : "text-white"}`}>
                               {getVisitorDisplayName(req)}
-                            </span>
-                          </td>
-                          <td className="px-3 py-1 font-normal text-[12px]">
-                            <div
-                              className={`flex flex-col items-center justify-center gap-1.5 text-[12px] ${isLight ? "text-gray-500" : "text-white/70"}`}
+                            </h4>
+                            <p className="text-gray-400 text-[9px] font-bold tracking-[0.2em] mt-1 uppercase opacity-70">
+                              BATCH-{new Date().getFullYear()}-{req.VVR_Request_id.toString().padStart(3, '0')}
+                            </p>
+                          </div>
+                          <div className="flex flex-col items-end gap-3">
+                            <StatusBadge status={req.VVR_Status} />
+                            <button
+                              onClick={() => handleViewGatePass(req)}
+                              className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest ${isLight ? "text-gray-500 hover:text-primary" : "text-white/40 hover:text-primary"} transition-colors`}
                             >
-                              <span className="font-normal tracking-wide">
-                                {req.VVR_Visit_Date
-                                  ? req.VVR_Visit_Date.split("T")[0].split(
-                                    " ",
-                                  )[0]
-                                  : "N/A"}
-                              </span>
+                              <QrCode size={14} /> View Pass
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4 mb-6 px-1">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 text-gray-400">
+                              <Calendar size={14} className="text-primary/70" />
+                              <span className="text-[9px] font-black uppercase tracking-[0.15em]">Deployed</span>
                             </div>
-                          </td>
-                          <td className="px-3 py-1 text-left font-normal text-[12px]">
-                            <div className="max-w-[170px]">
-                              <p
-                                title={
-                                  req.VVR_Purpose || "No purpose specified"
-                                }
-                                className={`font-normal tracking-wide text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
+                            <span className={`text-[10px] font-bold ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                              {req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0] : "N/A"} // {req.VVR_Visit_Time || "08:30 AM"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 text-gray-400">
+                              <MapPin size={14} className="text-primary/70" />
+                              <span className="text-[9px] font-black uppercase tracking-[0.15em]">Areas</span>
+                            </div>
+                            <span className={`text-[10px] font-bold truncate max-w-[160px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                              {req.VVR_Purpose || "General Access"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 text-gray-400">
+                              <AlertCircle size={14} className="text-primary/70" />
+                              <span className="text-[9px] font-black uppercase tracking-[0.15em]">Request</span>
+                            </div>
+                            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[9px] font-black border border-primary/20">
+                              1
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleReview(req.VVR_Request_id)}
+                          className={`w-full py-1.5 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] ${isLight ? "bg-white border-gray-100 text-gray-600 hover:bg-gray-50" : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10"}`}
+                        >
+                          <Eye size={15} /> Inspect
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="py-20 text-center opacity-40">
+                      <ClipboardList size={40} className="mx-auto mb-3" />
+                      <p className="text-[10px] font-bold uppercase tracking-widest">No Requests Found</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr
+                        className={`text-[12px] uppercase font-normal tracking-[0.3em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
+                      >
+                        <th className="px-3 py-2 text-center w-[60px] font-normal text-[12px]">ID</th>
+                        <th className="px-3 py-2 text-left font-normal text-[12px]">Visitor</th>
+                        <th className="px-3 py-2 text-center font-normal text-[12px]">Date</th>
+                        <th className="px-3 py-2 text-left font-normal text-[12px]">Reason</th>
+                        <th className="px-3 py-2 text-left font-normal text-[12px]">Areas</th>
+                        <th className="px-3 py-2 text-center font-normal text-[12px]">Status</th>
+                        <th className="px-3 py-2 text-center w-[80px] font-normal text-[12px]">Pass</th>
+                        <th className="px-3 py-2 text-center w-[120px] font-normal text-[12px]">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {filteredRequests && filteredRequests.length > 0 ? (
+                        filteredRequests.map((req) => (
+                          <tr
+                            key={req.VVR_Request_id}
+                            className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
+                          >
+                            <td className="px-3 py-1 text-center text-primary text-[12px] tracking-wide font-normal">
+                              #{req.VVR_Request_id}
+                            </td>
+                            <td className="px-3 py-1 text-left font-normal text-[12px]">
+                              <span
+                                className={`font-normal text-[12px] tracking-wide ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                               >
-                                {req.VVR_Purpose || "-"}
+                                {getVisitorDisplayName(req)}
+                              </span>
+                            </td>
+                            <td className="px-3 py-1 font-normal text-[12px]">
+                              <div
+                                className={`flex flex-col items-center justify-center gap-1.5 text-[12px] ${isLight ? "text-gray-500" : "text-white/70"}`}
+                              >
+                                <span className="font-normal tracking-wide">
+                                  {req.VVR_Visit_Date
+                                    ? req.VVR_Visit_Date.split("T")[0].split(
+                                      " ",
+                                    )[0]
+                                    : "N/A"}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-3 py-1 text-left font-normal text-[12px]">
+                              <div className="max-w-[170px]">
+                                <p
+                                  title={
+                                    req.VVR_Purpose || "No purpose specified"
+                                  }
+                                  className={`font-normal tracking-wide text-[12px] truncate ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
+                                >
+                                  {req.VVR_Purpose || "-"}
+                                </p>
+                              </div>
+                            </td>
+                            <td className="px-3 py-1 align-top text-left font-normal text-[12px]">
+                              <div
+                                className={`flex flex-col gap-2 text-[12px] font-normal tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
+                              >
+                                <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
+                                  {renderVisitAreas(req)}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-3 py-1 text-center font-normal text-[12px]">
+                              <div className="flex items-center justify-center">
+                                <StatusBadge status={req.VVR_Status} />
+                              </div>
+                            </td>
+                            <td className="px-3 py-1 text-center font-normal text-[12px]">
+                              <div className="flex items-center justify-center">
+                                {hasGatePass(req.VVR_Request_id) && (
+                                  <button
+                                    onClick={() => handleViewGatePass(req)}
+                                    className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all group/btn ${isLight ? "bg-green-500/5 text-green-600 border-green-500/20 hover:bg-green-500 hover:text-white hover:shadow-lg hover:shadow-green-500/25" : "bg-green-400/5 text-green-400 border-green-400/20 hover:bg-green-400 hover:text-white hover:shadow-lg hover:shadow-green-400/25"}`}
+                                    title="View Gate Pass"
+                                  >
+                                    <QrCode size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-3 py-1 text-center font-normal text-[12px]">
+                              <div className="flex items-center justify-center gap-2">
+                                <button
+                                  onClick={() => handleReview(req.VVR_Request_id)}
+                                  className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all group/btn ${isLight ? "bg-primary/5 text-primary border-primary/20 hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/25" : "bg-blue-400/5 text-blue-400 border-blue-400/20 hover:bg-blue-400 hover:text-white hover:shadow-lg hover:shadow-blue-400/25"}`}
+                                  title="View Request Details"
+                                >
+                                  <Eye size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
+                                </button>
+                                <button
+                                  onClick={() => handleOpenEdit(req)}
+                                  className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200" : "bg-white/5 text-gray-300 border-white/10 hover:bg-white/10"}`}
+                                  title="Edit"
+                                >
+                                  <Edit size={14} className="shrink-0" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={7} className="py-24 text-center font-normal text-[12px]">
+                            <div className="flex flex-col items-center justify-center opacity-20">
+                              <ClipboardList
+                                size={48}
+                                className={`mb-4 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                              />
+                              <p
+                                className={`uppercase tracking-[0.4em] text-[10px] font-normal ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                              >
+                                No Active Visit Requests Detected
                               </p>
                             </div>
                           </td>
-                          <td className="px-3 py-1 align-top text-left font-normal text-[12px]">
-                            <div
-                              className={`flex flex-col gap-2 text-[12px] font-normal tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
-                            >
-                              <div className="min-w-0 max-w-[280px] lg:max-w-[360px]">
-                                {renderVisitAreas(req)}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-3 py-1 text-center font-normal text-[12px]">
-                            <div className="flex items-center justify-center">
-                              <StatusBadge status={req.VVR_Status} />
-                            </div>
-                          </td>
-                          <td className="px-3 py-1 text-center font-normal text-[12px]">
-                            <div className="flex items-center justify-center">
-                              {hasGatePass(req.VVR_Request_id) && (
-                                <button
-                                  onClick={() => handleViewGatePass(req)}
-                                  className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all group/btn ${isLight ? "bg-green-500/5 text-green-600 border-green-500/20 hover:bg-green-500 hover:text-white hover:shadow-lg hover:shadow-green-500/25" : "bg-green-400/5 text-green-400 border-green-400/20 hover:bg-green-400 hover:text-white hover:shadow-lg hover:shadow-green-400/25"}`}
-                                  title="View Gate Pass"
-                                >
-                                  <QrCode size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-3 py-1 text-center font-normal text-[12px]">
-                            <div className="flex items-center justify-center gap-2">
-                              <button
-                                onClick={() => handleReview(req.VVR_Request_id)}
-                                className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all group/btn ${isLight ? "bg-primary/5 text-primary border-primary/20 hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/25" : "bg-blue-400/5 text-blue-400 border-blue-400/20 hover:bg-blue-400 hover:text-white hover:shadow-lg hover:shadow-blue-400/25"}`}
-                                title="View Request Details"
-                              >
-                                <Eye size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
-                              </button>
-                              <button
-                                onClick={() => handleOpenEdit(req)}
-                                className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all ${isLight ? "bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200" : "bg-white/5 text-gray-300 border-white/10 hover:bg-white/10"}`}
-                                title="Edit"
-                              >
-                                <Edit size={14} className="shrink-0" />
-                              </button>
-                            </div>
-                          </td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={7} className="py-24 text-center font-normal text-[12px]">
-                          <div className="flex flex-col items-center justify-center opacity-20">
-                            <ClipboardList
-                              size={48}
-                              className={`mb-4 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                            />
-                            <p
-                              className={`uppercase tracking-[0.4em] text-[10px] font-normal ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                            >
-                              No Active Visit Requests Detected
-                            </p>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                </tbody>
-              </table>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
-          )}
-          </div>
-        )
-      }
-    </div>
+          )
+          }
+        </div>
 
         {/* Modal for Add/Update Visit Request */}
         {isModalOpen && (
@@ -1262,8 +1315,8 @@ const VisitRequests = () => {
                             setVisitorSearchTerm("");
                           }}
                           className={`w-full border rounded-xl px-5 py-4 text-[13px] text-left focus:outline-none focus:border-primary/50 appearance-none cursor-pointer transition-all flex items-center justify-between ${isLight
-                              ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
-                              : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                            ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
+                            : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
                             } ${formData.VVR_Visitor_id ? (isLight ? "text-[#1A1A1A]" : "text-white") : isLight ? "text-gray-400" : "text-white/50"}`}
                         >
                           <span>
@@ -1284,8 +1337,8 @@ const VisitRequests = () => {
                         {visitorSearchOpen && (
                           <div
                             className={`absolute top-full left-0 right-0 z-50 mt-2 border rounded-xl shadow-lg ${isLight
-                                ? "bg-white border-gray-200 shadow-gray-200/40"
-                                : "bg-[#0A0A0B] border-white/10 shadow-black/50"
+                              ? "bg-white border-gray-200 shadow-gray-200/40"
+                              : "bg-[#0A0A0B] border-white/10 shadow-black/50"
                               }`}
                           >
                             <div className="p-3 border-b border-white/5 sticky top-0 bg-inherit">
@@ -1297,8 +1350,8 @@ const VisitRequests = () => {
                                   setVisitorSearchTerm(e.target.value)
                                 }
                                 className={`w-full border rounded-lg px-3 py-2 text-[12px] focus:outline-none focus:border-primary/50 transition-all ${isLight
-                                    ? "bg-gray-50 border-gray-200 text-[#1A1A1A]"
-                                    : "bg-white/[0.02] border-white/10 text-white"
+                                  ? "bg-gray-50 border-gray-200 text-[#1A1A1A]"
+                                  : "bg-white/[0.02] border-white/10 text-white"
                                   }`}
                                 autoFocus
                               />
@@ -1323,13 +1376,13 @@ const VisitRequests = () => {
                                       setVisitorSearchTerm("");
                                     }}
                                     className={`w-full px-4 py-1.5 text-left text-[12px] font-medium transition-all border-b border-white/5 last:border-b-0 flex items-center justify-between group ${String(formData.VVR_Visitor_id) ===
-                                        String(v.VV_Visitor_id)
-                                        ? isLight
-                                          ? "bg-primary/10 text-primary"
-                                          : "bg-primary/10 text-primary"
-                                        : isLight
-                                          ? "hover:bg-gray-50 text-[#1A1A1A]"
-                                          : "hover:bg-white/[0.05] text-white/80"
+                                      String(v.VV_Visitor_id)
+                                      ? isLight
+                                        ? "bg-primary/10 text-primary"
+                                        : "bg-primary/10 text-primary"
+                                      : isLight
+                                        ? "hover:bg-gray-50 text-[#1A1A1A]"
+                                        : "hover:bg-white/[0.05] text-white/80"
                                       }`}
                                   >
                                     <div className="flex flex-col">
@@ -1338,8 +1391,8 @@ const VisitRequests = () => {
                                       </span>
                                       <span
                                         className={`text-[10px] ${isLight
-                                            ? "text-gray-500"
-                                            : "text-white/40"
+                                          ? "text-gray-500"
+                                          : "text-white/40"
                                           }`}
                                       >
                                         ID: {v.VV_Visitor_id}
@@ -1381,8 +1434,8 @@ const VisitRequests = () => {
                       value={formData.VVR_Visit_Date}
                       onChange={handleInputChange}
                       className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${isLight
-                          ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
-                          : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                        ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
+                        : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
                         }`}
                       style={{ colorScheme: isLight ? "light" : "dark" }}
                     />
@@ -1399,8 +1452,8 @@ const VisitRequests = () => {
                       value={formData.VVR_Places_to_Visit}
                       onChange={handleInputChange}
                       className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${isLight
-                          ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
-                          : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                        ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
+                        : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
                         }`}
                       placeholder="Enter the place or area name"
                     />
@@ -1417,8 +1470,8 @@ const VisitRequests = () => {
                       onChange={handleInputChange}
                       rows="3"
                       className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 resize-none transition-all ${isLight
-                          ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
-                          : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                        ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
+                        : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
                         }`}
                       placeholder="Tell us why the visitor is coming"
                     ></textarea>
@@ -1508,6 +1561,105 @@ const VisitRequests = () => {
             </MenuItem>
           )}
         </Menu>
+
+        {/* ─── GATE PASS MODAL ─── */}
+        <AnimatePresence>
+          {isGatePassModalOpen && selectedGatePass && (
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsGatePassModalOpen(false)}
+                className="absolute inset-0 bg-black/80 backdrop-blur-md"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="w-full max-w-[430px] bg-[#161618]/95 backdrop-blur-3xl border border-white/20 shadow-[0_24px_80px_rgba(0,0,0,0.9)] rounded-[32px] overflow-hidden relative"
+              >
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-green-500/40 to-transparent"></div>
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+                {/* Modal Header */}
+                <div className="p-5 border-b border-white/5 flex items-center justify-between relative z-10 bg-white/[0.01]">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
+                    <div className="w-8 h-8 bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center rounded-xl shadow-lg">
+                      <ShieldCheck size={16} />
+                    </div>
+                    <div>
+                      <p className="text-gray-300/90 text-[11px] font-medium capitalize tracking-[0.16em] mb-1">
+                        GatePass Intelligence
+                      </p>
+                      <h2 className="text-white text-[15px] font-bold capitalize tracking-[0.14em]">
+                        GatePass Generated
+                      </h2>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setIsGatePassModalOpen(false)}
+                    className="text-gray-500 hover:text-white transition-all bg-white/5 p-2 rounded-xl border border-white/5 hover:border-white/20"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {/* Modal Body */}
+                <div className="p-6 md:p-8 flex flex-col items-center justify-center text-center relative z-10">
+                  <div className="relative group/qr p-6 mas-glass rounded-[22px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 visitor-qr-svg-container gate-pass-modal-qr">
+                    {isGeneratingQr ? (
+                      <div className="w-[160px] h-[160px] flex items-center justify-center">
+                        <Loader2 className="animate-spin text-primary" size={24} />
+                      </div>
+                    ) : (
+                      <QRCodeSVG
+                        value={encodedQr || "SVMQR_ERROR"}
+                        size={160}
+                        level="H"
+                      />
+                    )}
+                    <div className="absolute inset-x-0 -bottom-2 flex justify-center">
+                      <span className="bg-black text-white px-4 py-1.5 rounded-full text-[10px] font-bold tracking-[0.2em] capitalize border border-white/20">
+                        ID: {selectedGatePass.VGP_Pass_id || selectedGatePass.vgp_Pass_id}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <p className="text-gray-300/80 text-[11px] font-medium capitalize tracking-[0.3em]">
+                      Protocol Authenticated
+                    </p>
+                    <p className="text-white text-xl font-medium capitalize tracking-widest flex items-center justify-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                      {selectedGatePass.visitorName}
+                    </p>
+                    <div className="h-[1px] w-12 bg-white/10 mx-auto my-3"></div>
+                    <p className="text-gray-400 text-[11px] capitalize tracking-widest leading-relaxed max-w-[300px]">
+                      Present this digital gate pass at the security checkpoint for verification.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Modal Footer */}
+                <div className="p-4 border-t border-white/5 bg-white/[0.01] relative z-10 flex flex-col md:flex-row gap-3 md:gap-3">
+                  <button
+                    onClick={handleDownloadQR}
+                    className="flex-1 py-1.5 bg-green-500/10 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl transition-all shadow-xl flex items-center justify-center gap-2"
+                  >
+                    <Download size={13} /> Save
+                  </button>
+                  <button
+                    onClick={() => setIsGatePassModalOpen(false)}
+                    className="py-1.5 px-6 border border-white/10 text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl hover:bg-white/5 transition-all"
+                  >
+                    Conclude
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ─── FULL-SCREEN EDIT OVERLAY ─── */}

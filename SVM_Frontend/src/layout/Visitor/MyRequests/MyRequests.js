@@ -957,20 +957,18 @@ const MyRequests = () => {
                         >
                           <Pencil size={16} />
                         </button>
-                        {hasGatePass(req.VVR_Request_id) &&
-                          (req.VVR_Status === "A" ||
-                            req.VVR_Status === "APPROVED") && (
-                            <button
-                              onClick={() => handleViewGatePass(req)}
-                              className="flex-1 flex items-center justify-center gap-2 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary hover:bg-primary/20 hover:border-primary/50 transition-all font-bold uppercase tracking-[0.1em] text-[10px] group/btn"
-                            >
-                              <QrCode
-                                size={13}
-                                className="group-hover/btn:scale-110 transition-transform"
-                              />
-                              Gate Pass
-                            </button>
-                          )}
+                        {hasGatePass(req.VVR_Request_id) && (
+                          <button
+                            onClick={() => handleViewGatePass(req)}
+                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary hover:bg-primary/20 hover:border-primary/50 transition-all font-bold uppercase tracking-[0.1em] text-[10px] group/btn"
+                          >
+                            <QrCode
+                              size={13}
+                              className="group-hover/btn:scale-110 transition-transform"
+                            />
+                            Gate Pass
+                          </button>
+                        )}
                       </div>
                     </div>
                   </motion.div>
