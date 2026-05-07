@@ -110,7 +110,7 @@ const ActivityTimeline = () => {
                 ></div>
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-[var(--color-text-primary)] text-[11.5px] font-bold tracking-tight truncate mb-0.5">
+                <h4 className="text-[var(--color-text-primary)] text-[11.5px] font-normal tracking-wide truncate mb-0.5">
                   {act.visitor}
                 </h4>
                 <p className="text-[var(--color-text-dim)] text-[9.5px] font-medium tracking-wide opacity-80 leading-none">

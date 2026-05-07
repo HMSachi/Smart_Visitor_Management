@@ -131,33 +131,29 @@ const VisitorTable = ({
 
   return (
     <div className="space-y-3 animate-fade-in-slow">
-      <div className={`border transition-all rounded-[32px] shadow-xl relative overflow-hidden ${themeMode === "light" ? "bg-white border-gray-100" : "bg-[var(--color-bg-paper)] border-white/5"}`}>
-        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-
-        <div className="px-4 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-center gap-3 relative z-10">
-          <div className="overflow-x-auto no-scrollbar w-full xl:w-auto">
-            <div className={`inline-flex p-1 rounded-full border transition-all gap-0.5 ${themeMode === "light" ? "bg-white border-gray-100" : "bg-black/20 border-white/5"}`}>
-              {statusOptions.map((btn) => (
-                <button
-                  key={btn.id}
-                  onClick={() => setStatusFilter(btn.id)}
-                  className={`relative px-4 py-2 rounded-full text-[11px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${statusFilter === btn.id
-                    ? "bg-primary text-white shadow-lg shadow-primary/20"
-                    : themeMode === "light"
-                      ? "text-gray-500 hover:text-primary"
-                      : "text-white/40 hover:text-white"
-                    }`}
-                >
-                  {btn.label}
-                </button>
-              ))}
-            </div>
+      <div className="mb-4 flex flex-col xl:flex-row xl:items-center justify-between gap-3 relative z-10">
+        <div className="overflow-x-auto no-scrollbar w-full xl:w-auto pb-1">
+          <div className={`inline-flex p-1 rounded-full border transition-all gap-0.5 ${themeMode === "light" ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}>
+            {statusOptions.map((btn) => (
+              <button
+                key={btn.id}
+                onClick={() => setStatusFilter(btn.id)}
+                className={`relative px-4 py-2 rounded-full text-[11px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${statusFilter === btn.id
+                  ? "bg-primary text-white shadow-lg shadow-primary/20"
+                  : themeMode === "light"
+                    ? "text-gray-500 hover:text-primary"
+                    : "text-white/40 hover:text-white"
+                  }`}
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
+        </div>
 
-          <div className="inline-flex items-center gap-2 rounded-[8px] border border-white/8 bg-black/20 h-9 px-4 text-[11px] font-medium tracking-wide text-white/80 shrink-0">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
-            {filteredVisitors.length} records
-          </div>
+        <div className="inline-flex items-center gap-2 rounded-[8px] border border-white/8 bg-black/20 h-9 px-4 text-[11px] font-medium tracking-wide text-white/80 shrink-0">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
+          {filteredVisitors.length} records
         </div>
       </div>
 
