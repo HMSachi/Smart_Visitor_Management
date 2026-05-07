@@ -14,6 +14,8 @@ import {
   setSubmitting
 } from "../../../reducers/visitRequestFormSlice";
 import { AddVisitRequest, GetVisitRequestsByCP } from "../../../actions/VisitRequestAction";
+import { GetAllBlacklist } from "../../../actions/BlacklistAction";
+
 import { 
   User, 
   Calendar, 
@@ -32,6 +34,8 @@ const CreateVisitRequest = () => {
   const { visitorsByCP } = useSelector((state) => state.visitorManagement);
   const user = useSelector((state) => state.login.user);
   const userEmail = user?.ResultSet?.[0]?.VA_Email;
+  const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+
 
   const { visitationDetails: formData, selectedVisitorDetails, isSubmitting } = useSelector((state) => state.visitRequestForm);
   const [cpId, setCpId] = useState(null);
@@ -55,7 +59,9 @@ const CreateVisitRequest = () => {
 
   useEffect(() => {
     if (cpId) dispatch(GetVisitorsByCP(cpId));
+    dispatch(GetAllBlacklist());
   }, [dispatch, cpId]);
+
 
   const activeVisitors = useMemo(() => {
     return (visitorsByCP || []).filter((v) => {
@@ -81,9 +87,23 @@ const CreateVisitRequest = () => {
     if (!formData.VVR_Visit_Date) newErrors.VVR_Visit_Date = "Date required";
     if (!formData.VVR_Places_to_Visit?.trim()) newErrors.VVR_Places_to_Visit = "Location required";
     if (!formData.VVR_Purpose?.trim()) newErrors.VVR_Purpose = "Purpose required";
+
+    // Check blacklist
+    if (selectedVisitorDetails) {
+        const isBlacklisted = blacklists.some(
+            (b) => 
+                (b.VB_Email && b.VB_Email.toLowerCase() === selectedVisitorDetails.VV_Email?.toLowerCase() && b.VB_Status === "A") ||
+                (b.VB_Name && b.VB_Name.toLowerCase() === selectedVisitorDetails.VV_Name?.toLowerCase() && b.VB_Status === "A")
+        );
+        if (isBlacklisted) {
+            newErrors.VVR_Visitor_id = "Access Restricted: This visitor is blocked.";
+        }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
 
   const handleNext = async (e) => {
     e.preventDefault();

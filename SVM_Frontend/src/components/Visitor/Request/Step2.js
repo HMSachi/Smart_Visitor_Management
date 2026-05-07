@@ -36,6 +36,9 @@ import { validateNIC, validatePhone } from '../../../utils/validation';
 import { AddVehicle } from '../../../actions/VehicleAction';
 import { AddVisitGroup } from '../../../actions/VisitGroupAction';
 import { AddItem } from '../../../actions/ItemCarriedAction';
+import { GetAllBlacklist } from '../../../actions/BlacklistAction';
+import { GetAllVisitors } from '../../../actions/VisitorAction';
+
 
 const Step2Main = () => {
     const navigate = useNavigate();
@@ -50,6 +53,9 @@ const Step2Main = () => {
         isSubmitting,
         error: reduxError
     } = visitorState;
+    const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+    const { visitors: allVisitors } = useSelector((state) => state.visitorManagement || { visitors: [] });
+
 
     const [showFinalSuccess, setShowFinalSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
@@ -64,7 +70,10 @@ const Step2Main = () => {
         if (!vehicles.length) dispatch(addVehicle());
         if (!visitors.length) dispatch(addVisitor());
         if (!equipment.length) dispatch(addEquipment());
+        dispatch(GetAllBlacklist());
+        dispatch(GetAllVisitors());
     }, [dispatch]);
+
 
     // ── VEHICLES ──────────────────────────────────────────────────────────────
     const handleVehicleSave = async (vehicleId) => {
@@ -129,6 +138,17 @@ const Step2Main = () => {
         const phoneErr = validatePhone(person.contact);
         if (phoneErr) {
             alert(phoneErr);
+            return;
+        }
+
+        // Check blacklist
+        const isBlacklisted = blacklists.some(
+            (b) => 
+                (b.VB_Name && b.VB_Name.toLowerCase() === person.fullName?.toLowerCase() && b.VB_Status === "A")
+        );
+
+        if (isBlacklisted) {
+            alert(`Access Restricted for ${person.fullName}. Please connect with the system administrator.`);
             return;
         }
         
@@ -312,6 +332,7 @@ const Step2Main = () => {
 
                 <VisitorGroup
                     visitors={visitors}
+                    allVisitors={allVisitors}
                     onAdd={handleAddVisitor}
                     onRemove={(id) => dispatch(removeVisitor(id))}
                     onChange={(id, field, value) => dispatch(updateVisitorDetail({ id, field, value }))}

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
-  Trash2,
   Shield,
   User,
   Clock,
-  ChevronRight,
   Eye,
   UserPlus,
   Search,
@@ -210,6 +208,7 @@ const BlacklistTable = () => {
                   >
                     Date
                   </th>
+<<<<<<< HEAD
                   <th
                     className={`px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
@@ -217,6 +216,10 @@ const BlacklistTable = () => {
                   </th>
                   <th className="px-6 py-2 text-[12px] font-normal tracking-[0.2em] uppercase text-primary text-right whitespace-nowrap pr-6">
                     Control
+=======
+                  <th className="px-4 md:px-5 py-4 text-[10px] font-bold tracking-[0.2em] uppercase text-primary text-right whitespace-nowrap">
+                    Action
+>>>>>>> d84c08bc478503668fb632876e0c28206051dcb9
                   </th>
                 </tr>
               </thead>
@@ -230,8 +233,13 @@ const BlacklistTable = () => {
                       className="block sm:table-row"
                     >
                       <td
+<<<<<<< HEAD
                         colSpan="5"
                         className="px-6 py-14 text-center block sm:table-cell font-normal text-[12px]"
+=======
+                        colSpan="4"
+                        className="px-6 py-14 text-center block sm:table-cell"
+>>>>>>> d84c08bc478503668fb632876e0c28206051dcb9
                       >
                         <div className="flex justify-center items-center h-full">
                           <div className="w-7 h-7 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
@@ -309,6 +317,7 @@ const BlacklistTable = () => {
                           </div>
                         </td>
 
+<<<<<<< HEAD
                         {/* Risk Level */}
                         <td
                           className={`block sm:table-cell px-6 py-1 border-b sm:border-none text-[12px] ${isLight ? "border-gray-100" : "border-white/5"}`}
@@ -320,6 +329,8 @@ const BlacklistTable = () => {
                             level={item.VB_Alert_Type || "Level 01"}
                           />
                         </td>
+=======
+>>>>>>> d84c08bc478503668fb632876e0c28206051dcb9
 
                         {/* Actions */}
                         <td className="block sm:table-cell px-6 py-1 text-right font-normal text-[12px] pr-6">
@@ -399,8 +410,13 @@ const BlacklistTable = () => {
                       className="block sm:table-row"
                     >
                       <td
+<<<<<<< HEAD
                         colSpan="5"
                         className="px-6 py-14 text-center block sm:table-cell font-normal text-[12px]"
+=======
+                        colSpan="4"
+                        className="px-6 py-14 text-center block sm:table-cell"
+>>>>>>> d84c08bc478503668fb632876e0c28206051dcb9
                       >
                         <div className="flex flex-col items-center gap-4">
                           <div className="w-16 h-16 bg-primary/5 rounded-[24px] flex items-center justify-center border border-primary/10 shadow-inner">

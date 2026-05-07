@@ -12,6 +12,8 @@ import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 import { GetLogin } from "../../actions/LoginAction";
 import { useThemeMode } from "../../theme/ThemeModeContext";
 import { validateEmail, validatePassword } from "../../utils/validation";
+import { GetAllBlacklist } from "../../actions/BlacklistAction";
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,6 +24,8 @@ const Login = () => {
     error: reduxError,
     user,
   } = useSelector((state) => state.login);
+  const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -60,9 +64,28 @@ const Login = () => {
     : "radial-gradient(110% 88% at 78% 10%, rgba(200,16,46,0.22) 0%, rgba(200,16,46,0) 54%), radial-gradient(120% 90% at 22% 92%, rgba(47,107,154,0.2) 0%, rgba(47,107,154,0) 55%), radial-gradient(130% 110% at 50% 50%, rgba(4,8,13,0) 55%, rgba(4,8,13,0.44) 100%)";
 
   useEffect(() => {
+    dispatch(GetAllBlacklist());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (user) {
       if (user.ResultSet && user.ResultSet.length > 0) {
-        const role = user.ResultSet[0].VA_Role;
+        const currentUser = user.ResultSet[0];
+        const role = currentUser.VA_Role;
+        const email = currentUser.VA_Email || currentUser.VS_Email || currentUser.VCP_Email || currentUser.VV_Email;
+
+        // Check if blacklisted
+        const isBlacklisted = blacklists.some(
+          (b) => 
+            (b.VB_Email && b.VB_Email.toLowerCase() === email?.toLowerCase()) && 
+            b.VB_Status === "A"
+        );
+
+        if (isBlacklisted && role === "Visitor") {
+          setLocalError("Your access has been restricted. Please connect with the system administrator.");
+          return;
+        }
+
         if (role === "Admin") navigate("/admin-dashboard");
         else if (role === "Contact_Person")
           navigate("/contact_person/dashboard");
