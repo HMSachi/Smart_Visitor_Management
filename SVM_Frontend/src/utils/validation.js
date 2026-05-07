@@ -18,8 +18,8 @@ export const validatePhone = (phone) => {
 
 export const validateNIC = (nic) => {
   if (!nic) return "NIC is required";
-  const nicRegex = /^[0-9]{10}$/;
-  if (!nicRegex.test(nic)) return "NIC must be exactly 10 digits";
+  const nicRegex = /^([0-9]{10}|[0-9]{12})$/;
+  if (!nicRegex.test(nic)) return "NIC must be exactly 10 or 12 digits";
   return "";
 };
 

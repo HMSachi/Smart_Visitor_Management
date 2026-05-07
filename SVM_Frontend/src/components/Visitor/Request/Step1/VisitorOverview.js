@@ -106,7 +106,9 @@ const VisitorOverview = ({ data, onChange, errors = {} }) => {
                   // Real-time filtering based on field requirements
                   if (field.name === "fullName") {
                     value = value.replace(/[^A-Za-z\s]/g, "");
-                  } else if (field.name === "phoneNumber" || field.name === "nic") {
+                  } else if (field.name === "nic") {
+                    value = value.replace(/[^0-9]/g, "").slice(0, 12);
+                  } else if (field.name === "phoneNumber") {
                     value = value.replace(/[^0-9]/g, "").slice(0, 10);
                   }
                   

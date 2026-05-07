@@ -23,6 +23,7 @@ import {
   Target,
   MapPin,
   CheckCircle2,
+  Package,
 } from "lucide-react";
 import { GetGatePassById } from "../../../actions/GatePassAction";
 import { motion, AnimatePresence } from "framer-motion";
@@ -173,15 +174,24 @@ const LiveFeed = () => {
 
       let passId = data;
       let parsedQrData = null;
+      let isSubVisitorQR = false;
 
       if (isSecureQrPayload(data)) {
         console.log("[LiveFeed] Detected secure QR format");
         const decoded = await decodeSecureQrPayload(data);
+        console.log("[LiveFeed] Decoded secure QR payload:", decoded);
         if (decoded && typeof decoded === "object") {
           parsedQrData = decoded;
           setQrData(decoded);
+          
+          // Check if this is an individual sub-visitor QR
+          if (decoded.type === "subVisitor" && decoded.subVisitor) {
+            console.log("[LiveFeed] Individual sub-visitor QR detected");
+            isSubVisitorQR = true;
+            passId = decoded.id; // Use the id from payload
+          }
         }
-        if (decoded?.id) {
+        if (decoded?.id && !isSubVisitorQR) {
           passId = decoded.id;
         }
       } else {
@@ -204,13 +214,30 @@ const LiveFeed = () => {
         }
       }
 
-      if (!passId) {
+      if (!passId && !isSubVisitorQR) {
         throw new Error("We could not find a valid pass ID in the QR code.");
+      }
+
+      // For sub-visitor QRs, we don't need database lookup - we have all data in the QR
+      if (isSubVisitorQR && qrData?.subVisitor && qrData?.mainVisitor) {
+        console.log("[LiveFeed] Sub-visitor QR verified from decoded payload");
+        // Create a minimal pass details object to satisfy the UI
+        setPassDetails({
+          VGP_Pass_id: passId,
+          Visitor_Name: qrData.mainVisitor.name,
+          VV_Name: qrData.mainVisitor.name,
+          Visitor_ID: qrData.mainVisitor.id,
+          VV_Visitor_id: qrData.mainVisitor.id,
+        });
+        setScanStatus("details");
+        setScanMessage("Sub-visitor QR verified successfully.");
+        setIsLoading(false);
+        return;
       }
 
       console.log("[LiveFeed] Looking up pass ID:", passId);
 
-      // Fetch gate pass details from database
+      // Fetch gate pass details from database for regular QRs
       const result = await dispatch(GetGatePassById(passId));
 
       // Handle different response structures
@@ -250,7 +277,37 @@ const LiveFeed = () => {
   };
 
   const profileData = useMemo(() => {
-    // Merge QR data with database details
+    // Check if this is an individual sub-visitor QR code
+    if (qrData?.type === "subVisitor" && qrData?.subVisitor) {
+      console.log("[LiveFeed] Processing individual sub-visitor QR data");
+      
+      const merged = {
+        Name: qrData.subVisitor.name || "N/A",
+        "NIC/Passport_No": qrData.subVisitor.nic || "N/A",
+        Email: passDetails?.Visitor_Email || passDetails?.VV_Email || "N/A",
+        "Phone number": passDetails?.Visitor_Phone || passDetails?.VV_Phone || "N/A",
+        Company: qrData.mainVisitor?.company || passDetails?.VV_Company || "N/A",
+        "Main Visitor": qrData.mainVisitor?.name || passDetails?.Visitor_Name || "N/A",
+        "Main Visitor ID": qrData.mainVisitor?.id || passDetails?.VV_Visitor_id || "N/A",
+        "Visiting purpose": passDetails?.VVR_Purpose || "N/A",
+        "Visiting area": passDetails?.VVR_Places_to_Visit || "N/A",
+      };
+      
+      // Add items if available - handle compact format (n=name, q=quantity)
+      if (qrData.items && Array.isArray(qrData.items) && qrData.items.length > 0) {
+        console.log("[LiveFeed] Sub-visitor carrying items:", qrData.items);
+        // Expand compact format to full format for display
+        merged.items = qrData.items.map(item => ({
+          itemName: item.n || item.itemName || "N/A",
+          itemQuantity: item.q || item.itemQuantity || 1,
+          itemDescription: item.d || item.itemDescription || "",
+        }));
+      }
+      
+      return merged;
+    }
+    
+    // Otherwise, handle normal gate pass QR
     const merged = {
       Name:
         qrData?.Name ||
@@ -288,11 +345,20 @@ const LiveFeed = () => {
         passDetails?.VGP_Visiting_Area ||
         "N/A",
     };
+    
+    // Add sub-visitors from QR data if available
+    if (qrData?.subVisitors && Array.isArray(qrData.subVisitors)) {
+      console.log("[LiveFeed] Found subVisitors in qrData:", qrData.subVisitors);
+      merged.subVisitors = qrData.subVisitors;
+    } else {
+      console.log("[LiveFeed] No subVisitors in qrData. qrData:", qrData);
+    }
+    
     return merged;
   }, [qrData, passDetails]);
 
   const hasFullQrProfile = Object.values(profileData).some(
-    (value) => value !== "N/A",
+    (value) => value !== "N/A" && !Array.isArray(value),
   );
 
   const handleResetNode = () => {
@@ -522,6 +588,27 @@ const LiveFeed = () => {
                 </div>
               </div>
 
+              {/* Section: Main Visitor (for sub-visitor QR codes) */}
+              {qrData?.type === "subVisitor" && qrData?.mainVisitor && (
+                <div className="px-6 py-4">
+                  <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
+                    Main Visitor
+                  </p>
+                  <div className="space-y-3">
+                    <InfoRow
+                      icon={<User size={14} />}
+                      label="Name"
+                      value={profileData["Main Visitor"]}
+                    />
+                    <InfoRow
+                      icon={<CreditCard size={14} />}
+                      label="ID"
+                      value={profileData["Main Visitor ID"]}
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Section: Contact */}
               <div className="px-6 py-4">
                 <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
@@ -564,6 +651,106 @@ const LiveFeed = () => {
                   />
                 </div>
               </div>
+
+              {/* Section: Items Carried (for sub-visitors) */}
+              {profileData.items && profileData.items.length > 0 && (
+                <div className="px-6 py-4 border-t border-[var(--color-border-soft)]">
+                  <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
+                    Items Carried
+                  </p>
+                  <div className="space-y-2">
+                    {profileData.items.map((item, index) => (
+                      <div key={index} className="p-3 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border-soft)]">
+                        <div className="flex items-start gap-3 mb-2">
+                          <Package size={14} className="text-[var(--color-text-secondary)] flex-shrink-0 mt-0.5" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
+                              Item Name
+                            </p>
+                            <p className="text-sm font-semibold break-words leading-snug" style={{ color: "var(--color-text-primary)" }}>
+                              {item.itemName || "N/A"}
+                            </p>
+                          </div>
+                          {item.itemQuantity && item.itemQuantity > 1 && (
+                            <div className="px-2 py-1 rounded-lg bg-primary/20 text-primary text-[10px] font-bold flex-shrink-0">
+                              x{item.itemQuantity}
+                            </div>
+                          )}
+                        </div>
+                        {item.itemDescription && (
+                          <div className="flex items-start gap-3">
+                            <div className="w-4"></div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
+                                Description
+                              </p>
+                              <p className="text-[10px] text-[var(--color-text-secondary)] break-words" style={{ color: "var(--color-text-secondary)" }}>
+                                {item.itemDescription}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Section: Sub Visitors (Group Members) */}
+              {profileData.subVisitors && profileData.subVisitors.length > 0 && (
+                <div className="px-6 py-4 border-t border-[var(--color-border-soft)]">
+                  <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
+                    Sub Visitors
+                  </p>
+                  <div className="space-y-3">
+                    {profileData.subVisitors.map((subVisitor, index) => (
+                      <div key={index} className="p-3 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border-soft)]">
+                        <div className="flex items-start gap-3 mb-2">
+                          <User size={14} className="text-[var(--color-text-secondary)] flex-shrink-0 mt-0.5" />
+                          <div className="min-w-0">
+                            <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
+                              Name
+                            </p>
+                            <p className="text-sm font-semibold break-words leading-snug" style={{ color: "var(--color-text-primary)" }}>
+                              {subVisitor.name || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3 mb-2">
+                          <CreditCard size={14} className="text-[var(--color-text-secondary)] flex-shrink-0 mt-0.5" />
+                          <div className="min-w-0">
+                            <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
+                              NIC / Passport
+                            </p>
+                            <p className="text-sm font-semibold break-words leading-snug" style={{ color: "var(--color-text-primary)" }}>
+                              {subVisitor.nic || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+                        {/* Display items if available for this sub-visitor */}
+                        {subVisitor.items && subVisitor.items.length > 0 && (
+                          <div className="mt-2 pt-2 border-t border-[var(--color-border-soft)]">
+                            <p className="text-[8px] uppercase tracking-[0.2em] font-bold mb-2" style={{ color: "var(--color-text-dim)" }}>
+                              Carrying Items
+                            </p>
+                            <div className="space-y-1">
+                              {subVisitor.items.map((item, itemIndex) => (
+                                <div key={itemIndex} className="text-[10px] text-[var(--color-text-secondary)] flex items-center gap-2">
+                                  <span className="w-1 h-1 bg-[var(--color-text-secondary)] rounded-full flex-shrink-0"></span>
+                                  <span className="truncate">
+                                    {item.itemName} 
+                                    {item.itemQuantity && item.itemQuantity > 1 && ` (×${item.itemQuantity})`}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Access status bar */}
               <div

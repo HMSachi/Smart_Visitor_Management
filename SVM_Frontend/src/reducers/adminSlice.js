@@ -180,6 +180,32 @@ const adminSlice = createSlice({
     updateActiveVisitors: (state, action) => {
       state.metrics.activeVisitors = action.payload;
     },
+    setDashboardMetrics: (state, action) => {
+      const { todayVisits, activeVisitors, blacklistCount } = action.payload;
+      state.metrics.todayStats = [
+        {
+          label: "Total Visits Today",
+          value: todayVisits.toString(),
+          iconName: "Users",
+          trend: "Today",
+          colorClass: "mas-red",
+        },
+        {
+          label: "Active Visitors",
+          value: activeVisitors.toString(),
+          iconName: "UserCheck",
+          trend: "On-Premise",
+          colorClass: "mas-red",
+        },
+        {
+          label: "Alerts & Violations",
+          value: blacklistCount.toString(),
+          iconName: "AlertTriangle",
+          trend: "Restricted",
+          colorClass: "mas-red",
+        },
+      ];
+    },
 
     // Approval actions
     setSearchTerm: (state, action) => {
@@ -197,12 +223,17 @@ const adminSlice = createSlice({
     addSecurityAlert: (state, action) => {
       state.monitoring.alerts.unshift(action.payload);
     },
+    setDashboardAlerts: (state, action) => {
+      state.metrics.alerts = action.payload;
+    },
   },
   extraReducers: (builder) => {},
 });
 
 export const {
   updateActiveVisitors,
+  setDashboardMetrics,
+  setDashboardAlerts,
   setSearchTerm,
   updateVisitorStatus,
   addSecurityAlert,

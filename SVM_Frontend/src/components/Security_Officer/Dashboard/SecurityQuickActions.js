@@ -41,12 +41,12 @@ const SecurityQuickActions = () => {
     const navigate = useNavigate();
 
     const actions = [
-        {
-            icon: CheckCircle,
-            label: 'Entry Approval',
-            description: 'Approve visitor entry to facility',
-            onClick: () => navigate('/security_officer/entry-approval'),
-        },
+        // {
+        //     icon: CheckCircle,
+        //     label: 'Entry Approval',
+        //     description: 'Approve visitor entry to facility',
+        //     onClick: () => navigate('/security_officer/entry-approval'),
+        // },
         {
             icon: LogOut,
             label: 'Exit Verification',

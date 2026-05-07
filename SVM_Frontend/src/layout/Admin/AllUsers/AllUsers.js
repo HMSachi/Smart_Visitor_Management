@@ -802,11 +802,11 @@ const AllUsers = () => {
 
       {/* Modal for Add / Edit Administrator */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto">
           <div
-            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full ${modalWidthClass} overflow-hidden relative`}
+            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full ${modalWidthClass} relative my-auto`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none rounded-3xl"></div>
 
             <div
               className={`flex justify-between items-center ${headerPaddingClass} border-b border-white/5 relative z-10`}
@@ -828,7 +828,7 @@ const AllUsers = () => {
 
             <form
               onSubmit={handleFormSubmit}
-              className={`${formSpacingClass} relative z-10`}
+              className={`${formSpacingClass} relative z-10 max-h-[70vh] overflow-y-auto custom-scrollbar`}
             >
               <div className="space-y-1">
                 <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">

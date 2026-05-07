@@ -43,6 +43,8 @@ import ContactVisitRequests from "./layout/Contact_Person/VisitRequests/VisitReq
 import CreateVisitRequest from "./layout/Contact_Person/VisitRequests/CreateVisitRequest";
 import CreateVisitRequestDetails from "./layout/Contact_Person/VisitRequests/CreateVisitRequestDetails";
 import VisitRequestSuccess from "./layout/Contact_Person/VisitRequests/VisitRequestSuccess";
+import ContactRestrictedManagement from "./layout/Contact_Person/BlacklistManagement/BlacklistManagement";
+
 
 
 // Security Support Layouts
@@ -55,6 +57,8 @@ import IncidentReport from "./layout/Security_Officer/IncidentReport/IncidentRep
 import LogsHistory from "./layout/Security_Officer/LogsHistory/LogsHistory";
 import SecurityNotifications from "./layout/Security_Officer/Notifications/Notifications";
 import SecurityDashboard from "./layout/Security_Officer/Dashboard/Dashboard";
+import SecurityRestrictedManagement from "./layout/Security_Officer/BlacklistManagement/BlacklistManagement";
+
 
 import { useEffect, useMemo } from "react";
 import { updateIsMobile } from "./reducers/uiSlice";
@@ -280,6 +284,11 @@ const AppContent = () => {
             path="/contact_person/visit-request-success/:requestId"
             element={<VisitRequestSuccess />}
           />
+          <Route
+            path="/contact_person/blacklist-management"
+            element={<ContactRestrictedManagement />}
+          />
+
 
           {/* Security Support Routes */}
           <Route path="/Security_Officer/scanner" element={<Scanner />} />
@@ -315,6 +324,11 @@ const AppContent = () => {
             path="/Security_Officer/dashboard"
             element={<SecurityDashboard />}
           />
+          <Route
+            path="/Security_Officer/blacklist-management"
+            element={<SecurityRestrictedManagement />}
+          />
+
 
           <Route
             path="/security-dashboard"

@@ -148,7 +148,7 @@ const HeaderComponent = () => {
             </Link>
           ))}
 
-          {!isLatestVisitAccepted && (
+          {/* {!isLatestVisitAccepted && (
             <button
               onClick={() => navigate("/request-step-1")}
               className="flex items-center gap-2 ml-2 px-5 py-2.5 rounded-xl text-white text-[13px] font-semibold transition-all"
@@ -161,7 +161,7 @@ const HeaderComponent = () => {
               <Plus size={15} />
               Request a Visit
             </button>
-          )}
+          )} */}
 
           <ThemeToggleButton />
 
@@ -303,7 +303,7 @@ const HeaderComponent = () => {
           </div>
 
           {/* CTA */}
-          {!isLatestVisitAccepted && (
+          {/* {!isLatestVisitAccepted && (
             <button
               onClick={() => handleNavigate("/request-step-1")}
               className="mt-6 w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-white text-[14px] font-bold transition-all active:scale-95"
@@ -316,7 +316,7 @@ const HeaderComponent = () => {
               <Plus size={18} />
               Request a Visit
             </button>
-          )}
+          )} */}
         </Box>
       </Drawer>
     </header>

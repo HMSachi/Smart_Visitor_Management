@@ -66,13 +66,13 @@ const DashboardMain = () => {
         </motion.section> */}
 
         {/* Active Visitors & Incident Monitoring */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 md:gap-8">
           <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <ActiveVisitors />
           </motion.section>
-          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          {/* <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <IncidentMonitoring />
-          </motion.section>
+          </motion.section> */}
         </div>
 
         {/* Access Logs */}

@@ -2,9 +2,39 @@ import React from 'react';
 import { Users, Plus, X, Save, Edit2, Loader2 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 
-const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onSave, savingId }) => {
+const VisitorGroup = ({ visitors, allVisitors = [], onAdd, onRemove, onChange, onSave, savingId }) => {
+    const handleNameChange = (id, value) => {
+        onChange(id, 'fullName', value);
+        
+        // Find if the entered name matches a known visitor for autocomplete
+        const matchedVisitor = allVisitors.find(v => 
+            v.VV_Name?.trim().toLowerCase() === value?.trim().toLowerCase()
+        );
+        if (matchedVisitor) {
+            // Auto-fill NIC and Contact if matched
+            if (matchedVisitor.VV_NIC_Passport_NO) {
+                onChange(id, 'nic', matchedVisitor.VV_NIC_Passport_NO);
+            }
+            if (matchedVisitor.VV_Phone) {
+                onChange(id, 'contact', matchedVisitor.VV_Phone);
+            } else if (matchedVisitor.VV_Designation && matchedVisitor.VV_Designation !== 'N/A') {
+                 // Fallback to designation if phone number is not available
+                onChange(id, 'contact', matchedVisitor.VV_Designation);
+            }
+        }
+    };
+
     return (
         <section className="animate-fade-in stagger-item pt-12 border-t border-white/5">
+            {/* Global datalist for visitor names */}
+            <datalist id="visitor-names">
+                {allVisitors.map((v, idx) => (
+                    <option key={`${v.VV_Visitor_id}-${idx}`} value={v.VV_Name}>
+                        {v.VV_NIC_Passport_NO ? `ID: ${v.VV_NIC_Passport_NO}` : ''}
+                    </option>
+                ))}
+            </datalist>
+
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                     <div className="w-1.5 h-8 bg-primary rounded-full" />
@@ -40,9 +70,10 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onSave, savingId })
                                 <input
                                     type="text"
                                     placeholder="Name"
+                                    list="visitor-names"
                                     disabled={visitor.isConfirmed}
                                     value={visitor.fullName}
-                                    onChange={(e) => onChange(visitor.id, 'fullName', e.target.value)}
+                                    onChange={(e) => handleNameChange(visitor.id, e.target.value)}
                                     className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white outline-none disabled:opacity-50"
                                 />
                             </div>
@@ -54,7 +85,11 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onSave, savingId })
                                     placeholder="ID Number"
                                     disabled={visitor.isConfirmed}
                                     value={visitor.nic}
-                                    onChange={(e) => onChange(visitor.id, 'nic', e.target.value)}
+                                    maxLength={12}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        onChange(visitor.id, 'nic', val);
+                                    }}
                                     className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white outline-none disabled:opacity-50"
                                 />
                             </div>
@@ -66,7 +101,11 @@ const VisitorGroup = ({ visitors, onAdd, onRemove, onChange, onSave, savingId })
                                     placeholder="07XXXXXXXX"
                                     disabled={visitor.isConfirmed}
                                     value={visitor.contact}
-                                    onChange={(e) => onChange(visitor.id, 'contact', e.target.value)}
+                                    maxLength={10}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                                        onChange(visitor.id, 'contact', val);
+                                    }}
                                     className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white outline-none disabled:opacity-50"
                                 />
                             </div>

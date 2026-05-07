@@ -42,34 +42,6 @@ const Field = ({ icon: Icon, label, value, accent, isLight }) => (
 );
 
 /* ──────────────────────────────────────────────
-   Risk badge (matches BlacklistTable style)
-────────────────────────────────────────────── */
-const RiskBadge = ({ level }) => {
-  const styles = {
-    "Level 01": "border-blue-500/20 text-blue-500 bg-blue-500/5",
-    "Level 02": "border-primary/20 text-primary bg-primary/5",
-    "Level 03":
-      "border-primary/40 text-primary bg-primary/10 shadow-[0_0_15px_rgba(200,16,46,0.1)]",
-  };
-  return (
-    <span
-      className={`px-4 py-1.5 rounded-full text-[11px] font-medium tracking-[0.25em] uppercase border flex items-center gap-2 w-fit ${
-        styles[level] || styles["Level 01"]
-      }`}
-    >
-      <span
-        className={`w-1.5 h-1.5 rounded-full ${
-          level === "Level 03"
-            ? "bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse"
-            : "bg-current opacity-80"
-        }`}
-      />
-      {level}
-    </span>
-  );
-};
-
-/* ──────────────────────────────────────────────
    Main modal
 ────────────────────────────────────────────── */
 const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
@@ -136,9 +108,8 @@ const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
                   </div>
                 </div>
 
-                {/* Risk badge in header */}
+                {/* Close button in header */}
                 <div className="flex items-center gap-3">
-                  <RiskBadge level={person.VB_Alert_Type} />
                   <button
                     onClick={onClose}
                     className={`w-9 h-9 rounded-xl flex items-center justify-center border border-transparent transition-all duration-300 ${
@@ -247,13 +218,7 @@ const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
                       isLight={isLight}
                     />
 
-                    <Field
-                      icon={Shield}
-                      label="Risk Level"
-                      value={person.VB_Alert_Type}
-                      accent
-                      isLight={isLight}
-                    />
+
                     <Field
                       icon={Shield}
                       label="Status"

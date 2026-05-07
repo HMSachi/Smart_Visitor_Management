@@ -8,10 +8,25 @@ import TotalVisitsCard from "../../../components/Admin/Dashboard/TotalVisitsCard
 import SystemStatusNode from "../../../components/Admin/Dashboard/SystemStatusNode";
 import { LayoutDashboard, TrendingUp, Settings, BarChart3, CheckSquare, ShieldAlert, UserX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { FetchAdminDashboardMetrics } from "../../../actions/AdminDashboardAction";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(null);
+
+  useEffect(() => {
+    dispatch(FetchAdminDashboardMetrics());
+    
+    // Refresh dashboard every 30 seconds
+    const interval = setInterval(() => {
+      dispatch(FetchAdminDashboardMetrics());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [dispatch]);
 
   const handleQuickAccess = (section) => {
     const routes = {
