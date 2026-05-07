@@ -434,7 +434,7 @@ const AllUsers = () => {
 
             <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full xl:w-auto">
               <div
-                className={`flex items-center border transition-all rounded-[5px] px-2 h-8 min-w-[180px] w-full sm:w-[220px] md:w-[260px] group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+                className={`flex items-center border transition-all rounded-[5px] px-2 h-7 min-w-[220px] w-full sm:w-[280px] md:w-[320px] group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
               >
                 <Search size={10} className={`transition-colors mr-1.5 ${themeMode === "light" ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`} />
                 <input
@@ -447,7 +447,7 @@ const AllUsers = () => {
               </div>
 
               <div
-                className={`flex items-center border transition-all rounded-[5px] px-2 h-8 min-w-[120px] w-full sm:w-auto group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+                className={`flex items-center border transition-all rounded-[5px] px-2 h-7 min-w-[120px] w-full sm:w-auto group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
               >
                 <select
                   value={statusFilter}
@@ -462,7 +462,7 @@ const AllUsers = () => {
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center justify-center gap-1 bg-primary hover:bg-primary-hover text-white px-3 h-8 rounded-[5px] text-[2px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group shrink-0"
+                className="flex items-center justify-center gap-1 bg-primary hover:bg-primary-hover text-white px-3 h-7 rounded-[5px] text-[2px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group shrink-0"
               >
                 <Plus size={12} className="group-hover:rotate-90 transition-transform" />
                 Add User

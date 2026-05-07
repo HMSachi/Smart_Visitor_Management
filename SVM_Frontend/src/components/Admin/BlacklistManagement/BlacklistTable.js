@@ -155,7 +155,7 @@ const BlacklistTable = () => {
         >
           <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full md:w-auto">
             <div
-              className={`flex items-center border transition-all rounded-[5px] px-2 h-8 min-w-[180px] w-full sm:w-[220px] md:w-[260px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+              className={`flex items-center border transition-all rounded-[5px] px-2 h-7 min-w-[220px] w-full sm:w-[280px] md:w-[320px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
             >
               <Search size={10} className={`transition-colors mr-1.5 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`} />
               <input
@@ -169,7 +169,7 @@ const BlacklistTable = () => {
 
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center justify-center gap-1 bg-primary hover:bg-primary-hover text-white px-3 h-8 rounded-[5px] text-[2px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group shrink-0 w-full sm:w-auto"
+              className="flex items-center justify-center gap-1 bg-primary hover:bg-primary-hover text-white px-3 h-7 rounded-[5px] text-[2px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group shrink-0 w-full sm:w-auto"
             >
               <UserPlus size={12} className="group-hover:rotate-12 transition-transform" />
               Add to Blacklist
