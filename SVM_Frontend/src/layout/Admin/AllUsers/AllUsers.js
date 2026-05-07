@@ -419,7 +419,7 @@ const AllUsers = () => {
                   <button
                     key={btn.id}
                     onClick={() => setTableFilter(btn.id)}
-                    className={`relative px-2 py-1.5 rounded-full text-[2px] tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${tableFilter === btn.id
+                    className={`relative px-4 py-2 rounded-full text-[11px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${tableFilter === btn.id
                       ? "bg-primary text-white shadow-lg shadow-primary/20"
                       : themeMode === "light"
                         ? "text-gray-500 hover:text-primary"
@@ -434,25 +434,25 @@ const AllUsers = () => {
 
             <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full xl:w-auto">
               <div
-                className={`flex items-center border transition-all rounded-[5px] px-2 h-7 min-w-[220px] w-full sm:w-[280px] md:w-[320px] group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+                className={`flex items-center border transition-all rounded-[8px] px-3 h-9 min-w-[220px] w-full sm:w-[280px] md:w-[320px] group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
               >
-                <Search size={10} className={`transition-colors mr-1.5 ${themeMode === "light" ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`} />
+                <Search size={14} className={`transition-colors mr-2 ${themeMode === "light" ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`} />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search users..."
-                  className={`bg-transparent text-[2px] focus:outline-none w-full tracking-wide ${themeMode === "light" ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
+                  className={`bg-transparent text-[13px] focus:outline-none w-full tracking-wide ${themeMode === "light" ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
                 />
               </div>
 
               <div
-                className={`flex items-center border transition-all rounded-[5px] px-2 h-7 min-w-[120px] w-full sm:w-auto group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+                className={`flex items-center border transition-all rounded-[8px] px-3 h-9 min-w-[120px] w-full sm:w-auto group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
               >
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`text-[2px] bg-transparent focus:outline-none w-full tracking-wide ${themeMode === "light" ? "text-[#1A1A1A]" : "text-white"}`}
+                  className={`text-[13px] bg-transparent focus:outline-none w-full tracking-wide cursor-pointer ${themeMode === "light" ? "text-[#1A1A1A]" : "text-white"}`}
                 >
                   <option value="ALL">All Statuses</option>
                   <option value="ACTIVE">Active</option>

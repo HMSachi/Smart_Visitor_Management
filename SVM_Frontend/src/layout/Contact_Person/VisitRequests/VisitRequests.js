@@ -1008,7 +1008,7 @@ const VisitRequests = () => {
                 <button
                   key={option.id}
                   onClick={() => setStatusFilter(option.id)}
-                  className={`relative px-0.5 py-1.5 rounded-full text-[2px] tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
+                  className={`relative px-4 py-2 rounded-full text-[11px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
                     ? "text-white"
                     : isLight
                       ? "text-gray-500 hover:text-primary"
@@ -1018,7 +1018,7 @@ const VisitRequests = () => {
                   {statusFilter === option.id && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute inset-0 bg-primary rounded-full shadow-[0_5px_15px_rgba(200,16,46,0.3)]"
+                      className="absolute inset-0 bg-primary rounded-full shadow-[0_4px_12px_rgba(200,16,46,0.25)]"
                       transition={{
                         type: "spring",
                         bounce: 0.15,
@@ -1026,7 +1026,7 @@ const VisitRequests = () => {
                       }}
                     />
                   )}
-                  <span className="relative z-10">{option.label}</span>
+                  <span className="relative z-10 capitalize">{option.label}</span>
                 </button>
               ))}
             </div>
@@ -1034,27 +1034,27 @@ const VisitRequests = () => {
 
           <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0">
             <div
-              className={`flex items-center border transition-all rounded-[5px] px-2 h-7 min-w-[220px] w-full sm:w-[280px] md:w-[320px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+              className={`flex items-center border transition-all rounded-[8px] px-3 h-9 min-w-[220px] w-full sm:w-[280px] md:w-[320px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
             >
               <Search
-                size={10}
-                className={`transition-colors mr-1.5 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
+                size={14}
+                className={`transition-colors mr-2 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
               />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search..."
-                className={`bg-transparent text-[2px] focus:outline-none w-full tracking-wide ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
+                className={`bg-transparent text-[13px] focus:outline-none w-full tracking-wide ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
               />
             </div>
 
             <button
               onClick={() => navigate("/contact_person/create-visit-request")}
-              className="flex items-center justify-center gap-1 bg-primary hover:bg-primary-hover text-white px-2 h-7 rounded-[5px] text-[2px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group"
+              className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 h-9 rounded-[8px] text-[11px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group"
             >
               <Plus
-                size={12}
+                size={16}
                 className="group-hover:rotate-90 transition-transform"
               />
               Create Request

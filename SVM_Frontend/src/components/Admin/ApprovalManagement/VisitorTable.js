@@ -141,7 +141,7 @@ const VisitorTable = ({
                 <button
                   key={btn.id}
                   onClick={() => setStatusFilter(btn.id)}
-                  className={`relative px-2 py-1.5 rounded-full text-[2px] tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${statusFilter === btn.id
+                  className={`relative px-4 py-2 rounded-full text-[11px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${statusFilter === btn.id
                     ? "bg-primary text-white shadow-lg shadow-primary/20"
                     : themeMode === "light"
                       ? "text-gray-500 hover:text-primary"
@@ -154,7 +154,7 @@ const VisitorTable = ({
             </div>
           </div>
 
-          <div className="inline-flex items-center gap-2 rounded-[5px] border border-white/8 bg-black/20 h-7 px-3 text-[2px] font-bold uppercase tracking-[0.25em] text-white/80 shrink-0">
+          <div className="inline-flex items-center gap-2 rounded-[8px] border border-white/8 bg-black/20 h-9 px-4 text-[11px] font-medium tracking-wide text-white/80 shrink-0">
             <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
             {filteredVisitors.length} records
           </div>
