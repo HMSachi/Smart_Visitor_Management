@@ -78,7 +78,7 @@ const RequestDistribution = () => {
           {value}
         </span>
       </div>
-      <div className="relative h-1.5 sm:h-2 sm:h-2.5 bg-[var(--color-border-soft)] rounded-full overflow-hidden">
+      <div className="relative h-1 sm:h-1.5 bg-[var(--color-border-soft)] rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           whileInView={{ width: `${percentage}%` }}

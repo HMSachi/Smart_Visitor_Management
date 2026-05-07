@@ -970,7 +970,7 @@ const VisitRequests = () => {
           {visibleAreas.map((area, index) => (
             <span
               key={`${requestKey}-${area}-${index}`}
-              className={`inline-flex items-center text-[10px] font-medium tracking-wide max-w-full ${isLight ? "text-[#1A1A1A]" : "text-white/85"}`}
+              className={`inline-flex items-center text-[12px] font-normal tracking-wide max-w-full ${isLight ? "text-[#1A1A1A]" : "text-white/85"}`}
             >
               <span className="truncate">{area}</span>
             </span>
