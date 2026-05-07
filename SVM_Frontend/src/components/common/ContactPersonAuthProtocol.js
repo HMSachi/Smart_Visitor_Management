@@ -72,9 +72,26 @@ const ContactPersonAuthProtocol = ({
   itemsCarried = [],
   vehiclesList = [],
   jointItems = [],
+  gatePasses = [],
 }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
+
+  // Check whether the main visitor has a gate pass (mirrors VisitorTable logic)
+  const hasGatePass = () => {
+    if (!visitor?.id) return false;
+    const list = Array.isArray(gatePasses)
+      ? gatePasses
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
+    return list.some((gp) => {
+      const gpRequestId =
+        gp.VVR_Request_id ||
+        gp.VGP_Request_id ||
+        gp.vvr_Request_id ||
+        gp.vgp_Request_id;
+      return String(gpRequestId) === String(visitor.id);
+    });
+  };
 
   // QR popup state
   const [popupQR, setPopupQR] = useState({ open: false, member: null, idx: null, loading: false, qrCode: null, error: null });
@@ -285,13 +302,15 @@ const ContactPersonAuthProtocol = ({
                       <span className={`text-[11px] font-medium uppercase flex-1 sm:text-center ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{member.nic}</span>
                       <span className={`text-[11px] font-medium flex-1 sm:text-center ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{member.contact || "-"}</span>
                       <div className="w-12 flex justify-center">
-                        <button
-                          onClick={() => handleOpenSubVisitorQR(member, idx)}
-                          title="View QR Code"
-                          className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all border ${isLight ? "bg-white border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary" : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"}`}
-                        >
-                          <QrCode size={13} />
-                        </button>
+                        {hasGatePass() && (
+                          <button
+                            onClick={() => handleOpenSubVisitorQR(member, idx)}
+                            title="View QR Code"
+                            className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all border ${isLight ? "bg-white border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary" : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"}`}
+                          >
+                            <QrCode size={13} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}

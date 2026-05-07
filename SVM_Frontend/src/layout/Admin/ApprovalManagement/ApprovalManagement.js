@@ -309,6 +309,7 @@ const ApprovalManagement = () => {
                         itemsCarried={itemsCarried}
                         vehiclesList={vehiclesForVisitor}
                         jointItems={jointItems}
+                        gatePasses={gatePasses}
                       />
                     )}
                   </div>
