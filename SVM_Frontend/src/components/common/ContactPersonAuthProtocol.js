@@ -170,7 +170,7 @@ const ContactPersonAuthProtocol = ({
                       <span className={`text-[10px] font-bold uppercase tracking-wider w-16 text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Qty</span>
                       <span className={`text-[10px] font-bold uppercase tracking-wider flex-[3] sm:text-right ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Description</span>
                     </div>
-                    <div className={`divide-y ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
+                    <div className={`divide-y overflow-y-auto max-h-[200px] ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
                       {itemsCarried.map((item, idx) => (
                         <div key={item.id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
                           <span className={`text-[11px] font-medium flex-[2] truncate ${isLight ? 'text-[#1A1A1A]' : 'text-white'}`}>{item.itemName}</span>
@@ -247,7 +247,7 @@ const ContactPersonAuthProtocol = ({
                   <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Vehicle Type</span>
                   <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 sm:text-right ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Vehicle Number</span>
                 </div>
-                <div className={`divide-y ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
+                <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
                   {vehiclesList.map((vehicle, idx) => (
                     <div key={vehicle.id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
                       <span className={`text-[11px] font-medium uppercase flex-1 ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{vehicle.vehicleType}</span>
@@ -278,7 +278,7 @@ const ContactPersonAuthProtocol = ({
                   <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 sm:text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Contact</span>
                   <span className={`text-[10px] font-bold uppercase tracking-wider w-12 text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>QR</span>
                 </div>
-                <div className={`divide-y ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
+                <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
                   {groupMembers.map((member, idx) => (
                     <div key={member.id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
                       <span className={`text-[11px] font-medium flex-1 ${isLight ? 'text-[#1A1A1A]' : 'text-white'}`}>{member.fullName}</span>
@@ -320,7 +320,7 @@ const ContactPersonAuthProtocol = ({
                     <span className={`text-[10px] font-bold uppercase tracking-wider w-16 text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Qty</span>
                     <span className={`text-[10px] font-bold uppercase tracking-wider flex-[2] sm:text-right ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Description</span>
                   </div>
-                  <div className={`divide-y ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
+                  <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
                     {jointItems.map((item, idx) => {
                       const memberName = item.Group_Members || "Unknown Member";
                       return (

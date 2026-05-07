@@ -293,7 +293,7 @@ const RequestDetails = () => {
                   <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider w-16 text-center">Qty</span>
                   <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-[3] sm:text-right">Description</span>
                 </div>
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px]">
                   {items.map((item, idx) => (
                     <div key={item.VIC_Item_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                       <span className="text-[11px] font-medium text-[#1A1A1A] flex-[2] truncate">{item.VIC_Item_Name}</span>
@@ -318,7 +318,7 @@ const RequestDetails = () => {
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Vehicle Type</span>
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-right">Vehicle Number</span>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px] custom-scrollbar">
                 {vehicleRecords.map((vehicle, idx) => (
                   <div key={vehicle.VV_Vehicle_id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                     <span className="text-[11px] font-medium text-gray-600 uppercase flex-1">{vehicle.VV_Vehicle_Type}</span>
@@ -340,7 +340,7 @@ const RequestDetails = () => {
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-center">NIC / Passport</span>
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-right">Phone Number</span>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px] custom-scrollbar">
                 {groupMembers.map((member, idx) => (
                   <div key={member.VVG_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                     <span className="text-[11px] font-medium text-[#1A1A1A] flex-1">{member.VVG_Visitor_Name}</span>
@@ -368,7 +368,7 @@ const RequestDetails = () => {
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider w-16 text-center">Qty</span>
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-[2] sm:text-right">Description</span>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px] custom-scrollbar">
                 {jointItems.map((item, idx) => {
                   const memberName = item.Group_Members || "Unknown Member";
                   return (
