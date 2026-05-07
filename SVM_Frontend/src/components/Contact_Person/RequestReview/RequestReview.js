@@ -74,6 +74,7 @@ const RequestReviewMain = () => {
   const [vehiclesList, setVehiclesList] = useState([]);
   const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
   const [itemsCarried, setItemsCarried] = useState([]);
+  const [jointItems, setJointItems] = useState([]);
   const [detailsLoading, setDetailsLoading] = useState(false);
 
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -171,7 +172,7 @@ const RequestReviewMain = () => {
           }));
         if (!cancelled) setVisitorGroupMembers(matchedMembers);
 
-        // Load items carried
+        // Load items carried (flat list for main visitor subsection)
         const itemsResponse = await ItemCarriedService.GetAllItemsCarried();
         const allItems =
           itemsResponse?.data?.ResultSet || itemsResponse?.data || [];
@@ -188,6 +189,15 @@ const RequestReviewMain = () => {
             description: i.VIC_Designation,
           }));
         if (!cancelled) setItemsCarried(matchedItems);
+
+        // Load joint items (items with sub-visitor names) for "Items Carried In"
+        try {
+          const jointRes = await VisitorService.GetVisitorJoint(apiRequest.VVR_Request_id);
+          const jointData = jointRes?.data?.ResultSet || jointRes?.data || [];
+          if (!cancelled) setJointItems(Array.isArray(jointData) ? jointData : []);
+        } catch {
+          if (!cancelled) setJointItems([]);
+        }
       } catch (error) {
         if (!cancelled) {
           setVisitorRecord(null);
@@ -320,6 +330,7 @@ const RequestReviewMain = () => {
               groupMembers={visitorGroupMembers}
               itemsCarried={itemsCarried}
               vehiclesList={vehiclesList}
+              jointItems={jointItems}
             />
           )}
         </div>

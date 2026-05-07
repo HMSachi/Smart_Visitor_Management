@@ -129,6 +129,7 @@ const PersonnelAuthProtocol = ({
   groupMembers = [],
   itemsCarried = [],
   vehiclesList = [],
+  jointItems = [],
 }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
@@ -193,31 +194,86 @@ const PersonnelAuthProtocol = ({
       animate={{ opacity: 1, y: 0 }}
       className="pb-0 w-full px-0 space-y-1.5"
     >
-      <SectionCard isLight={isLight}>
-        <div className="p-3 md:p-5">
-          <SplitSection title="Visitor details" icon={User} isLight={isLight}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              <Field label="Full name" value={visitor.name || visitor.fullName} icon={User} isLight={isLight} />
-              <Field label="ID or passport number" value={visitor.nic} icon={Hash} isLight={isLight} />
-              <Field label="Phone number" value={visitor.contact || visitor.phoneNumber} icon={Phone} isLight={isLight} />
-              <Field label="Email address" value={visitor.email || visitor.emailAddress} icon={Mail} isLight={isLight} />
-            </div>
-          </SplitSection>
-        </div>
-      </SectionCard>
+      {/* Visitor Profile Matrix */}
+      <div className="mb-8">
+        <SectionCard isLight={isLight}>
+          <div className="p-4 md:p-5">
+            <SplitSection
+              title="Visitor details"
+              icon={User}
+              description="Identity and contact information for the primary visitor."
+              isLight={isLight}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                <Field
+                  label="Full name"
+                  value={visitor.name || visitor.fullName}
+                  icon={User}
+                  isLight={isLight}
+                />
+                <Field
+                  label="ID or passport number"
+                  value={visitor.nic}
+                  icon={Hash}
+                  isLight={isLight}
+                />
+                <Field
+                  label="Phone number"
+                  value={visitor.contact || visitor.phoneNumber}
+                  icon={Phone}
+                  isLight={isLight}
+                />
+                <Field
+                  label="Email address"
+                  value={visitor.email || visitor.emailAddress}
+                  icon={Mail}
+                  isLight={isLight}
+                />
+              </div>
 
-      <SectionCard isLight={isLight}>
-        <div className="p-3 md:p-5">
-          <SplitSection title="Visit details" icon={Briefcase} isLight={isLight}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              <Field label="Visit date" value={visitor.date || visitor.proposedVisitDate} icon={Calendar} isLight={isLight} />
-              <Field label="Reason for visit" value={visitor.purpose || visitor.purposeOfVisitation} icon={Info} isLight={isLight} />
-              <Field label="Company" value={visitor.representingCompany} icon={Briefcase} isLight={isLight} />
-              <Field label="Visitor type" value={visitor.visitorClassification} icon={Users} isLight={isLight} />
-            </div>
-          </SplitSection>
-        </div>
-      </SectionCard>
+              {/* Items carried by the main visitor — embedded as a subsection */}
+              <div className={`mt-6 pt-5 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}>
+                <div className="flex items-center gap-2 mb-4">
+                  <Package size={13} className="text-primary/70" />
+                  <p className={`uppercase text-[10px] font-bold tracking-[0.2em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                    Items Carried
+                  </p>
+                  <span className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${isLight ? "text-gray-400" : "text-white/35"}`}>
+                    — declared by the primary visitor
+                  </span>
+                </div>
+                {itemsCarried && itemsCarried.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-3">
+                    {itemsCarried.map((item, idx) => (
+                      <motion.div
+                        key={item.id || idx}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.07 }}
+                        className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-[20px] ${
+                          isLight
+                            ? "bg-gray-50 border-gray-200"
+                            : "bg-black/30 border-white/8"
+                        }`}
+                      >
+                        <Field label="Item Name" value={item.itemName} icon={Package} isLight={isLight} />
+                        <Field label="Quantity" value={item.quantity ? String(item.quantity) : "—"} icon={Hash} isLight={isLight} />
+                        <Field label="Description" value={item.description || "—"} icon={Briefcase} isLight={isLight} />
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={`border border-dashed rounded-xl p-3 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}>
+                    <p className={`text-[10px] font-semibold uppercase tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}>
+                      No items declared by the primary visitor
+                    </p>
+                  </div>
+                )}
+              </div>
+            </SplitSection>
+          </div>
+        </SectionCard>
+      </div>
 
       <SectionCard isLight={isLight}>
         <div className="p-3 md:p-5">
@@ -343,23 +399,92 @@ const PersonnelAuthProtocol = ({
         </SectionCard>
       )}
 
-      {itemsCarried && itemsCarried.length > 0 && (
-        <SectionCard isLight={isLight}>
-          <div className="p-3 md:p-5">
-            <SplitSection title="Items Carried" icon={Package} isLight={isLight}>
-              <SimpleTable
-                isLight={isLight}
-                columns={[
-                  { label: "Item Name", key: "itemName" },
-                  { label: "Quantity", key: "quantity" },
-                  { label: "Description", key: "description" }
-                ]}
-                data={itemsCarried}
-              />
+      {/* Items Carried In — grouped by sub-visitor (Group_Members) */}
+      <div className="mb-8">
+        <SectionCard
+          isLight={isLight}
+          darkClassName="bg-[var(--color-bg-default)]"
+        >
+          <div className="p-4 md:p-5">
+            <SplitSection
+              title="Items Carried In"
+              icon={Package}
+              description="Items brought in by each member of the visiting group."
+              isLight={isLight}
+            >
+              {jointItems && jointItems.length > 0 ? (() => {
+                // Group rows by sub-visitor name
+                const grouped = jointItems.reduce((acc, row) => {
+                  const name = row.Group_Members || "Unknown Member";
+                  if (!acc[name]) acc[name] = [];
+                  acc[name].push(row);
+                  return acc;
+                }, {});
+                return (
+                  <div className="space-y-6">
+                    {Object.entries(grouped).map(([memberName, memberItems], gIdx) => (
+                      <div key={gIdx}>
+                        {/* Sub-visitor name header */}
+                        <div className={`flex items-center gap-2 mb-3 pb-2 border-b ${
+                          isLight ? "border-gray-100" : "border-white/10"
+                        }`}>
+                          <User size={12} className="text-primary/60" />
+                          <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
+                            isLight ? "text-[#1A1A1A]" : "text-white"
+                          }`}>
+                            {memberName}
+                          </span>
+                          <span className={`ml-auto text-[9px] font-semibold uppercase tracking-[0.14em] px-2 py-0.5 rounded-full border ${
+                            isLight ? "bg-gray-50 border-gray-200 text-gray-400" : "bg-white/5 border-white/10 text-white/40"
+                          }`}>
+                            {memberItems.length} {memberItems.length === 1 ? "item" : "items"}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-3">
+                          {memberItems.map((item, idx) => (
+                            <motion.div
+                              key={idx}
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: idx * 0.07 }}
+                              className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-[20px] hover:border-primary/20 transition-all ${
+                                isLight
+                                  ? "bg-gray-50 border-gray-200"
+                                  : "bg-[var(--color-bg-paper)]/40 border-white/5"
+                              }`}
+                            >
+                              <Field label="Item Name" value={item.VIC_Item_Name || item.itemName} icon={Package} isLight={isLight} />
+                              <Field label="Quantity" value={item.VIC_Quantity ? String(item.VIC_Quantity) : (item.quantity ? String(item.quantity) : "—")} icon={Hash} isLight={isLight} />
+                              <Field label="Description" value={item.VIC_Designation || item.description || "—"} icon={Briefcase} isLight={isLight} />
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })() : (
+                <div
+                  className={`border border-dashed rounded-2xl p-5 text-center ${
+                    isLight ? "border-gray-200" : "border-white/10"
+                  }`}
+                >
+                  <Package size={28} className="mx-auto mb-2 opacity-20" />
+                  <p
+                    className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
+                      isLight ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    No items carried in by the visiting group
+                  </p>
+                </div>
+              )}
             </SplitSection>
           </div>
         </SectionCard>
-      )}
+      </div>
+
+
       {onAction && (
         <div className={`mt-6 pt-6 border-t ${isLight ? "border-gray-100" : "border-white/5"} flex items-center justify-end gap-3`}>
           {(visitor.status === "Accepted by Contact Person" || visitor.status === "Accepted by Visitor") && (
