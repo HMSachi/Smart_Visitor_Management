@@ -112,11 +112,17 @@ const VisitRequestSuccess = () => {
                 <h4 className="text-[12px] font-medium text-[#0A1D37] uppercase tracking-wide mb-2.5 flex items-center gap-2">
                   <Car size={14} className="text-primary" /> Vehicles ({vehicles.length})
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  {vehicles.length > 0 && (
+                    <div className="flex justify-between items-center px-2 pb-1 border-b border-gray-100">
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider flex-1">Type</span>
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider flex-1 sm:text-right">Vehicle Number</span>
+                    </div>
+                  )}
                   {vehicles.filter(v => v.number).map((v, i) => (
-                    <div key={i} className="flex justify-between items-center p-2 rounded-lg bg-gray-50 border border-gray-100">
-                      <span className="text-[12px] font-normal text-gray-500 uppercase tracking-wide">{v.type}</span>
-                      <span className="text-[12px] font-normal text-[#0A1D37] tracking-wide">{v.number}</span>
+                    <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2 rounded-lg bg-gray-50 border border-gray-100">
+                      <span className="text-[12px] font-normal text-gray-500 uppercase tracking-wide flex-1">{v.type}</span>
+                      <span className="text-[12px] font-normal text-[#0A1D37] tracking-wide flex-1 sm:text-right">{v.number}</span>
                     </div>
                   ))}
                   {vehicles.length === 0 && <p className="text-[12px] font-normal text-gray-400 italic">None registered</p>}
@@ -129,6 +135,13 @@ const VisitRequestSuccess = () => {
                   <Users size={14} className="text-primary" /> Group ({people.length})
                 </h4>
                 <div className="space-y-2">
+                  {people.length > 0 && (
+                    <div className="flex justify-between items-center px-2 pb-1 border-b border-gray-100">
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider flex-1">Name</span>
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider flex-1 sm:text-center">NIC</span>
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider flex-1 sm:text-right">Phone Number</span>
+                    </div>
+                  )}
                   {people.filter(p => p.name).map((p, i) => (
                     <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2 rounded-lg bg-gray-50 border border-gray-100">
                       <span className="text-[12px] font-normal text-[#0A1D37] tracking-wide flex-1">{p.name}</span>
@@ -146,15 +159,20 @@ const VisitRequestSuccess = () => {
                   <Package size={14} className="text-primary" /> Declared Items ({items.length})
                 </h4>
                 <div className="space-y-2">
+                  {items.length > 0 && (
+                    <div className="flex justify-between items-center px-2 pb-1 border-b border-gray-100">
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider flex-[2]">Item Name</span>
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider w-16 text-center">Qty</span>
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider flex-[3] sm:text-right">Description</span>
+                    </div>
+                  )}
                   {items.filter(i => i.name).map((i, idx) => (
-                    <div key={idx} className="p-2 rounded-lg bg-gray-50 border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[12px] font-normal text-[#0A1D37] tracking-wide">{i.name}</span>
-                          <span className="text-[12px] font-normal text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{i.quantity}</span>
-                        </div>
-                        <p className="text-[12px] font-normal text-gray-500 tracking-wide">{i.description || "No description"}</p>
+                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2 rounded-lg bg-gray-50 border border-gray-100">
+                      <span className="text-[12px] font-normal text-[#0A1D37] tracking-wide flex-[2] truncate">{i.name}</span>
+                      <div className="w-16 flex justify-center">
+                        <span className="text-[12px] font-normal text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{i.quantity}</span>
                       </div>
+                      <span className="text-[12px] font-normal text-gray-500 tracking-wide flex-[3] sm:text-right truncate">{i.description || "-"}</span>
                     </div>
                   ))}
                   {items.length === 0 && <p className="text-[12px] font-normal text-gray-400 italic">No items declared</p>}
