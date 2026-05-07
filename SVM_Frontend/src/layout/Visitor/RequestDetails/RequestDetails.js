@@ -287,14 +287,23 @@ const RequestDetails = () => {
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1A1A1A]">Items Carried</p>
             </div>
             {items.length > 0 ? (
-              <div className="space-y-3">
-                {items.map((item) => (
-                  <div key={item.VIC_Item_id} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-2xl border border-gray-200 bg-[#F8F9FA]">
-                    <SmallField label="Item Name" value={item.VIC_Item_Name} icon={Package} />
-                    <SmallField label="Quantity" value={String(item.VIC_Quantity || "N/A")} icon={Hash} />
-                    <SmallField label="Description" value={item.VIC_Designation || "N/A"} icon={Briefcase} />
-                  </div>
-                ))}
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <div className="flex justify-between items-center px-3 py-1.5 bg-gray-100 border-b border-gray-200">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-[2]">Item Name</span>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider w-16 text-center">Qty</span>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-[3] sm:text-right">Description</span>
+                </div>
+                <div className="divide-y divide-gray-100">
+                  {items.map((item, idx) => (
+                    <div key={item.VIC_Item_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                      <span className="text-[11px] font-medium text-[#1A1A1A] flex-[2] truncate">{item.VIC_Item_Name}</span>
+                      <div className="w-16 flex justify-center">
+                        <span className="text-[11px] font-medium text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{item.VIC_Quantity || 1}</span>
+                      </div>
+                      <span className="text-[11px] font-medium text-gray-500 flex-[3] sm:text-right truncate">{item.VIC_Designation || "-"}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : (
               <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No items declared by the main visitor.</p>
@@ -304,13 +313,19 @@ const RequestDetails = () => {
 
         <SectionCard title="Vehicle Registry" icon={Car}>
           {vehicleRecords.length > 0 ? (
-            <div className="space-y-3">
-              {vehicleRecords.map((vehicle, idx) => (
-                <div key={vehicle.VV_Vehicle_id || idx} className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 rounded-2xl border border-gray-200 bg-[#F8F9FA]">
-                  <SmallField label="Vehicle Number" value={vehicle.VV_Vehicle_Number} icon={Car} />
-                  <SmallField label="Vehicle Type" value={vehicle.VV_Vehicle_Type} icon={Car} />
-                </div>
-              ))}
+            <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div className="flex justify-between items-center px-3 py-1.5 bg-gray-100 border-b border-gray-200">
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Vehicle Type</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-right">Vehicle Number</span>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {vehicleRecords.map((vehicle, idx) => (
+                  <div key={vehicle.VV_Vehicle_id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                    <span className="text-[11px] font-medium text-gray-600 uppercase flex-1">{vehicle.VV_Vehicle_Type}</span>
+                    <span className="text-[11px] font-medium text-[#1A1A1A] flex-1 sm:text-right">{vehicle.VV_Vehicle_Number}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No vehicles registered.</p>
@@ -319,14 +334,21 @@ const RequestDetails = () => {
 
         <SectionCard title="Visiting Group" icon={Users}>
           {groupMembers.length > 0 ? (
-            <div className="space-y-3">
-              {groupMembers.map((member) => (
-                <div key={member.VVG_id} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-2xl border border-gray-200 bg-[#F8F9FA]">
-                  <SmallField label="Full Name" value={member.VVG_Visitor_Name} icon={User} />
-                  <SmallField label="ID or Passport Number" value={member.VVG_NIC_Passport_Number} icon={Hash} />
-                  <SmallField label="Phone Number" value={member.VVG_Designation} icon={Phone} />
-                </div>
-              ))}
+            <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div className="flex justify-between items-center px-3 py-1.5 bg-gray-100 border-b border-gray-200">
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Name</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-center">NIC / Passport</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-right">Phone Number</span>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {groupMembers.map((member, idx) => (
+                  <div key={member.VVG_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                    <span className="text-[11px] font-medium text-[#1A1A1A] flex-1">{member.VVG_Visitor_Name}</span>
+                    <span className="text-[11px] font-medium text-gray-600 uppercase flex-1 sm:text-center">{member.VVG_NIC_Passport_Number}</span>
+                    <span className="text-[11px] font-medium text-gray-600 flex-1 sm:text-right">{member.VVG_Designation || "-"}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No additional visitors submitted.</p>
@@ -338,40 +360,31 @@ const RequestDetails = () => {
           <p className="text-[10px] text-gray-400 font-medium uppercase tracking-[0.12em] mb-4">
             Items brought in by each member of the visiting group
           </p>
-          {jointItems.length > 0 ? (() => {
-            const grouped = jointItems.reduce((acc, row) => {
-              const name = row.Group_Members || "Unknown Member";
-              if (!acc[name]) acc[name] = [];
-              acc[name].push(row);
-              return acc;
-            }, {});
-            return (
-              <div className="space-y-5">
-                {Object.entries(grouped).map(([memberName, memberItems], gIdx) => (
-                  <div key={gIdx}>
-                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
-                      <User size={11} className="text-primary/60" />
-                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1A1A1A]">
-                        {memberName}
-                      </span>
-                      <span className="ml-auto text-[9px] font-semibold uppercase tracking-[0.12em] px-2 py-0.5 rounded-full bg-gray-100 border border-gray-200 text-gray-400">
-                        {memberItems.length} {memberItems.length === 1 ? "item" : "items"}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {memberItems.map((item, idx) => (
-                        <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-2xl border border-gray-200 bg-[#F8F9FA]">
-                          <SmallField label="Item Name" value={item.VIC_Item_Name} icon={Package} />
-                          <SmallField label="Quantity" value={String(item.VIC_Quantity || "N/A")} icon={Hash} />
-                          <SmallField label="Description" value={item.VIC_Designation || "N/A"} icon={Briefcase} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+          {jointItems.length > 0 ? (
+            <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div className="flex justify-between items-center px-3 py-1.5 bg-gray-100 border-b border-gray-200">
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Sub Visitor</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Item Name</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider w-16 text-center">Qty</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-[2] sm:text-right">Description</span>
               </div>
-            );
-          })() : (
+              <div className="divide-y divide-gray-100">
+                {jointItems.map((item, idx) => {
+                  const memberName = item.Group_Members || "Unknown Member";
+                  return (
+                    <div key={idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                      <span className="text-[11px] font-medium text-[#1A1A1A] flex-1 truncate">{memberName}</span>
+                      <span className="text-[11px] font-medium text-gray-600 flex-1 truncate">{item.VIC_Item_Name}</span>
+                      <div className="w-16 flex justify-center">
+                        <span className="text-[11px] font-medium text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{item.VIC_Quantity || 1}</span>
+                      </div>
+                      <span className="text-[11px] font-medium text-gray-500 flex-[2] sm:text-right truncate">{item.VIC_Designation || "-"}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
             <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No items carried in by the visiting group.</p>
           )}
         </SectionCard>
