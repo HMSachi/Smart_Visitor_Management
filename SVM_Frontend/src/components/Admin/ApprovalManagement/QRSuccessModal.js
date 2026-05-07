@@ -308,10 +308,10 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <div className="relative group/qr p-4 mas-glass rounded-[16px] mb-5 shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all hover:scale-105 qr-svg-container">
+                    <div className="relative group/qr p-3 mas-glass rounded-[16px] mb-3 shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all hover:scale-105 qr-svg-container">
                       <QRCodeSVG
                         value={encodedQrValue || "SVMQR_PENDING"}
-                        size={140}
+                        size={160}
                         level="H"
                         includeMargin={false}
                       />
@@ -322,16 +322,16 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                       </div>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       <p className="text-gray-300/80 text-[10px] font-medium capitalize tracking-[0.2em]">
-                        Protocol Authenticated
+                        Authenticated
                       </p>
                       <p className="text-white text-[12px] font-medium capitalize tracking-widest flex items-center justify-center gap-2">
                         <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                         {visitorData?.name}
                       </p>
-                      <div className="h-[1px] w-12 bg-white/10 mx-auto my-2"></div>
-                      <p className="text-gray-400 text-[12px] capitalize tracking-widest leading-relaxed max-w-[300px]">
+                      <div className="h-[1px] w-12 bg-white/10 mx-auto my-1"></div>
+                      <p className="text-gray-400 text-[10px] capitalize tracking-wider leading-relaxed max-w-[280px]">
                         {wasSent
                           ? `Transmitted to ${visitorData?.contact || visitorData?.email || "Visitor"}.`
                           : "Present this digital gate pass at the checkpoint."}
@@ -371,7 +371,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                   onClick={handleClose}
                   className={`py-2 px-6 border border-white/10 text-white text-[11px] font-medium capitalize tracking-[0.1em] rounded-[10px] hover:bg-white/5 transition-all ${!gatePassId ? "w-full" : ""}`}
                 >
-                  {gatePassId ? "Conclude" : "Cancel"}
+                  Cancel
                 </button>
               </div>
             </motion.div>
