@@ -235,26 +235,26 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
             className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[150]"
             onClick={handleClose}
           />
-          <div className="fixed inset-0 flex items-center justify-center p-6 z-[151]">
+          <div className="fixed inset-0 flex items-center justify-center p-4 z-[151] pb-[15vh]">
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="w-full max-w-[430px] bg-[#161618]/95 backdrop-blur-3xl border border-white/20 shadow-[0_24px_80px_rgba(0,0,0,0.9)] rounded-[32px] overflow-hidden relative"
+              className="w-full max-w-sm bg-[#161618]/95 backdrop-blur-3xl border border-white/20 shadow-[0_24px_80px_rgba(0,0,0,0.9)] rounded-[24px] overflow-hidden relative"
             >
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-green-500/40 to-transparent"></div>
               <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-              <div className="p-5 border-b border-white/5 flex items-center justify-between relative z-10 bg-white/[0.01]">
-                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
-                  <div className="w-8 h-8 bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center rounded-xl shadow-lg">
-                    <QrCode size={16} />
+              <div className="p-4 border-b border-white/5 flex items-center justify-between relative z-10 bg-white/[0.01]">
+                <div className="flex flex-col md:flex-row items-center gap-3">
+                  <div className="w-8 h-8 bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center rounded-lg shadow-lg">
+                    <QrCode size={14} />
                   </div>
                   <div>
-                    <p className="text-gray-300/90 text-[11px] font-medium capitalize tracking-[0.16em] mb-1">
+                    <p className="text-gray-300/90 text-[10px] font-medium capitalize tracking-[0.16em] mb-0.5">
                       GatePass Intelligence
                     </p>
-                    <h2 className="text-white text-[15px] font-bold capitalize tracking-[0.14em]">
+                    <h2 className="text-white text-[12px] font-medium capitalize tracking-[0.14em]">
                       GatePass Generated
                     </h2>
                   </div>
@@ -269,17 +269,17 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                 )}
               </div>
 
-              <div className="p-6 md:p-8 flex flex-col items-center justify-center text-center relative z-10">
+              <div className="p-5 flex flex-col items-center justify-center text-center relative z-10">
                 {!gatePassId ? (
-                  <div className="space-y-8 w-full">
-                    <div className="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center mx-auto border border-green-500/20 shadow-[0_0_30px_rgba(0,177,79,0.2)]">
-                      <CheckSquare size={36} className="text-green-500" />
+                  <div className="space-y-5 w-full">
+                    <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto border border-green-500/20 shadow-[0_0_30px_rgba(0,177,79,0.2)]">
+                      <CheckSquare size={24} className="text-green-500" />
                     </div>
-                    <div className="space-y-3">
-                      <h3 className="text-white text-lg font-bold capitalize tracking-widest">
+                    <div className="space-y-2">
+                      <h3 className="text-white text-[12px] font-medium capitalize tracking-widest">
                         {visitorData?.name}
                       </h3>
-                      <p className="text-gray-400 text-sm capitalize tracking-wide leading-relaxed">
+                      <p className="text-gray-400 text-[12px] capitalize tracking-wide leading-relaxed">
                         Clearance synchronized. Generate pass to grant access.
                       </p>
                     </div>
@@ -291,7 +291,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                     <button
                       onClick={handleGenerateGatePass}
                       disabled={isGenerating}
-                      className="flex items-center justify-center gap-3 w-full py-3 bg-green-500 hover:bg-green-600 text-white text-[11px] font-bold capitalize tracking-[0.2em] rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
+                      className="flex items-center justify-center gap-2 w-full py-2 bg-green-500 hover:bg-green-600 text-white text-[12px] font-medium capitalize tracking-[0.1em] rounded-xl transition-all shadow-md shadow-green-500/20 disabled:opacity-50"
                     >
                       {isGenerating ? (
                         <>
@@ -308,46 +308,46 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <div className="relative group/qr p-6 mas-glass rounded-[22px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 qr-svg-container">
+                    <div className="relative group/qr p-4 mas-glass rounded-[16px] mb-5 shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all hover:scale-105 qr-svg-container">
                       <QRCodeSVG
                         value={encodedQrValue || "SVMQR_PENDING"}
-                        size={160}
+                        size={140}
                         level="H"
                         includeMargin={false}
                       />
                       <div className="absolute inset-x-0 -bottom-2 flex justify-center">
-                        <span className="bg-black text-white px-4 py-1.5 rounded-full text-[10px] font-bold tracking-[0.2em] capitalize border border-white/20">
+                        <span className="bg-black text-white px-3 py-1 rounded-full text-[10px] font-medium tracking-[0.1em] capitalize border border-white/20">
                           ID: {gatePassId}
                         </span>
                       </div>
                     </div>
 
-                    <div className="space-y-4">
-                      <p className="text-gray-300/80 text-[11px] font-medium capitalize tracking-[0.3em]">
+                    <div className="space-y-2">
+                      <p className="text-gray-300/80 text-[10px] font-medium capitalize tracking-[0.2em]">
                         Protocol Authenticated
                       </p>
-                      <p className="text-white text-xl font-medium capitalize tracking-widest flex items-center justify-center gap-2">
+                      <p className="text-white text-[12px] font-medium capitalize tracking-widest flex items-center justify-center gap-2">
                         <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                         {visitorData?.name}
                       </p>
-                      <div className="h-[1px] w-12 bg-white/10 mx-auto my-3"></div>
-                      <p className="text-gray-400 text-[11px] capitalize tracking-widest leading-relaxed max-w-[300px]">
+                      <div className="h-[1px] w-12 bg-white/10 mx-auto my-2"></div>
+                      <p className="text-gray-400 text-[12px] capitalize tracking-widest leading-relaxed max-w-[300px]">
                         {wasSent
                           ? `Transmitted to ${visitorData?.contact || visitorData?.email || "Visitor"}.`
-                          : "Present this digital gate pass at the security checkpoint for verification."}
+                          : "Present this digital gate pass at the checkpoint."}
                       </p>
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="p-4 border-t border-white/5 bg-white/[0.01] relative z-10 flex flex-col md:flex-row gap-3 md:gap-3">
+              <div className="p-3 border-t border-white/5 bg-white/[0.01] relative z-10 flex flex-col md:flex-row gap-2">
                 {gatePassId && (
                   <>
                     <button
                       onClick={handleSend}
                       disabled={wasSent}
-                      className={`flex-1 py-1.5 text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 ${wasSent ? "bg-green-500/20 text-green-500 cursor-default" : "bg-primary hover:bg-[#A00D25]"}`}
+                      className={`flex-1 py-2 text-white text-[11px] font-medium capitalize tracking-[0.1em] rounded-[10px] transition-all shadow-md flex items-center justify-center gap-2 ${wasSent ? "bg-green-500/20 text-green-500 cursor-default" : "bg-primary hover:bg-[#A00D25]"}`}
                     >
                       {wasSent ? (
                         <>
@@ -361,7 +361,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                     </button>
                     <button
                       onClick={handleDownloadQR}
-                      className="flex-1 py-1.5 bg-green-500/10 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl transition-all shadow-xl flex items-center justify-center gap-2"
+                      className="flex-1 py-2 bg-green-500/10 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white text-[11px] font-medium capitalize tracking-[0.1em] rounded-[10px] transition-all shadow-md flex items-center justify-center gap-2"
                     >
                       <Download size={13} /> Save
                     </button>
@@ -369,7 +369,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
                 )}
                 <button
                   onClick={handleClose}
-                  className={`py-1.5 px-6 border border-white/10 text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl hover:bg-white/5 transition-all ${!gatePassId ? "w-full" : ""}`}
+                  className={`py-2 px-6 border border-white/10 text-white text-[11px] font-medium capitalize tracking-[0.1em] rounded-[10px] hover:bg-white/5 transition-all ${!gatePassId ? "w-full" : ""}`}
                 >
                   {gatePassId ? "Conclude" : "Cancel"}
                 </button>
