@@ -118,7 +118,7 @@ const VisitRequestSuccess = () => {
                       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Type</span>
                       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-right">Vehicle Number</span>
                     </div>
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px] custom-scrollbar">
                       {vehicles.filter(v => v.number).map((v, i) => (
                         <div key={i} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                           <span className="text-[11px] font-medium text-gray-600 uppercase flex-1">{v.type}</span>
@@ -144,7 +144,7 @@ const VisitRequestSuccess = () => {
                       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-center">NIC</span>
                       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-right">Phone Number</span>
                     </div>
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px] custom-scrollbar">
                       {people.filter(p => p.name).map((p, i) => (
                         <div key={i} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                           <span className="text-[11px] font-medium text-[#1A1A1A] flex-1">{p.name}</span>
@@ -171,7 +171,7 @@ const VisitRequestSuccess = () => {
                       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider w-16 text-center">Qty</span>
                       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-[3] sm:text-right">Description</span>
                     </div>
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px] custom-scrollbar">
                       {items.filter(i => i.name).map((i, idx) => (
                         <div key={idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                           <span className="text-[11px] font-medium text-[#1A1A1A] flex-[2] truncate">{i.name}</span>
