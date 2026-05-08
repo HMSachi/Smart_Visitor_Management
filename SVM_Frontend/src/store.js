@@ -18,6 +18,7 @@ import itemCarriedReducer from "./reducers/ItemCarriedReducer";
 import { VisitGroupReducer } from "./reducers/VisitGroupReducer";
 import blacklistReducer from "./reducers/BlacklistReducer";
 import visitRequestFormReducer from "./reducers/visitRequestFormSlice";
+import placesReducer from "./reducers/PlacesReducer";
 
 const composeEnhancers =
     typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -43,6 +44,7 @@ const reducer = combineReducers({
     visitGroupState: VisitGroupReducer,
     blacklistState: blacklistReducer,
     visitRequestForm: visitRequestFormReducer,
+    placesState: placesReducer,
 });
 
 const store = createStore(

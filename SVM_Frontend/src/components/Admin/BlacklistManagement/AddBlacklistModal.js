@@ -278,9 +278,15 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
       alert("Please select a visitor from the list");
       return;
     }
+    let adminId = "1";
+    try {
+      adminId = localStorage.getItem("admin_id") || "1";
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
+    }
     onAdd({
       ...formData,
-      VB_Admin_id: localStorage.getItem("admin_id") || "1",
+      VB_Admin_id: adminId,
       VB_Visitor_id: selectedVisitor.VV_Visitor_id,
     });
     onClose();

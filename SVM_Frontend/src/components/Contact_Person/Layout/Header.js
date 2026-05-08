@@ -19,18 +19,22 @@ const Header = ({ title }) => {
       return { name: currentUser.VCP_Name, email: currentUser.VCP_Email };
     if (currentUser?.VA_Name)
       return { name: currentUser.VA_Name, email: currentUser.VA_Email };
-    const persisted = localStorage.getItem("user_session");
-    if (persisted) {
-      try {
-        const s = JSON.parse(persisted);
-        const u = s?.ResultSet?.[0] || s?.data?.ResultSet?.[0];
-        return {
-          name: u?.VCP_Name || u?.VA_Name || "",
-          email: u?.VCP_Email || u?.VA_Email || "",
-        };
-      } catch (e) {
-        return { name: "", email: "" };
+    try {
+      const persisted = localStorage.getItem("user_session");
+      if (persisted) {
+        try {
+          const s = JSON.parse(persisted);
+          const u = s?.ResultSet?.[0] || s?.data?.ResultSet?.[0];
+          return {
+            name: u?.VCP_Name || u?.VA_Name || "",
+            email: u?.VCP_Email || u?.VA_Email || "",
+          };
+        } catch (e) {
+          return { name: "", email: "" };
+        }
       }
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
     }
     return { name: "", email: "" };
   };
@@ -52,7 +56,8 @@ const Header = ({ title }) => {
     try {
       const stored = localStorage.getItem("read_notifications");
       return stored ? JSON.parse(stored) : [];
-    } catch {
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
       return [];
     }
   });
@@ -88,7 +93,11 @@ const Header = ({ title }) => {
     if (!readNotifications.includes(String(id))) {
       const newRead = [...readNotifications, String(id)];
       setReadNotifications(newRead);
-      localStorage.setItem("read_notifications", JSON.stringify(newRead));
+      try {
+        localStorage.setItem("read_notifications", JSON.stringify(newRead));
+      } catch (err) {
+        console.warn("localStorage access blocked:", err);
+      }
     }
   };
 
@@ -96,7 +105,11 @@ const Header = ({ title }) => {
     const allIds = notifications.map(n => String(n.id));
     const merged = Array.from(new Set([...readNotifications, ...allIds]));
     setReadNotifications(merged);
-    localStorage.setItem("read_notifications", JSON.stringify(merged));
+    try {
+      localStorage.setItem("read_notifications", JSON.stringify(merged));
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
+    }
   };
 
   return (

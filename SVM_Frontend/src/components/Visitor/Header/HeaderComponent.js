@@ -99,7 +99,11 @@ const HeaderComponent = () => {
 
   const handleLogout = () => {
     if (!window.confirm("Are you sure you want to sign out?")) return;
-    localStorage.removeItem("user_session");
+    try {
+      localStorage.removeItem("user_session");
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
+    }
     dispatch({ type: LOGOUT });
     dispatch(setMobileMenu(false));
     navigate("/login");

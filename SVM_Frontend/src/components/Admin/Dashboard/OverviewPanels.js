@@ -105,7 +105,11 @@ const OverviewPanels = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-      {todayStats.map((stat, index) => Panel(stat, index))}
+      {todayStats?.map((stat, index) => (
+        <div key={`stat-${index}`}>
+          {Panel(stat, index)}
+        </div>
+      ))}
     </div>
   );
 };

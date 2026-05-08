@@ -10,6 +10,7 @@ import {
   ChevronRight,
   LogOut,
   UserPlus,
+  MapPin,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Drawer, Box, IconButton } from "@mui/material";
@@ -46,6 +47,12 @@ const menuItems = [
     label: "All Users",
     icon: UserPlus,
     path: "/admin/all-users",
+  },
+  {
+    id: "places",
+    label: "Places to Visit",
+    icon: MapPin,
+    path: "/admin/places-management",
   },
 ];
 
@@ -188,7 +195,11 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     if (!window.confirm("Are you sure you want to sign out?")) return;
-    localStorage.removeItem("user_session");
+    try {
+      localStorage.removeItem("user_session");
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
+    }
     dispatch({ type: LOGOUT });
     navigate("/login");
   };
