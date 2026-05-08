@@ -22,10 +22,14 @@ export const FetchSecurityDashboardData = () => async (dispatch) => {
 
     // 2. Fetch All Gate Passes to calculate Today's scans and for logs
     const allResponse = await GatePassService.GetAllGatePasses();
-    const allPasses = allResponse.data || [];
+    let allPasses = allResponse.data || [];
+    // Ensure allPasses is an array
+    if (!Array.isArray(allPasses)) {
+        allPasses = allPasses?.ResultSet || [];
+    }
     
     const today = new Date().toISOString().split('T')[0];
-    const todayScans = allPasses.filter(pass => pass.VGP_Issue_Date?.startsWith(today));
+    const todayScans = Array.isArray(allPasses) ? allPasses.filter(pass => pass.VGP_Issue_Date?.startsWith(today)) : [];
     
     dispatch(updateMetric({ label: "Scans Today", value: todayScans.length.toString() }));
 

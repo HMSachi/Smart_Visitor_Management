@@ -55,9 +55,9 @@ const TotalVisitsCard = () => {
       </div>
 
       {/* Area Chart */}
-      <div className="h-28 w-full relative z-10 -mx-1">
-        <ResponsiveContainer width="105%" height="100%">
-          <AreaChart data={history}>
+      <div className="h-28 w-full relative z-10">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={history || []}>
             <defs>
               <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.25} />

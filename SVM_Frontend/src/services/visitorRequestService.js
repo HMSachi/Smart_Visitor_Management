@@ -15,9 +15,14 @@ const loadRequests = () => {
     return [];
   }
 
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  const parsed = parseJSON(raw, []);
-  return Array.isArray(parsed) ? parsed : [];
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const parsed = parseJSON(raw, []);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    console.warn("localStorage access blocked:", err);
+    return [];
+  }
 };
 
 const saveRequests = (requests) => {
@@ -25,7 +30,11 @@ const saveRequests = (requests) => {
     return;
   }
 
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
+  } catch (err) {
+    console.warn("localStorage access blocked:", err);
+  }
 };
 
 const nextSequence = () => {
@@ -33,10 +42,15 @@ const nextSequence = () => {
     return Date.now() % 1000;
   }
 
-  const current = Number(window.localStorage.getItem(SEQUENCE_KEY) || '0');
-  const next = current + 1;
-  window.localStorage.setItem(SEQUENCE_KEY, String(next));
-  return next;
+  try {
+    const current = Number(window.localStorage.getItem(SEQUENCE_KEY) || '0');
+    const next = current + 1;
+    window.localStorage.setItem(SEQUENCE_KEY, String(next));
+    return next;
+  } catch (err) {
+    console.warn("localStorage access blocked:", err);
+    return Date.now() % 1000;
+  }
 };
 
 const formatPurpose = (purpose, purposeOther) => {
@@ -141,7 +155,11 @@ export const createVisitorRequest = (step1Data) => {
   saveRequests(requests);
 
   if (typeof window !== 'undefined') {
-    window.localStorage.setItem(LAST_REQUEST_KEY, newRequest.id);
+    try {
+      window.localStorage.setItem(LAST_REQUEST_KEY, newRequest.id);
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
+    }
   }
 
   return newRequest;
@@ -152,7 +170,12 @@ export const getLastRequestId = () => {
     return '';
   }
 
-  return window.localStorage.getItem(LAST_REQUEST_KEY) || '';
+  try {
+    return window.localStorage.getItem(LAST_REQUEST_KEY) || '';
+  } catch (err) {
+    console.warn("localStorage access blocked:", err);
+    return '';
+  }
 };
 
 export const getVisitorRequestById = (requestId) => {

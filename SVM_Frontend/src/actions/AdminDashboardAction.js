@@ -6,7 +6,11 @@ export const FetchAdminDashboardMetrics = () => async (dispatch) => {
     try {
         // 1. Fetch Today's Visits (All gate passes filtered by today's date)
         const allPassesRes = await GatePassService.GetAllGatePasses();
-        const allPasses = allPassesRes.data || [];
+        let allPasses = allPassesRes.data || [];
+        // Ensure allPasses is an array
+        if (!Array.isArray(allPasses)) {
+            allPasses = allPasses?.ResultSet || [];
+        }
         const today = new Date().toISOString().split('T')[0];
         const todayVisits = allPasses.filter(pass => {
             const passDate = pass.VGP_Issue_Date || pass.vgp_Issue_Date;
