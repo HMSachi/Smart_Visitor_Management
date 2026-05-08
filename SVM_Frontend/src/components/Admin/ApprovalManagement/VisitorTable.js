@@ -27,11 +27,13 @@ const StatusBadge = ({ status }) => {
     Pending: "svm-status-pill--muted",
   };
 
+  const formattedStatus = status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : "";
+
   return (
     <div
       className={`svm-status-pill w-[200px] mx-auto ${variants[status] || variants.Pending}`}
     >
-      {status}
+      {formattedStatus}
     </div>
   );
 };

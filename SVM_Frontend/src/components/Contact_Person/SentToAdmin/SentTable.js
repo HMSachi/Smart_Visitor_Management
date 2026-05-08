@@ -56,7 +56,7 @@ const SentTable = ({ requests }) => {
                             </td>
                             <td className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">
                                                                 <div
-                                                                    className={`svm-status-pill ${
+                                                                    className={`svm-status-pill normal-case ${
                                                                         req.status === 'Approved'
                                                                             ? 'svm-status-pill--success'
                                                                             : req.status === 'Declined'

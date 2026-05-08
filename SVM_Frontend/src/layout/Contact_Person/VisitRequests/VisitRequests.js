@@ -64,37 +64,37 @@ const StatusBadge = ({ status }) => {
     case "A":
     case "APPROVED":
       return (
-        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
-          Admin Approved
+        <div className="px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-500 rounded-[5px] text-[9px] font-bold tracking-[0.1em] flex items-center justify-center w-max shadow-sm">
+          Admin approved
         </div>
       );
     case "R":
     case "REJECTED":
       return (
-        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
+        <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 text-primary rounded-[5px] text-[9px] font-bold tracking-[0.1em] flex items-center justify-center w-max shadow-sm">
           Declined
         </div>
       );
     case "ACCEPTED":
       return (
-        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
-          Accepted by Visitor
+        <div className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-[5px] text-[9px] font-bold tracking-[0.1em] flex items-center justify-center w-max shadow-sm">
+          Accepted by visitor
         </div>
       );
     case "SENT":
     case "SENT_TO_ADMIN":
     case "SENT TO ADMIN":
       return (
-        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
-          Accepted by Contact Person
+        <div className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 text-orange-500 rounded-[5px] text-[9px] font-bold tracking-[0.1em] flex items-center justify-center w-max shadow-sm">
+          Contact person accepted
         </div>
       );
     case "P":
     case "PENDING":
     default:
       return (
-        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase flex items-center justify-center w-max shadow-sm">
-          Sent to Visitor
+        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-[5px] text-[9px] font-bold tracking-[0.1em] flex items-center justify-center w-max shadow-sm">
+          Sent to visitor
         </div>
       );
   }
