@@ -8,39 +8,39 @@ const StatusBadge = ({ status }) => {
   switch (s) {
     case "ADMIN APPROVED":
       return (
-        <div className="svm-status-pill svm-status-pill--success mx-auto">
-          Admin Approved
+        <div className="svm-status-pill svm-status-pill--success mx-auto normal-case">
+          Admin approved
         </div>
       );
     case "REJECTED":
       return (
-        <div className="svm-status-pill svm-status-pill--danger mx-auto">Rejected</div>
+        <div className="svm-status-pill svm-status-pill--danger mx-auto normal-case">Rejected</div>
       );
     case "ACCEPTED BY VISITOR":
       return (
-        <div className="svm-status-pill svm-status-pill--warning mx-auto">
-          Accepted by Visitor
+        <div className="svm-status-pill svm-status-pill--warning mx-auto normal-case">
+          Accepted by visitor
         </div>
       );
     case "ACCEPTED BY CONTACT PERSON":
     case "SENT TO ADMIN":
       return (
-        <div className="svm-status-pill svm-status-pill--orange mx-auto">
-          Sent to Admin
+        <div className="svm-status-pill svm-status-pill--orange mx-auto normal-case">
+          Sent to admin
         </div>
       );
     case "CHECKED IN":
       return (
-        <div className="svm-status-pill svm-status-pill--info mx-auto">Checked In</div>
+        <div className="svm-status-pill svm-status-pill--info mx-auto normal-case">Checked in</div>
       );
     case "CHECKED OUT":
       return (
-        <div className="svm-status-pill svm-status-pill--muted mx-auto">Checked Out</div>
+        <div className="svm-status-pill svm-status-pill--muted mx-auto normal-case">Checked out</div>
       );
     case "SENT TO VISITOR":
     default:
       return (
-        <div className="svm-status-pill svm-status-pill--info mx-auto">Sent to Visitor</div>
+        <div className="svm-status-pill svm-status-pill--info mx-auto normal-case">Sent to visitor</div>
       );
   }
 };
@@ -52,8 +52,8 @@ const RequestsTable = ({ requests, onReview }) => {
   return (
     <div
       className={`border rounded-[32px] overflow-hidden relative z-10 ${isLight
-          ? "bg-white border-gray-200 shadow-xl shadow-gray-200/50"
-          : "bg-[#0F0F10] border-white/5"
+        ? "bg-white border-gray-200 shadow-xl shadow-gray-200/50"
+        : "bg-[#0F0F10] border-white/5"
         }`}
     >
       <div
@@ -64,8 +64,8 @@ const RequestsTable = ({ requests, onReview }) => {
           <thead className="sticky top-0 z-20 font-normal text-[12px]">
             <tr
               className={`border-b ${isLight
-                  ? "bg-[#F8F9FA] border-gray-100"
-                  : "bg-black/95 border-b-white/5"
+                ? "bg-[#F8F9FA] border-gray-100"
+                : "bg-black/95 border-b-white/5"
                 }`}
             >
               <th
@@ -112,8 +112,8 @@ const RequestsTable = ({ requests, onReview }) => {
                 <tr
                   key={visitor.id}
                   className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight
-                      ? "hover:bg-[#F8F9FA] border-gray-50"
-                      : "hover:bg-white/[0.02] border-white/5"
+                    ? "hover:bg-[#F8F9FA] border-gray-50"
+                    : "hover:bg-white/[0.02] border-white/5"
                     }`}
                 >
                   {/* Request ID */}
@@ -174,8 +174,8 @@ const RequestsTable = ({ requests, onReview }) => {
                         onClick={() => onReview(visitor.id)}
                         title="Review Request"
                         className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${isLight
-                            ? "bg-primary/5 border-primary/15 text-primary hover:text-white hover:bg-primary hover:border-primary"
-                            : "bg-blue-500/5 border-blue-500/20 text-blue-400 hover:text-white hover:bg-blue-500 hover:border-blue-500"
+                          ? "bg-primary/5 border-primary/15 text-primary hover:text-white hover:bg-primary hover:border-primary"
+                          : "bg-blue-500/5 border-blue-500/20 text-blue-400 hover:text-white hover:bg-blue-500 hover:border-blue-500"
                           }`}
                       >
                         <Eye

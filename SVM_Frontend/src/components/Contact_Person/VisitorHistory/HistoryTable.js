@@ -55,7 +55,7 @@ const HistoryTable = ({ history }) => {
                                 </td>
                                 <td className="block sm:table-cell px-2 sm:px-8 py-1 text-left sm:text-right font-normal text-[12px]">
                                     <span className="text-[12px] font-normal tracking-[0.3em] text-primary/60 uppercase block sm:hidden mb-3 text-left">Status</span>
-                                    <span className={`svm-status-pill ${item.status === 'Approved' ? 'svm-status-pill--success' : 'svm-status-pill--danger'}`}>
+                                    <span className={`svm-status-pill normal-case ${item.status === 'Approved' ? 'svm-status-pill--success' : 'svm-status-pill--danger'}`}>
                                         {item.status}
                                     </span>
                                 </td>

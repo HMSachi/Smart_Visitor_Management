@@ -60,7 +60,7 @@ const StatusBadge = ({ status }) => {
     case "SENT":
     case "SENT_TO_ADMIN":
       return (
-        <div className="svm-status-pill svm-status-pill--warning">CP Accepted</div>
+        <div className="svm-status-pill svm-status-pill--warning">Contact person accepted</div>
       );
     case "P":
     case "PENDING":

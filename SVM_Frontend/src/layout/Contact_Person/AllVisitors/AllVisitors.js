@@ -407,7 +407,7 @@ const ContactAllVisitors = () => {
                             </div>
                             <div className="flex flex-col items-end gap-3">
                               <div
-                                className={`svm-status-pill ${isActive ? "svm-status-pill--success" : "svm-status-pill--danger"}`}
+                                className={`svm-status-pill normal-case ${isActive ? "svm-status-pill--success" : "svm-status-pill--danger"}`}
                               >
                                 {isActive ? "Active" : "Inactive"}
                               </div>
@@ -567,7 +567,7 @@ const ContactAllVisitors = () => {
                                   onClick={() => handleToggleStatus(visitor)}
                                   disabled={isLoading}
                                   title="Click to toggle status"
-                                  className={`svm-status-pill transition-colors cursor-pointer ${
+                                  className={`svm-status-pill normal-case transition-colors cursor-pointer ${
                                     isActive
                                       ? "svm-status-pill--success hover:bg-green-500/20"
                                       : "svm-status-pill--danger hover:bg-primary/20"

@@ -408,7 +408,7 @@ td {
 @layer components {
   /* ——— Status Pill (Tables) ——— */
   .svm-status-pill {
-    @apply inline-flex items-center justify-center gap-1 rounded-full border uppercase tracking-[0.05em] font-medium text-[10px] leading-none whitespace-nowrap transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-1 rounded-[5px] border tracking-[0.05em] font-medium text-[10px] leading-none whitespace-nowrap transition-all duration-200 normal-case;
     font-size: 10px !important;
     font-weight: 500 !important;
     line-height: 1 !important;
