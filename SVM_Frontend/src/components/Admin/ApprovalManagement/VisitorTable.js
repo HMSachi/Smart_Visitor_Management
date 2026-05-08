@@ -382,20 +382,20 @@ const VisitorTable = ({
                       <p className="text-white capitalize text-[12px] font-semibold tracking-wide mb-0.5 leading-tight">
                         {visitor.name}
                       </p>
-                      <p className="text-gray-400 text-[10px] font-medium tracking-widest uppercase">
+                      <p className="text-gray-400 text-[10px] font-medium tracking-widest">
                         {visitor.batchId || `ID: ${visitor.id}`}
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       <StatusBadge status={visitor.status} />
                       {hasGatePass(visitor.id) && (
-                        <button
-                          onClick={() => onAction(visitor, "ViewGatePass")}
-                          className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.1em] text-primary/80 hover:text-primary transition-colors"
-                        >
-                          <QrCode size={10} />
-                          Gate Pass
-                        </button>
+                          <button
+                            onClick={() => onAction(visitor, "ViewGatePass")}
+                            className="flex items-center gap-1 text-[9px] font-bold tracking-[0.1em] text-primary/80 hover:text-primary transition-colors"
+                          >
+                            <QrCode size={10} />
+                            Gatepass
+                          </button>
                       )}
                     </div>
                   </div>
@@ -429,16 +429,16 @@ const VisitorTable = ({
                       visitor.status === "Accepted by Visitor" ||
                       visitor.status === "Accepted by Contact Person") && (
                         <>
-                          <button
-                            onClick={() => onAction(visitor, "Approve")}
-                            className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-green-500 hover:text-white transition-all"
-                          >
-                            <Check size={11} strokeWidth={3} />
-                            Approve
-                          </button>
+                            <button
+                              onClick={() => onAction(visitor, "Approve")}
+                              className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-bold tracking-wider rounded-lg hover:bg-green-500 hover:text-white transition-all"
+                            >
+                              <Check size={11} strokeWidth={3} />
+                              Approve
+                            </button>
                           <button
                             onClick={() => onAction(visitor, "Reject")}
-                            className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-primary hover:text-white transition-all"
+                            className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-wider rounded-lg hover:bg-primary hover:text-white transition-all"
                           >
                             <X size={11} strokeWidth={3} />
                             Reject
@@ -447,10 +447,10 @@ const VisitorTable = ({
                       )}
                     <button
                       onClick={() => onViewDetails(visitor)}
-                      className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-white/[0.03] border border-white/5 text-gray-300 text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-white hover:text-black transition-all"
+                      className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-white/[0.03] border border-white/5 text-gray-300 text-[10px] font-bold tracking-wider rounded-lg hover:bg-white hover:text-black transition-all"
                     >
                       <Eye size={11} />
-                      Inspect
+                      View details
                     </button>
                   </div>
                 </div>

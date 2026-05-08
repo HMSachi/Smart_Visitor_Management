@@ -167,22 +167,22 @@ const BlacklistTable = () => {
                   }
                 >
                   <th
-                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-4 text-[12px] font-normal tracking-[0.2em] whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
                     Visitor
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-4 text-[12px] font-normal tracking-[0.2em] whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
-                    Blacklist Reason
+                    Blacklist reason
                   </th>
                   <th
-                    className={`px-4 md:px-5 py-4 text-[13px] font-bold tracking-[0.2em] uppercase text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                    className={`px-4 md:px-5 py-4 text-[12px] font-normal tracking-[0.2em] text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
                   >
-                    Date Added
+                    Date added
                   </th>
-                  <th className="px-4 md:px-5 py-4 text-[10px] font-bold tracking-[0.2em] uppercase text-primary text-right whitespace-nowrap">
-                    Action
+                  <th className="px-4 md:px-5 py-4 text-[12px] font-normal tracking-[0.2em] text-primary text-right whitespace-nowrap">
+                    Actions
                   </th>
                 </tr>
               </thead>

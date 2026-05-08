@@ -528,7 +528,7 @@ const AllUsers = () => {
                                   borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "8%",
                                 }}
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
                               >
                                 User ID
                               </TableCell>
@@ -538,7 +538,7 @@ const AllUsers = () => {
                                   borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "15%",
                                 }}
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
                               >
                                 Name
                               </TableCell>
@@ -548,7 +548,7 @@ const AllUsers = () => {
                                   borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "20%",
                                 }}
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
                               >
                                 Email
                               </TableCell>
@@ -558,7 +558,7 @@ const AllUsers = () => {
                                   borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "12%",
                                 }}
-                                className={`hidden sm:table-cell ${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
+                                className={`hidden sm:table-cell ${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
                               >
                                 {cat.id === "CONTACT" ? "Department" : "Role"}
                               </TableCell>
@@ -568,7 +568,7 @@ const AllUsers = () => {
                                   borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "15%",
                                 }}
-                                className={`hidden md:table-cell ${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
+                                className={`hidden md:table-cell ${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
                               >
                                 {cat.id === "CONTACT" ? "Contact" : "Joined"}
                               </TableCell>
@@ -578,7 +578,7 @@ const AllUsers = () => {
                                   borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
                                   width: "10%",
                                 }}
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
                               >
                                 Status
                               </TableCell>
@@ -589,7 +589,7 @@ const AllUsers = () => {
                                   width: "10%",
                                 }}
                                 align="right"
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
+                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
                               >
                                 Actions
                               </TableCell>
@@ -688,7 +688,7 @@ const AllUsers = () => {
                                       </TableCell>
                                       <TableCell
                                         sx={{ padding: "3px 12px", width: "10%" }}
-                                       className="text-[10px] font-normal">
+                                       className="text-[12px] font-normal">
                                         <button
                                           onClick={() =>
                                             handleToggleStatus(item, cat.id)
@@ -697,7 +697,7 @@ const AllUsers = () => {
                                           title="Click to toggle status"
                                           className={`svm-status-pill transition-colors cursor-pointer ${isActive ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"}`}
                                         >
-                                          {isActive ? "ACTIVE" : "INACTIVE"}
+                                          {isActive ? "Active" : "Inactive"}
                                         </button>
                                       </TableCell>
                                       <TableCell

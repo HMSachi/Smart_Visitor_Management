@@ -142,22 +142,22 @@ const VisitorManagement = () => {
                 <Table sx={{ minWidth: 650 }} aria-label="visitors table">
                   <TableHead className="bg-black/40">
                     <TableRow>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
-                        ID
+                      <TableCell className="text-white/40 font-normal tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
+                        Id
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
+                      <TableCell className="text-white/40 font-normal tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
                         Visitor
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
+                      <TableCell className="text-white/40 font-normal tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
                         Credentials
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
+                      <TableCell className="text-white/40 font-normal tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
                         Company
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5 min-w-[200px]">
-                        Going To
+                      <TableCell className="text-white/40 font-normal tracking-[0.3em] text-[12px] border-b-white/5 py-1.5 min-w-[200px]">
+                        Going to
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5 text-center">
+                      <TableCell className="text-white/40 font-normal tracking-[0.3em] text-[12px] border-b-white/5 py-1.5 text-center">
                         Status
                       </TableCell>
                     </TableRow>
@@ -217,9 +217,9 @@ const VisitorManagement = () => {
                                 onClick={() => handleToggleStatus(visitor)}
                                 disabled={isLoading}
                                 title="Click to toggle status"
-                                className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-normal transition-all cursor-pointer ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                className={`px-2 py-0.5 text-[12px] tracking-wider font-normal transition-all cursor-pointer ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
                               >
-                                {isActive ? "ACTIVE" : "INACTIVE"}
+                                {isActive ? "Active" : "Inactive"}
                               </button>
                             </TableCell>
                           </TableRow>
