@@ -1742,10 +1742,10 @@ const VisitRequests = () => {
                     </div>
                     <div>
                       <p className="text-gray-300/90 text-[11px] font-medium capitalize tracking-[0.16em] mb-1">
-                        GatePass Intelligence
+                        Entry Pass System
                       </p>
                       <h2 className="text-white text-[15px] font-bold capitalize tracking-[0.14em]">
-                        GatePass Generated
+                        Your Pass is Ready
                       </h2>
                     </div>
                   </div>
@@ -1773,14 +1773,14 @@ const VisitRequests = () => {
                     )}
                     <div className="absolute inset-x-0 -bottom-2 flex justify-center">
                       <span className="bg-black text-white px-4 py-1.5 rounded-full text-[10px] font-bold tracking-[0.2em] capitalize border border-white/20">
-                        ID: {selectedGatePass.VGP_Pass_id || selectedGatePass.vgp_Pass_id}
+                        Pass No. {selectedGatePass.VGP_Pass_id || selectedGatePass.vgp_Pass_id}
                       </span>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <p className="text-gray-300/80 text-[11px] font-medium capitalize tracking-[0.3em]">
-                      Protocol Authenticated
+                      Identity Verified ✓
                     </p>
                     <p className="text-white text-xl font-medium capitalize tracking-widest flex items-center justify-center gap-2">
                       <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
@@ -1805,7 +1805,7 @@ const VisitRequests = () => {
                     onClick={() => setIsGatePassModalOpen(false)}
                     className="py-1.5 px-6 border border-white/10 text-white text-[10px] font-bold capitalize tracking-[0.16em] rounded-xl hover:bg-white/5 transition-all"
                   >
-                    Conclude
+                    Done
                   </button>
                 </div>
               </motion.div>

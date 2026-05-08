@@ -156,10 +156,10 @@ const SubVisitorQRGenerator = ({ subVisitorsData, mainVisitorData, requestId, ga
               </div>
               <div>
                 <p className="text-gray-300/90 text-[11px] font-medium capitalize tracking-[0.16em] mb-1">
-                  Sub-Visitor Pass
+                  Group Member Pass
                 </p>
                 <h2 className="text-white text-[15px] font-bold capitalize tracking-[0.14em]">
-                  QR Generated
+                  Pass is Ready
                 </h2>
               </div>
             </div>
@@ -188,7 +188,7 @@ const SubVisitorQRGenerator = ({ subVisitorsData, mainVisitorData, requestId, ga
             {/* Sub-Visitor Name & NIC */}
             <div className="space-y-3 mb-6">
               <p className="text-gray-300/80 text-[11px] font-medium capitalize tracking-[0.3em]">
-                Protocol Authenticated
+                Identity Verified ✓
               </p>
               <p className="text-white text-[15px] font-medium capitalize tracking-[0.14em]">
                 {currentSubVisitor.name || currentSubVisitor.Visitor_Group_Name || currentSubVisitor.Group_Members || "Sub-Visitor"}
@@ -215,7 +215,7 @@ const SubVisitorQRGenerator = ({ subVisitorsData, mainVisitorData, requestId, ga
               />
               <div className="absolute inset-x-0 -bottom-2 flex justify-center">
                 <span className="bg-black text-white px-3 py-1 rounded-full text-[9px] font-bold tracking-[0.16em] capitalize border border-white/20">
-                  Sub Pass
+                  Group Pass
                 </span>
               </div>
             </div>
@@ -242,7 +242,7 @@ const SubVisitorQRGenerator = ({ subVisitorsData, mainVisitorData, requestId, ga
             <div className="flex items-center gap-2.5">
               <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
               <span className="text-[10px] uppercase tracking-widest font-medium text-gray-400">
-                QR is valid — sub-visitor authorized
+               Pass verified — welcome inside
               </span>
             </div>
           </div>

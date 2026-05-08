@@ -35,26 +35,26 @@ import VisitorService from "../../../services/VisitorService";
 
 // ── Helper: a single icon + label + value row ──────────────────────────────
 const InfoRow = ({ icon, label, value }) => (
-  <div className="flex items-start gap-3">
+  <div className="flex items-center gap-2">
     <div
-      className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+      className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
       style={{
         background: "var(--color-surface-2)",
         border: "1px solid var(--color-border-soft)",
         color: "var(--color-text-secondary)",
       }}
     >
-      {icon}
+      {React.cloneElement(icon, { size: 11 })}
     </div>
-    <div className="min-w-0">
+    <div className="min-w-0 flex-1">
       <p
-        className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5"
+        className="text-[8px] uppercase tracking-[0.18em] font-bold leading-none mb-0.5"
         style={{ color: "var(--color-text-dim)" }}
       >
         {label}
       </p>
       <p
-        className="text-sm font-semibold break-words leading-snug"
+        className="text-xs font-semibold break-words leading-snug"
         style={{
           color:
             value === "N/A"
@@ -190,7 +190,7 @@ const LiveFeed = () => {
         if (decoded && typeof decoded === "object") {
           parsedQrData = decoded;
           setQrData(decoded);
-          
+
           // Check if this is an individual sub-visitor QR
           if (decoded.type === "subVisitor" && decoded.subVisitor) {
             console.log("[LiveFeed] Individual sub-visitor QR detected");
@@ -227,21 +227,29 @@ const LiveFeed = () => {
 
       // For sub-visitor QRs, verify against the VisitorJoint API using the requestId
       if (isSubVisitorQR && parsedQrData?.subVisitor && passId) {
-        console.log("[LiveFeed] Sub-visitor QR — verifying via VisitorJoint API, requestId:", passId);
+        console.log(
+          "[LiveFeed] Sub-visitor QR — verifying via VisitorJoint API, requestId:",
+          passId,
+        );
         const jointResponse = await VisitorService.GetVisitorJoint(passId);
-        const rows = jointResponse?.data?.ResultSet
-          || (Array.isArray(jointResponse?.data) ? jointResponse.data : [])
-          || [];
+        const rows =
+          jointResponse?.data?.ResultSet ||
+          (Array.isArray(jointResponse?.data) ? jointResponse.data : []) ||
+          [];
 
         if (rows.length === 0) {
-          throw new Error("Sub-visitor could not be verified. No matching request found.");
+          throw new Error(
+            "Sub-visitor could not be verified. No matching request found.",
+          );
         }
 
         // Find the row matching this sub-visitor's NIC
         const scannedNic = parsedQrData.subVisitor.nic;
-        const matchedRow = rows.find(
-          (r) => String(r.Visit_Group_NIC_Passport_Number) === String(scannedNic)
-        ) || rows[0]; // fall back to first row if NIC not matched
+        const matchedRow =
+          rows.find(
+            (r) =>
+              String(r.Visit_Group_NIC_Passport_Number) === String(scannedNic),
+          ) || rows[0]; // fall back to first row if NIC not matched
 
         setSubVisitorApiData(matchedRow);
         setScanStatus("details");
@@ -281,17 +289,23 @@ const LiveFeed = () => {
         const requestId = details.VGP_Request_id || details.VVR_Request_id;
         if (requestId) {
           try {
-            const jointResponse = await VisitorService.GetVisitorJoint(requestId);
-            const rows = jointResponse?.data?.ResultSet
-              || (Array.isArray(jointResponse?.data) ? jointResponse.data : [])
-              || [];
+            const jointResponse =
+              await VisitorService.GetVisitorJoint(requestId);
+            const rows =
+              jointResponse?.data?.ResultSet ||
+              (Array.isArray(jointResponse?.data) ? jointResponse.data : []) ||
+              [];
 
             // Deduplicate sub-visitors by NIC (API returns one row per sub-visitor × item)
             const seen = new Set();
             const uniqueSubVisitors = [];
             for (const row of rows) {
-              const nic = row.Visit_Group_NIC_Passport_Number || row.Members_NIC_Passport_Number || row.nic;
-              const name = row.Visitor_Group_Name || row.Group_Members || row.name;
+              const nic =
+                row.Visit_Group_NIC_Passport_Number ||
+                row.Members_NIC_Passport_Number ||
+                row.nic;
+              const name =
+                row.Visitor_Group_Name || row.Group_Members || row.name;
               if (!name) continue;
               const key = nic || name;
               if (!seen.has(key)) {
@@ -300,7 +314,10 @@ const LiveFeed = () => {
               }
             }
             setSubVisitorsData(uniqueSubVisitors);
-            console.log("[LiveFeed] Fetched sub-visitors from API:", uniqueSubVisitors);
+            console.log(
+              "[LiveFeed] Fetched sub-visitors from API:",
+              uniqueSubVisitors,
+            );
           } catch (err) {
             console.warn("[LiveFeed] Could not fetch sub-visitors:", err);
           }
@@ -323,13 +340,23 @@ const LiveFeed = () => {
   const profileData = useMemo(() => {
     // Check if this is an individual sub-visitor QR code — use live API data
     if (qrData?.type === "subVisitor" && qrData?.subVisitor) {
-      console.log("[LiveFeed] Processing sub-visitor QR. API row:", subVisitorApiData);
+      console.log(
+        "[LiveFeed] Processing sub-visitor QR. API row:",
+        subVisitorApiData,
+      );
 
       // Prefer live API data; fall back to what was encoded in the QR
-      const svName = subVisitorApiData?.Visitor_Group_Name || qrData.subVisitor.name || "N/A";
-      const svNic  = subVisitorApiData?.Visit_Group_NIC_Passport_Number || qrData.subVisitor.nic || "N/A";
-      const mainName = subVisitorApiData?.Visitor_Name || qrData.mainVisitor?.name || "N/A";
-      const mainNic  = subVisitorApiData?.Visitor_NIC_Passport_Number || "N/A";
+      const svName =
+        subVisitorApiData?.Visitor_Group_Name ||
+        qrData.subVisitor.name ||
+        "N/A";
+      const svNic =
+        subVisitorApiData?.Visit_Group_NIC_Passport_Number ||
+        qrData.subVisitor.nic ||
+        "N/A";
+      const mainName =
+        subVisitorApiData?.Visitor_Name || qrData.mainVisitor?.name || "N/A";
+      const mainNic = subVisitorApiData?.Visitor_NIC_Passport_Number || "N/A";
       const visitArea = subVisitorApiData?.Visitor_Places_to_Visit || "N/A";
       const contactPerson = subVisitorApiData?.Contact_Person_Name || "N/A";
 
@@ -348,8 +375,12 @@ const LiveFeed = () => {
       };
 
       // Add items from QR payload (compact format: n=name, q=quantity)
-      if (qrData.items && Array.isArray(qrData.items) && qrData.items.length > 0) {
-        merged.items = qrData.items.map(item => ({
+      if (
+        qrData.items &&
+        Array.isArray(qrData.items) &&
+        qrData.items.length > 0
+      ) {
+        merged.items = qrData.items.map((item) => ({
           itemName: item.n || item.itemName || "N/A",
           itemQuantity: item.q || item.itemQuantity || 1,
           itemDescription: item.d || item.itemDescription || "",
@@ -358,7 +389,7 @@ const LiveFeed = () => {
 
       return merged;
     }
-    
+
     // Otherwise, handle normal gate pass QR
     const merged = {
       Name:
@@ -397,18 +428,27 @@ const LiveFeed = () => {
         passDetails?.VGP_Visiting_Area ||
         "N/A",
     };
-    
+
     // Add sub-visitors — merge from live API fetch (preferred) and QR payload fallback
-    const liveSubVisitors = subVisitorsData && subVisitorsData.length > 0 ? subVisitorsData : null;
-    const qrSubVisitors = qrData?.subVisitors && Array.isArray(qrData.subVisitors) ? qrData.subVisitors : null;
+    const liveSubVisitors =
+      subVisitorsData && subVisitorsData.length > 0 ? subVisitorsData : null;
+    const qrSubVisitors =
+      qrData?.subVisitors && Array.isArray(qrData.subVisitors)
+        ? qrData.subVisitors
+        : null;
     const combinedSubVisitors = liveSubVisitors || qrSubVisitors;
     if (combinedSubVisitors && combinedSubVisitors.length > 0) {
       console.log("[LiveFeed] Sub-visitors for display:", combinedSubVisitors);
       merged.subVisitors = combinedSubVisitors;
     } else {
-      console.log("[LiveFeed] No subVisitors found. qrData:", qrData, "subVisitorsData:", subVisitorsData);
+      console.log(
+        "[LiveFeed] No subVisitors found. qrData:",
+        qrData,
+        "subVisitorsData:",
+        subVisitorsData,
+      );
     }
-    
+
     return merged;
   }, [qrData, passDetails, subVisitorsData, subVisitorApiData]);
 
@@ -561,16 +601,17 @@ const LiveFeed = () => {
             key="details"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-lg mx-auto overflow-hidden rounded-[28px] shadow-2xl transition-colors duration-300"
+            className="w-full max-w-lg mx-auto rounded-[28px] shadow-2xl transition-colors duration-300 flex flex-col"
             style={{
               background: "var(--color-bg-paper)",
               border: "1px solid var(--color-border-soft)",
               boxShadow: "0 20px 50px rgba(0, 0, 0, 0.15)",
+              maxHeight: "85vh",
             }}
           >
             {/* ── Header gradient strip ── */}
             <div
-              className="relative px-6 pt-6 pb-8 overflow-hidden"
+              className="relative px-4 pt-4 pb-5 overflow-hidden flex-shrink-0"
               style={{
                 background:
                   "linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 60%, transparent 100%)",
@@ -579,9 +620,9 @@ const LiveFeed = () => {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-600 via-green-400 to-green-600 opacity-80" />
 
               {/* Avatar + name block */}
-              <div className="flex items-center gap-4 mt-2">
+              <div className="flex items-center gap-3 mt-1">
                 <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black flex-shrink-0"
+                  className="w-11 h-11 rounded-xl flex items-center justify-center text-lg font-black flex-shrink-0"
                   style={{
                     background:
                       "linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.1))",
@@ -609,7 +650,7 @@ const LiveFeed = () => {
                       }}
                     >
                       <span className="w-1 h-1 rounded-full bg-indigo-400 inline-block" />
-                      Sub Visitor
+                      Group Member
                     </span>
                   ) : (
                     <span
@@ -624,7 +665,7 @@ const LiveFeed = () => {
                       Main Visitor
                     </span>
                   )}
-                  <p className="text-[var(--color-text-primary)] text-base font-black tracking-tight truncate">
+                  <p className="text-[var(--color-text-primary)] text-sm font-black tracking-tight truncate">
                     {profileData.Name !== "N/A"
                       ? profileData.Name
                       : "Unknown Visitor"}
@@ -637,7 +678,7 @@ const LiveFeed = () => {
                 </div>
                 <div className="ml-auto flex-shrink-0">
                   <div
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-green-600 dark:text-green-400 text-[9px] font-black uppercase tracking-[0.2em]"
+                    className="flex items-center gap-1 px-2 py-1 rounded-full text-green-600 dark:text-green-400 text-[8px] font-black uppercase tracking-[0.2em]"
                     style={{
                       background: "rgba(34, 197, 94, 0.1)",
                       border: "1px solid rgba(34, 197, 94, 0.2)",
@@ -650,14 +691,14 @@ const LiveFeed = () => {
               </div>
             </div>
 
-            {/* ── Info sections ── */}
-            <div className="divide-y divide-[var(--color-border-soft)] transition-colors duration-300">
+            {/* ── Info sections (scrollable) ── */}
+            <div className="divide-y divide-[var(--color-border-soft)] transition-colors duration-300 overflow-y-auto flex-1 text-[13px]">
               {/* Section: Identity */}
-              <div className="px-6 py-4">
-                <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
-                  Identity
+              <div className="px-4 py-2.5">
+                <p className="text-[8px] uppercase tracking-[0.3em] font-bold mb-2 text-[var(--color-text-dim)]">
+                  Visitor Info
                 </p>
-                <div className="space-y-3">
+                <div className="space-y-1.5">
                   <InfoRow
                     icon={<User size={14} />}
                     label="Full Name"
@@ -672,124 +713,113 @@ const LiveFeed = () => {
               </div>
 
               {/* Section: Main Visitor (for sub-visitor QR codes) */}
-              {qrData?.type === "subVisitor" && (subVisitorApiData || qrData?.mainVisitor) && (
-                <div className="px-6 py-4">
-                  <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
-                    Main Visitor
+              {qrData?.type === "subVisitor" &&
+                (subVisitorApiData || qrData?.mainVisitor) && (
+                  <div className="px-4 py-2.5">
+                    <p className="text-[8px] uppercase tracking-[0.3em] font-bold mb-2 text-[var(--color-text-dim)]">
+                      Main Visitor
+                    </p>
+                    <div className="space-y-1.5">
+                      <InfoRow
+                        icon={<User size={14} />}
+                        label="Name"
+                        value={profileData["Main Visitor"]}
+                      />
+                      <InfoRow
+                        icon={<CreditCard size={14} />}
+                        label="NIC / Passport"
+                        value={profileData["Main Visitor NIC"]}
+                      />
+                      {profileData["Contact Person"] &&
+                        profileData["Contact Person"] !== "N/A" && (
+                          <InfoRow
+                            icon={<Phone size={14} />}
+                            label="Contact Person"
+                            value={profileData["Contact Person"]}
+                          />
+                        )}
+                      {profileData["Visiting area"] &&
+                        profileData["Visiting area"] !== "N/A" && (
+                          <InfoRow
+                            icon={<MapPin size={14} />}
+                            label="Visiting Area"
+                            value={profileData["Visiting area"]}
+                          />
+                        )}
+                    </div>
+                  </div>
+                )}
+
+              {/* Section: Contact — hidden for sub-visitor QRs */}
+              {qrData?.type !== "subVisitor" && (
+                <div className="px-4 py-2.5">
+                  <p className="text-[8px] uppercase tracking-[0.3em] font-bold mb-2 text-[var(--color-text-dim)]">
+                    Contact Details
                   </p>
-                  <div className="space-y-3">
+                  <div className="space-y-1.5">
                     <InfoRow
-                      icon={<User size={14} />}
-                      label="Name"
-                      value={profileData["Main Visitor"]}
+                      icon={<Mail size={14} />}
+                      label="Email"
+                      value={profileData.Email}
                     />
                     <InfoRow
-                      icon={<CreditCard size={14} />}
-                      label="NIC / Passport"
-                      value={profileData["Main Visitor NIC"]}
+                      icon={<Phone size={14} />}
+                      label="Phone"
+                      value={profileData["Phone number"]}
                     />
-                    {profileData["Contact Person"] && profileData["Contact Person"] !== "N/A" && (
-                      <InfoRow
-                        icon={<Phone size={14} />}
-                        label="Contact Person"
-                        value={profileData["Contact Person"]}
-                      />
-                    )}
-                    {profileData["Visiting area"] && profileData["Visiting area"] !== "N/A" && (
-                      <InfoRow
-                        icon={<MapPin size={14} />}
-                        label="Visiting Area"
-                        value={profileData["Visiting area"]}
-                      />
-                    )}
+                    <InfoRow
+                      icon={<Building2 size={14} />}
+                      label="Company"
+                      value={profileData.Company}
+                    />
                   </div>
                 </div>
               )}
 
-              {/* Section: Contact — hidden for sub-visitor QRs */}
-              {qrData?.type !== "subVisitor" && (
-              <div className="px-6 py-4">
-                <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
-                  Contact
-                </p>
-                <div className="space-y-3">
-                  <InfoRow
-                    icon={<Mail size={14} />}
-                    label="Email"
-                    value={profileData.Email}
-                  />
-                  <InfoRow
-                    icon={<Phone size={14} />}
-                    label="Phone"
-                    value={profileData["Phone number"]}
-                  />
-                  <InfoRow
-                    icon={<Building2 size={14} />}
-                    label="Company"
-                    value={profileData.Company}
-                  />
-                </div>
-              </div>
-              )}
-
               {/* Section: Visit Details — hidden for sub-visitor QRs */}
               {qrData?.type !== "subVisitor" && (
-              <div className="px-6 py-4">
-                <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
-                  Visit Details
-                </p>
-                <div className="space-y-3">
-                  <InfoRow
-                    icon={<Target size={14} />}
-                    label="Purpose"
-                    value={profileData["Visiting purpose"]}
-                  />
-                  <InfoRow
-                    icon={<MapPin size={14} />}
-                    label="Area"
-                    value={profileData["Visiting area"]}
-                  />
+                <div className="px-4 py-2.5">
+                  <p className="text-[8px] uppercase tracking-[0.3em] font-bold mb-2 text-[var(--color-text-dim)]">
+                    Visit Details
+                  </p>
+                  <div className="space-y-1.5">
+                    <InfoRow
+                      icon={<Target size={14} />}
+                      label="Purpose"
+                      value={profileData["Visiting purpose"]}
+                    />
+                    <InfoRow
+                      icon={<MapPin size={14} />}
+                      label="Location"
+                      value={profileData["Visiting area"]}
+                    />
+                  </div>
                 </div>
-              </div>
               )}
 
               {/* Section: Items Carried (for sub-visitors) */}
               {profileData.items && profileData.items.length > 0 && (
-                <div className="px-6 py-4 border-t border-[var(--color-border-soft)]">
-                  <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
-                    Items Carried
+                <div className="px-4 py-2.5 border-t border-[var(--color-border-soft)]">
+                  <p className="text-[8px] uppercase tracking-[0.3em] font-bold mb-2 text-[var(--color-text-dim)]">
+                    Items Being Brought In
                   </p>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {profileData.items.map((item, index) => (
-                      <div key={index} className="p-3 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border-soft)]">
-                        <div className="flex items-start gap-3 mb-2">
-                          <Package size={14} className="text-[var(--color-text-secondary)] flex-shrink-0 mt-0.5" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
-                              Item Name
-                            </p>
-                            <p className="text-sm font-semibold break-words leading-snug" style={{ color: "var(--color-text-primary)" }}>
-                              {item.itemName || "N/A"}
-                            </p>
-                          </div>
-                          {item.itemQuantity && item.itemQuantity > 1 && (
-                            <div className="px-2 py-1 rounded-lg bg-primary/20 text-primary text-[10px] font-bold flex-shrink-0">
-                              x{item.itemQuantity}
-                            </div>
-                          )}
-                        </div>
-                        {item.itemDescription && (
-                          <div className="flex items-start gap-3">
-                            <div className="w-4"></div>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
-                                Description
-                              </p>
-                              <p className="text-[10px] text-[var(--color-text-secondary)] break-words" style={{ color: "var(--color-text-secondary)" }}>
-                                {item.itemDescription}
-                              </p>
-                            </div>
-                          </div>
+                      <div
+                        key={index}
+                        className="p-2 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border-soft)] flex items-center gap-2"
+                      >
+                        <Package
+                          size={12}
+                          className="text-[var(--color-text-secondary)] flex-shrink-0"
+                        />
+                        <span className="text-xs font-semibold text-[var(--color-text-primary)] truncate flex-1">
+                          {item.itemName || "N/A"}
+                        </span>
+                        {item.itemQuantity && item.itemQuantity > 1 && (
+                          <span className="px-1.5 py-0.5 rounded bg-primary/20 text-primary text-[9px] font-bold flex-shrink-0">
+                            x{item.itemQuantity}
+                          </span>
                         )}
                       </div>
                     ))}
@@ -798,74 +828,59 @@ const LiveFeed = () => {
               )}
 
               {/* Section: Sub Visitors (Group Members) */}
-              {profileData.subVisitors && profileData.subVisitors.length > 0 && (
-                <div className="px-6 py-4 border-t border-[var(--color-border-soft)]">
-                  <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
-                    Sub Visitors
-                  </p>
-                  <div className="space-y-3">
-                    {profileData.subVisitors.map((subVisitor, index) => (
-                      <div key={index} className="p-3 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border-soft)]">
-                        <div className="flex items-start gap-3 mb-2">
-                          <User size={14} className="text-[var(--color-text-secondary)] flex-shrink-0 mt-0.5" />
-                          <div className="min-w-0">
-                            <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
-                              Name
-                            </p>
-                            <p className="text-sm font-semibold break-words leading-snug" style={{ color: "var(--color-text-primary)" }}>
+              {profileData.subVisitors &&
+                profileData.subVisitors.length > 0 && (
+                  <div className="px-4 py-2.5 border-t border-[var(--color-border-soft)]">
+                    <p className="text-[8px] uppercase tracking-[0.3em] font-bold mb-2 text-[var(--color-text-dim)]">
+                      Group Members
+                    </p>
+                    <div className="space-y-1.5">
+                      {profileData.subVisitors.map((subVisitor, index) => (
+                        <div
+                          key={index}
+                          className="p-2 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border-soft)] flex items-center gap-2"
+                        >
+                          <div
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black flex-shrink-0"
+                            style={{
+                              background: "rgba(34,197,94,0.1)",
+                              color: "var(--color-success)",
+                            }}
+                          >
+                            {(subVisitor.name || "?")
+                              .split(" ")
+                              .map((w) => w[0])
+                              .join("")
+                              .slice(0, 2)
+                              .toUpperCase()}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-semibold text-[var(--color-text-primary)] truncate">
                               {subVisitor.name || "N/A"}
                             </p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3 mb-2">
-                          <CreditCard size={14} className="text-[var(--color-text-secondary)] flex-shrink-0 mt-0.5" />
-                          <div className="min-w-0">
-                            <p className="text-[9px] uppercase tracking-[0.22em] font-bold mb-0.5" style={{ color: "var(--color-text-dim)" }}>
-                              NIC / Passport
-                            </p>
-                            <p className="text-sm font-semibold break-words leading-snug" style={{ color: "var(--color-text-primary)" }}>
+                            <p className="text-[10px] text-[var(--color-text-dim)] truncate">
                               {subVisitor.nic || "N/A"}
                             </p>
                           </div>
                         </div>
-                        {/* Display items if available for this sub-visitor */}
-                        {subVisitor.items && subVisitor.items.length > 0 && (
-                          <div className="mt-2 pt-2 border-t border-[var(--color-border-soft)]">
-                            <p className="text-[8px] uppercase tracking-[0.2em] font-bold mb-2" style={{ color: "var(--color-text-dim)" }}>
-                              Carrying Items
-                            </p>
-                            <div className="space-y-1">
-                              {subVisitor.items.map((item, itemIndex) => (
-                                <div key={itemIndex} className="text-[10px] text-[var(--color-text-secondary)] flex items-center gap-2">
-                                  <span className="w-1 h-1 bg-[var(--color-text-secondary)] rounded-full flex-shrink-0"></span>
-                                  <span className="truncate">
-                                    {item.itemName} 
-                                    {item.itemQuantity && item.itemQuantity > 1 && ` (×${item.itemQuantity})`}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Access status bar */}
               <div
-                className="px-6 py-1.5 flex items-center justify-between transition-colors duration-300"
+                className="px-4 py-1 flex items-center justify-between transition-colors duration-300 flex-shrink-0"
                 style={{ background: "var(--color-surface-1)" }}
               >
                 <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] uppercase tracking-widest font-medium text-[var(--color-text-secondary)]">
-                    QR is valid — visitor information found
+                  <span className="text-[9px] uppercase tracking-widest font-medium text-[var(--color-text-secondary)]">
+                    Pass verified — welcome inside
                   </span>
                 </div>
                 <ShieldCheck
-                  size={16}
+                  size={14}
                   className="text-green-600 dark:text-green-400 flex-shrink-0"
                 />
               </div>
@@ -873,25 +888,25 @@ const LiveFeed = () => {
 
             {/* ── Footer actions ── */}
             <div
-              className="px-6 py-4 flex flex-col md:flex-row gap-3 transition-colors duration-300"
+              className="px-4 py-3 flex gap-2 transition-colors duration-300 flex-shrink-0"
               style={{
                 background: "var(--color-surface-1)",
                 borderTop: "1px solid var(--color-border-soft)",
               }}
             >
               <button
-                onClick={() => alert("Verification Log Saved to Cluster")}
-                className="flex-1 py-3.5 font-black uppercase text-[10px] tracking-[0.22em] rounded-2xl transition-all flex items-center justify-center gap-3 text-white"
+                onClick={() => alert("Entry allowed. Verification logged.")}
+                className="flex-1 py-2.5 font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all flex items-center justify-center gap-2 text-white"
                 style={{
                   background: "linear-gradient(135deg, #16a34a, #22c55e)",
-                  boxShadow: "0 8px 20px rgba(34, 197, 94, 0.25)",
+                  boxShadow: "0 4px 12px rgba(34, 197, 94, 0.25)",
                 }}
               >
-                Allow Entry <ArrowRight size={16} />
+                Allow Entry <ArrowRight size={13} />
               </button>
               <button
                 onClick={handleResetNode}
-                className="px-5 md:px-7 py-3.5 border border-[var(--color-border-medium)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-2)] font-black uppercase text-[10px] tracking-[0.22em] rounded-2xl transition-all"
+                className="px-4 py-2.5 border border-[var(--color-border-medium)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-2)] font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all"
               >
                 Scan Another
               </button>
