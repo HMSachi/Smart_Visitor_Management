@@ -308,20 +308,20 @@ const CreateVisitRequestDetails = () => {
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-hidden">
         <Header title="Additional Details" />
         
-        <main className="flex-1 overflow-y-auto p-3 custom-scrollbar">
-          <div className="max-w-7xl mx-auto space-y-3 animate-fade-in-slow pb-4">
+        <main className="flex-1 overflow-y-auto p-6 pt-12 custom-scrollbar">
+          <div className="max-w-6xl mx-auto space-y-4 animate-fade-in-slow pb-4">
             
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-green-500 text-white text-[10px] font-medium flex items-center justify-center"><CheckCircle2 size={12} /></div>
-                        <span className="text-[10px] font-medium capitalize tracking-widest text-gray-500">Core info</span>
+                        <div className="w-6 h-6 rounded-full bg-green-500 text-white text-[12px] font-normal flex items-center justify-center"><CheckCircle2 size={12} /></div>
+                        <span className="text-[12px] font-normal capitalize tracking-widest text-gray-500">Core info</span>
                       </div>
                       <div className="h-[1px] w-12 bg-gray-200"></div>
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-primary text-white text-[10px] font-medium flex items-center justify-center">2</div>
-                        <span className="text-[10px] font-medium capitalize tracking-widest text-primary">Details</span>
+                        <div className="w-6 h-6 rounded-full bg-primary text-white text-[12px] font-normal flex items-center justify-center">2</div>
+                        <span className="text-[12px] font-normal capitalize tracking-widest text-primary">Details</span>
                       </div>
 
-            <form onSubmit={handleSubmit} className="space-y-2">
+            <form onSubmit={handleSubmit} className="space-y-8 mt-20">
               
               <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 mb-2">
@@ -340,7 +340,7 @@ const CreateVisitRequestDetails = () => {
                           disabled={v.isConfirmed}
                           value={v.type} 
                           onChange={(e) => dispatch(updateVehicle({ index, field: "type", value: e.target.value }))} 
-                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[12px] font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 disabled:opacity-60"
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[12px] font-normal appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 disabled:opacity-60"
                         >
                           <option value="Car">Car</option>
                           <option value="Van">Van</option>
@@ -373,7 +373,7 @@ const CreateVisitRequestDetails = () => {
                       </div>
                     </div>
                   ))}
-                  {vehicles.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">No vehicles added</p></div>}
+                  {vehicles.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[12px] font-normal text-gray-300 uppercase tracking-widest">No vehicles added</p></div>}
                 </div>
               </div>
 
@@ -445,7 +445,7 @@ const CreateVisitRequestDetails = () => {
                       </div>
                     </div>
                   ))}
-                  {people.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[12px] font-bold text-gray-300 uppercase tracking-widest">No additional visitors</p></div>}
+                  {people.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[12px] font-normal text-gray-300 uppercase tracking-widest">No additional visitors</p></div>}
                 </div>
               </div>
 
@@ -511,7 +511,7 @@ const CreateVisitRequestDetails = () => {
                               dispatch(updateSubVisitorItem({ index, field: "subVisitorPhone", value: matchedPerson.phone }));
                             }
                           }}
-                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[12px] font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 disabled:opacity-60"
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[12px] font-normal appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 disabled:opacity-60"
                         >
                           <option value="">Select Sub-Visitor...</option>
                           {people.map((p, pIdx) => (
@@ -542,22 +542,22 @@ const CreateVisitRequestDetails = () => {
                       </div>
                     </div>
                   ))}
-                  {subVisitorItems.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">No sub-visitor items declared</p></div>}
+                  {subVisitorItems.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[12px] font-normal text-gray-300 uppercase tracking-widest">No sub-visitor items declared</p></div>}
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-center gap-4 pt-6">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-10">
                 <button
                   type="button"
                   onClick={() => navigate("/contact_person/create-visit-request")}
-                  className="w-full md:w-auto px-10 h-10 rounded-xl text-[12px] font-normal capitalize tracking-widest text-gray-400 hover:text-gray-600 transition-all"
+                  className="w-full md:w-auto px-10 h-10 rounded-xl text-[12px] font-normal tracking-[0.14em] text-gray-400 hover:text-gray-600 transition-all"
                 >
                   Back to core info
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full md:w-auto flex-1 h-10 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal capitalize tracking-widest rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-50"
+                  className="w-full md:w-auto flex-1 h-10 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal tracking-[0.14em] rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-50"
                 >
                   {isSubmitting ? "Finalizing registration..." : "Complete & submit"}
                 </button>

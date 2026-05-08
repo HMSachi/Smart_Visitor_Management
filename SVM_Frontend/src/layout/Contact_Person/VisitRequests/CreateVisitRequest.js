@@ -159,27 +159,27 @@ const CreateVisitRequest = () => {
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-hidden">
         <Header title="Visitor Registration" />
         
-        <main className="flex-1 overflow-y-auto p-3 custom-scrollbar">
-          <div className="max-w-7xl mx-auto space-y-3 animate-fade-in-slow pb-4">
+        <main className="flex-1 overflow-y-auto p-6 pt-12 custom-scrollbar">
+          <div className="max-w-6xl mx-auto space-y-4 animate-fade-in-slow pb-4">
             
             {/* Step Indicator */}
             <div className="flex items-center gap-4 px-1">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-primary text-white text-[10px] font-medium flex items-center justify-center">1</div>
-                <span className="text-[10px] font-medium capitalize tracking-widest text-primary">Core info</span>
+                <div className="w-6 h-6 rounded-full bg-primary text-white text-[12px] font-normal flex items-center justify-center">1</div>
+                <span className="text-[12px] font-normal capitalize tracking-widest text-primary">Core info</span>
               </div>
               <div className="h-[1px] w-12 bg-gray-200"></div>
               <div className="flex items-center gap-2 opacity-40">
-                <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-500 text-[10px] font-medium flex items-center justify-center">2</div>
-                <span className="text-[10px] font-medium capitalize tracking-widest text-gray-500">Details</span>
+                <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-500 text-[12px] font-normal flex items-center justify-center">2</div>
+                <span className="text-[12px] font-normal capitalize tracking-widest text-gray-500">Details</span>
               </div>
             </div>
 
-            <form onSubmit={handleNext} className="space-y-3">
+            <form onSubmit={handleNext} className="space-y-6 mt-20">
               <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <SectionHeader title="Visitor Details" icon={FileText} />
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="space-y-1.5 md:col-span-2">
                     <label className="text-[12px] font-medium text-gray-400 capitalize tracking-[0.15em] flex items-center gap-1.5 px-0.5">
                       <User size={11} className="text-primary" /> Who is the visitor?
@@ -188,7 +188,7 @@ const CreateVisitRequest = () => {
                       name="VVR_Visitor_id"
                       value={formData.VVR_Visitor_id}
                       onChange={handleInputChange}
-                      className={`w-full bg-white border rounded-lg px-3 py-1.5 text-[12px] font-medium transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
+                      className={`w-full bg-white border rounded-lg px-3 py-1.5 text-[12px] font-normal transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
                         errors.VVR_Visitor_id ? "border-red-500" : "border-gray-200 focus:border-primary/50"
                       }`}
                     >
@@ -197,7 +197,7 @@ const CreateVisitRequest = () => {
                         <option key={v.VV_Visitor_id} value={v.VV_Visitor_id}>{v.VV_Name}</option>
                       ))}
                     </select>
-                    {errors.VVR_Visitor_id && <p className="text-[8px] text-red-500 font-bold px-0.5 capitalize">{errors.VVR_Visitor_id}</p>}
+                    {errors.VVR_Visitor_id && <p className="text-[12px] text-red-500 font-normal px-0.5 capitalize">{errors.VVR_Visitor_id}</p>}
                   </div>
 
                   {selectedVisitorDetails && (
@@ -232,7 +232,7 @@ const CreateVisitRequest = () => {
                       value={formData.VVR_Places_to_Visit}
                       onChange={handleInputChange}
                       disabled={placesLoading}
-                      className={`w-full bg-white border rounded-lg px-3 py-1.5 text-[12px] font-medium transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
+                      className={`w-full bg-white border rounded-lg px-3 py-1.5 text-[12px] font-normal transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
                         errors.VVR_Places_to_Visit ? "border-red-500" : "border-gray-200 focus:border-primary/50"
                       } ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
                     >
@@ -250,7 +250,7 @@ const CreateVisitRequest = () => {
                           );
                         })}
                     </select>
-                    {errors.VVR_Places_to_Visit && <p className="text-[8px] text-red-500 font-bold px-0.5 capitalize">{errors.VVR_Places_to_Visit}</p>}
+                    {errors.VVR_Places_to_Visit && <p className="text-[12px] text-red-500 font-normal px-0.5 capitalize">{errors.VVR_Places_to_Visit}</p>}
                   </div>
                   <div className="md:col-span-2">
                     <InputField label="What Is The Reason?" name="VVR_Purpose" placeholder="e.g. Maintenance, Meeting" value={formData.VVR_Purpose} onChange={handleInputChange} error={errors.VVR_Purpose} icon={HelpCircle} />
@@ -258,7 +258,7 @@ const CreateVisitRequest = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-center gap-4 pt-4">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-10">
                 <button
                   type="button"
                   disabled={isSubmitting}
@@ -266,14 +266,14 @@ const CreateVisitRequest = () => {
                     dispatch(resetForm());
                     navigate("/contact_person/visit-requests");
                   }}
-                  className="w-full md:w-auto px-10 h-10 rounded-xl text-[12px] font-normal capitalize tracking-widest text-gray-400 hover:text-gray-600 transition-all disabled:opacity-40"
+                  className="w-full md:w-auto px-10 h-10 rounded-xl text-[12px] font-normal tracking-[0.14em] text-gray-400 hover:text-gray-600 transition-all disabled:opacity-40"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full md:w-auto flex-1 h-10 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal capitalize tracking-widest rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-60 group flex items-center justify-center gap-2"
+                  className="w-full md:w-auto px-12 h-10 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal tracking-[0.14em] rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-60 group flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     "Saving details..."
