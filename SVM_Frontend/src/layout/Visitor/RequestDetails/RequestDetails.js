@@ -178,10 +178,8 @@ const RequestDetails = () => {
   const rawFields = useMemo(() => {
     if (!currentRequest) return [];
     return Object.entries(currentRequest)
-      .filter(([key, value]) => {
-        // Remove status field from raw fields display as well
-        if (key === "VVR_Status") return false;
-        return value !== null && value !== undefined && value !== "";
+      .filter(([key]) => {
+        return ["VVR_Created_Date", "VVR_Update_Date"].includes(key);
       })
       .sort(([a], [b]) => a.localeCompare(b));
   }, [currentRequest]);
@@ -241,7 +239,7 @@ const RequestDetails = () => {
         </div>
       )}
 
-      <div className="max-w-none mx-auto space-y-4">
+      <div className="max-w-7xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate("/visitor/my-requests")}
