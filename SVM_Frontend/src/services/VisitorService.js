@@ -62,7 +62,7 @@ const GetVisitorJoint = async (requestId) => {
   let config = {
     method: "get",
     url: getApiUrl(
-      `/ItemCarried/GetItemJoinByGroupMember?VVR_Request_id=${encodeURIComponent(requestId)}`,
+      `/Visitor/VisitorJoint?RequestId=${encodeURIComponent(requestId)}`,
     ),
   };
   console.log("[VisitorService] GetVisitorJoint - URL:", config.url);

@@ -177,7 +177,7 @@ const SubVisitorQRGenerator = ({ subVisitorsData, mainVisitorData, requestId, ga
                 boxShadow: "0 4px 12px rgba(34, 197, 94, 0.1)",
               }}
             >
-              {(currentSubVisitor.name || currentSubVisitor.Group_Members || "?")
+              {(currentSubVisitor.name || currentSubVisitor.Visitor_Group_Name || currentSubVisitor.Group_Members || "?")
                 .split(" ")
                 .map((w) => w[0])
                 .join("")
@@ -191,10 +191,10 @@ const SubVisitorQRGenerator = ({ subVisitorsData, mainVisitorData, requestId, ga
                 Protocol Authenticated
               </p>
               <p className="text-white text-[15px] font-medium capitalize tracking-[0.14em]">
-                {currentSubVisitor.name || currentSubVisitor.Group_Members || "Sub-Visitor"}
+                {currentSubVisitor.name || currentSubVisitor.Visitor_Group_Name || currentSubVisitor.Group_Members || "Sub-Visitor"}
               </p>
               <p className="text-green-600 dark:text-green-400 text-[10px] uppercase tracking-[0.28em] font-bold opacity-80">
-                {currentSubVisitor.nic || currentSubVisitor.Members_NIC_Passport_Number || "ID N/A"}
+                {currentSubVisitor.nic || currentSubVisitor.Visit_Group_NIC_Passport_Number || currentSubVisitor.Members_NIC_Passport_Number || "ID N/A"}
               </p>
               <div className="h-[1px] w-12 bg-white/10 mx-auto my-3"></div>
               <p className="text-gray-400 text-[11px] capitalize tracking-[0.08em] leading-relaxed max-w-[280px]">

@@ -31,6 +31,7 @@ import {
   decodeSecureQrPayload,
   isSecureQrPayload,
 } from "../../../utils/secureQrPayload";
+import VisitorService from "../../../services/VisitorService";
 
 // ── Helper: a single icon + label + value row ──────────────────────────────
 const InfoRow = ({ icon, label, value }) => (
@@ -83,6 +84,10 @@ const LiveFeed = () => {
   const [passDetails, setPassDetails] = useState(null);
   const [qrData, setQrData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  // Sub-visitors fetched live from the VisitorJoint API after scanning (main QR)
+  const [subVisitorsData, setSubVisitorsData] = useState([]);
+  // The specific VisitorJoint row matched when scanning a sub-visitor QR
+  const [subVisitorApiData, setSubVisitorApiData] = useState(null);
 
   const stopScanner = useCallback(() => {
     if (controlsRef.current) {
@@ -121,6 +126,8 @@ const LiveFeed = () => {
     setScanResult("");
     setPassDetails(null);
     setQrData(null);
+    setSubVisitorsData([]);
+    setSubVisitorApiData(null);
     setScanStatus("scanning");
     setScanMessage("Opening the camera. Please hold the QR code steady.");
 
@@ -218,17 +225,25 @@ const LiveFeed = () => {
         throw new Error("We could not find a valid pass ID in the QR code.");
       }
 
-      // For sub-visitor QRs, we don't need database lookup - we have all data in the QR
-      if (isSubVisitorQR && qrData?.subVisitor && qrData?.mainVisitor) {
-        console.log("[LiveFeed] Sub-visitor QR verified from decoded payload");
-        // Create a minimal pass details object to satisfy the UI
-        setPassDetails({
-          VGP_Pass_id: passId,
-          Visitor_Name: qrData.mainVisitor.name,
-          VV_Name: qrData.mainVisitor.name,
-          Visitor_ID: qrData.mainVisitor.id,
-          VV_Visitor_id: qrData.mainVisitor.id,
-        });
+      // For sub-visitor QRs, verify against the VisitorJoint API using the requestId
+      if (isSubVisitorQR && parsedQrData?.subVisitor && passId) {
+        console.log("[LiveFeed] Sub-visitor QR — verifying via VisitorJoint API, requestId:", passId);
+        const jointResponse = await VisitorService.GetVisitorJoint(passId);
+        const rows = jointResponse?.data?.ResultSet
+          || (Array.isArray(jointResponse?.data) ? jointResponse.data : [])
+          || [];
+
+        if (rows.length === 0) {
+          throw new Error("Sub-visitor could not be verified. No matching request found.");
+        }
+
+        // Find the row matching this sub-visitor's NIC
+        const scannedNic = parsedQrData.subVisitor.nic;
+        const matchedRow = rows.find(
+          (r) => String(r.Visit_Group_NIC_Passport_Number) === String(scannedNic)
+        ) || rows[0]; // fall back to first row if NIC not matched
+
+        setSubVisitorApiData(matchedRow);
         setScanStatus("details");
         setScanMessage("Sub-visitor QR verified successfully.");
         setIsLoading(false);
@@ -261,6 +276,35 @@ const LiveFeed = () => {
         setScanMessage(
           "The visitor details were found and verified successfully.",
         );
+
+        // Fetch sub-visitor data live from the VisitorJoint API
+        const requestId = details.VGP_Request_id || details.VVR_Request_id;
+        if (requestId) {
+          try {
+            const jointResponse = await VisitorService.GetVisitorJoint(requestId);
+            const rows = jointResponse?.data?.ResultSet
+              || (Array.isArray(jointResponse?.data) ? jointResponse.data : [])
+              || [];
+
+            // Deduplicate sub-visitors by NIC (API returns one row per sub-visitor × item)
+            const seen = new Set();
+            const uniqueSubVisitors = [];
+            for (const row of rows) {
+              const nic = row.Visit_Group_NIC_Passport_Number || row.Members_NIC_Passport_Number || row.nic;
+              const name = row.Visitor_Group_Name || row.Group_Members || row.name;
+              if (!name) continue;
+              const key = nic || name;
+              if (!seen.has(key)) {
+                seen.add(key);
+                uniqueSubVisitors.push({ name, nic: nic || "N/A" });
+              }
+            }
+            setSubVisitorsData(uniqueSubVisitors);
+            console.log("[LiveFeed] Fetched sub-visitors from API:", uniqueSubVisitors);
+          } catch (err) {
+            console.warn("[LiveFeed] Could not fetch sub-visitors:", err);
+          }
+        }
       } else {
         throw new Error("We could not find a matching gate pass.");
       }
@@ -277,33 +321,41 @@ const LiveFeed = () => {
   };
 
   const profileData = useMemo(() => {
-    // Check if this is an individual sub-visitor QR code
+    // Check if this is an individual sub-visitor QR code — use live API data
     if (qrData?.type === "subVisitor" && qrData?.subVisitor) {
-      console.log("[LiveFeed] Processing individual sub-visitor QR data");
-      
+      console.log("[LiveFeed] Processing sub-visitor QR. API row:", subVisitorApiData);
+
+      // Prefer live API data; fall back to what was encoded in the QR
+      const svName = subVisitorApiData?.Visitor_Group_Name || qrData.subVisitor.name || "N/A";
+      const svNic  = subVisitorApiData?.Visit_Group_NIC_Passport_Number || qrData.subVisitor.nic || "N/A";
+      const mainName = subVisitorApiData?.Visitor_Name || qrData.mainVisitor?.name || "N/A";
+      const mainNic  = subVisitorApiData?.Visitor_NIC_Passport_Number || "N/A";
+      const visitArea = subVisitorApiData?.Visitor_Places_to_Visit || "N/A";
+      const contactPerson = subVisitorApiData?.Contact_Person_Name || "N/A";
+
       const merged = {
-        Name: qrData.subVisitor.name || "N/A",
-        "NIC/Passport_No": qrData.subVisitor.nic || "N/A",
-        Email: passDetails?.Visitor_Email || passDetails?.VV_Email || "N/A",
-        "Phone number": passDetails?.Visitor_Phone || passDetails?.VV_Phone || "N/A",
-        Company: qrData.mainVisitor?.company || passDetails?.VV_Company || "N/A",
-        "Main Visitor": qrData.mainVisitor?.name || passDetails?.Visitor_Name || "N/A",
-        "Main Visitor ID": qrData.mainVisitor?.id || passDetails?.VV_Visitor_id || "N/A",
-        "Visiting purpose": passDetails?.VVR_Purpose || "N/A",
-        "Visiting area": passDetails?.VVR_Places_to_Visit || "N/A",
+        Name: svName,
+        "NIC/Passport_No": svNic,
+        "Main Visitor": mainName,
+        "Main Visitor NIC": mainNic,
+        "Visiting area": visitArea,
+        "Contact Person": contactPerson,
+        // Fields not available from VisitorJoint — kept for completeness
+        Email: "N/A",
+        "Phone number": "N/A",
+        Company: "N/A",
+        "Visiting purpose": "N/A",
       };
-      
-      // Add items if available - handle compact format (n=name, q=quantity)
+
+      // Add items from QR payload (compact format: n=name, q=quantity)
       if (qrData.items && Array.isArray(qrData.items) && qrData.items.length > 0) {
-        console.log("[LiveFeed] Sub-visitor carrying items:", qrData.items);
-        // Expand compact format to full format for display
         merged.items = qrData.items.map(item => ({
           itemName: item.n || item.itemName || "N/A",
           itemQuantity: item.q || item.itemQuantity || 1,
           itemDescription: item.d || item.itemDescription || "",
         }));
       }
-      
+
       return merged;
     }
     
@@ -346,16 +398,19 @@ const LiveFeed = () => {
         "N/A",
     };
     
-    // Add sub-visitors from QR data if available
-    if (qrData?.subVisitors && Array.isArray(qrData.subVisitors)) {
-      console.log("[LiveFeed] Found subVisitors in qrData:", qrData.subVisitors);
-      merged.subVisitors = qrData.subVisitors;
+    // Add sub-visitors — merge from live API fetch (preferred) and QR payload fallback
+    const liveSubVisitors = subVisitorsData && subVisitorsData.length > 0 ? subVisitorsData : null;
+    const qrSubVisitors = qrData?.subVisitors && Array.isArray(qrData.subVisitors) ? qrData.subVisitors : null;
+    const combinedSubVisitors = liveSubVisitors || qrSubVisitors;
+    if (combinedSubVisitors && combinedSubVisitors.length > 0) {
+      console.log("[LiveFeed] Sub-visitors for display:", combinedSubVisitors);
+      merged.subVisitors = combinedSubVisitors;
     } else {
-      console.log("[LiveFeed] No subVisitors in qrData. qrData:", qrData);
+      console.log("[LiveFeed] No subVisitors found. qrData:", qrData, "subVisitorsData:", subVisitorsData);
     }
     
     return merged;
-  }, [qrData, passDetails]);
+  }, [qrData, passDetails, subVisitorsData, subVisitorApiData]);
 
   const hasFullQrProfile = Object.values(profileData).some(
     (value) => value !== "N/A" && !Array.isArray(value),
@@ -366,6 +421,8 @@ const LiveFeed = () => {
     setScanResult("");
     setPassDetails(null);
     setQrData(null);
+    setSubVisitorsData([]);
+    setSubVisitorApiData(null);
     setIsLoading(false);
     setScanStatus("idle");
     setScanMessage("Point your camera at the QR code to get started.");
@@ -541,6 +598,32 @@ const LiveFeed = () => {
                     .toUpperCase()}
                 </div>
                 <div className="min-w-0">
+                  {/* Visitor type badge */}
+                  {qrData?.type === "subVisitor" ? (
+                    <span
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-[0.22em] mb-1"
+                      style={{
+                        background: "rgba(99, 102, 241, 0.12)",
+                        border: "1px solid rgba(99, 102, 241, 0.3)",
+                        color: "#818cf8",
+                      }}
+                    >
+                      <span className="w-1 h-1 rounded-full bg-indigo-400 inline-block" />
+                      Sub Visitor
+                    </span>
+                  ) : (
+                    <span
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-[0.22em] mb-1"
+                      style={{
+                        background: "rgba(34, 197, 94, 0.1)",
+                        border: "1px solid rgba(34, 197, 94, 0.25)",
+                        color: "#4ade80",
+                      }}
+                    >
+                      <span className="w-1 h-1 rounded-full bg-green-400 inline-block" />
+                      Main Visitor
+                    </span>
+                  )}
                   <p className="text-[var(--color-text-primary)] text-base font-black tracking-tight truncate">
                     {profileData.Name !== "N/A"
                       ? profileData.Name
@@ -589,7 +672,7 @@ const LiveFeed = () => {
               </div>
 
               {/* Section: Main Visitor (for sub-visitor QR codes) */}
-              {qrData?.type === "subVisitor" && qrData?.mainVisitor && (
+              {qrData?.type === "subVisitor" && (subVisitorApiData || qrData?.mainVisitor) && (
                 <div className="px-6 py-4">
                   <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
                     Main Visitor
@@ -602,14 +685,29 @@ const LiveFeed = () => {
                     />
                     <InfoRow
                       icon={<CreditCard size={14} />}
-                      label="ID"
-                      value={profileData["Main Visitor ID"]}
+                      label="NIC / Passport"
+                      value={profileData["Main Visitor NIC"]}
                     />
+                    {profileData["Contact Person"] && profileData["Contact Person"] !== "N/A" && (
+                      <InfoRow
+                        icon={<Phone size={14} />}
+                        label="Contact Person"
+                        value={profileData["Contact Person"]}
+                      />
+                    )}
+                    {profileData["Visiting area"] && profileData["Visiting area"] !== "N/A" && (
+                      <InfoRow
+                        icon={<MapPin size={14} />}
+                        label="Visiting Area"
+                        value={profileData["Visiting area"]}
+                      />
+                    )}
                   </div>
                 </div>
               )}
 
-              {/* Section: Contact */}
+              {/* Section: Contact — hidden for sub-visitor QRs */}
+              {qrData?.type !== "subVisitor" && (
               <div className="px-6 py-4">
                 <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
                   Contact
@@ -632,8 +730,10 @@ const LiveFeed = () => {
                   />
                 </div>
               </div>
+              )}
 
-              {/* Section: Visit Details */}
+              {/* Section: Visit Details — hidden for sub-visitor QRs */}
+              {qrData?.type !== "subVisitor" && (
               <div className="px-6 py-4">
                 <p className="text-[9px] uppercase tracking-[0.3em] font-bold mb-3 text-[var(--color-text-dim)]">
                   Visit Details
@@ -651,6 +751,7 @@ const LiveFeed = () => {
                   />
                 </div>
               </div>
+              )}
 
               {/* Section: Items Carried (for sub-visitors) */}
               {profileData.items && profileData.items.length > 0 && (
