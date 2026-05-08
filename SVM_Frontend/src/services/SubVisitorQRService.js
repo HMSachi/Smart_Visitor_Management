@@ -14,16 +14,32 @@ const GenerateSubVisitorQR = async (subVisitorData, mainVisitorData, requestId) 
     try {
       const itemsResponse = await VisitorService.GetVisitorJoint(requestId);
       if (itemsResponse?.data) {
-        const items = Array.isArray(itemsResponse.data) 
-          ? itemsResponse.data 
+        // New API: /Visitor/VisitorJoint returns { ResultSet: [...] }
+        const rows = Array.isArray(itemsResponse.data)
+          ? itemsResponse.data
           : itemsResponse.data.ResultSet || itemsResponse.data.data || [];
-        
-        // Filter items specific to this sub-visitor if item has group member reference
-        itemsData = items.map(item => ({
+
+        // Filter rows that belong to this sub-visitor by NIC/name and have item data
+        const subVisitorNic = subVisitorData.nic || subVisitorData.Visit_Group_NIC_Passport_Number;
+        const subVisitorName = subVisitorData.name || subVisitorData.Visitor_Group_Name;
+
+        const relevantRows = rows.filter((row) => {
+          const rowNic = row.Visit_Group_NIC_Passport_Number || row.Members_NIC_Passport_Number || row.nic;
+          const rowName = row.Visitor_Group_Name || row.Group_Members || row.name;
+          const hasItem = row.Item_Name || row.Item_Id;
+          if (!hasItem) return false;
+          // Match by NIC first, fall back to name
+          if (subVisitorNic && subVisitorNic !== "N/A" && rowNic) {
+            return String(rowNic) === String(subVisitorNic);
+          }
+          return rowName === subVisitorName;
+        });
+
+        itemsData = relevantRows.map((item) => ({
           itemName: item.Item_Name || item.ItemName || item.name || "N/A",
-          itemDescription: item.Item_Description || item.Description || item.description || "",
+          itemDescription: item.Item_Details || item.Item_Description || item.description || "",
           itemQuantity: item.Item_Quantity || item.Quantity || item.quantity || 1,
-          itemId: item.IC_Item_Carried_id || item.ItemId || item.id || "N/A",
+          itemId: item.Item_Id || item.IC_Item_Carried_id || item.ItemId || "N/A",
         }));
       }
     } catch (err) {
@@ -36,12 +52,12 @@ const GenerateSubVisitorQR = async (subVisitorData, mainVisitorData, requestId) 
       type: "subVisitor",
       id: requestId, // Use requestId as the main ID for database lookup
       subVisitor: {
-        name: subVisitorData.name || subVisitorData.Group_Members || "N/A",
-        nic: subVisitorData.nic || subVisitorData.Members_NIC_Passport_Number || "N/A",
+        name: subVisitorData.name || subVisitorData.Visitor_Group_Name || subVisitorData.Group_Members || "N/A",
+        nic: subVisitorData.nic || subVisitorData.Visit_Group_NIC_Passport_Number || subVisitorData.Members_NIC_Passport_Number || "N/A",
       },
       mainVisitor: {
-        name: mainVisitorData.visitorName || mainVisitorData.VV_Name || "N/A",
-        id: mainVisitorData.visitorId || mainVisitorData.VV_Visitor_id || "N/A",
+        name: mainVisitorData.visitorName || mainVisitorData.Visitor_Name || mainVisitorData.VV_Name || "N/A",
+        id: mainVisitorData.visitorId || mainVisitorData.Visitor_Id || mainVisitorData.VV_Visitor_id || "N/A",
       },
       // Items included but kept minimal to reduce payload size
       items: itemsData.slice(0, 3).map(item => ({
@@ -75,14 +91,14 @@ const GenerateMultipleSubVisitorQRs = async (subVisitorsArray, mainVisitorData, 
         try {
           const qrCode = await GenerateSubVisitorQR(subVisitor, mainVisitorData, requestId);
           return {
-            subVisitorName: subVisitor.name || subVisitor.Group_Members || "Sub-Visitor " + (index + 1),
+            subVisitorName: subVisitor.name || subVisitor.Visitor_Group_Name || subVisitor.Group_Members || "Sub-Visitor " + (index + 1),
             qrCode,
             success: true,
           };
         } catch (err) {
           console.error(`[SubVisitorQRService] Failed for sub-visitor ${index}:`, err);
           return {
-            subVisitorName: subVisitor.name || subVisitor.Group_Members || "Sub-Visitor " + (index + 1),
+            subVisitorName: subVisitor.name || subVisitor.Visitor_Group_Name || subVisitor.Group_Members || "Sub-Visitor " + (index + 1),
             qrCode: null,
             success: false,
             error: err.message,

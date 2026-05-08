@@ -113,34 +113,41 @@ const GatePass = () => {
   // Extract sub-visitor information from joint data
   const subVisitors = useMemo(() => {
     console.log("[GatePass] subVisitors useMemo triggered. visitorJointData:", visitorJointData);
-    
+
     if (!visitorJointData) {
       console.log("[GatePass] No visitorJointData available");
       return [];
     }
-    
-    console.log("[GatePass] Processing visitorJointData structure. Type:", typeof visitorJointData, "Is Array:", Array.isArray(visitorJointData));
-    console.log("[GatePass] visitorJointData keys:", Object.keys(visitorJointData));
-    
+
     // Handle different response structures
-    let visitors = [];
-    
+    let rows = [];
+
     if (Array.isArray(visitorJointData)) {
-      visitors = visitorJointData;
-      console.log("[GatePass] Response is direct array, length:", visitors.length);
+      rows = visitorJointData;
     } else if (visitorJointData.ResultSet && Array.isArray(visitorJointData.ResultSet)) {
-      visitors = visitorJointData.ResultSet;
-      console.log("[GatePass] Response has ResultSet, length:", visitors.length);
+      rows = visitorJointData.ResultSet;
     } else if (visitorJointData.data && Array.isArray(visitorJointData.data)) {
-      visitors = visitorJointData.data;
-      console.log("[GatePass] Response has data array, length:", visitors.length);
-    } else if (Array.isArray(visitorJointData) === false && typeof visitorJointData === 'object') {
-      // Try to extract first object as a single visitor
-      console.log("[GatePass] Response is object, treating as single visitor");
-      visitors = [visitorJointData];
+      rows = visitorJointData.data;
+    } else if (typeof visitorJointData === 'object') {
+      rows = [visitorJointData];
     }
-    
-    console.log("[GatePass] Extracted visitors:", visitors);
+
+    // The new /Visitor/VisitorJoint API returns one row per sub-visitor+item combination.
+    // Deduplicate by NIC so each sub-visitor appears only once.
+    const seen = new Set();
+    const visitors = [];
+    for (const row of rows) {
+      const nic = row.Visit_Group_NIC_Passport_Number || row.Members_NIC_Passport_Number || row.nic;
+      const name = row.Visitor_Group_Name || row.Group_Members || row.VVG_Visitor_Name || row.name;
+      if (!name) continue; // Skip rows with no sub-visitor name
+      const key = nic || name;
+      if (!seen.has(key)) {
+        seen.add(key);
+        visitors.push(row);
+      }
+    }
+
+    console.log("[GatePass] Extracted unique sub-visitors:", visitors);
     return visitors;
   }, [visitorJointData]);
 
@@ -162,9 +169,8 @@ const GatePass = () => {
     if (subVisitors && subVisitors.length > 0) {
       console.log("[GatePass] Adding subVisitors to QR payload. Count:", subVisitors.length);
       const mapped = subVisitors.map((sv) => {
-        console.log("[GatePass] Processing sub-visitor:", sv);
-        const mapped_name = sv.Group_Members || sv.Visitor_Group_Name || sv.VVG_Visitor_Name || sv.name || "N/A";
-        const mapped_nic = sv.Members_NIC_Passport_Number || sv.Visit_Group_NIC_Passport_Number || sv.VVG_NIC_Passport_Number || sv.nic || "N/A";
+        const mapped_name = sv.Visitor_Group_Name || sv.Group_Members || sv.VVG_Visitor_Name || sv.name || "N/A";
+        const mapped_nic = sv.Visit_Group_NIC_Passport_Number || sv.Members_NIC_Passport_Number || sv.VVG_NIC_Passport_Number || sv.nic || "N/A";
         console.log("[GatePass] Mapped to - name:", mapped_name, "nic:", mapped_nic);
         return {
           name: mapped_name,
@@ -365,9 +371,10 @@ const GatePass = () => {
               subVisitorsData={subVisitors}
               mainVisitorData={{
                 visitorName: visitorName,
-                visitorId: gatePassData.VV_Visitor_id || gatePassData.Visitor_ID || "N/A",
+                visitorId: gatePassData.Visitor_Id || gatePassData.VV_Visitor_id || gatePassData.Visitor_ID || "N/A",
+                Visitor_Name: visitorName,
                 company: gatePassData.VV_Company || gatePassData.Company || "N/A",
-                contactPersonName: gatePassData.CP_Name || "N/A",
+                contactPersonName: gatePassData.Contact_Person_Name || gatePassData.CP_Name || "N/A",
               }}
               requestId={gatePassData.VGP_Request_id || gatePassData.VVR_Request_id}
               gatePassId={gatePassId}

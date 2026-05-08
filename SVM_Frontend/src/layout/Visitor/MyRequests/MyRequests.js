@@ -881,23 +881,23 @@ const MyRequests = () => {
                   <Table size="small" sx={{ minWidth: 560 }}>
                     <TableHead className="bg-white/[0.02]">
                       <TableRow>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
+                        <TableCell className="text-gray-400 font-medium tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
                           ID
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5 min-w-[150px]">
+                        <TableCell className="text-gray-400 font-medium tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5 min-w-[150px]">
                           Date
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5 min-w-[200px]">
-                          Going To
+                        <TableCell className="text-gray-400 font-medium tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5 min-w-[200px]">
+                          Going to
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
+                        <TableCell className="text-gray-400 font-medium tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
                           Reason
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
+                        <TableCell align="center" className="text-gray-400 font-medium tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
                           Status
                         </TableCell>
                         <TableCell
-                          className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5"
+                          className="text-gray-400 font-medium tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5"
                           align="right"
                         >
                           Actions

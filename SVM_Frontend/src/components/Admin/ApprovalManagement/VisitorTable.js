@@ -137,7 +137,7 @@ const VisitorTable = ({
               <button
                 key={btn.id}
                 onClick={() => setStatusFilter(btn.id)}
-                className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[11px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[13px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
               >
                 {statusFilter === btn.id && (
                   <motion.div
@@ -169,23 +169,23 @@ const VisitorTable = ({
             <table className="w-full min-w-[920px] text-left border-collapse">
               <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)] font-normal text-[12px]">
                 <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left">
-                    VISITOR NAME
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-left">
+                    Visitor name
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center min-w-[180px]">
-                    VISIT DATE
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center min-w-[180px]">
+                    Visit date
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-left min-w-[300px]">
-                    VISITING PLACE
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-left min-w-[300px]">
+                    Visiting place
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-[220px]">
-                    STATUS
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center w-[220px]">
+                    Status
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-28">
-                    GATE PASS
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center w-28">
+                    Gatepass
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] uppercase text-primary text-right md:pr-4 lg:pr-6 w-32">
-                    ACTIONS
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-primary text-right md:pr-4 lg:pr-6 w-32">
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -281,9 +281,9 @@ const VisitorTable = ({
                             <button
                               onClick={() => onViewDetails(visitor)}
                               title="VIEW DETAILS"
-                              className="w-7 h-7 rounded-md flex items-center justify-center bg-white/[0.03] border border-white/5 text-gray-400 hover:text-white hover:border-white/20 transition-all duration-300"
+                              className="w-8 h-8 rounded-md flex items-center justify-center bg-white/[0.03] border border-white/5 text-gray-400 hover:text-white hover:border-white/20 transition-all duration-300"
                             >
-                              <Eye size={13} />
+                              <Eye size={18} />
                             </button>
                           </div>
                         </td>
