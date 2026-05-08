@@ -13,6 +13,7 @@ import {
 import { GetVisitRequestsByVisitor } from "../../../actions/VisitRequestAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
+import { GetAllPlaces } from "../../../actions/PlacesAction";
 import VisitorService from "../../../services/VisitorService";
 import VisitRequestService from "../../../services/VisitRequestService";
 import VehicleService from "../../../services/VehicleService";
@@ -104,6 +105,9 @@ const MyRequests = () => {
   const { blacklists } = useSelector(
     (state) => state.blacklistState || { blacklists: [] },
   );
+  const { places: placesList, loading: placesLoading } = useSelector(
+    (state) => state.placesState || { places: [], loading: false },
+  );
 
   // Extract Visitor ID from login session
   const user = useSelector((state) => state.login.user);
@@ -166,6 +170,7 @@ const MyRequests = () => {
     }
     dispatch(GetAllGatePasses());
     dispatch(GetAllBlacklist());
+    dispatch(GetAllPlaces());
   }, [userEmail, dispatch]);
 
   useEffect(() => {
@@ -1298,9 +1303,7 @@ const MyRequests = () => {
                         <MapPin size={11} className="text-primary" /> Places to
                         Visit
                       </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Main Hall, Floor 3…"
+                      <select
                         value={editForm.VVR_Places_to_Visit}
                         onChange={(e) =>
                           setEditForm((f) => ({
@@ -1308,8 +1311,23 @@ const MyRequests = () => {
                             VVR_Places_to_Visit: e.target.value,
                           }))
                         }
-                        className="mas-input"
-                      />
+                        disabled={placesLoading}
+                        className={`mas-input appearance-none cursor-pointer ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                      >
+                        <option value="">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
+                        {placesList && placesList.length > 0 && placesList
+                          .filter((place) => {
+                            const status = (place.VAIL_Status || place.Status || 'A').toString().trim().toUpperCase();
+                            return status === 'A';
+                          })
+                          .map((place, idx) => {
+                            const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
+                            const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
+                            return (
+                              <option key={id} value={name}>{name}</option>
+                            );
+                          })}
+                      </select>
                     </div>
                     <div className="md:col-span-2 space-y-1.5">
                       <label
