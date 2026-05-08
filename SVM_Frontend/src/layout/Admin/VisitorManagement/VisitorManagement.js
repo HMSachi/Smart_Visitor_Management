@@ -115,7 +115,7 @@ const VisitorManagement = () => {
             </div>
           </header>
 
-          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
+          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] overflow-hidden shadow-2xl relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
             {isLoading ? (

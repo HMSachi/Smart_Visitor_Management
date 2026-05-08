@@ -873,7 +873,7 @@ const MyRequests = () => {
             </div>
           ) : filteredRequests.length > 0 ? (
             <>
-              <div className="hidden lg:block bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl mb-4">
+              <div className="hidden lg:block bg-black/20 border border-white/5 rounded-[5px] overflow-hidden backdrop-blur-xl shadow-2xl mb-4">
                 <TableContainer
                   component={Paper}
                   className="bg-transparent shadow-none border-none"
@@ -997,7 +997,7 @@ const MyRequests = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="group bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl hover:border-white/10 hover:bg-black/30 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10"
+                    className="group bg-black/20 border border-white/5 rounded-[5px] overflow-hidden backdrop-blur-xl shadow-2xl hover:border-white/10 hover:bg-black/30 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10"
                   >
                     <div className="p-5 md:p-6 space-y-4">
                       <div className="flex items-start justify-between gap-3">

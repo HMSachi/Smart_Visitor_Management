@@ -498,7 +498,7 @@ const AllUsers = () => {
                       <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent"></div>
                     </div>
 
-                    <div className="bg-[var(--color-bg-paper)] border border-white/8 rounded-2xl overflow-hidden shadow-xl relative hover:border-white/12 transition-colors duration-300">
+                    <div className="bg-[var(--color-bg-paper)] border border-white/8 rounded-[5px] overflow-hidden shadow-xl relative hover:border-white/12 transition-colors duration-300">
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none"></div>
                       <TableContainer
                         component={Paper}

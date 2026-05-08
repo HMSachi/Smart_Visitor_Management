@@ -51,7 +51,7 @@ const RequestsTable = ({ requests, onReview }) => {
 
   return (
     <div
-      className={`border rounded-[32px] overflow-hidden relative z-10 ${isLight
+      className={`border rounded-[5px] overflow-hidden relative z-10 ${isLight
         ? "bg-white border-gray-200 shadow-xl shadow-gray-200/50"
         : "bg-[#0F0F10] border-white/5"
         }`}

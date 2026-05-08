@@ -150,7 +150,7 @@ const BlacklistTable = () => {
 
         {/* ── Table card ── */}
         <div
-          className={`rounded-[32px] overflow-hidden flex flex-col shadow-3xl relative border ${isLight ? "bg-white border-gray-200" : "bg-[var(--color-bg-paper)] border-white/5"}`}
+          className={`rounded-[5px] overflow-hidden flex flex-col shadow-3xl relative border ${isLight ? "bg-white border-gray-200" : "bg-[var(--color-bg-paper)] border-white/5"}`}
         >
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
@@ -211,7 +211,7 @@ const BlacklistTable = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
-                        className={`group hover:bg-primary/[0.02] transition-all duration-500 block sm:table-row sm:border-none rounded-[20px] sm:rounded-none mb-2.5 sm:mb-0 p-3 sm:p-0 border ${isLight ? "bg-white border-gray-200 shadow-sm sm:bg-transparent" : "bg-[#161618] sm:bg-transparent border-white/5"}`}
+                        className={`group hover:bg-primary/[0.02] transition-all duration-500 block sm:table-row sm:border-none rounded-[5px] sm:rounded-none mb-2.5 sm:mb-0 p-3 sm:p-0 border ${isLight ? "bg-white border-gray-200 shadow-sm sm:bg-transparent" : "bg-[#161618] sm:bg-transparent border-white/5"}`}
                       >
                         {/* Visitor */}
                         <td

@@ -158,7 +158,7 @@ const VisitorTable = ({
         </div>
       </div>
 
-      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-2xl relative overflow-hidden">
+      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
         <div className="bg-transparent">
@@ -373,7 +373,7 @@ const VisitorTable = ({
               return (
                 <div
                   key={visitor.id || index}
-                  className="bg-[var(--color-bg-paper)] border border-white/5 rounded-xl overflow-hidden shadow-lg relative group"
+                  className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] overflow-hidden shadow-lg relative group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
