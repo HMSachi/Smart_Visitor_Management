@@ -309,7 +309,7 @@ const CreateVisitRequestDetails = () => {
         <Header title="Additional Details" />
         
         <main className="flex-1 overflow-y-auto p-3 custom-scrollbar">
-          <div className="max-w-none mx-auto space-y-3 animate-fade-in-slow pb-4">
+          <div className="max-w-7xl mx-auto space-y-3 animate-fade-in-slow pb-4">
             
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-green-500 text-white text-[10px] font-medium flex items-center justify-center"><CheckCircle2 size={12} /></div>
@@ -326,7 +326,7 @@ const CreateVisitRequestDetails = () => {
               <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 mb-2">
                   <SectionHeader title="Vehicle Details" icon={Car} />
-                  <button type="button" onClick={handleAddVehicle} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-medium capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                  <button type="button" onClick={handleAddVehicle} className="flex items-center gap-2 px-3 h-10 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[12px] font-normal capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
                     <Plus size={12} /> Add vehicle
                   </button>
                 </div>
@@ -380,7 +380,7 @@ const CreateVisitRequestDetails = () => {
               <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
                   <SectionHeader title="Additional Visitors" icon={Users} />
-                  <button type="button" onClick={handleAddPerson} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-medium capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                  <button type="button" onClick={handleAddPerson} className="flex items-center gap-2 px-3 h-10 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[12px] font-normal capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
                     <Plus size={12} /> Add person
                   </button>
                 </div>
@@ -452,7 +452,7 @@ const CreateVisitRequestDetails = () => {
               <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
                   <SectionHeader title="Items to Bring" icon={Package} />
-                  <button type="button" onClick={handleAddItem} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-medium capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                  <button type="button" onClick={handleAddItem} className="flex items-center gap-2 px-3 h-10 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[12px] font-normal capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
                     <Plus size={12} /> Add item
                   </button>
                 </div>
@@ -489,8 +489,8 @@ const CreateVisitRequestDetails = () => {
               <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="Sub-Visitor Items Carried" icon={Package} />
-                  <button type="button" onClick={handleAddSubVisitorItem} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
-                    <Plus size={12} /> Add Sub-Visitor Item
+                  <button type="button" onClick={handleAddSubVisitorItem} className="flex items-center gap-2 px-3 h-10 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[12px] font-normal capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                    <Plus size={12} /> Add sub-visitor item
                   </button>
                 </div>
 
@@ -547,11 +547,19 @@ const CreateVisitRequestDetails = () => {
               </div>
 
               <div className="flex flex-col md:flex-row items-center gap-4 pt-6">
-                <button type="button" onClick={() => navigate("/contact_person/create-visit-request")} className="w-full md:w-auto px-10 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all">
-                  Back to Core Info
+                <button
+                  type="button"
+                  onClick={() => navigate("/contact_person/create-visit-request")}
+                  className="w-full md:w-auto px-10 h-10 rounded-xl text-[12px] font-normal capitalize tracking-widest text-gray-400 hover:text-gray-600 transition-all"
+                >
+                  Back to core info
                 </button>
-                <button type="submit" disabled={isSubmitting} className="w-full md:w-auto flex-1 px-10 py-3.5 bg-[#C8102E] hover:bg-[#A60D26] text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-xl shadow-[0_10px_25px_rgba(200,16,46,0.15)] transition-all active:scale-95 disabled:opacity-50">
-                  {isSubmitting ? "Finalizing Registration..." : "Complete & Submit"}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full md:w-auto flex-1 h-10 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal capitalize tracking-widest rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-50"
+                >
+                  {isSubmitting ? "Finalizing registration..." : "Complete & submit"}
                 </button>
               </div>
 

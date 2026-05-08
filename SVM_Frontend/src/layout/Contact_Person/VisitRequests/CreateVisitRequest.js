@@ -160,7 +160,7 @@ const CreateVisitRequest = () => {
         <Header title="Visitor Registration" />
         
         <main className="flex-1 overflow-y-auto p-3 custom-scrollbar">
-          <div className="max-w-none mx-auto space-y-3 animate-fade-in-slow pb-4">
+          <div className="max-w-7xl mx-auto space-y-3 animate-fade-in-slow pb-4">
             
             {/* Step Indicator */}
             <div className="flex items-center gap-4 px-1">
@@ -259,11 +259,33 @@ const CreateVisitRequest = () => {
               </div>
 
               <div className="flex flex-col md:flex-row items-center gap-4 pt-4">
-                <button type="button" disabled={isSubmitting} onClick={() => { dispatch(resetForm()); navigate("/contact_person/visit-requests"); }} className="w-full md:w-auto px-10 py-1.5 rounded-xl text-[11px] font-medium capitalize tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all disabled:opacity-40">
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    dispatch(resetForm());
+                    navigate("/contact_person/visit-requests");
+                  }}
+                  className="w-full md:w-auto px-10 h-10 rounded-xl text-[12px] font-normal capitalize tracking-widest text-gray-400 hover:text-gray-600 transition-all disabled:opacity-40"
+                >
                   Cancel
                 </button>
-                <button type="submit" disabled={isSubmitting} className="w-full md:w-auto flex-1 px-10 py-3.5 bg-[#C8102E] hover:bg-[#A60D26] text-white text-[11px] font-medium capitalize tracking-[0.2em] rounded-xl shadow-[0_10px_25px_rgba(200,16,46,0.15)] transition-all active:scale-95 disabled:opacity-60 group flex items-center justify-center gap-2">
-                  {isSubmitting ? "Saving details..." : (<>Next Step: Additional Details <ArrowLeft className="rotate-180 transition-transform group-hover:translate-x-1" size={14} /></>)}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full md:w-auto flex-1 h-10 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal capitalize tracking-widest rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-60 group flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    "Saving details..."
+                  ) : (
+                    <>
+                      Next step: additional details{" "}
+                      <ArrowLeft
+                        className="rotate-180 transition-transform group-hover:translate-x-1"
+                        size={14}
+                      />
+                    </>
+                  )}
                 </button>
               </div>
             </form>

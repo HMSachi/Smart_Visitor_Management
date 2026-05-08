@@ -410,7 +410,7 @@ const AllUsers = () => {
                   <button
                     key={btn.id}
                     onClick={() => setTableFilter(btn.id)}
-                    className={`relative px-4 py-2 rounded-full text-[11px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${tableFilter === btn.id
+                    className={`relative px-5 h-10 rounded-full text-[12px] font-normal tracking-wide transition-all duration-300 whitespace-nowrap ${tableFilter === btn.id
                       ? "bg-primary text-white shadow-lg shadow-primary/20"
                       : themeMode === "light"
                         ? "text-gray-500 hover:text-primary"
@@ -425,7 +425,7 @@ const AllUsers = () => {
 
             <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full xl:w-auto">
               <div
-                className={`flex items-center border transition-all rounded-[8px] px-3 h-9 min-w-[220px] w-full sm:w-[280px] md:w-[320px] group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+                className={`flex items-center border transition-all rounded-[8px] px-3 h-10 min-w-[220px] w-full sm:w-[280px] md:w-[320px] group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
               >
                 <Search size={14} className={`transition-colors mr-2 ${themeMode === "light" ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`} />
                 <input
@@ -438,7 +438,7 @@ const AllUsers = () => {
               </div>
 
               <div
-                className={`flex items-center border transition-all rounded-[8px] px-3 h-9 min-w-[120px] w-full sm:w-auto group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
+                className={`flex items-center border transition-all rounded-[8px] px-3 h-10 min-w-[120px] w-full sm:w-auto group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
               >
                 <select
                   value={statusFilter}
@@ -453,10 +453,10 @@ const AllUsers = () => {
 
               <button
                 onClick={() => openModal("add")}
-                className="flex items-center justify-center gap-1 bg-primary hover:bg-primary-hover text-white px-3 h-7 rounded-[5px] text-[2px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group shrink-0"
+                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 h-10 rounded-[5px] text-[12px] font-normal tracking-wider transition-all shadow-lg active:scale-95 group shrink-0"
               >
-                <Plus size={12} className="group-hover:rotate-90 transition-transform" />
-                Add User
+                <Plus size={14} className="group-hover:rotate-90 transition-transform" />
+                Add user
               </button>
             </div>
           </header>
