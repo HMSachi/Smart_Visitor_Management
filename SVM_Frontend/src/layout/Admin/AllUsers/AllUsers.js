@@ -42,6 +42,8 @@ import {
   ShieldAlert,
   UserCheck,
   Phone,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { 
   validateName, validateNIC, validatePhone, validateEmail, validatePassword 
@@ -87,6 +89,7 @@ const AllUsers = () => {
     type: "ADMIN", // Current being edited type
   });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     dispatch(GetAllAdministrator());
@@ -192,6 +195,7 @@ const AllUsers = () => {
       });
     }
     setErrors({});
+    setShowPassword(false);
     setIsModalOpen(true);
   };
 
@@ -378,18 +382,14 @@ const AllUsers = () => {
   const loading = adminLoading || contactLoading;
   const error = adminError || contactError;
   const isCompactAddForm = modalMode === "add";
-  const modalWidthClass = isCompactAddForm ? "max-w-sm" : "max-w-md";
+  const modalWidthClass = "max-w-3xl";
   const headerPaddingClass = isCompactAddForm ? "p-4" : "p-6";
   const formSpacingClass = isCompactAddForm ? "p-4 space-y-3" : "p-6 space-y-4";
-  const fieldSizeClass = isCompactAddForm
-    ? "px-3 py-2.5 text-[12px]"
-    : "px-4 py-1.5 text-[13px]";
+  const fieldSizeClass = "px-3.5 py-2.5 text-[12px]";
   const actionsPaddingClass = isCompactAddForm
     ? "pt-4 mt-2 gap-2"
     : "pt-6 mt-4 gap-3";
-  const actionButtonSizeClass = isCompactAddForm
-    ? "px-4 py-2.5 text-[12px]"
-    : "px-6 py-1.5 text-[13px]";
+  const actionButtonSizeClass = "px-6 py-2.5 text-[12px]";
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
@@ -749,11 +749,11 @@ const AllUsers = () => {
               className={`flex justify-between items-center ${headerPaddingClass} border-b border-white/5 relative z-10`}
             >
               <h2
-                className={`${isCompactAddForm ? "text-base" : "text-lg"} font-bold text-white uppercase tracking-wider`}
+                className="text-base font-bold text-white tracking-wider"
               >
                 {modalMode === "add"
-                  ? "Add New System User"
-                  : "Edit User Profile"}
+                  ? "Add system user"
+                  : "Edit user profile"}
               </h2>
               <button
                 onClick={closeModal}
@@ -767,9 +767,9 @@ const AllUsers = () => {
               onSubmit={handleFormSubmit}
               className={`${formSpacingClass} relative z-10 max-h-[70vh] overflow-y-auto custom-scrollbar`}
             >
-              <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                  <User size={12} /> Name
+              <div className="space-y-1.5">
+                <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
+                  <User size={11} className="text-primary/60" /> Name
                 </label>
                 <input
                   type="text"
@@ -790,9 +790,9 @@ const AllUsers = () => {
                 )}
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                  <Mail size={12} /> Email
+              <div className="space-y-1.5">
+                <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
+                  <Mail size={11} className="text-primary/60" /> Email
                 </label>
                 <input
                   type="email"
@@ -815,9 +815,9 @@ const AllUsers = () => {
 
               {formData.type === "CONTACT" ? (
                 <>
-                  <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Users size={12} /> Department
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
+                      <Users size={11} className="text-primary/60" /> Department
                     </label>
                     <input
                       type="text"
@@ -837,9 +837,9 @@ const AllUsers = () => {
                       </p>
                     )}
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <X size={12} /> Phone Connection
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
+                      <X size={11} className="text-primary/60" /> Phone connection
                     </label>
                     <input
                       type="text"
@@ -863,9 +863,9 @@ const AllUsers = () => {
                 </>
               ) : (
                 <>
-                  <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Users size={12} /> Department
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
+                      <Users size={11} className="text-primary/60" /> Department
                     </label>
                     <input
                       type="text"
@@ -886,9 +886,9 @@ const AllUsers = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Phone size={12} /> Phone
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
+                      <Phone size={11} className="text-primary/60" /> Phone
                     </label>
                     <input
                       type="text"
@@ -914,9 +914,9 @@ const AllUsers = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Shield size={12} /> Role
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
+                      <Shield size={11} className="text-primary/60" /> Role
                     </label>
                     <select
                       name="role"
@@ -940,27 +940,36 @@ const AllUsers = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Hash size={12} /> Password
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
+                      <Hash size={11} className="text-primary/60" /> Password
                     </label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      maxLength={5}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
-                        errors.password
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                      placeholder={
-                        modalMode === "add"
-                          ? "Max 5 chars, Capital & Special"
-                          : "Leave blank to keep current"
-                      }
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        maxLength={5}
+                        className={`w-full rounded-xl pl-3.5 pr-10 py-2.5 text-[12px] text-white focus:outline-none transition-colors ${
+                          errors.password
+                            ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                            : "bg-black/40 border border-white/10 focus:border-primary/50"
+                        }`}
+                        placeholder={
+                          modalMode === "add"
+                            ? "Max 5 chars, Capital & Special"
+                            : "Leave blank to keep current"
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                     {errors.password ? (
                       <p className="text-[10px] text-red-400 font-semibold mt-1">
                         {errors.password}
@@ -978,15 +987,15 @@ const AllUsers = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className={`${actionButtonSizeClass} rounded-xl font-bold text-gray-400 hover:bg-white/5 uppercase tracking-wider transition-all`}
+                  className={`${actionButtonSizeClass} rounded-xl font-normal text-gray-400 hover:bg-white/5 tracking-wider transition-all`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className={`${actionButtonSizeClass} rounded-xl bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary`}
+                  className={`${actionButtonSizeClass} rounded-xl bg-primary hover:bg-primary/90 text-white font-normal tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary`}
                 >
-                  {modalMode === "add" ? "Create User" : "Update Access"}
+                  {modalMode === "add" ? "Create user" : "Update access"}
                 </button>
               </div>
             </form>

@@ -26,6 +26,7 @@ import {
   AlertCircle,
   Car,
   Eye,
+  EyeOff,
   Users,
 } from "lucide-react";
 import {
@@ -77,6 +78,7 @@ const ContactAllVisitors = () => {
     VV_Vehicle_Number: "",
   });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const loadContactPersonId = () => {
@@ -160,6 +162,7 @@ const ContactAllVisitors = () => {
       VV_Vehicle_Number: "",
     });
     setIsModalOpen(true);
+    setShowPassword(false);
   };
 
   const closeModal = () => {
@@ -475,32 +478,32 @@ const ContactAllVisitors = () => {
                       className={`border-b ${isLight ? "bg-[#F8F9FA] border-gray-100" : "bg-black/95 border-b-white/5"}`}
                     >
                       <th
-                        className={`px-3 py-1.5 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-primary/60" : "text-primary"}`}
+                        className={`px-3 py-1.5 text-center font-normal tracking-[0.3em] text-[12px] ${isLight ?"text-primary/60" : "text-primary"}`}
                       >
-                        ID
+                        Id
                       </th>
                       <th
-                        className={`px-3 py-1.5 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
                         Visitor
                       </th>
                       <th
-                        className={`px-3 py-1.5 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
                         Credentials
                       </th>
                       <th
-                        className={`px-3 py-1.5 text-left font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
                         Company
                       </th>
                       <th
-                        className={`px-3 py-1.5 text-left font-normal uppercase tracking-[0.3em] text-[12px] min-w-[250px] ${isLight ?"text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] min-w-[250px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
-                        Visiting Area
+                        Visiting area
                       </th>
                       <th
-                        className={`px-3 py-1 text-center font-normal uppercase tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
+                        className={`px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] ${isLight ?"text-gray-400" : "text-white/40"}`}
                       >
                         Status
                       </th>
@@ -584,9 +587,9 @@ const ContactAllVisitors = () => {
                       <tr>
                         <td
                           colSpan={6}
-                          className={`text-[12px] font-normal px-2.5 py-12 text-center uppercase tracking-[0.24em] ${isLight ? "text-gray-400" : "text-white/40"}`}
+                          className={`text-[12px] font-normal px-2.5 py-12 text-center tracking-[0.24em] ${isLight ? "text-gray-400" : "text-white/40"}`}
                         >
-                          No Visitors detected matching criteria
+                          No visitors detected matching criteria
                         </td>
                       </tr>
                     )}
@@ -601,14 +604,14 @@ const ContactAllVisitors = () => {
         {/* Modal for Add Visitor */}
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto">
-            <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden relative my-auto">
+            <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden relative my-auto">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
 
               <div className="flex justify-between items-center p-4 md:p-5 border-b border-white/5 relative z-10 bg-black/20">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
                   <div className="w-1.5 h-6 bg-primary rounded-full"></div>
-                  <h2 className="text-[12px] md:text-[12px] font-normal text-white uppercase tracking-[0.16em]">
-                    Pre-Approve Visitor
+                  <h2 className="text-[12px] md:text-[12px] font-normal text-white tracking-[0.16em]">
+                    Pre-approve visitor
                   </h2>
                 </div>
                 <button
@@ -625,8 +628,8 @@ const ContactAllVisitors = () => {
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <User size={11} className="text-primary/60" /> Full Name
+                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                      <User size={11} className="text-primary/60" /> Full name
                     </label>
                     <input
                       type="text"
@@ -648,9 +651,9 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Hash size={11} className="text-primary/60" /> ID or
-                      Passport
+                      passport
                     </label>
                     <input
                       type="text"
@@ -673,9 +676,9 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Mail size={11} className="text-primary/60" /> Email
-                      Address
+                      address
                     </label>
                     <input
                       type="email"
@@ -697,9 +700,9 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Phone size={11} className="text-primary/60" /> Phone
-                      Number
+                      number
                     </label>
                     <input
                       type="text"
@@ -720,14 +723,14 @@ const ContactAllVisitors = () => {
                       </p>
                     )}
                     {!errors.VV_Phone && (
-                      <p className="text-[12px] text-white/40 uppercase tracking-[0.12em] px-1 mt-1">
+                      <p className="text-[12px] text-white/40 tracking-[0.12em] px-1 mt-1">
                         Enter 10 digits (Numbers only)
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Building size={11} className="text-primary/60" />{" "}
                       Organization
                     </label>
@@ -751,9 +754,9 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <Briefcase size={11} className="text-primary/60" />{" "}
-                      What Is The Reason?
+                      What is the reason?
                     </label>
                     <input
                       type="text"
@@ -775,9 +778,9 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <MapPin size={11} className="text-primary/60" /> Where to
-                      Visit
+                      visit
                     </label>
                     <input
                       type="text"
@@ -799,29 +802,38 @@ const ContactAllVisitors = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] text-primary uppercase tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
+                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
                       <AlertCircle size={11} className="text-primary/60" />{" "}
-                      Create Password
+                      Create password
                     </label>
-                    <input
-                      type="password"
-                      name="VA_Password"
-                      value={formData.VA_Password}
-                      onChange={handleInputChange}
-                      maxLength={5}
-                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                        errors.VA_Password
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/60 border border-primary/20 focus:border-primary/50"
-                      }`}
-                      placeholder="••••••••"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="VA_Password"
+                        value={formData.VA_Password}
+                        onChange={handleInputChange}
+                        maxLength={5}
+                        className={`w-full rounded-lg pl-3.5 pr-10 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                          errors.VA_Password
+                            ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                            : "bg-black/60 border border-primary/20 focus:border-primary/50"
+                        }`}
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                     {errors.VA_Password ? (
                       <p className="text-[12px] text-red-400 font-normal mt-1">
                         {errors.VA_Password}
                       </p>
                     ) : (
-                      <p className="text-[12px] text-white/35 uppercase tracking-[0.12em] px-1 mt-1">
+                      <p className="text-[12px] text-white/35 tracking-[0.12em] px-1 mt-1">
                         Max 5 chars, Capital &amp; Special Char
                       </p>
                     )}
@@ -871,15 +883,15 @@ const ContactAllVisitors = () => {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-6 py-2.5 rounded-lg text-[12px] font-normal text-gray-400 hover:bg-white/5 uppercase tracking-[0.14em] transition-all"
+                    className="px-6 py-2.5 rounded-lg text-[12px] font-normal text-gray-400 hover:bg-white/5 tracking-[0.14em] transition-all"
                   >
                     Close
                   </button>
                   <button
                     type="submit"
-                    className="px-7 py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal uppercase tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
+                    className="px-7 py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
                   >
-                    Send Pre-Approval
+                    Send pre-approval
                   </button>
                 </div>
               </form>

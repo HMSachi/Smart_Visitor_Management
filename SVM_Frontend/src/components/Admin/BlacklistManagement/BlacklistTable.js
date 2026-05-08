@@ -119,33 +119,33 @@ const BlacklistTable = () => {
         className={`space-y-4 animate-fade-in-slow ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
       >
         {/* ── Toolbar ── */}
-        <div
-          className={`flex flex-col md:flex-row justify-between items-center gap-3 p-4 md:p-5 rounded-[28px] border shadow-xl ${isLight ? "bg-white border-gray-200 shadow-gray-200/50" : "bg-[var(--color-bg-paper)] border-white/5 shadow-black/20"}`}
-        >
-          <div className="relative w-full md:w-96">
-            <Search
-              className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${isLight ? "text-gray-400" : "text-gray-400"}`}
-              size={16}
-            />
-            <input
-              type="text"
-              placeholder="Search by name or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full rounded-2xl pl-11 pr-4 py-2.5 text-[13px] focus:outline-none focus:border-primary/50 transition-all placeholder:text-gray-500 shadow-inner border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-gray-100" : "bg-white/[0.03] border-white/10 text-white shadow-black/20"}`}
-            />
-          </div>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+            <div className={`relative w-full md:w-96 flex items-center transition-colors border rounded-lg px-2.5 h-9 shadow-sm group ${isLight ? "bg-white border-gray-200 shadow-sm shadow-gray-200/50" : "bg-black/40 border-white/10 focus-within:border-primary"}`}>
+              <Search
+                className={`mr-3 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
+                size={14}
+              />
+              <input
+                type="text"
+                placeholder="Search by name or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={`bg-transparent text-[12px] font-normal tracking-wide focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
+              />
+            </div>
 
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="w-full md:w-auto px-6 py-3 bg-primary text-white text-[11px] font-bold uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-2.5 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 active:scale-[0.98] group"
-          >
-            <UserPlus
-              size={16}
-              className="group-hover:rotate-12 transition-transform"
-            />
-            Add to Blacklist
-          </button>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="flex items-center justify-center gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-5 h-9 rounded-lg text-[12px] font-normal tracking-widest transition-all shadow-lg active:scale-95 group whitespace-nowrap"
+            >
+              <UserPlus
+                size={16}
+                className="group-hover:rotate-12 transition-transform"
+              />
+              Add to restricted list
+            </button>
+          </div>
         </div>
 
         {/* ── Table card ── */}

@@ -59,7 +59,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
       <Icon size={19} strokeWidth={active ? 2.2 : 1.8} />
     </div>
     {!collapsed && (
-      <span className="text-[13.5px] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+      <span className="text-[12px] font-normal whitespace-nowrap overflow-hidden text-ellipsis">
         {label}
       </span>
     )}
@@ -153,7 +153,7 @@ const SidebarContent = ({
         >
           <LogOut size={17} className="shrink-0" />
           {!isCollapsed && (
-            <span className="text-[13px] font-medium">Sign Out</span>
+            <span className="text-[12px] font-normal">Sign Out</span>
           )}
         </button>
       </div>
