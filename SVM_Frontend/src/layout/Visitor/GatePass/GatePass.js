@@ -11,7 +11,7 @@ import {
 import GatePassService from "../../../services/GatePassService";
 import VisitorService from "../../../services/VisitorService";
 import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
-import SubVisitorQRGenerator from "../../../components/SubVisitorQRGenerator";
+// import SubVisitorQRGenerator from "../../../components/SubVisitorQRGenerator";
 
 const GatePass = () => {
   const { gatePassId } = useParams();
@@ -364,7 +364,7 @@ const GatePass = () => {
           </div>
         </div>
 
-        {/* Sub-Visitor QR Codes Section */}
+        {/* Sub-Visitor QR Codes Section (Commented Out)
         {subVisitors && subVisitors.length > 0 && gatePassData && (
           <div className="mt-12 relative z-10">
             <SubVisitorQRGenerator
@@ -381,6 +381,7 @@ const GatePass = () => {
             />
           </div>
         )}
+        */}
       </div>
     </div>
   );

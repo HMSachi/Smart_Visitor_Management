@@ -2759,7 +2759,7 @@ const VisitRequests = () => {
                       </div>
                     </div>
 
-                    {/* ── Sub-Visitor Items Carried ── */}
+                    {/* ── Sub-Visitor Items Carried (Commented Out) ──
                     <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
                       <div className="p-4 md:p-5 space-y-4">
                         <div className="flex flex-col gap-2">
@@ -2909,6 +2909,7 @@ const VisitRequests = () => {
                         </div>
                       </div>
                     </div>
+                    */}
                   </>
                 )}
               </div>

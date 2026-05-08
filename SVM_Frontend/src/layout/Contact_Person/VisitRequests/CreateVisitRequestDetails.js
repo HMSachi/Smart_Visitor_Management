@@ -486,6 +486,7 @@ const CreateVisitRequestDetails = () => {
                 </div>
               </div>
 
+              {/* 
               <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                   <SectionHeader title="Sub-Visitor Items Carried" icon={Package} />
@@ -545,6 +546,7 @@ const CreateVisitRequestDetails = () => {
                   {subVisitorItems.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">No sub-visitor items declared</p></div>}
                 </div>
               </div>
+              */}
 
               <div className="flex flex-col md:flex-row items-center gap-4 pt-6">
                 <button

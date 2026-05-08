@@ -2121,7 +2121,7 @@ const MyRequests = () => {
                       </div>
                     </div>
 
-                    {/* ══ SUB-VISITOR ITEMS CARRIED ══ */}
+                    {/* ══ SUB-VISITOR ITEMS CARRIED (Commented Out) ══
                     <div
                       className="rounded-3xl p-5 md:p-6 space-y-4"
                       style={{
@@ -2411,6 +2411,7 @@ const MyRequests = () => {
                         ))}
                       </div>
                     </div>
+                    */}
                   </>
                 )}
               </div>
