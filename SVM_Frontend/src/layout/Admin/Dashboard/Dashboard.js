@@ -44,7 +44,7 @@ const Dashboard = () => {
       <Header />
 
       <div className="flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-7 overflow-y-auto">
-        <div className="max-w-[1600px] mx-auto space-y-6">
+        <div className="max-w-none mx-auto space-y-6">
           {/* Page Header - Professional Title Section */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-start gap-3">

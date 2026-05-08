@@ -99,12 +99,12 @@ const SidebarContent = ({
       className="h-full flex flex-col"
       style={{
         background: "var(--color-bg-paper)",
-        borderRight: "1px solid var(--color-border-soft)",
+        borderRight: "none",
       }}
     >
       {/* Logo */}
       <div
-        className={`flex items-center gap-3 px-4 py-5 border-b border-[var(--color-border-soft)] ${isCollapsed ? "justify-center" : ""}`}
+        className={`flex items-center gap-3 px-4 py-5 border-none ${isCollapsed ? "justify-center" : ""}`}
       >
         <img
           src="/logo_mas.png"
@@ -143,7 +143,7 @@ const SidebarContent = ({
       </nav>
 
       {/* User & Logout */}
-      <div className="px-3 py-4 border-t border-[var(--color-border-soft)]">
+      <div className="px-3 py-4 border-none">
         <button
           onClick={onLogout}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-[var(--color-border-soft)] text-[var(--color-text-secondary)] hover:text-[var(--color-error)] hover:border-[var(--color-error)]/30 transition-all duration-300 mb-3 ${isCollapsed ? "justify-center" : ""}`}
@@ -214,19 +214,22 @@ const Sidebar = () => {
         size="small"
         sx={{
           position: "absolute",
-          right: -14,
-          top: 88,
-          width: 28,
-          height: 28,
-          background: "var(--color-bg-elevated)",
-          border: "1px solid var(--color-border-medium)",
+          right: 4,
+          top: 76,
+          width: 24,
+          height: 24,
+          background: "transparent",
+          border: "none",
           color: "var(--color-primary)",
-          boxShadow: "var(--shadow-card)",
-          "&:hover": { background: "var(--color-primary)", color: "#fff" },
+          "&:hover": { 
+            background: "var(--color-primary-low)", 
+            color: "var(--color-primary)"
+          },
+          transition: "all 0.2s ease",
           zIndex: 50,
         }}
       >
-        {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </IconButton>
     </aside>
   );

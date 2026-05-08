@@ -397,7 +397,7 @@ const AllUsers = () => {
 
       <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-        <div className="max-w-[1500px] mx-auto">
+        <div className="max-w-none mx-auto">
           <header className="mb-6 flex flex-col xl:flex-row justify-between items-center gap-3 relative z-10">
             <div className="overflow-x-auto no-scrollbar w-full xl:w-auto">
               <div className={`inline-flex p-1 rounded-full border transition-all gap-0.5 ${themeMode === "light" ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}>
@@ -518,7 +518,7 @@ const AllUsers = () => {
                           <TableHead>
                             <TableRow
                               sx={{
-                                height: "30px",
+                                height: "24px",
                                 backgroundColor: themeMode === "light" ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.03)",
                               }}
                             >
@@ -607,11 +607,11 @@ const AllUsers = () => {
                                   colSpan={6}
                                   align="center"
                                   sx={{
-                                    padding: "12px",
+                                    padding: "8px",
                                     borderBottom:
                                       "1px solid rgba(255,255,255,0.05)",
                                   }}
-                                  className="text-white/30 text-[11px] font-normal text-[12px]"
+                                  className="text-white/30 text-[12px] font-normal"
                                 >
                                   No users in this category
                                 </TableCell>
@@ -638,13 +638,13 @@ const AllUsers = () => {
                                         "&:hover": {
                                           backgroundColor: themeMode === "light" ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.04)",
                                         },
-                                        height: "32px",
+                                        height: "28px",
                                         borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.04)" : "1px solid rgba(255,255,255,0.05)",
                                         transition: "background-color 0.2s ease",
                                       }}
                                     >
                                       <TableCell
-                                        sx={{ padding: "4px 12px", width: "8%" }}
+                                        sx={{ padding: "3px 12px", width: "8%" }}
                                         className={`${themeMode === "light" ? "text-gray-800" : "text-white/80"} font-normal text-[12px] whitespace-nowrap`}
                                       >
                                         <div className="flex items-center gap-1">
@@ -659,19 +659,19 @@ const AllUsers = () => {
                                         </div>
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "4px 12px", width: "15%" }}
+                                        sx={{ padding: "3px 12px", width: "15%" }}
                                         className={`font-normal transition-colors text-[12px] ${isActive ? (themeMode === "light" ? "text-gray-900" : "text-white") : (themeMode === "light" ? "text-gray-400" : "text-white/40")}`}
                                       >
                                         {item.VA_Name || item.VCP_Name || "-"}
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "4px 12px", width: "20%" }}
+                                        sx={{ padding: "3px 12px", width: "20%" }}
                                         className={`font-normal transition-colors text-[12px] whitespace-nowrap ${isActive ? (themeMode === "light" ? "text-gray-600" : "text-gray-400 opacity-60") : (themeMode === "light" ? "text-gray-400" : "text-gray-500 opacity-30")}`}
                                       >
                                         {item.VA_Email || item.VCP_Email}
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "4px 12px", width: "12%" }}
+                                        sx={{ padding: "3px 12px", width: "12%" }}
                                         className={`hidden sm:table-cell transition-colors font-normal text-[12px] ${isActive ? (themeMode === "light" ? "text-gray-700" : "text-white/70") : (themeMode === "light" ? "text-gray-300" : "text-white/20")}`}
                                       >
                                         {item.VA_Role ||
@@ -679,7 +679,7 @@ const AllUsers = () => {
                                           "-"}
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "4px 12px", width: "15%" }}
+                                        sx={{ padding: "3px 12px", width: "15%" }}
                                         className={`hidden md:table-cell transition-colors font-normal text-[12px] ${isActive ? (themeMode === "light" ? "text-gray-700" : "text-white/70") : (themeMode === "light" ? "text-gray-300" : "text-white/20")}`}
                                       >
                                         {item.VA_Created_Date
@@ -687,8 +687,8 @@ const AllUsers = () => {
                                           : item.VCP_Phone || "AUTHEN.SYSTEM"}
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "4px 12px", width: "10%" }}
-                                       className="text-[12px] font-normal">
+                                        sx={{ padding: "3px 12px", width: "10%" }}
+                                       className="text-[10px] font-normal">
                                         <button
                                           onClick={() =>
                                             handleToggleStatus(item, cat.id)

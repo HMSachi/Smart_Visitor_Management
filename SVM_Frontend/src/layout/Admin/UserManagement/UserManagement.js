@@ -238,7 +238,7 @@ const UserManagement = () => {
       <Header title="User Administration" />
 
       <div className="flex-1 p-8 overflow-y-auto w-full">
-        <div className="max-w-[1600px] mx-auto">
+        <div className="max-w-none mx-auto">
           <header className="mb-6 flex flex-col xl:flex-row justify-between items-start xl:items-center pb-4 gap-6 relative z-10">
             <div className="w-full md:w-auto">
               {/* Horizontal Tab Navigation */}
@@ -533,29 +533,29 @@ const UserManagement = () => {
               <Table sx={{ minWidth: 650 }} aria-label="user management table">
                 <TableHead className="bg-black/40">
                     <TableRow>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
                         ID
                       </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
                         Name
                       </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
                         {activeTab === "CONTACT" ? "Department" : "System Role"}
                       </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
                         {activeTab === "CONTACT"
                           ? "Email"
                           : "Authentication Origin"}
                       </th>
                       {activeTab === "CONTACT" && (
-                        <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
+                        <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
                           Phone
                         </th>
                       )}
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-left">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
                         Status
                       </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-2 text-right">
+                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-right">
                         Actions
                       </th>
                     </TableRow>
@@ -627,7 +627,7 @@ const UserManagement = () => {
                             {item.VCP_Phone || "-"}
                           </TableCell>
                         )}
-                        <TableCell className="border-b-white/5 py-1 font-normal text-[12px]">
+                        <TableCell className="border-b-white/5 py-1 font-normal text-[10px]">
                           <button
                             onClick={() => handleToggleStatus(item)}
                             disabled={isLoading}

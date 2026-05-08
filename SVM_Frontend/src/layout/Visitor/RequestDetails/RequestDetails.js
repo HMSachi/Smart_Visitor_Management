@@ -59,22 +59,23 @@ const toDisplayDate = (value) => {
 };
 
 const SmallField = ({ label, value, icon: Icon }) => (
-  <div className="space-y-1.5">
-    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-[0.14em] flex items-center gap-2">
+  <div className="space-y-1">
+    <label className="text-[12px] font-medium text-gray-500 capitalize tracking-tight flex items-center gap-1.5">
       {Icon && <Icon size={11} className="text-primary/70" />}
       {label}
     </label>
-    <div className="w-full bg-[#F8F9FA] border border-gray-200 rounded-2xl px-5 py-1.5 text-[#1A1A1A] text-[11px] font-semibold tracking-[0.06em] break-words min-h-[44px] flex items-center">
+    <div className="w-full bg-gray-50/50 border border-gray-100 rounded-lg px-3 py-1 text-[#1A1A1A] text-[12px] font-normal tracking-tight break-words min-h-[36px] flex items-center">
       {value || "N/A"}
     </div>
   </div>
 );
 
 const SectionCard = ({ title, icon: Icon, children }) => (
-  <div className="bg-white border border-gray-200 rounded-3xl p-5 md:p-6 shadow-sm space-y-4">
+  <div className="bg-white border border-gray-100 rounded-[12px] p-3 md:p-4 shadow-sm space-y-3">
     <div className="flex items-center gap-2">
-      <Icon size={14} className="text-primary" />
-      <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#1A1A1A]">{title}</h3>
+      <div className="w-[3px] h-3.5 bg-primary rounded-full"></div>
+      <Icon size={13} className="text-primary/70" />
+      <h3 className="text-[13px] font-medium capitalize tracking-tight text-[#1A1A1A]">{title}</h3>
     </div>
     {children}
   </div>
@@ -199,10 +200,10 @@ const RequestDetails = () => {
   if (!currentRequest) {
     return (
       <div className="min-h-screen bg-[var(--color-bg-default)] text-white px-4 md:px-8 pt-24 md:pt-28 pb-8">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-none mx-auto">
           <button
             onClick={() => navigate("/visitor/my-requests")}
-            className="mb-6 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary"
+            className="mb-6 flex items-center gap-2 text-[11px] font-semibold capitalize tracking-[0.16em] text-primary"
           >
             <ArrowLeft size={14} /> Back to My Requests
           </button>
@@ -231,20 +232,20 @@ const RequestDetails = () => {
                   setShowSuccess(false);
                   navigate("/visitor/my-requests");
                 }}
-                className="px-6 py-2.5 bg-primary text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all hover:bg-primary/90 active:scale-95"
+                className="px-6 py-2.5 bg-primary text-white text-[11px] font-bold capitalize tracking-wider rounded-xl transition-all hover:bg-primary/90 active:scale-95"
               >
-                OK
+                Ok
               </button>
             </div>
           </div>
         </div>
       )}
 
-      <div className="max-w-5xl mx-auto space-y-4">
+      <div className="max-w-none mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate("/visitor/my-requests")}
-            className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary"
+            className="flex items-center gap-2 text-[11px] font-semibold capitalize tracking-[0.16em] text-primary"
           >
             <ArrowLeft size={14} /> Back to My Requests
           </button>
@@ -252,61 +253,59 @@ const RequestDetails = () => {
           {summary.status === "Pending" && (
             <button
               onClick={handleAccept}
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-[11px] font-bold uppercase tracking-[0.16em] transition-all shadow-md active:scale-95"
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-[11px] font-bold capitalize tracking-[0.16em] transition-all shadow-md active:scale-95"
             >
               Accepted
             </button>
           )}
         </div>
 
-        <SectionCard title="Request Summary" icon={Hash}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <SectionCard title="Request summary" icon={Hash}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
             <SmallField label="Reference ID" value={`#${summary.id}`} icon={Hash} />
-            <SmallField label="Visit Date" value={summary.visitDate} icon={Calendar} />
-            <SmallField label="Visiting Areas" value={summary.areas} icon={MapPin} />
-            <div className="md:col-span-2">
-              <SmallField label="Submitted Purpose" value={summary.purpose} icon={Briefcase} />
-            </div>
+            <SmallField label="Visit date" value={summary.visitDate} icon={Calendar} />
+            <SmallField label="Visiting areas" value={summary.areas} icon={MapPin} />
+            <SmallField label="Submitted purpose" value={summary.purpose} icon={Briefcase} />
           </div>
         </SectionCard>
 
-        <SectionCard title="Visitor Information" icon={User}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SmallField label="Full Name" value={summary.name} icon={User} />
-            <SmallField label="ID or Passport Number" value={summary.nic} icon={Hash} />
+        <SectionCard title="Visitor information" icon={User}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            <SmallField label="Full name" value={summary.name} icon={User} />
+            <SmallField label="NIC" value={summary.nic} icon={Hash} />
             <SmallField label="Email" value={summary.email} icon={Mail} />
             <SmallField label="Phone" value={summary.phone} icon={Phone} />
             <SmallField label="Company" value={summary.company} icon={Building2} />
-            <SmallField label="Visitor Type" value={summary.visitorType} icon={Briefcase} />
+            <SmallField label="Visitor type" value={summary.visitorType} icon={Briefcase} />
           </div>
 
           {/* Items carried by the main visitor */}
-          <div className="mt-5 pt-5 border-t border-gray-100">
-            <div className="flex items-center gap-2 mb-3">
-              <Package size={13} className="text-primary" />
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1A1A1A]">Items Carried</p>
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="flex items-center gap-2 mb-2">
+              <Package size={13} className="text-primary/70" />
+              <p className="text-[12px] font-medium capitalize tracking-tight text-[#1A1A1A]">Items carried</p>
             </div>
             {items.length > 0 ? (
-              <div className="border border-gray-200 rounded-lg overflow-hidden">
-                <div className="flex justify-between items-center px-3 py-1.5 bg-gray-100 border-b border-gray-200">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-[2]">Item Name</span>
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider w-16 text-center">Qty</span>
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-[3] sm:text-right">Description</span>
+              <div className="border border-gray-100 rounded-lg overflow-hidden">
+                <div className="flex justify-between items-center px-3 py-1.5 bg-gray-50 border-b border-gray-100">
+                  <span className="text-[12px] font-medium text-gray-400 capitalize tracking-tight flex-[2]">Item name</span>
+                  <span className="text-[12px] font-medium text-gray-400 capitalize tracking-tight w-16 text-center">Qty</span>
+                  <span className="text-[12px] font-medium text-gray-400 capitalize tracking-tight flex-[3] sm:text-right">Description</span>
                 </div>
-                <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px]">
+                <div className="divide-y divide-gray-50/50 overflow-y-auto max-h-[150px]">
                   {items.map((item, idx) => (
-                    <div key={item.VIC_Item_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                      <span className="text-[11px] font-medium text-[#1A1A1A] flex-[2] truncate">{item.VIC_Item_Name}</span>
+                    <div key={item.VIC_Item_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}`}>
+                      <span className="text-[12px] font-normal text-[#1A1A1A] flex-[2] truncate">{item.VIC_Item_Name}</span>
                       <div className="w-16 flex justify-center">
-                        <span className="text-[11px] font-medium text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{item.VIC_Quantity || 1}</span>
+                        <span className="text-[12px] font-medium text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{item.VIC_Quantity || 1}</span>
                       </div>
-                      <span className="text-[11px] font-medium text-gray-500 flex-[3] sm:text-right truncate">{item.VIC_Designation || "-"}</span>
+                      <span className="text-[12px] font-normal text-gray-500 flex-[3] sm:text-right truncate">{item.VIC_Designation || item.VIC_Description || "-"}</span>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No items declared by the main visitor.</p>
+              <p className="text-[11px] text-gray-500 font-medium capitalize tracking-[0.12em]">No items declared by the main visitor.</p>
             )}
           </div>
         </SectionCard>
@@ -315,20 +314,20 @@ const RequestDetails = () => {
           {vehicleRecords.length > 0 ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden">
               <div className="flex justify-between items-center px-3 py-1.5 bg-gray-100 border-b border-gray-200">
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Vehicle Type</span>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-right">Vehicle Number</span>
+                <span className="text-[10px] font-bold text-gray-500 capitalize tracking-wider flex-1">Vehicle type</span>
+                <span className="text-[10px] font-bold text-gray-500 capitalize tracking-wider flex-1 sm:text-right">Vehicle number</span>
               </div>
               <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px] custom-scrollbar">
                 {vehicleRecords.map((vehicle, idx) => (
                   <div key={vehicle.VV_Vehicle_id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                    <span className="text-[11px] font-medium text-gray-600 uppercase flex-1">{vehicle.VV_Vehicle_Type}</span>
+                    <span className="text-[11px] font-medium text-gray-600 capitalize flex-1">{vehicle.VV_Vehicle_Type}</span>
                     <span className="text-[11px] font-medium text-[#1A1A1A] flex-1 sm:text-right">{vehicle.VV_Vehicle_Number}</span>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No vehicles registered.</p>
+            <p className="text-[11px] text-gray-500 font-medium capitalize tracking-[0.12em]">No vehicles registered.</p>
           )}
         </SectionCard>
 
@@ -336,37 +335,37 @@ const RequestDetails = () => {
           {groupMembers.length > 0 ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden">
               <div className="flex justify-between items-center px-3 py-1.5 bg-gray-100 border-b border-gray-200">
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Name</span>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-center">NIC / Passport</span>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1 sm:text-right">Phone Number</span>
+                <span className="text-[10px] font-bold text-gray-500 capitalize tracking-wider flex-1">Name</span>
+                <span className="text-[10px] font-bold text-gray-500 capitalize tracking-wider flex-1 sm:text-center">NIC</span>
+                <span className="text-[10px] font-bold text-gray-500 capitalize tracking-wider flex-1 sm:text-right">Phone number</span>
               </div>
               <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px] custom-scrollbar">
                 {groupMembers.map((member, idx) => (
                   <div key={member.VVG_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                     <span className="text-[11px] font-medium text-[#1A1A1A] flex-1">{member.VVG_Visitor_Name}</span>
-                    <span className="text-[11px] font-medium text-gray-600 uppercase flex-1 sm:text-center">{member.VVG_NIC_Passport_Number}</span>
+                    <span className="text-[11px] font-medium text-gray-600 capitalize flex-1 sm:text-center">{member.VVG_NIC_Passport_Number}</span>
                     <span className="text-[11px] font-medium text-gray-600 flex-1 sm:text-right">{member.VVG_Designation || "-"}</span>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No additional visitors submitted.</p>
+            <p className="text-[11px] text-gray-500 font-medium capitalize tracking-[0.12em]">No additional visitors submitted.</p>
           )}
         </SectionCard>
 
         {/* Items carried in — grouped by sub-visitor (Group_Members from API) */}
-        <SectionCard title="Items Carried In" icon={Package}>
-          <p className="text-[10px] text-gray-400 font-medium uppercase tracking-[0.12em] mb-4">
+        <SectionCard title="Items carried in" icon={Package}>
+          <p className="text-[10px] text-gray-400 font-medium capitalize tracking-[0.12em] mb-4">
             Items brought in by each member of the visiting group
           </p>
           {jointItems.length > 0 ? (
             <div className="border border-gray-200 rounded-lg overflow-hidden">
               <div className="flex justify-between items-center px-3 py-1.5 bg-gray-100 border-b border-gray-200">
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Sub Visitor</span>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-1">Item Name</span>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider w-16 text-center">Qty</span>
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex-[2] sm:text-right">Description</span>
+                <span className="text-[10px] font-bold text-gray-500 capitalize tracking-wider flex-1">Sub visitor</span>
+                <span className="text-[10px] font-bold text-gray-500 capitalize tracking-wider flex-1">Item name</span>
+                <span className="text-[10px] font-bold text-gray-500 capitalize tracking-wider w-16 text-center">Qty</span>
+                <span className="text-[10px] font-bold text-gray-500 capitalize tracking-wider flex-[2] sm:text-right">Description</span>
               </div>
               <div className="divide-y divide-gray-100 overflow-y-auto max-h-[200px] custom-scrollbar">
                 {jointItems.map((item, idx) => {
@@ -385,15 +384,15 @@ const RequestDetails = () => {
               </div>
             </div>
           ) : (
-            <p className="text-[11px] text-gray-500 font-medium uppercase tracking-[0.12em]">No items carried in by the visiting group.</p>
+            <p className="text-[11px] text-gray-500 font-medium capitalize tracking-[0.12em]">No items carried in by the visiting group.</p>
           )}
         </SectionCard>
 
-        <SectionCard title="All Submitted Raw Fields" icon={Hash}>
+        <SectionCard title="All submitted raw fields" icon={Hash}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {rawFields.map(([key, value]) => (
               <div key={key} className="rounded-2xl border border-gray-200 bg-[#F8F9FA] px-4 py-1.5">
-                <p className="text-[9px] font-semibold text-gray-500 uppercase tracking-[0.14em] mb-1">{toFriendlyFieldName(key)}</p>
+                <p className="text-[9px] font-semibold text-gray-500 capitalize tracking-[0.14em] mb-1">{toFriendlyFieldName(key)}</p>
                 <p className="text-[11px] font-semibold text-[#1A1A1A] break-words">{formatRawFieldValue(key, value)}</p>
               </div>
             ))}

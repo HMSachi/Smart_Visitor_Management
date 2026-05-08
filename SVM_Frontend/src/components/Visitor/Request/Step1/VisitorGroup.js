@@ -113,10 +113,10 @@ const VisitorGroup = ({
                 )}
               </div>
 
-              {/* NIC / Passport */}
+              {/* NIC */}
               <div className="space-y-2">
                 <label className="text-[9px] font-semibold text-gray-500 uppercase tracking-[0.18em] flex items-center gap-2 px-1">
-                  ID or passport number
+                  NIC
                 </label>
                 <div className="relative">
                   <input
@@ -134,7 +134,7 @@ const VisitorGroup = ({
                         ? `visitor-${visitor.id}-nic-error`
                         : undefined
                     }
-                    placeholder="Enter ID or passport number"
+                    placeholder="Enter NIC"
                     className={`w-full rounded-none px-3 py-2 text-[10px] focus:outline-none transition-all font-medium ${
                       isLight
                         ? "bg-white border border-gray-200 text-[#1A1A1A] focus:border-primary placeholder:text-gray-400"

@@ -81,7 +81,7 @@ const VisitorManagement = () => {
 
       <div className="flex-1 p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-        <div className="max-w-[1600px] mx-auto">
+        <div className="max-w-none mx-auto">
           <header className="mb-6 flex flex-col md:flex-row justify-end items-start md:items-end pb-4 gap-6 relative z-10">
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
               <form
@@ -142,22 +142,22 @@ const VisitorManagement = () => {
                 <Table sx={{ minWidth: 650 }} aria-label="visitors table">
                   <TableHead className="bg-black/40">
                     <TableRow>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
                         ID
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
                         Visitor
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
                         Credentials
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2">
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5">
                         Company
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2 min-w-[200px]">
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5 min-w-[200px]">
                         Going To
                       </TableCell>
-                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-2 text-center">
+                      <TableCell className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b-white/5 py-1.5 text-center">
                         Status
                       </TableCell>
                     </TableRow>
@@ -212,7 +212,7 @@ const VisitorManagement = () => {
                             >
                               {visitor.VV_Visiting_places || "-"}
                             </TableCell>
-                            <TableCell className="border-b-white/5 py-1 text-center font-normal text-[12px]">
+                            <TableCell className="border-b-white/5 py-0.5 text-center font-normal text-[10px]">
                               <button
                                 onClick={() => handleToggleStatus(visitor)}
                                 disabled={isLoading}

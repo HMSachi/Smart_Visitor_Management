@@ -27,30 +27,22 @@ import SubVisitorQRService from "../../services/SubVisitorQRService";
 
 const SplitSection = ({
   title,
-  description,
   icon: Icon,
   isLight,
   children,
 }) => (
-  <div className="flex flex-col gap-2">
-    <div className="flex items-center gap-2">
+  <div className="flex flex-col gap-1">
+    <div className="flex items-center gap-1.5">
       <div className="w-[3px] h-3.5 bg-primary rounded-full"></div>
       <div className="flex items-center gap-1.5">
         {Icon && <Icon size={13} className="text-primary/70" />}
         <h3
-          className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+          className={`text-[13px] font-medium capitalize tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
         >
           {title}
         </h3>
       </div>
     </div>
-    {description && (
-      <p
-        className={`text-[9px] leading-relaxed mb-1 tracking-[0.05em] ${isLight ? "text-gray-400" : "text-white/30"}`}
-      >
-        {description}
-      </p>
-    )}
     <div className="w-full">{children}</div>
   </div>
 );
@@ -67,7 +59,7 @@ const SectionCard = ({ children, isLight, darkClassName = "" }) => (
 );
 
 const Field = ({ label, value, icon: Icon, isLight }) => (
-  <div className="group/field flex flex-col gap-1">
+  <div className="group/field flex flex-col gap-0.5">
     <div className="flex items-center gap-1.5 px-0.5">
       {Icon && (
         <Icon
@@ -76,18 +68,18 @@ const Field = ({ label, value, icon: Icon, isLight }) => (
         />
       )}
       <label
-        className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}
+        className={`text-[12px] font-medium capitalize tracking-tight ${isLight ? "text-gray-500" : "text-white/40"}`}
       >
         {label}
       </label>
     </div>
     <div
-      className={`px-3 py-1.5 rounded-lg border transition-all duration-300 ${isLight
+      className={`px-3 py-1 rounded-lg border transition-all duration-300 ${isLight
           ? "bg-gray-50/30 border-gray-100 text-[#1A1A1A]"
           : "bg-black/20 border-white/5 text-white"
         }`}
     >
-      <p className="text-[11px] font-medium tracking-wide">
+      <p className="text-[12px] font-medium tracking-tight">
         {value || "No data"}
       </p>
     </div>
@@ -100,7 +92,7 @@ const SimpleTable = ({ columns, data, isLight }) => (
       <thead>
         <tr className={`border-b ${isLight ? "bg-gray-50/50 border-gray-100" : "bg-black/20 border-white/5"}`}>
           {columns.map((col, idx) => (
-            <th key={idx} className={`py-2 px-2.5 text-[9px] font-normal tracking-[0.2em] uppercase ${isLight ? "text-gray-400" : "text-white/30"}`}>
+            <th key={idx} className={`py-1.5 px-2.5 text-[12px] font-medium tracking-tight capitalize ${isLight ? "text-gray-400" : "text-white/30"}`}>
               {col.label}
             </th>
           ))}
@@ -110,7 +102,7 @@ const SimpleTable = ({ columns, data, isLight }) => (
         {data.map((row, rowIdx) => (
           <tr key={rowIdx} className={`border-b last:border-b-0 transition-colors ${isLight ? "border-gray-50 hover:bg-gray-50/30" : "border-white/[0.02] hover:bg-white/[0.01]"}`}>
             {columns.map((col, colIdx) => (
-              <td key={colIdx} className={`py-2 px-2.5 text-[11px] font-normal tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}>
+              <td key={colIdx} className={`py-1.5 px-2.5 text-[12px] font-normal tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}>
                 {row[col.key] || "—"}
               </td>
             ))}
@@ -212,16 +204,15 @@ const PersonnelAuthProtocol = ({
       className="pb-0 w-full px-0 space-y-1.5"
     >
       {/* Visitor Profile Matrix */}
-      <div className="mb-8">
+      <div className="mb-2">
         <SectionCard isLight={isLight}>
-          <div className="p-4 md:p-5">
+          <div className="p-3">
             <SplitSection
               title="Visitor details"
               icon={User}
-              description="Identity and contact information for the primary visitor."
               isLight={isLight}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
                 <Field
                   label="Full name"
                   value={visitor.name || visitor.fullName}
@@ -229,7 +220,7 @@ const PersonnelAuthProtocol = ({
                   isLight={isLight}
                 />
                 <Field
-                  label="ID or passport number"
+                  label="NIC"
                   value={visitor.nic}
                   icon={Hash}
                   isLight={isLight}
@@ -249,40 +240,36 @@ const PersonnelAuthProtocol = ({
               </div>
 
               {/* Items carried by the main visitor — embedded as a subsection */}
-              <div className={`mt-6 pt-5 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}>
-                <div className="flex items-center gap-2 mb-4">
+              <div className={`mt-3 pt-3 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}>
+                <div className="flex items-center gap-2 mb-2">
                   <Package size={13} className="text-primary/70" />
-                  <p className={`uppercase text-[10px] font-bold tracking-[0.2em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
-                    Items Carried
+                  <p className={`capitalize text-[12px] font-medium tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                    Items carried
                   </p>
-                  <span className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${isLight ? "text-gray-400" : "text-white/35"}`}>
-                    — declared by the primary visitor
-                  </span>
                 </div>
                 {itemsCarried && itemsCarried.length > 0 ? (
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 gap-2">
                     {itemsCarried.map((item, idx) => (
                       <motion.div
                         key={item.id || idx}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.07 }}
-                        className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-[20px] ${
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className={`grid grid-cols-1 md:grid-cols-3 gap-3 p-2 border rounded-xl ${
                           isLight
                             ? "bg-gray-50 border-gray-200"
                             : "bg-black/30 border-white/8"
                         }`}
                       >
-                        <Field label="Item Name" value={item.itemName} icon={Package} isLight={isLight} />
-                        <Field label="Quantity" value={item.quantity ? String(item.quantity) : "—"} icon={Hash} isLight={isLight} />
+                        <Field label="Item name" value={item.itemName} icon={Package} isLight={isLight} />
+                        <Field label="Qty" value={item.quantity ? String(item.quantity) : "—"} icon={Hash} isLight={isLight} />
                         <Field label="Description" value={item.description || "—"} icon={Briefcase} isLight={isLight} />
                       </motion.div>
                     ))}
                   </div>
                 ) : (
-                  <div className={`border border-dashed rounded-xl p-3 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}>
-                    <p className={`text-[10px] font-semibold uppercase tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}>
-                      No items declared by the primary visitor
+                  <div className={`border border-dashed rounded-xl p-2 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}>
+                    <p className={`text-[10px] font-semibold capitalize tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}>
+                      No items declared
                     </p>
                   </div>
                 )}
@@ -303,7 +290,7 @@ const PersonnelAuthProtocol = ({
                     scale: 1.02,
                     borderColor: "var(--color-primary)",
                   }}
-                  className={`px-4 py-2.5 border rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm group/zone ${isLight
+                  className={`px-4 py-2.5 border rounded-xl text-[10px] font-bold capitalize tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm group/zone ${isLight
                     ? "bg-gray-50 border-gray-100 text-[#1A1A1A]"
                     : "bg-black/40 border-white/10 text-white"
                     }`}
@@ -323,12 +310,12 @@ const PersonnelAuthProtocol = ({
       {vehiclesList && vehiclesList.length > 0 && (
         <SectionCard isLight={isLight}>
           <div className="p-3 md:p-5">
-            <SplitSection title="Vehicle Registry" icon={Car} isLight={isLight}>
+            <SplitSection title="Vehicle registry" icon={Car} isLight={isLight}>
               <SimpleTable
                 isLight={isLight}
                 columns={[
-                  { label: "Vehicle Registration", key: "plateNumber" },
-                  { label: "Vehicle Type", key: "vehicleType" }
+                  { label: "Vehicle registration", key: "plateNumber" },
+                  { label: "Vehicle type", key: "vehicleType" }
                 ]}
                 data={vehiclesList}
               />
@@ -339,75 +326,12 @@ const PersonnelAuthProtocol = ({
 
       {groupMembers && groupMembers.length > 0 && (
         <SectionCard isLight={isLight}>
-          <div className="p-3 md:p-5">
-            <SplitSection
-              title="Visiting People"
-              icon={Users}
-              description="Additional attendees tied to the request."
-              isLight={isLight}
-            >
-              {groupMembers && groupMembers.length > 0 ? (
-                <div className="space-y-4">
-                  {groupMembers.map((member, idx) => (
-                    <motion.div
-                      key={member.id || idx}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      className={`grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-4 p-4 md:p-5 border rounded-2xl hover:border-primary/20 transition-all ${
-                        isLight ? "bg-gray-50 border-gray-200" : "bg-black/35 border-white/10"
-                      }`}
-                    >
-                      <Field label="Full Name" value={member.fullName} icon={User} isLight={isLight} />
-                      <Field label="NIC / Passport Number" value={member.nic} icon={Hash} isLight={isLight} />
-                      <Field label="Designation / Contact" value={member.contact} icon={Phone} isLight={isLight} />
-                      {hasGatePass() && (
-                        <div className="flex flex-col justify-end">
-                          <button
-                            onClick={() => handleOpenSubVisitorQR(member, idx)}
-                            title="View QR Code"
-                            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all border ${
-                              isLight
-                                ? "bg-white border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary"
-                                : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"
-                            }`}
-                          >
-                            <QrCode size={15} />
-                          </button>
-                        </div>
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-              ) : (
-                <div
-                  className={`border border-dashed rounded-2xl p-5 text-center ${
-                    isLight ? "border-gray-200" : "border-white/10"
-                  }`}
-                >
-                  <Users size={28} className="mx-auto mb-2 opacity-20" />
-                  <p
-                    className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
-                      isLight ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    No additional visitors
-                  </p>
-                </div>
-              )}
-            </SplitSection>
-          </div>
-        </SectionCard>
-      )}
-
-      {groupMembers && groupMembers.length > 0 && (
-        <SectionCard isLight={isLight}>
-          <div className="p-3 md:p-5">
-            <SplitSection title="Additional Visitors" icon={Users} isLight={isLight}>
+          <div className="p-2 md:p-3">
+            <SplitSection title="Additional visitors" icon={Users} isLight={isLight}>
               <SimpleTable
                 isLight={isLight}
                 columns={[
-                  { label: "Full Name", key: "fullName" },
+                  { label: "Full name", key: "fullName" },
                   { label: "NIC", key: "nic" },
                   { label: "Contact", key: "contact" }
                 ]}
@@ -419,16 +343,15 @@ const PersonnelAuthProtocol = ({
       )}
 
       {/* Items Carried In — grouped by sub-visitor (Group_Members) */}
-      <div className="mb-8">
+      <div className="mb-2">
         <SectionCard
           isLight={isLight}
           darkClassName="bg-[var(--color-bg-default)]"
         >
-          <div className="p-4 md:p-5">
+          <div className="p-3">
             <SplitSection
-              title="Items Carried In"
+              title="Items carried in"
               icon={Package}
-              description="Items brought in by each member of the visiting group."
               isLight={isLight}
             >
               {jointItems && jointItems.length > 0 ? (() => {
@@ -440,40 +363,39 @@ const PersonnelAuthProtocol = ({
                   return acc;
                 }, {});
                 return (
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     {Object.entries(grouped).map(([memberName, memberItems], gIdx) => (
                       <div key={gIdx}>
                         {/* Sub-visitor name header */}
-                        <div className={`flex items-center gap-2 mb-3 pb-2 border-b ${
+                        <div className={`flex items-center gap-2 mb-2 pb-1.5 border-b ${
                           isLight ? "border-gray-100" : "border-white/10"
                         }`}>
                           <User size={12} className="text-primary/60" />
-                          <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
+                          <span className={`text-[10px] font-bold capitalize tracking-[0.2em] ${
                             isLight ? "text-[#1A1A1A]" : "text-white"
                           }`}>
                             {memberName}
                           </span>
-                          <span className={`ml-auto text-[9px] font-semibold uppercase tracking-[0.14em] px-2 py-0.5 rounded-full border ${
+                          <span className={`ml-auto text-[9px] font-semibold capitalize tracking-[0.14em] px-2 py-0.5 rounded-full border ${
                             isLight ? "bg-gray-50 border-gray-200 text-gray-400" : "bg-white/5 border-white/10 text-white/40"
                           }`}>
                             {memberItems.length} {memberItems.length === 1 ? "item" : "items"}
                           </span>
                         </div>
-                        <div className="grid grid-cols-1 gap-3">
+                        <div className="grid grid-cols-1 gap-2">
                           {memberItems.map((item, idx) => (
                             <motion.div
                               key={idx}
-                              initial={{ opacity: 0, y: 8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: idx * 0.07 }}
-                              className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-[20px] hover:border-primary/20 transition-all ${
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className={`grid grid-cols-1 md:grid-cols-3 gap-3 p-3 border rounded-xl hover:border-primary/20 transition-all ${
                                 isLight
                                   ? "bg-gray-50 border-gray-200"
                                   : "bg-[var(--color-bg-paper)]/40 border-white/5"
                               }`}
                             >
-                              <Field label="Item Name" value={item.VIC_Item_Name || item.itemName} icon={Package} isLight={isLight} />
-                              <Field label="Quantity" value={item.VIC_Quantity ? String(item.VIC_Quantity) : (item.quantity ? String(item.quantity) : "—")} icon={Hash} isLight={isLight} />
+                              <Field label="Item name" value={item.VIC_Item_Name || item.itemName} icon={Package} isLight={isLight} />
+                              <Field label="Qty" value={item.VIC_Quantity ? String(item.VIC_Quantity) : (item.quantity ? String(item.quantity) : "—")} icon={Hash} isLight={isLight} />
                               <Field label="Description" value={item.VIC_Designation || item.description || "—"} icon={Briefcase} isLight={isLight} />
                             </motion.div>
                           ))}
@@ -484,17 +406,16 @@ const PersonnelAuthProtocol = ({
                 );
               })() : (
                 <div
-                  className={`border border-dashed rounded-2xl p-5 text-center ${
+                  className={`border border-dashed rounded-xl p-3 text-center ${
                     isLight ? "border-gray-200" : "border-white/10"
                   }`}
                 >
-                  <Package size={28} className="mx-auto mb-2 opacity-20" />
                   <p
-                    className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
+                    className={`text-[10px] font-semibold capitalize tracking-[0.18em] ${
                       isLight ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    No items carried in by the visiting group
+                    No items carried in
                   </p>
                 </div>
               )}
@@ -510,20 +431,20 @@ const PersonnelAuthProtocol = ({
               <>
                 <button
                   onClick={() => onAction(visitor, "Reject")}
-                  className={`px-6 py-2.5 border font-bold text-[11px] tracking-[0.15em] uppercase rounded-xl transition-all flex items-center gap-1.5 active:scale-95 ${isLight
+                  className={`px-6 py-2.5 border font-bold text-[11px] tracking-[0.15em] capitalize rounded-xl transition-all flex items-center gap-1.5 active:scale-95 ${isLight
                     ? "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
                     : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
                     }`}
                 >
                   <AlertCircle size={14} />
-                  Reject Request
+                  Reject request
                 </button>
                 <button
                   onClick={() => onAction(visitor, "Approve")}
-                  className="px-8 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[11px] font-bold tracking-[0.15em] uppercase rounded-xl transition-all shadow-lg shadow-green-500/20 flex items-center gap-1.5 active:scale-95"
+                  className="px-8 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[11px] font-bold tracking-[0.15em] capitalize rounded-xl transition-all shadow-lg shadow-green-500/20 flex items-center gap-1.5 active:scale-95"
                 >
                   <CheckCircle2 size={14} />
-                  Approve Entry
+                  Approve entry
                 </button>
               </>
             )}
@@ -563,8 +484,8 @@ const PersonnelAuthProtocol = ({
                       <QrCode size={16} className="text-green-500" />
                     </div>
                     <div>
-                      <p className="text-gray-400 text-[10px] uppercase tracking-[0.22em] font-bold">
-                        Sub-Visitor Pass
+                      <p className="text-gray-400 text-[10px] capitalize tracking-[0.22em] font-bold">
+                        Sub-visitor pass
                       </p>
                       <p className="text-white text-[13px] font-semibold capitalize tracking-wide">
                         {popupQR.member?.fullName || "—"}
@@ -584,19 +505,19 @@ const PersonnelAuthProtocol = ({
                   {popupQR.loading ? (
                     <div className="flex flex-col items-center gap-4 py-8">
                       <Loader2 size={36} className="text-green-500 animate-spin" />
-                      <p className="text-gray-500 text-[10px] uppercase tracking-[0.22em] font-bold">
-                        Generating QR Code…
+                      <p className="text-gray-500 text-[10px] capitalize tracking-[0.22em] font-bold">
+                        Generating QR code…
                       </p>
                     </div>
                   ) : popupQR.error ? (
                     <div className="flex flex-col items-center gap-3 py-6">
                       <AlertCircle size={32} className="text-primary opacity-60" />
-                      <p className="text-gray-400 text-[10px] uppercase tracking-[0.16em] font-semibold text-center">
+                      <p className="text-gray-400 text-[10px] capitalize tracking-[0.16em] font-semibold text-center">
                         {popupQR.error}
                       </p>
                       <button
                         onClick={() => handleOpenSubVisitorQR(popupQR.member, popupQR.idx)}
-                        className="px-5 py-2 bg-primary/10 border border-primary/30 text-primary text-[9px] font-bold uppercase tracking-[0.18em] rounded-xl hover:bg-primary/20 transition-all"
+                        className="px-5 py-2 bg-primary/10 border border-primary/30 text-primary text-[9px] font-bold capitalize tracking-[0.18em] rounded-xl hover:bg-primary/20 transition-all"
                       >
                         Retry
                       </button>
@@ -616,7 +537,7 @@ const PersonnelAuthProtocol = ({
                         />
                         <div className="absolute inset-x-0 -bottom-2.5 flex justify-center">
                           <span className="bg-black text-white px-3 py-0.5 rounded-full text-[8px] font-bold tracking-[0.18em] border border-white/20">
-                            SUB PASS
+                            Sub pass
                           </span>
                         </div>
                       </div>
@@ -624,7 +545,7 @@ const PersonnelAuthProtocol = ({
                       {/* NIC */}
                       <div className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
-                        <p className="text-green-400/80 text-[9px] uppercase tracking-[0.22em] font-bold">
+                        <p className="text-green-400/80 text-[9px] capitalize tracking-[0.22em] font-bold">
                           {popupQR.member?.nic}
                         </p>
                       </div>
@@ -632,7 +553,7 @@ const PersonnelAuthProtocol = ({
                       {/* Download */}
                       <button
                         onClick={() => handleDownloadSubQR(popupQR.member?.fullName)}
-                        className="w-full flex items-center justify-center gap-2 py-3 bg-green-500/10 border border-green-500/25 text-green-500 hover:bg-green-500 hover:text-white text-[10px] font-bold uppercase tracking-[0.18em] rounded-2xl transition-all"
+                        className="w-full flex items-center justify-center gap-2 py-3 bg-green-500/10 border border-green-500/25 text-green-500 hover:bg-green-500 hover:text-white text-[10px] font-bold capitalize tracking-[0.18em] rounded-2xl transition-all"
                       >
                         <Download size={13} />
                         Download QR

@@ -22,9 +22,9 @@ const VisitorOverview = ({ data, onChange, errors = {} }) => {
     },
     {
       name: "nic",
-      label: "ID or passport number",
+      label: "NIC",
       type: "text",
-      placeholder: "Enter your ID number",
+      placeholder: "Enter your NIC number",
       icon: CreditCard,
     },
     {

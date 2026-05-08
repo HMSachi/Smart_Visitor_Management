@@ -24,22 +24,17 @@ import SubVisitorQRService from "../../services/SubVisitorQRService";
 
 /* ─── Shared sub-components ─── */
 
-const SplitSection = ({ title, description, icon: Icon, isLight, children }) => (
-  <div className="flex flex-col gap-2">
+const SplitSection = ({ title, icon: Icon, isLight, children }) => (
+  <div className="flex flex-col gap-1">
     <div className="flex items-center gap-2">
       <div className="w-[3px] h-3.5 bg-primary rounded-full" />
       <div className="flex items-center gap-1.5">
         {Icon && <Icon size={13} className="text-primary/70" />}
-        <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+        <h3 className={`text-[13px] font-medium capitalize tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
           {title}
         </h3>
       </div>
     </div>
-    {description && (
-      <p className={`text-[9px] leading-relaxed mb-1 tracking-[0.05em] ${isLight ? "text-gray-400" : "text-white/30"}`}>
-        {description}
-      </p>
-    )}
     <div className="w-full">{children}</div>
   </div>
 );
@@ -51,15 +46,15 @@ const SectionCard = ({ children, isLight, darkClassName = "" }) => (
 );
 
 const Field = ({ label, value, icon: Icon, isLight }) => (
-  <div className="group/field flex flex-col gap-1">
+  <div className="group/field flex flex-col gap-0.5">
     <div className="flex items-center gap-1.5 px-0.5">
       {Icon && <Icon size={11} className="text-primary/50 group-hover/field:text-primary transition-colors" />}
-      <label className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}>
+      <label className={`text-[12px] font-medium capitalize tracking-tight ${isLight ? "text-gray-500" : "text-white/40"}`}>
         {label}
       </label>
     </div>
-    <div className={`px-3 py-1.5 rounded-lg border transition-all duration-300 ${isLight ? "bg-gray-50/30 border-gray-100 text-[#1A1A1A]" : "bg-black/20 border-white/5 text-white"}`}>
-      <p className="text-[11px] font-medium tracking-wide">{value || "No data"}</p>
+    <div className={`px-3 py-1 rounded-lg border transition-all duration-300 ${isLight ? "bg-gray-50/30 border-gray-100 text-[#1A1A1A]" : "bg-black/20 border-white/5 text-white"}`}>
+      <p className="text-[12px] font-medium tracking-tight">{value || "No data"}</p>
     </div>
   </div>
 );
@@ -159,49 +154,45 @@ const ContactPersonAuthProtocol = ({
             <SplitSection
               title="Visitor details"
               icon={User}
-              description="Identity and contact information for the primary visitor."
               isLight={isLight}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
                 <Field label="Full name" value={visitor.name || visitor.fullName} icon={User} isLight={isLight} />
-                <Field label="ID or passport number" value={visitor.nic} icon={Hash} isLight={isLight} />
+                <Field label="NIC" value={visitor.nic} icon={Hash} isLight={isLight} />
                 <Field label="Phone number" value={visitor.contact || visitor.phoneNumber} icon={Phone} isLight={isLight} />
                 <Field label="Email address" value={visitor.email || visitor.emailAddress} icon={Mail} isLight={isLight} />
               </div>
 
               {/* Items carried by the main visitor — embedded subsection */}
-              <div className={`mt-6 pt-5 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}>
-                <div className="flex items-center gap-2 mb-4">
+              <div className={`mt-4 pt-4 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}>
+                <div className="flex items-center gap-2 mb-3">
                   <Package size={13} className="text-primary/70" />
-                  <p className={`uppercase text-[10px] font-bold tracking-[0.2em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
-                    Items Carried
+                  <p className={`capitalize text-[12px] font-medium tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                    Items carried
                   </p>
-                  <span className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${isLight ? "text-gray-400" : "text-white/35"}`}>
-                    — declared by the primary visitor
-                  </span>
                 </div>
                 {itemsCarried && itemsCarried.length > 0 ? (
-                  <div className={`border rounded-lg overflow-hidden ${isLight ? 'border-gray-200' : 'border-white/10'}`}>
-                    <div className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? 'bg-gray-100 border-gray-200' : 'bg-white/5 border-white/10'}`}>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider flex-[2] ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Item Name</span>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider w-16 text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Qty</span>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider flex-[3] sm:text-right ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Description</span>
+                  <div className={`border rounded-lg overflow-hidden ${isLight ? 'border-gray-100' : 'border-white/10'}`}>
+                    <div className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? 'bg-gray-50 border-gray-100' : 'bg-white/5 border-white/10'}`}>
+                      <span className={`text-[12px] font-medium capitalize tracking-tight flex-[2] ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>Item name</span>
+                      <span className={`text-[12px] font-medium capitalize tracking-tight w-16 text-center ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>Qty</span>
+                      <span className={`text-[12px] font-medium capitalize tracking-tight flex-[3] sm:text-right ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>Description</span>
                     </div>
-                    <div className={`divide-y overflow-y-auto max-h-[200px] ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
+                    <div className={`divide-y overflow-y-auto max-h-[200px] ${isLight ? 'divide-gray-50/50' : 'divide-white/5'}`}>
                       {itemsCarried.map((item, idx) => (
-                        <div key={item.id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
-                          <span className={`text-[11px] font-medium flex-[2] truncate ${isLight ? 'text-[#1A1A1A]' : 'text-white'}`}>{item.itemName}</span>
+                        <div key={item.id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/30') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
+                          <span className={`text-[12px] font-medium flex-[2] truncate ${isLight ? 'text-[#1A1A1A]' : 'text-white'}`}>{item.itemName}</span>
                           <div className="w-16 flex justify-center">
-                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? 'text-primary bg-primary/5' : 'text-white bg-white/10'}`}>x{item.quantity ? item.quantity : 1}</span>
+                            <span className={`text-[12px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? 'text-primary bg-primary/5' : 'text-white bg-white/10'}`}>x{item.quantity ? item.quantity : 1}</span>
                           </div>
-                          <span className={`text-[11px] font-medium flex-[3] sm:text-right truncate ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>{item.description || "-"}</span>
+                          <span className={`text-[12px] font-medium flex-[3] sm:text-right truncate ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>{item.description || "-"}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 ) : (
                   <div className={`border border-dashed rounded-xl p-3 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}>
-                    <p className={`text-[10px] font-semibold uppercase tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}>
+                    <p className={`text-[10px] font-semibold capitalize tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}>
                       No items declared by the primary visitor
                     </p>
                   </div>
@@ -257,18 +248,18 @@ const ContactPersonAuthProtocol = ({
       {/* ── 4. Vehicle Registry (conditional) ── */}
       {vehiclesList && vehiclesList.length > 0 && (
         <SectionCard isLight={isLight}>
-          <div className="p-3 md:p-5">
-            <SplitSection title="Vehicle Registry" icon={Car} isLight={isLight}>
-              <div className={`border rounded-lg overflow-hidden ${isLight ? 'border-gray-200' : 'border-white/10'}`}>
-                <div className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? 'bg-gray-100 border-gray-200' : 'bg-white/5 border-white/10'}`}>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Vehicle Type</span>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 sm:text-right ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Vehicle Number</span>
+          <div className="p-3 md:p-4">
+            <SplitSection title="Vehicle registry" icon={Car} isLight={isLight}>
+              <div className={`border rounded-lg overflow-hidden ${isLight ? 'border-gray-100' : 'border-white/10'}`}>
+                <div className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? 'bg-gray-50 border-gray-100' : 'bg-white/5 border-white/10'}`}>
+                  <span className={`text-[12px] font-medium capitalize tracking-tight flex-1 ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>Vehicle type</span>
+                  <span className={`text-[12px] font-medium capitalize tracking-tight flex-1 sm:text-right ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>Vehicle number</span>
                 </div>
-                <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
+                <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? 'divide-gray-50/50' : 'divide-white/5'}`}>
                   {vehiclesList.map((vehicle, idx) => (
-                    <div key={vehicle.id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
-                      <span className={`text-[11px] font-medium uppercase flex-1 ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{vehicle.vehicleType}</span>
-                      <span className={`text-[11px] font-medium flex-1 sm:text-right ${isLight ? 'text-[#1A1A1A]' : 'text-white'}`}>{vehicle.plateNumber}</span>
+                    <div key={vehicle.id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/30') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
+                      <span className={`text-[12px] font-medium capitalize flex-1 ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{vehicle.vehicleType}</span>
+                      <span className={`text-[12px] font-medium flex-1 sm:text-right ${isLight ? 'text-[#1A1A1A]' : 'text-white'}`}>{vehicle.plateNumber}</span>
                     </div>
                   ))}
                 </div>
@@ -281,32 +272,31 @@ const ContactPersonAuthProtocol = ({
       {/* ── 5. Visiting People with QR buttons (conditional) ── */}
       {groupMembers && groupMembers.length > 0 && (
         <SectionCard isLight={isLight}>
-          <div className="p-3 md:p-5">
+          <div className="p-2 md:p-3">
             <SplitSection
-              title="Visiting People"
+              title="Visiting people"
               icon={Users}
-              description="Additional attendees tied to the request."
               isLight={isLight}
             >
-              <div className={`border rounded-lg overflow-hidden ${isLight ? 'border-gray-200' : 'border-white/10'}`}>
-                <div className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? 'bg-gray-100 border-gray-200' : 'bg-white/5 border-white/10'}`}>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Name</span>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 sm:text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>NIC / Passport</span>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 sm:text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Contact</span>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider w-12 text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>QR</span>
+              <div className={`border rounded-lg overflow-hidden ${isLight ? 'border-gray-100' : 'border-white/10'}`}>
+                <div className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? 'bg-gray-50 border-gray-100' : 'bg-white/5 border-white/10'}`}>
+                  <span className={`text-[12px] font-medium capitalize tracking-tight flex-1 ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>Name</span>
+                  <span className={`text-[12px] font-medium capitalize tracking-tight flex-1 sm:text-center ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>NIC</span>
+                  <span className={`text-[12px] font-medium capitalize tracking-tight flex-1 sm:text-center ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>Contact</span>
+                  <span className={`text-[12px] font-medium capitalize tracking-tight w-12 text-center ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>QR</span>
                 </div>
-                <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
+                <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? 'divide-gray-50/50' : 'divide-white/5'}`}>
                   {groupMembers.map((member, idx) => (
-                    <div key={member.id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
-                      <span className={`text-[11px] font-medium flex-1 ${isLight ? 'text-[#1A1A1A]' : 'text-white'}`}>{member.fullName}</span>
-                      <span className={`text-[11px] font-medium uppercase flex-1 sm:text-center ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{member.nic}</span>
-                      <span className={`text-[11px] font-medium flex-1 sm:text-center ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{member.contact || "-"}</span>
+                    <div key={member.id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/30') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
+                      <span className={`text-[12px] font-medium flex-1 ${isLight ? 'text-[#1A1A1A]' : 'text-white'}`}>{member.fullName}</span>
+                      <span className={`text-[12px] font-medium capitalize flex-1 sm:text-center ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{member.nic}</span>
+                      <span className={`text-[12px] font-medium flex-1 sm:text-center ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{member.contact || "-"}</span>
                       <div className="w-12 flex justify-center">
                         {hasGatePass() && (
                           <button
                             onClick={() => handleOpenSubVisitorQR(member, idx)}
-                            title="View QR Code"
-                            className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all border ${isLight ? "bg-white border-gray-200 text-gray-500 hover:border-primary/40 hover:text-primary" : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"}`}
+                            title="View QR code"
+                            className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all border ${isLight ? "bg-white border-gray-100 text-gray-500 hover:border-primary/40 hover:text-primary" : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"}`}
                           >
                             <QrCode size={13} />
                           </button>
@@ -322,28 +312,27 @@ const ContactPersonAuthProtocol = ({
       )}
 
       {/* ── 6. Items Carried In — grouped by sub-visitor ── */}
-      <div className="mb-8">
+      <div className="mb-2">
         <SectionCard isLight={isLight} darkClassName="bg-[var(--color-bg-default)]">
-          <div className="p-4 md:p-5">
+          <div className="p-2 md:p-3">
             <SplitSection
-              title="Items Carried In"
+              title="Items carried in"
               icon={Package}
-              description="Items brought in by each member of the visiting group."
               isLight={isLight}
             >
               {jointItems && jointItems.length > 0 ? (
                 <div className={`border rounded-lg overflow-hidden ${isLight ? 'border-gray-200' : 'border-white/10'}`}>
                   <div className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? 'bg-gray-100 border-gray-200' : 'bg-white/5 border-white/10'}`}>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Sub Visitor</span>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider flex-1 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Item Name</span>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider w-16 text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Qty</span>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider flex-[2] sm:text-right ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Description</span>
+                    <span className={`text-[10px] font-bold capitalize tracking-wider flex-1 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Sub visitor</span>
+                    <span className={`text-[10px] font-bold capitalize tracking-wider flex-1 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Item name</span>
+                    <span className={`text-[10px] font-bold capitalize tracking-wider w-16 text-center ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Qty</span>
+                    <span className={`text-[10px] font-bold capitalize tracking-wider flex-[2] sm:text-right ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Description</span>
                   </div>
                   <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? 'divide-gray-100' : 'divide-white/5'}`}>
                     {jointItems.map((item, idx) => {
                       const memberName = item.Group_Members || "Unknown Member";
                       return (
-                        <div key={idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
+                        <div key={idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1 ${isLight ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50') : (idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5')}`}>
                           <span className={`text-[11px] font-medium flex-1 truncate ${isLight ? 'text-[#1A1A1A]' : 'text-white'}`}>{memberName}</span>
                           <span className={`text-[11px] font-medium flex-1 truncate ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{item.VIC_Item_Name || item.itemName}</span>
                           <div className="w-16 flex justify-center">
@@ -356,10 +345,9 @@ const ContactPersonAuthProtocol = ({
                   </div>
                 </div>
               ) : (
-                <div className={`border border-dashed rounded-2xl p-5 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}>
-                  <Package size={28} className="mx-auto mb-2 opacity-20" />
-                  <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${isLight ? "text-gray-400" : "text-gray-500"}`}>
-                    No items carried in by the visiting group
+                <div className={`border border-dashed rounded-xl p-3 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}>
+                  <p className={`text-[10px] font-semibold capitalize tracking-[0.18em] ${isLight ? "text-gray-400" : "text-gray-500"}`}>
+                    No items carried in
                   </p>
                 </div>
               )}

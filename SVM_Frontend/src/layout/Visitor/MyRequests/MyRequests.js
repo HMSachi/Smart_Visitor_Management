@@ -550,7 +550,7 @@ const MyRequests = () => {
     const member = editGroupMembers[idx];
     if (!member?._isNew || newMemberSavingIdx !== null) return;
     if (!member.VVG_Visitor_Name || !member.VVG_NIC_Passport_Number) {
-      setEditError("Name and ID/Passport are required for new visitors.");
+      setEditError("Name and NIC are required for new visitors.");
       return;
     }
     const nicErr = validateNIC(member.VVG_NIC_Passport_Number);
@@ -749,7 +749,7 @@ const MyRequests = () => {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none"></div>
 
-      <div className="max-w-[1100px] mx-auto relative z-10">
+      <div className="max-w-none mx-auto relative z-10">
         <header className="mb-5">
           <div>
             <h1 className="text-[20px] md:text-[21px] font-semibold text-white mt-1 tracking-[0.02em]">
@@ -785,23 +785,23 @@ const MyRequests = () => {
                   <Table size="small" sx={{ minWidth: 560 }}>
                     <TableHead className="bg-white/[0.02]">
                       <TableRow>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
                           ID
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px] min-w-[150px]">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5 min-w-[150px]">
                           Date
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px] min-w-[200px]">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5 min-w-[200px]">
                           Going To
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
                           Reason
                         </TableCell>
-                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]">
+                        <TableCell className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
                           Status
                         </TableCell>
                         <TableCell
-                          className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[10px] border-b-white/5 py-1.5 px-2.5 text-[12px]"
+                          className="text-gray-400 font-normal uppercase tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5"
                           align="right"
                         >
                           Actions
@@ -815,17 +815,17 @@ const MyRequests = () => {
                           hover
                           className="hover:bg-white/[0.02] transition-all"
                         >
-                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
+                          <TableCell className="px-2.5 py-1 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center gap-1.5">
                               <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                                 <Hash size={11} />
                               </div>
-                              <span className="text-white font-mono tracking-normal text-[13px]">
+                              <span className="text-white font-mono tracking-normal text-[11px]">
                                 #{req.VVR_Request_id}
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
+                          <TableCell className="px-2.5 py-1 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center gap-2 text-gray-300">
                               <Calendar size={11} className="text-primary/50" />
                               <span className="text-[12px] font-normal tracking-normal">
@@ -837,7 +837,7 @@ const MyRequests = () => {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
+                          <TableCell className="px-2.5 py-1 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center gap-2 text-gray-300">
                               <MapPin size={11} className="text-primary/50" />
                               <span className="text-[12px] font-normal tracking-normal">
@@ -845,18 +845,18 @@ const MyRequests = () => {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
+                          <TableCell className="px-2.5 py-1 border-b-white/5 font-normal text-[12px]">
                             <p className="text-white font-normal tracking-wide text-[12px] opacity-80 line-clamp-1">
                               {req.VVR_Purpose || "-"}
                             </p>
                           </TableCell>
-                          <TableCell className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]">
+                          <TableCell className="px-2.5 py-1 border-b-white/5 font-normal text-[12px]">
                             <div className="flex items-center justify-center">
                               <StatusBadge status={req.VVR_Status} />
                             </div>
                           </TableCell>
                           <TableCell
-                            className="px-2.5 py-1.5 border-b-white/5 font-normal text-[12px]"
+                            className="px-2.5 py-1 border-b-white/5 font-normal text-[12px]"
                             align="right"
                           >
                             <div className="flex items-center justify-end gap-2">
@@ -983,7 +983,7 @@ const MyRequests = () => {
                         {hasGatePass(req.VVR_Request_id) && (
                           <button
                             onClick={() => handleViewGatePass(req)}
-                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary hover:bg-primary/20 hover:border-primary/50 transition-all font-bold uppercase tracking-[0.1em] text-[10px] group/btn"
+                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-primary/10 border border-primary/30 rounded-xl text-primary hover:bg-primary/20 hover:border-primary/50 transition-all font-bold uppercase tracking-[0.1em] text-[12px] group/btn"
                           >
                             <QrCode
                               size={13}
@@ -2023,3 +2023,6 @@ const MyRequests = () => {
 };
 
 export default MyRequests;
+
+
+

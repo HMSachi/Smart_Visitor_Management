@@ -239,13 +239,13 @@ const ApprovalManagement = () => {
         onBack={handleBackToList}
       />
 
-      <div className="flex-1 p-2 md:p-4 space-y-2 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
+      <div className="flex-1 p-2 md:p-3 space-y-2 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
         {/* Dynamic Operational Aura */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
-        <div className="max-w-[1700px] mx-auto relative z-10 flex flex-col min-h-full">
+        <div className="max-w-none mx-auto relative z-10 flex flex-col min-h-full">
 
-          <div className="flex-1 flex flex-col space-y-3 md:space-y-6">
+          <div className="flex-1 flex flex-col space-y-2 md:space-y-4">
             <AnimatePresence mode="wait">
               {viewMode === "list" ? (
                 <motion.div
@@ -280,17 +280,17 @@ const ApprovalManagement = () => {
                           <div className="flex flex-row items-center gap-2">
                             <button
                               onClick={() => handleAction(selectedVisitor, "Approve")}
-                              className="px-4 py-2 bg-[#00B14F] hover:bg-[#009e46] text-white text-[9px] font-bold tracking-[0.15em] uppercase rounded-lg transition-all shadow-sm flex items-center gap-2"
+                              className="px-4 py-2 bg-[#00B14F] hover:bg-[#009e46] text-white text-[9px] font-bold tracking-[0.15em] capitalize rounded-lg transition-all shadow-sm flex items-center gap-2"
                             >
                               <CheckCircle2 size={12} />
-                              ACCEPT
+                              Accept
                             </button>
                             <button
                               onClick={() => handleAction(selectedVisitor, "Reject")}
-                              className="px-4 py-2 bg-primary hover:bg-[#A00D25] text-white text-[9px] font-bold tracking-[0.15em] uppercase rounded-lg transition-all shadow-sm flex items-center gap-2"
+                              className="px-4 py-2 bg-primary hover:bg-[#A00D25] text-white text-[9px] font-bold tracking-[0.15em] capitalize rounded-lg transition-all shadow-sm flex items-center gap-2"
                             >
                               <AlertCircle size={12} />
-                              REJECT
+                              Reject
                             </button>
                           </div>
                         )}

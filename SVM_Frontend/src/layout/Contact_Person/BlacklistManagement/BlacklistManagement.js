@@ -8,7 +8,7 @@ const BlacklistManagement = () => {
       <Header />
 
       <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto w-full animate-fade-in">
-        <div className="max-w-[1600px] mx-auto">
+        <div className="max-w-none mx-auto">
           {/* Page Header */}
           <div className="flex items-center gap-3 mb-6">
             <div

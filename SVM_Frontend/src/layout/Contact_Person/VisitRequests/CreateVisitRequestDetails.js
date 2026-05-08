@@ -268,41 +268,39 @@ const CreateVisitRequestDetails = () => {
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-hidden">
         <Header title="Additional Details" />
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-5 custom-scrollbar">
-          <div className="max-w-6xl mx-auto space-y-4 animate-fade-in-slow pb-6">
+        <main className="flex-1 overflow-y-auto p-3 custom-scrollbar">
+          <div className="max-w-none mx-auto space-y-3 animate-fade-in-slow pb-4">
             
-            <div className="flex items-center gap-4 px-1">
-              <div className="flex items-center gap-2 opacity-40">
-                <div className="w-6 h-6 rounded-full bg-green-500 text-white text-[10px] font-black flex items-center justify-center"><CheckCircle2 size={12} /></div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Core Info</span>
-              </div>
-              <div className="h-[1px] w-12 bg-gray-200"></div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-primary text-white text-[10px] font-black flex items-center justify-center">2</div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary">Details</span>
-              </div>
-            </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-green-500 text-white text-[10px] font-medium flex items-center justify-center"><CheckCircle2 size={12} /></div>
+                        <span className="text-[10px] font-medium capitalize tracking-widest text-gray-500">Core info</span>
+                      </div>
+                      <div className="h-[1px] w-12 bg-gray-200"></div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-primary text-white text-[10px] font-medium flex items-center justify-center">2</div>
+                        <span className="text-[10px] font-medium capitalize tracking-widest text-primary">Details</span>
+                      </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-2">
               
-              <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+              <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 mb-2">
                   <SectionHeader title="Vehicle Details" icon={Car} />
-                  <button type="button" onClick={handleAddVehicle} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
-                    <Plus size={12} /> Add Vehicle
+                  <button type="button" onClick={handleAddVehicle} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-medium capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                    <Plus size={12} /> Add vehicle
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-1">
                   {vehicles.map((v, index) => (
-                    <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 rounded-xl border transition-all ${v.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"} relative group`}>
+                    <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-2 rounded-xl border transition-all ${v.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"} relative group`}>
                       <div className="md:col-span-3">
-                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 flex px-0.5">Type</label>
+                        <label className="text-[12px] font-medium text-gray-400 capitalize tracking-[0.15em] mb-1 flex px-0.5">Type</label>
                         <select 
                           disabled={v.isConfirmed}
                           value={v.type} 
                           onChange={(e) => dispatch(updateVehicle({ index, field: "type", value: e.target.value }))} 
-                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[12px] font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 disabled:opacity-60"
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[12px] font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 disabled:opacity-60"
                         >
                           <option value="Car">Car</option>
                           <option value="Van">Van</option>
@@ -339,15 +337,15 @@ const CreateVisitRequestDetails = () => {
                 </div>
               </div>
 
-              <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+              <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
                   <SectionHeader title="Additional Visitors" icon={Users} />
-                  <button type="button" onClick={handleAddPerson} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
-                    <Plus size={12} /> Add Person
+                  <button type="button" onClick={handleAddPerson} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-medium capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                    <Plus size={12} /> Add person
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <datalist id="visitor-names">
                     {allVisitors.map((v, idx) => (
                       <option key={`${v.VV_Visitor_id}-${idx}`} value={v.VV_Name}>
@@ -356,7 +354,7 @@ const CreateVisitRequestDetails = () => {
                     ))}
                   </datalist>
                   {people.map((p, index) => (
-                    <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 rounded-xl border transition-all ${p.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"}`}>
+                    <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-3 rounded-xl border transition-all ${p.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"}`}>
                       <div className="md:col-span-3">
                         <InputField 
                           disabled={p.isConfirmed} 
@@ -407,21 +405,21 @@ const CreateVisitRequestDetails = () => {
                       </div>
                     </div>
                   ))}
-                  {people.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">No additional visitors</p></div>}
+                  {people.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[12px] font-bold text-gray-300 uppercase tracking-widest">No additional visitors</p></div>}
                 </div>
               </div>
 
-              <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+              <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
                   <SectionHeader title="Items to Bring" icon={Package} />
-                  <button type="button" onClick={handleAddItem} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
-                    <Plus size={12} /> Add Item
+                  <button type="button" onClick={handleAddItem} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-medium capitalize tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                    <Plus size={12} /> Add item
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {items.map((i, index) => (
-                    <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 rounded-xl border transition-all ${i.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"}`}>
+                    <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-3 rounded-xl border transition-all ${i.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"}`}>
                       <div className="md:col-span-3">
                         <InputField disabled={i.isConfirmed} label="Item" value={i.name} onChange={(e) => dispatch(updateItem({ index, field: "name", value: e.target.value }))} placeholder="e.g. Laptop" />
                       </div>
@@ -444,11 +442,11 @@ const CreateVisitRequestDetails = () => {
                       </div>
                     </div>
                   ))}
-                  {items.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">No items declared</p></div>}
+                  {items.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[12px] font-bold text-gray-300 uppercase tracking-widest">No items declared</p></div>}
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-center gap-4 pt-6">
+              <div className="flex flex-col md:flex-row items-center gap-4 pt-4">
                 <button type="button" onClick={() => navigate("/contact_person/create-visit-request")} className="w-full md:w-auto px-10 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all">
                   Back to Core Info
                 </button>
