@@ -15,6 +15,7 @@ import {
 } from "../../../reducers/visitRequestFormSlice";
 import { AddVisitRequest, GetVisitRequestsByCP } from "../../../actions/VisitRequestAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
+import { GetAllPlaces } from "../../../actions/PlacesAction";
 
 import { 
   User, 
@@ -35,6 +36,7 @@ const CreateVisitRequest = () => {
   const user = useSelector((state) => state.login.user);
   const userEmail = user?.ResultSet?.[0]?.VA_Email;
   const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+  const { places: placesList, loading: placesLoading } = useSelector((state) => state.placesState || { places: [], loading: false });
 
 
   const { visitationDetails: formData, selectedVisitorDetails, isSubmitting } = useSelector((state) => state.visitRequestForm);
@@ -60,6 +62,7 @@ const CreateVisitRequest = () => {
   useEffect(() => {
     if (cpId) dispatch(GetVisitorsByCP(cpId));
     dispatch(GetAllBlacklist());
+    dispatch(GetAllPlaces());
   }, [dispatch, cpId]);
 
 
@@ -219,7 +222,36 @@ const CreateVisitRequest = () => {
                   )}
 
                   <InputField label="Visit Date" name="VVR_Visit_Date" type="date" value={formData.VVR_Visit_Date} onChange={handleInputChange} error={errors.VVR_Visit_Date} icon={Calendar} />
-                  <InputField label="Places to Visit" name="VVR_Places_to_Visit" placeholder="e.g. Server Room, Finance" value={formData.VVR_Places_to_Visit} onChange={handleInputChange} error={errors.VVR_Places_to_Visit} icon={MapPin} />
+                  {/* Places to Visit — dynamic dropdown from Admin Places API */}
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] font-medium text-gray-400 capitalize tracking-[0.15em] flex items-center gap-1.5 px-0.5">
+                      <MapPin size={11} className="text-primary" /> Places to Visit
+                    </label>
+                    <select
+                      name="VVR_Places_to_Visit"
+                      value={formData.VVR_Places_to_Visit}
+                      onChange={handleInputChange}
+                      disabled={placesLoading}
+                      className={`w-full bg-white border rounded-lg px-3 py-1.5 text-[12px] font-medium transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
+                        errors.VVR_Places_to_Visit ? "border-red-500" : "border-gray-200 focus:border-primary/50"
+                      } ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                    >
+                      <option value="">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
+                      {placesList && placesList.length > 0 && placesList
+                        .filter((place) => {
+                          const status = (place.VAIL_Status || place.Status || place.status || 'A').toString().trim().toUpperCase();
+                          return status === 'A';
+                        })
+                        .map((place, idx) => {
+                          const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
+                          const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
+                          return (
+                            <option key={id} value={name}>{name}</option>
+                          );
+                        })}
+                    </select>
+                    {errors.VVR_Places_to_Visit && <p className="text-[8px] text-red-500 font-bold px-0.5 capitalize">{errors.VVR_Places_to_Visit}</p>}
+                  </div>
                   <div className="md:col-span-2">
                     <InputField label="What Is The Reason?" name="VVR_Purpose" placeholder="e.g. Maintenance, Meeting" value={formData.VVR_Purpose} onChange={handleInputChange} error={errors.VVR_Purpose} icon={HelpCircle} />
                   </div>

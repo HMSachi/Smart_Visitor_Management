@@ -21,9 +21,10 @@ import {
   DialogContent,
   DialogActions,
   CircularProgress,
+  Chip,
 } from "@mui/material";
-import { MapPin, Plus, Edit } from "lucide-react";
-import { AddPlace, GetAllPlaces, UpdatePlace } from "../../../actions/PlacesAction";
+import { MapPin, Plus, Edit, ToggleLeft, ToggleRight } from "lucide-react";
+import { AddPlace, GetAllPlaces, UpdatePlace, UpdatePlaceStatus } from "../../../actions/PlacesAction";
 
 const PlacesManagement = () => {
   const [placeName, setPlaceName] = useState("");
@@ -178,6 +179,33 @@ const PlacesManagement = () => {
     }
   };
 
+  const handleToggleStatus = async (place) => {
+    try {
+      setIsSubmitting(true);
+      const placeId = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || place.ID;
+      const currentStatus = (place.VAIL_Status || place.Status || 'A').toString().trim().toUpperCase();
+      const newStatus = currentStatus === 'A' ? 'I' : 'A';
+      const pUid = user?.ResultSet?.[0]?.P_UID || "admin";
+
+      await dispatch(UpdatePlaceStatus(placeId, newStatus, pUid));
+
+      setNotification({
+        open: true,
+        message: `Place ${newStatus === 'A' ? 'activated' : 'deactivated'} successfully`,
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Error toggling place status:", error);
+      setNotification({
+        open: true,
+        message: "Failed to update place status",
+        severity: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleCloseNotification = () => {
     setNotification({ ...notification, open: false });
   };
@@ -254,6 +282,7 @@ const PlacesManagement = () => {
                 <TableRow>
                   <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Place Name</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 600 }}>Status</TableCell>
                   <TableCell align="right" sx={{ fontWeight: 600 }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -261,12 +290,36 @@ const PlacesManagement = () => {
                 {places.map((place, index) => {
                   const placeId = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || place.ID || index + 1;
                   const placeNameVal = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unnamed Place";
+                  const placeStatus = (place.VAIL_Status || place.Status || 'A').toString().trim().toUpperCase();
+                  const isActive = placeStatus === 'A';
                   
                   return (
-                    <TableRow key={placeId} hover>
+                    <TableRow key={placeId} hover sx={{ opacity: isActive ? 1 : 0.6 }}>
                       <TableCell>{placeId}</TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>{placeNameVal}</TableCell>
+                      <TableCell align="center">
+                        <Chip
+                          label={isActive ? "Active" : "Inactive"}
+                          size="small"
+                          sx={{
+                            fontWeight: 600,
+                            fontSize: '0.7rem',
+                            bgcolor: isActive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
+                            color: isActive ? '#22c55e' : '#ef4444',
+                            border: `1px solid ${isActive ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                          }}
+                        />
+                      </TableCell>
                       <TableCell align="right">
+                        <IconButton 
+                          onClick={() => handleToggleStatus(place)}
+                          size="small"
+                          disabled={isSubmitting}
+                          title={isActive ? "Deactivate" : "Activate"}
+                          sx={{ color: isActive ? '#22c55e' : '#ef4444', mr: 0.5 }}
+                        >
+                          {isActive ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
+                        </IconButton>
                         <IconButton 
                           color="primary" 
                           onClick={() => handleOpenEdit(place)}

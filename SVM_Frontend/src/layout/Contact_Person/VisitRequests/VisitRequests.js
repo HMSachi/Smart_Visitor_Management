@@ -14,6 +14,7 @@ import { GetVisitorsByCP } from "../../../actions/VisitorAction";
 import { AddVehicle } from "../../../actions/VehicleAction";
 import { GetAllGatePasses } from "../../../actions/GatePassAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
+import { GetAllPlaces } from "../../../actions/PlacesAction";
 import VisitRequestService from "../../../services/VisitRequestService";
 import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
@@ -131,6 +132,9 @@ const VisitRequests = () => {
   const { visitorsByCP } = useSelector((state) => state.visitorManagement);
   const { blacklists } = useSelector(
     (state) => state.blacklistState || { blacklists: [] }
+  );
+  const { places: placesList, loading: placesLoading } = useSelector(
+    (state) => state.placesState || { places: [], loading: false }
   );
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
@@ -287,6 +291,7 @@ const VisitRequests = () => {
     dispatch(GetVisitRequestsByCP(cpId));
     dispatch(GetVisitorsByCP(cpId));
     dispatch(GetAllBlacklist());
+    dispatch(GetAllPlaces());
     setFormData((prev) => ({ ...prev, VVR_Contact_person_id: cpId }));
   }, [dispatch, cpId]);
 
@@ -1579,18 +1584,31 @@ const VisitRequests = () => {
                     <label className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold px-1 opacity-70">
                       Areas to Visit
                     </label>
-                    <input
+                    <select
                       required
-                      type="text"
                       name="VVR_Places_to_Visit"
                       value={formData.VVR_Places_to_Visit}
                       onChange={handleInputChange}
-                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${isLight
+                      disabled={placesLoading}
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all appearance-none cursor-pointer ${isLight
                         ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
                         : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                        }`}
-                      placeholder="Enter the place or area name"
-                    />
+                        } ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                    >
+                      <option value="">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
+                      {placesList && placesList.length > 0 && placesList
+                        .filter((place) => {
+                          const status = (place.VAIL_Status || place.Status || 'A').toString().trim().toUpperCase();
+                          return status === 'A';
+                        })
+                        .map((place, idx) => {
+                          const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
+                          const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
+                          return (
+                            <option key={id} value={name}>{name}</option>
+                          );
+                        })}
+                    </select>
                   </div>
 
                   <div className="space-y-2">
@@ -1967,8 +1985,7 @@ const VisitRequests = () => {
                             Places to Visit
                           </label>
                         </div>
-                        <input
-                          type="text"
+                        <select
                           value={editForm.VVR_Places_to_Visit}
                           onChange={(e) =>
                             setEditForm((f) => ({
@@ -1976,9 +1993,23 @@ const VisitRequests = () => {
                               VVR_Places_to_Visit: e.target.value,
                             }))
                           }
-                          className="mas-input"
-                          placeholder="Enter the place or area name"
-                        />
+                          disabled={placesLoading}
+                          className={`mas-input appearance-none cursor-pointer ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                        >
+                          <option value="">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
+                          {placesList && placesList.length > 0 && placesList
+                            .filter((place) => {
+                              const status = (place.VAIL_Status || place.Status || 'A').toString().trim().toUpperCase();
+                              return status === 'A';
+                            })
+                            .map((place, idx) => {
+                              const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
+                              const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
+                              return (
+                                <option key={id} value={name}>{name}</option>
+                              );
+                            })}
+                        </select>
                       </div>
                       {/* Purpose */}
                       <div className="md:col-span-2 group/field flex flex-col gap-1">
