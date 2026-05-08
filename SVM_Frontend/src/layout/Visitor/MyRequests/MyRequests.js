@@ -124,6 +124,7 @@ const MyRequests = () => {
   const [editVehicles, setEditVehicles] = useState([]); // [{ VV_Vehicle_id, VV_Vehicle_Number, VV_Vehicle_Type, _isNew? }]
   const [editGroupMembers, setEditGroupMembers] = useState([]); // [{ VVG_id, VVG_Visitor_Name, VVG_Designation, VVG_NIC_Passport_Number }]
   const [editItems, setEditItems] = useState([]); // [{ VIC_Item_id, VIC_Item_Name, VIC_Quantity, VIC_Designation }]
+  const [editJointItems, setEditJointItems] = useState([]); // [{ subVisitorName, VIC_Item_Name, VIC_Quantity, VIC_Designation, _isNew? }]
   const [editSaving, setEditSaving] = useState(false);
   const [vehicleSavingIdx, setVehicleSavingIdx] = useState(null);
   const [memberSavingIdx, setMemberSavingIdx] = useState(null);
@@ -131,6 +132,8 @@ const MyRequests = () => {
   const [newVehicleSavingIdx, setNewVehicleSavingIdx] = useState(null);
   const [newMemberSavingIdx, setNewMemberSavingIdx] = useState(null);
   const [newItemSavingIdx, setNewItemSavingIdx] = useState(null);
+  const [subItemSavingIdx, setSubItemSavingIdx] = useState(null);
+  const [newSubItemSavingIdx, setNewSubItemSavingIdx] = useState(null);
   const [rowSuccess, setRowSuccess] = useState({});
   const [editError, setEditError] = useState("");
   const [dirtyRows, setDirtyRows] = useState(new Set()); // keys: 'vehicle-N','member-N','item-N'
@@ -235,10 +238,11 @@ const MyRequests = () => {
     setDirtyRows(new Set());
     setWarnDirty(false);
     try {
-      const [vehicleRes, groupRes, itemsRes] = await Promise.all([
+      const [vehicleRes, groupRes, itemsRes, jointRes] = await Promise.all([
         VehicleService.GetAllVehicles(),
         VisitGroupService.GetAllVisitGroup(),
         ItemCarriedService.GetAllItemsCarried(),
+        VisitorService.GetVisitorJoint(req.VVR_Request_id),
       ]);
       const reqId = String(req.VVR_Request_id);
       const allVehicles = vehicleRes?.data?.ResultSet || vehicleRes?.data || [];
@@ -287,6 +291,24 @@ const MyRequests = () => {
             },
           })),
       );
+      const rawJoint = jointRes?.data?.ResultSet || jointRes?.data || [];
+      setEditJointItems(
+        (Array.isArray(rawJoint) ? rawJoint : []).map((i) => ({
+          ...i,
+          subVisitorName: i.Group_Members || "",
+          subVisitorNic: i.VVG_NIC_Passport_Number || i.NIC || "",
+          subVisitorPhone: i.VVG_Designation || i.Contact || "",
+          VIC_Item_Name: i.VIC_Item_Name || i.itemName || "",
+          VIC_Quantity: String(i.VIC_Quantity || i.quantity || "1"),
+          VIC_Designation: i.VIC_Designation || i.description || "",
+          _original: {
+            subVisitorName: i.Group_Members || "",
+            VIC_Item_Name: i.VIC_Item_Name || i.itemName || "",
+            VIC_Quantity: String(i.VIC_Quantity || i.quantity || "1"),
+            VIC_Designation: i.VIC_Designation || i.description || "",
+          },
+        }))
+      );
     } catch (err) {
       console.error("Failed to load edit data:", err);
     } finally {
@@ -299,7 +321,9 @@ const MyRequests = () => {
       editSaving ||
       vehicleSavingIdx !== null ||
       memberSavingIdx !== null ||
-      itemSavingIdx !== null
+      itemSavingIdx !== null ||
+      subItemSavingIdx !== null ||
+      newSubItemSavingIdx !== null
     )
       return;
     setEditingRequest(null);
@@ -307,6 +331,7 @@ const MyRequests = () => {
     setRowSuccess({});
     setDirtyRows(new Set());
     setWarnDirty(false);
+    setEditJointItems([]);
   };
 
   // Helper: mark a row as dirty (edited but not yet saved)
@@ -336,6 +361,16 @@ const MyRequests = () => {
     if (it._isNew) return true;
     if (!it._original) return false;
     return (
+      it.VIC_Item_Name !== it._original.VIC_Item_Name ||
+      it.VIC_Quantity !== it._original.VIC_Quantity ||
+      it.VIC_Designation !== it._original.VIC_Designation
+    );
+  };
+  const isSubItemDirty = (it) => {
+    if (it._isNew) return true;
+    if (!it._original) return false;
+    return (
+      it.subVisitorName !== it._original.subVisitorName ||
       it.VIC_Item_Name !== it._original.VIC_Item_Name ||
       it.VIC_Quantity !== it._original.VIC_Quantity ||
       it.VIC_Designation !== it._original.VIC_Designation
@@ -377,6 +412,9 @@ const MyRequests = () => {
     });
     editItems.forEach((it, i) => {
       if (isItemDirty(it)) unsavedKeys.push(`item-${i}`);
+    });
+    editJointItems.forEach((it, i) => {
+      if (isSubItemDirty(it)) unsavedKeys.push(`subItem-${i}`);
     });
     if (unsavedKeys.length > 0) {
       setDirtyRows(new Set(unsavedKeys));
@@ -436,12 +474,12 @@ const MyRequests = () => {
         arr.map((v, i) =>
           i === idx
             ? {
-                ...v,
-                _original: {
-                  VV_Vehicle_Number: v.VV_Vehicle_Number,
-                  VV_Vehicle_Type: v.VV_Vehicle_Type,
-                },
-              }
+              ...v,
+              _original: {
+                VV_Vehicle_Number: v.VV_Vehicle_Number,
+                VV_Vehicle_Type: v.VV_Vehicle_Type,
+              },
+            }
             : v,
         ),
       );
@@ -474,14 +512,14 @@ const MyRequests = () => {
         arr.map((v, i) =>
           i === idx
             ? {
-                ...v,
-                _isNew: false,
-                VV_Vehicle_id: "saved",
-                _original: {
-                  VV_Vehicle_Number: v.VV_Vehicle_Number,
-                  VV_Vehicle_Type: v.VV_Vehicle_Type,
-                },
-              }
+              ...v,
+              _isNew: false,
+              VV_Vehicle_id: "saved",
+              _original: {
+                VV_Vehicle_Number: v.VV_Vehicle_Number,
+                VV_Vehicle_Type: v.VV_Vehicle_Type,
+              },
+            }
             : v,
         ),
       );
@@ -527,12 +565,12 @@ const MyRequests = () => {
         arr.map((m, i) =>
           i === idx
             ? {
-                ...m,
-                _original: {
-                  VVG_Visitor_Name: m.VVG_Visitor_Name,
-                  VVG_Designation: m.VVG_Designation,
-                },
-              }
+              ...m,
+              _original: {
+                VVG_Visitor_Name: m.VVG_Visitor_Name,
+                VVG_Designation: m.VVG_Designation,
+              },
+            }
             : m,
         ),
       );
@@ -558,7 +596,7 @@ const MyRequests = () => {
       setEditError(nicErr);
       return;
     }
-    
+
     // Validate phone number (stored in Designation)
     const phoneErr = validatePhone(member.VVG_Designation);
     if (phoneErr) {
@@ -595,14 +633,14 @@ const MyRequests = () => {
         arr.map((m, i) =>
           i === idx
             ? {
-                ...m,
-                _isNew: false,
-                VVG_id: "saved",
-                _original: {
-                  VVG_Visitor_Name: m.VVG_Visitor_Name,
-                  VVG_Designation: m.VVG_Designation,
-                },
-              }
+              ...m,
+              _isNew: false,
+              VVG_id: "saved",
+              _original: {
+                VVG_Visitor_Name: m.VVG_Visitor_Name,
+                VVG_Designation: m.VVG_Designation,
+              },
+            }
             : m,
         ),
       );
@@ -632,13 +670,13 @@ const MyRequests = () => {
         arr.map((it, i) =>
           i === idx
             ? {
-                ...it,
-                _original: {
-                  VIC_Item_Name: it.VIC_Item_Name,
-                  VIC_Quantity: it.VIC_Quantity,
-                  VIC_Designation: it.VIC_Designation,
-                },
-              }
+              ...it,
+              _original: {
+                VIC_Item_Name: it.VIC_Item_Name,
+                VIC_Quantity: it.VIC_Quantity,
+                VIC_Designation: it.VIC_Designation,
+              },
+            }
             : it,
         ),
       );
@@ -672,15 +710,15 @@ const MyRequests = () => {
         arr.map((it, i) =>
           i === idx
             ? {
-                ...it,
-                _isNew: false,
-                VIC_Item_id: "saved",
-                _original: {
-                  VIC_Item_Name: it.VIC_Item_Name,
-                  VIC_Quantity: it.VIC_Quantity,
-                  VIC_Designation: it.VIC_Designation,
-                },
-              }
+              ...it,
+              _isNew: false,
+              VIC_Item_id: "saved",
+              _original: {
+                VIC_Item_Name: it.VIC_Item_Name,
+                VIC_Quantity: it.VIC_Quantity,
+                VIC_Designation: it.VIC_Designation,
+              },
+            }
             : it,
         ),
       );
@@ -692,6 +730,45 @@ const MyRequests = () => {
     } finally {
       setNewItemSavingIdx(null);
     }
+  };
+
+  // ── Update existing sub-visitor item ──
+  const handleUpdateSubItem = async (idx) => {
+    setSubItemSavingIdx(idx);
+    setTimeout(() => {
+      setEditJointItems((arr) => arr.map((it, i) => i === idx ? {
+        ...it,
+        _original: {
+          subVisitorName: it.subVisitorName,
+          VIC_Item_Name: it.VIC_Item_Name,
+          VIC_Quantity: it.VIC_Quantity,
+          VIC_Designation: it.VIC_Designation,
+        }
+      } : it));
+      clearDirty(`subItem-${idx}`);
+      flashSuccess(`subItem-${idx}`);
+      setSubItemSavingIdx(null);
+    }, 500);
+  };
+
+  // ── Submit new sub-visitor item ──
+  const handleSubmitNewSubItem = async (idx) => {
+    setNewSubItemSavingIdx(idx);
+    setTimeout(() => {
+      setEditJointItems((arr) => arr.map((it, i) => i === idx ? {
+        ...it,
+        _isNew: false,
+        _original: {
+          subVisitorName: it.subVisitorName,
+          VIC_Item_Name: it.VIC_Item_Name,
+          VIC_Quantity: it.VIC_Quantity,
+          VIC_Designation: it.VIC_Designation,
+        }
+      } : it));
+      clearDirty(`subItem-${idx}`);
+      flashSuccess(`subItem-${idx}`);
+      setNewSubItemSavingIdx(null);
+    }, 500);
   };
 
   // ── Helper: add blank new rows ──
@@ -724,6 +801,18 @@ const MyRequests = () => {
       ...arr,
     ]);
   };
+  const handleAddNewSubItemRow = () => {
+    setEditJointItems((arr) => [
+      {
+        _isNew: true,
+        subVisitorName: "",
+        VIC_Item_Name: "",
+        VIC_Quantity: "",
+        VIC_Designation: "",
+      },
+      ...arr,
+    ]);
+  };
   const handleRemoveNewRow = (section, idx) => {
     if (section === "vehicle")
       setEditVehicles((arr) => arr.filter((_, i) => i !== idx));
@@ -731,6 +820,8 @@ const MyRequests = () => {
       setEditGroupMembers((arr) => arr.filter((_, i) => i !== idx));
     if (section === "item")
       setEditItems((arr) => arr.filter((_, i) => i !== idx));
+    if (section === "subItem")
+      setEditJointItems((arr) => arr.filter((_, i) => i !== idx));
   };
 
   const filteredRequests = (visitRequestsByVis || [])
@@ -831,8 +922,8 @@ const MyRequests = () => {
                               <span className="text-[12px] font-normal tracking-normal">
                                 {req.VVR_Visit_Date
                                   ? req.VVR_Visit_Date.split("T")[0].split(
-                                      " ",
-                                    )[0]
+                                    " ",
+                                  )[0]
                                   : "N/A"}
                               </span>
                             </div>
@@ -1375,9 +1466,9 @@ const MyRequests = () => {
                                     arr.map((v, i) =>
                                       i === idx
                                         ? {
-                                            ...v,
-                                            VV_Vehicle_Number: e.target.value,
-                                          }
+                                          ...v,
+                                          VV_Vehicle_Number: e.target.value,
+                                        }
                                         : v,
                                     ),
                                   )
@@ -1412,9 +1503,9 @@ const MyRequests = () => {
                                     arr.map((v, i) =>
                                       i === idx
                                         ? {
-                                            ...v,
-                                            VV_Vehicle_Type: e.target.value,
-                                          }
+                                          ...v,
+                                          VV_Vehicle_Type: e.target.value,
+                                        }
                                         : v,
                                     ),
                                   )
@@ -1524,21 +1615,21 @@ const MyRequests = () => {
                         </h3>
                         {editGroupMembers.filter((m) => !m._isNew).length >
                           0 && (
-                          <span
-                            style={{
-                              color: "var(--color-text-dim)",
-                              fontSize: 10,
-                              marginLeft: 4,
-                            }}
-                          >
-                            {editGroupMembers.filter((m) => !m._isNew).length}{" "}
-                            visitor
-                            {editGroupMembers.filter((m) => !m._isNew).length >
-                            1
-                              ? "s"
-                              : ""}
-                          </span>
-                        )}
+                            <span
+                              style={{
+                                color: "var(--color-text-dim)",
+                                fontSize: 10,
+                                marginLeft: 4,
+                              }}
+                            >
+                              {editGroupMembers.filter((m) => !m._isNew).length}{" "}
+                              visitor
+                              {editGroupMembers.filter((m) => !m._isNew).length >
+                                1
+                                ? "s"
+                                : ""}
+                            </span>
+                          )}
                         <button
                           onClick={handleAddNewMemberRow}
                           className="btn-outline ml-auto whitespace-nowrap"
@@ -1607,9 +1698,9 @@ const MyRequests = () => {
                                     arr.map((m, i) =>
                                       i === idx
                                         ? {
-                                            ...m,
-                                            VVG_Visitor_Name: e.target.value,
-                                          }
+                                          ...m,
+                                          VVG_Visitor_Name: e.target.value,
+                                        }
                                         : m,
                                     ),
                                   )
@@ -1639,9 +1730,9 @@ const MyRequests = () => {
                                     arr.map((m, i) =>
                                       i === idx
                                         ? {
-                                            ...m,
-                                            VVG_Designation: val,
-                                          }
+                                          ...m,
+                                          VVG_Designation: val,
+                                        }
                                         : m,
                                     ),
                                   );
@@ -1677,9 +1768,9 @@ const MyRequests = () => {
                                       arr.map((m, i) =>
                                         i === idx
                                           ? {
-                                              ...m,
-                                              VVG_NIC_Passport_Number: val,
-                                            }
+                                            ...m,
+                                            VVG_NIC_Passport_Number: val,
+                                          }
                                           : m,
                                       ),
                                     );
@@ -1785,7 +1876,7 @@ const MyRequests = () => {
                           }}
                           className="font-bold uppercase tracking-[0.2em]"
                         >
-                          Items to Bring
+                          Items to Bring (Main Visitor)
                         </h3>
                         {editItems.filter((it) => !it._isNew).length > 0 && (
                           <span
@@ -1869,9 +1960,9 @@ const MyRequests = () => {
                                     arr.map((it, i) =>
                                       i === idx
                                         ? {
-                                            ...it,
-                                            VIC_Item_Name: e.target.value,
-                                          }
+                                          ...it,
+                                          VIC_Item_Name: e.target.value,
+                                        }
                                         : it,
                                     ),
                                   )
@@ -1899,9 +1990,9 @@ const MyRequests = () => {
                                     arr.map((it, i) =>
                                       i === idx
                                         ? {
-                                            ...it,
-                                            VIC_Quantity: e.target.value,
-                                          }
+                                          ...it,
+                                          VIC_Quantity: e.target.value,
+                                        }
                                         : it,
                                     ),
                                   )
@@ -1929,9 +2020,9 @@ const MyRequests = () => {
                                     arr.map((it, i) =>
                                       i === idx
                                         ? {
-                                            ...it,
-                                            VIC_Designation: e.target.value,
-                                          }
+                                          ...it,
+                                          VIC_Designation: e.target.value,
+                                        }
                                         : it,
                                     ),
                                   )
@@ -1995,6 +2086,297 @@ const MyRequests = () => {
                                   style={{ padding: "9px 18px", fontSize: 12 }}
                                 >
                                   {itemSavingIdx === idx ? (
+                                    <>
+                                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                      Updating…
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Save size={12} /> Update
+                                    </>
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* ══ SUB-VISITOR ITEMS CARRIED ══ */}
+                    <div
+                      className="rounded-3xl p-5 md:p-6 space-y-4"
+                      style={{
+                        background: "var(--color-bg-paper)",
+                        border: "1px solid var(--color-border-soft)",
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Package size={14} className="text-primary" />
+                        <h3
+                          style={{
+                            color: "var(--color-text-primary)",
+                            fontSize: 11,
+                            margin: 0,
+                          }}
+                          className="font-bold uppercase tracking-[0.2em]"
+                        >
+                          Sub-Visitor Items Carried
+                        </h3>
+                        {editJointItems.filter((it) => !it._isNew).length > 0 && (
+                          <span
+                            style={{
+                              color: "var(--color-text-dim)",
+                              fontSize: 10,
+                              marginLeft: 4,
+                            }}
+                          >
+                            {editJointItems.filter((it) => !it._isNew).length} item
+                            {editJointItems.filter((it) => !it._isNew).length > 1
+                              ? "s"
+                              : ""}
+                          </span>
+                        )}
+                        <span
+                          style={{
+                            color: "var(--color-text-dim)",
+                            fontSize: 10,
+                            marginLeft: "auto",
+                          }}
+                          className="font-semibold italic"
+                        >
+                          Update API coming soon
+                        </span>
+                        <button
+                          onClick={handleAddNewSubItemRow}
+                          className="btn-outline ml-2 whitespace-nowrap"
+                          style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                        >
+                          <Plus size={12} /> Add Item
+                        </button>
+                      </div>
+                      {editJointItems.length === 0 && (
+                        <p
+                          style={{
+                            color: "var(--color-text-dim)",
+                            fontSize: 11,
+                          }}
+                          className="font-medium"
+                        >
+                          No items. Click <strong>Add Item</strong> to
+                          add one.
+                        </p>
+                      )}
+                      <div className="space-y-3">
+                        {editJointItems.map((item, idx) => (
+                          <div
+                            key={`subItem-${idx}`}
+                            ref={(el) => {
+                              rowRefs.current[`subItem-${idx}`] = el;
+                            }}
+                            className="grid grid-cols-1 md:grid-cols-[1.2fr_1.2fr_0.8fr_1.2fr_auto] gap-3 items-end p-4 rounded-2xl"
+                            style={(() => {
+                              const isDirtyWarn =
+                                warnDirty && dirtyRows.has(`subItem-${idx}`);
+                              if (isDirtyWarn)
+                                return {
+                                  border: "2px solid rgba(239,68,68,0.7)",
+                                  background: "rgba(239,68,68,0.05)",
+                                  borderRadius: "16px",
+                                };
+                              if (item._isNew)
+                                return {
+                                  border: "1.5px dashed rgba(251,191,36,0.5)",
+                                  background: "rgba(251,191,36,0.04)",
+                                };
+                              return {
+                                background: "var(--color-surface-1)",
+                                border: "1px solid var(--color-border-soft)",
+                              };
+                            })()}
+                          >
+                            <div className="space-y-1.5">
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Sub-Visitor
+                              </label>
+                              <select
+                                value={item.subVisitorName || ""}
+                                onChange={(e) =>
+                                  setEditJointItems((arr) =>
+                                    arr.map((it, i) =>
+                                      i === idx
+                                        ? {
+                                          ...it,
+                                          subVisitorName: e.target.value,
+                                        }
+                                        : it,
+                                    ),
+                                  )
+                                }
+                                className="mas-input appearance-none bg-transparent"
+                              >
+                                <option value="" className="text-black">Select...</option>
+                                {editGroupMembers.map((p, pIdx) => (
+                                  <option key={pIdx} value={p.VVG_Visitor_Name || p._original?.VVG_Visitor_Name} className="text-black">
+                                    {p.VVG_Visitor_Name || p._original?.VVG_Visitor_Name || `Visitor ${pIdx + 1}`}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="space-y-1.5">
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Item Name
+                              </label>
+                              <input
+                                type="text"
+                                value={item.VIC_Item_Name}
+                                onChange={(e) =>
+                                  setEditJointItems((arr) =>
+                                    arr.map((it, i) =>
+                                      i === idx
+                                        ? {
+                                          ...it,
+                                          VIC_Item_Name: e.target.value,
+                                        }
+                                        : it,
+                                    ),
+                                  )
+                                }
+                                className="mas-input"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Quantity
+                              </label>
+                              <input
+                                type="text"
+                                value={item.VIC_Quantity}
+                                onChange={(e) =>
+                                  setEditJointItems((arr) =>
+                                    arr.map((it, i) =>
+                                      i === idx
+                                        ? {
+                                          ...it,
+                                          VIC_Quantity: e.target.value,
+                                        }
+                                        : it,
+                                    ),
+                                  )
+                                }
+                                className="mas-input"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.14em",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
+                                Description
+                              </label>
+                              <input
+                                type="text"
+                                value={item.VIC_Designation}
+                                onChange={(e) =>
+                                  setEditJointItems((arr) =>
+                                    arr.map((it, i) =>
+                                      i === idx
+                                        ? {
+                                          ...it,
+                                          VIC_Designation: e.target.value,
+                                        }
+                                        : it,
+                                    ),
+                                  )
+                                }
+                                className="mas-input"
+                              />
+                            </div>
+                            <div className="flex flex-col items-end gap-1.5">
+                              {rowSuccess[`subItem-${idx}`] && (
+                                <span
+                                  className="flex items-center gap-1 font-semibold whitespace-nowrap"
+                                  style={{
+                                    color: "var(--color-success)",
+                                    fontSize: 11,
+                                  }}
+                                >
+                                  <CheckCircle2 size={12} /> Saved
+                                </span>
+                              )}
+                              {item._isNew ? (
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() =>
+                                      handleRemoveNewRow("subItem", idx)
+                                    }
+                                    className="btn-outline whitespace-nowrap"
+                                    style={{
+                                      padding: "9px 14px",
+                                      fontSize: 11,
+                                    }}
+                                  >
+                                    <X size={12} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleSubmitNewSubItem(idx)}
+                                    disabled={newSubItemSavingIdx !== null}
+                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                    style={{
+                                      padding: "9px 18px",
+                                      fontSize: 12,
+                                      background: "var(--color-success)",
+                                    }}
+                                  >
+                                    {newSubItemSavingIdx === idx ? (
+                                      <>
+                                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                        Submitting…
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Plus size={12} /> Submit
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => handleUpdateSubItem(idx)}
+                                  disabled={subItemSavingIdx !== null}
+                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                  style={{ padding: "9px 18px", fontSize: 12 }}
+                                >
+                                  {subItemSavingIdx === idx ? (
                                     <>
                                       <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
                                       Updating…

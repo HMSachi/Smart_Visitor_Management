@@ -9,14 +9,15 @@ import { AddItem } from "../../../actions/ItemCarriedAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 import { GetAllVisitors } from "../../../actions/VisitorAction";
 
-import { 
+import {
   addVehicle, toggleVehicleConfirmed, removeVehicle, updateVehicle, markVehicleSaved,
   addPerson, togglePersonConfirmed, removePerson, updatePerson, markPersonSaved,
   addItem, toggleItemConfirmed, removeItem, updateItem, markItemSaved,
+  addSubVisitorItem, toggleSubVisitorItemConfirmed, removeSubVisitorItem, updateSubVisitorItem, markSubVisitorItemSaved,
   resetForm, setSubmitting, setError
 } from "../../../reducers/visitRequestFormSlice";
 import { SectionHeader, InputField } from "../../../components/Contact_Person/VisitRequests/FormComponents";
-import { 
+import {
   Car, Users, Package, Plus, Trash2, ArrowLeft, CheckCircle2, Save, Edit2, Loader2
 } from "lucide-react";
 import { validateName, validateNIC, validatePhone } from "../../../utils/validation";
@@ -24,13 +25,14 @@ import { validateName, validateNIC, validatePhone } from "../../../utils/validat
 const CreateVisitRequestDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { 
-    visitationDetails: formData, 
+  const {
+    visitationDetails: formData,
     savedRequestId,
-    vehicles, 
-    people, 
-    items, 
-    isSubmitting 
+    vehicles,
+    people,
+    items,
+    subVisitorItems,
+    isSubmitting
   } = useSelector((state) => state.visitRequestForm);
   const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
   const { visitors: allVisitors } = useSelector((state) => state.visitorManagement || { visitors: [] });
@@ -42,6 +44,7 @@ const CreateVisitRequestDetails = () => {
   const [vehicleSavingIndex, setVehicleSavingIndex] = useState(null);
   const [personSavingIndex, setPersonSavingIndex] = useState(null);
   const [itemSavingIndex, setItemSavingIndex] = useState(null);
+  const [subVisitorItemSavingIndex, setSubVisitorItemSavingIndex] = useState(null);
 
   useEffect(() => {
     dispatch(GetAllBlacklist());
@@ -96,7 +99,7 @@ const CreateVisitRequestDetails = () => {
       dispatch(togglePersonConfirmed(index));
       return;
     }
-    
+
     // Validations
     const nameErr = validateName(person.name);
     if (nameErr) { alert(nameErr); return; }
@@ -107,7 +110,7 @@ const CreateVisitRequestDetails = () => {
 
     // Check blacklist
     const isBlacklisted = blacklists.some(
-      (b) => 
+      (b) =>
         (b.VB_Name && b.VB_Name.toLowerCase() === person.name?.toLowerCase() && b.VB_Status === "A")
     );
 
@@ -141,9 +144,9 @@ const CreateVisitRequestDetails = () => {
 
   const handlePersonNameChange = (index, value) => {
     dispatch(updatePerson({ index, field: "name", value }));
-    
+
     // Find if the entered name matches a known visitor for autocomplete
-    const matchedVisitor = allVisitors.find(v => 
+    const matchedVisitor = allVisitors.find(v =>
       v.VV_Name?.trim().toLowerCase() === value?.trim().toLowerCase()
     );
     if (matchedVisitor) {
@@ -206,6 +209,43 @@ const CreateVisitRequestDetails = () => {
       await handleItemSave(items.indexOf(unsaved));
     } else {
       dispatch(addItem());
+    }
+  };
+
+  const handleSubVisitorItemSave = async (index) => {
+    const item = subVisitorItems[index];
+    if (item.isConfirmed) {
+      dispatch(toggleSubVisitorItemConfirmed(index));
+      return;
+    }
+    if (!item.subVisitorName?.trim() || !item.name?.trim()) {
+      alert("Please select a sub-visitor and enter an item name before saving.");
+      return;
+    }
+    if (!effectiveRequestId) {
+      alert("Visit request not found. Please go back to Step 1.");
+      return;
+    }
+    // API will be added later; simulate save for now
+    setSubVisitorItemSavingIndex(index);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
+      dispatch(markSubVisitorItemSaved(index));
+      dispatch(toggleSubVisitorItemConfirmed(index));
+    } catch (err) {
+      console.error("Failed to save sub-visitor item:", err);
+      alert("Failed to save sub-visitor item. Please try again.");
+    } finally {
+      setSubVisitorItemSavingIndex(null);
+    }
+  };
+
+  const handleAddSubVisitorItem = async () => {
+    const unsaved = subVisitorItems.find(i => !i.isConfirmed && i.name?.trim());
+    if (unsaved) {
+      await handleSubVisitorItemSave(subVisitorItems.indexOf(unsaved));
+    } else {
+      dispatch(addSubVisitorItem());
     }
   };
 
@@ -309,17 +349,17 @@ const CreateVisitRequestDetails = () => {
                         </select>
                       </div>
                       <div className="md:col-span-7">
-                        <InputField 
+                        <InputField
                           disabled={v.isConfirmed}
-                          label="Plate Number" 
-                          value={v.number} 
-                          onChange={(e) => dispatch(updateVehicle({ index, field: "number", value: e.target.value }))} 
-                          placeholder="WP CAS 1234" 
+                          label="Plate Number"
+                          value={v.number}
+                          onChange={(e) => dispatch(updateVehicle({ index, field: "number", value: e.target.value }))}
+                          placeholder="WP CAS 1234"
                         />
                       </div>
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
-                        <button 
-                          type="button" 
+                        <button
+                          type="button"
                           onClick={() => handleVehicleSave(index)}
                           disabled={vehicleSavingIndex === index}
                           className={`p-2 rounded-lg transition-all disabled:opacity-50 ${v.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
@@ -356,45 +396,45 @@ const CreateVisitRequestDetails = () => {
                   {people.map((p, index) => (
                     <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-3 rounded-xl border transition-all ${p.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"}`}>
                       <div className="md:col-span-3">
-                        <InputField 
-                          disabled={p.isConfirmed} 
-                          label="Name" 
-                          value={p.name} 
+                        <InputField
+                          disabled={p.isConfirmed}
+                          label="Name"
+                          value={p.name}
                           list="visitor-names"
                           onChange={(e) => {
                             const val = e.target.value;
                             handlePersonNameChange(index, val);
-                          }} 
-                          placeholder="Full Name" 
+                          }}
+                          placeholder="Full Name"
                         />
                       </div>
                       <div className="md:col-span-4">
-                        <InputField 
-                          disabled={p.isConfirmed} 
-                          label="NIC" 
-                          value={p.nic} 
+                        <InputField
+                          disabled={p.isConfirmed}
+                          label="NIC"
+                          value={p.nic}
                           onChange={(e) => {
                             const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 12);
                             dispatch(updatePerson({ index, field: "nic", value: val }));
-                          }} 
-                          placeholder="ID Number" 
+                          }}
+                          placeholder="ID Number"
                         />
                       </div>
                       <div className="md:col-span-3">
-                        <InputField 
-                          disabled={p.isConfirmed} 
-                          label="Contact" 
-                          value={p.phone} 
+                        <InputField
+                          disabled={p.isConfirmed}
+                          label="Contact"
+                          value={p.phone}
                           onChange={(e) => {
                             const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
                             dispatch(updatePerson({ index, field: "phone", value: val }));
-                          }} 
-                          placeholder="07XXXXXXXX" 
+                          }}
+                          placeholder="07XXXXXXXX"
                         />
                       </div>
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
-                        <button 
-                          type="button" 
+                        <button
+                          type="button"
                           onClick={() => handlePersonSave(index)}
                           disabled={personSavingIndex === index}
                           className={`p-2 rounded-lg transition-all disabled:opacity-50 ${p.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
@@ -430,8 +470,8 @@ const CreateVisitRequestDetails = () => {
                         <InputField disabled={i.isConfirmed} label="Description" value={i.description} onChange={(e) => dispatch(updateItem({ index, field: "description", value: e.target.value }))} placeholder="Details or Serial No" />
                       </div>
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
-                        <button 
-                          type="button" 
+                        <button
+                          type="button"
                           onClick={() => handleItemSave(index)}
                           disabled={itemSavingIndex === index}
                           className={`p-2 rounded-lg transition-all disabled:opacity-50 ${i.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
@@ -446,7 +486,67 @@ const CreateVisitRequestDetails = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-center gap-4 pt-4">
+              <div className="bg-white p-4 md:p-5 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+                  <SectionHeader title="Sub-Visitor Items Carried" icon={Package} />
+                  <button type="button" onClick={handleAddSubVisitorItem} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
+                    <Plus size={12} /> Add Sub-Visitor Item
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {subVisitorItems.map((i, index) => (
+                    <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 rounded-xl border transition-all ${i.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"}`}>
+                      <div className="md:col-span-3">
+                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5 flex px-0.5">Sub-Visitor</label>
+                        <select
+                          disabled={i.isConfirmed}
+                          value={i.subVisitorName}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            dispatch(updateSubVisitorItem({ index, field: "subVisitorName", value: val }));
+                            const matchedPerson = people.find(p => p.name === val);
+                            if (matchedPerson) {
+                              dispatch(updateSubVisitorItem({ index, field: "subVisitorNic", value: matchedPerson.nic }));
+                              dispatch(updateSubVisitorItem({ index, field: "subVisitorPhone", value: matchedPerson.phone }));
+                            }
+                          }}
+                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[12px] font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 disabled:opacity-60"
+                        >
+                          <option value="">Select Sub-Visitor...</option>
+                          {people.map((p, pIdx) => (
+                            <option key={pIdx} value={p.name}>{p.name || `Visitor ${pIdx + 1}`}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="md:col-span-3">
+                        <InputField disabled={i.isConfirmed} label="Item" value={i.name} onChange={(e) => dispatch(updateSubVisitorItem({ index, field: "name", value: e.target.value }))} placeholder="e.g. Laptop" />
+                      </div>
+                      <div className="md:col-span-2">
+                        <InputField disabled={i.isConfirmed} label="Qty" value={i.quantity} onChange={(e) => dispatch(updateSubVisitorItem({ index, field: "quantity", value: e.target.value }))} placeholder="e.g. 1" />
+                      </div>
+                      <div className="md:col-span-2">
+                        <InputField disabled={i.isConfirmed} label="Description" value={i.description} onChange={(e) => dispatch(updateSubVisitorItem({ index, field: "description", value: e.target.value }))} placeholder="Details" />
+                      </div>
+                      <div className="md:col-span-2 flex justify-end gap-2 pb-1">
+                        <button
+                          type="button"
+                          onClick={() => handleSubVisitorItemSave(index)}
+                          disabled={subVisitorItemSavingIndex === index}
+                          className={`p-2 rounded-lg transition-all disabled:opacity-50 ${i.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
+                          title={i.isConfirmed ? "Edit Entry" : "Save Item (API pending)"}
+                        >
+                          {subVisitorItemSavingIndex === index ? <Loader2 size={16} className="animate-spin" /> : i.isConfirmed ? <Edit2 size={16} /> : <Save size={16} />}
+                        </button>
+                        <button type="button" onClick={() => dispatch(removeSubVisitorItem(index))} className="p-2 text-gray-300 hover:text-red-500 transition-all"><Trash2 size={16} /></button>
+                      </div>
+                    </div>
+                  ))}
+                  {subVisitorItems.length === 0 && <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-xl"><p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">No sub-visitor items declared</p></div>}
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row items-center gap-4 pt-6">
                 <button type="button" onClick={() => navigate("/contact_person/create-visit-request")} className="w-full md:w-auto px-10 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gray-600 transition-all">
                   Back to Core Info
                 </button>
