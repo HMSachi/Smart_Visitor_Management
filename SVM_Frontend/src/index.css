@@ -414,9 +414,9 @@ td {
     line-height: 1 !important;
     height: 28px !important;
     min-height: 28px !important;
-    width: 140px !important;
+    width: auto !important;
     min-width: 140px !important;
-    padding: 0 12px !important;
+    padding: 0 16px !important;
   }
 
   .svm-status-pill--success {

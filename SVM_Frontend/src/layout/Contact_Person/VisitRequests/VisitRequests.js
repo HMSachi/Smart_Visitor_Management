@@ -1111,7 +1111,7 @@ const VisitRequests = () => {
                 <button
                   key={option.id}
                   onClick={() => setStatusFilter(option.id)}
-                  className={`relative px-4 py-2 rounded-full text-[11px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
+                  className={`relative px-4 py-2 rounded-full text-[13px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
                     ? "text-white"
                     : isLight
                       ? "text-gray-500 hover:text-primary"
@@ -1268,7 +1268,7 @@ const VisitRequests = () => {
                   <table className="w-full">
                     <thead>
                       <tr
-                        className={`text-[12px] uppercase font-normal tracking-[0.3em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
+                        className={`text-[12px] font-normal tracking-[0.3em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
                       >
                         <th className="px-3 py-2 text-center w-[60px] font-normal text-[12px]">ID</th>
                         <th className="px-3 py-2 text-left font-normal text-[12px]">Visitor</th>
@@ -1276,7 +1276,7 @@ const VisitRequests = () => {
                         <th className="px-3 py-2 text-left font-normal text-[12px]">Reason</th>
                         <th className="px-3 py-2 text-left font-normal text-[12px]">Areas</th>
                         <th className="px-3 py-2 text-center font-normal text-[12px]">Status</th>
-                        <th className="px-3 py-2 text-center w-[80px] font-normal text-[12px]">Pass</th>
+                        <th className="px-3 py-2 text-center w-[80px] font-normal text-[12px]">Gatepass</th>
                         <th className="px-3 py-2 text-center w-[120px] font-normal text-[12px]">Actions</th>
                       </tr>
                     </thead>
