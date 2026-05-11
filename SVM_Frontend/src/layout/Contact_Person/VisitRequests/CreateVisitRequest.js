@@ -155,8 +155,8 @@ const CreateVisitRequest = () => {
   };
 
   return (
-    <div className="contact-theme-root flex bg-[#F8F9FA] overflow-hidden text-[#1A1A1A] h-screen w-full">
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-hidden">
+    <div className="contact-theme-root flex bg-background-default overflow-hidden text-text-primary h-screen w-full">
+      <div className="flex-1 flex flex-col min-w-0 bg-background-default overflow-hidden">
         <Header title="Visitor Registration" />
         
         <main className="flex-1 overflow-y-auto p-6 pt-12 custom-scrollbar">
@@ -168,54 +168,54 @@ const CreateVisitRequest = () => {
                 <div className="w-6 h-6 rounded-full bg-primary text-white text-[12px] font-normal flex items-center justify-center">1</div>
                 <span className="text-[12px] font-normal capitalize tracking-widest text-primary">Core info</span>
               </div>
-              <div className="h-[1px] w-12 bg-gray-200"></div>
+              <div className="h-[1px] w-12 bg-border-soft"></div>
               <div className="flex items-center gap-2 opacity-40">
-                <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-500 text-[12px] font-normal flex items-center justify-center">2</div>
-                <span className="text-[12px] font-normal capitalize tracking-widest text-gray-500">Details</span>
+                <div className="w-6 h-6 rounded-full bg-border-soft text-text-secondary text-[12px] font-normal flex items-center justify-center">2</div>
+                <span className="text-[12px] font-normal capitalize tracking-widest text-text-secondary">Details</span>
               </div>
             </div>
 
             <form onSubmit={handleNext} className="space-y-6 mt-20">
-              <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
+              <div className="bg-background-paper p-6 rounded-[12px] shadow-card border border-border-soft">
                 <SectionHeader title="Visitor Details" icon={FileText} />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-[12px] font-medium text-gray-400 capitalize tracking-[0.15em] flex items-center gap-1.5 px-0.5">
+                    <label className="text-[12px] font-medium text-text-secondary capitalize tracking-[0.15em] flex items-center gap-1.5 px-0.5">
                       <User size={11} className="text-primary" /> Who is the visitor?
                     </label>
                     <select
                       name="VVR_Visitor_id"
                       value={formData.VVR_Visitor_id}
                       onChange={handleInputChange}
-                      className={`w-full bg-white border rounded-lg px-3 py-1.5 text-[12px] font-normal transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
-                        errors.VVR_Visitor_id ? "border-red-500" : "border-gray-200 focus:border-primary/50"
+                      className={`w-full bg-background-paper border rounded-lg px-3 py-1.5 text-[12px] font-normal text-text-primary transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
+                        errors.VVR_Visitor_id ? "border-red-500" : "border-border-soft focus:border-primary/50"
                       }`}
                     >
-                      <option value="">Select from registry</option>
+                      <option value="" className="bg-background-paper">Select from registry</option>
                       {activeVisitors.map((v) => (
-                        <option key={v.VV_Visitor_id} value={v.VV_Visitor_id}>{v.VV_Name}</option>
+                        <option key={v.VV_Visitor_id} value={v.VV_Visitor_id} className="bg-background-paper">{v.VV_Name}</option>
                       ))}
                     </select>
                     {errors.VVR_Visitor_id && <p className="text-[12px] text-red-500 font-normal px-0.5 capitalize">{errors.VVR_Visitor_id}</p>}
                   </div>
 
                   {selectedVisitorDetails && (
-                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-4 p-3 rounded-xl bg-gray-50/50 border border-gray-100">
+                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-4 p-3 rounded-xl bg-background-alt/50 border border-border-soft text-text-primary">
                       <div className="space-y-0.5 text-center md:text-left">
-                        <span className="text-[12px] font-medium text-gray-400 capitalize tracking-widest">Email</span>
-                        <p className="text-[12px] font-medium text-[#0A1D37] truncate">{selectedVisitorDetails.VV_Email || "N/A"}</p>
+                        <span className="text-[12px] font-medium text-text-secondary capitalize tracking-widest">Email</span>
+                        <p className="text-[12px] font-medium truncate">{selectedVisitorDetails.VV_Email || "N/A"}</p>
                       </div>
                       <div className="space-y-0.5 text-center md:text-left">
-                        <span className="text-[12px] font-medium text-gray-400 capitalize tracking-widest">Phone</span>
-                        <p className="text-[12px] font-medium text-[#0A1D37]">{selectedVisitorDetails.VV_Phone || "N/A"}</p>
+                        <span className="text-[12px] font-medium text-text-secondary capitalize tracking-widest">Phone</span>
+                        <p className="text-[12px] font-medium">{selectedVisitorDetails.VV_Phone || "N/A"}</p>
                       </div>
                       <div className="space-y-0.5 text-center md:text-left">
-                        <span className="text-[12px] font-medium text-gray-400 capitalize tracking-widest">Company</span>
-                        <p className="text-[12px] font-medium text-[#0A1D37] truncate">{selectedVisitorDetails.VV_Company || "N/A"}</p>
+                        <span className="text-[12px] font-medium text-text-secondary capitalize tracking-widest">Company</span>
+                        <p className="text-[12px] font-medium truncate">{selectedVisitorDetails.VV_Company || "N/A"}</p>
                       </div>
                       <div className="space-y-0.5 text-center md:text-left">
-                        <span className="text-[12px] font-medium text-gray-400 capitalize tracking-widest">Type</span>
+                        <span className="text-[12px] font-medium text-text-secondary capitalize tracking-widest">Type</span>
                         <p className="text-[12px] font-medium text-primary">{selectedVisitorDetails.VV_Visitor_Type || "N/A"}</p>
                       </div>
                     </div>
@@ -224,7 +224,7 @@ const CreateVisitRequest = () => {
                   <InputField label="Visit Date" name="VVR_Visit_Date" type="date" value={formData.VVR_Visit_Date} onChange={handleInputChange} error={errors.VVR_Visit_Date} icon={Calendar} />
                   {/* Places to Visit — dynamic dropdown from Admin Places API */}
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-400 capitalize tracking-[0.15em] flex items-center gap-1.5 px-0.5">
+                    <label className="text-[12px] font-medium text-text-secondary capitalize tracking-[0.15em] flex items-center gap-1.5 px-0.5">
                       <MapPin size={11} className="text-primary" /> Places to Visit
                     </label>
                     <select
@@ -232,11 +232,11 @@ const CreateVisitRequest = () => {
                       value={formData.VVR_Places_to_Visit}
                       onChange={handleInputChange}
                       disabled={placesLoading}
-                      className={`w-full bg-white border rounded-lg px-3 py-1.5 text-[12px] font-normal transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
-                        errors.VVR_Places_to_Visit ? "border-red-500" : "border-gray-200 focus:border-primary/50"
+                      className={`w-full bg-background-paper border rounded-lg px-3 py-1.5 text-[12px] font-normal text-text-primary transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
+                        errors.VVR_Places_to_Visit ? "border-red-500" : "border-border-soft focus:border-primary/50"
                       } ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
                     >
-                      <option value="">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
+                      <option value="" className="bg-background-paper">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
                       {placesList && placesList.length > 0 && placesList
                         .filter((place) => {
                           const status = (place.VAIL_Status || place.Status || place.status || 'A').toString().trim().toUpperCase();
@@ -246,7 +246,7 @@ const CreateVisitRequest = () => {
                           const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
                           const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
                           return (
-                            <option key={id} value={name}>{name}</option>
+                            <option key={id} value={name} className="bg-background-paper">{name}</option>
                           );
                         })}
                     </select>
@@ -258,7 +258,7 @@ const CreateVisitRequest = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-10">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12 pb-10">
                 <button
                   type="button"
                   disabled={isSubmitting}
@@ -266,20 +266,20 @@ const CreateVisitRequest = () => {
                     dispatch(resetForm());
                     navigate("/contact_person/visit-requests");
                   }}
-                  className="w-full md:w-auto px-10 h-10 rounded-xl text-[12px] font-normal tracking-[0.14em] text-gray-400 hover:text-gray-600 transition-all disabled:opacity-40"
+                  className="w-full sm:w-auto px-12 h-11 rounded-xl text-[12px] font-medium tracking-[0.1em] text-text-secondary hover:text-text-primary hover:bg-gray-50 transition-all disabled:opacity-40 uppercase"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full md:w-auto px-12 h-10 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal tracking-[0.14em] rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-60 group flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-12 h-11 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-bold tracking-[0.1em] rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-60 group flex items-center justify-center gap-2 uppercase"
                 >
                   {isSubmitting ? (
-                    "Saving details..."
+                    "Saving..."
                   ) : (
                     <>
-                      Next step: additional details{" "}
+                      Next step{" "}
                       <ArrowLeft
                         className="rotate-180 transition-transform group-hover:translate-x-1"
                         size={14}

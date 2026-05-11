@@ -53,7 +53,7 @@ const DashboardMain = () => {
     return () => clearInterval(interval);
   }, [dispatch, cpId]);
   return (
-    <div className="min-h-screen bg-[var(--color-bg-primary)] p-2 sm:p-3 md:p-4 lg:p-6 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full">
+    <div className="min-h-screen contact-theme-root bg-background-default p-2 sm:p-3 md:p-4 lg:p-6 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full">
       <div className="space-y-5 sm:space-y-6 md:space-y-8">
         {/* Header Section */}
         <div className="h-4" /> {/* Spacer instead of header */}

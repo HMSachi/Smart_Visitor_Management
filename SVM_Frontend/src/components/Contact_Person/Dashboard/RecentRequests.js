@@ -41,14 +41,14 @@ const RecentRequests = () => {
     switch (status?.toLowerCase()) {
       case "approved":
       case "accepted":
-        return "text-green-500 bg-green-500/10 border-green-500/20";
+        return "text-status-success bg-status-success/10 border-status-success/20";
       case "pending":
-        return "text-yellow-500 bg-yellow-500/10 border-yellow-500/20";
+        return "text-status-warning bg-status-warning/10 border-status-warning/20";
       case "declined":
       case "rejected":
-        return "text-primary bg-primary/10 border-primary/20";
+        return "text-status-error bg-status-error/10 border-status-error/20";
       default:
-        return "text-[var(--color-text-secondary)] bg-[var(--color-surface-1)] border-[var(--color-border-soft)]";
+        return "text-text-secondary bg-background-alt border-border-soft";
     }
   };
 
@@ -57,14 +57,14 @@ const RecentRequests = () => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-xl overflow-hidden hover:border-primary/20 transition-all duration-300 h-full flex flex-col"
+      className="bg-background-alt border border-border-soft rounded-xl overflow-hidden hover:border-primary/20 transition-all duration-300 h-full flex flex-col"
     >
-      <div className="p-3 border-b border-[var(--color-border-soft)] flex items-center justify-between flex-shrink-0">
+      <div className="p-3 border-b border-border-soft flex items-center justify-between flex-shrink-0">
         <div>
-          <h3 className="text-[var(--color-text-primary)] text-xs font-black uppercase tracking-widest leading-none">
+          <h3 className="text-text-primary text-xs font-black uppercase tracking-widest leading-none">
             Recent Requests
           </h3>
-          <p className="text-[var(--color-text-dim)] text-[9px] font-bold uppercase tracking-widest mt-0.5 opacity-75">
+          <p className="text-text-dim text-[9px] font-bold uppercase tracking-widest mt-0.5 opacity-75">
             Latest authorization activities
           </p>
         </div>
@@ -86,14 +86,14 @@ const RecentRequests = () => {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[9px] uppercase tracking-[0.2em] font-normal border-b border-[var(--color-border-soft)] sticky top-0">
+                <tr className="bg-background-paper text-text-secondary text-[9px] uppercase tracking-[0.2em] font-normal border-b border-border-soft sticky top-0">
                   <th className="px-3 py-2 font-normal text-[12px]">Visitor</th>
                   <th className="px-3 py-2 text-center font-normal text-[12px]">Date</th>
                   <th className="px-3 py-2 text-center font-normal text-[12px]">Status</th>
                   <th className="px-3 py-2 text-right font-normal text-[12px]">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--color-border-soft)]">
+              <tbody className="divide-y divide-border-soft">
                 {recentRequests.map((rawReq, index) => {
                   const req = mapRequestToUI(rawReq);
                   return (

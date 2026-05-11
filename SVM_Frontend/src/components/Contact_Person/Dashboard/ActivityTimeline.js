@@ -67,16 +67,16 @@ const ActivityTimeline = () => {
       viewport={{ once: true }}
       className="space-y-4 h-full flex flex-col"
     >
-      <div className="flex items-center justify-between border-b border-[var(--color-border-soft)] pb-4">
+      <div className="flex items-center justify-between border-b border-border-soft pb-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
             <Activity size={16} />
           </div>
           <div>
-            <h3 className="text-[var(--color-text-primary)] text-xs font-black uppercase tracking-widest leading-none">
+            <h3 className="text-text-primary text-xs font-black uppercase tracking-widest leading-none">
               Live Activity
             </h3>
-            <p className="text-[var(--color-text-dim)] text-[9px] font-bold uppercase tracking-widest mt-0.5 opacity-75">
+            <p className="text-text-dim text-[9px] font-bold uppercase tracking-widest mt-0.5 opacity-75">
               Real-time system feed
             </p>
           </div>
@@ -97,32 +97,32 @@ const ActivityTimeline = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.05 }}
-            className="flex items-center justify-between p-2.5 sm:p-3 bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-xl hover:border-primary/30 hover:bg-primary/[0.02] transition-all group cursor-pointer shadow-sm"
+            className="flex items-center justify-between p-2.5 sm:p-3 bg-background-paper border border-border-soft rounded-xl hover:border-primary/30 hover:bg-primary/[0.02] transition-all group cursor-pointer shadow-sm"
           >
             <div className="flex items-center gap-4 flex-1 min-w-0">
               <div className="relative flex-shrink-0">
                 <div
                   className={`w-2 h-2 rounded-full ${
                     act.status === "priority" || act.status === "urgent"
-                      ? "bg-primary shadow-[0_0_8px_var(--color-primary)]"
-                      : "bg-green-500 shadow-[0_0_8px_#22c55e]"
+                      ? "bg-primary shadow-[0_0_8px_rgba(200,16,46,0.5)]"
+                      : "bg-status-success shadow-[0_0_8px_rgba(34,197,94,0.5)]"
                   }`}
                 ></div>
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-[var(--color-text-primary)] text-[11.5px] font-normal tracking-wide truncate mb-0.5">
+                <h4 className="text-text-primary text-[11.5px] font-normal tracking-wide truncate mb-0.5">
                   {act.visitor}
                 </h4>
-                <p className="text-[var(--color-text-dim)] text-[9.5px] font-medium tracking-wide opacity-80 leading-none">
+                <p className="text-text-dim text-[9.5px] font-medium tracking-wide opacity-80 leading-none">
                   {act.action}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3 flex-shrink-0 ml-3">
-              <span className="text-[var(--color-text-dim)] text-[9px] font-bold tracking-wider whitespace-nowrap">
+              <span className="text-text-dim text-[9px] font-bold tracking-wider whitespace-nowrap">
                 {act.time}
               </span>
-              <div className="w-7 h-7 rounded-lg bg-[var(--color-surface-1)] flex items-center justify-center text-[var(--color-text-dim)] group-hover:text-primary group-hover:bg-primary/10 transition-all border border-transparent group-hover:border-primary/20">
+              <div className="w-7 h-7 rounded-lg bg-background-alt flex items-center justify-center text-text-dim group-hover:text-primary group-hover:bg-primary/10 transition-all border border-transparent group-hover:border-primary/20">
                 <ArrowUpRight size={13} />
               </div>
             </div>

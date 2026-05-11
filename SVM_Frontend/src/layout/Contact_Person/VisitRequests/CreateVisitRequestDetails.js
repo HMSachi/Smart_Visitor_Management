@@ -548,20 +548,20 @@ const CreateVisitRequestDetails = () => {
               </div>
               */}
 
-              <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-10">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12 pb-10">
                 <button
                   type="button"
                   onClick={() => navigate("/contact_person/create-visit-request")}
-                  className="w-full md:w-auto px-10 h-10 rounded-xl text-[12px] font-normal tracking-[0.14em] text-gray-400 hover:text-gray-600 transition-all"
+                  className="w-full sm:w-auto px-12 h-11 rounded-xl text-[12px] font-medium tracking-[0.1em] text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all uppercase"
                 >
                   Back to core info
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full md:w-auto flex-1 h-10 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal tracking-[0.14em] rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-50"
+                  className="w-full sm:w-auto px-12 h-11 bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-bold tracking-[0.1em] rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-50 uppercase"
                 >
-                  {isSubmitting ? "Finalizing registration..." : "Complete & submit"}
+                  {isSubmitting ? "Submitting..." : "Complete & submit"}
                 </button>
               </div>
 

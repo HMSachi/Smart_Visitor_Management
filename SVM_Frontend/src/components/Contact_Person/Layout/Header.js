@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { toggleMobileMenu } from "../../../reducers/uiSlice";
 import ThemeToggleButton from "../../common/ThemeToggleButton";
+import { useThemeMode } from "../../../theme/ThemeModeContext";
 
 const Header = ({ title }) => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ const Header = ({ title }) => {
   const isMobileMenuOpen = useSelector((state) => state.ui.isMobileMenuOpen);
   const user = useSelector((state) => state.login.user);
   const { visitRequestsByCP } = useSelector((state) => state.visitRequestsState || { visitRequestsByCP: [] });
+  const { themeMode } = useThemeMode();
+  const isDark = themeMode === "dark";
 
   const getIdentity = () => {
     const currentUser = user?.ResultSet?.[0] || user?.data?.ResultSet?.[0];

@@ -14,21 +14,21 @@ const Panel = ({ icon, label, value, trend, onClick }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       onClick={onClick}
-      className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] p-2.5 sm:p-3.5 md:p-4 rounded-xl flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 relative overflow-hidden shadow-md h-full"
+      className="bg-background-paper border border-border-soft p-2.5 sm:p-3.5 md:p-4 rounded-xl flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 relative overflow-hidden shadow-md h-full"
     >
       <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all"></div>
 
       <div className="flex justify-between items-start relative z-10">
         <div>
-          <p className="text-[var(--color-text-dim)] text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.15em] mb-1 sm:mb-2 group-hover:text-primary transition-opacity">{label}</p>
-          <h3 className="text-[var(--color-text-primary)] text-lg sm:text-xl md:text-2xl font-semibold tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
+          <p className="text-text-dim text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.15em] mb-1 sm:mb-2 group-hover:text-primary transition-opacity">{label}</p>
+          <h3 className="text-text-primary text-lg sm:text-xl md:text-2xl font-semibold tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
         </div>
-        <div className="p-2.5 rounded-xl bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-500 shadow-sm">
+        <div className="p-2.5 rounded-xl bg-background-alt border border-border-soft group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-500 shadow-sm">
           <Icon className="text-primary group-hover:scale-110 transition-transform" size={16} strokeWidth={2.5} />
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-700 shadow-[0_0_10px_var(--color-primary)]"></div>
+      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(200,16,46,0.5)]"></div>
     </motion.div>
   );
 };

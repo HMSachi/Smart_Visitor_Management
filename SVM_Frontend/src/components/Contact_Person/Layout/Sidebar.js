@@ -67,7 +67,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
       <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
     )}
     {collapsed && (
-      <div className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[var(--color-bg-elevated)] border border-[var(--color-border-medium)] rounded-lg text-[12px] font-semibold text-[var(--color-text-primary)] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none z-50 shadow-xl transition-all duration-200 translate-x-1 group-hover:translate-x-0">
+      <div className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 px-3 py-1.5 bg-background-elevated border border-border-medium rounded-lg text-[12px] font-semibold text-text-primary whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none z-50 shadow-xl transition-all duration-200 translate-x-1 group-hover:translate-x-0">
         {label}
       </div>
     )}
@@ -97,11 +97,7 @@ const SidebarContent = ({
 
   return (
     <Box
-      className="h-full flex flex-col"
-      style={{
-        background: "var(--color-bg-paper)",
-        borderRight: "none",
-      }}
+      className="h-full flex flex-col bg-background-paper"
     >
       {/* Logo */}
       <div
@@ -115,7 +111,7 @@ const SidebarContent = ({
         />
         {!isCollapsed && (
           <div className="min-w-0 animate-fade-in">
-            <p className="text-[var(--color-text-primary)] text-[13px] font-bold tracking-tight leading-tight">
+            <p className="text-text-primary text-[13px] font-bold tracking-tight leading-tight">
               Contact Person Portal
             </p>
             <p className="text-primary text-[11px] font-medium tracking-wide">
@@ -128,7 +124,7 @@ const SidebarContent = ({
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto no-scrollbar">
         {!isCollapsed && (
-          <p className="text-[10.5px] uppercase font-semibold text-[var(--color-text-dim)] tracking-widest px-3 mb-3">
+          <p className="text-[10.5px] uppercase font-semibold text-text-dim tracking-widest px-3 mb-3">
             Navigation
           </p>
         )}

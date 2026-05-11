@@ -133,8 +133,20 @@ td {
   color: var(--color-text-primary) !important;
 }
 
-[data-theme="light"] [class*="text-gray-"] {
+[data-theme="light"] [class*="text-gray-"],
+[data-theme="light"] [class*="text-slate-"],
+[data-theme="light"] [class*="text-zinc-"] {
   color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] [class*="bg-white/5"],
+[data-theme="dark"] [class*="bg-white/10"] {
+  /* Keep subtle overlays in dark mode */
+}
+
+[data-theme="light"] [class*="bg-white/"],
+[data-theme="light"] [class*="bg-black/"] {
+  background-color: var(--color-surface-2) !important;
 }
 
 [data-theme="light"] [class*="placeholder:text-gray-"]::placeholder {
@@ -170,35 +182,54 @@ td {
    ============================================================ */
 .contact-theme-root,
 .admin-theme-root,
-.visitor-theme-root {
+.visitor-theme-root,
+.security-theme-root {
   background-color: var(--color-bg-default);
   color: var(--color-text-primary);
 }
 
 .contact-theme-root [class*="text-white"],
 .admin-theme-root [class*="text-white"],
-.visitor-theme-root [class*="text-white"] {
+.visitor-theme-root [class*="text-white"],
+.security-theme-root [class*="text-white"] {
   color: var(--color-text-primary) !important;
 }
 
-.contact-theme-root [class*="text-gray-"],
-.admin-theme-root [class*="text-gray-"],
-.visitor-theme-root [class*="text-gray-"] {
-  color: var(--color-text-secondary) !important;
+[data-theme="light"] .contact-theme-root [class*="bg-white"],
+[data-theme="light"] .admin-theme-root [class*="bg-white"],
+[data-theme="light"] .visitor-theme-root [class*="bg-white"],
+[data-theme="light"] .security-theme-root [class*="bg-white"] {
+  background-color: var(--color-bg-paper) !important;
 }
 
-.contact-theme-root [class*="border-white"],
-.admin-theme-root [class*="border-white"],
-.visitor-theme-root [class*="border-white"] {
+[data-theme="light"] .contact-theme-root [class*="bg-gray-50"],
+[data-theme="light"] .admin-theme-root [class*="bg-gray-50"],
+[data-theme="light"] .visitor-theme-root [class*="bg-gray-50"],
+[data-theme="light"] .security-theme-root [class*="bg-gray-50"] {
+  background-color: var(--color-bg-alt) !important;
+}
+
+[data-theme="light"] .contact-theme-root [class*="border-gray-"],
+[data-theme="light"] .admin-theme-root [class*="border-gray-"],
+[data-theme="light"] .visitor-theme-root [class*="border-gray-"],
+[data-theme="light"] .security-theme-root [class*="border-gray-"] {
   border-color: var(--color-border-soft) !important;
 }
 
-.contact-theme-root [class*="bg-black/"],
-.admin-theme-root [class*="bg-black/"],
-.visitor-theme-root [class*="bg-black/"],
-.contact-theme-root [class*="bg-white/5"],
-.admin-theme-root [class*="bg-white/5"] {
-  background-color: var(--color-surface-2) !important;
+[data-theme="light"] .contact-theme-root [class*="text-gray-"],
+[data-theme="light"] .admin-theme-root [class*="text-gray-"],
+[data-theme="light"] .visitor-theme-root [class*="text-gray-"],
+[data-theme="light"] .security-theme-root [class*="text-gray-"] {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="light"] .contact-theme-root [class*="text-[#0A1D37]"],
+[data-theme="light"] .admin-theme-root [class*="text-[#0A1D37]"] {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="light"] .contact-theme-root [class*="bg-[#F8F9FA]"] {
+  background-color: var(--color-bg-default) !important;
 }
 
 .contact-theme-root [class*="bg-white"] {
@@ -432,7 +463,9 @@ td {
   }
 
   .svm-status-pill--danger {
-    @apply bg-primary/10 border-primary/20 text-primary;
+    background-color: color-mix(in srgb, var(--color-primary), transparent 90%);
+    border-color: color-mix(in srgb, var(--color-primary), transparent 80%);
+    color: var(--color-primary);
   }
 
   .svm-status-pill--orange {
@@ -555,7 +588,8 @@ td {
 
   /* ——— Buttons ——— */
   .compact-btn {
-    @apply px-5 py-2.5 bg-primary text-white text-[13px] font-semibold tracking-wide rounded-xl hover:bg-[var(--color-primary-hover)] active:scale-95 transition-all shadow-lg shadow-primary/20;
+    @apply px-5 py-2.5 bg-primary text-white text-[13px] font-semibold tracking-wide rounded-xl hover:bg-[var(--color-primary-hover)] active:scale-95 transition-all;
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-primary), transparent 80%);
   }
 
   .btn-primary {

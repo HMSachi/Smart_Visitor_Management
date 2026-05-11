@@ -17,7 +17,7 @@ const QuickActionButton = ({
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
       onClick={onClick}
-      className="group relative overflow-hidden h-full min-h-[90px] bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-xl p-3 sm:p-3.5 hover:border-primary/40 transition-all duration-500 flex flex-col justify-between"
+      className="group relative overflow-hidden h-full min-h-[90px] bg-background-alt border border-border-soft rounded-xl p-3 sm:p-3.5 hover:border-primary/40 transition-all duration-500 flex flex-col justify-between"
     >
       {/* Background glow effect */}
       <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>
@@ -32,17 +32,17 @@ const QuickActionButton = ({
               strokeWidth={2}
             />
           </div>
-          <h3 className="text-[var(--color-text-primary)] font-semibold text-[11px] sm:text-[12px] tracking-wide mb-0.5 text-left leading-tight">
+          <h3 className="text-text-primary font-semibold text-[11px] sm:text-[12px] tracking-wide mb-0.5 text-left leading-tight">
             {label}
           </h3>
         </div>
-        <p className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] opacity-75 text-left leading-tight">
+        <p className="text-text-secondary text-[9px] sm:text-[10px] opacity-75 text-left leading-tight">
           {description}
         </p>
       </div>
 
       {/* Bottom accent line */}
-      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-700 shadow-[0_0_10px_var(--color-primary)]"></div>
+      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(200,16,46,0.5)]"></div>
     </motion.button>
   );
 };
@@ -81,10 +81,10 @@ const QuickActions = () => {
     <div className="space-y-2 sm:space-y-3 md:space-y-4">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4">
         <div>
-          <h2 className="text-[var(--color-text-primary)] text-sm sm:text-base font-bold tracking-tight">
+          <h2 className="text-text-primary text-sm sm:text-base font-bold tracking-tight">
             Quick Actions
           </h2>
-          <p className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] opacity-75 mt-0.5 sm:mt-1 uppercase tracking-[0.15em]">
+          <p className="text-text-secondary text-[9px] sm:text-[10px] opacity-75 mt-0.5 sm:mt-1 uppercase tracking-[0.15em]">
             Common tasks at your fingertips
           </p>
         </div>
