@@ -46,7 +46,7 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
         borderRadius: '24px',
-        padding: '1.5rem',
+        padding: '1.25rem',
         boxShadow: 'var(--shadow-card)',
         transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
       }}

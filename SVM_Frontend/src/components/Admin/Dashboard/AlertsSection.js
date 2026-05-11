@@ -32,10 +32,10 @@ const AlertsSection = () => {
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '32px',
-        padding: '1.75rem',
+        borderRadius: '28px',
+        padding: '1.5rem',
         boxShadow: 'var(--shadow-card)',
-        minHeight: '420px',
+        minHeight: '380px',
       }}
     >
       {/* Header */}

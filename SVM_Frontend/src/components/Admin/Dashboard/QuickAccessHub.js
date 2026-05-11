@@ -34,12 +34,12 @@ const QuickAccessHub = ({ setActiveTab }) => {
           onClick={() => setActiveTab(link.id)}
           role="button"
           tabIndex="0"
-          className="group relative overflow-hidden flex flex-col items-center justify-center text-center p-8 cursor-pointer transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] text-left"
+          className="group relative overflow-hidden flex flex-col items-center justify-center text-center p-6 cursor-pointer transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] text-left"
           style={{
             background: 'var(--color-bg-paper)',
             border: '1px solid var(--color-border-soft)',
             boxShadow: 'var(--shadow-card)',
-            borderRadius: '32px',
+            borderRadius: '24px',
           }}
         >
           {/* Hover background */}
@@ -47,7 +47,7 @@ const QuickAccessHub = ({ setActiveTab }) => {
             className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             style={{ 
               background: 'linear-gradient(135deg, rgba(200,16,46,0.06), transparent)',
-              borderRadius: '32px'
+              borderRadius: '24px'
             }}
           />
 

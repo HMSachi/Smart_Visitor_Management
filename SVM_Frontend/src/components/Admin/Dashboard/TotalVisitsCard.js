@@ -16,8 +16,8 @@ const TotalVisitsCard = () => {
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '32px',
-        padding: '2rem',
+        borderRadius: '28px',
+        padding: '1.75rem',
         boxShadow: 'var(--shadow-card)',
         transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
       }}

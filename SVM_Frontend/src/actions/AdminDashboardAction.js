@@ -23,14 +23,19 @@ export const FetchAdminDashboardMetrics = () => async (dispatch) => {
 
         // 3. Fetch Blacklist Count (Restricted List)
         const blacklistRes = await BlacklistService.GetAllBlacklist();
-        const blacklistCount = (blacklistRes.data?.ResultSet || blacklistRes.data || []).length;
+        const blacklistRaw = blacklistRes.data?.ResultSet || blacklistRes.data || [];
+        const blacklistCount = Array.isArray(blacklistRaw) ? blacklistRaw.length : 0;
+
+        // 4. Calculate All-Time Visits
+        const allTimeVisits = Array.isArray(allPasses) ? allPasses.length : 0;
 
         dispatch(updateActiveVisitors(activeVisitorsCount));
 
         dispatch(setDashboardMetrics({
             todayVisits,
             activeVisitors: activeVisitorsCount,
-            blacklistCount
+            blacklistCount,
+            totalVisits: allTimeVisits
         }));
 
         // 4. Map Recent Activity to Alerts

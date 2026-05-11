@@ -13,8 +13,8 @@ const SystemStatusNode = () => {
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '32px',
-        padding: '2.5rem 2rem',
+        borderRadius: '28px',
+        padding: '1.75rem',
         boxShadow: 'var(--shadow-card)',
       }}
     >

@@ -145,11 +145,11 @@ const Dashboard = () => {
                 onClick={() => navigate("/admin/approval-management")}
                 role="button"
                 tabIndex="0"
-                className="group relative overflow-hidden p-8 border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-500 text-left hover:scale-[1.03] active:scale-[0.98] shadow-sm hover:shadow-xl cursor-pointer"
+                className="group relative overflow-hidden p-6 border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-500 text-left hover:scale-[1.03] active:scale-[0.98] shadow-sm hover:shadow-xl cursor-pointer"
                 style={{
                   background: "var(--color-bg-paper)",
-                  borderRadius: "32px !important",
-                  borderRadius: "32px", // standard for browsers that don't like !important in inline style
+                  borderRadius: "24px !important",
+                  borderRadius: "24px", // standard for browsers that don't like !important in inline style
                 }}
               >
                 <div
@@ -180,11 +180,11 @@ const Dashboard = () => {
                 onClick={() => navigate("/admin/security-monitoring")}
                 role="button"
                 tabIndex="0"
-                className="group relative overflow-hidden p-8 border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-500 text-left hover:scale-[1.03] active:scale-[0.98] shadow-sm hover:shadow-xl cursor-pointer"
+                className="group relative overflow-hidden p-6 border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-500 text-left hover:scale-[1.03] active:scale-[0.98] shadow-sm hover:shadow-xl cursor-pointer"
                 style={{
                   background: "var(--color-bg-paper)",
-                  borderRadius: "32px !important",
-                  borderRadius: "32px",
+                  borderRadius: "24px !important",
+                  borderRadius: "24px",
                 }}
               >
                 <div
@@ -215,11 +215,11 @@ const Dashboard = () => {
                 onClick={() => navigate("/admin/blacklist-management")}
                 role="button"
                 tabIndex="0"
-                className="group relative overflow-hidden p-8 border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-500 text-left hover:scale-[1.03] active:scale-[0.98] shadow-sm hover:shadow-xl cursor-pointer"
+                className="group relative overflow-hidden p-6 border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-500 text-left hover:scale-[1.03] active:scale-[0.98] shadow-sm hover:shadow-xl cursor-pointer"
                 style={{
                   background: "var(--color-bg-paper)",
-                  borderRadius: "32px !important",
-                  borderRadius: "32px",
+                  borderRadius: "24px !important",
+                  borderRadius: "24px",
                 }}
               >
                 <div
