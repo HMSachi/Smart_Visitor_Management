@@ -2537,7 +2537,7 @@ const VisitRequests = () => {
                             <div className="flex items-center gap-1.5">
                               <Package size={13} className="text-primary/70" />
                               <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
-                                Items to Bring (Main Visitor)
+                                Items to Bring
                               </h3>
                               {editItems.filter((it) => !it._isNew).length > 0 && (
                                 <span className={`text-[10px] font-semibold ml-1 ${isLight ? "text-gray-400" : "text-white/30"}`}>
