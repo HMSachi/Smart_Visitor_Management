@@ -1894,7 +1894,7 @@ const MyRequests = () => {
                           }}
                           className="font-bold uppercase tracking-[0.2em]"
                         >
-                          Items to Bring (Main Visitor)
+                          Items to Bring 
                         </h3>
                         {editItems.filter((it) => !it._isNew).length > 0 && (
                           <span
