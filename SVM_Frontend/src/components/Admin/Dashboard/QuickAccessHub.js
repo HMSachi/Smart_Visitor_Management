@@ -52,14 +52,14 @@ const QuickAccessHub = ({ setActiveTab }) => {
           />
 
           <div
-            className="w-10 h-10 mb-3 flex items-center justify-center rounded-xl transition-all duration-300 group-hover:bg-primary group-hover:text-white relative z-10"
+            className="w-10 h-10 mb-4 flex items-center justify-center rounded-2xl transition-all duration-300 group-hover:bg-primary group-hover:text-white relative z-10"
             style={{
-              background: link.primary ? 'rgba(200,16,46,0.1)' : 'var(--color-surface-1)',
-              border: link.primary ? '1px solid rgba(200,16,46,0.25)' : '1px solid var(--color-border-soft)',
-              color: link.primary ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+              background: 'var(--color-surface-2)',
+              border: '1px solid var(--color-border-soft)',
+              color: 'var(--color-text-secondary)',
             }}
           >
-            <link.icon size={18} strokeWidth={2} />
+            <link.icon size={16} strokeWidth={2.5} />
           </div>
 
           <h3

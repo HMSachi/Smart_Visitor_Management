@@ -67,10 +67,10 @@ const ActiveVisitorsCard = () => {
         </div>
 
         <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white"
-          style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.2)' }}
+          className="w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white"
+          style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-soft)', color: 'var(--color-text-secondary)' }}
         >
-          <Users size={20} strokeWidth={2} />
+          <Users size={16} strokeWidth={2.5} />
         </div>
       </div>
 

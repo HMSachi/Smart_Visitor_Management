@@ -164,10 +164,10 @@ const Dashboard = () => {
                 />
                 <div className="relative z-10">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-white transition-all duration-300 group-hover:scale-110"
-                    style={{ background: "rgba(200,16,46,0.15)" }}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 transition-all duration-300 group-hover:bg-primary group-hover:text-white"
+                    style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-soft)", color: "var(--color-text-secondary)" }}
                   >
-                    <CheckSquare size={16} />
+                    <CheckSquare size={16} strokeWidth={2.5} />
                   </div>
                   <h3 className="font-semibold text-[var(--color-text-primary)] text-[12.5px] mb-0.5 group-hover:text-primary transition-colors">
                     Approval Management
@@ -199,10 +199,10 @@ const Dashboard = () => {
                 />
                 <div className="relative z-10">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-white transition-all duration-300 group-hover:scale-110"
-                    style={{ background: "rgba(200,16,46,0.15)" }}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 transition-all duration-300 group-hover:bg-primary group-hover:text-white"
+                    style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-soft)", color: "var(--color-text-secondary)" }}
                   >
-                    <ShieldAlert size={16} />
+                    <ShieldAlert size={16} strokeWidth={2.5} />
                   </div>
                   <h3 className="font-semibold text-[var(--color-text-primary)] text-[12.5px] mb-0.5 group-hover:text-primary transition-colors">
                     Security Monitoring
@@ -234,10 +234,10 @@ const Dashboard = () => {
                 />
                 <div className="relative z-10">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-white transition-all duration-300 group-hover:scale-110"
-                    style={{ background: "rgba(200,16,46,0.15)" }}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 transition-all duration-300 group-hover:bg-primary group-hover:text-white"
+                    style={{ background: "var(--color-surface-2)", border: "1px solid var(--color-border-soft)", color: "var(--color-text-secondary)" }}
                   >
-                    <UserX size={16} />
+                    <UserX size={16} strokeWidth={2.5} />
                   </div>
                   <h3 className="font-semibold text-[var(--color-text-primary)] text-[12.5px] mb-0.5 group-hover:text-primary transition-colors">
                     Restricted List

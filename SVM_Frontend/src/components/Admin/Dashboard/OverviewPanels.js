@@ -79,9 +79,9 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
 
         <div
           className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300"
-          style={{ background: color.bg, border: `1px solid ${color.border}`, color: color.text }}
+          style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-soft)', color: 'var(--color-text-secondary)' }}
         >
-          <Icon size={18} strokeWidth={2} />
+          <Icon size={16} strokeWidth={2.5} />
         </div>
       </div>
 

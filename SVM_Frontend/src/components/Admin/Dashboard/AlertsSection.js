@@ -42,10 +42,10 @@ const AlertsSection = () => {
       <div className="flex items-center justify-between mb-5 pb-4" style={{ borderBottom: '1px solid var(--color-border-soft)' }}>
         <div className="flex items-center gap-1.5">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-primary"
-            style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.2)' }}
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300"
+            style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-soft)', color: 'var(--color-text-secondary)' }}
           >
-            <Bell size={16} />
+            <Bell size={16} strokeWidth={2.5} />
           </div>
           <div>
             <h2 className="text-[var(--color-text-primary)] text-[15px] font-semibold m-0">
