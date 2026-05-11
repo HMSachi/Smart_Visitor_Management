@@ -96,147 +96,261 @@ const PlacesManagement = () => {
       <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="max-w-none mx-auto">
-
           {/* Toolbar */}
-          <header className="mb-6 flex flex-col xl:flex-row justify-between items-center gap-3 relative z-10">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 flex items-center justify-center text-primary shadow-md">
-                <MapPin size={18} strokeWidth={1.8} />
+          <header className="mb-6 flex flex-col xl:flex-row justify-between items-center gap-6 relative z-10 px-1">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center text-primary shadow-xl backdrop-blur-md">
+                <MapPin size={22} strokeWidth={1.5} />
               </div>
               <div>
-                <h2 className={`text-sm font-semibold tracking-wide uppercase ${isLight ? "text-gray-800" : "text-white"}`}>
+                <h2 className="text-lg font-bold text-white tracking-tight">
                   Facility Locations
                 </h2>
-                <p className={`text-[9px] tracking-[0.2em] uppercase font-medium mt-0.5 ${isLight ? "text-gray-400" : "text-white/40"}`}>
-                  {filteredPlaces.length} {filteredPlaces.length === 1 ? "place" : "places"} registered
-                </p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">
+                    {filteredPlaces.length} {filteredPlaces.length === 1 ? "Place" : "Places"}
+                  </span>
+                  <span className="text-[10px] text-[var(--color-text-dim)] uppercase tracking-widest font-medium">
+                    Management Portal
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full xl:w-auto">
-              {/* Search */}
-              <div className={`flex items-center border transition-all rounded-[8px] px-3 h-9 min-w-[220px] w-full sm:w-[280px] group shadow-sm ${isLight ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary"}`}>
-                <Search size={14} className={`transition-colors mr-2 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`} />
+            <div className="flex flex-col sm:flex-row gap-3 items-center shrink-0 w-full xl:w-auto">
+              {/* Search Box - Rounded Style */}
+              <div className="relative w-full sm:w-64 group">
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                  <Search
+                    size={14}
+                    className="text-[var(--color-text-dim)] group-focus-within:text-primary transition-colors"
+                  />
+                </div>
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search places..."
-                  className={`bg-transparent text-[13px] focus:outline-none w-full tracking-wide ${isLight ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
+                  placeholder="Filter locations..."
+                  className="w-full bg-[var(--color-bg-paper)] border border-white/10 text-white text-[13px] rounded-full py-2 pl-9 pr-4 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-white/20"
                 />
               </div>
 
               {/* Add Form Inline */}
-              <form onSubmit={handleAddPlace} className="flex gap-2 w-full sm:w-auto">
+              <form
+                onSubmit={handleAddPlace}
+                className="flex gap-2 w-full sm:w-auto p-1.5 bg-white/5 border border-white/5 rounded-[12px] backdrop-blur-md"
+              >
                 <input
                   type="text"
                   value={placeName}
                   onChange={(e) => setPlaceName(e.target.value)}
-                  placeholder="New place name..."
+                  placeholder="Add new facility..."
                   disabled={isSubmitting}
-                  className={`border transition-all rounded-[8px] px-3 h-9 text-[13px] focus:outline-none w-full sm:w-[200px] shadow-sm ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] placeholder:text-gray-400 focus:border-primary/40" : "bg-black/40 border-white/10 text-white placeholder:text-white/20 focus:border-primary"}`}
+                  className="bg-transparent text-[13px] text-white focus:outline-none px-3 w-full sm:w-[200px] placeholder:text-white/20"
                 />
                 <button
                   type="submit"
                   disabled={isSubmitting || !placeName.trim()}
-                  className="flex items-center justify-center gap-1 bg-primary hover:bg-primary-hover text-white px-3 h-9 rounded-[8px] text-[11px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 group shrink-0 disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 h-8 rounded-[8px] text-[11px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-50"
                 >
-                  <Plus size={14} className="group-hover:rotate-90 transition-transform" />
-                  {isSubmitting ? "Adding..." : "Add"}
+                  <Plus size={14} />
+                  {isSubmitting ? "..." : "Add"}
                 </button>
               </form>
             </div>
           </header>
 
-          {/* Table */}
-          <div className={`${isLight ? "bg-white border-gray-100" : "bg-[var(--color-bg-paper)] border-white/8"} border rounded-2xl overflow-hidden shadow-xl relative hover:border-white/12 transition-colors duration-300`}>
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none"></div>
+          {/* Table Container */}
+          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
             {loading ? (
-              <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
-                <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
-                <p className={`text-[13px] uppercase tracking-[0.3em] font-medium ${isLight ? "text-gray-400" : "text-gray-300"}`}>Loading places...</p>
-              </div>
-            ) : filteredPlaces.length === 0 ? (
-              <div className="p-8 md:p-20 text-center">
-                <p className={`text-[13px] uppercase tracking-[0.3em] font-medium ${isLight ? "text-gray-400" : "text-gray-300"}`}>
-                  {searchTerm ? "No places match your search." : "No places found. Add one above."}
+              <div className="p-20 flex flex-col items-center justify-center">
+                <CircularProgress size={24} className="text-primary mb-4" />
+                <p className="text-[var(--color-text-dim)] text-[12px] uppercase tracking-[0.3em]">
+                  Syncing data...
                 </p>
               </div>
             ) : (
-              <TableContainer component={Paper} className="bg-transparent border-none z-10 relative"
-                sx={{ maxHeight: "calc(100vh - 16rem)", overflow: "auto" }}>
+              <TableContainer
+                component={Paper}
+                className="bg-transparent border-none z-10 relative"
+                sx={{
+                  maxHeight: "600px",
+                  minHeight: "400px",
+                  overflow: "auto",
+                }}
+              >
                 <Table stickyHeader aria-label="places table">
                   <TableHead>
-                    <TableRow sx={{ height: "24px", backgroundColor: isLight ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.03)" }}>
-                      {["ID", "Place Name", "Status", "Actions"].map((label, i) => (
-                        <TableCell key={label}
-                          align={label === "Actions" ? "right" : label === "Status" ? "center" : "left"}
-                          sx={{ padding: "4px 16px", borderBottom: isLight ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)" }}
-                          className={`${isLight ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] uppercase whitespace-nowrap`}
-                        >
-                          {label}
-                        </TableCell>
-                      ))}
+                    <TableRow
+                      sx={{
+                        height: "24px",
+                        backgroundColor: "var(--color-bg-paper)",
+                      }}
+                    >
+                      <TableCell
+                        sx={{
+                          padding: "8px 24px",
+                          borderBottom: "1px solid rgba(255,255,255,0.05)",
+                          width: "15%",
+                        }}
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                      >
+                        Location ID
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          padding: "8px 24px",
+                          borderBottom: "1px solid rgba(255,255,255,0.05)",
+                        }}
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                      >
+                        Facility Name
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{
+                          padding: "8px 24px",
+                          borderBottom: "1px solid rgba(255,255,255,0.05)",
+                          width: "20%",
+                        }}
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                      >
+                        Status
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        sx={{
+                          padding: "8px 24px",
+                          borderBottom: "1px solid rgba(255,255,255,0.05)",
+                          width: "15%",
+                        }}
+                        className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                      >
+                        Actions
+                      </TableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody>
-                    {filteredPlaces.map((place, index) => {
-                      const placeId = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || index + 1;
-                      const placeNameVal = place.VAIL_Item_Name || place.Item_Name || "Unnamed";
-                      const status = (place.VAIL_Status || place.Status || "A").toString().trim().toUpperCase();
-                      const isActive = status === "A";
-
-                      return (
-                        <TableRow key={placeId}
-                          sx={{
-                            "&:hover": { backgroundColor: isLight ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.04)" },
-                            height: "28px",
-                            opacity: isActive ? 1 : 0.55,
-                            transition: "all 0.2s ease",
-                          }}
+                  <TableBody className="divide-y divide-white/[0.04]">
+                    {filteredPlaces.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          align="center"
+                          className="py-12 text-[var(--color-text-dim)] uppercase tracking-widest text-[12px]"
                         >
-                          <TableCell sx={{ padding: "3px 16px" }}
-                            className={`${isLight ? "text-gray-800" : "text-white/80"} font-normal text-[12px]`}>
-                            <div className="flex items-center gap-1">
-                              <Hash size={10} className="text-primary/40" />
-                              <span>{placeId}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell sx={{ padding: "3px 16px" }}
-                            className={`font-medium text-[12px] ${isActive ? (isLight ? "text-gray-900" : "text-white") : (isLight ? "text-gray-400" : "text-white/40")}`}>
-                            {placeNameVal}
-                          </TableCell>
-                          <TableCell align="center" sx={{ padding: "3px 16px" }}>
-                            <button
-                              onClick={() => handleToggleStatus(place)}
-                              disabled={isSubmitting}
-                              title={isActive ? "Click to deactivate" : "Click to activate"}
-                              className={`svm-status-pill transition-colors cursor-pointer ${isActive ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"}`}
+                          {searchTerm
+                            ? "No matches found"
+                            : "No records available"}
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredPlaces.map((place, index) => {
+                        const placeId =
+                          place.VAIL_Item_List_ID ||
+                          place.Item_List_ID ||
+                          place.Id ||
+                          index + 1;
+                        const placeNameVal =
+                          place.VAIL_Item_Name || place.Item_Name || "Unnamed";
+                        const status = (
+                          place.VAIL_Status ||
+                          place.Status ||
+                          "A"
+                        )
+                          .toString()
+                          .trim()
+                          .toUpperCase();
+                        const isActive = status === "A";
+
+                        return (
+                          <TableRow
+                            key={placeId}
+                            sx={{
+                              "&:hover": {
+                                backgroundColor: "rgba(255,255,255,0.02)",
+                              },
+                              height: "28px",
+                              transition: "all 0.2s ease",
+                            }}
+                          >
+                            <TableCell
+                              sx={{
+                                padding: "8px 24px",
+                                borderBottom: "none",
+                              }}
+                              className="text-white align-middle font-normal text-[12px]"
                             >
-                              {isActive ? "ACTIVE" : "INACTIVE"}
-                            </button>
-                          </TableCell>
-                          <TableCell align="right" sx={{ padding: "3px 16px" }}>
-                            <IconButton
-                              onClick={() => handleToggleStatus(place)}
-                              size="small"
-                              disabled={isSubmitting}
-                              title={isActive ? "Deactivate" : "Activate"}
-                              sx={{ color: isActive ? "#22c55e" : "#ef4444", mr: 0.5 }}
+                              <div className="flex items-center gap-1">
+                                <Hash size={10} className="text-primary/40" />
+                                <span>{placeId}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                padding: "8px 24px",
+                                borderBottom: "none",
+                              }}
+                              className={`font-normal align-middle transition-colors text-[12px] ${
+                                isActive ? "text-white" : "text-white/40 line-through"
+                              }`}
                             >
-                              {isActive ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
-                            </IconButton>
-                            <IconButton
-                              onClick={() => handleOpenEdit(place)}
-                              size="small"
-                              className={`${isLight ? "text-gray-400 hover:text-primary" : "text-white/40 hover:text-white"} p-1`}
+                              {placeNameVal}
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              sx={{
+                                padding: "8px 24px",
+                                borderBottom: "none",
+                              }}
                             >
-                              <Edit size={14} />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                              <button
+                                onClick={() => handleToggleStatus(place)}
+                                disabled={isSubmitting}
+                                className={`svm-status-pill transition-colors cursor-pointer ${
+                                  isActive
+                                    ? "svm-status-pill--success hover:bg-green-500/20"
+                                    : "svm-status-pill--danger hover:bg-primary/20"
+                                }`}
+                              >
+                                {isActive ? "ACTIVE" : "INACTIVE"}
+                              </button>
+                            </TableCell>
+                            <TableCell
+                              align="right"
+                              sx={{
+                                padding: "8px 24px",
+                                borderBottom: "none",
+                              }}
+                            >
+                              <div className="flex items-center justify-end gap-1">
+                                <IconButton
+                                  onClick={() => handleToggleStatus(place)}
+                                  size="small"
+                                  disabled={isSubmitting}
+                                  sx={{
+                                    color: isActive ? "#22c55e" : "#ef4444",
+                                  }}
+                                >
+                                  {isActive ? (
+                                    <ToggleRight size={18} />
+                                  ) : (
+                                    <ToggleLeft size={18} />
+                                  )}
+                                </IconButton>
+                                <IconButton
+                                  onClick={() => handleOpenEdit(place)}
+                                  size="small"
+                                  className="text-white/40 hover:text-white p-1"
+                                >
+                                  <Edit size={16} />
+                                </IconButton>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
                   </TableBody>
                 </Table>
               </TableContainer>

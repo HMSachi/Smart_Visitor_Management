@@ -378,6 +378,8 @@ const AllUsers = () => {
     tableFilter === "ALL"
       ? filteredCategories
       : filteredCategories.filter((cat) => cat.id === tableFilter);
+      
+  const totalUsers = categories.reduce((sum, cat) => sum + cat.data.length, 0);
 
   const loading = adminLoading || contactLoading;
   const error = adminError || contactError;
@@ -395,73 +397,63 @@ const AllUsers = () => {
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
       <Header title="All System Users" />
 
-      <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
-        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-        <div className="max-w-none mx-auto">
-          <header className="mb-6 flex flex-col xl:flex-row justify-between items-center gap-3 relative z-10">
-            <div className="overflow-x-auto no-scrollbar w-full xl:w-auto">
-              <div className={`inline-flex p-1 rounded-full border transition-all gap-0.5 ${themeMode === "light" ? "bg-white border-gray-100 shadow-sm" : "bg-black/20 border-white/5"}`}>
-                {[
-                  ...categories.map((cat) => ({
-                    id: cat.id,
-                    label: cat.title,
-                  })),
-                ].map((btn) => (
+      <div className="flex-1 p-2 md:p-3 space-y-2 md:space-y-4 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
+        {/* Dynamic Operational Aura */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+
+        <div className="max-w-none mx-auto relative z-10 flex flex-col min-h-full">
+          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-xl relative overflow-hidden mb-2 sm:mb-4">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+            
+            <div className="px-3 sm:px-4 md:px-5 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
+              <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto relative max-w-full overflow-x-auto no-scrollbar">
+                {categories.map((cat) => (
                   <button
-                    key={btn.id}
-                    onClick={() => setTableFilter(btn.id)}
-                    className={`relative px-5 h-10 rounded-full text-[12px] font-normal tracking-wide transition-all duration-300 whitespace-nowrap ${tableFilter === btn.id
-                      ? "bg-primary text-white shadow-lg shadow-primary/20"
-                      : themeMode === "light"
-                        ? "text-gray-500 hover:text-primary"
-                        : "text-white/40 hover:text-white"
-                      }`}
+                    key={cat.id}
+                    onClick={() => setTableFilter(cat.id)}
+                    className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[13px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${tableFilter === cat.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
                   >
-                    {btn.label}
+                    {tableFilter === cat.id && (
+                      <motion.div
+                        layoutId="activeFilter"
+                        className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                    <span className="relative z-10">{cat.title}</span>
                   </button>
                 ))}
               </div>
-            </div>
 
-            <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full xl:w-auto">
-              <div
-                className={`flex items-center border transition-all rounded-[8px] px-3 h-10 min-w-[220px] w-full sm:w-[280px] md:w-[320px] group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
-              >
-                <Search size={14} className={`transition-colors mr-2 ${themeMode === "light" ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`} />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search users..."
-                  className={`bg-transparent text-[13px] focus:outline-none w-full tracking-wide ${themeMode === "light" ? "text-[#1A1A1A] placeholder:text-gray-400" : "text-white placeholder:text-white/20"}`}
-                />
-              </div>
+              <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full xl:w-auto">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-black/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-white/80 shrink-0">
+                  <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
+                  {totalUsers} records
+                </div>
 
-              <div
-                className={`flex items-center border transition-all rounded-[8px] px-3 h-10 min-w-[120px] w-full sm:w-auto group shadow-sm ${themeMode === "light" ? "bg-white border-gray-200 hover:border-primary/20 focus-within:border-primary/40" : "bg-black/40 border-white/10 focus-within:border-primary hover:border-white/20"}`}
-              >
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`text-[13px] bg-transparent focus:outline-none w-full tracking-wide cursor-pointer ${themeMode === "light" ? "text-[#1A1A1A]" : "text-white"}`}
+                <div className="flex items-center bg-black/40 border border-white/10 px-4 py-1.5 rounded-full group focus-within:border-primary transition-all w-full md:w-64">
+                  <Search size={14} className="text-white/20 group-focus-within:text-primary" />
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="bg-transparent border-none focus:outline-none text-white text-[12px] font-medium ml-2 w-full placeholder:text-white/20"
+                  />
+                </div>
+
+                <button
+                  onClick={() => openModal("add")}
+                  className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold tracking-wider transition-all shadow-lg active:scale-95 group shrink-0"
                 >
-                  <option value="ALL">All Statuses</option>
-                  <option value="ACTIVE">Active</option>
-                  <option value="INACTIVE">Inactive</option>
-                </select>
+                  <Plus size={14} className="group-hover:rotate-90 transition-transform" />
+                  Add user
+                </button>
               </div>
-
-              <button
-                onClick={() => openModal("add")}
-                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 h-10 rounded-[5px] text-[12px] font-normal tracking-wider transition-all shadow-lg active:scale-95 group shrink-0"
-              >
-                <Plus size={14} className="group-hover:rotate-90 transition-transform" />
-                Add user
-              </button>
             </div>
-          </header>
+          </div>
 
-          <div className="space-y-10">
+          <div className="flex-1 space-y-4">
             {loading ? (
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
@@ -498,13 +490,13 @@ const AllUsers = () => {
                       <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent"></div>
                     </div>
 
-                    <div className="bg-[var(--color-bg-paper)] border border-white/8 rounded-[5px] overflow-hidden shadow-xl relative hover:border-white/12 transition-colors duration-300">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none"></div>
+                    <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
                       <TableContainer
                         component={Paper}
-                        className="bg-transparent border-none z-10 relative"
+                        className="bg-transparent border-none z-10 relative shadow-none"
                         sx={{
-                          maxHeight: "calc(100vh - 10rem)",
+                          maxHeight: "600px",
                           minHeight: "400px",
                           overflow: "auto",
                           overflowX: "auto",
@@ -519,83 +511,83 @@ const AllUsers = () => {
                             <TableRow
                               sx={{
                                 height: "24px",
-                                backgroundColor: themeMode === "light" ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.03)",
+                                backgroundColor: "var(--color-bg-paper)",
                               }}
                             >
                               <TableCell
                                 sx={{
-                                  padding: "4px 12px",
-                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
+                                  padding: "8px 24px",
+                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
                                   width: "8%",
                                 }}
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                               >
                                 User ID
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "4px 12px",
-                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
+                                  padding: "8px 24px",
+                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
                                   width: "15%",
                                 }}
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                               >
                                 Name
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "4px 12px",
-                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
+                                  padding: "8px 24px",
+                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
                                   width: "20%",
                                 }}
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                               >
                                 Email
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "4px 12px",
-                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
+                                  padding: "8px 24px",
+                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
                                   width: "12%",
                                 }}
-                                className={`hidden sm:table-cell ${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
+                                className={`hidden sm:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit`}
                               >
                                 {cat.id === "CONTACT" ? "Department" : "Role"}
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "4px 12px",
-                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
+                                  padding: "8px 24px",
+                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
                                   width: "15%",
                                 }}
-                                className={`hidden md:table-cell ${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
+                                className={`hidden md:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit`}
                               >
                                 {cat.id === "CONTACT" ? "Contact" : "Joined"}
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "4px 12px",
-                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
+                                  padding: "8px 24px",
+                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
                                   width: "10%",
                                 }}
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                               >
                                 Status
                               </TableCell>
                               <TableCell
+                                align="right"
                                 sx={{
-                                  padding: "4px 12px",
-                                  borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.08)",
+                                  padding: "8px 24px",
+                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
                                   width: "10%",
                                 }}
-                                align="right"
-                                className={`${themeMode === "light" ? "text-gray-500" : "text-white/40"} font-normal text-[12px] tracking-[0.2em] whitespace-nowrap`}
+                                className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                               >
                                 Actions
                               </TableCell>
                             </TableRow>
                           </TableHead>
-                          <TableBody>
+                          <TableBody className="divide-y divide-white/[0.04]">
                             {cat.data.length === 0 ? (
                               <TableRow
                                 sx={{
@@ -604,14 +596,13 @@ const AllUsers = () => {
                                 }}
                               >
                                 <TableCell
-                                  colSpan={6}
+                                  colSpan={7}
                                   align="center"
                                   sx={{
                                     padding: "8px",
-                                    borderBottom:
-                                      "1px solid rgba(255,255,255,0.05)",
+                                    borderBottom: "1px solid rgba(255,255,255,0.05)",
                                   }}
-                                  className="text-white/30 text-[12px] font-normal"
+                                  className="text-[var(--color-text-dim)] text-[12px] font-normal"
                                 >
                                   No users in this category
                                 </TableCell>
@@ -636,16 +627,16 @@ const AllUsers = () => {
                                       }
                                       sx={{
                                         "&:hover": {
-                                          backgroundColor: themeMode === "light" ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.04)",
+                                          backgroundColor: "rgba(255,255,255,0.02)",
                                         },
                                         height: "28px",
-                                        borderBottom: themeMode === "light" ? "1px solid rgba(0,0,0,0.04)" : "1px solid rgba(255,255,255,0.05)",
+                                        borderBottom: "1px solid rgba(255,255,255,0.05)",
                                         transition: "background-color 0.2s ease",
                                       }}
                                     >
                                       <TableCell
-                                        sx={{ padding: "3px 12px", width: "8%" }}
-                                        className={`${themeMode === "light" ? "text-gray-800" : "text-white/80"} font-normal text-[12px] whitespace-nowrap`}
+                                        sx={{ padding: "8px 24px", width: "8%", borderBottom: "none" }}
+                                        className="text-white align-middle font-normal text-[12px] whitespace-nowrap"
                                       >
                                         <div className="flex items-center gap-1">
                                           <Hash
@@ -659,36 +650,36 @@ const AllUsers = () => {
                                         </div>
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "3px 12px", width: "15%" }}
-                                        className={`font-normal transition-colors text-[12px] ${isActive ? (themeMode === "light" ? "text-gray-900" : "text-white") : (themeMode === "light" ? "text-gray-400" : "text-white/40")}`}
+                                        sx={{ padding: "8px 24px", width: "15%", borderBottom: "none" }}
+                                        className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40 line-through"}`}
                                       >
                                         {item.VA_Name || item.VCP_Name || "-"}
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "3px 12px", width: "20%" }}
-                                        className={`font-normal transition-colors text-[12px] whitespace-nowrap ${isActive ? (themeMode === "light" ? "text-gray-600" : "text-gray-400 opacity-60") : (themeMode === "light" ? "text-gray-400" : "text-gray-500 opacity-30")}`}
+                                        sx={{ padding: "8px 24px", width: "20%", borderBottom: "none" }}
+                                        className={`font-normal align-middle transition-colors text-[12px] whitespace-nowrap ${isActive ? "text-white/70" : "text-white/20"}`}
                                       >
                                         {item.VA_Email || item.VCP_Email}
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "3px 12px", width: "12%" }}
-                                        className={`hidden sm:table-cell transition-colors font-normal text-[12px] ${isActive ? (themeMode === "light" ? "text-gray-700" : "text-white/70") : (themeMode === "light" ? "text-gray-300" : "text-white/20")}`}
+                                        sx={{ padding: "8px 24px", width: "12%", borderBottom: "none" }}
+                                        className={`hidden sm:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                       >
                                         {item.VA_Role ||
                                           item.VCP_Department ||
                                           "-"}
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "3px 12px", width: "15%" }}
-                                        className={`hidden md:table-cell transition-colors font-normal text-[12px] ${isActive ? (themeMode === "light" ? "text-gray-700" : "text-white/70") : (themeMode === "light" ? "text-gray-300" : "text-white/20")}`}
+                                        sx={{ padding: "8px 24px", width: "15%", borderBottom: "none" }}
+                                        className={`hidden md:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                       >
                                         {item.VA_Created_Date
                                           ? item.VA_Created_Date.split(" ")[0]
                                           : item.VCP_Phone || "AUTHEN.SYSTEM"}
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "3px 12px", width: "10%" }}
-                                       className="text-[12px] font-normal">
+                                        sx={{ padding: "8px 24px", width: "10%", borderBottom: "none" }}
+                                       className="text-[12px] align-middle font-normal">
                                         <button
                                           onClick={() =>
                                             handleToggleStatus(item, cat.id)
@@ -701,17 +692,17 @@ const AllUsers = () => {
                                         </button>
                                       </TableCell>
                                       <TableCell
-                                        sx={{ padding: "4px 12px", width: "10%" }}
+                                        sx={{ padding: "8px 24px", width: "10%", borderBottom: "none" }}
                                         align="right"
-                                       className="text-[12px] font-normal">
+                                       className="text-[12px] align-middle font-normal">
                                         <IconButton
                                           onClick={() =>
                                             openModal("edit", item, cat.id)
                                           }
                                           size="small"
-                                          className={`${themeMode === "light" ? "text-gray-400 hover:text-primary" : "text-white/40 hover:text-white"} p-1`}
+                                          className="text-white/40 hover:text-white p-1"
                                         >
-                                          <Edit size={12} />
+                                          <Edit size={16} />
                                         </IconButton>
                                       </TableCell>
                                     </TableRow>

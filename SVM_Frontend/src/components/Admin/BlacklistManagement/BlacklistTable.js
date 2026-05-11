@@ -116,91 +116,91 @@ const BlacklistTable = () => {
 
       {/* ── Table Container ── */}
       <div
-        className={`space-y-4 animate-fade-in-slow ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+        className={`space-y-6 animate-fade-in-slow ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
       >
         {/* ── Toolbar ── */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
-            <div className={`relative w-full md:w-96 flex items-center transition-colors border rounded-lg px-2.5 h-9 shadow-sm group ${isLight ? "bg-white border-gray-200 shadow-sm shadow-gray-200/50" : "bg-black/40 border-white/10 focus-within:border-primary"}`}>
-              <Search
-                className={`mr-3 ${isLight ? "text-gray-400 group-focus-within:text-primary" : "text-white/20 group-focus-within:text-primary"}`}
-                size={14}
-              />
+        <header className="flex flex-col xl:flex-row justify-between items-center gap-6 relative z-10 px-1">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center text-primary shadow-xl backdrop-blur-md">
+              <Shield size={22} strokeWidth={1.5} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-white tracking-tight">
+                Restricted Visitors
+              </h2>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">
+                  {filtered.length} {filtered.length === 1 ? "Record" : "Records"}
+                </span>
+                <span className="text-[10px] text-[var(--color-text-dim)] uppercase tracking-widest font-medium">
+                  Security Database
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 items-center shrink-0 w-full xl:w-auto">
+            {/* Search Box - Rounded Style */}
+            <div className="relative w-full sm:w-80 group">
+              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <Search
+                  size={14}
+                  className="text-[var(--color-text-dim)] group-focus-within:text-primary transition-colors"
+                />
+              </div>
               <input
                 type="text"
-                placeholder="Search by name or email..."
+                placeholder="Filter restricted visitors..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`bg-transparent text-[12px] font-normal tracking-wide focus:outline-none w-full ${isLight ? "text-[#1A1A1A] placeholder-gray-400" : "text-white placeholder:text-white/20"}`}
+                className="w-full bg-[var(--color-bg-paper)] border border-white/10 text-white text-[13px] rounded-full py-2 pl-9 pr-4 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-white/20 shadow-inner"
               />
             </div>
 
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center justify-center gap-2 bg-primary hover:bg-[var(--color-primary-hover)] text-white px-5 h-9 rounded-lg text-[12px] font-normal tracking-widest transition-all shadow-lg active:scale-95 group whitespace-nowrap"
+              className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold uppercase tracking-[0.1em] transition-all shadow-[0_8px_20px_-4px_rgba(255,107,0,0.4)] active:scale-95 group shrink-0"
             >
-              <UserPlus
-                size={16}
-                className="group-hover:rotate-12 transition-transform"
-              />
-              Add to restricted list
+              <UserPlus size={16} />
+              Add Restricted User
             </button>
           </div>
-        </div>
+        </header>
 
         {/* ── Table card ── */}
-        <div
-          className={`rounded-[5px] overflow-hidden flex flex-col shadow-3xl relative border ${isLight ? "bg-white border-gray-200" : "bg-[var(--color-bg-paper)] border-white/5"}`}
-        >
+        <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
-          <div
-            className={`flex-1 overflow-x-auto sm:overflow-visible p-3 sm:p-0 ${isLight ? "bg-[#F8F9FA]" : "bg-[var(--color-bg-default)]"}`}
-          >
-            <table className="w-full text-left border-separate border-spacing-y-2.5 sm:border-spacing-y-0 sm:border-collapse min-w-0 sm:min-w-[680px] block sm:table">
-              <thead className="hidden sm:table-header-group">
-                <tr
-                  className={
-                    isLight
-                      ? "bg-white border-b border-gray-200"
-                      : "bg-[var(--color-bg-paper)] border-b border-white/5"
-                  }
-                >
-                  <th
-                    className={`px-4 md:px-5 py-4 text-[12px] font-normal tracking-[0.2em] whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                  >
-                    Visitor
+          <div className="flex-1 overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr className="bg-inherit">
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
+                    Visitor Information
                   </th>
-                  <th
-                    className={`px-4 md:px-5 py-4 text-[12px] font-normal tracking-[0.2em] whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                  >
-                    Blacklist reason
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
+                    Reason for Restriction
                   </th>
-                  <th
-                    className={`px-4 md:px-5 py-4 text-[12px] font-normal tracking-[0.2em] text-center whitespace-nowrap ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                  >
-                    Date added
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">
+                    Added Date
                   </th>
-                  <th className="px-4 md:px-5 py-4 text-[12px] font-normal tracking-[0.2em] text-primary text-right whitespace-nowrap">
-                    Actions
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-primary border-b border-white/5 text-right whitespace-nowrap">
+                    Management
                   </th>
                 </tr>
               </thead>
 
-              <tbody className="block sm:table-row-group">
+              <tbody className="divide-y divide-white/[0.04]">
                 <AnimatePresence>
                   {isLoading ? (
                     <motion.tr
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="block sm:table-row"
                     >
-                      <td
-                        colSpan="4"
-                        className="px-6 py-14 text-center block sm:table-cell"
-                      >
-                        <div className="flex justify-center items-center h-full">
-                          <div className="w-7 h-7 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                      <td colSpan="4" className="py-20 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                          <span className="text-[11px] text-[var(--color-text-dim)] uppercase tracking-widest font-medium">Fetching restricted list...</span>
                         </div>
                       </td>
                     </motion.tr>
@@ -208,95 +208,63 @@ const BlacklistTable = () => {
                     filtered.map((item, idx) => (
                       <motion.tr
                         key={item.VB_id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className={`group hover:bg-primary/[0.02] transition-all duration-500 block sm:table-row sm:border-none rounded-[5px] sm:rounded-none mb-2.5 sm:mb-0 p-3 sm:p-0 border ${isLight ? "bg-white border-gray-200 shadow-sm sm:bg-transparent" : "bg-[#161618] sm:bg-transparent border-white/5"}`}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.03 }}
+                        className="group hover:bg-white/[0.02] transition-colors"
                       >
                         {/* Visitor */}
-                        <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
-                        >
-                          <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
-                            Visitor
-                          </span>
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-                            <div>
-                              <p
-                                className={`capitalize text-[12px] font-medium tracking-widest mb-1 group-hover:text-primary transition-colors break-words ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                              >
-                                {item.VB_Name}
-                              </p>
-                              <p
-                                className={`text-[12px] font-medium tracking-[0.2em] lowercase ${isLight ? "text-gray-500" : "text-gray-300/80"}`}
-                              >
-                                {item.VB_Email || "no-email"}
-                              </p>
-                            </div>
+                        <td className="px-6 py-4 align-middle">
+                          <div className="flex flex-col">
+                            <span className="text-[13px] font-medium text-white tracking-wide group-hover:text-primary transition-colors">
+                              {item.VB_Name}
+                            </span>
+                            <span className="text-[11px] text-[var(--color-text-dim)] lowercase tracking-wider mt-0.5">
+                              {item.VB_Email || "system-restricted"}
+                            </span>
                           </div>
                         </td>
 
                         {/* Reason */}
-                        <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
-                        >
-                          <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5">
-                            Blacklist Reason
-                          </span>
-                          <div className="flex flex-col gap-2">
-                            <p
-                              className={`capitalize text-[12px] font-medium tracking-widest leading-relaxed max-w-full sm:max-w-md break-words ${isLight ? "text-gray-700" : "text-white/80"}`}
-                            >
+                        <td className="px-6 py-4 align-middle">
+                          <div className="max-w-xs xl:max-w-md">
+                            <p className="text-[12px] text-white/70 leading-relaxed line-clamp-2">
                               {item.VB_Description || "—"}
                             </p>
                           </div>
                         </td>
 
                         {/* Date Added */}
-                        <td
-                          className={`block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 border-b sm:border-none text-center text-[13px] ${isLight ? "border-gray-200" : "border-white/5"}`}
-                        >
-                          <span className="text-[11px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5 text-left">
-                            Date Added
-                          </span>
+                        <td className="px-6 py-4 align-middle">
                           <div className="flex flex-col items-center gap-2">
-                            <p
-                              className={`capitalize text-[12px] font-medium tracking-[0.2em] flex items-center gap-2 ${isLight ? "text-gray-600" : "text-gray-300/90"}`}
-                            >
-                              <Clock size={12} className="text-primary/40" />{" "}
-                              {item.VB_Created_Date
-                                ? item.VB_Created_Date.split(" ")[0]
-                                : "—"}
-                            </p>
+                            <div className="flex items-center gap-1.5 text-[12px] text-white/60">
+                              <Clock size={12} className="text-primary/40" />
+                              <span className="tracking-wider">
+                                {item.VB_Created_Date
+                                  ? item.VB_Created_Date.split(" ")[0]
+                                  : "—"}
+                              </span>
+                            </div>
                             <span
                               className={`svm-status-pill ${
                                 item.VB_Status === "I"
-                                  ? "bg-gray-500/10 border-gray-500/20 text-gray-400"
+                                  ? "bg-gray-500/10 border-gray-500/20 text-gray-500"
                                   : "svm-status-pill--success"
                               }`}
                             >
-                              {item.VB_Status === "I" ? "Inactive" : "Active"}
+                              {item.VB_Status === "I" ? "DEACTIVATED" : "ACTIVE"}
                             </span>
                           </div>
                         </td>
 
-
                         {/* Actions */}
-                        <td className="block sm:table-cell px-3.5 sm:px-5 py-3 sm:py-4 text-right">
-                          <span className="text-[13px] font-bold tracking-[0.2em] text-primary/60 uppercase block sm:hidden mb-2.5 text-left">
-                            Action
-                          </span>
-                          <div className="flex justify-start sm:justify-end gap-2.5">
-                            {/* ── View Details button ── */}
+                        <td className="px-6 py-4 align-middle">
+                          <div className="flex justify-end items-center gap-2">
                             <button
                               onClick={() => handleViewDetails(item)}
-                              title="View Details"
-                              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${isLight ? "bg-primary/5 border-primary/15 text-primary hover:text-white hover:bg-primary hover:border-primary" : "bg-blue-500/5 border-blue-500/20 text-blue-400 hover:text-white hover:bg-blue-500 hover:border-blue-500"}`}
+                              className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-all group/btn"
                             >
-                              <Eye
-                                size={15}
-                                className="group-hover/btn:scale-110 transition-transform"
-                              />
+                              <Eye size={16} className="group-hover/btn:scale-110 transition-transform" />
                             </button>
 
                             {/* Edit button */}
