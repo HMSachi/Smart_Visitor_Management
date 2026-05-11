@@ -247,7 +247,7 @@ const RequestDetails = () => {
           >
             <ArrowLeft size={14} /> Back to My Requests
           </button>
-          
+
           {summary.status === "Pending" && (
             <button
               onClick={handleAccept}
@@ -353,6 +353,7 @@ const RequestDetails = () => {
         </SectionCard>
 
         {/* Items carried in — grouped by sub-visitor (Group_Members from API) */}
+        {/* 
         <SectionCard title="Items carried in" icon={Package}>
           <p className="text-[10px] text-text-dim font-medium capitalize tracking-[0.12em] mb-4">
             Items brought in by each member of the visiting group
@@ -385,6 +386,7 @@ const RequestDetails = () => {
             <p className="text-[11px] text-text-dim font-medium capitalize tracking-[0.12em]">No items carried in by the visiting group.</p>
           )}
         </SectionCard>
+        */}
 
         <SectionCard title="All submitted raw fields" icon={Hash}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

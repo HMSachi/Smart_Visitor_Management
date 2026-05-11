@@ -50,8 +50,8 @@ const SplitSection = ({
 const SectionCard = ({ children, isLight, darkClassName = "" }) => (
   <div
     className={`rounded-[12px] border overflow-hidden ${isLight
-        ? "bg-white border-gray-200"
-        : `bg-black/25 border-white/10 ${darkClassName}`
+      ? "bg-white border-gray-200"
+      : `bg-black/25 border-white/10 ${darkClassName}`
       }`}
   >
     {children}
@@ -75,8 +75,8 @@ const Field = ({ label, value, icon: Icon, isLight }) => (
     </div>
     <div
       className={`px-3 py-1 rounded-lg border transition-all duration-300 ${isLight
-          ? "bg-gray-50/30 border-gray-100 text-[#1A1A1A]"
-          : "bg-black/20 border-white/5 text-white"
+        ? "bg-gray-50/30 border-gray-100 text-[#1A1A1A]"
+        : "bg-black/20 border-white/5 text-white"
         }`}
     >
       <p className="text-[12px] font-medium tracking-tight">
@@ -254,11 +254,10 @@ const PersonnelAuthProtocol = ({
                         key={item.id || idx}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className={`grid grid-cols-1 md:grid-cols-3 gap-3 p-2 border rounded-xl ${
-                          isLight
+                        className={`grid grid-cols-1 md:grid-cols-3 gap-3 p-2 border rounded-xl ${isLight
                             ? "bg-gray-50 border-gray-200"
                             : "bg-black/30 border-white/8"
-                        }`}
+                          }`}
                       >
                         <Field label="Item name" value={item.itemName} icon={Package} isLight={isLight} />
                         <Field label="Qty" value={item.quantity ? String(item.quantity) : "—"} icon={Hash} isLight={isLight} />
@@ -342,112 +341,90 @@ const PersonnelAuthProtocol = ({
         </SectionCard>
       )}
 
-      {/* Items Carried In — grouped by sub-visitor (Group_Members) */}
-      <div className="mb-2">
-        <SectionCard
-          isLight={isLight}
-          darkClassName="bg-[var(--color-bg-default)]"
-        >
-          <div className="p-3">
-            <SplitSection
-              title="Items carried in"
-              icon={Package}
-              isLight={isLight}
-            >
-              {jointItems && jointItems.length > 0 ? (() => {
-                // Group rows by sub-visitor name
-                const grouped = jointItems.reduce((acc, row) => {
-                  const name = row.Group_Members || "Unknown Member";
-                  if (!acc[name]) acc[name] = [];
-                  acc[name].push(row);
-                  return acc;
-                }, {});
-                return (
-                  <div className="space-y-4">
-                    {Object.entries(grouped).map(([memberName, memberItems], gIdx) => (
-                      <div key={gIdx}>
-                        {/* Sub-visitor name header */}
-                        <div className={`flex items-center gap-2 mb-2 pb-1.5 border-b ${
-                          isLight ? "border-gray-100" : "border-white/10"
-                        }`}>
-                          <User size={12} className="text-primary/60" />
-                          <span className={`text-[10px] font-bold capitalize tracking-[0.2em] ${
-                            isLight ? "text-[#1A1A1A]" : "text-white"
-                          }`}>
-                            {memberName}
-                          </span>
-                          <span className={`ml-auto text-[9px] font-semibold capitalize tracking-[0.14em] px-2 py-0.5 rounded-full border ${
-                            isLight ? "bg-gray-50 border-gray-200 text-gray-400" : "bg-white/5 border-white/10 text-white/40"
-                          }`}>
-                            {memberItems.length} {memberItems.length === 1 ? "item" : "items"}
-                          </span>
+      {/* 
+      {jointItems && jointItems.length > 0 && (
+        <div className="mb-2">
+          <SectionCard
+            isLight={isLight}
+            darkClassName="bg-[var(--color-bg-default)]"
+          >
+            <div className="p-3">
+              <SplitSection
+                title="Items carried in"
+                icon={Package}
+                isLight={isLight}
+              >
+                {(() => {
+                  // Group rows by sub-visitor name
+                  const grouped = jointItems.reduce((acc, row) => {
+                    const name = row.Group_Members || "Unknown Member";
+                    if (!acc[name]) acc[name] = [];
+                    acc[name].push(row);
+                    return acc;
+                  }, {});
+                  return (
+                    <div className="space-y-4">
+                      {Object.entries(grouped).map(([memberName, memberItems], gIdx) => (
+                        <div key={gIdx}>
+                          <div className={`flex items-center gap-2 mb-2 pb-1.5 border-b ${isLight ? "border-gray-100" : "border-white/10"}`}>
+                            <User size={12} className="text-primary/60" />
+                            <span className={`text-[10px] font-bold capitalize tracking-[0.2em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                              {memberName}
+                            </span>
+                            <span className={`ml-auto text-[9px] font-semibold capitalize tracking-[0.14em] px-2 py-0.5 rounded-full border ${isLight ? "bg-gray-50 border-gray-200 text-gray-400" : "bg-white/5 border-white/10 text-white/40"}`}>
+                              {memberItems.length} {memberItems.length === 1 ? "item" : "items"}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-1 gap-2">
+                            {memberItems.map((item, idx) => (
+                              <motion.div
+                                key={idx}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className={`grid grid-cols-1 md:grid-cols-3 gap-3 p-3 border rounded-xl hover:border-primary/20 transition-all ${isLight ? "bg-gray-50 border-gray-200" : "bg-[var(--color-bg-paper)]/40 border-white/5"}`}
+                              >
+                                <Field label="Item name" value={item.VIC_Item_Name || item.itemName} icon={Package} isLight={isLight} />
+                                <Field label="Qty" value={item.VIC_Quantity ? String(item.VIC_Quantity) : (item.quantity ? String(item.quantity) : "—")} icon={Hash} isLight={isLight} />
+                                <Field label="Description" value={item.VIC_Designation || item.description || "—"} icon={Briefcase} isLight={isLight} />
+                              </motion.div>
+                            ))}
+                          </div>
                         </div>
-                        <div className="grid grid-cols-1 gap-2">
-                          {memberItems.map((item, idx) => (
-                            <motion.div
-                              key={idx}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              className={`grid grid-cols-1 md:grid-cols-3 gap-3 p-3 border rounded-xl hover:border-primary/20 transition-all ${
-                                isLight
-                                  ? "bg-gray-50 border-gray-200"
-                                  : "bg-[var(--color-bg-paper)]/40 border-white/5"
-                              }`}
-                            >
-                              <Field label="Item name" value={item.VIC_Item_Name || item.itemName} icon={Package} isLight={isLight} />
-                              <Field label="Qty" value={item.VIC_Quantity ? String(item.VIC_Quantity) : (item.quantity ? String(item.quantity) : "—")} icon={Hash} isLight={isLight} />
-                              <Field label="Description" value={item.VIC_Designation || item.description || "—"} icon={Briefcase} isLight={isLight} />
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })() : (
-                <div
-                  className={`border border-dashed rounded-xl p-3 text-center ${
-                    isLight ? "border-gray-200" : "border-white/10"
-                  }`}
-                >
-                  <p
-                    className={`text-[10px] font-semibold capitalize tracking-[0.18em] ${
-                      isLight ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    No items carried in
-                  </p>
-                </div>
-              )}
-            </SplitSection>
-          </div>
-        </SectionCard>
-      </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </SplitSection>
+            </div>
+          </SectionCard>
+        </div>
+      )}
+      */}
 
 
       {onAction && (
         <div className={`mt-6 pt-6 border-t ${isLight ? "border-gray-100" : "border-white/5"} flex items-center justify-end gap-3`}>
           {(visitor.status === "Accepted by Contact Person" || visitor.status === "Accepted by Visitor") && (
-              <>
-                <button
-                  onClick={() => onAction(visitor, "Reject")}
-                  className={`px-6 py-2.5 border font-bold text-[11px] tracking-[0.15em] capitalize rounded-xl transition-all flex items-center gap-1.5 active:scale-95 ${isLight
-                    ? "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                    : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
-                    }`}
-                >
-                  <AlertCircle size={14} />
-                  Reject request
-                </button>
-                <button
-                  onClick={() => onAction(visitor, "Approve")}
-                  className="px-8 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[11px] font-bold tracking-[0.15em] capitalize rounded-xl transition-all shadow-lg shadow-green-500/20 flex items-center gap-1.5 active:scale-95"
-                >
-                  <CheckCircle2 size={14} />
-                  Approve entry
-                </button>
-              </>
-            )}
+            <>
+              <button
+                onClick={() => onAction(visitor, "Reject")}
+                className={`px-6 py-2.5 border font-bold text-[11px] tracking-[0.15em] capitalize rounded-xl transition-all flex items-center gap-1.5 active:scale-95 ${isLight
+                  ? "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+                  }`}
+              >
+                <AlertCircle size={14} />
+                Reject request
+              </button>
+              <button
+                onClick={() => onAction(visitor, "Approve")}
+                className="px-8 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[11px] font-bold tracking-[0.15em] capitalize rounded-xl transition-all shadow-lg shadow-green-500/20 flex items-center gap-1.5 active:scale-95"
+              >
+                <CheckCircle2 size={14} />
+                Approve entry
+              </button>
+            </>
+          )}
         </div>
       )}
 

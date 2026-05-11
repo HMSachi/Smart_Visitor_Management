@@ -363,7 +363,7 @@ const ContactPersonAuthProtocol = ({
           <SplitSection title="Places to visit" icon={MapPin} isLight={isLight}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
               {(visitor.areas || visitor.selectedAreas) &&
-              (visitor.areas || visitor.selectedAreas).length > 0 ? (
+                (visitor.areas || visitor.selectedAreas).length > 0 ? (
                 (visitor.areas || visitor.selectedAreas).map((area, idx) => (
                   <motion.div
                     key={idx}
@@ -518,103 +518,54 @@ const ContactPersonAuthProtocol = ({
         </SectionCard>
       )}
 
-      {/* ── 6. Items Carried In — grouped by sub-visitor ── */}
-      <div className="mb-2">
-        <SectionCard
-          isLight={isLight}
-          darkClassName="bg-[var(--color-bg-default)]"
-        >
-          <div className="p-2 md:p-3">
-            <SplitSection
-              title="Items carried in"
-              icon={Package}
-              isLight={isLight}
-            >
-              {jointItems && jointItems.length > 0 ? (
+      {/* 
+      {jointItems && jointItems.length > 0 && (
+        <div className="mb-2">
+          <SectionCard
+            isLight={isLight}
+            darkClassName="bg-[var(--color-bg-default)]"
+          >
+            <div className="p-2 md:p-3">
+              <SplitSection
+                title="Items carried in"
+                icon={Package}
+                isLight={isLight}
+              >
                 <div
                   className={`border rounded-lg overflow-hidden ${isLight ? "border-gray-200" : "border-white/10"}`}
                 >
                   <div
                     className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? "bg-gray-100 border-gray-200" : "bg-white/5 border-white/10"}`}
                   >
-                    <span
-                      className={`text-[10px] font-bold capitalize tracking-wider flex-1 ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                    >
-                      Sub visitor
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold capitalize tracking-wider flex-1 ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                    >
-                      Item name
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold capitalize tracking-wider w-16 text-center ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                    >
-                      Qty
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold capitalize tracking-wider flex-[2] sm:text-right ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                    >
-                      Description
-                    </span>
+                    <span className={`text-[10px] font-bold capitalize tracking-wider flex-1 ${isLight ? "text-gray-500" : "text-gray-400"}`}>Sub visitor</span>
+                    <span className={`text-[10px] font-bold capitalize tracking-wider flex-1 ${isLight ? "text-gray-500" : "text-gray-400"}`}>Item name</span>
+                    <span className={`text-[10px] font-bold capitalize tracking-wider w-16 text-center ${isLight ? "text-gray-500" : "text-gray-400"}`}>Qty</span>
+                    <span className={`text-[10px] font-bold capitalize tracking-wider flex-[2] sm:text-right ${isLight ? "text-gray-500" : "text-gray-400"}`}>Description</span>
                   </div>
-                  <div
-                    className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? "divide-gray-100" : "divide-white/5"}`}
-                  >
+                  <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? "divide-gray-100" : "divide-white/5"}`}>
                     {jointItems.map((item, idx) => {
                       const memberName = item.Group_Members || "Unknown Member";
                       return (
-                        <div
-                          key={idx}
-                          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1 ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/50") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
-                        >
-                          <span
-                            className={`text-[11px] font-medium flex-1 truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                          >
-                            {memberName}
-                          </span>
-                          <span
-                            className={`text-[11px] font-medium flex-1 truncate ${isLight ? "text-gray-600" : "text-gray-400"}`}
-                          >
-                            {item.VIC_Item_Name || item.itemName}
-                          </span>
+                        <div key={idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1 ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/50") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}>
+                          <span className={`text-[11px] font-medium flex-1 truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>{memberName}</span>
+                          <span className={`text-[11px] font-medium flex-1 truncate ${isLight ? "text-gray-600" : "text-gray-400"}`}>{item.VIC_Item_Name || item.itemName}</span>
                           <div className="w-16 flex justify-center">
-                            <span
-                              className={`text-[11px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}
-                            >
-                              x
-                              {item.VIC_Quantity
-                                ? item.VIC_Quantity
-                                : item.quantity
-                                  ? item.quantity
-                                  : 1}
+                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}>
+                              x{item.VIC_Quantity || item.quantity || 1}
                             </span>
                           </div>
-                          <span
-                            className={`text-[11px] font-medium flex-[2] sm:text-right truncate ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                          >
-                            {item.VIC_Designation || item.description || "-"}
-                          </span>
+                          <span className={`text-[11px] font-medium flex-[2] sm:text-right truncate ${isLight ? "text-gray-500" : "text-gray-400"}`}>{item.VIC_Designation || item.description || "-"}</span>
                         </div>
                       );
                     })}
                   </div>
                 </div>
-              ) : (
-                <div
-                  className={`border border-dashed rounded-xl p-3 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}
-                >
-                  <p
-                    className={`text-[10px] font-semibold capitalize tracking-[0.18em] ${isLight ? "text-gray-400" : "text-gray-500"}`}
-                  >
-                    No items carried in
-                  </p>
-                </div>
-              )}
-            </SplitSection>
-          </div>
-        </SectionCard>
-      </div>
+              </SplitSection>
+            </div>
+          </SectionCard>
+        </div>
+      )}
+      */}
 
       {/* ── Sub-Visitor QR Popup Modal ── */}
       <AnimatePresence>
