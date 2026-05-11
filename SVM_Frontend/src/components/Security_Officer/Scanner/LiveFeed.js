@@ -24,6 +24,9 @@ import {
   MapPin,
   CheckCircle2,
   Package,
+  LogOut,
+  LogIn,
+  MessageSquare,
 } from "lucide-react";
 import { GetGatePassById } from "../../../actions/GatePassAction";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,6 +35,7 @@ import {
   isSecureQrPayload,
 } from "../../../utils/secureQrPayload";
 import VisitorService from "../../../services/VisitorService";
+import GatePassService from "../../../services/GatePassService";
 
 // ── Helper: a single icon + label + value row ──────────────────────────────
 const InfoRow = ({ icon, label, value }) => (
@@ -76,6 +80,7 @@ const LiveFeed = () => {
   const videoRef = useRef(null);
   const controlsRef = useRef(null);
   const scannerRef = useRef(null);
+  const useDemoScanLog = true;
   const [scanStatus, setScanStatus] = useState("idle"); // idle, scanning, success, error, details
   const [scanMessage, setScanMessage] = useState(
     "Point your camera at the QR code to get started.",
@@ -88,6 +93,39 @@ const LiveFeed = () => {
   const [subVisitorsData, setSubVisitorsData] = useState([]);
   // The specific VisitorJoint row matched when scanning a sub-visitor QR
   const [subVisitorApiData, setSubVisitorApiData] = useState(null);
+  // Track check-in/checkout
+  const [scanCount, setScanCount] = useState(0);
+  const [scanType, setScanType] = useState(null); // "CHECK_IN" or "CHECK_OUT"
+  const [remarks, setRemarks] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const getTodayDateKey = () => new Date().toISOString().slice(0, 10);
+
+  const getDemoScanLogKey = (passId, dateKey) =>
+    `svm.scanLog.${passId}.${dateKey}`;
+
+  const getTodayScanCountDemo = (passId) => {
+    const dateKey = getTodayDateKey();
+    const raw = localStorage.getItem(getDemoScanLogKey(passId, dateKey));
+    const entries = raw ? JSON.parse(raw) : [];
+    return { count: Array.isArray(entries) ? entries.length : 0, entries };
+  };
+
+  const logScanEntryDemo = (passId, type, remarkText) => {
+    const dateKey = getTodayDateKey();
+    const key = getDemoScanLogKey(passId, dateKey);
+    const raw = localStorage.getItem(key);
+    const entries = raw ? JSON.parse(raw) : [];
+    const next = Array.isArray(entries) ? entries : [];
+    next.push({
+      passId,
+      type,
+      remarks: remarkText || "",
+      timestamp: new Date().toISOString(),
+    });
+    localStorage.setItem(key, JSON.stringify(next));
+    return { Status: "Success" };
+  };
 
   const stopScanner = useCallback(() => {
     if (controlsRef.current) {
@@ -285,6 +323,46 @@ const LiveFeed = () => {
           "The visitor details were found and verified successfully.",
         );
 
+        // Fetch scan count for today to determine check-in or checkout
+        try {
+          let count = 0;
+          if (useDemoScanLog) {
+            const demo = getTodayScanCountDemo(details.VGP_Pass_id);
+            count = demo.count || 0;
+          } else {
+            const scanCountResponse = await GatePassService.GetTodayScanCount(
+              details.VGP_Pass_id
+            );
+            count =
+              scanCountResponse?.data?.scanCount ||
+              scanCountResponse?.data?.count ||
+              0;
+          }
+
+          setScanCount(count);
+
+          // Determine scan type based on count
+          if (count === 0 || count === 1) {
+            setScanType(count === 0 ? "CHECK_IN" : "CHECK_OUT");
+          } else {
+            setScanType("CHECK_OUT");
+          }
+
+          console.log(
+            "[LiveFeed] Scan count for today:",
+            count,
+            "Scan type:",
+            count === 0 ? "CHECK_IN" : "CHECK_OUT"
+          );
+        } catch (err) {
+          console.warn(
+            "[LiveFeed] Could not fetch scan count, defaulting to CHECK_IN:",
+            err
+          );
+          setScanCount(0);
+          setScanType("CHECK_IN");
+        }
+
         // Fetch sub-visitor data live from the VisitorJoint API
         const requestId = details.VGP_Request_id || details.VVR_Request_id;
         if (requestId) {
@@ -466,6 +544,56 @@ const LiveFeed = () => {
     setIsLoading(false);
     setScanStatus("idle");
     setScanMessage("Point your camera at the QR code to get started.");
+    setScanCount(0);
+    setScanType(null);
+    setRemarks("");
+    setIsSubmitting(false);
+  };
+
+  const handleCheckInOut = async () => {
+    if (!passDetails?.VGP_Pass_id) {
+      console.error("No pass ID available for check-in/out");
+      return;
+    }
+
+    if (scanType === "CHECK_OUT" && !remarks.trim()) {
+      alert("Please enter remarks about the visitor behavior before checking out.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      let result = null;
+      if (useDemoScanLog) {
+        result = { data: logScanEntryDemo(passDetails.VGP_Pass_id, scanType, remarks) };
+      } else {
+        result = await GatePassService.LogScanEntry(
+          passDetails.VGP_Pass_id,
+          scanType,
+          remarks
+        );
+      }
+
+      if (result?.data?.Status === "Success" || result?.status === 200) {
+        const actionText = scanType === "CHECK_IN" ? "Check-in" : "Check-out";
+        setScanMessage(
+          `${actionText} successful! ${scanType === "CHECK_OUT" && remarks ? "Remarks logged." : ""}`
+        );
+        
+        // Show success for 2 seconds then reset
+        setTimeout(() => {
+          handleResetNode();
+          startScanner();
+        }, 2000);
+      } else {
+        throw new Error("Failed to log scan entry");
+      }
+    } catch (err) {
+      console.error("Error logging scan entry:", err);
+      alert(`Failed to log ${scanType}: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -874,16 +1002,63 @@ const LiveFeed = () => {
                 style={{ background: "var(--color-surface-1)" }}
               >
                 <div className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                      scanType === "CHECK_OUT"
+                        ? "bg-orange-500"
+                        : "bg-green-500"
+                    }`}
+                  />
                   <span className="text-[9px] uppercase tracking-widest font-medium text-[var(--color-text-secondary)]">
-                    Pass verified — welcome inside
+                    {scanType === "CHECK_OUT"
+                      ? "Second scan detected — checkout mode"
+                      : "Pass verified — check-in"}
                   </span>
                 </div>
-                <ShieldCheck
-                  size={14}
-                  className="text-green-600 dark:text-green-400 flex-shrink-0"
-                />
+                {scanType === "CHECK_OUT" ? (
+                  <LogOut
+                    size={14}
+                    className="text-orange-600 dark:text-orange-400 flex-shrink-0"
+                  />
+                ) : (
+                  <LogIn
+                    size={14}
+                    className="text-green-600 dark:text-green-400 flex-shrink-0"
+                  />
+                )}
               </div>
+
+              {/* Remarks field for checkout */}
+              {scanType === "CHECK_OUT" && (
+                <div className="px-4 py-3 border-t border-[var(--color-border-soft)]">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <MessageSquare
+                      size={13}
+                      className="text-orange-600 dark:text-orange-400"
+                    />
+                    <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[var(--color-text-secondary)]">
+                      Visitor Behavior Remarks
+                    </label>
+                  </div>
+                  <textarea
+                    value={remarks}
+                    onChange={(e) => setRemarks(e.target.value)}
+                    placeholder="Enter any remarks about visitor behavior during the visit..."
+                    className="w-full px-3 py-2 rounded-lg border transition-all text-[12px] resize-none focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    style={{
+                      background: "var(--color-surface-2)",
+                      borderColor: "var(--color-border-soft)",
+                      color: "var(--color-text-primary)",
+                    }}
+                    rows={3}
+                    disabled={isSubmitting}
+                  />
+                  <p className="text-[8px] text-[var(--color-text-dim)] mt-1.5">
+                    Required: Please provide feedback about the visitor's
+                    behavior and conduct during the visit.
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* ── Footer actions ── */}
@@ -895,18 +1070,39 @@ const LiveFeed = () => {
               }}
             >
               <button
-                onClick={() => alert("Entry allowed. Verification logged.")}
-                className="flex-1 py-2.5 font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all flex items-center justify-center gap-2 text-white"
+                onClick={handleCheckInOut}
+                disabled={isSubmitting || (scanType === "CHECK_OUT" && !remarks.trim())}
+                className={`flex-1 py-2.5 font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all flex items-center justify-center gap-2 text-white disabled:opacity-50 disabled:cursor-not-allowed`}
                 style={{
-                  background: "linear-gradient(135deg, #16a34a, #22c55e)",
-                  boxShadow: "0 4px 12px rgba(34, 197, 94, 0.25)",
+                  background:
+                    scanType === "CHECK_OUT"
+                      ? "linear-gradient(135deg, #ea580c, #f97316)"
+                      : "linear-gradient(135deg, #16a34a, #22c55e)",
+                  boxShadow:
+                    scanType === "CHECK_OUT"
+                      ? "0 4px 12px rgba(249, 115, 22, 0.25)"
+                      : "0 4px 12px rgba(34, 197, 94, 0.25)",
                 }}
               >
-                Allow Entry <ArrowRight size={13} />
+                {isSubmitting ? (
+                  <>
+                    <RefreshCw size={13} className="animate-spin" />
+                    Processing...
+                  </>
+                ) : scanType === "CHECK_OUT" ? (
+                  <>
+                    Check Out <LogOut size={13} />
+                  </>
+                ) : (
+                  <>
+                    Check In <LogIn size={13} />
+                  </>
+                )}
               </button>
               <button
                 onClick={handleResetNode}
-                className="px-4 py-2.5 border border-[var(--color-border-medium)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-2)] font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all"
+                disabled={isSubmitting}
+                className="px-4 py-2.5 border border-[var(--color-border-medium)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-2)] font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Scan Another
               </button>
