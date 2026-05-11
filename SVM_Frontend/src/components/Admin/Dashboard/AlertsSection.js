@@ -48,10 +48,10 @@ const AlertsSection = () => {
             <Bell size={16} strokeWidth={2.5} />
           </div>
           <div>
-            <h2 className="text-[var(--color-text-primary)] text-[15px] font-semibold m-0">
+            <h2 className="text-[var(--color-text-primary)] text-[16px] font-bold m-0">
               System Alerts
             </h2>
-            <p className="text-[var(--color-text-dim)] text-[11px] font-medium">Live notifications</p>
+            <p className="text-[var(--color-text-dim)] text-[11px] font-medium mt-0.5">Live notifications</p>
           </div>
         </div>
         <span

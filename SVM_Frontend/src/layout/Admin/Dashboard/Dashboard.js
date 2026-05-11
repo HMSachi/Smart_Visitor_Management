@@ -47,24 +47,21 @@ const Dashboard = () => {
         <div className="max-w-none mx-auto space-y-6">
           {/* Page Header - Professional Title Section */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <div
-                className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shrink-0 flex-shrink-0 mt-0.5"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0 flex-shrink-0"
                 style={{
                   background:
                     "linear-gradient(135deg, rgba(200,16,46,0.9), rgba(200,16,46,0.7))",
-                  boxShadow: "0 4px 15px rgba(200,16,46,0.3)",
+                  boxShadow: "0 4px 12px rgba(200,16,46,0.2)",
                 }}
               >
-                <BarChart3 size={20} strokeWidth={2.5} />
+                <BarChart3 size={16} strokeWidth={2.5} />
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)] leading-tight m-0">
+                <h1 className="text-[16px] font-bold text-[var(--color-text-primary)] leading-tight m-0">
                   Dashboard
                 </h1>
-                <p className="text-[var(--color-text-secondary)] text-xs mt-1">
-                  Real-time system overview and metrics
-                </p>
               </div>
             </div>
             <button
@@ -92,9 +89,9 @@ const Dashboard = () => {
                     "linear-gradient(135deg, rgba(200,16,46,0.8), rgba(200,16,46,0.6))",
                 }}
               >
-                <TrendingUp size={16} strokeWidth={2} />
+                <TrendingUp size={16} strokeWidth={2.5} />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--color-text-primary)] m-0">
+              <h2 className="text-[16px] font-bold text-[var(--color-text-primary)] m-0">
                 Quick Access
               </h2>
             </div>
@@ -136,9 +133,9 @@ const Dashboard = () => {
                     "linear-gradient(135deg, rgba(200,16,46,0.8), rgba(200,16,46,0.6))",
                 }}
               >
-                <LayoutDashboard size={16} strokeWidth={2} />
+                <LayoutDashboard size={16} strokeWidth={2.5} />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--color-text-primary)] m-0">
+              <h2 className="text-[16px] font-bold text-[var(--color-text-primary)] m-0">
                 Admin Modules
               </h2>
             </div>
