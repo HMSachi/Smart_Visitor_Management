@@ -470,7 +470,7 @@ const ContactAllVisitors = () => {
               ) : (
                 <div
                   className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
-                  style={{ height: "38rem" }}
+                  style={{ height: "calc(100vh - 160px)" }}
                 >
                 <table className="w-full min-w-[720px] md:min-w-[900px] border-collapse">
                   <thead className="sticky top-0 z-20 font-normal text-[12px]">
