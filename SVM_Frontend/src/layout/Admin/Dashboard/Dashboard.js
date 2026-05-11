@@ -49,14 +49,14 @@ const Dashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-start gap-3">
               <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0 flex-shrink-0 mt-0.5"
+                className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shrink-0 flex-shrink-0 mt-0.5"
                 style={{
                   background:
                     "linear-gradient(135deg, rgba(200,16,46,0.9), rgba(200,16,46,0.7))",
-                  boxShadow: "0 4px 12px rgba(200,16,46,0.2)",
+                  boxShadow: "0 4px 15px rgba(200,16,46,0.3)",
                 }}
               >
-                <BarChart3 size={18} strokeWidth={2} />
+                <BarChart3 size={20} strokeWidth={2.5} />
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)] leading-tight m-0">
@@ -69,7 +69,8 @@ const Dashboard = () => {
             </div>
             <button
               onClick={() => navigate("/admin/all-users")}
-              className="px-4 py-2 rounded-lg border border-[var(--color-border-soft)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+              className="px-5 py-2.5 border border-[var(--color-border-soft)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 flex items-center gap-2 whitespace-nowrap shadow-sm active:scale-95"
+              style={{ borderRadius: '12px' }}
             >
               <Settings size={16} />
               <span className="text-sm font-medium">View Users</span>
@@ -143,11 +144,15 @@ const Dashboard = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Approval Management */}
-              <button
+              <div
                 onClick={() => navigate("/admin/approval-management")}
-                className="group relative overflow-hidden p-4 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
+                role="button"
+                tabIndex="0"
+                className="group relative overflow-hidden p-8 border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-500 text-left hover:scale-[1.03] active:scale-[0.98] shadow-sm hover:shadow-xl cursor-pointer"
                 style={{
                   background: "var(--color-bg-paper)",
+                  borderRadius: "32px !important",
+                  borderRadius: "32px", // standard for browsers that don't like !important in inline style
                 }}
               >
                 <div
@@ -171,14 +176,18 @@ const Dashboard = () => {
                     Review and process visitor approval requests
                   </p>
                 </div>
-              </button>
+              </div>
 
               {/* Security Monitoring */}
-              <button
+              <div
                 onClick={() => navigate("/admin/security-monitoring")}
-                className="group relative overflow-hidden p-4 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
+                role="button"
+                tabIndex="0"
+                className="group relative overflow-hidden p-8 border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-500 text-left hover:scale-[1.03] active:scale-[0.98] shadow-sm hover:shadow-xl cursor-pointer"
                 style={{
                   background: "var(--color-bg-paper)",
+                  borderRadius: "32px !important",
+                  borderRadius: "32px",
                 }}
               >
                 <div
@@ -202,14 +211,18 @@ const Dashboard = () => {
                     Monitor system security and access logs
                   </p>
                 </div>
-              </button>
+              </div>
 
               {/* Blacklist Management */}
-              <button
+              <div
                 onClick={() => navigate("/admin/blacklist-management")}
-                className="group relative overflow-hidden p-4 rounded-xl border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-300 text-left"
+                role="button"
+                tabIndex="0"
+                className="group relative overflow-hidden p-8 border border-[var(--color-border-soft)] hover:border-primary/50 transition-all duration-500 text-left hover:scale-[1.03] active:scale-[0.98] shadow-sm hover:shadow-xl cursor-pointer"
                 style={{
                   background: "var(--color-bg-paper)",
+                  borderRadius: "32px !important",
+                  borderRadius: "32px",
                 }}
               >
                 <div
@@ -233,7 +246,7 @@ const Dashboard = () => {
                     Manage and maintain blocked visitor lists
                   </p>
                 </div>
-              </button>
+              </div>
             </div>
           </section>
         </div>

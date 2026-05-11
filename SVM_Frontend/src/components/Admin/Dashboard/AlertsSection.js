@@ -28,12 +28,12 @@ const AlertsSection = () => {
 
   return (
     <div
-      className="flex flex-col h-full"
+      className="flex flex-col h-full transition-all duration-500"
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '16px',
-        padding: '1.5rem',
+        borderRadius: '32px',
+        padding: '1.75rem',
         boxShadow: 'var(--shadow-card)',
         minHeight: '420px',
       }}
@@ -74,7 +74,7 @@ const AlertsSection = () => {
                 initial={{ opacity: 0, x: 16 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.08 }}
-                className="flex items-start gap-3 p-4 rounded-xl cursor-pointer group transition-all duration-200"
+                className="flex items-start gap-3 p-4 rounded-[18px] cursor-pointer group transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   background: style.bg,
                   border: `1px solid ${style.border}`,

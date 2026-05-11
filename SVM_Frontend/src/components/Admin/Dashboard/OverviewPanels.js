@@ -45,12 +45,17 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '12px',
-        padding: '1.25rem',
+        borderRadius: '24px',
+        padding: '1.5rem',
         boxShadow: 'var(--shadow-card)',
-        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+        transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
       }}
-      whileHover={{ y: -3, boxShadow: `0 8px 32px ${color.glow}, var(--shadow-card)` }}
+      whileHover={{ 
+        y: -5, 
+        scale: 1.02,
+        boxShadow: `0 20px 40px ${color.glow}, var(--shadow-card)`,
+        borderColor: color.text 
+      }}
     >
       {/* Background decoration */}
       <div

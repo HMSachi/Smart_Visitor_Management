@@ -30,15 +30,15 @@ const ActiveVisitorsCard = () => {
 
   return (
     <div
-      className="group relative overflow-hidden cursor-pointer h-full"
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '16px',
-        padding: '1.5rem',
+        borderRadius: '32px',
+        padding: '2rem',
         boxShadow: 'var(--shadow-card)',
-        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+        transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
       }}
+      className="group relative overflow-hidden cursor-pointer h-full hover:scale-[1.015] active:scale-[0.99]"
     >
       {/* Background decoration */}
       <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-30 blur-3xl group-hover:opacity-50 transition-all" style={{ background: 'rgba(200,16,46,0.15)' }} />

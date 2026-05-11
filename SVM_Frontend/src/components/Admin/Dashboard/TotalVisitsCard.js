@@ -16,12 +16,12 @@ const TotalVisitsCard = () => {
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '16px',
-        padding: '1.5rem',
+        borderRadius: '32px',
+        padding: '2rem',
         boxShadow: 'var(--shadow-card)',
-        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+        transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
       }}
-      whileHover={{ y: -2 }}
+      whileHover={{ y: -5, scale: 1.015 }}
     >
       {/* Background decoration */}
       <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-25 blur-3xl group-hover:opacity-40 transition-all pointer-events-none" style={{ background: 'rgba(200,16,46,0.2)' }} />
