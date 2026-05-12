@@ -102,6 +102,8 @@ const ApprovalManagement = () => {
               id: i.VIC_Item_id,
               itemName: i.VIC_Item_Name,
               quantity: i.VIC_Quantity,
+              description: i.VIC_Designation,
+              status: i.VIC_Status || null,
             }));
           setItemsCarried(matchedItems);
 

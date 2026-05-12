@@ -15,6 +15,7 @@ import {
   Info,
   CheckCircle2,
   AlertCircle,
+  Clock,
   QrCode,
   Download,
   Loader2,
@@ -249,21 +250,46 @@ const PersonnelAuthProtocol = ({
                 </div>
                 {itemsCarried && itemsCarried.length > 0 ? (
                   <div className="grid grid-cols-1 gap-2">
-                    {itemsCarried.map((item, idx) => (
-                      <motion.div
-                        key={item.id || idx}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className={`grid grid-cols-1 md:grid-cols-3 gap-3 p-2 border rounded-xl ${isLight
-                            ? "bg-gray-50 border-gray-200"
-                            : "bg-black/30 border-white/8"
+                    {itemsCarried.map((item, idx) => {
+                      const s = (item.status || "").toString().trim().toUpperCase();
+                      const isTaken = s === "A";
+                      const isNotTaken = s === "I";
+                      return (
+                        <motion.div
+                          key={item.id || idx}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className={`grid grid-cols-1 md:grid-cols-3 gap-3 p-2 border rounded-xl ${
+                            isLight
+                              ? "bg-gray-50 border-gray-200"
+                              : "bg-black/30 border-white/8"
                           }`}
-                      >
-                        <Field label="Item name" value={item.itemName} icon={Package} isLight={isLight} />
-                        <Field label="Qty" value={item.quantity ? String(item.quantity) : "—"} icon={Hash} isLight={isLight} />
-                        <Field label="Description" value={item.description || "—"} icon={Briefcase} isLight={isLight} />
-                      </motion.div>
-                    ))}
+                        >
+                          <Field label="Item name" value={item.itemName} icon={Package} isLight={isLight} />
+                          <Field label="Qty" value={item.quantity ? String(item.quantity) : "—"} icon={Hash} isLight={isLight} />
+                          <Field label="Description" value={item.description || "—"} icon={Briefcase} isLight={isLight} />
+                          {/* Status chip — full width */}
+                          <div className="md:col-span-3 flex items-center gap-2">
+                            {isTaken ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.14em] uppercase bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400">
+                                <CheckCircle2 size={11} />
+                                Taken
+                              </span>
+                            ) : isNotTaken ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.14em] uppercase bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400">
+                                <AlertCircle size={11} />
+                                Not Taken
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.14em] uppercase bg-gray-200/60 border border-gray-300/50 text-gray-500 dark:bg-white/5 dark:border-white/10 dark:text-gray-400">
+                                <Clock size={11} />
+                                Not checked yet
+                              </span>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className={`border border-dashed rounded-xl p-2 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}>

@@ -192,6 +192,7 @@ const RequestReviewMain = () => {
             itemName: i.VIC_Item_Name,
             quantity: i.VIC_Quantity,
             description: i.VIC_Designation,
+            status: i.VIC_Status || null,
           }));
         if (!cancelled) setItemsCarried(matchedItems);
 

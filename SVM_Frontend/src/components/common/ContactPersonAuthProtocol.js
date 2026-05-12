@@ -12,6 +12,8 @@ import {
   Package,
   Info,
   AlertCircle,
+  CheckCircle2,
+  Clock,
   QrCode,
   Download,
   Loader2,
@@ -268,38 +270,67 @@ const ContactPersonAuthProtocol = ({
                         Qty
                       </span>
                       <span
-                        className={`text-[12px] font-medium capitalize tracking-tight flex-[3] sm:text-right ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                        className={`text-[12px] font-medium capitalize tracking-tight flex-[3] sm:text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
                       >
                         Description
+                      </span>
+                      <span
+                        className={`text-[12px] font-medium capitalize tracking-tight w-28 text-right ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                      >
+                        Status
                       </span>
                     </div>
                     <div
                       className={`divide-y overflow-y-auto max-h-[200px] ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
                     >
-                      {itemsCarried.map((item, idx) => (
-                        <div
-                          key={item.id || idx}
-                          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
-                        >
-                          <span
-                            className={`text-[12px] font-medium flex-[2] truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                      {itemsCarried.map((item, idx) => {
+                        const s = (item.status || "").toString().trim().toUpperCase();
+                        const isTaken = s === "A";
+                        const isNotTaken = s === "I";
+                        return (
+                          <div
+                            key={item.id || idx}
+                            className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
                           >
-                            {item.itemName}
-                          </span>
-                          <div className="w-16 flex justify-center">
                             <span
-                              className={`text-[12px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}
+                              className={`text-[12px] font-medium flex-[2] truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                             >
-                              x{item.quantity ? item.quantity : 1}
+                              {item.itemName}
                             </span>
+                            <div className="w-16 flex justify-center">
+                              <span
+                                className={`text-[12px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}
+                              >
+                                x{item.quantity ? item.quantity : 1}
+                              </span>
+                            </div>
+                            <span
+                              className={`text-[12px] font-medium flex-[3] sm:text-center truncate ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                            >
+                              {item.description || "-"}
+                            </span>
+                            {/* Status badge */}
+                            <div className="w-28 flex justify-end">
+                              {isTaken ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400">
+                                  <CheckCircle2 size={10} />
+                                  Taken
+                                </span>
+                              ) : isNotTaken ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400">
+                                  <AlertCircle size={10} />
+                                  Not Taken
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-gray-200/60 border border-gray-200 text-gray-400 dark:bg-white/5 dark:border-white/10">
+                                  <Clock size={10} />
+                                  Pending
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          <span
-                            className={`text-[12px] font-medium flex-[3] sm:text-right truncate ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                          >
-                            {item.description || "-"}
-                          </span>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 ) : (

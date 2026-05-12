@@ -36,6 +36,7 @@ import {
 } from "../../../utils/secureQrPayload";
 import VisitorService from "../../../services/VisitorService";
 import GatePassService from "../../../services/GatePassService";
+import ItemCarriedService from "../../../services/ItemCarriedService";
 
 // ── Helper: a single icon + label + value row ──────────────────────────────
 const InfoRow = ({ icon, label, value }) => (
@@ -98,6 +99,9 @@ const LiveFeed = () => {
   const [scanType, setScanType] = useState(null); // "CHECK_IN" or "CHECK_OUT"
   const [remarks, setRemarks] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Items carried by the main visitor + their checked state
+  const [mainVisitorItems, setMainVisitorItems] = useState([]); // [{ id, itemName, quantity, description }]
+  const [itemCheckStates, setItemCheckStates] = useState({}); // { [id]: boolean }
 
   const getTodayDateKey = () => new Date().toISOString().slice(0, 10);
 
@@ -166,6 +170,8 @@ const LiveFeed = () => {
     setQrData(null);
     setSubVisitorsData([]);
     setSubVisitorApiData(null);
+    setMainVisitorItems([]);
+    setItemCheckStates({});
     setScanStatus("scanning");
     setScanMessage("Opening the camera. Please hold the QR code steady.");
 
@@ -399,6 +405,29 @@ const LiveFeed = () => {
           } catch (err) {
             console.warn("[LiveFeed] Could not fetch sub-visitors:", err);
           }
+
+          // Fetch items carried by the main visitor
+          try {
+            const itemsRes = await ItemCarriedService.GetAllItemsCarried();
+            const allItems = itemsRes?.data?.ResultSet || itemsRes?.data || [];
+            const matchedItems = (Array.isArray(allItems) ? allItems : [])
+              .filter((i) => String(i.VVR_Request_id) === String(requestId))
+              .map((i) => ({
+                id: i.VIC_Item_id,
+                itemName: i.VIC_Item_Name,
+                quantity: i.VIC_Quantity,
+                description: i.VIC_Designation || "",
+                status: i.VIC_Status || null,
+              }));
+            setMainVisitorItems(matchedItems);
+            // Default: all items are UN-ticked (security must explicitly confirm each)
+            const defaultChecks = {};
+            matchedItems.forEach((item) => { defaultChecks[item.id] = false; });
+            setItemCheckStates(defaultChecks);
+            console.log("[LiveFeed] Fetched main-visitor items:", matchedItems);
+          } catch (err) {
+            console.warn("[LiveFeed] Could not fetch items carried:", err);
+          }
         }
       } else {
         throw new Error("We could not find a matching gate pass.");
@@ -541,6 +570,8 @@ const LiveFeed = () => {
     setQrData(null);
     setSubVisitorsData([]);
     setSubVisitorApiData(null);
+    setMainVisitorItems([]);
+    setItemCheckStates({});
     setIsLoading(false);
     setScanStatus("idle");
     setScanMessage("Point your camera at the QR code to get started.");
@@ -563,6 +594,17 @@ const LiveFeed = () => {
 
     setIsSubmitting(true);
     try {
+      // Update item statuses first (A = taken/ticked, I = not taken/unticked)
+      if (mainVisitorItems.length > 0) {
+        await Promise.allSettled(
+          mainVisitorItems.map((item) => {
+            const isTaken = itemCheckStates[item.id] === true;
+            return ItemCarriedService.UpdateItemStatus(item.id, isTaken ? "A" : "I");
+          })
+        );
+        console.log("[LiveFeed] Item statuses updated.");
+      }
+
       let result = null;
       if (useDemoScanLog) {
         result = { data: logScanEntryDemo(passDetails.VGP_Pass_id, scanType, remarks) };
@@ -995,6 +1037,246 @@ const LiveFeed = () => {
                     </div>
                   </div>
                 )}
+
+              {/* Section: Items Carried — main visitor QR only */}
+              {qrData?.type !== "subVisitor" && mainVisitorItems.length > 0 && (
+                <div className="px-4 py-2.5 border-t border-[var(--color-border-soft)]">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[8px] uppercase tracking-[0.3em] font-bold text-[var(--color-text-dim)]">
+                      Items Carried
+                    </p>
+
+                    {/* Counter shown only during CHECK_IN */}
+                    {scanType === "CHECK_IN" && (
+                      <span
+                        className="text-[8px] font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-full"
+                        style={{
+                          background: "rgba(34,197,94,0.1)",
+                          border: "1px solid rgba(34,197,94,0.2)",
+                          color: "var(--color-success)",
+                        }}
+                      >
+                        {Object.values(itemCheckStates).filter(Boolean).length} / {mainVisitorItems.length} verified
+                      </span>
+                    )}
+
+                    {/* Read-only label during CHECK_OUT */}
+                    {scanType === "CHECK_OUT" && (
+                      <span
+                        className="text-[8px] font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-full"
+                        style={{
+                          background: "rgba(249,115,22,0.1)",
+                          border: "1px solid rgba(249,115,22,0.25)",
+                          color: "#f97316",
+                        }}
+                      >
+                        {mainVisitorItems.length} {mainVisitorItems.length === 1 ? "item" : "items"}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Instruction — only shown during CHECK_IN */}
+                  {scanType === "CHECK_IN" && (
+                    <p className="text-[8px] text-[var(--color-text-dim)] mb-2 leading-relaxed">
+                      Tick each item the visitor is carrying out. Unticked items will be marked as not taken.
+                    </p>
+                  )}
+
+                  {/* READ-ONLY view for CHECK_OUT */}
+                  {scanType === "CHECK_OUT" ? (
+                    <div className="space-y-1.5">
+                      {mainVisitorItems.map((item) => {
+                        const s = (item.status || "").toString().trim().toUpperCase();
+                        const isTaken = s === "A";
+                        const isNotTaken = s === "I";
+                        return (
+                          <div
+                            key={item.id}
+                            className="w-full p-2 rounded-lg border flex items-center gap-2.5"
+                            style={{
+                              background: isTaken
+                                ? "rgba(34,197,94,0.06)"
+                                : isNotTaken
+                                ? "rgba(249,115,22,0.06)"
+                                : "var(--color-surface-2)",
+                              borderColor: isTaken
+                                ? "rgba(34,197,94,0.3)"
+                                : isNotTaken
+                                ? "rgba(249,115,22,0.3)"
+                                : "var(--color-border-soft)",
+                            }}
+                          >
+                            <Package
+                              size={12}
+                              className="flex-shrink-0"
+                              style={{
+                                color: isTaken
+                                  ? "var(--color-success)"
+                                  : isNotTaken
+                                  ? "#f97316"
+                                  : "var(--color-text-secondary)",
+                              }}
+                            />
+                            <div className="min-w-0 flex-1">
+                              <p
+                                className="text-xs font-semibold truncate"
+                                style={{ color: "var(--color-text-primary)" }}
+                              >
+                                {item.itemName || "Unnamed item"}
+                              </p>
+                              {item.description && (
+                                <p className="text-[9px] text-[var(--color-text-dim)] truncate">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
+                            {item.quantity && (
+                              <span
+                                className="px-1.5 py-0.5 rounded text-[9px] font-bold flex-shrink-0"
+                                style={{
+                                  background: "var(--color-surface-1)",
+                                  color: "var(--color-text-secondary)",
+                                }}
+                              >
+                                x{item.quantity}
+                              </span>
+                            )}
+                            {/* Status badge */}
+                            {isTaken ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-[0.14em] flex-shrink-0 bg-green-500/10 border border-green-500/25 text-green-500">
+                                <svg width="9" height="7" viewBox="0 0 10 8" fill="none">
+                                  <path d="M1 4L3.5 6.5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                Taken
+                              </span>
+                            ) : isNotTaken ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-[0.14em] flex-shrink-0 bg-orange-500/10 border border-orange-500/25 text-orange-500">
+                                <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
+                                  <path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                </svg>
+                                Not Taken
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-[0.14em] flex-shrink-0" style={{ background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)", color: "var(--color-text-dim)" }}>
+                                Pending
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    /* INTERACTIVE checklist for CHECK_IN */
+                    <div className="space-y-1.5">
+                      {mainVisitorItems.map((item) => {
+                        const isChecked = itemCheckStates[item.id] === true;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() =>
+                              setItemCheckStates((prev) => ({
+                                ...prev,
+                                [item.id]: !prev[item.id],
+                              }))
+                            }
+                            disabled={isSubmitting}
+                            className="w-full text-left p-2 rounded-lg border transition-all flex items-center gap-2.5 group"
+                            style={{
+                              background: isChecked
+                                ? "rgba(34,197,94,0.08)"
+                                : "var(--color-surface-2)",
+                              borderColor: isChecked
+                                ? "rgba(34,197,94,0.35)"
+                                : "var(--color-border-soft)",
+                            }}
+                          >
+                            {/* Checkbox visual */}
+                            <div
+                              className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 transition-all"
+                              style={{
+                                background: isChecked
+                                  ? "rgba(34,197,94,1)"
+                                  : "var(--color-surface-1)",
+                                border: isChecked
+                                  ? "2px solid rgba(34,197,94,1)"
+                                  : "2px solid var(--color-border-medium)",
+                              }}
+                            >
+                              {isChecked && (
+                                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                  <path
+                                    d="M1 4L3.5 6.5L9 1"
+                                    stroke="white"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                            {/* Item details */}
+                            <Package
+                              size={12}
+                              className="flex-shrink-0"
+                              style={{
+                                color: isChecked
+                                  ? "var(--color-success)"
+                                  : "var(--color-text-secondary)",
+                              }}
+                            />
+                            <div className="min-w-0 flex-1">
+                              <p
+                                className="text-xs font-semibold truncate transition-all"
+                                style={{
+                                  color: isChecked
+                                    ? "var(--color-success)"
+                                    : "var(--color-text-primary)",
+                                  textDecoration: isChecked ? "line-through" : "none",
+                                  opacity: isChecked ? 0.75 : 1,
+                                }}
+                              >
+                                {item.itemName || "Unnamed item"}
+                              </p>
+                              {item.description && (
+                                <p className="text-[9px] text-[var(--color-text-dim)] truncate">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
+                            {item.quantity && (
+                              <span
+                                className="px-1.5 py-0.5 rounded text-[9px] font-bold flex-shrink-0"
+                                style={{
+                                  background: isChecked
+                                    ? "rgba(34,197,94,0.15)"
+                                    : "rgba(var(--color-primary-rgb,200,16,46),0.1)",
+                                  color: isChecked
+                                    ? "var(--color-success)"
+                                    : "var(--color-text-secondary)",
+                                }}
+                              >
+                                x{item.quantity}
+                              </span>
+                            )}
+                            {/* Taken / Not taken badge */}
+                            <span
+                              className="text-[8px] font-black uppercase tracking-[0.14em] flex-shrink-0"
+                              style={{
+                                color: isChecked
+                                  ? "var(--color-success)"
+                                  : "var(--color-text-dim)",
+                              }}
+                            >
+                              {isChecked ? "Taken" : "Not taken"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Access status bar */}
               <div

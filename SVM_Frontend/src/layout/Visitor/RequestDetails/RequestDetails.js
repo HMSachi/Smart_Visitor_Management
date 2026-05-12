@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { ArrowLeft, Calendar, Hash, MapPin, User, Mail, Phone, Building2, Briefcase, Car, Users, Package } from "lucide-react";
+import { ArrowLeft, Calendar, Hash, MapPin, User, Mail, Phone, Building2, Briefcase, Car, Users, Package, CheckCircle2, AlertCircle, Clock } from "lucide-react";
 import VisitorService from "../../../services/VisitorService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
@@ -288,18 +288,43 @@ const RequestDetails = () => {
                 <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft">
                   <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[2]">Item name</span>
                   <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight w-16 text-center">Qty</span>
-                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[3] sm:text-right">Description</span>
+                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[3] sm:text-center">Description</span>
+                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight w-28 text-right">Status</span>
                 </div>
                 <div className="divide-y divide-border-soft/50 overflow-y-auto max-h-[150px]">
-                  {items.map((item, idx) => (
-                    <div key={item.VIC_Item_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/30'}`}>
-                      <span className="text-[12px] font-normal text-text-primary flex-[2] truncate">{item.VIC_Item_Name}</span>
-                      <div className="w-16 flex justify-center">
-                        <span className="text-[12px] font-medium text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{item.VIC_Quantity || 1}</span>
+                  {items.map((item, idx) => {
+                    const s = (item.VIC_Status || "").toString().trim().toUpperCase();
+                    const isTaken = s === "A";
+                    const isNotTaken = s === "I";
+                    return (
+                      <div key={item.VIC_Item_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/30'}`}>
+                        <span className="text-[12px] font-normal text-text-primary flex-[2] truncate">{item.VIC_Item_Name}</span>
+                        <div className="w-16 flex justify-center">
+                          <span className="text-[12px] font-medium text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{item.VIC_Quantity || 1}</span>
+                        </div>
+                        <span className="text-[12px] font-normal text-text-dim flex-[3] sm:text-center truncate">{item.VIC_Designation || item.VIC_Description || "-"}</span>
+                        {/* Status badge */}
+                        <div className="w-28 flex justify-end">
+                          {isTaken ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400">
+                              <CheckCircle2 size={10} />
+                              Taken
+                            </span>
+                          ) : isNotTaken ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400">
+                              <AlertCircle size={10} />
+                              Not Taken
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-gray-200/60 border border-gray-200 text-gray-400 dark:bg-white/5 dark:border-white/10">
+                              <Clock size={10} />
+                              Pending
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <span className="text-[12px] font-normal text-text-dim flex-[3] sm:text-right truncate">{item.VIC_Designation || item.VIC_Description || "-"}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ) : (
