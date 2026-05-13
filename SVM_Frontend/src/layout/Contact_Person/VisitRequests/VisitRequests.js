@@ -179,10 +179,10 @@ const VisitRequests = () => {
   const [editJointItems, setEditJointItems] = useState([]);
   const [editSaving, setEditSaving] = useState(false);
   const [editLoadingData, setEditLoadingData] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -1275,11 +1275,11 @@ const VisitRequests = () => {
                       <tr
                         className={`text-[12px] font-normal tracking-[0.3em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
                       >
-                        <th className="px-3 py-2 text-center w-[60px] font-normal text-[12px]">ID</th>
+                        <th className="px-3 py-2 text-center w-[60px] font-normal text-[12px] hidden md:table-cell">ID</th>
                         <th className="px-3 py-2 text-left font-normal text-[12px]">Visitor</th>
-                        <th className="px-3 py-2 text-center font-normal text-[12px]">Date</th>
-                        <th className="px-3 py-2 text-left font-normal text-[12px]">Reason</th>
-                        <th className="px-3 py-2 text-left font-normal text-[12px]">Areas</th>
+                        <th className="px-3 py-2 text-center font-normal text-[12px] hidden md:table-cell">Date</th>
+                        <th className="px-3 py-2 text-left font-normal text-[12px] hidden lg:table-cell">Reason</th>
+                        <th className="px-3 py-2 text-left font-normal text-[12px] hidden xl:table-cell">Areas</th>
                         <th className="px-3 py-2 text-center font-normal text-[12px]">Status</th>
                         <th className="px-3 py-2 text-center w-[80px] font-normal text-[12px]">Gatepass</th>
                         <th className="px-3 py-2 text-center w-[120px] font-normal text-[12px]">Actions</th>
@@ -1292,7 +1292,7 @@ const VisitRequests = () => {
                             key={req.VVR_Request_id}
                             className={`group border-b transition-all duration-300 relative overflow-hidden ${isLight ? "hover:bg-[#F8F9FA] border-gray-50" : "hover:bg-white/[0.02] border-white/5"}`}
                           >
-                            <td className="px-3 py-1 text-center text-primary text-[12px] tracking-wide font-normal">
+                            <td className="px-3 py-1 text-center text-primary text-[12px] tracking-wide font-normal hidden md:table-cell">
                               #{req.VVR_Request_id}
                             </td>
                             <td className="px-3 py-1 text-left font-normal text-[12px]">
@@ -1302,7 +1302,7 @@ const VisitRequests = () => {
                                 {getVisitorDisplayName(req)}
                               </span>
                             </td>
-                            <td className="px-3 py-1 font-normal text-[12px]">
+                            <td className="px-3 py-1 font-normal text-[12px] hidden md:table-cell">
                               <div
                                 className={`flex flex-col items-center justify-center gap-1.5 text-[12px] ${isLight ? "text-gray-500" : "text-white/70"}`}
                               >
@@ -1315,7 +1315,7 @@ const VisitRequests = () => {
                                 </span>
                               </div>
                             </td>
-                            <td className="px-3 py-1 text-left font-normal text-[12px]">
+                            <td className="px-3 py-1 text-left font-normal text-[12px] hidden lg:table-cell">
                               <div className="max-w-[170px]">
                                 <p
                                   title={
@@ -1327,7 +1327,7 @@ const VisitRequests = () => {
                                 </p>
                               </div>
                             </td>
-                            <td className="px-3 py-1 align-top text-left font-normal text-[12px]">
+                            <td className="px-3 py-1 align-top text-left font-normal text-[12px] hidden xl:table-cell">
                               <div
                                 className={`flex flex-col gap-2 text-[12px] font-normal tracking-wide min-w-0 ${isLight ? "text-gray-500" : "text-white/55"}`}
                               >
@@ -1376,7 +1376,7 @@ const VisitRequests = () => {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={7} className="py-24 text-center font-normal text-[12px]">
+                          <td colSpan={8} className="py-24 text-center font-normal text-[12px]">
                             <div className="flex flex-col items-center justify-center opacity-20">
                               <ClipboardList
                                 size={48}

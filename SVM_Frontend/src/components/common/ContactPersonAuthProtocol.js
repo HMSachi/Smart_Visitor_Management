@@ -254,28 +254,28 @@ const ContactPersonAuthProtocol = ({
                 </div>
                 {itemsCarried && itemsCarried.length > 0 ? (
                   <div
-                    className={`border rounded-lg overflow-hidden ${isLight ? "border-gray-100" : "border-white/10"}`}
+                    className={`border rounded-lg overflow-x-auto ${isLight ? "border-gray-100" : "border-white/10"}`}
                   >
                     <div
-                      className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
+                      className={`flex justify-between items-center px-3 py-1.5 border-b min-w-max ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
                     >
                       <span
-                        className={`text-[12px] font-medium capitalize tracking-tight flex-[2] ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                        className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-[2] min-w-[120px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
                       >
                         Item name
                       </span>
                       <span
-                        className={`text-[12px] font-medium capitalize tracking-tight w-16 text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                        className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight w-16 text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
                       >
                         Qty
                       </span>
                       <span
-                        className={`text-[12px] font-medium capitalize tracking-tight flex-[3] sm:text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                        className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-[3] text-center min-w-[120px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
                       >
                         Description
                       </span>
                       <span
-                        className={`text-[12px] font-medium capitalize tracking-tight w-28 text-right ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                        className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight w-28 text-right min-w-[100px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
                       >
                         Status
                       </span>
@@ -290,39 +290,39 @@ const ContactPersonAuthProtocol = ({
                         return (
                           <div
                             key={item.id || idx}
-                            className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
+                            className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
                           >
                             <span
-                              className={`text-[12px] font-medium flex-[2] truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                              className={`text-[11px] md:text-[12px] font-medium flex-[2] truncate min-w-[120px] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                             >
                               {item.itemName}
                             </span>
                             <div className="w-16 flex justify-center">
                               <span
-                                className={`text-[12px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}
+                                className={`text-[11px] md:text-[12px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}
                               >
                                 x{item.quantity ? item.quantity : 1}
                               </span>
                             </div>
                             <span
-                              className={`text-[12px] font-medium flex-[3] sm:text-center truncate ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                              className={`text-[11px] md:text-[12px] font-medium flex-[3] text-center truncate min-w-[120px] ${isLight ? "text-gray-500" : "text-gray-400"}`}
                             >
                               {item.description || "-"}
                             </span>
                             {/* Status badge */}
-                            <div className="w-28 flex justify-end">
+                            <div className="w-28 flex justify-end min-w-[100px]">
                               {isTaken ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] md:text-[9px] font-bold tracking-[0.12em] uppercase bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400 whitespace-nowrap">
                                   <CheckCircle2 size={10} />
                                   Taken
                                 </span>
                               ) : isNotTaken ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] md:text-[9px] font-bold tracking-[0.12em] uppercase bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400 whitespace-nowrap">
                                   <AlertCircle size={10} />
                                   Not Taken
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-gray-200/60 border border-gray-200 text-gray-400 dark:bg-white/5 dark:border-white/10">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] md:text-[9px] font-bold tracking-[0.12em] uppercase bg-gray-200/60 border border-gray-200 text-gray-400 dark:bg-white/5 dark:border-white/10 whitespace-nowrap">
                                   <Clock size={10} />
                                   Pending
                                 </span>
@@ -431,18 +431,18 @@ const ContactPersonAuthProtocol = ({
           <div className="p-3 md:p-4">
             <SplitSection title="Vehicle registry" icon={Car} isLight={isLight}>
               <div
-                className={`border rounded-lg overflow-hidden ${isLight ? "border-gray-100" : "border-white/10"}`}
+                className={`border rounded-lg overflow-x-auto ${isLight ? "border-gray-100" : "border-white/10"}`}
               >
                 <div
-                  className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
+                  className={`flex justify-between items-center px-3 py-1.5 border-b min-w-max ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
                 >
                   <span
-                    className={`text-[12px] font-medium capitalize tracking-tight flex-1 ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[100px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
                   >
                     Vehicle type
                   </span>
                   <span
-                    className={`text-[12px] font-medium capitalize tracking-tight flex-1 sm:text-right ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[100px] text-right ${isLight ? "text-gray-400" : "text-gray-400"}`}
                   >
                     Vehicle number
                   </span>
@@ -453,15 +453,15 @@ const ContactPersonAuthProtocol = ({
                   {vehiclesList.map((vehicle, idx) => (
                     <div
                       key={vehicle.id || idx}
-                      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
+                      className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
                     >
                       <span
-                        className={`text-[12px] font-medium capitalize flex-1 ${isLight ? "text-gray-600" : "text-gray-400"}`}
+                        className={`text-[11px] md:text-[12px] font-medium capitalize flex-1 min-w-[100px] ${isLight ? "text-gray-600" : "text-gray-400"}`}
                       >
                         {vehicle.vehicleType}
                       </span>
                       <span
-                        className={`text-[12px] font-medium flex-1 sm:text-right ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                        className={`text-[11px] md:text-[12px] font-medium flex-1 min-w-[100px] text-right ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                       >
                         {vehicle.plateNumber}
                       </span>
@@ -484,27 +484,26 @@ const ContactPersonAuthProtocol = ({
               isLight={isLight}
             >
               <div
-                className={`border rounded-lg overflow-hidden ${isLight ? "border-gray-100" : "border-white/10"}`}
+                className={`border rounded-lg overflow-x-auto ${isLight ? "border-gray-100" : "border-white/10"}`}
               >
                 <div
-                  className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
+                  className={`flex justify-between items-center px-3 py-1.5 border-b min-w-max ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
                 >
                   <span
-                    className={`text-[12px] font-medium capitalize tracking-tight flex-1 ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[120px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
                   >
                     Name
                   </span>
                   <span
-                    className={`text-[12px] font-medium capitalize tracking-tight flex-1 sm:text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[130px] text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
                   >
                     NIC
                   </span>
                   <span
-                    className={`text-[12px] font-medium capitalize tracking-tight flex-1 sm:text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[120px] text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
                   >
                     Contact
                   </span>
-                  {/* <span className={`text-[12px] font-medium capitalize tracking-tight w-12 text-center ${isLight ? 'text-gray-400' : 'text-gray-400'}`}>QR</span> */}
                 </div>
                 <div
                   className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
@@ -512,34 +511,23 @@ const ContactPersonAuthProtocol = ({
                   {groupMembers.map((member, idx) => (
                     <div
                       key={member.id || idx}
-                      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1 ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
+                      className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
                     >
                       <span
-                        className={`text-[12px] font-medium flex-1 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                        className={`text-[11px] md:text-[12px] font-medium flex-1 min-w-[120px] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                       >
                         {member.fullName}
                       </span>
                       <span
-                        className={`text-[12px] font-medium capitalize flex-1 sm:text-center ${isLight ? "text-gray-600" : "text-gray-400"}`}
+                        className={`text-[11px] md:text-[12px] font-medium capitalize flex-1 min-w-[130px] text-center ${isLight ? "text-gray-600" : "text-gray-400"}`}
                       >
                         {member.nic}
                       </span>
                       <span
-                        className={`text-[12px] font-medium flex-1 sm:text-center ${isLight ? "text-gray-600" : "text-gray-400"}`}
+                        className={`text-[11px] md:text-[12px] font-medium flex-1 min-w-[120px] text-center ${isLight ? "text-gray-600" : "text-gray-400"}`}
                       >
                         {member.contact || "-"}
                       </span>
-                      {/* <div className="w-12 flex justify-center">
-                        {hasGatePass() && (
-                          <button
-                            onClick={() => handleOpenSubVisitorQR(member, idx)}
-                            title="View QR code"
-                            className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all border ${isLight ? "bg-white border-gray-100 text-gray-500 hover:border-primary/40 hover:text-primary" : "bg-white/5 border-white/10 text-white/40 hover:border-primary/40 hover:text-primary"}`}
-                          >
-                            <QrCode size={13} />
-                          </button>
-                        )}
-                      </div> */}
                     </div>
                   ))}
                 </div>
@@ -566,26 +554,36 @@ const ContactPersonAuthProtocol = ({
                   className={`border rounded-lg overflow-hidden ${isLight ? "border-gray-200" : "border-white/10"}`}
                 >
                   <div
-                    className={`flex justify-between items-center px-3 py-1.5 border-b ${isLight ? "bg-gray-100 border-gray-200" : "bg-white/5 border-white/10"}`}
+                    className={`hidden md:flex justify-between items-center px-3 py-1.5 border-b ${isLight ? "bg-gray-100 border-gray-200" : "bg-white/5 border-white/10"}`}
                   >
                     <span className={`text-[10px] font-bold capitalize tracking-wider flex-1 ${isLight ? "text-gray-500" : "text-gray-400"}`}>Sub visitor</span>
                     <span className={`text-[10px] font-bold capitalize tracking-wider flex-1 ${isLight ? "text-gray-500" : "text-gray-400"}`}>Item name</span>
                     <span className={`text-[10px] font-bold capitalize tracking-wider w-16 text-center ${isLight ? "text-gray-500" : "text-gray-400"}`}>Qty</span>
-                    <span className={`text-[10px] font-bold capitalize tracking-wider flex-[2] sm:text-right ${isLight ? "text-gray-500" : "text-gray-400"}`}>Description</span>
+                    <span className={`text-[10px] font-bold capitalize tracking-wider flex-[2] text-right ${isLight ? "text-gray-500" : "text-gray-400"}`}>Description</span>
                   </div>
                   <div className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? "divide-gray-100" : "divide-white/5"}`}>
                     {jointItems.map((item, idx) => {
                       const memberName = item.Group_Members || "Unknown Member";
                       return (
-                        <div key={idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1 ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/50") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}>
-                          <span className={`text-[11px] font-medium flex-1 truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>{memberName}</span>
-                          <span className={`text-[11px] font-medium flex-1 truncate ${isLight ? "text-gray-600" : "text-gray-400"}`}>{item.VIC_Item_Name || item.itemName}</span>
-                          <div className="w-16 flex justify-center">
-                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}>
+                        <div key={idx} className={`flex flex-col md:flex-row md:items-center justify-between gap-2 px-3 py-1.5 md:py-1 ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/50") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}>
+                          <div className="flex flex-col gap-1 md:gap-0 flex-1">
+                            <span className={`text-[10px] font-bold uppercase tracking-[0.15em] md:hidden ${isLight ? "text-gray-500" : "text-gray-500"}`}>Sub Visitor</span>
+                            <span className={`text-[11px] font-medium truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>{memberName}</span>
+                          </div>
+                          <div className="flex flex-col gap-1 md:gap-0 flex-1">
+                            <span className={`text-[10px] font-bold uppercase tracking-[0.15em] md:hidden ${isLight ? "text-gray-500" : "text-gray-500"}`}>Item Name</span>
+                            <span className={`text-[11px] font-medium truncate ${isLight ? "text-gray-600" : "text-gray-400"}`}>{item.VIC_Item_Name || item.itemName}</span>
+                          </div>
+                          <div className="w-16 flex justify-center flex-col gap-1 md:gap-0">
+                            <span className={`text-[10px] font-bold uppercase tracking-[0.15em] md:hidden text-center ${isLight ? "text-gray-500" : "text-gray-500"}`}>Qty</span>
+                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded tracking-wide text-center ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}>
                               x{item.VIC_Quantity || item.quantity || 1}
                             </span>
                           </div>
-                          <span className={`text-[11px] font-medium flex-[2] sm:text-right truncate ${isLight ? "text-gray-500" : "text-gray-400"}`}>{item.VIC_Designation || item.description || "-"}</span>
+                          <div className="flex flex-col gap-1 md:gap-0 flex-[2]">
+                            <span className={`text-[10px] font-bold uppercase tracking-[0.15em] md:hidden ${isLight ? "text-gray-500" : "text-gray-500"}`}>Description</span>
+                            <span className={`text-[11px] font-medium truncate md:text-right ${isLight ? "text-gray-500" : "text-gray-400"}`}>{item.VIC_Designation || item.description || "-"}</span>
+                          </div>
                         </div>
                       );
                     })}
