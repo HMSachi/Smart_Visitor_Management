@@ -43,7 +43,9 @@ const ContactAllVisitors = () => {
     (state) => state.visitorManagement,
   );
   const { contactPersons } = useSelector((state) => state.contactPerson);
-  const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+  const { blacklists } = useSelector(
+    (state) => state.blacklistState || { blacklists: [] },
+  );
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
@@ -227,13 +229,19 @@ const ContactAllVisitors = () => {
     // Blacklist validation
     const isBlacklisted = blacklists.some(
       (b) =>
-        (b.VB_Email && b.VB_Email.toLowerCase() === formData.VV_Email?.toLowerCase() && b.VB_Status === "A") ||
-        (b.VB_Name && b.VB_Name.toLowerCase() === formData.VV_Name?.toLowerCase() && b.VB_Status === "A")
+        (b.VB_Email &&
+          b.VB_Email.toLowerCase() === formData.VV_Email?.toLowerCase() &&
+          b.VB_Status === "A") ||
+        (b.VB_Name &&
+          b.VB_Name.toLowerCase() === formData.VV_Name?.toLowerCase() &&
+          b.VB_Status === "A"),
     );
 
     if (isBlacklisted) {
-      newErrors.VV_Name = "⚠️ This person is in the restricted list. Please contact the system administrator.";
-      newErrors.VV_Email = "⚠️ This person is in the restricted list. Please contact the system administrator.";
+      newErrors.VV_Name =
+        "⚠️ This person is in the restricted list. Please contact the system administrator.";
+      newErrors.VV_Email =
+        "⚠️ This person is in the restricted list. Please contact the system administrator.";
     }
 
     setErrors(newErrors);
@@ -314,21 +322,14 @@ const ContactAllVisitors = () => {
     : [];
 
   return (
-    <div
-      className="flex overflow-hidden h-screen w-full transition-colors duration-500 contact-theme-root bg-background-default text-text-primary"
-    >
-
-      <div
-        className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-background-default"
-      >
+    <div className="flex overflow-hidden h-screen w-full transition-colors duration-500 contact-theme-root bg-background-default text-text-primary">
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-background-default">
         <Header title="Authorized Visitors" />
 
         <div className="p-4 md:p-8 animate-fade-in-slow relative max-w-none mx-auto w-full z-10">
           <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
-              <div
-                className="flex items-center transition-colors border rounded-lg px-2.5 h-9 min-w-[180px] w-full sm:w-[220px] md:w-[250px] shadow-sm group bg-background-paper border-border-soft focus-within:border-primary"
-              >
+              <div className="flex items-center transition-colors border rounded-lg px-2.5 h-9 min-w-[180px] w-full sm:w-[220px] md:w-[250px] shadow-sm group bg-background-paper border-border-soft focus-within:border-primary">
                 <Search
                   size={14}
                   className="mr-3 text-text-dim group-focus-within:text-primary"
@@ -355,15 +356,16 @@ const ContactAllVisitors = () => {
                 onClick={openModal}
                 className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 h-9 rounded-lg text-[12px] font-normal uppercase tracking-widest transition-all shadow-lg active:scale-95 group"
               >
-                <Plus size={16} className="group-hover:rotate-90 transition-transform" />
+                <Plus
+                  size={16}
+                  className="group-hover:rotate-90 transition-transform"
+                />
                 New Pre-Approval
               </button>
             </div>
           </div>
 
-          <div
-            className="border rounded-[32px] overflow-hidden relative z-10 bg-background-paper border-border-soft shadow-xl shadow-black/5"
-          >
+          <div className="border rounded-[32px] overflow-hidden relative z-10 bg-background-paper border-border-soft shadow-xl shadow-black/5">
             {isLoading ? (
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 border-4 border-border-soft border-t-primary rounded-full animate-spin mb-6"></div>
@@ -380,131 +382,131 @@ const ContactAllVisitors = () => {
                   {error}
                 </p>
               </div>
-            ) : (
-              isMobile ? (
-                <div className="p-4 space-y-6">
-                  {filteredVisitors && filteredVisitors.length > 0 ? (
-                    filteredVisitors.map((visitor) => {
-                      const isActive =
-                        (visitor.VV_Status || "")
-                          .toString()
-                          .trim()
-                          .toUpperCase() === "A" ||
-                        (visitor.VV_Status || "")
-                          .toString()
-                          .trim()
-                          .toUpperCase() === "ACTIVE";
-                      return (
-                        <div
-                          key={visitor.VV_Visitor_id}
-                          className="p-5 rounded-[28px] border transition-all bg-background-paper border-border-soft shadow-sm"
-                        >
-                          <div className="flex justify-between items-start mb-6">
-                            <div>
-                              <h4 className={`text-[12px] font-black uppercase tracking-tight ${isActive ? "text-text-primary" : "text-text-dim"}`}>
-                                {visitor.VV_Name || "Unknown"}
-                              </h4>
-                              <p className="text-text-dim text-[12px] font-normal tracking-[0.2em] mt-1 uppercase opacity-70">
-                                VISITOR-{visitor.VV_Visitor_id.toString().padStart(3, '0')}
-                              </p>
-                            </div>
-                            <div className="flex flex-col items-end gap-3">
-                              <div
-                                className={`svm-status-pill normal-case ${isActive ? "svm-status-pill--success" : "svm-status-pill--danger"}`}
-                              >
-                                {isActive ? "Active" : "Inactive"}
-                              </div>
-                              <button className="hidden flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-text-secondary hover:text-primary transition-colors">
-                                <Eye size={14} /> View History
-                              </button>
-                            </div>
+            ) : isMobile ? (
+              <div className="p-4 space-y-6">
+                {filteredVisitors && filteredVisitors.length > 0 ? (
+                  filteredVisitors.map((visitor) => {
+                    const isActive =
+                      (visitor.VV_Status || "")
+                        .toString()
+                        .trim()
+                        .toUpperCase() === "A" ||
+                      (visitor.VV_Status || "")
+                        .toString()
+                        .trim()
+                        .toUpperCase() === "ACTIVE";
+                    return (
+                      <div
+                        key={visitor.VV_Visitor_id}
+                        className="p-5 rounded-[28px] border transition-all bg-background-paper border-border-soft shadow-sm"
+                      >
+                        <div className="flex justify-between items-start mb-6">
+                          <div>
+                            <h4
+                              className={`text-[12px] font-black uppercase tracking-tight ${isActive ? "text-text-primary" : "text-text-dim"}`}
+                            >
+                              {visitor.VV_Name || "Unknown"}
+                            </h4>
+                            <p className="text-text-dim text-[12px] font-normal tracking-[0.2em] mt-1 uppercase opacity-70">
+                              VISITOR-
+                              {visitor.VV_Visitor_id.toString().padStart(
+                                3,
+                                "0",
+                              )}
+                            </p>
                           </div>
-
-                          <div className="space-y-4 mb-6 px-1">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3 text-text-dim">
-                                <Users size={14} className="text-primary/70" />
-                                <span className="text-[12px] font-black uppercase tracking-[0.15em]">Company</span>
-                              </div>
-                              <span className="text-[12px] font-normal truncate max-w-[150px] text-right text-text-secondary">
-                                {visitor.VV_Company || "-"}
-                              </span>
+                          <div className="flex flex-col items-end gap-3">
+                            <div
+                              className={`svm-status-pill normal-case ${isActive ? "svm-status-pill--success" : "svm-status-pill--danger"}`}
+                            >
+                              {isActive ? "Active" : "Inactive"}
                             </div>
-                            
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3 text-text-dim">
-                                <MapPin size={14} className="text-primary/70" />
-                                <span className="text-[12px] font-black uppercase tracking-[0.15em]">Areas</span>
-                              </div>
-                              <span className="text-[12px] font-normal truncate max-w-[150px] text-right text-text-secondary">
-                                {visitor.VV_Visiting_places || "N/A"}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3 text-text-dim">
-                                <AlertCircle size={14} className="text-primary/70" />
-                                <span className="text-[12px] font-black uppercase tracking-[0.15em]">NIC</span>
-                              </div>
-                              <span className="text-[12px] font-normal text-text-secondary">
-                                {visitor.VV_NIC_Passport_NO || "-"}
-                              </span>
-                            </div>
+                            <button className="hidden flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-text-secondary hover:text-primary transition-colors">
+                              <Eye size={14} /> View History
+                            </button>
                           </div>
-
-                          <button
-                            className="hidden w-full py-1.5 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] bg-background-alt border-border-soft text-text-secondary hover:bg-background-elevated"
-                          >
-                            <Eye size={15} /> Details
-                          </button>
                         </div>
-                      );
-                    })
-                  ) : (
-                    <div className="py-20 text-center opacity-40">
-                      <Users size={40} className="mx-auto mb-3" />
-                      <p className="text-[12px] font-normal uppercase tracking-widest">No Visitors Detected</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div
-                  className="custom-scrollbar relative z-10 overflow-auto"
-                  style={{ height: "calc(100vh - 160px)" }}
-                >
+
+                        <div className="space-y-4 mb-6 px-1">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 text-text-dim">
+                              <Users size={14} className="text-primary/70" />
+                              <span className="text-[12px] font-black uppercase tracking-[0.15em]">
+                                Company
+                              </span>
+                            </div>
+                            <span className="text-[12px] font-normal truncate max-w-[150px] text-right text-text-secondary">
+                              {visitor.VV_Company || "-"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 text-text-dim">
+                              <MapPin size={14} className="text-primary/70" />
+                              <span className="text-[12px] font-black uppercase tracking-[0.15em]">
+                                Areas
+                              </span>
+                            </div>
+                            <span className="text-[12px] font-normal truncate max-w-[150px] text-right text-text-secondary">
+                              {visitor.VV_Visiting_places || "N/A"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 text-text-dim">
+                              <AlertCircle
+                                size={14}
+                                className="text-primary/70"
+                              />
+                              <span className="text-[12px] font-black uppercase tracking-[0.15em]">
+                                NIC
+                              </span>
+                            </div>
+                            <span className="text-[12px] font-normal text-text-secondary">
+                              {visitor.VV_NIC_Passport_NO || "-"}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button className="hidden w-full py-1.5 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] bg-background-alt border-border-soft text-text-secondary hover:bg-background-elevated">
+                          <Eye size={15} /> Details
+                        </button>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="py-20 text-center opacity-40">
+                    <Users size={40} className="mx-auto mb-3" />
+                    <p className="text-[12px] font-normal uppercase tracking-widest">
+                      No Visitors Detected
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div
+                className="custom-scrollbar relative z-10 overflow-auto"
+                style={{ height: "calc(100vh - 160px)" }}
+              >
                 <table className="w-full min-w-[720px] md:min-w-[900px] border-collapse">
                   <thead className="sticky top-0 z-20 font-normal text-[12px]">
-                    <tr
-                      className="border-b bg-background-alt border-border-soft"
-                    >
-                      <th
-                        className="px-3 py-1.5 text-center font-normal tracking-[0.3em] text-[12px] text-primary"
-                      >
+                    <tr className="border-b bg-background-alt border-border-soft">
+                      <th className="px-3 py-1.5 text-center font-normal tracking-[0.3em] text-[12px] text-primary">
                         Id
                       </th>
-                      <th
-                        className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] text-text-secondary"
-                      >
+                      <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Visitor
                       </th>
-                      <th
-                        className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] text-text-secondary"
-                      >
+                      <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Credentials
                       </th>
-                      <th
-                        className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] text-text-secondary"
-                      >
+                      <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Company
                       </th>
-                      <th
-                        className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] min-w-[250px] text-text-secondary"
-                      >
+                      <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] min-w-[250px] text-text-secondary">
                         Visiting area
                       </th>
-                      <th
-                        className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary"
-                      >
+                      <th className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Status
                       </th>
                     </tr>
@@ -596,47 +598,48 @@ const ContactAllVisitors = () => {
                   </tbody>
                 </table>
               </div>
-            )
-          )}
+            )}
           </div>
         </div>
 
         {/* Modal for Add Visitor */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto">
-            <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden relative my-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 animate-fade-in overflow-y-auto">
+            <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl md:max-w-3xl overflow-hidden relative my-auto">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
 
-              <div className="flex justify-between items-center p-4 md:p-5 border-b border-white/5 relative z-10 bg-black/20">
-                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
-                  <div className="w-1.5 h-6 bg-primary rounded-full"></div>
-                  <h2 className="text-[12px] md:text-[12px] font-normal text-white tracking-[0.16em]">
+              <div className="flex justify-between items-center p-3 sm:p-4 md:p-5 border-b border-white/5 relative z-10 bg-black/20">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-1.5 h-5 sm:h-6 bg-primary rounded-full"></div>
+                  <h2 className="text-[11px] sm:text-[12px] font-normal text-white tracking-[0.16em]">
                     Pre-approve visitor
                   </h2>
                 </div>
                 <button
                   onClick={closeModal}
-                  className="text-gray-400 hover:text-white transition-colors bg-white/5 p-2 rounded-lg"
+                  className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 sm:p-2 rounded-lg"
+                  title="Close"
                 >
-                  <X size={20} />
+                  <X size={18} className="sm:w-5 sm:h-5" />
                 </button>
               </div>
 
               <form
                 onSubmit={handleFormSubmit}
-                className="p-4 md:p-5 space-y-5 relative z-10 max-h-[80vh] overflow-y-auto custom-scrollbar"
+                className="p-3 sm:p-4 md:p-5 space-y-4 sm:space-y-5 relative z-10 max-h-[85vh] sm:max-h-[80vh] overflow-y-auto custom-scrollbar"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <User size={11} className="text-primary/60" /> Full name
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <User size={10} className="text-primary/60 shrink-0" />{" "}
+                      Full name
                     </label>
                     <input
                       type="text"
                       name="VV_Name"
                       value={formData.VV_Name}
                       onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_Name
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -650,10 +653,10 @@ const ContactAllVisitors = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <Hash size={11} className="text-primary/60" /> ID or
-                      passport
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Hash size={10} className="text-primary/60 shrink-0" /> ID
+                      or passport
                     </label>
                     <input
                       type="text"
@@ -661,7 +664,7 @@ const ContactAllVisitors = () => {
                       value={formData.VV_NIC_Passport_NO}
                       onChange={handleInputChange}
                       maxLength={12}
-                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_NIC_Passport_NO
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -669,23 +672,23 @@ const ContactAllVisitors = () => {
                       placeholder="e.g., 123456789"
                     />
                     {errors.VV_NIC_Passport_NO && (
-                      <p className="text-[12px] text-red-400 font-normal mt-1">
+                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_NIC_Passport_NO}
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <Mail size={11} className="text-primary/60" /> Email
-                      address
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Mail size={10} className="text-primary/60 shrink-0" />{" "}
+                      Email
                     </label>
                     <input
                       type="email"
                       name="VV_Email"
                       value={formData.VV_Email}
                       onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_Email
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -693,16 +696,16 @@ const ContactAllVisitors = () => {
                       placeholder="john@example.com"
                     />
                     {errors.VV_Email && (
-                      <p className="text-[12px] text-red-400 font-normal mt-1">
+                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Email}
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <Phone size={11} className="text-primary/60" /> Phone
-                      number
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Phone size={10} className="text-primary/60 shrink-0" />{" "}
+                      Phone
                     </label>
                     <input
                       type="text"
@@ -710,7 +713,7 @@ const ContactAllVisitors = () => {
                       value={formData.VV_Phone}
                       onChange={handleInputChange}
                       maxLength={10}
-                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_Phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -718,20 +721,23 @@ const ContactAllVisitors = () => {
                       placeholder="1234567890"
                     />
                     {errors.VV_Phone && (
-                      <p className="text-[12px] text-red-400 font-normal mt-1">
+                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Phone}
                       </p>
                     )}
                     {!errors.VV_Phone && (
-                      <p className="text-[12px] text-white/40 tracking-[0.12em] px-1 mt-1">
-                        Enter 10 digits (Numbers only)
+                      <p className="text-[11px] sm:text-[12px] text-white/40 tracking-[0.12em] px-0.5 mt-1">
+                        10 digits (numbers only)
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <Building size={11} className="text-primary/60" />{" "}
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Building
+                        size={10}
+                        className="text-primary/60 shrink-0"
+                      />{" "}
                       Organization
                     </label>
                     <input
@@ -739,7 +745,7 @@ const ContactAllVisitors = () => {
                       name="VV_Company"
                       value={formData.VV_Company}
                       onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_Company
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -747,23 +753,26 @@ const ContactAllVisitors = () => {
                       placeholder="e.g., Acme Corporation"
                     />
                     {errors.VV_Company && (
-                      <p className="text-[12px] text-red-400 font-normal mt-1">
+                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Company}
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <Briefcase size={11} className="text-primary/60" />{" "}
-                      What is the reason?
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Briefcase
+                        size={10}
+                        className="text-primary/60 shrink-0"
+                      />{" "}
+                      Reason for visit
                     </label>
                     <input
                       type="text"
                       name="VV_Visitor_Type"
                       value={formData.VV_Visitor_Type}
                       onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_Visitor_Type
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -771,23 +780,23 @@ const ContactAllVisitors = () => {
                       placeholder="e.g., Meeting, Delivery, Interview"
                     />
                     {errors.VV_Visitor_Type && (
-                      <p className="text-[12px] text-red-400 font-normal mt-1">
+                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Visitor_Type}
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-gray-400 tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <MapPin size={11} className="text-primary/60" /> Where to
-                      visit
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <MapPin size={10} className="text-primary/60 shrink-0" />{" "}
+                      Where to visit
                     </label>
                     <input
                       type="text"
                       name="VV_Visiting_places"
                       value={formData.VV_Visiting_places}
                       onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                         errors.VV_Visiting_places
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -795,16 +804,19 @@ const ContactAllVisitors = () => {
                       placeholder="e.g., Building A, Floor 3, Room 301"
                     />
                     {errors.VV_Visiting_places && (
-                      <p className="text-[12px] text-red-400 font-normal mt-1">
+                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Visiting_places}
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 md:gap-2 px-1">
-                      <AlertCircle size={11} className="text-primary/60" />{" "}
-                      Create password
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <AlertCircle
+                        size={10}
+                        className="text-primary/60 shrink-0"
+                      />{" "}
+                      Password
                     </label>
                     <div className="relative">
                       <input
@@ -813,7 +825,7 @@ const ContactAllVisitors = () => {
                         value={formData.VA_Password}
                         onChange={handleInputChange}
                         maxLength={5}
-                        className={`w-full rounded-lg pl-3.5 pr-10 py-2.5 text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        className={`w-full rounded-lg pl-3 sm:pl-3.5 pr-8 sm:pr-10 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
                           errors.VA_Password
                             ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                             : "bg-black/60 border border-primary/20 focus:border-primary/50"
@@ -823,73 +835,38 @@ const ContactAllVisitors = () => {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
                       >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        {showPassword ? (
+                          <EyeOff size={14} className="sm:w-4 sm:h-4" />
+                        ) : (
+                          <Eye size={14} className="sm:w-4 sm:h-4" />
+                        )}
                       </button>
                     </div>
                     {errors.VA_Password ? (
-                      <p className="text-[12px] text-red-400 font-normal mt-1">
+                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VA_Password}
                       </p>
                     ) : (
-                      <p className="text-[12px] text-white/35 tracking-[0.12em] px-1 mt-1">
-                        Max 5 chars, Capital &amp; Special Char
+                      <p className="text-[11px] sm:text-[12px] text-white/35 tracking-[0.12em] px-0.5 mt-1">
+                        Max 5 chars, Capital &amp; Special
                       </p>
                     )}
                   </div>
                 </div>
 
-                {/* NEW: Vehicle Section */}
-                {/* <div className="pt-4 border-t border-white/5 space-y-3">
-                  <div className="flex flex-col md:flex-row items-center gap-3 md:gap-3">
-                    <Car size={13} className="text-primary" />
-                    <h3 className="text-[12px] font-normal text-white uppercase tracking-[0.16em] mb-0">
-                      Vehicle Logistics
-                    </h3>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal px-1">
-                        Vehicle Type
-                      </label>
-                      <input
-                        type="text"
-                        name="VV_Vehicle_Type"
-                        value={formData.VV_Vehicle_Type}
-                        onChange={handleInputChange}
-                        className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50"
-                        placeholder="Car, van, bike"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] text-gray-400 uppercase tracking-[0.14em] font-normal px-1">
-                        Plate Number
-                      </label>
-                      <input
-                        type="text"
-                        name="VV_Vehicle_Number"
-                        value={formData.VV_Vehicle_Number}
-                        onChange={handleInputChange}
-                        className="w-full bg-black/40 border border-white/10 rounded-lg px-3.5 py-2.5 text-[12px] text-white focus:outline-none focus:border-primary/50"
-                        placeholder="Enter plate number"
-                      />
-                    </div>
-                  </div>
-                </div> */}
-
-                <div className="pt-5 flex justify-end gap-3 border-t border-white/5">
+                <div className="pt-3 sm:pt-5 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 border-t border-white/5">
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-6 py-2.5 rounded-lg text-[12px] font-normal text-gray-400 hover:bg-white/5 tracking-[0.14em] transition-all"
+                    className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-[11px] sm:text-[12px] font-normal text-gray-400 hover:bg-white/5 tracking-[0.14em] transition-all"
                   >
                     Close
                   </button>
                   <button
                     type="submit"
-                    className="px-7 py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-normal tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
+                    className="px-5 sm:px-7 py-2 sm:py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[11px] sm:text-[12px] font-normal tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
                   >
                     Send pre-approval
                   </button>

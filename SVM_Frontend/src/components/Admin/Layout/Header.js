@@ -35,19 +35,35 @@ const Header = ({ title, subtitle, showBack, onBack }) => {
         WebkitBackdropFilter: "blur(12px)",
       }}
     >
-      {/* Left: Mobile hamburger / Back button / Title */}
+      {/* Left: Mobile back/hamburger / Back button / Title */}
       <div className="flex items-center gap-3 min-w-0">
         {isMobile ? (
-          <button
-            onClick={() => dispatch(toggleMobileMenu())}
-            className="w-9 h-9 flex items-center justify-center rounded-xl text-primary shrink-0"
-            style={{
-              background: "var(--color-primary-low)",
-              border: "1px solid rgba(200,16,46,0.2)",
-            }}
-          >
-            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => navigate(-1)}
+              className="w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors group shrink-0"
+              style={{
+                background: "transparent",
+                border: "none",
+              }}
+              title="Go Back"
+            >
+              <ArrowLeft
+                size={17}
+                className="group-hover:-translate-x-0.5 transition-transform"
+              />
+            </button>
+            <button
+              onClick={() => dispatch(toggleMobileMenu())}
+              className="w-9 h-9 flex items-center justify-center rounded-xl text-primary shrink-0"
+              style={{
+                background: "var(--color-primary-low)",
+                border: "1px solid rgba(200,16,46,0.2)",
+              }}
+            >
+              {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
         ) : showBack ? (
           <button
             onClick={onBack || (() => navigate(-1))}
