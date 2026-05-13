@@ -45,16 +45,24 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-import { 
-  validateName, validateNIC, validatePhone, validateEmail, validatePassword 
+import {
+  validateName,
+  validateNIC,
+  validatePhone,
+  validateEmail,
+  validatePassword,
 } from "../../../utils/validation";
 
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
   if (s === "ACTIVE" || s === "A") {
-    return <div className="svm-status-pill svm-status-pill--success">Active</div>;
+    return (
+      <div className="svm-status-pill svm-status-pill--success">Active</div>
+    );
   }
-  return <div className="svm-status-pill svm-status-pill--danger">Inactive</div>;
+  return (
+    <div className="svm-status-pill svm-status-pill--danger">Inactive</div>
+  );
 };
 
 const AllUsers = () => {
@@ -206,7 +214,7 @@ const AllUsers = () => {
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
-    
+
     // Real-time filtering and length enforcement
     if (name === "name") {
       value = value.replace(/[^A-Za-z\s]/g, "");
@@ -215,7 +223,7 @@ const AllUsers = () => {
     } else if (name === "password") {
       value = value.slice(0, 5);
     }
-    
+
     setFormData({ ...formData, [name]: value });
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -378,20 +386,27 @@ const AllUsers = () => {
     tableFilter === "ALL"
       ? filteredCategories
       : filteredCategories.filter((cat) => cat.id === tableFilter);
-      
+
   const totalUsers = categories.reduce((sum, cat) => sum + cat.data.length, 0);
 
   const loading = adminLoading || contactLoading;
   const error = adminError || contactError;
+  const isMobile = window.innerWidth < 768;
   const isCompactAddForm = modalMode === "add";
-  const modalWidthClass = "max-w-3xl";
-  const headerPaddingClass = isCompactAddForm ? "p-4" : "p-6";
-  const formSpacingClass = isCompactAddForm ? "p-4 space-y-3" : "p-6 space-y-4";
-  const fieldSizeClass = "px-3.5 py-2.5 text-[12px]";
+  const modalWidthClass = "max-w-sm sm:max-w-2xl md:max-w-3xl";
+  const headerPaddingClass = isCompactAddForm
+    ? "p-3 sm:p-4 md:p-5"
+    : "p-3 sm:p-4 md:p-6";
+  const formSpacingClass = isCompactAddForm
+    ? "p-3 sm:p-4 md:p-5 space-y-3 sm:space-y-4"
+    : "p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4";
+  const fieldSizeClass =
+    "px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px]";
   const actionsPaddingClass = isCompactAddForm
-    ? "pt-4 mt-2 gap-2"
-    : "pt-6 mt-4 gap-3";
-  const actionButtonSizeClass = "px-6 py-2.5 text-[12px]";
+    ? "pt-3 sm:pt-4 md:pt-4 mt-2 gap-2 flex flex-col-reverse sm:flex-row"
+    : "pt-4 sm:pt-6 mt-3 sm:mt-4 gap-2 sm:gap-3 flex flex-col-reverse sm:flex-row";
+  const actionButtonSizeClass =
+    "px-4 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[12px]";
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
@@ -404,7 +419,7 @@ const AllUsers = () => {
         <div className="max-w-none mx-auto relative z-10 flex flex-col min-h-full">
           <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-xl relative overflow-hidden mb-2 sm:mb-4">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-            
+
             <div className="px-3 sm:px-4 md:px-5 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
               <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto relative max-w-full overflow-x-auto no-scrollbar">
                 {categories.map((cat) => (
@@ -417,7 +432,11 @@ const AllUsers = () => {
                       <motion.div
                         layoutId="activeFilter"
                         className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                        transition={{
+                          type: "spring",
+                          bounce: 0.2,
+                          duration: 0.6,
+                        }}
                       />
                     )}
                     <span className="relative z-10">{cat.title}</span>
@@ -432,7 +451,10 @@ const AllUsers = () => {
                 </div>
 
                 <div className="flex items-center bg-black/40 border border-white/10 px-4 py-1.5 rounded-full group focus-within:border-primary transition-all w-full md:w-64">
-                  <Search size={14} className="text-white/20 group-focus-within:text-primary" />
+                  <Search
+                    size={14}
+                    className="text-white/20 group-focus-within:text-primary"
+                  />
                   <input
                     type="text"
                     placeholder="Search users..."
@@ -446,7 +468,10 @@ const AllUsers = () => {
                   onClick={() => openModal("add")}
                   className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold tracking-wider transition-all shadow-lg active:scale-95 group shrink-0"
                 >
-                  <Plus size={14} className="group-hover:rotate-90 transition-transform" />
+                  <Plus
+                    size={14}
+                    className="group-hover:rotate-90 transition-transform"
+                  />
                   Add user
                 </button>
               </div>
@@ -517,7 +542,8 @@ const AllUsers = () => {
                               <TableCell
                                 sx={{
                                   padding: "8px 24px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
                                   width: "8%",
                                 }}
                                 className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
@@ -527,7 +553,8 @@ const AllUsers = () => {
                               <TableCell
                                 sx={{
                                   padding: "8px 24px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
                                   width: "15%",
                                 }}
                                 className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
@@ -537,7 +564,8 @@ const AllUsers = () => {
                               <TableCell
                                 sx={{
                                   padding: "8px 24px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
                                   width: "20%",
                                 }}
                                 className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
@@ -547,7 +575,8 @@ const AllUsers = () => {
                               <TableCell
                                 sx={{
                                   padding: "8px 24px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
                                   width: "12%",
                                 }}
                                 className={`hidden sm:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit`}
@@ -557,7 +586,8 @@ const AllUsers = () => {
                               <TableCell
                                 sx={{
                                   padding: "8px 24px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
                                   width: "15%",
                                 }}
                                 className={`hidden md:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit`}
@@ -567,7 +597,8 @@ const AllUsers = () => {
                               <TableCell
                                 sx={{
                                   padding: "8px 24px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
                                   width: "10%",
                                 }}
                                 className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
@@ -578,7 +609,8 @@ const AllUsers = () => {
                                 align="right"
                                 sx={{
                                   padding: "8px 24px",
-                                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
                                   width: "10%",
                                 }}
                                 className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
@@ -600,7 +632,8 @@ const AllUsers = () => {
                                   align="center"
                                   sx={{
                                     padding: "8px",
-                                    borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                    borderBottom:
+                                      "1px solid rgba(255,255,255,0.05)",
                                   }}
                                   className="text-[var(--color-text-dim)] text-[12px] font-normal"
                                 >
@@ -620,92 +653,124 @@ const AllUsers = () => {
                                     .toUpperCase() === "ACTIVE";
 
                                 return (
-                                    <TableRow
-                                      key={
-                                        item.VA_Admin_id ||
-                                        item.VCP_Contact_person_id
-                                      }
+                                  <TableRow
+                                    key={
+                                      item.VA_Admin_id ||
+                                      item.VCP_Contact_person_id
+                                    }
+                                    sx={{
+                                      "&:hover": {
+                                        backgroundColor:
+                                          "rgba(255,255,255,0.02)",
+                                      },
+                                      height: "28px",
+                                      borderBottom:
+                                        "1px solid rgba(255,255,255,0.05)",
+                                      transition: "background-color 0.2s ease",
+                                    }}
+                                  >
+                                    <TableCell
                                       sx={{
-                                        "&:hover": {
-                                          backgroundColor: "rgba(255,255,255,0.02)",
-                                        },
-                                        height: "28px",
-                                        borderBottom: "1px solid rgba(255,255,255,0.05)",
-                                        transition: "background-color 0.2s ease",
+                                        padding: "8px 24px",
+                                        width: "8%",
+                                        borderBottom: "none",
                                       }}
+                                      className="text-white align-middle font-normal text-[12px] whitespace-nowrap"
                                     >
-                                      <TableCell
-                                        sx={{ padding: "8px 24px", width: "8%", borderBottom: "none" }}
-                                        className="text-white align-middle font-normal text-[12px] whitespace-nowrap"
+                                      <div className="flex items-center gap-1">
+                                        <Hash
+                                          size={10}
+                                          className="text-primary/40"
+                                        />
+                                        <span>
+                                          {item.VA_Admin_id ||
+                                            item.VCP_Contact_person_id}
+                                        </span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "15%",
+                                        borderBottom: "none",
+                                      }}
+                                      className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40 line-through"}`}
+                                    >
+                                      {item.VA_Name || item.VCP_Name || "-"}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "20%",
+                                        borderBottom: "none",
+                                      }}
+                                      className={`font-normal align-middle transition-colors text-[12px] whitespace-nowrap ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    >
+                                      {item.VA_Email || item.VCP_Email}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "12%",
+                                        borderBottom: "none",
+                                      }}
+                                      className={`hidden sm:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    >
+                                      {item.VA_Role ||
+                                        item.VCP_Department ||
+                                        "-"}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "15%",
+                                        borderBottom: "none",
+                                      }}
+                                      className={`hidden md:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    >
+                                      {item.VA_Created_Date
+                                        ? item.VA_Created_Date.split(" ")[0]
+                                        : item.VCP_Phone || "AUTHEN.SYSTEM"}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "10%",
+                                        borderBottom: "none",
+                                      }}
+                                      className="text-[12px] align-middle font-normal"
+                                    >
+                                      <button
+                                        onClick={() =>
+                                          handleToggleStatus(item, cat.id)
+                                        }
+                                        disabled={loading}
+                                        title="Click to toggle status"
+                                        className={`svm-status-pill transition-colors cursor-pointer ${isActive ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"}`}
                                       >
-                                        <div className="flex items-center gap-1">
-                                          <Hash
-                                            size={10}
-                                            className="text-primary/40"
-                                          />
-                                          <span>
-                                            {item.VA_Admin_id ||
-                                              item.VCP_Contact_person_id}
-                                          </span>
-                                        </div>
-                                      </TableCell>
-                                      <TableCell
-                                        sx={{ padding: "8px 24px", width: "15%", borderBottom: "none" }}
-                                        className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40 line-through"}`}
+                                        {isActive ? "Active" : "Inactive"}
+                                      </button>
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "10%",
+                                        borderBottom: "none",
+                                      }}
+                                      align="right"
+                                      className="text-[12px] align-middle font-normal"
+                                    >
+                                      <IconButton
+                                        onClick={() =>
+                                          openModal("edit", item, cat.id)
+                                        }
+                                        size="small"
+                                        className="text-white/40 hover:text-white p-1"
                                       >
-                                        {item.VA_Name || item.VCP_Name || "-"}
-                                      </TableCell>
-                                      <TableCell
-                                        sx={{ padding: "8px 24px", width: "20%", borderBottom: "none" }}
-                                        className={`font-normal align-middle transition-colors text-[12px] whitespace-nowrap ${isActive ? "text-white/70" : "text-white/20"}`}
-                                      >
-                                        {item.VA_Email || item.VCP_Email}
-                                      </TableCell>
-                                      <TableCell
-                                        sx={{ padding: "8px 24px", width: "12%", borderBottom: "none" }}
-                                        className={`hidden sm:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
-                                      >
-                                        {item.VA_Role ||
-                                          item.VCP_Department ||
-                                          "-"}
-                                      </TableCell>
-                                      <TableCell
-                                        sx={{ padding: "8px 24px", width: "15%", borderBottom: "none" }}
-                                        className={`hidden md:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
-                                      >
-                                        {item.VA_Created_Date
-                                          ? item.VA_Created_Date.split(" ")[0]
-                                          : item.VCP_Phone || "AUTHEN.SYSTEM"}
-                                      </TableCell>
-                                      <TableCell
-                                        sx={{ padding: "8px 24px", width: "10%", borderBottom: "none" }}
-                                       className="text-[12px] align-middle font-normal">
-                                        <button
-                                          onClick={() =>
-                                            handleToggleStatus(item, cat.id)
-                                          }
-                                          disabled={loading}
-                                          title="Click to toggle status"
-                                          className={`svm-status-pill transition-colors cursor-pointer ${isActive ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"}`}
-                                        >
-                                          {isActive ? "Active" : "Inactive"}
-                                        </button>
-                                      </TableCell>
-                                      <TableCell
-                                        sx={{ padding: "8px 24px", width: "10%", borderBottom: "none" }}
-                                        align="right"
-                                       className="text-[12px] align-middle font-normal">
-                                        <IconButton
-                                          onClick={() =>
-                                            openModal("edit", item, cat.id)
-                                          }
-                                          size="small"
-                                          className="text-white/40 hover:text-white p-1"
-                                        >
-                                          <Edit size={16} />
-                                        </IconButton>
-                                      </TableCell>
-                                    </TableRow>
+                                        <Edit size={16} />
+                                      </IconButton>
+                                    </TableCell>
+                                  </TableRow>
                                 );
                               })
                             )}
@@ -730,44 +795,41 @@ const AllUsers = () => {
 
       {/* Modal for Add / Edit Administrator */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 animate-fade-in overflow-y-auto">
           <div
-            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full ${modalWidthClass} relative my-auto`}
+            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl w-full ${modalWidthClass} overflow-hidden relative my-auto`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none rounded-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none rounded-2xl sm:rounded-3xl"></div>
 
             <div
-              className={`flex justify-between items-center ${headerPaddingClass} border-b border-white/5 relative z-10`}
+              className={`flex justify-between items-center ${headerPaddingClass} border-b border-white/5 relative z-10 bg-black/20`}
             >
-              <h2
-                className="text-base font-bold text-white tracking-wider"
-              >
-                {modalMode === "add"
-                  ? "Add system user"
-                  : "Edit user profile"}
+              <h2 className="text-sm sm:text-base font-bold text-white tracking-wider">
+                {modalMode === "add" ? "Add system user" : "Edit user profile"}
               </h2>
               <button
                 onClick={closeModal}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors p-1.5 sm:p-2"
+                title="Close"
               >
-                <X size={20} />
+                <X size={18} className="sm:w-5 sm:h-5" />
               </button>
             </div>
 
             <form
               onSubmit={handleFormSubmit}
-              className={`${formSpacingClass} relative z-10 max-h-[70vh] overflow-y-auto custom-scrollbar`}
+              className={`${formSpacingClass} relative z-10 max-h-[85vh] sm:max-h-[80vh] overflow-y-auto custom-scrollbar`}
             >
-              <div className="space-y-1.5">
-                <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
-                  <User size={11} className="text-primary/60" /> Name
+              <div className="space-y-1">
+                <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                  <User size={10} className="text-primary/60 shrink-0" /> Name
                 </label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                  className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                     errors.name
                       ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                       : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -775,22 +837,22 @@ const AllUsers = () => {
                   placeholder="e.g. John Doe"
                 />
                 {errors.name && (
-                  <p className="text-[10px] text-red-400 font-semibold mt-1">
+                  <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                     {errors.name}
                   </p>
                 )}
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
-                  <Mail size={11} className="text-primary/60" /> Email
+              <div className="space-y-1">
+                <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                  <Mail size={10} className="text-primary/60 shrink-0" /> Email
                 </label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                  className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                     errors.email
                       ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                       : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -798,7 +860,7 @@ const AllUsers = () => {
                   placeholder="example@mas.com"
                 />
                 {errors.email && (
-                  <p className="text-[10px] text-red-400 font-semibold mt-1">
+                  <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                     {errors.email}
                   </p>
                 )}
@@ -806,16 +868,17 @@ const AllUsers = () => {
 
               {formData.type === "CONTACT" ? (
                 <>
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
-                      <Users size={11} className="text-primary/60" /> Department
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Users size={10} className="text-primary/60 shrink-0" />{" "}
+                      Department
                     </label>
                     <input
                       type="text"
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.department
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -823,14 +886,15 @@ const AllUsers = () => {
                       placeholder="e.g. Human Resources"
                     />
                     {errors.department && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.department}
                       </p>
                     )}
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
-                      <X size={11} className="text-primary/60" /> Phone connection
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Phone size={10} className="text-primary/60 shrink-0" />{" "}
+                      Phone
                     </label>
                     <input
                       type="text"
@@ -838,7 +902,7 @@ const AllUsers = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       maxLength={10}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -846,7 +910,7 @@ const AllUsers = () => {
                       placeholder="e.g. +94 123 4567"
                     />
                     {errors.phone && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.phone}
                       </p>
                     )}
@@ -854,16 +918,17 @@ const AllUsers = () => {
                 </>
               ) : (
                 <>
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
-                      <Users size={11} className="text-primary/60" /> Department
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Users size={10} className="text-primary/60 shrink-0" />{" "}
+                      Department
                     </label>
                     <input
                       type="text"
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.department
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -871,15 +936,16 @@ const AllUsers = () => {
                       placeholder="e.g. Human Resources"
                     />
                     {errors.department && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.department}
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
-                      <Phone size={11} className="text-primary/60" /> Phone
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Phone size={10} className="text-primary/60 shrink-0" />{" "}
+                      Phone
                     </label>
                     <input
                       type="text"
@@ -887,7 +953,7 @@ const AllUsers = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       maxLength={10}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -895,25 +961,26 @@ const AllUsers = () => {
                       placeholder="e.g. 0712345678"
                     />
                     {errors.phone ? (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.phone}
                       </p>
                     ) : (
-                      <p className="text-[9px] text-white/30 uppercase tracking-widest mt-1">
+                      <p className="text-[9px] sm:text-[10px] text-white/30 uppercase tracking-widest mt-1">
                         10 digits only
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
-                      <Shield size={11} className="text-primary/60" /> Role
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Shield size={10} className="text-primary/60 shrink-0" />{" "}
+                      Role
                     </label>
                     <select
                       name="role"
                       value={formData.role}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.role
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -925,15 +992,16 @@ const AllUsers = () => {
                       <option value="Contact_Person">Contact Person</option>
                     </select>
                     {errors.role && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.role}
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] text-primary tracking-[0.14em] font-normal flex flex-col md:flex-row items-center gap-2 px-1">
-                      <Hash size={11} className="text-primary/60" /> Password
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Hash size={10} className="text-primary/60 shrink-0" />{" "}
+                      Password
                     </label>
                     <div className="relative">
                       <input
@@ -942,7 +1010,7 @@ const AllUsers = () => {
                         value={formData.password}
                         onChange={handleInputChange}
                         maxLength={5}
-                        className={`w-full rounded-xl pl-3.5 pr-10 py-2.5 text-[12px] text-white focus:outline-none transition-colors ${
+                        className={`w-full rounded-lg pl-3 sm:pl-3.5 pr-8 sm:pr-10 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors ${
                           errors.password
                             ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                             : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -956,35 +1024,41 @@ const AllUsers = () => {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
                       >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        {showPassword ? (
+                          <EyeOff size={14} className="sm:w-4 sm:h-4" />
+                        ) : (
+                          <Eye size={14} className="sm:w-4 sm:h-4" />
+                        )}
                       </button>
                     </div>
                     {errors.password ? (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.password}
                       </p>
                     ) : (
-                      <p className="text-[9px] text-white/30 uppercase tracking-widest mt-1">
-                        Max 5 chars, Capital &amp; Special Char
+                      <p className="text-[9px] sm:text-[10px] text-white/30 uppercase tracking-widest mt-1">
+                        Max 5 chars, Capital &amp; Special
                       </p>
                     )}
                   </div>
                 </>
               )}
 
-              <div className={`${actionsPaddingClass} flex justify-end`}>
+              <div
+                className={`${actionsPaddingClass} justify-end border-t border-white/5`}
+              >
                 <button
                   type="button"
                   onClick={closeModal}
-                  className={`${actionButtonSizeClass} rounded-xl font-normal text-gray-400 hover:bg-white/5 tracking-wider transition-all`}
+                  className={`${actionButtonSizeClass} rounded-lg font-normal text-gray-400 hover:bg-white/5 tracking-wider transition-all`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className={`${actionButtonSizeClass} rounded-xl bg-primary hover:bg-primary/90 text-white font-normal tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary`}
+                  className={`${actionButtonSizeClass} rounded-lg bg-primary hover:bg-primary/90 text-white font-normal tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary`}
                 >
                   {modalMode === "add" ? "Create user" : "Update access"}
                 </button>

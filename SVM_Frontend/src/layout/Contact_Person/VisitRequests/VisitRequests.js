@@ -2276,19 +2276,19 @@ const VisitRequests = () => {
                     </div>
 
                     {/* ── Visiting People card (mirrors View "Visiting People" section) ── */}
-                    <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
-                      <div className="p-4 md:p-5 space-y-4">
+                    <div className={`rounded-xl sm:rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                      <div className="p-3 sm:p-4 md:p-5 space-y-3 sm:space-y-4">
                         {/* SplitSection header */}
                         <div className="flex flex-col gap-2">
                           <div className="flex items-center gap-2">
-                            <div className="w-[3px] h-3.5 bg-primary rounded-full" />
-                            <div className="flex items-center gap-1.5">
-                              <Users size={13} className="text-primary/70" />
-                              <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                            <div className="w-[3px] h-2.5 sm:h-3.5 bg-primary rounded-full" />
+                            <div className="flex items-center gap-1 sm:gap-1.5 flex-1 min-w-0">
+                              <Users size={11} className="sm:size-[13px] text-primary/70 flex-shrink-0" />
+                              <h3 className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
                                 People Visiting
                               </h3>
                               {editGroupMembers.filter((m) => !m._isNew).length > 0 && (
-                                <span className={`text-[10px] font-semibold ml-1 ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                                <span className={`text-[9px] sm:text-[10px] font-semibold ml-1 flex-shrink-0 ${isLight ? "text-gray-400" : "text-white/30"}`}>
                                   {editGroupMembers.filter((m) => !m._isNew).length} visitor
                                   {editGroupMembers.filter((m) => !m._isNew).length > 1 ? "s" : ""}
                                 </span>
@@ -2307,19 +2307,19 @@ const VisitRequests = () => {
                                   },
                                 ])
                               }
-                              className="btn-outline ml-auto whitespace-nowrap"
-                              style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                              className="btn-outline ml-auto whitespace-nowrap px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] flex-shrink-0"
+                              style={{ gap: 4 }}
                             >
-                              <Plus size={12} /> Add Visitor
+                              <Plus size={10} className="sm:size-[12px]" /> Add Visitor
                             </button>
                           </div>
                         </div>
                         {editGroupMembers.length === 0 && (
-                          <p className={`text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                          <p className={`text-[10px] sm:text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
                             No visitors. Click <strong>Add Visitor</strong> to add one.
                           </p>
                         )}
-                        <div className="space-y-3">
+                        <div className="space-y-2 sm:space-y-3">
                           {editGroupMembers.map((m, idx) => (
                             <div
                               key={m.VVG_id || idx}
@@ -2528,19 +2528,19 @@ const VisitRequests = () => {
                     </div>
 
                     {/* ── Items to Bring card (mirrors View "Items Carried" section) ── */}
-                    <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
-                      <div className="p-4 md:p-5 space-y-4">
+                    <div className={`rounded-xl sm:rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                      <div className="p-3 sm:p-4 md:p-5 space-y-3 sm:space-y-4">
                         {/* SplitSection header */}
                         <div className="flex flex-col gap-2">
                           <div className="flex items-center gap-2">
-                            <div className="w-[3px] h-3.5 bg-primary rounded-full" />
-                            <div className="flex items-center gap-1.5">
-                              <Package size={13} className="text-primary/70" />
-                              <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                            <div className="w-[3px] h-2.5 sm:h-3.5 bg-primary rounded-full" />
+                            <div className="flex items-center gap-1 sm:gap-1.5 flex-1 min-w-0">
+                              <Package size={11} className="sm:size-[13px] text-primary/70 flex-shrink-0" />
+                              <h3 className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
                                 Items to Bring
                               </h3>
                               {editItems.filter((it) => !it._isNew).length > 0 && (
-                                <span className={`text-[10px] font-semibold ml-1 ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                                <span className={`text-[9px] sm:text-[10px] font-semibold ml-1 flex-shrink-0 ${isLight ? "text-gray-400" : "text-white/30"}`}>
                                   {editItems.filter((it) => !it._isNew).length} item
                                   {editItems.filter((it) => !it._isNew).length > 1 ? "s" : ""}
                                 </span>
@@ -2558,19 +2558,19 @@ const VisitRequests = () => {
                                   },
                                 ])
                               }
-                              className="btn-outline ml-auto whitespace-nowrap"
-                              style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                              className="btn-outline ml-auto whitespace-nowrap px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] flex-shrink-0"
+                              style={{ gap: 4 }}
                             >
-                              <Plus size={12} /> Add Item
+                              <Plus size={10} className="sm:size-[12px]" /> Add Item
                             </button>
                           </div>
                         </div>
                         {editItems.length === 0 && (
-                          <p className={`text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
+                          <p className={`text-[10px] sm:text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
                             No items. Click <strong>Add Item</strong> to add one.
                           </p>
                         )}
-                        <div className="space-y-3">
+                        <div className="space-y-2 sm:space-y-3">
                           {editItems.map((it, idx) => (
                             <div
                               key={it.VIC_Item_id || idx}
