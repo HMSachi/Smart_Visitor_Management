@@ -254,7 +254,7 @@ const ContactPersonAuthProtocol = ({
                 </div>
                 {itemsCarried && itemsCarried.length > 0 ? (
                   <div
-                    className={`border rounded-lg overflow-x-auto ${isLight ? "border-gray-100" : "border-white/10"}`}
+                    className={`border rounded-lg overflow-auto max-h-[250px] ${isLight ? "border-gray-100" : "border-white/10"}`}
                   >
                     <div
                       className={`flex justify-between items-center px-3 py-1.5 border-b min-w-max ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
@@ -281,7 +281,7 @@ const ContactPersonAuthProtocol = ({
                       </span>
                     </div>
                     <div
-                      className={`divide-y overflow-y-auto max-h-[200px] ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
+                      className={`divide-y ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
                     >
                       {itemsCarried.map((item, idx) => {
                         const s = (item.status || "").toString().trim().toUpperCase();
@@ -431,7 +431,7 @@ const ContactPersonAuthProtocol = ({
           <div className="p-3 md:p-4">
             <SplitSection title="Vehicle registry" icon={Car} isLight={isLight}>
               <div
-                className={`border rounded-lg overflow-x-auto ${isLight ? "border-gray-100" : "border-white/10"}`}
+                className={`border rounded-lg overflow-auto max-h-[250px] ${isLight ? "border-gray-100" : "border-white/10"}`}
               >
                 <div
                   className={`flex justify-between items-center px-3 py-1.5 border-b min-w-max ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
@@ -448,7 +448,7 @@ const ContactPersonAuthProtocol = ({
                   </span>
                 </div>
                 <div
-                  className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
+                  className={`divide-y ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
                 >
                   {vehiclesList.map((vehicle, idx) => (
                     <div
@@ -484,7 +484,7 @@ const ContactPersonAuthProtocol = ({
               isLight={isLight}
             >
               <div
-                className={`border rounded-lg overflow-x-auto ${isLight ? "border-gray-100" : "border-white/10"}`}
+                className={`border rounded-lg overflow-auto max-h-[250px] ${isLight ? "border-gray-100" : "border-white/10"}`}
               >
                 <div
                   className={`flex justify-between items-center px-3 py-1.5 border-b min-w-max ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
@@ -506,7 +506,7 @@ const ContactPersonAuthProtocol = ({
                   </span>
                 </div>
                 <div
-                  className={`divide-y overflow-y-auto max-h-[200px] custom-scrollbar ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
+                  className={`divide-y ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
                 >
                   {groupMembers.map((member, idx) => (
                     <div

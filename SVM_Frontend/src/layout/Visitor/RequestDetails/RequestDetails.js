@@ -284,27 +284,27 @@ const RequestDetails = () => {
               <p className="text-[12px] font-medium capitalize tracking-tight text-text-primary">Items carried</p>
             </div>
             {items.length > 0 ? (
-              <div className="border border-border-soft rounded-lg overflow-hidden">
-                <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft">
-                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[2]">Item name</span>
+              <div className="border border-border-soft rounded-lg overflow-auto max-h-[200px]">
+                <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft min-w-max">
+                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[2] min-w-[120px]">Item name</span>
                   <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight w-16 text-center">Qty</span>
-                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[3] sm:text-center">Description</span>
-                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight w-28 text-right">Status</span>
+                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[3] text-center min-w-[120px]">Description</span>
+                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight w-28 text-right min-w-[100px]">Status</span>
                 </div>
-                <div className="divide-y divide-border-soft/50 overflow-y-auto max-h-[150px]">
+                <div className="divide-y divide-border-soft/50">
                   {items.map((item, idx) => {
                     const s = (item.VIC_Status || "").toString().trim().toUpperCase();
                     const isTaken = s === "A";
                     const isNotTaken = s === "I";
                     return (
-                      <div key={item.VIC_Item_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/30'}`}>
-                        <span className="text-[12px] font-normal text-text-primary flex-[2] truncate">{item.VIC_Item_Name}</span>
+                      <div key={item.VIC_Item_id} className={`flex flex-row items-center justify-between gap-1.5 px-3 py-1.5 min-w-max ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/30'}`}>
+                        <span className="text-[12px] font-normal text-text-primary flex-[2] truncate min-w-[120px]">{item.VIC_Item_Name}</span>
                         <div className="w-16 flex justify-center">
                           <span className="text-[12px] font-medium text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{item.VIC_Quantity || 1}</span>
                         </div>
-                        <span className="text-[12px] font-normal text-text-dim flex-[3] sm:text-center truncate">{item.VIC_Designation || item.VIC_Description || "-"}</span>
+                        <span className="text-[12px] font-normal text-text-dim flex-[3] text-center truncate min-w-[120px]">{item.VIC_Designation || item.VIC_Description || "-"}</span>
                         {/* Status badge */}
-                        <div className="w-28 flex justify-end">
+                        <div className="w-28 flex justify-end min-w-[100px]">
                           {isTaken ? (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400">
                               <CheckCircle2 size={10} />
@@ -335,16 +335,16 @@ const RequestDetails = () => {
 
         <SectionCard title="Vehicle Registry" icon={Car}>
           {vehicleRecords.length > 0 ? (
-            <div className="border border-border-soft rounded-lg overflow-hidden">
-              <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft">
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1">Vehicle type</span>
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 sm:text-right">Vehicle number</span>
+            <div className="border border-border-soft rounded-lg overflow-auto max-h-[250px]">
+              <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft min-w-max">
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 min-w-[100px]">Vehicle type</span>
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-right min-w-[100px]">Vehicle number</span>
               </div>
-              <div className="divide-y divide-border-soft overflow-y-auto max-h-[200px] custom-scrollbar">
+              <div className="divide-y divide-border-soft">
                 {vehicleRecords.map((vehicle, idx) => (
-                  <div key={vehicle.VV_Vehicle_id || idx} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/50'}`}>
-                    <span className="text-[11px] font-medium text-text-secondary capitalize flex-1">{vehicle.VV_Vehicle_Type}</span>
-                    <span className="text-[11px] font-medium text-text-primary flex-1 sm:text-right">{vehicle.VV_Vehicle_Number}</span>
+                  <div key={vehicle.VV_Vehicle_id || idx} className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/50'}`}>
+                    <span className="text-[11px] font-medium text-text-secondary capitalize flex-1 min-w-[100px]">{vehicle.VV_Vehicle_Type}</span>
+                    <span className="text-[11px] font-medium text-text-primary flex-1 text-right min-w-[100px]">{vehicle.VV_Vehicle_Number}</span>
                   </div>
                 ))}
               </div>
@@ -356,18 +356,18 @@ const RequestDetails = () => {
 
         <SectionCard title="Visiting Group" icon={Users}>
           {groupMembers.length > 0 ? (
-            <div className="border border-border-soft rounded-lg overflow-hidden">
-              <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft">
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1">Name</span>
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 sm:text-center">NIC</span>
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 sm:text-right">Phone number</span>
+            <div className="border border-border-soft rounded-lg overflow-auto max-h-[250px]">
+              <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft min-w-max">
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 min-w-[120px]">Name</span>
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-center min-w-[130px]">NIC</span>
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-right min-w-[120px]">Phone number</span>
               </div>
-              <div className="divide-y divide-border-soft overflow-y-auto max-h-[200px] custom-scrollbar">
+              <div className="divide-y divide-border-soft">
                 {groupMembers.map((member, idx) => (
-                  <div key={member.VVG_id} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-1.5 ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/50'}`}>
-                    <span className="text-[11px] font-medium text-text-primary flex-1">{member.VVG_Visitor_Name}</span>
-                    <span className="text-[11px] font-medium text-text-secondary capitalize flex-1 sm:text-center">{member.VVG_NIC_Passport_Number}</span>
-                    <span className="text-[11px] font-medium text-text-secondary flex-1 sm:text-right">{member.VVG_Designation || "-"}</span>
+                  <div key={member.VVG_id} className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/50'}`}>
+                    <span className="text-[11px] font-medium text-text-primary flex-1 min-w-[120px]">{member.VVG_Visitor_Name}</span>
+                    <span className="text-[11px] font-medium text-text-secondary capitalize flex-1 text-center min-w-[130px]">{member.VVG_NIC_Passport_Number}</span>
+                    <span className="text-[11px] font-medium text-text-secondary flex-1 text-right min-w-[120px]">{member.VVG_Designation || "-"}</span>
                   </div>
                 ))}
               </div>

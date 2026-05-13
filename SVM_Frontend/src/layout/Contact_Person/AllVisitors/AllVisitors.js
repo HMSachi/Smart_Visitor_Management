@@ -414,7 +414,7 @@ const ContactAllVisitors = () => {
                               >
                                 {isActive ? "Active" : "Inactive"}
                               </div>
-                              <button className="flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-text-secondary hover:text-primary transition-colors">
+                              <button className="hidden flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-text-secondary hover:text-primary transition-colors">
                                 <Eye size={14} /> View History
                               </button>
                             </div>
@@ -453,7 +453,7 @@ const ContactAllVisitors = () => {
                           </div>
 
                           <button
-                            className="w-full py-1.5 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] bg-background-alt border-border-soft text-text-secondary hover:bg-background-elevated"
+                            className="hidden w-full py-1.5 rounded-2xl border transition-all flex items-center justify-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] shadow-sm active:scale-[0.98] bg-background-alt border-border-soft text-text-secondary hover:bg-background-elevated"
                           >
                             <Eye size={15} /> Details
                           </button>
@@ -469,7 +469,7 @@ const ContactAllVisitors = () => {
                 </div>
               ) : (
                 <div
-                  className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
+                  className="custom-scrollbar relative z-10 overflow-auto"
                   style={{ height: "calc(100vh - 160px)" }}
                 >
                 <table className="w-full min-w-[720px] md:min-w-[900px] border-collapse">

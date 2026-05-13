@@ -1190,7 +1190,7 @@ const VisitRequests = () => {
             </div>
           ) : (
             <div
-              className="custom-scrollbar relative z-10 overflow-x-auto overflow-y-auto"
+              className="custom-scrollbar relative z-10 overflow-auto"
               style={{ height: "calc(100vh - 160px)" }}
             >
               {isMobile ? (
