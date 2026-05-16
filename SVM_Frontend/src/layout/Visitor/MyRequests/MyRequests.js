@@ -61,7 +61,9 @@ const StatusBadge = ({ status }) => {
     case "SENT":
     case "SENT_TO_ADMIN":
       return (
-        <div className="svm-status-pill svm-status-pill--warning">Contact person accepted</div>
+        <div className="svm-status-pill svm-status-pill--warning">
+          Contact person accepted
+        </div>
       );
     case "P":
     case "PENDING":
@@ -312,7 +314,7 @@ const MyRequests = () => {
             VIC_Quantity: String(i.VIC_Quantity || i.quantity || "1"),
             VIC_Designation: i.VIC_Designation || i.description || "",
           },
-        }))
+        })),
       );
     } catch (err) {
       console.error("Failed to load edit data:", err);
@@ -479,12 +481,12 @@ const MyRequests = () => {
         arr.map((v, i) =>
           i === idx
             ? {
-              ...v,
-              _original: {
-                VV_Vehicle_Number: v.VV_Vehicle_Number,
-                VV_Vehicle_Type: v.VV_Vehicle_Type,
-              },
-            }
+                ...v,
+                _original: {
+                  VV_Vehicle_Number: v.VV_Vehicle_Number,
+                  VV_Vehicle_Type: v.VV_Vehicle_Type,
+                },
+              }
             : v,
         ),
       );
@@ -517,14 +519,14 @@ const MyRequests = () => {
         arr.map((v, i) =>
           i === idx
             ? {
-              ...v,
-              _isNew: false,
-              VV_Vehicle_id: "saved",
-              _original: {
-                VV_Vehicle_Number: v.VV_Vehicle_Number,
-                VV_Vehicle_Type: v.VV_Vehicle_Type,
-              },
-            }
+                ...v,
+                _isNew: false,
+                VV_Vehicle_id: "saved",
+                _original: {
+                  VV_Vehicle_Number: v.VV_Vehicle_Number,
+                  VV_Vehicle_Type: v.VV_Vehicle_Type,
+                },
+              }
             : v,
         ),
       );
@@ -570,12 +572,12 @@ const MyRequests = () => {
         arr.map((m, i) =>
           i === idx
             ? {
-              ...m,
-              _original: {
-                VVG_Visitor_Name: m.VVG_Visitor_Name,
-                VVG_Designation: m.VVG_Designation,
-              },
-            }
+                ...m,
+                _original: {
+                  VVG_Visitor_Name: m.VVG_Visitor_Name,
+                  VVG_Designation: m.VVG_Designation,
+                },
+              }
             : m,
         ),
       );
@@ -638,14 +640,14 @@ const MyRequests = () => {
         arr.map((m, i) =>
           i === idx
             ? {
-              ...m,
-              _isNew: false,
-              VVG_id: "saved",
-              _original: {
-                VVG_Visitor_Name: m.VVG_Visitor_Name,
-                VVG_Designation: m.VVG_Designation,
-              },
-            }
+                ...m,
+                _isNew: false,
+                VVG_id: "saved",
+                _original: {
+                  VVG_Visitor_Name: m.VVG_Visitor_Name,
+                  VVG_Designation: m.VVG_Designation,
+                },
+              }
             : m,
         ),
       );
@@ -675,13 +677,13 @@ const MyRequests = () => {
         arr.map((it, i) =>
           i === idx
             ? {
-              ...it,
-              _original: {
-                VIC_Item_Name: it.VIC_Item_Name,
-                VIC_Quantity: it.VIC_Quantity,
-                VIC_Designation: it.VIC_Designation,
-              },
-            }
+                ...it,
+                _original: {
+                  VIC_Item_Name: it.VIC_Item_Name,
+                  VIC_Quantity: it.VIC_Quantity,
+                  VIC_Designation: it.VIC_Designation,
+                },
+              }
             : it,
         ),
       );
@@ -715,15 +717,15 @@ const MyRequests = () => {
         arr.map((it, i) =>
           i === idx
             ? {
-              ...it,
-              _isNew: false,
-              VIC_Item_id: "saved",
-              _original: {
-                VIC_Item_Name: it.VIC_Item_Name,
-                VIC_Quantity: it.VIC_Quantity,
-                VIC_Designation: it.VIC_Designation,
-              },
-            }
+                ...it,
+                _isNew: false,
+                VIC_Item_id: "saved",
+                _original: {
+                  VIC_Item_Name: it.VIC_Item_Name,
+                  VIC_Quantity: it.VIC_Quantity,
+                  VIC_Designation: it.VIC_Designation,
+                },
+              }
             : it,
         ),
       );
@@ -741,15 +743,21 @@ const MyRequests = () => {
   const handleUpdateSubItem = async (idx) => {
     setSubItemSavingIdx(idx);
     setTimeout(() => {
-      setEditJointItems((arr) => arr.map((it, i) => i === idx ? {
-        ...it,
-        _original: {
-          subVisitorName: it.subVisitorName,
-          VIC_Item_Name: it.VIC_Item_Name,
-          VIC_Quantity: it.VIC_Quantity,
-          VIC_Designation: it.VIC_Designation,
-        }
-      } : it));
+      setEditJointItems((arr) =>
+        arr.map((it, i) =>
+          i === idx
+            ? {
+                ...it,
+                _original: {
+                  subVisitorName: it.subVisitorName,
+                  VIC_Item_Name: it.VIC_Item_Name,
+                  VIC_Quantity: it.VIC_Quantity,
+                  VIC_Designation: it.VIC_Designation,
+                },
+              }
+            : it,
+        ),
+      );
       clearDirty(`subItem-${idx}`);
       flashSuccess(`subItem-${idx}`);
       setSubItemSavingIdx(null);
@@ -760,16 +768,22 @@ const MyRequests = () => {
   const handleSubmitNewSubItem = async (idx) => {
     setNewSubItemSavingIdx(idx);
     setTimeout(() => {
-      setEditJointItems((arr) => arr.map((it, i) => i === idx ? {
-        ...it,
-        _isNew: false,
-        _original: {
-          subVisitorName: it.subVisitorName,
-          VIC_Item_Name: it.VIC_Item_Name,
-          VIC_Quantity: it.VIC_Quantity,
-          VIC_Designation: it.VIC_Designation,
-        }
-      } : it));
+      setEditJointItems((arr) =>
+        arr.map((it, i) =>
+          i === idx
+            ? {
+                ...it,
+                _isNew: false,
+                _original: {
+                  subVisitorName: it.subVisitorName,
+                  VIC_Item_Name: it.VIC_Item_Name,
+                  VIC_Quantity: it.VIC_Quantity,
+                  VIC_Designation: it.VIC_Designation,
+                },
+              }
+            : it,
+        ),
+      );
       clearDirty(`subItem-${idx}`);
       flashSuccess(`subItem-${idx}`);
       setNewSubItemSavingIdx(null);
@@ -835,9 +849,7 @@ const MyRequests = () => {
         String(req.VVR_Request_id).includes(searchTerm) ||
         req.VVR_Purpose?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
-    .sort(
-      (a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id)
-    );
+    .sort((a, b) => Number(b.VVR_Request_id) - Number(a.VVR_Request_id));
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-default)] text-white px-4 md:px-8 pt-24 md:pt-28 pb-6 md:pb-8 font-sans relative overflow-hidden">
@@ -893,7 +905,10 @@ const MyRequests = () => {
                         <TableCell className="text-gray-400 font-medium tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
                           Reason
                         </TableCell>
-                        <TableCell align="center" className="text-gray-400 font-medium tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5">
+                        <TableCell
+                          align="center"
+                          className="text-gray-400 font-medium tracking-[0.1em] text-[12px] border-b-white/5 py-1 px-2.5"
+                        >
                           Status
                         </TableCell>
                         <TableCell
@@ -927,8 +942,8 @@ const MyRequests = () => {
                               <span className="text-[12px] font-normal tracking-normal">
                                 {req.VVR_Visit_Date
                                   ? req.VVR_Visit_Date.split("T")[0].split(
-                                    " ",
-                                  )[0]
+                                      " ",
+                                    )[0]
                                   : "N/A"}
                               </span>
                             </div>
@@ -1314,19 +1329,42 @@ const MyRequests = () => {
                         disabled={placesLoading}
                         className={`mas-input appearance-none cursor-pointer ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
                       >
-                        <option value="">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
-                        {placesList && placesList.length > 0 && placesList
-                          .filter((place) => {
-                            const status = (place.VAIL_Status || place.Status || 'A').toString().trim().toUpperCase();
-                            return status === 'A';
-                          })
-                          .map((place, idx) => {
-                            const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
-                            const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
-                            return (
-                              <option key={id} value={name}>{name}</option>
-                            );
-                          })}
+                        <option value="">
+                          {placesLoading
+                            ? "Loading places..."
+                            : "Select a place to visit"}
+                        </option>
+                        {placesList &&
+                          placesList.length > 0 &&
+                          placesList
+                            .filter((place) => {
+                              const status = (
+                                place.VAIL_Status ||
+                                place.Status ||
+                                "A"
+                              )
+                                .toString()
+                                .trim()
+                                .toUpperCase();
+                              return status === "A";
+                            })
+                            .map((place, idx) => {
+                              const id =
+                                place.VAIL_Item_List_ID ||
+                                place.Item_List_ID ||
+                                place.Id ||
+                                idx;
+                              const name =
+                                place.VAIL_Item_Name ||
+                                place.Item_Name ||
+                                place.Name ||
+                                "Unknown";
+                              return (
+                                <option key={id} value={name}>
+                                  {name}
+                                </option>
+                              );
+                            })}
                       </select>
                     </div>
                     <div className="md:col-span-2 space-y-1.5">
@@ -1484,9 +1522,9 @@ const MyRequests = () => {
                                     arr.map((v, i) =>
                                       i === idx
                                         ? {
-                                          ...v,
-                                          VV_Vehicle_Number: e.target.value,
-                                        }
+                                            ...v,
+                                            VV_Vehicle_Number: e.target.value,
+                                          }
                                         : v,
                                     ),
                                   )
@@ -1521,9 +1559,9 @@ const MyRequests = () => {
                                     arr.map((v, i) =>
                                       i === idx
                                         ? {
-                                          ...v,
-                                          VV_Vehicle_Type: e.target.value,
-                                        }
+                                            ...v,
+                                            VV_Vehicle_Type: e.target.value,
+                                          }
                                         : v,
                                     ),
                                   )
@@ -1633,21 +1671,21 @@ const MyRequests = () => {
                         </h3>
                         {editGroupMembers.filter((m) => !m._isNew).length >
                           0 && (
-                            <span
-                              style={{
-                                color: "var(--color-text-dim)",
-                                fontSize: 10,
-                                marginLeft: 4,
-                              }}
-                            >
-                              {editGroupMembers.filter((m) => !m._isNew).length}{" "}
-                              visitor
-                              {editGroupMembers.filter((m) => !m._isNew).length >
-                                1
-                                ? "s"
-                                : ""}
-                            </span>
-                          )}
+                          <span
+                            style={{
+                              color: "var(--color-text-dim)",
+                              fontSize: 10,
+                              marginLeft: 4,
+                            }}
+                          >
+                            {editGroupMembers.filter((m) => !m._isNew).length}{" "}
+                            visitor
+                            {editGroupMembers.filter((m) => !m._isNew).length >
+                            1
+                              ? "s"
+                              : ""}
+                          </span>
+                        )}
                         <button
                           onClick={handleAddNewMemberRow}
                           className="btn-outline ml-auto whitespace-nowrap"
@@ -1716,9 +1754,9 @@ const MyRequests = () => {
                                     arr.map((m, i) =>
                                       i === idx
                                         ? {
-                                          ...m,
-                                          VVG_Visitor_Name: e.target.value,
-                                        }
+                                            ...m,
+                                            VVG_Visitor_Name: e.target.value,
+                                          }
                                         : m,
                                     ),
                                   )
@@ -1743,14 +1781,16 @@ const MyRequests = () => {
                                 value={member.VVG_Designation}
                                 maxLength={10}
                                 onChange={(e) => {
-                                  const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                                  const val = e.target.value
+                                    .replace(/[^0-9]/g, "")
+                                    .slice(0, 10);
                                   setEditGroupMembers((arr) =>
                                     arr.map((m, i) =>
                                       i === idx
                                         ? {
-                                          ...m,
-                                          VVG_Designation: val,
-                                        }
+                                            ...m,
+                                            VVG_Designation: val,
+                                          }
                                         : m,
                                     ),
                                   );
@@ -1781,14 +1821,16 @@ const MyRequests = () => {
                                 maxLength={12}
                                 onChange={(e) => {
                                   if (member._isNew) {
-                                    const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 12);
+                                    const val = e.target.value
+                                      .replace(/[^0-9]/g, "")
+                                      .slice(0, 12);
                                     setEditGroupMembers((arr) =>
                                       arr.map((m, i) =>
                                         i === idx
                                           ? {
-                                            ...m,
-                                            VVG_NIC_Passport_Number: val,
-                                          }
+                                              ...m,
+                                              VVG_NIC_Passport_Number: val,
+                                            }
                                           : m,
                                       ),
                                     );
@@ -1894,7 +1936,7 @@ const MyRequests = () => {
                           }}
                           className="font-bold uppercase tracking-[0.2em]"
                         >
-                          Items to Bring 
+                          Items to Bring
                         </h3>
                         {editItems.filter((it) => !it._isNew).length > 0 && (
                           <span
@@ -1978,9 +2020,9 @@ const MyRequests = () => {
                                     arr.map((it, i) =>
                                       i === idx
                                         ? {
-                                          ...it,
-                                          VIC_Item_Name: e.target.value,
-                                        }
+                                            ...it,
+                                            VIC_Item_Name: e.target.value,
+                                          }
                                         : it,
                                     ),
                                   )
@@ -2008,9 +2050,9 @@ const MyRequests = () => {
                                     arr.map((it, i) =>
                                       i === idx
                                         ? {
-                                          ...it,
-                                          VIC_Quantity: e.target.value,
-                                        }
+                                            ...it,
+                                            VIC_Quantity: e.target.value,
+                                          }
                                         : it,
                                     ),
                                   )
@@ -2038,9 +2080,9 @@ const MyRequests = () => {
                                     arr.map((it, i) =>
                                       i === idx
                                         ? {
-                                          ...it,
-                                          VIC_Designation: e.target.value,
-                                        }
+                                            ...it,
+                                            VIC_Designation: e.target.value,
+                                          }
                                         : it,
                                     ),
                                   )
@@ -2424,6 +2466,3 @@ const MyRequests = () => {
 };
 
 export default MyRequests;
-
-
-

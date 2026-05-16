@@ -32,7 +32,8 @@ const CreateVisitRequest = () => {
   const dispatch = useDispatch();
   const { themeMode } = useThemeMode();
   
-  const { visitorsByCP } = useSelector((state) => state.visitorManagement);
+  const visitorMgmtData = useSelector((state) => state.visitorManagement);
+  const visitorsByCP = Array.isArray(visitorMgmtData?.visitorsByCP) ? visitorMgmtData.visitorsByCP : [];
   const user = useSelector((state) => state.login.user);
   const userEmail = user?.ResultSet?.[0]?.VA_Email;
   const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });

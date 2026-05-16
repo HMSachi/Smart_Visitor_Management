@@ -129,7 +129,8 @@ const VisitRequests = () => {
   const { gatePasses } = useSelector(
     (state) => state.gatePassState || { gatePasses: [] },
   );
-  const { visitorsByCP } = useSelector((state) => state.visitorManagement);
+  const visitorMgmtData = useSelector((state) => state.visitorManagement);
+  const visitorsByCP = Array.isArray(visitorMgmtData?.visitorsByCP) ? visitorMgmtData.visitorsByCP : [];
   const { blacklists } = useSelector(
     (state) => state.blacklistState || { blacklists: [] }
   );

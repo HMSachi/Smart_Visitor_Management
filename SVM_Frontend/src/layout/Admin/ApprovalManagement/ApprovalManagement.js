@@ -6,7 +6,13 @@ import VisitorTable from "../../../components/Admin/ApprovalManagement/VisitorTa
 import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProtocol";
 import ApprovalModal from "../../../components/Admin/ApprovalManagement/ApprovalModal";
 import QRSuccessModal from "../../../components/Admin/ApprovalManagement/QRSuccessModal";
-import { ArrowLeft, Shield, CheckCircle2, AlertCircle, QrCode } from "lucide-react";
+import {
+  ArrowLeft,
+  Shield,
+  CheckCircle2,
+  AlertCircle,
+  QrCode,
+} from "lucide-react";
 import {
   setSearchTerm as setAdminSearchTerm,
   updateVisitorStatus,
@@ -30,7 +36,10 @@ const ApprovalManagement = () => {
   const { visitRequests, isLoading: isVrLoading } = useSelector(
     (state) => state.visitRequestsState,
   );
-  const { visitors } = useSelector((state) => state.visitorManagement);
+  const visitorData = useSelector((state) => state.visitorManagement);
+  const visitors = Array.isArray(visitorData?.visitors)
+    ? visitorData.visitors
+    : [];
   const { vehicles } = useSelector(
     (state) => state.vehicleState || { vehicles: [] },
   );
@@ -109,8 +118,11 @@ const ApprovalManagement = () => {
 
           // Load vehicles for this request
           const vehiclesRes = await VehicleService.GetAllVehicles();
-          const allVehicles = vehiclesRes?.data?.ResultSet || vehiclesRes?.data || [];
-          const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
+          const allVehicles =
+            vehiclesRes?.data?.ResultSet || vehiclesRes?.data || [];
+          const matchedVehicles = (
+            Array.isArray(allVehicles) ? allVehicles : []
+          )
             .filter(
               (v) => String(v.VVR_Request_id) === String(selectedVisitor.id),
             )
@@ -123,7 +135,9 @@ const ApprovalManagement = () => {
 
           // Load joint items (items grouped by sub-visitor) for "Items Carried In"
           try {
-            const jointRes = await VisitorService.GetVisitorJoint(selectedVisitor.id);
+            const jointRes = await VisitorService.GetVisitorJoint(
+              selectedVisitor.id,
+            );
             const jointData = jointRes?.data?.ResultSet || jointRes?.data || [];
             setJointItems(Array.isArray(jointData) ? jointData : []);
           } catch {
@@ -172,7 +186,8 @@ const ApprovalManagement = () => {
         else if (s === "A" || s === "APPROVED")
           displayStatus = "Admin Approved";
         else if (s === "R" || s === "REJECTED") displayStatus = "Rejected";
-        else if (s === "ACCEPTED" || s === "ACCEPTED BY VISITOR") displayStatus = "Accepted by Visitor";
+        else if (s === "ACCEPTED" || s === "ACCEPTED BY VISITOR")
+          displayStatus = "Accepted by Visitor";
 
         return {
           id: req.VVR_Request_id?.toString() || "",
@@ -235,7 +250,7 @@ const ApprovalManagement = () => {
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] h-screen">
-      <Header 
+      <Header
         title={viewMode === "details" ? "Review Visit Request" : undefined}
         showBack={viewMode === "details"}
         onBack={handleBackToList}
@@ -246,7 +261,6 @@ const ApprovalManagement = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
         <div className="max-w-none mx-auto relative z-10 flex flex-col min-h-full">
-
           <div className="flex-1 flex flex-col space-y-2 md:space-y-4">
             <AnimatePresence mode="wait">
               {viewMode === "list" ? (
@@ -277,26 +291,32 @@ const ApprovalManagement = () => {
                     ref={formScrollRef}
                     className="flex-1 flex flex-col space-y-2"
                   >
-                      <div className="flex items-center justify-end gap-2">
-                        {(selectedVisitor?.status === "Accepted by Contact Person" || selectedVisitor?.status === "Accepted by Visitor") && (
-                          <div className="flex flex-row items-center gap-2">
-                            <button
-                              onClick={() => handleAction(selectedVisitor, "Approve")}
-                              className="px-4 py-2 bg-[#00B14F] hover:bg-[#009e46] text-white text-[9px] font-bold tracking-[0.15em] capitalize rounded-lg transition-all shadow-sm flex items-center gap-2"
-                            >
-                              <CheckCircle2 size={12} />
-                              Accept
-                            </button>
-                            <button
-                              onClick={() => handleAction(selectedVisitor, "Reject")}
-                              className="px-4 py-2 bg-primary hover:bg-[#A00D25] text-white text-[9px] font-bold tracking-[0.15em] capitalize rounded-lg transition-all shadow-sm flex items-center gap-2"
-                            >
-                              <AlertCircle size={12} />
-                              Reject
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                    <div className="flex items-center justify-end gap-2">
+                      {(selectedVisitor?.status ===
+                        "Accepted by Contact Person" ||
+                        selectedVisitor?.status === "Accepted by Visitor") && (
+                        <div className="flex flex-row items-center gap-2">
+                          <button
+                            onClick={() =>
+                              handleAction(selectedVisitor, "Approve")
+                            }
+                            className="px-4 py-2 bg-[#00B14F] hover:bg-[#009e46] text-white text-[9px] font-bold tracking-[0.15em] capitalize rounded-lg transition-all shadow-sm flex items-center gap-2"
+                          >
+                            <CheckCircle2 size={12} />
+                            Accept
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleAction(selectedVisitor, "Reject")
+                            }
+                            className="px-4 py-2 bg-primary hover:bg-[#A00D25] text-white text-[9px] font-bold tracking-[0.15em] capitalize rounded-lg transition-all shadow-sm flex items-center gap-2"
+                          >
+                            <AlertCircle size={12} />
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                    </div>
                     {detailsLoading ? (
                       <div className="flex items-center justify-center py-16">
                         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
