@@ -18,11 +18,15 @@ import {
   Download,
   Loader2,
   X,
+  FolderOpen,
+  ImageIcon,
+  FileText,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
 import { useThemeMode } from "../../theme/ThemeModeContext";
 import SubVisitorQRService from "../../services/SubVisitorQRService";
+import VisitorAttachmentService from "../../services/VisitorAttachmentService";
 
 /* ─── Shared sub-components ─── */
 
@@ -116,6 +120,16 @@ const ContactPersonAuthProtocol = ({
   });
   const [qrCache, setQrCache] = useState({});
 
+  // View Attachments Modal State
+  const [viewAttachments, setViewAttachments] = useState({
+    open: false,
+    visitorId: null,
+    visitorName: "",
+    loading: false,
+    list: [],
+    error: null,
+  });
+
   const handleOpenSubVisitorQR = useCallback(
     async (member, idx) => {
       const cached = qrCache[idx];
@@ -200,6 +214,40 @@ const ContactPersonAuthProtocol = ({
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
+  const openViewAttachments = async (visitorId, visitorName) => {
+    setViewAttachments({
+      open: true,
+      visitorId,
+      visitorName,
+      loading: true,
+      list: [],
+      error: null,
+    });
+    try {
+      const res =
+        await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const list = res?.data?.ResultSet || res?.data || [];
+      setViewAttachments((prev) => ({ ...prev, loading: false, list }));
+    } catch (err) {
+      setViewAttachments((prev) => ({
+        ...prev,
+        loading: false,
+        error: err?.message || "Failed to load attachments.",
+      }));
+    }
+  };
+
+  const closeViewAttachments = () => {
+    setViewAttachments({
+      open: false,
+      visitorId: null,
+      visitorName: "",
+      loading: false,
+      list: [],
+      error: null,
+    });
+  };
+
   if (!visitor) return null;
 
   return (
@@ -212,140 +260,175 @@ const ContactPersonAuthProtocol = ({
       <div className="mb-8">
         <SectionCard isLight={isLight}>
           <div className="p-4 md:p-5">
-            <SplitSection title="Visitor details" icon={User} isLight={isLight}>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-                <Field
-                  label="Full name"
-                  value={visitor.name || visitor.fullName}
-                  icon={User}
-                  isLight={isLight}
-                />
+            {/* Visitor Details Header */}
+            <div className="flex flex-col gap-1 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-[3px] h-3.5 bg-primary rounded-full" />
+                <div className="flex items-center gap-1.5">
+                  <User size={13} className="text-primary/70" />
+                  <h3
+                    className={`text-[13px] font-medium capitalize tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                  >
+                    Visitor details
+                  </h3>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+              <Field
+                label="Full name"
+                value={visitor.name || visitor.fullName}
+                icon={User}
+                isLight={isLight}
+              />
+              <div className="relative">
+                <button
+                  type="button"
+                  title="View uploaded attachments"
+                  onClick={() =>
+                    openViewAttachments(
+                      visitor.id || visitor.raw?.VVR_Visitor_id,
+                      visitor.name || visitor.fullName,
+                    )
+                  }
+                  className={`absolute -top-7 right-0 p-2 rounded-lg border-2 transition-all font-semibold z-10 ${
+                    isLight
+                      ? "bg-primary/15 border-primary/40 text-primary hover:bg-primary/25 hover:border-primary/60 active:scale-95"
+                      : "bg-primary/20 border-primary/50 text-primary hover:bg-primary/30 hover:border-primary/70 active:scale-95"
+                  }`}
+                >
+                  <FolderOpen size={14} />
+                </button>
                 <Field
                   label="NIC"
                   value={visitor.nic}
                   icon={Hash}
                   isLight={isLight}
                 />
-                <Field
-                  label="Phone number"
-                  value={visitor.contact || visitor.phoneNumber}
-                  icon={Phone}
-                  isLight={isLight}
-                />
-                <Field
-                  label="Email address"
-                  value={visitor.email || visitor.emailAddress}
-                  icon={Mail}
-                  isLight={isLight}
-                />
               </div>
+              <Field
+                label="Phone number"
+                value={visitor.contact || visitor.phoneNumber}
+                icon={Phone}
+                isLight={isLight}
+              />
+              <Field
+                label="Email address"
+                value={visitor.email || visitor.emailAddress}
+                icon={Mail}
+                isLight={isLight}
+              />
+            </div>
 
-              {/* Items carried by the main visitor — embedded subsection */}
-              <div
-                className={`mt-4 pt-4 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <Package size={13} className="text-primary/70" />
-                  <p
-                    className={`capitalize text-[12px] font-medium tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+            {/* Items carried by the main visitor — embedded subsection */}
+            <div
+              className={`mt-4 pt-4 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <Package size={13} className="text-primary/70" />
+                <p
+                  className={`capitalize text-[12px] font-medium tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                >
+                  Items carried
+                </p>
+              </div>
+              {itemsCarried && itemsCarried.length > 0 ? (
+                <div
+                  className={`border rounded-lg overflow-auto max-h-[250px] ${isLight ? "border-gray-100" : "border-white/10"}`}
+                >
+                  <div
+                    className={`flex justify-between items-center px-3 py-1.5 border-b min-w-max ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
                   >
-                    Items carried
+                    <span
+                      className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-[2] min-w-[120px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    >
+                      Item name
+                    </span>
+                    <span
+                      className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight w-16 text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    >
+                      Qty
+                    </span>
+                    <span
+                      className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-[3] text-center min-w-[120px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    >
+                      Description
+                    </span>
+                    <span
+                      className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight w-28 text-right min-w-[100px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    >
+                      Status
+                    </span>
+                  </div>
+                  <div
+                    className={`divide-y ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
+                  >
+                    {itemsCarried.map((item, idx) => {
+                      const s = (item.status || "")
+                        .toString()
+                        .trim()
+                        .toUpperCase();
+                      const isTaken = s === "A";
+                      const isNotTaken = s === "I";
+                      return (
+                        <div
+                          key={item.id || idx}
+                          className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
+                        >
+                          <span
+                            className={`text-[11px] md:text-[12px] font-medium flex-[2] truncate min-w-[120px] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                          >
+                            {item.itemName}
+                          </span>
+                          <div className="w-16 flex justify-center">
+                            <span
+                              className={`text-[11px] md:text-[12px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}
+                            >
+                              x{item.quantity ? item.quantity : 1}
+                            </span>
+                          </div>
+                          <span
+                            className={`text-[11px] md:text-[12px] font-medium flex-[3] text-center truncate min-w-[120px] ${isLight ? "text-gray-500" : "text-gray-400"}`}
+                          >
+                            {item.description || "-"}
+                          </span>
+                          {/* Status badge */}
+                          <div className="w-28 flex justify-end min-w-[100px]">
+                            {isTaken ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] md:text-[9px] font-bold tracking-[0.12em] uppercase bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400 whitespace-nowrap">
+                                <CheckCircle2 size={10} />
+                                Taken
+                              </span>
+                            ) : isNotTaken ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] md:text-[9px] font-bold tracking-[0.12em] uppercase bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                                <AlertCircle size={10} />
+                                Not Taken
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] md:text-[9px] font-bold tracking-[0.12em] uppercase bg-gray-200/60 border border-gray-200 text-gray-400 dark:bg-white/5 dark:border-white/10 whitespace-nowrap">
+                                <Clock size={10} />
+                                Pending
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className={`border border-dashed rounded-xl p-3 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}
+                >
+                  <p
+                    className={`text-[10px] font-semibold capitalize tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}
+                  >
+                    No items declared by the primary visitor
                   </p>
                 </div>
-                {itemsCarried && itemsCarried.length > 0 ? (
-                  <div
-                    className={`border rounded-lg overflow-auto max-h-[250px] ${isLight ? "border-gray-100" : "border-white/10"}`}
-                  >
-                    <div
-                      className={`flex justify-between items-center px-3 py-1.5 border-b min-w-max ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
-                    >
-                      <span
-                        className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-[2] min-w-[120px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
-                      >
-                        Item name
-                      </span>
-                      <span
-                        className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight w-16 text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
-                      >
-                        Qty
-                      </span>
-                      <span
-                        className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-[3] text-center min-w-[120px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
-                      >
-                        Description
-                      </span>
-                      <span
-                        className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight w-28 text-right min-w-[100px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
-                      >
-                        Status
-                      </span>
-                    </div>
-                    <div
-                      className={`divide-y ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}
-                    >
-                      {itemsCarried.map((item, idx) => {
-                        const s = (item.status || "").toString().trim().toUpperCase();
-                        const isTaken = s === "A";
-                        const isNotTaken = s === "I";
-                        return (
-                          <div
-                            key={item.id || idx}
-                            className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
-                          >
-                            <span
-                              className={`text-[11px] md:text-[12px] font-medium flex-[2] truncate min-w-[120px] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                            >
-                              {item.itemName}
-                            </span>
-                            <div className="w-16 flex justify-center">
-                              <span
-                                className={`text-[11px] md:text-[12px] font-medium px-2 py-0.5 rounded tracking-wide ${isLight ? "text-primary bg-primary/5" : "text-white bg-white/10"}`}
-                              >
-                                x{item.quantity ? item.quantity : 1}
-                              </span>
-                            </div>
-                            <span
-                              className={`text-[11px] md:text-[12px] font-medium flex-[3] text-center truncate min-w-[120px] ${isLight ? "text-gray-500" : "text-gray-400"}`}
-                            >
-                              {item.description || "-"}
-                            </span>
-                            {/* Status badge */}
-                            <div className="w-28 flex justify-end min-w-[100px]">
-                              {isTaken ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] md:text-[9px] font-bold tracking-[0.12em] uppercase bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400 whitespace-nowrap">
-                                  <CheckCircle2 size={10} />
-                                  Taken
-                                </span>
-                              ) : isNotTaken ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] md:text-[9px] font-bold tracking-[0.12em] uppercase bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400 whitespace-nowrap">
-                                  <AlertCircle size={10} />
-                                  Not Taken
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] md:text-[9px] font-bold tracking-[0.12em] uppercase bg-gray-200/60 border border-gray-200 text-gray-400 dark:bg-white/5 dark:border-white/10 whitespace-nowrap">
-                                  <Clock size={10} />
-                                  Pending
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className={`border border-dashed rounded-xl p-3 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}
-                  >
-                    <p
-                      className={`text-[10px] font-semibold capitalize tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}
-                    >
-                      No items declared by the primary visitor
-                    </p>
-                  </div>
-                )}
-              </div>
-            </SplitSection>
+              )}
+            </div>
           </div>
         </SectionCard>
       </div>
@@ -394,7 +477,7 @@ const ContactPersonAuthProtocol = ({
           <SplitSection title="Places to visit" icon={MapPin} isLight={isLight}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
               {(visitor.areas || visitor.selectedAreas) &&
-                (visitor.areas || visitor.selectedAreas).length > 0 ? (
+              (visitor.areas || visitor.selectedAreas).length > 0 ? (
                 (visitor.areas || visitor.selectedAreas).map((area, idx) => (
                   <motion.div
                     key={idx}
@@ -721,6 +804,117 @@ const ContactPersonAuthProtocol = ({
           </>
         )}
       </AnimatePresence>
+
+      {/* ── View Attachments Modal ── */}
+      {viewAttachments.open && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <div>
+                  <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
+                    Uploaded Documents
+                  </h2>
+                  {viewAttachments.visitorName && (
+                    <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                      {viewAttachments.visitorName} · #
+                      {viewAttachments.visitorId}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={closeViewAttachments}
+                className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 relative z-10 min-h-[120px]">
+              {viewAttachments.loading ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3">
+                  <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
+                  <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                    Loading...
+                  </p>
+                </div>
+              ) : viewAttachments.error ? (
+                <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
+                  <AlertCircle size={13} className="shrink-0" />
+                  {viewAttachments.error}
+                </div>
+              ) : viewAttachments.list.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                  <FolderOpen size={32} />
+                  <p className="text-[11px] tracking-widest uppercase">
+                    No attachments found
+                  </p>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {viewAttachments.list.map((att, idx) => {
+                    const category =
+                      att.VAT_File_Category || att.FileCategory || "document";
+                    const fileName =
+                      att.VAT_File_Name ||
+                      att.FileName ||
+                      att.FilePath ||
+                      `file-${idx + 1}`;
+                    const fileUrl =
+                      att.VAT_File_Path || att.FilePath || att.FileUrl || null;
+                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                      fileName,
+                    );
+                    return (
+                      <li
+                        key={idx}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                      >
+                        {isImage ? (
+                          <ImageIcon
+                            size={15}
+                            className="text-primary/60 shrink-0"
+                          />
+                        ) : (
+                          <FileText
+                            size={15}
+                            className="text-primary/60 shrink-0"
+                          />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-medium text-white truncate">
+                            {fileName}
+                          </p>
+                          <p className="text-[9px] text-white/40 capitalize">
+                            {category}
+                          </p>
+                        </div>
+                        {fileUrl && (
+                          <a
+                            href={fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/10 text-primary/70 hover:bg-primary/25 hover:text-primary transition-all shrink-0"
+                            title="Download file"
+                          >
+                            <Download size={12} />
+                          </a>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };

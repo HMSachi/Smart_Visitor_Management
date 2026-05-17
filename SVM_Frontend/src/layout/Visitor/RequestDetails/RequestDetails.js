@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { ArrowLeft, Calendar, Hash, MapPin, User, Mail, Phone, Building2, Briefcase, Car, Users, Package, CheckCircle2, AlertCircle, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, Hash, MapPin, User, Mail, Phone, Building2, Briefcase, Car, Users, Package, CheckCircle2, AlertCircle, Clock, FolderOpen, FileText, ImageIcon, Download, X } from "lucide-react";
 import VisitorService from "../../../services/VisitorService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
+import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
 import { UpdateVisitRequest } from "../../../actions/VisitRequestAction";
 
 const RAW_FIELD_LABELS = {
@@ -103,6 +104,29 @@ const RequestDetails = () => {
   const [vehicleRecords, setVehicleRecords] = useState([]);
   const [jointItems, setJointItems] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [viewAttachments, setViewAttachments] = useState({
+    open: false,
+    visitorId: null,
+    visitorName: "",
+    loading: false,
+    list: [],
+    error: null,
+  });
+
+  const openViewAttachments = async (visitorId, visitorName) => {
+    setViewAttachments({ open: true, visitorId, visitorName, loading: true, list: [], error: null });
+    try {
+      const response = await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const attachments = Array.isArray(response?.data?.ResultSet) ? response.data.ResultSet : response?.data || [];
+      setViewAttachments((prev) => ({ ...prev, loading: false, list: attachments }));
+    } catch (err) {
+      setViewAttachments((prev) => ({ ...prev, loading: false, error: err.message || "Failed to load attachments" }));
+    }
+  };
+
+  const closeViewAttachments = () => {
+    setViewAttachments({ open: false, visitorId: null, visitorName: "", loading: false, list: [], error: null });
+  };
 
   useEffect(() => {
     const loadExtraDetails = async () => {
@@ -270,7 +294,25 @@ const RequestDetails = () => {
         <SectionCard title="Visitor information" icon={User}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             <SmallField label="Full name" value={summary.name} icon={User} />
-            <SmallField label="NIC" value={summary.nic} icon={Hash} />
+            <div className="space-y-1">
+              <label className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex items-center justify-between gap-1.5">
+                <span className="flex items-center gap-1.5">
+                  <Hash size={11} className="text-primary/70" />
+                  NIC
+                </span>
+                <button
+                  type="button"
+                  title="View uploaded attachments"
+                  onClick={() => openViewAttachments(visitorRecord?.VV_Visitor_id, summary.name)}
+                  className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all shrink-0 cursor-pointer active:scale-95"
+                >
+                  <FolderOpen size={13} />
+                </button>
+              </label>
+              <div className="w-full bg-background-alt/50 border border-border-soft rounded-lg px-3 py-1 text-text-primary text-[12px] font-normal tracking-tight break-words min-h-[36px] flex items-center">
+                {summary.nic || "N/A"}
+              </div>
+            </div>
             <SmallField label="Email" value={summary.email} icon={Mail} />
             <SmallField label="Phone" value={summary.phone} icon={Phone} />
             <SmallField label="Company" value={summary.company} icon={Building2} />
@@ -424,6 +466,117 @@ const RequestDetails = () => {
           </div>
         </SectionCard>
       </div>
+
+      {/* Attachments Modal */}
+      {viewAttachments.open && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <div>
+                  <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
+                    Uploaded Documents
+                  </h2>
+                  {viewAttachments.visitorName && (
+                    <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                      {viewAttachments.visitorName} · #{viewAttachments.visitorId}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={closeViewAttachments}
+                className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+                title="Close"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 relative z-10 min-h-[120px]">
+              {viewAttachments.loading ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3">
+                  <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
+                  <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                    Loading...
+                  </p>
+                </div>
+              ) : viewAttachments.error ? (
+                <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
+                  <AlertCircle size={13} className="shrink-0" />
+                  {viewAttachments.error}
+                </div>
+              ) : viewAttachments.list.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                  <FolderOpen size={32} />
+                  <p className="text-[11px] tracking-widest uppercase">
+                    No attachments found
+                  </p>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {viewAttachments.list.map((att, idx) => {
+                    const category =
+                      att.VAT_File_Category || att.FileCategory || "document";
+                    const fileName =
+                      att.VAT_File_Name ||
+                      att.FileName ||
+                      att.FilePath ||
+                      `file-${idx + 1}`;
+                    const fileUrl =
+                      att.VAT_File_Path || att.FilePath || att.FileUrl || null;
+                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                      fileName,
+                    );
+                    return (
+                      <li
+                        key={idx}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                      >
+                        {isImage ? (
+                          <ImageIcon
+                            size={15}
+                            className="text-primary/60 shrink-0"
+                          />
+                        ) : (
+                          <FileText
+                            size={15}
+                            className="text-primary/60 shrink-0"
+                          />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-medium text-white truncate">
+                            {fileName}
+                          </p>
+                          <p className="text-[9px] text-white/40 capitalize">
+                            {category}
+                          </p>
+                        </div>
+                        {fileUrl && (
+                          <a
+                            href={fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/10 text-primary/70 hover:bg-primary/25 hover:text-primary transition-all shrink-0"
+                            title="Download file"
+                          >
+                            <Download size={12} />
+                          </a>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
