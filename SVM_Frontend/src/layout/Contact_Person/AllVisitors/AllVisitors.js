@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
@@ -11,6 +11,8 @@ import { GetAllContactPersons } from "../../../actions/ContactPersonAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 import Header from "../../../components/Contact_Person/Layout/Header";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
+import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
+import VisitorService from "../../../services/VisitorService";
 import {
   User,
   Mail,
@@ -28,6 +30,13 @@ import {
   Eye,
   EyeOff,
   Users,
+  Paperclip,
+  Upload,
+  CheckCircle,
+  FileText,
+  FolderOpen,
+  ExternalLink,
+  ImageIcon,
 } from "lucide-react";
 import {
   validateName,
@@ -66,6 +75,105 @@ const ContactAllVisitors = () => {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // View Attachments Modal State
+  const [viewAttachments, setViewAttachments] = useState({
+    open: false,
+    visitorId: null,
+    visitorName: "",
+    loading: false,
+    list: [],
+    error: null,
+  });
+
+  const openViewAttachments = async (visitorId, visitorName) => {
+    setViewAttachments({ open: true, visitorId, visitorName, loading: true, list: [], error: null });
+    try {
+      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const list = res?.data?.ResultSet || res?.data || [];
+      setViewAttachments((prev) => ({ ...prev, loading: false, list }));
+    } catch (err) {
+      setViewAttachments((prev) => ({ ...prev, loading: false, error: err?.message || "Failed to load attachments." }));
+    }
+  };
+
+  const closeViewAttachments = () => {
+    setViewAttachments({ open: false, visitorId: null, visitorName: "", loading: false, list: [], error: null });
+  };
+
+  // Attachment Modal State
+  const [attachmentModal, setAttachmentModal] = useState({
+    open: false,
+    visitorId: null,
+    visitorName: "",
+  });
+  const [attachFile, setAttachFile] = useState(null);
+  const [attachCategory, setAttachCategory] = useState("nic");
+  const [attachUploading, setAttachUploading] = useState(false);
+  const [attachResult, setAttachResult] = useState(null); // { success, message }
+  const [attachDragOver, setAttachDragOver] = useState(false);
+  // Pending attachment: file chosen in the form before visitor is created
+  const [pendingAttachFile, setPendingAttachFile] = useState(null);
+  const [pendingAttachCategory, setPendingAttachCategory] = useState("nic");
+  const fileInputRef = useRef(null);
+
+  const openAttachmentModal = (visitorId, visitorName = "") => {
+    setAttachmentModal({ open: true, visitorId, visitorName });
+    // Pre-populate with any pending file already chosen from the form
+    setAttachFile(visitorId ? null : pendingAttachFile);
+    setAttachCategory(visitorId ? "nic" : pendingAttachCategory);
+    setAttachResult(null);
+    setAttachUploading(false);
+  };
+
+  // Confirm file selection from the form-context modal (no visitorId yet)
+  const confirmAttachFile = () => {
+    setPendingAttachFile(attachFile);
+    setPendingAttachCategory(attachCategory);
+    setAttachmentModal({ open: false, visitorId: null, visitorName: "" });
+    setAttachResult(null);
+  };
+
+  const closeAttachmentModal = () => {
+    setAttachmentModal({ open: false, visitorId: null, visitorName: "" });
+    // Don't clear attachFile — leave pendingAttachFile intact
+    setAttachFile(null);
+    setAttachResult(null);
+  };
+
+  const handleAttachFileChange = (e) => {
+    const f = e.target.files?.[0];
+    if (f) { setAttachFile(f); setAttachResult(null); }
+  };
+
+  const handleAttachDrop = (e) => {
+    e.preventDefault();
+    setAttachDragOver(false);
+    const f = e.dataTransfer.files?.[0];
+    if (f) { setAttachFile(f); setAttachResult(null); }
+  };
+
+  // Upload for existing visitor (opened from table row)
+  const handleAttachUpload = async () => {
+    if (!attachFile || !attachmentModal.visitorId) return;
+    const pUid = user?.ResultSet?.[0]?.VA_Name || "Admin";
+    setAttachUploading(true);
+    setAttachResult(null);
+    try {
+      await VisitorAttachmentService.UploadAttachment(
+        attachmentModal.visitorId,
+        attachCategory,
+        pUid,
+        attachFile
+      );
+      setAttachResult({ success: true, message: "Attachment uploaded successfully." });
+    } catch (err) {
+      setAttachResult({ success: false, message: err?.response?.data?.Message || err?.message || "Upload failed." });
+    } finally {
+      setAttachUploading(false);
+    }
+  };
+
   const [formData, setFormData] = useState({
     VV_Contact_person_id: cpId,
     VV_Name: "",
@@ -163,6 +271,9 @@ const ContactAllVisitors = () => {
       VV_Vehicle_Type: "",
       VV_Vehicle_Number: "",
     });
+    // Reset pending attachment for each new form session
+    setPendingAttachFile(null);
+    setPendingAttachCategory("nic");
     setIsModalOpen(true);
     setShowPassword(false);
   };
@@ -170,6 +281,8 @@ const ContactAllVisitors = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setErrors({});
+    setPendingAttachFile(null);
+    setPendingAttachCategory("nic");
   };
 
   const handleInputChange = (e) => {
@@ -293,6 +406,38 @@ const ContactAllVisitors = () => {
       console.log("AddVisitor payload:", visitorPayload);
       const visitorResponse = await dispatch(AddVisitor(visitorPayload));
       console.log("AddVisitor response:", visitorResponse);
+
+      // If user pre-selected an attachment, fetch the fresh visitor list to
+      // reliably get the new visitor's ID (AddVisitor response may not include it)
+      if (pendingAttachFile) {
+        try {
+          const refreshed = await VisitorService.GetVisitorsByContactPerson(cpId);
+          const allVisitors = refreshed?.data?.ResultSet || refreshed?.data || [];
+          // Match the new visitor by email or NIC
+          const newVisitor = allVisitors.find(
+            (v) =>
+              v.VV_Email?.trim().toLowerCase() === formData.VV_Email?.trim().toLowerCase() ||
+              v.VV_NIC_Passport_NO?.trim() === formData.VV_NIC_Passport_NO?.trim()
+          );
+          const newVisitorId = newVisitor?.VV_Visitor_id || null;
+          console.log("Resolved new visitor ID for attachment:", newVisitorId);
+
+          if (newVisitorId) {
+            const pUid = user?.ResultSet?.[0]?.VA_Name || "Admin";
+            await VisitorAttachmentService.UploadAttachment(
+              newVisitorId,
+              pendingAttachCategory,
+              pUid,
+              pendingAttachFile
+            );
+            console.log("Attachment uploaded successfully for visitor", newVisitorId);
+          } else {
+            console.warn("Could not resolve new visitor ID — attachment skipped.");
+          }
+        } catch (attachErr) {
+          console.error("Attachment upload failed:", attachErr?.message);
+        }
+      }
 
       closeModal();
 
@@ -509,6 +654,9 @@ const ContactAllVisitors = () => {
                       <th className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Status
                       </th>
+                      <th className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary">
+                        Docs
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-soft">
@@ -567,7 +715,7 @@ const ContactAllVisitors = () => {
                               </span>
                             </td>
                             <td className="px-3 py-1 text-center font-normal text-[10px]">
-                              <div className="flex items-center justify-center">
+                              <div className="flex items-center justify-center gap-2">
                                 <button
                                   onClick={() => handleToggleStatus(visitor)}
                                   disabled={isLoading}
@@ -581,6 +729,16 @@ const ContactAllVisitors = () => {
                                   {isActive ? "Active" : "Inactive"}
                                 </button>
                               </div>
+                            </td>
+                            <td className="px-3 py-1 text-center">
+                              <button
+                                type="button"
+                                title="View uploaded attachments"
+                                onClick={() => openViewAttachments(visitor.VV_Visitor_id, visitor.VV_Name)}
+                                className="p-1.5 rounded-lg bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary transition-all"
+                              >
+                                <FolderOpen size={13} />
+                              </button>
                             </td>
                           </tr>
                         );
@@ -655,22 +813,52 @@ const ContactAllVisitors = () => {
 
                   <div className="space-y-1">
                     <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <Hash size={10} className="text-primary/60 shrink-0" /> ID
-                      or passport
+                      <Hash size={10} className="text-primary/60 shrink-0" /> ID or passport
                     </label>
-                    <input
-                      type="text"
-                      name="VV_NIC_Passport_NO"
-                      value={formData.VV_NIC_Passport_NO}
-                      onChange={handleInputChange}
-                      maxLength={12}
-                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                        errors.VV_NIC_Passport_NO
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                      placeholder="e.g., 123456789"
-                    />
+                    <div className="flex items-stretch gap-2">
+                      <input
+                        type="text"
+                        name="VV_NIC_Passport_NO"
+                        value={formData.VV_NIC_Passport_NO}
+                        onChange={handleInputChange}
+                        maxLength={12}
+                        className={`flex-1 min-w-0 rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                          errors.VV_NIC_Passport_NO
+                            ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                            : "bg-black/40 border border-white/10 focus:border-primary/50"
+                        }`}
+                        placeholder="e.g., 123456789"
+                      />
+                      <button
+                        type="button"
+                        title="Attach NIC / Passport document"
+                        onClick={() => openAttachmentModal(null, formData.VV_Name?.trim())}
+                        className={`shrink-0 p-1.5 rounded-lg transition-all ${
+                          pendingAttachFile
+                            ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                            : "bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary"
+                        }`}
+                      >
+                        {pendingAttachFile ? <CheckCircle size={13} /> : <Paperclip size={13} />}
+                      </button>
+                    </div>
+                    {/* File badge — shows when user has selected a file */}
+                    {pendingAttachFile && (
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <FileText size={10} className="text-green-400 shrink-0" />
+                        <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[180px]">
+                          {pendingAttachFile.name}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => { setPendingAttachFile(null); setPendingAttachCategory("nic"); }}
+                          className="ml-auto text-white/30 hover:text-red-400 transition-colors"
+                          title="Remove file"
+                        >
+                          <X size={10} />
+                        </button>
+                      </div>
+                    )}
                     {errors.VV_NIC_Passport_NO && (
                       <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_NIC_Passport_NO}
@@ -872,6 +1060,264 @@ const ContactAllVisitors = () => {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* ── Attachment Upload Modal ── */}
+        {attachmentModal.open && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+            <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1.5 h-5 bg-primary rounded-full" />
+                  <div>
+                    <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
+                      Upload ID Document
+                    </h2>
+                    {attachmentModal.visitorName && (
+                      <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                        {attachmentModal.visitorName}
+                        {attachmentModal.visitorId ? ` · #${attachmentModal.visitorId}` : ""}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={closeAttachmentModal}
+                  className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-5 space-y-4 relative z-10">
+
+                {/* Category selector */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] text-gray-400 tracking-[0.14em] font-normal">
+                    Document type
+                  </label>
+                  <div className="flex gap-2">
+                    {["nic", "passport"].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setAttachCategory(cat)}
+                        className={`flex-1 py-2 rounded-lg text-[11px] font-normal tracking-widest uppercase transition-all border ${
+                          attachCategory === cat
+                            ? "bg-primary/20 border-primary/50 text-primary"
+                            : "bg-black/30 border-white/10 text-gray-400 hover:border-white/20"
+                        }`}
+                      >
+                        {cat === "nic" ? "NIC" : "Passport"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Drop zone */}
+                <div
+                  onDragOver={(e) => { e.preventDefault(); setAttachDragOver(true); }}
+                  onDragLeave={() => setAttachDragOver(false)}
+                  onDrop={handleAttachDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`cursor-pointer rounded-xl border-2 border-dashed transition-all p-6 flex flex-col items-center justify-center gap-3 ${
+                    attachDragOver
+                      ? "border-primary/70 bg-primary/10"
+                      : attachFile
+                      ? "border-green-500/40 bg-green-500/5"
+                      : "border-white/10 bg-black/20 hover:border-white/20 hover:bg-black/30"
+                  }`}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={handleAttachFileChange}
+                  />
+                  {attachFile ? (
+                    <>
+                      <FileText size={28} className="text-green-400" />
+                      <p className="text-[11px] text-green-300 tracking-wide text-center">
+                        {attachFile.name}
+                      </p>
+                      <p className="text-[10px] text-white/30">
+                        {(attachFile.size / 1024).toFixed(1)} KB · Click to change
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={28} className="text-white/20" />
+                      <p className="text-[11px] text-white/40 tracking-wide text-center">
+                        Drag & drop or click to select
+                      </p>
+                      <p className="text-[10px] text-white/20">
+                        JPG, PNG, PDF accepted
+                      </p>
+                    </>
+                  )}
+                </div>
+
+                {/* Result message */}
+                {attachResult && (
+                  <div className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-[11px] font-normal tracking-wide ${
+                    attachResult.success
+                      ? "bg-green-500/10 border border-green-500/20 text-green-300"
+                      : "bg-red-500/10 border border-red-500/20 text-red-300"
+                  }`}>
+                    {attachResult.success ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
+                    {attachResult.message}
+                  </div>
+                )}
+
+                {/* Actions — context-aware */}
+                <div className="flex gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={closeAttachmentModal}
+                    className="flex-1 py-2 rounded-lg text-[11px] font-normal tracking-[0.14em] text-gray-400 hover:bg-white/5 transition-all border border-white/5"
+                  >
+                    {attachResult?.success ? "Done" : "Cancel"}
+                  </button>
+
+                  {/* Form context: no visitor id yet — confirm just stores the file */}
+                  {!attachmentModal.visitorId ? (
+                    <button
+                      type="button"
+                      onClick={confirmAttachFile}
+                      disabled={!attachFile}
+                      className="flex-1 py-2 rounded-lg text-[11px] font-normal tracking-[0.14em] bg-primary hover:bg-[var(--color-primary-hover)] text-white shadow-lg shadow-primary/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      <CheckCircle size={13} /> Confirm
+                    </button>
+                  ) : (
+                    /* Table context: visitor id exists — upload immediately */
+                    <button
+                      type="button"
+                      onClick={handleAttachUpload}
+                      disabled={!attachFile || attachUploading || attachResult?.success}
+                      className="flex-1 py-2 rounded-lg text-[11px] font-normal tracking-[0.14em] bg-primary hover:bg-[var(--color-primary-hover)] text-white shadow-lg shadow-primary/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {attachUploading ? (
+                        <><div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Uploading...</>
+                      ) : attachResult?.success ? (
+                        <><CheckCircle size={13} /> Uploaded</>
+                      ) : (
+                        <><Upload size={13} /> Upload</>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── View Attachments Modal ── */}
+        {viewAttachments.open && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+            <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1.5 h-5 bg-primary rounded-full" />
+                  <div>
+                    <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
+                      Uploaded Documents
+                    </h2>
+                    {viewAttachments.visitorName && (
+                      <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                        {viewAttachments.visitorName} · #{viewAttachments.visitorId}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={closeViewAttachments}
+                  className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-5 relative z-10 min-h-[120px]">
+                {viewAttachments.loading ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3">
+                    <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
+                    <p className="text-[11px] text-white/30 tracking-widest uppercase">Loading...</p>
+                  </div>
+                ) : viewAttachments.error ? (
+                  <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
+                    <AlertCircle size={13} className="shrink-0" />
+                    {viewAttachments.error}
+                  </div>
+                ) : viewAttachments.list.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                    <FolderOpen size={32} />
+                    <p className="text-[11px] tracking-widest uppercase">No attachments found</p>
+                  </div>
+                ) : (
+                  <ul className="space-y-2">
+                    {viewAttachments.list.map((att, idx) => {
+                      const category = att.VAT_File_Category || att.FileCategory || "document";
+                      const fileName = att.VAT_File_Name || att.FileName || att.FilePath || `file-${idx + 1}`;
+                      const fileUrl  = att.VAT_File_Path || att.FilePath || att.FileUrl || null;
+                      const isImage  = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+                      return (
+                        <li key={idx} className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group">
+                          {isImage
+                            ? <ImageIcon size={15} className="text-primary/60 shrink-0" />
+                            : <FileText size={15} className="text-primary/60 shrink-0" />
+                          }
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] text-white/80 font-normal truncate">{fileName}</p>
+                            <span className={`text-[9px] font-normal uppercase tracking-widest px-1.5 py-0.5 rounded mt-0.5 inline-block ${
+                              category.toLowerCase() === "nic"
+                                ? "bg-blue-500/20 text-blue-300"
+                                : category.toLowerCase() === "passport"
+                                ? "bg-purple-500/20 text-purple-300"
+                                : "bg-white/10 text-white/40"
+                            }`}>
+                              {category}
+                            </span>
+                          </div>
+                          {fileUrl && (
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              title="Open file"
+                              className="p-1 rounded-lg text-white/20 hover:text-primary hover:bg-primary/10 transition-all opacity-0 group-hover:opacity-100"
+                            >
+                              <ExternalLink size={13} />
+                            </a>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="px-5 pb-4 relative z-10">
+                <button
+                  type="button"
+                  onClick={closeViewAttachments}
+                  className="w-full py-2 rounded-lg text-[11px] font-normal tracking-[0.14em] text-gray-400 hover:bg-white/5 transition-all border border-white/5"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         )}
