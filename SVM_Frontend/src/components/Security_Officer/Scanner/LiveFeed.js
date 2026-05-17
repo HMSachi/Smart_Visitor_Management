@@ -27,6 +27,12 @@ import {
   LogOut,
   LogIn,
   MessageSquare,
+  FolderOpen,
+  FileText,
+  ImageIcon,
+  Download,
+  X,
+  AlertCircle,
 } from "lucide-react";
 import { GetGatePassById } from "../../../actions/GatePassAction";
 import { motion, AnimatePresence } from "framer-motion";
@@ -37,6 +43,7 @@ import {
 import VisitorService from "../../../services/VisitorService";
 import GatePassService from "../../../services/GatePassService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
 
 // ── Helper: a single icon + label + value row ──────────────────────────────
 const InfoRow = ({ icon, label, value }) => (
@@ -102,6 +109,15 @@ const LiveFeed = () => {
   // Items carried by the main visitor + their checked state
   const [mainVisitorItems, setMainVisitorItems] = useState([]); // [{ id, itemName, quantity, description }]
   const [itemCheckStates, setItemCheckStates] = useState({}); // { [id]: boolean }
+  // Attachment viewer modal state
+  const [viewAttachments, setViewAttachments] = useState({
+    open: false,
+    visitorId: null,
+    visitorName: "",
+    loading: false,
+    list: [],
+    error: null,
+  });
 
   const getTodayDateKey = () => new Date().toISOString().slice(0, 10);
 
@@ -337,7 +353,7 @@ const LiveFeed = () => {
             count = demo.count || 0;
           } else {
             const scanCountResponse = await GatePassService.GetTodayScanCount(
-              details.VGP_Pass_id
+              details.VGP_Pass_id,
             );
             count =
               scanCountResponse?.data?.scanCount ||
@@ -358,12 +374,12 @@ const LiveFeed = () => {
             "[LiveFeed] Scan count for today:",
             count,
             "Scan type:",
-            count === 0 ? "CHECK_IN" : "CHECK_OUT"
+            count === 0 ? "CHECK_IN" : "CHECK_OUT",
           );
         } catch (err) {
           console.warn(
             "[LiveFeed] Could not fetch scan count, defaulting to CHECK_IN:",
-            err
+            err,
           );
           setScanCount(0);
           setScanType("CHECK_IN");
@@ -422,7 +438,9 @@ const LiveFeed = () => {
             setMainVisitorItems(matchedItems);
             // Default: all items are UN-ticked (security must explicitly confirm each)
             const defaultChecks = {};
-            matchedItems.forEach((item) => { defaultChecks[item.id] = false; });
+            matchedItems.forEach((item) => {
+              defaultChecks[item.id] = false;
+            });
             setItemCheckStates(defaultChecks);
             console.log("[LiveFeed] Fetched main-visitor items:", matchedItems);
           } catch (err) {
@@ -563,6 +581,47 @@ const LiveFeed = () => {
     (value) => value !== "N/A" && !Array.isArray(value),
   );
 
+  const openViewAttachments = async (visitorId, visitorName) => {
+    setViewAttachments((prev) => ({
+      ...prev,
+      open: true,
+      visitorId,
+      visitorName,
+      loading: true,
+      error: null,
+      list: [],
+    }));
+
+    try {
+      const response =
+        await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const attachments = response?.data || [];
+      setViewAttachments((prev) => ({
+        ...prev,
+        loading: false,
+        list: Array.isArray(attachments) ? attachments : [],
+      }));
+    } catch (err) {
+      console.error("Error fetching attachments:", err);
+      setViewAttachments((prev) => ({
+        ...prev,
+        loading: false,
+        error: err.message || "Failed to load attachments",
+      }));
+    }
+  };
+
+  const closeViewAttachments = () => {
+    setViewAttachments({
+      open: false,
+      visitorId: null,
+      visitorName: "",
+      loading: false,
+      list: [],
+      error: null,
+    });
+  };
+
   const handleResetNode = () => {
     stopScanner();
     setScanResult("");
@@ -579,6 +638,14 @@ const LiveFeed = () => {
     setScanType(null);
     setRemarks("");
     setIsSubmitting(false);
+    setViewAttachments({
+      open: false,
+      visitorId: null,
+      visitorName: "",
+      loading: false,
+      list: [],
+      error: null,
+    });
   };
 
   const handleCheckInOut = async () => {
@@ -588,7 +655,9 @@ const LiveFeed = () => {
     }
 
     if (scanType === "CHECK_OUT" && !remarks.trim()) {
-      alert("Please enter remarks about the visitor behavior before checking out.");
+      alert(
+        "Please enter remarks about the visitor behavior before checking out.",
+      );
       return;
     }
 
@@ -599,29 +668,34 @@ const LiveFeed = () => {
         await Promise.allSettled(
           mainVisitorItems.map((item) => {
             const isTaken = itemCheckStates[item.id] === true;
-            return ItemCarriedService.UpdateItemStatus(item.id, isTaken ? "A" : "I");
-          })
+            return ItemCarriedService.UpdateItemStatus(
+              item.id,
+              isTaken ? "A" : "I",
+            );
+          }),
         );
         console.log("[LiveFeed] Item statuses updated.");
       }
 
       let result = null;
       if (useDemoScanLog) {
-        result = { data: logScanEntryDemo(passDetails.VGP_Pass_id, scanType, remarks) };
+        result = {
+          data: logScanEntryDemo(passDetails.VGP_Pass_id, scanType, remarks),
+        };
       } else {
         result = await GatePassService.LogScanEntry(
           passDetails.VGP_Pass_id,
           scanType,
-          remarks
+          remarks,
         );
       }
 
       if (result?.data?.Status === "Success" || result?.status === 200) {
         const actionText = scanType === "CHECK_IN" ? "Check-in" : "Check-out";
         setScanMessage(
-          `${actionText} successful! ${scanType === "CHECK_OUT" && remarks ? "Remarks logged." : ""}`
+          `${actionText} successful! ${scanType === "CHECK_OUT" && remarks ? "Remarks logged." : ""}`,
         );
-        
+
         // Show success for 2 seconds then reset
         setTimeout(() => {
           handleResetNode();
@@ -874,11 +948,28 @@ const LiveFeed = () => {
                     label="Full Name"
                     value={profileData.Name}
                   />
-                  <InfoRow
-                    icon={<CreditCard size={14} />}
-                    label="NIC / Passport"
-                    value={profileData["NIC/Passport_No"]}
-                  />
+                  <div className="flex items-center justify-between gap-2">
+                    <InfoRow
+                      icon={<CreditCard size={14} />}
+                      label="NIC / Passport"
+                      value={profileData["NIC/Passport_No"]}
+                    />
+                    <button
+                      type="button"
+                      title="View uploaded attachments"
+                      onClick={() => {
+                        const vid =
+                          passDetails?.Visitor_Id ||
+                          passDetails?.VV_Visitor_id ||
+                          passDetails?.Visitor_ID ||
+                          passDetails?.VGP_Visitor_id;
+                        openViewAttachments(vid, profileData.Name);
+                      }}
+                      className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all shrink-0 cursor-pointer active:scale-95"
+                    >
+                      <FolderOpen size={13} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -1056,7 +1147,8 @@ const LiveFeed = () => {
                           color: "var(--color-success)",
                         }}
                       >
-                        {Object.values(itemCheckStates).filter(Boolean).length} / {mainVisitorItems.length} verified
+                        {Object.values(itemCheckStates).filter(Boolean).length}{" "}
+                        / {mainVisitorItems.length} verified
                       </span>
                     )}
 
@@ -1070,7 +1162,8 @@ const LiveFeed = () => {
                           color: "#f97316",
                         }}
                       >
-                        {mainVisitorItems.length} {mainVisitorItems.length === 1 ? "item" : "items"}
+                        {mainVisitorItems.length}{" "}
+                        {mainVisitorItems.length === 1 ? "item" : "items"}
                       </span>
                     )}
                   </div>
@@ -1078,7 +1171,8 @@ const LiveFeed = () => {
                   {/* Instruction — only shown during CHECK_IN */}
                   {scanType === "CHECK_IN" && (
                     <p className="text-[8px] text-[var(--color-text-dim)] mb-2 leading-relaxed">
-                      Tick each item the visitor is carrying out. Unticked items will be marked as not taken.
+                      Tick each item the visitor is carrying out. Unticked items
+                      will be marked as not taken.
                     </p>
                   )}
 
@@ -1086,7 +1180,10 @@ const LiveFeed = () => {
                   {scanType === "CHECK_OUT" ? (
                     <div className="space-y-1.5">
                       {mainVisitorItems.map((item) => {
-                        const s = (item.status || "").toString().trim().toUpperCase();
+                        const s = (item.status || "")
+                          .toString()
+                          .trim()
+                          .toUpperCase();
                         const isTaken = s === "A";
                         const isNotTaken = s === "I";
                         return (
@@ -1097,13 +1194,13 @@ const LiveFeed = () => {
                               background: isTaken
                                 ? "rgba(34,197,94,0.06)"
                                 : isNotTaken
-                                ? "rgba(249,115,22,0.06)"
-                                : "var(--color-surface-2)",
+                                  ? "rgba(249,115,22,0.06)"
+                                  : "var(--color-surface-2)",
                               borderColor: isTaken
                                 ? "rgba(34,197,94,0.3)"
                                 : isNotTaken
-                                ? "rgba(249,115,22,0.3)"
-                                : "var(--color-border-soft)",
+                                  ? "rgba(249,115,22,0.3)"
+                                  : "var(--color-border-soft)",
                             }}
                           >
                             <Package
@@ -1113,8 +1210,8 @@ const LiveFeed = () => {
                                 color: isTaken
                                   ? "var(--color-success)"
                                   : isNotTaken
-                                  ? "#f97316"
-                                  : "var(--color-text-secondary)",
+                                    ? "#f97316"
+                                    : "var(--color-text-secondary)",
                               }}
                             />
                             <div className="min-w-0 flex-1">
@@ -1144,20 +1241,48 @@ const LiveFeed = () => {
                             {/* Status badge */}
                             {isTaken ? (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-[0.14em] flex-shrink-0 bg-green-500/10 border border-green-500/25 text-green-500">
-                                <svg width="9" height="7" viewBox="0 0 10 8" fill="none">
-                                  <path d="M1 4L3.5 6.5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <svg
+                                  width="9"
+                                  height="7"
+                                  viewBox="0 0 10 8"
+                                  fill="none"
+                                >
+                                  <path
+                                    d="M1 4L3.5 6.5L9 1"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
                                 </svg>
                                 Taken
                               </span>
                             ) : isNotTaken ? (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-[0.14em] flex-shrink-0 bg-orange-500/10 border border-orange-500/25 text-orange-500">
-                                <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
-                                  <path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                <svg
+                                  width="9"
+                                  height="9"
+                                  viewBox="0 0 10 10"
+                                  fill="none"
+                                >
+                                  <path
+                                    d="M2 2L8 8M8 2L2 8"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                  />
                                 </svg>
                                 Not Taken
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-[0.14em] flex-shrink-0" style={{ background: "var(--color-surface-1)", border: "1px solid var(--color-border-soft)", color: "var(--color-text-dim)" }}>
+                              <span
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-[0.14em] flex-shrink-0"
+                                style={{
+                                  background: "var(--color-surface-1)",
+                                  border: "1px solid var(--color-border-soft)",
+                                  color: "var(--color-text-dim)",
+                                }}
+                              >
                                 Pending
                               </span>
                             )}
@@ -1204,7 +1329,12 @@ const LiveFeed = () => {
                               }}
                             >
                               {isChecked && (
-                                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                <svg
+                                  width="10"
+                                  height="8"
+                                  viewBox="0 0 10 8"
+                                  fill="none"
+                                >
                                   <path
                                     d="M1 4L3.5 6.5L9 1"
                                     stroke="white"
@@ -1232,7 +1362,9 @@ const LiveFeed = () => {
                                   color: isChecked
                                     ? "var(--color-success)"
                                     : "var(--color-text-primary)",
-                                  textDecoration: isChecked ? "line-through" : "none",
+                                  textDecoration: isChecked
+                                    ? "line-through"
+                                    : "none",
                                   opacity: isChecked ? 0.75 : 1,
                                 }}
                               >
@@ -1353,7 +1485,9 @@ const LiveFeed = () => {
             >
               <button
                 onClick={handleCheckInOut}
-                disabled={isSubmitting || (scanType === "CHECK_OUT" && !remarks.trim())}
+                disabled={
+                  isSubmitting || (scanType === "CHECK_OUT" && !remarks.trim())
+                }
                 className={`flex-1 py-2.5 font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all flex items-center justify-center gap-2 text-white disabled:opacity-50 disabled:cursor-not-allowed`}
                 style={{
                   background:
@@ -1392,6 +1526,118 @@ const LiveFeed = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Attachments Modal */}
+      {viewAttachments.open && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <div>
+                  <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
+                    Uploaded Documents
+                  </h2>
+                  {viewAttachments.visitorName && (
+                    <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                      {viewAttachments.visitorName} · #
+                      {viewAttachments.visitorId}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={closeViewAttachments}
+                className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+                title="Close"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 relative z-10 min-h-[120px]">
+              {viewAttachments.loading ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3">
+                  <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
+                  <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                    Loading...
+                  </p>
+                </div>
+              ) : viewAttachments.error ? (
+                <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
+                  <AlertCircle size={13} className="shrink-0" />
+                  {viewAttachments.error}
+                </div>
+              ) : viewAttachments.list.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                  <FolderOpen size={32} />
+                  <p className="text-[11px] tracking-widest uppercase">
+                    No attachments found
+                  </p>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {viewAttachments.list.map((att, idx) => {
+                    const category =
+                      att.VAT_File_Category || att.FileCategory || "document";
+                    const fileName =
+                      att.VAT_File_Name ||
+                      att.FileName ||
+                      att.FilePath ||
+                      `file-${idx + 1}`;
+                    const fileUrl =
+                      att.VAT_File_Path || att.FilePath || att.FileUrl || null;
+                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                      fileName,
+                    );
+                    return (
+                      <li
+                        key={idx}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                      >
+                        {isImage ? (
+                          <ImageIcon
+                            size={15}
+                            className="text-primary/60 shrink-0"
+                          />
+                        ) : (
+                          <FileText
+                            size={15}
+                            className="text-primary/60 shrink-0"
+                          />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-medium text-white truncate">
+                            {fileName}
+                          </p>
+                          <p className="text-[9px] text-white/40 capitalize">
+                            {category}
+                          </p>
+                        </div>
+                        {fileUrl && (
+                          <a
+                            href={fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/10 text-primary/70 hover:bg-primary/25 hover:text-primary transition-all shrink-0"
+                            title="Download file"
+                          >
+                            <Download size={12} />
+                          </a>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
