@@ -85,7 +85,7 @@ const SelectVisitorField = ({
       <option value="">
         {isLoading ? "Loading visitors..." : visitors.length === 0 ? "No visitors available" : "Select a visitor..."}
       </option>
-      {visitors.map((visitor) => (
+      {Array.isArray(visitors) && visitors.map((visitor) => (
         <option
           key={visitor.VV_Visitor_id}
           value={String(visitor.VV_Visitor_id)}
@@ -133,7 +133,7 @@ const SelectSubVisitorField = ({
       <option value="">
         {isLoading ? "Loading companions..." : subVisitors.length === 0 ? "No companions found" : "Select a companion (optional)..."}
       </option>
-      {subVisitors.map((subVisitor) => (
+      {Array.isArray(subVisitors) && subVisitors.map((subVisitor) => (
         <option
           key={subVisitor.VVG_id}
           value={String(subVisitor.VVG_id)}
@@ -173,7 +173,11 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
     setIsLoadingVisitors(true);
     try {
       const response = await VisitorService.GetAllVisitors();
-      const visitorList = response?.data?.ResultSet || response?.data || [];
+      const visitorList = Array.isArray(response?.data?.ResultSet)
+        ? response.data.ResultSet
+        : Array.isArray(response?.data)
+          ? response.data
+          : [];
       setVisitors(visitorList);
     } catch (error) {
       console.error("Error loading visitors:", error);

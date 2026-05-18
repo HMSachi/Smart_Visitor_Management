@@ -43,26 +43,26 @@ const SecurityQuickActions = () => {
     const actions = [
         // {
         //     icon: CheckCircle,
-        //     label: 'Entry Approval',
-        //     description: 'Approve visitor entry to facility',
+        //     label: 'Approve Entry',
+        //     description: 'Allow visitor to enter',
         //     onClick: () => navigate('/security_officer/entry-approval'),
         // },
         {
             icon: LogOut,
-            label: 'Exit Verification',
-            description: 'Verify and record visitor exit',
+            label: 'Record Exit',
+            description: 'Scan departing visitors',
             onClick: () => navigate('/security_officer/exit-verification'),
         },
         {
             icon: Users,
-            label: 'Active Visitors',
-            description: 'View currently on-premise visitors',
+            label: 'Visitors Inside',
+            description: 'See who is currently inside',
             onClick: () => navigate('/security_officer/active-visitors'),
         },
         {
             icon: AlertCircle,
-            label: 'Incident Report',
-            description: 'File security incident report',
+            label: 'Report Issue',
+            description: 'Create a security report',
             onClick: () => navigate('/security_officer/incident-report'),
         },
     ];
@@ -71,8 +71,7 @@ const SecurityQuickActions = () => {
         <div className="space-y-4 md:space-y-6">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
                 <div>
-                    <h2 className="text-[var(--color-text-primary)] text-lg md:text-xl font-bold tracking-tight">Quick Actions</h2>
-                    <p className="text-[var(--color-text-secondary)] text-xs opacity-75 mt-1 uppercase tracking-[0.2em]">Critical security operations</p>
+                    <h2 className="text-[var(--color-text-primary)] text-[13px] md:text-[14px] font-bold uppercase tracking-[0.4em]">Quick Actions</h2>
                 </div>
             </div>
 

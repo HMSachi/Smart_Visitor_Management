@@ -29,7 +29,7 @@ const menuItems = [
   },
   {
     id: "blacklist",
-    label: "Restricted Visitors",
+    label: "Blocked Visitors",
     icon: ShieldAlert,
     path: "/Security_Officer/blacklist-management",
   },

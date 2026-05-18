@@ -72,14 +72,13 @@ const AccessLogs = () => {
 
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 relative z-10">
                 <div>
-                    <h2 className="text-[var(--color-text-primary)] text-lg md:text-xl font-bold tracking-tight flex items-center gap-3">
-                        <History size={20} className="text-primary" />
-                        Access Logs
+                    <h2 className="text-[var(--color-text-primary)] text-[13px] md:text-[14px] font-bold uppercase tracking-[0.4em] flex items-center gap-3">
+                        <History size={16} className="text-primary" />
+                        History Logs
                     </h2>
-                    <p className="text-[var(--color-text-secondary)] text-xs opacity-75 mt-1 uppercase tracking-[0.2em]">Entry & exit transaction history</p>
                 </div>
                 <button className="mt-4 md:mt-0 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all text-xs font-bold uppercase tracking-wide">
-                    Export Report
+                    Download Report
                 </button>
             </div>
 
@@ -87,8 +86,8 @@ const AccessLogs = () => {
                 <table className="w-full text-left">
                     <thead>
                         <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[12px] uppercase tracking-[0.2em] font-normal border-b border-[var(--color-border-soft)] sticky top-0">
-                            <th className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">Timestamp</th>
-                            <th className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">Visitor Name</th>
+                            <th className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">Date & Time</th>
+                            <th className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">Name</th>
                             <th className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">Action</th>
                             <th className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">Location</th>
                             <th className="px-2.5 md:px-6 py-1.5 text-center font-normal text-[12px]">Status</th>

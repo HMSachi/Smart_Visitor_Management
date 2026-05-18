@@ -80,6 +80,14 @@ const Header = ({ title }) => {
             />
           </button>
         )}
+        {title && (
+          <div className="flex items-center gap-3 ml-2 border-l border-[var(--color-border-soft)] pl-4">
+            <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-primary rounded-full shadow-[0_0_15px_var(--color-primary)] animate-pulse hidden sm:block"></div>
+            <span className="text-[var(--color-text-primary)] text-[12px] sm:text-[13px] md:text-[14px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate">
+              {title}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Right: Actions */}
