@@ -1,8 +1,8 @@
 import React from 'react';
-import { Car, Plus, X, Save, Edit2, Loader2 } from 'lucide-react';
+import { Car, Plus, X, Save, Edit2, Loader2, Paperclip, CheckCircle2, AlertCircle } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 
-const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onSave, savingId }) => {
+const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onSave, savingId, onLicenseUpload, onLicenseFileChange, licenseUploading = {}, licenseInputRefs = { current: {} } }) => {
     return (
         <section className="animate-fade-in stagger-item">
             <div className="flex items-center justify-between mb-8">
@@ -64,6 +64,42 @@ const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onSave, savingId 
                             </div>
 
                             <div className="md:col-span-2 flex items-end justify-end gap-2 pb-0.5">
+                                {/* Hidden file input for license upload */}
+                                <input
+                                    type="file"
+                                    accept="image/*,application/pdf"
+                                    className="hidden"
+                                    ref={(el) => { licenseInputRefs.current[vehicle.id] = el; }}
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) onLicenseFileChange(vehicle.id, file);
+                                        e.target.value = '';
+                                    }}
+                                />
+                                {/* License attachment button — icon only, "License" shown as tooltip */}
+                                <button
+                                    type="button"
+                                    onClick={() => onLicenseUpload(vehicle.id)}
+                                    disabled={licenseUploading[vehicle.id] === 'uploading'}
+                                    title="License"
+                                    className={`p-2.5 transition-all disabled:opacity-50 border ${
+                                        licenseUploading[vehicle.id] === 'done'
+                                            ? 'border-green-500/30 text-green-400 bg-green-500/10'
+                                            : licenseUploading[vehicle.id] === 'error'
+                                            ? 'border-red-500/30 text-red-400 bg-red-500/10'
+                                            : 'border-primary/20 text-primary/70 bg-primary/5 hover:bg-primary/15 hover:text-primary'
+                                    }`}
+                                >
+                                    {licenseUploading[vehicle.id] === 'uploading' ? (
+                                        <Loader2 size={16} className="animate-spin" />
+                                    ) : licenseUploading[vehicle.id] === 'done' ? (
+                                        <CheckCircle2 size={16} />
+                                    ) : licenseUploading[vehicle.id] === 'error' ? (
+                                        <AlertCircle size={16} />
+                                    ) : (
+                                        <Paperclip size={16} />
+                                    )}
+                                </button>
                                 <button
                                     type="button"
                                     onClick={() => onSave(vehicle.id)}

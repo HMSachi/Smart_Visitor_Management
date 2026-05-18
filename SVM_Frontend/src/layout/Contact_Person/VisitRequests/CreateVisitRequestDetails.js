@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
@@ -8,6 +8,7 @@ import { AddVisitGroup } from "../../../actions/VisitGroupAction";
 import { AddItem } from "../../../actions/ItemCarriedAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 import { GetAllVisitors } from "../../../actions/VisitorAction";
+import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
 
 import {
   addVehicle, toggleVehicleConfirmed, removeVehicle, updateVehicle, markVehicleSaved,
@@ -18,7 +19,7 @@ import {
 } from "../../../reducers/visitRequestFormSlice";
 import { SectionHeader, InputField } from "../../../components/Contact_Person/VisitRequests/FormComponents";
 import {
-  Car, Users, Package, Plus, Trash2, ArrowLeft, CheckCircle2, Save, Edit2, Loader2
+  Car, Users, Package, Plus, Trash2, ArrowLeft, CheckCircle2, Save, Edit2, Loader2, Paperclip, AlertCircle
 } from "lucide-react";
 import { validateName, validateNIC, validatePhone } from "../../../utils/validation";
 
@@ -46,10 +47,44 @@ const CreateVisitRequestDetails = () => {
   const [itemSavingIndex, setItemSavingIndex] = useState(null);
   const [subVisitorItemSavingIndex, setSubVisitorItemSavingIndex] = useState(null);
 
-  useEffect(() => {
-    dispatch(GetAllBlacklist());
-    dispatch(GetAllVisitors());
-  }, [dispatch]);
+  // Visitor ID comes from Step 1 — the contact person selected the visitor from the dropdown.
+  // formData.VVR_Visitor_id holds it directly; no extra API call needed.
+  const user = useSelector((state) => state.login.user);
+
+  // License upload state per vehicle index: 'uploading' | 'done' | 'error'
+  const [licenseUploading, setLicenseUploading] = useState({});
+  const licenseInputRefs = useRef({});
+
+  const handleLicenseUpload = (index) => {
+    if (licenseInputRefs.current[index]) {
+      licenseInputRefs.current[index].click();
+    }
+  };
+
+  const handleLicenseFileChange = async (index, file) => {
+    if (!file) return;
+    const visitorId = formData.VVR_Visitor_id;
+    if (!visitorId) {
+      alert("Visitor not selected. Please go back to Step 1 and select a visitor.");
+      return;
+    }
+    const pUid = user?.ResultSet?.[0]?.VA_Name || "ContactPerson";
+    setLicenseUploading((prev) => ({ ...prev, [index]: "uploading" }));
+    try {
+      await VisitorAttachmentService.UploadAttachment(
+        visitorId,
+        "Driving Licence",
+        pUid,
+        file
+      );
+      setLicenseUploading((prev) => ({ ...prev, [index]: "done" }));
+      setTimeout(() => setLicenseUploading((prev) => { const n = { ...prev }; delete n[index]; return n; }), 3000);
+    } catch (err) {
+      console.error("License upload failed:", err);
+      setLicenseUploading((prev) => ({ ...prev, [index]: "error" }));
+      setTimeout(() => setLicenseUploading((prev) => { const n = { ...prev }; delete n[index]; return n; }), 3000);
+    }
+  };
 
 
   const handleVehicleSave = async (index) => {
@@ -358,6 +393,42 @@ const CreateVisitRequestDetails = () => {
                         />
                       </div>
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
+                        {/* Hidden file input for license */}
+                        <input
+                          type="file"
+                          accept="image/*,application/pdf"
+                          className="hidden"
+                          ref={(el) => { licenseInputRefs.current[index] = el; }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleLicenseFileChange(index, file);
+                            e.target.value = "";
+                          }}
+                        />
+                        {/* License attachment button — icon only, "License" shown as tooltip */}
+                        <button
+                          type="button"
+                          onClick={() => handleLicenseUpload(index)}
+                          disabled={licenseUploading[index] === "uploading"}
+                          title="License"
+                          className={`p-2 rounded-lg transition-all disabled:opacity-50 border ${
+                            licenseUploading[index] === "done"
+                              ? "border-green-300 text-green-600 bg-green-50"
+                              : licenseUploading[index] === "error"
+                              ? "border-red-300 text-red-500 bg-red-50"
+                              : "border-primary/20 text-primary/70 bg-primary/5 hover:bg-primary/10 hover:text-primary"
+                          }`}
+                        >
+                          {licenseUploading[index] === "uploading" ? (
+                            <Loader2 size={15} className="animate-spin" />
+                          ) : licenseUploading[index] === "done" ? (
+                            <CheckCircle2 size={15} />
+                          ) : licenseUploading[index] === "error" ? (
+                            <AlertCircle size={15} />
+                          ) : (
+                            <Paperclip size={15} />
+                          )}
+                        </button>
                         <button
                           type="button"
                           onClick={() => handleVehicleSave(index)}
