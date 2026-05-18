@@ -9,6 +9,7 @@ import { AddItem } from "../../../actions/ItemCarriedAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 import { GetAllVisitors } from "../../../actions/VisitorAction";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
+import VisitGroupService from "../../../services/VisitGroupService";
 
 import {
   addVehicle, toggleVehicleConfirmed, removeVehicle, updateVehicle, markVehicleSaved,
@@ -51,9 +52,76 @@ const CreateVisitRequestDetails = () => {
   // formData.VVR_Visitor_id holds it directly; no extra API call needed.
   const user = useSelector((state) => state.login.user);
 
-  // License upload state per vehicle index: 'uploading' | 'done' | 'error'
   const [licenseUploading, setLicenseUploading] = useState({});
   const licenseInputRefs = useRef({});
+
+  // Sub-visitor attachment upload state
+  const [personUploading, setPersonUploading] = useState({});
+  const personInputRefs = useRef({});
+
+  const handlePersonUpload = (index) => {
+    if (personInputRefs.current[index]) {
+      personInputRefs.current[index].click();
+    }
+  };
+
+  const handlePersonFileChange = async (index, file) => {
+    if (!file) return;
+    const person = people[index];
+    if (!person.isSavedToServer) {
+      alert("Please save the sub-visitor first before uploading an attachment.");
+      return;
+    }
+    const pUid = user?.ResultSet?.[0]?.VA_Name || "ContactPerson";
+
+    // Primary: use VVG_id stored in Redux from AddVisitGroup ResultSet
+    let subVisitorId = person.vvgId;
+
+    // Fallback: if not in Redux state (e.g. saved before code change or hot-reload),
+    // query the API and find the matching group by request ID + visitor name
+    if (!subVisitorId && effectiveRequestId) {
+      try {
+        const res = await VisitGroupService.GetAllVisitGroup();
+        const groups = res?.data?.ResultSet || res?.data || [];
+        const match = Array.isArray(groups)
+          ? groups.find(
+              (g) =>
+                String(g.VVR_Request_id) === String(effectiveRequestId) &&
+                g.VVG_Visitor_Name?.trim().toLowerCase() === person.name?.trim().toLowerCase()
+            )
+          : null;
+        if (match?.VVG_id) {
+          subVisitorId = match.VVG_id;
+          // Cache it in Redux so subsequent uploads are instant
+          dispatch(updatePerson({ index, field: "vvgId", value: subVisitorId }));
+        }
+      } catch (e) {
+        console.error("Fallback VVG_id lookup failed:", e);
+      }
+    }
+
+    if (!subVisitorId) {
+      alert("Sub-visitor ID not found. Please save the visitor again and retry.");
+      return;
+    }
+
+    setPersonUploading((prev) => ({ ...prev, [index]: "uploading" }));
+    try {
+      await VisitorAttachmentService.UploadSubVisitorAttachment(
+        subVisitorId,
+        formData.VVR_Visitor_id,
+        "NIC",
+        pUid,
+        file
+      );
+      setPersonUploading((prev) => ({ ...prev, [index]: "done" }));
+      setTimeout(() => setPersonUploading((prev) => { const n = { ...prev }; delete n[index]; return n; }), 3000);
+    } catch (err) {
+      console.error("Sub-visitor attachment upload failed:", err);
+      setPersonUploading((prev) => ({ ...prev, [index]: "error" }));
+      setTimeout(() => setPersonUploading((prev) => { const n = { ...prev }; delete n[index]; return n; }), 3000);
+    }
+  };
 
   const handleLicenseUpload = (index) => {
     if (licenseInputRefs.current[index]) {
@@ -160,13 +228,25 @@ const CreateVisitRequestDetails = () => {
     }
     setPersonSavingIndex(index);
     try {
-      await dispatch(AddVisitGroup({
+      const response = await dispatch(AddVisitGroup({
         VVG_Visitor_Name: person.name,
         VVG_NIC_Passport_Number: person.nic,
         VVG_Designation: person.phone,
         VVR_Request_id: effectiveRequestId,
         VVG_Status: "A"
       }));
+
+      // Log the raw response so we can verify the exact shape in DevTools
+      console.log("[AddVisitGroup response]", response);
+
+      // Extract the sub-visitor's VVG_id from the API response ResultSet
+      const vvgId = response?.ResultSet?.[0]?.VVG_id;
+      if (vvgId) {
+        dispatch(updatePerson({ index, field: "vvgId", value: vvgId }));
+      } else {
+        console.warn("[AddVisitGroup] VVG_id not found in ResultSet. Full response:", JSON.stringify(response));
+      }
+
       dispatch(markPersonSaved(index));
       dispatch(togglePersonConfirmed(index));
     } catch (err) {
@@ -503,6 +583,40 @@ const CreateVisitRequestDetails = () => {
                         />
                       </div>
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
+                        {/* Hidden file input for sub-visitor license/nic */}
+                        <input
+                          type="file"
+                          accept=".png,.jpg,.jpeg,.pdf,.xlsx"
+                          className="hidden"
+                          ref={(el) => { personInputRefs.current[index] = el; }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handlePersonFileChange(index, file);
+                            e.target.value = "";
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handlePersonUpload(index)}
+                          disabled={personUploading[index] === "uploading"}
+                          title="NIC / Passport / Driving License"
+                          className={`p-2 rounded-lg transition-all disabled:opacity-50 border ${personUploading[index] === "done"
+                            ? "border-green-300 text-green-600 bg-green-50"
+                            : personUploading[index] === "error"
+                              ? "border-red-300 text-red-500 bg-red-50"
+                              : "border-primary/20 text-primary/70 bg-primary/5 hover:bg-primary/10 hover:text-primary"
+                            }`}
+                        >
+                          {personUploading[index] === "uploading" ? (
+                            <Loader2 size={15} className="animate-spin" />
+                          ) : personUploading[index] === "done" ? (
+                            <CheckCircle2 size={15} />
+                          ) : personUploading[index] === "error" ? (
+                            <AlertCircle size={15} />
+                          ) : (
+                            <Paperclip size={15} />
+                          )}
+                        </button>
                         <button
                           type="button"
                           onClick={() => handlePersonSave(index)}

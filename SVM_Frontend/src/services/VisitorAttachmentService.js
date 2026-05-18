@@ -40,6 +40,34 @@ const UploadAttachment = async (visitorId, fileCategory, pUid, file) => {
 };
 
 /**
+ * Upload an attachment for a sub-visitor.
+ * @param {number|string} subVisitorId - VVG_id of the sub-visitor
+ * @param {number|string} visitorId    - VV_Visitor_id of the main visitor
+ * @param {string}        fileCategory - e.g. "NIC", "Passport", "Driving License"
+ * @param {string}        pUid         - logged-in user name / UID
+ * @param {File}          file         - the file object to upload
+ */
+const UploadSubVisitorAttachment = async (subVisitorId, visitorId, fileCategory, pUid, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("VVG_id", subVisitorId);
+  formData.append("VV_Visitor_id", visitorId);
+  formData.append("VAT_File_Category", fileCategory);
+  formData.append("P_UID", pUid);
+
+  const config = {
+    method: "post",
+    url: getApiUrl("/VisitorAttachment/UploadAttachment"),
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  };
+
+  return axios.request(config).then((response) => response);
+};
+
+/**
  * Get all attachments for a visitor.
  * @param {number|string} visitorId - VV_Visitor_id
  */
@@ -89,6 +117,7 @@ const DownloadAttachment = async (vatId, fileName = "attachment") => {
 
 export default {
   UploadAttachment,
+  UploadSubVisitorAttachment,
   GetAttachmentsByVisitorId,
   DownloadAttachment,
 };
