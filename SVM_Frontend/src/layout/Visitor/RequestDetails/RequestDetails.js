@@ -1,7 +1,28 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { ArrowLeft, Calendar, Hash, MapPin, User, Mail, Phone, Building2, Briefcase, Car, Users, Package, CheckCircle2, AlertCircle, Clock, FolderOpen, FileText, ImageIcon, Download, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Hash,
+  MapPin,
+  User,
+  Mail,
+  Phone,
+  Building2,
+  Briefcase,
+  Car,
+  Users,
+  Package,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  FolderOpen,
+  FileText,
+  ImageIcon,
+  Download,
+  X,
+} from "lucide-react";
 import VisitorService from "../../../services/VisitorService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
@@ -76,7 +97,9 @@ const SectionCard = ({ title, icon: Icon, children }) => (
     <div className="flex items-center gap-2">
       <div className="w-[3px] h-3.5 bg-primary rounded-full"></div>
       <Icon size={13} className="text-primary/70" />
-      <h3 className="text-[13px] font-medium capitalize tracking-tight text-text-primary">{title}</h3>
+      <h3 className="text-[13px] font-medium capitalize tracking-tight text-text-primary">
+        {title}
+      </h3>
     </div>
     {children}
   </div>
@@ -88,7 +111,9 @@ const RequestDetails = () => {
   const location = useLocation();
   const { requestId } = useParams();
 
-  const { visitRequestsByVis } = useSelector((state) => state.visitRequestsState);
+  const { visitRequestsByVis } = useSelector(
+    (state) => state.visitRequestsState,
+  );
   const requestFromState = location.state?.request;
 
   const currentRequest = useMemo(() => {
@@ -114,55 +139,92 @@ const RequestDetails = () => {
   });
 
   const openViewAttachments = async (visitorId, visitorName) => {
-    setViewAttachments({ open: true, visitorId, visitorName, loading: true, list: [], error: null });
+    setViewAttachments({
+      open: true,
+      visitorId,
+      visitorName,
+      loading: true,
+      list: [],
+      error: null,
+    });
     try {
-      const response = await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
-      const attachments = Array.isArray(response?.data?.ResultSet) ? response.data.ResultSet : response?.data || [];
-      setViewAttachments((prev) => ({ ...prev, loading: false, list: attachments }));
+      const response =
+        await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const rawList = response?.data?.ResultSet || response?.data || [];
+      const list = Array.isArray(rawList) ? rawList : [];
+      setViewAttachments((prev) => ({ ...prev, loading: false, list }));
     } catch (err) {
-      setViewAttachments((prev) => ({ ...prev, loading: false, error: err.message || "Failed to load attachments" }));
+      setViewAttachments((prev) => ({
+        ...prev,
+        loading: false,
+        error: err.message || "Failed to load attachments",
+      }));
     }
   };
 
   const closeViewAttachments = () => {
-    setViewAttachments({ open: false, visitorId: null, visitorName: "", loading: false, list: [], error: null });
+    setViewAttachments({
+      open: false,
+      visitorId: null,
+      visitorName: "",
+      loading: false,
+      list: [],
+      error: null,
+    });
   };
 
   useEffect(() => {
     const loadExtraDetails = async () => {
       try {
         if (currentRequest?.VVR_Visitor_id) {
-          const visitorRes = await VisitorService.GetVisitorById(currentRequest.VVR_Visitor_id);
+          const visitorRes = await VisitorService.GetVisitorById(
+            currentRequest.VVR_Visitor_id,
+          );
           const visitorSet = visitorRes?.data?.ResultSet;
-          const record = Array.isArray(visitorSet) ? visitorSet[0] : visitorSet || visitorRes?.data;
+          const record = Array.isArray(visitorSet)
+            ? visitorSet[0]
+            : visitorSet || visitorRes?.data;
           setVisitorRecord(record || null);
         }
 
         if (currentRequest?.VVR_Request_id) {
           const groupRes = await VisitGroupService.GetAllVisitGroup();
           const allGroups = groupRes?.data?.ResultSet || groupRes?.data || [];
-          const matchedGroup = (Array.isArray(allGroups) ? allGroups : []).filter(
-            (m) => String(m.VVR_Request_id) === String(currentRequest.VVR_Request_id),
+          const matchedGroup = (
+            Array.isArray(allGroups) ? allGroups : []
+          ).filter(
+            (m) =>
+              String(m.VVR_Request_id) ===
+              String(currentRequest.VVR_Request_id),
           );
           setGroupMembers(matchedGroup);
 
           const itemsRes = await ItemCarriedService.GetAllItemsCarried();
           const allItems = itemsRes?.data?.ResultSet || itemsRes?.data || [];
           const matchedItems = (Array.isArray(allItems) ? allItems : []).filter(
-            (i) => String(i.VVR_Request_id) === String(currentRequest.VVR_Request_id),
+            (i) =>
+              String(i.VVR_Request_id) ===
+              String(currentRequest.VVR_Request_id),
           );
           setItems(matchedItems);
 
           const vehicleRes = await VehicleService.GetAllVehicles();
-          const allVehicles = vehicleRes?.data?.ResultSet || vehicleRes?.data || [];
-          const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : []).filter(
-            (v) => String(v.VVR_Request_id) === String(currentRequest.VVR_Request_id)
+          const allVehicles =
+            vehicleRes?.data?.ResultSet || vehicleRes?.data || [];
+          const matchedVehicles = (
+            Array.isArray(allVehicles) ? allVehicles : []
+          ).filter(
+            (v) =>
+              String(v.VVR_Request_id) ===
+              String(currentRequest.VVR_Request_id),
           );
           setVehicleRecords(matchedVehicles);
 
           // Load joint items (items paired with sub-visitor names)
           try {
-            const jointRes = await VisitorService.GetVisitorJoint(currentRequest.VVR_Request_id);
+            const jointRes = await VisitorService.GetVisitorJoint(
+              currentRequest.VVR_Request_id,
+            );
             const jointData = jointRes?.data?.ResultSet || jointRes?.data || [];
             setJointItems(Array.isArray(jointData) ? jointData : []);
           } catch {
@@ -211,7 +273,9 @@ const RequestDetails = () => {
   const handleAccept = async () => {
     if (!currentRequest?.VVR_Request_id) return;
     try {
-      await dispatch(UpdateVisitRequest({ ...currentRequest, VVR_Status: "ACCEPTED" }));
+      await dispatch(
+        UpdateVisitRequest({ ...currentRequest, VVR_Status: "ACCEPTED" }),
+      );
       setShowSuccess(true);
     } catch (error) {
       console.error("Error accepting request:", error);
@@ -244,9 +308,12 @@ const RequestDetails = () => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"></div>
           <div className="relative bg-background-paper p-6 rounded-[20px] shadow-2xl border border-border-soft flex flex-col max-w-sm w-full animate-scale-in">
-            <h3 className="text-lg font-bold text-text-primary mb-2">Success</h3>
+            <h3 className="text-lg font-bold text-text-primary mb-2">
+              Success
+            </h3>
             <p className="text-[13px] text-text-secondary mb-6 leading-relaxed">
-              Request accepted successfully. The contact person will be notified.
+              Request accepted successfully. The contact person will be
+              notified.
             </p>
             <div className="flex justify-end">
               <button
@@ -284,10 +351,26 @@ const RequestDetails = () => {
 
         <SectionCard title="Request summary" icon={Hash}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-            <SmallField label="Reference ID" value={`#${summary.id}`} icon={Hash} />
-            <SmallField label="Visit date" value={summary.visitDate} icon={Calendar} />
-            <SmallField label="Visiting areas" value={summary.areas} icon={MapPin} />
-            <SmallField label="Submitted purpose" value={summary.purpose} icon={Briefcase} />
+            <SmallField
+              label="Reference ID"
+              value={`#${summary.id}`}
+              icon={Hash}
+            />
+            <SmallField
+              label="Visit date"
+              value={summary.visitDate}
+              icon={Calendar}
+            />
+            <SmallField
+              label="Visiting areas"
+              value={summary.areas}
+              icon={MapPin}
+            />
+            <SmallField
+              label="Submitted purpose"
+              value={summary.purpose}
+              icon={Briefcase}
+            />
           </div>
         </SectionCard>
 
@@ -303,7 +386,12 @@ const RequestDetails = () => {
                 <button
                   type="button"
                   title="View uploaded attachments"
-                  onClick={() => openViewAttachments(visitorRecord?.VV_Visitor_id, summary.name)}
+                  onClick={() =>
+                    openViewAttachments(
+                      visitorRecord?.VV_Visitor_id,
+                      summary.name,
+                    )
+                  }
                   className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all shrink-0 cursor-pointer active:scale-95"
                 >
                   <FolderOpen size={13} />
@@ -315,36 +403,66 @@ const RequestDetails = () => {
             </div>
             <SmallField label="Email" value={summary.email} icon={Mail} />
             <SmallField label="Phone" value={summary.phone} icon={Phone} />
-            <SmallField label="Company" value={summary.company} icon={Building2} />
-            <SmallField label="Visitor type" value={summary.visitorType} icon={Briefcase} />
+            <SmallField
+              label="Company"
+              value={summary.company}
+              icon={Building2}
+            />
+            <SmallField
+              label="Visitor type"
+              value={summary.visitorType}
+              icon={Briefcase}
+            />
           </div>
 
           {/* Items carried by the main visitor */}
           <div className="mt-3 pt-3 border-t border-border-soft">
             <div className="flex items-center gap-2 mb-2">
               <Package size={13} className="text-primary/70" />
-              <p className="text-[12px] font-medium capitalize tracking-tight text-text-primary">Items carried</p>
+              <p className="text-[12px] font-medium capitalize tracking-tight text-text-primary">
+                Items carried
+              </p>
             </div>
             {items.length > 0 ? (
               <div className="border border-border-soft rounded-lg overflow-auto max-h-[200px]">
                 <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft min-w-max">
-                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[2] min-w-[120px]">Item name</span>
-                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight w-16 text-center">Qty</span>
-                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[3] text-center min-w-[120px]">Description</span>
-                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight w-28 text-right min-w-[100px]">Status</span>
+                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[2] min-w-[120px]">
+                    Item name
+                  </span>
+                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight w-16 text-center">
+                    Qty
+                  </span>
+                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight flex-[3] text-center min-w-[120px]">
+                    Description
+                  </span>
+                  <span className="text-[12px] font-medium text-text-secondary capitalize tracking-tight w-28 text-right min-w-[100px]">
+                    Status
+                  </span>
                 </div>
                 <div className="divide-y divide-border-soft/50">
                   {items.map((item, idx) => {
-                    const s = (item.VIC_Status || "").toString().trim().toUpperCase();
+                    const s = (item.VIC_Status || "")
+                      .toString()
+                      .trim()
+                      .toUpperCase();
                     const isTaken = s === "A";
                     const isNotTaken = s === "I";
                     return (
-                      <div key={item.VIC_Item_id} className={`flex flex-row items-center justify-between gap-1.5 px-3 py-1.5 min-w-max ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/30'}`}>
-                        <span className="text-[12px] font-normal text-text-primary flex-[2] truncate min-w-[120px]">{item.VIC_Item_Name}</span>
+                      <div
+                        key={item.VIC_Item_id}
+                        className={`flex flex-row items-center justify-between gap-1.5 px-3 py-1.5 min-w-max ${idx % 2 === 0 ? "bg-background-paper" : "bg-background-alt/30"}`}
+                      >
+                        <span className="text-[12px] font-normal text-text-primary flex-[2] truncate min-w-[120px]">
+                          {item.VIC_Item_Name}
+                        </span>
                         <div className="w-16 flex justify-center">
-                          <span className="text-[12px] font-medium text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">x{item.VIC_Quantity || 1}</span>
+                          <span className="text-[12px] font-medium text-primary bg-primary/5 px-2 py-0.5 rounded tracking-wide">
+                            x{item.VIC_Quantity || 1}
+                          </span>
                         </div>
-                        <span className="text-[12px] font-normal text-text-dim flex-[3] text-center truncate min-w-[120px]">{item.VIC_Designation || item.VIC_Description || "-"}</span>
+                        <span className="text-[12px] font-normal text-text-dim flex-[3] text-center truncate min-w-[120px]">
+                          {item.VIC_Designation || item.VIC_Description || "-"}
+                        </span>
                         {/* Status badge */}
                         <div className="w-28 flex justify-end min-w-[100px]">
                           {isTaken ? (
@@ -370,7 +488,9 @@ const RequestDetails = () => {
                 </div>
               </div>
             ) : (
-              <p className="text-[11px] text-text-secondary font-medium capitalize tracking-[0.12em]">No items declared by the main visitor.</p>
+              <p className="text-[11px] text-text-secondary font-medium capitalize tracking-[0.12em]">
+                No items declared by the main visitor.
+              </p>
             )}
           </div>
         </SectionCard>
@@ -379,20 +499,33 @@ const RequestDetails = () => {
           {vehicleRecords.length > 0 ? (
             <div className="border border-border-soft rounded-lg overflow-auto max-h-[250px]">
               <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft min-w-max">
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 min-w-[100px]">Vehicle type</span>
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-right min-w-[100px]">Vehicle number</span>
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 min-w-[100px]">
+                  Vehicle type
+                </span>
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-right min-w-[100px]">
+                  Vehicle number
+                </span>
               </div>
               <div className="divide-y divide-border-soft">
                 {vehicleRecords.map((vehicle, idx) => (
-                  <div key={vehicle.VV_Vehicle_id || idx} className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/50'}`}>
-                    <span className="text-[11px] font-medium text-text-secondary capitalize flex-1 min-w-[100px]">{vehicle.VV_Vehicle_Type}</span>
-                    <span className="text-[11px] font-medium text-text-primary flex-1 text-right min-w-[100px]">{vehicle.VV_Vehicle_Number}</span>
+                  <div
+                    key={vehicle.VV_Vehicle_id || idx}
+                    className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${idx % 2 === 0 ? "bg-background-paper" : "bg-background-alt/50"}`}
+                  >
+                    <span className="text-[11px] font-medium text-text-secondary capitalize flex-1 min-w-[100px]">
+                      {vehicle.VV_Vehicle_Type}
+                    </span>
+                    <span className="text-[11px] font-medium text-text-primary flex-1 text-right min-w-[100px]">
+                      {vehicle.VV_Vehicle_Number}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <p className="text-[11px] text-text-dim font-medium capitalize tracking-[0.12em]">No vehicles registered.</p>
+            <p className="text-[11px] text-text-dim font-medium capitalize tracking-[0.12em]">
+              No vehicles registered.
+            </p>
           )}
         </SectionCard>
 
@@ -400,22 +533,39 @@ const RequestDetails = () => {
           {groupMembers.length > 0 ? (
             <div className="border border-border-soft rounded-lg overflow-auto max-h-[250px]">
               <div className="flex justify-between items-center px-3 py-1.5 bg-background-alt border-b border-border-soft min-w-max">
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 min-w-[120px]">Name</span>
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-center min-w-[130px]">NIC</span>
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-right min-w-[120px]">Phone number</span>
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 min-w-[120px]">
+                  Name
+                </span>
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-center min-w-[130px]">
+                  NIC
+                </span>
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-right min-w-[120px]">
+                  Phone number
+                </span>
               </div>
               <div className="divide-y divide-border-soft">
                 {groupMembers.map((member, idx) => (
-                  <div key={member.VVG_id} className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${idx % 2 === 0 ? 'bg-background-paper' : 'bg-background-alt/50'}`}>
-                    <span className="text-[11px] font-medium text-text-primary flex-1 min-w-[120px]">{member.VVG_Visitor_Name}</span>
-                    <span className="text-[11px] font-medium text-text-secondary capitalize flex-1 text-center min-w-[130px]">{member.VVG_NIC_Passport_Number}</span>
-                    <span className="text-[11px] font-medium text-text-secondary flex-1 text-right min-w-[120px]">{member.VVG_Designation || "-"}</span>
+                  <div
+                    key={member.VVG_id}
+                    className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${idx % 2 === 0 ? "bg-background-paper" : "bg-background-alt/50"}`}
+                  >
+                    <span className="text-[11px] font-medium text-text-primary flex-1 min-w-[120px]">
+                      {member.VVG_Visitor_Name}
+                    </span>
+                    <span className="text-[11px] font-medium text-text-secondary capitalize flex-1 text-center min-w-[130px]">
+                      {member.VVG_NIC_Passport_Number}
+                    </span>
+                    <span className="text-[11px] font-medium text-text-secondary flex-1 text-right min-w-[120px]">
+                      {member.VVG_Designation || "-"}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <p className="text-[11px] text-text-dim font-medium capitalize tracking-[0.12em]">No additional visitors submitted.</p>
+            <p className="text-[11px] text-text-dim font-medium capitalize tracking-[0.12em]">
+              No additional visitors submitted.
+            </p>
           )}
         </SectionCard>
 
@@ -458,9 +608,16 @@ const RequestDetails = () => {
         <SectionCard title="All submitted raw fields" icon={Hash}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {rawFields.map(([key, value]) => (
-              <div key={key} className="rounded-2xl border border-border-soft bg-background-alt/50 px-4 py-1.5">
-                <p className="text-[9px] font-semibold text-text-secondary capitalize tracking-[0.14em] mb-1">{toFriendlyFieldName(key)}</p>
-                <p className="text-[11px] font-semibold text-text-primary break-words">{formatRawFieldValue(key, value)}</p>
+              <div
+                key={key}
+                className="rounded-2xl border border-border-soft bg-background-alt/50 px-4 py-1.5"
+              >
+                <p className="text-[9px] font-semibold text-text-secondary capitalize tracking-[0.14em] mb-1">
+                  {toFriendlyFieldName(key)}
+                </p>
+                <p className="text-[11px] font-semibold text-text-primary break-words">
+                  {formatRawFieldValue(key, value)}
+                </p>
               </div>
             ))}
           </div>
@@ -483,7 +640,8 @@ const RequestDetails = () => {
                   </h2>
                   {viewAttachments.visitorName && (
                     <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
-                      {viewAttachments.visitorName} · #{viewAttachments.visitorId}
+                      {viewAttachments.visitorName} · #
+                      {viewAttachments.visitorId}
                     </p>
                   )}
                 </div>
@@ -519,7 +677,7 @@ const RequestDetails = () => {
                   </p>
                 </div>
               ) : (
-                <ul className="space-y-2">
+                <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
                   {viewAttachments.list.map((att, idx) => {
                     const category =
                       att.VAT_File_Category || att.FileCategory || "document";
@@ -528,8 +686,8 @@ const RequestDetails = () => {
                       att.FileName ||
                       att.FilePath ||
                       `file-${idx + 1}`;
-                    const fileUrl =
-                      att.VAT_File_Path || att.FilePath || att.FileUrl || null;
+                    const vatId =
+                      att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
                     const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
                       fileName,
                     );
@@ -557,17 +715,20 @@ const RequestDetails = () => {
                             {category}
                           </p>
                         </div>
-                        {fileUrl && (
-                          <a
-                            href={fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/10 text-primary/70 hover:bg-primary/25 hover:text-primary transition-all shrink-0"
-                            title="Download file"
-                          >
-                            <Download size={12} />
-                          </a>
-                        )}
+                        <button
+                          type="button"
+                          title="Download file"
+                          onClick={() =>
+                            vatId &&
+                            VisitorAttachmentService.DownloadAttachment(
+                              vatId,
+                              fileName,
+                            )
+                          }
+                          className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
+                        >
+                          <Download size={18} />
+                        </button>
                       </li>
                     );
                   })}

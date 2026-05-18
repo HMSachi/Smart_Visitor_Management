@@ -53,7 +53,42 @@ const GetAttachmentsByVisitorId = async (visitorId) => {
   return axios.request(config).then((response) => response);
 };
 
+/**
+ * Download an attachment file by its VAT_Id.
+ * @param {number|string} vatId    - VAT_Id of the attachment record
+ * @param {string}        fileName - Suggested file name for the download
+ */
+const DownloadAttachment = async (vatId, fileName = "attachment") => {
+  const config = {
+    method: "get",
+    url: getApiUrl(
+      `/VisitorAttachment/DownloadAttachment?VAT_Id=${encodeURIComponent(vatId)}`
+    ),
+    responseType: "blob",
+  };
+
+  const response = await axios.request(config);
+
+  // Derive file name from Content-Disposition header if available
+  const disposition = response.headers?.["content-disposition"] || "";
+  const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+  const resolvedName = match ? match[1].replace(/['"]/g, "") : fileName;
+
+  // Trigger browser download
+  const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = resolvedName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(blobUrl);
+
+  return response;
+};
+
 export default {
   UploadAttachment,
   GetAttachmentsByVisitorId,
+  DownloadAttachment,
 };

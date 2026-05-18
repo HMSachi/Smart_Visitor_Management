@@ -30,12 +30,7 @@ import { useThemeMode } from "../../theme/ThemeModeContext";
 import SubVisitorQRService from "../../services/SubVisitorQRService";
 import VisitorAttachmentService from "../../services/VisitorAttachmentService";
 
-const SplitSection = ({
-  title,
-  icon: Icon,
-  isLight,
-  children,
-}) => (
+const SplitSection = ({ title, icon: Icon, isLight, children }) => (
   <div className="flex flex-col gap-1">
     <div className="flex items-center gap-1.5">
       <div className="w-[3px] h-3.5 bg-primary rounded-full"></div>
@@ -54,10 +49,11 @@ const SplitSection = ({
 
 const SectionCard = ({ children, isLight, darkClassName = "" }) => (
   <div
-    className={`rounded-[12px] border overflow-hidden ${isLight
-      ? "bg-white border-gray-200"
-      : `bg-black/25 border-white/10 ${darkClassName}`
-      }`}
+    className={`rounded-[12px] border overflow-hidden ${
+      isLight
+        ? "bg-white border-gray-200"
+        : `bg-black/25 border-white/10 ${darkClassName}`
+    }`}
   >
     {children}
   </div>
@@ -79,10 +75,11 @@ const Field = ({ label, value, icon: Icon, isLight }) => (
       </label>
     </div>
     <div
-      className={`px-3 py-1 rounded-lg border transition-all duration-300 ${isLight
-        ? "bg-gray-50/30 border-gray-100 text-[#1A1A1A]"
-        : "bg-black/20 border-white/5 text-white"
-        }`}
+      className={`px-3 py-1 rounded-lg border transition-all duration-300 ${
+        isLight
+          ? "bg-gray-50/30 border-gray-100 text-[#1A1A1A]"
+          : "bg-black/20 border-white/5 text-white"
+      }`}
     >
       <p className="text-[12px] font-medium tracking-tight">
         {value || "No data"}
@@ -92,12 +89,19 @@ const Field = ({ label, value, icon: Icon, isLight }) => (
 );
 
 const SimpleTable = ({ columns, data, isLight }) => (
-  <div className={`overflow-x-auto rounded-xl border ${isLight ? "border-gray-100" : "border-white/5"}`}>
+  <div
+    className={`overflow-x-auto rounded-xl border ${isLight ? "border-gray-100" : "border-white/5"}`}
+  >
     <table className="w-full text-left border-collapse">
       <thead>
-        <tr className={`border-b ${isLight ? "bg-gray-50/50 border-gray-100" : "bg-black/20 border-white/5"}`}>
+        <tr
+          className={`border-b ${isLight ? "bg-gray-50/50 border-gray-100" : "bg-black/20 border-white/5"}`}
+        >
           {columns.map((col, idx) => (
-            <th key={idx} className={`py-1.5 px-2.5 text-[12px] font-medium tracking-tight capitalize ${isLight ? "text-gray-400" : "text-white/30"}`}>
+            <th
+              key={idx}
+              className={`py-1.5 px-2.5 text-[12px] font-medium tracking-tight capitalize ${isLight ? "text-gray-400" : "text-white/30"}`}
+            >
               {col.label}
             </th>
           ))}
@@ -105,9 +109,15 @@ const SimpleTable = ({ columns, data, isLight }) => (
       </thead>
       <tbody>
         {data.map((row, rowIdx) => (
-          <tr key={rowIdx} className={`border-b last:border-b-0 transition-colors ${isLight ? "border-gray-50 hover:bg-gray-50/30" : "border-white/[0.02] hover:bg-white/[0.01]"}`}>
+          <tr
+            key={rowIdx}
+            className={`border-b last:border-b-0 transition-colors ${isLight ? "border-gray-50 hover:bg-gray-50/30" : "border-white/[0.02] hover:bg-white/[0.01]"}`}
+          >
             {columns.map((col, colIdx) => (
-              <td key={colIdx} className={`py-1.5 px-2.5 text-[12px] font-normal tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}>
+              <td
+                key={colIdx}
+                className={`py-1.5 px-2.5 text-[12px] font-normal tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white/90"}`}
+              >
                 {row[col.key] || "—"}
               </td>
             ))}
@@ -150,7 +160,14 @@ const PersonnelAuthProtocol = ({
 
   // Single popup state for whichever sub-visitor QR is open
   // { open, member, idx, loading, qrCode, error }
-  const [popupQR, setPopupQR] = useState({ open: false, member: null, idx: null, loading: false, qrCode: null, error: null });
+  const [popupQR, setPopupQR] = useState({
+    open: false,
+    member: null,
+    idx: null,
+    loading: false,
+    qrCode: null,
+    error: null,
+  });
   // Cache generated QRs by index so re-opening is instant
   const [qrCache, setQrCache] = useState({});
 
@@ -164,30 +181,68 @@ const PersonnelAuthProtocol = ({
     error: null,
   });
 
-  const handleOpenSubVisitorQR = useCallback(async (member, idx) => {
-    const cached = qrCache[idx];
-    if (cached) {
-      setPopupQR({ open: true, member, idx, loading: false, qrCode: cached, error: null });
-      return;
-    }
-    setPopupQR({ open: true, member, idx, loading: true, qrCode: null, error: null });
-    try {
-      const subVisitorData = { name: member.fullName, nic: member.nic };
-      const mainVisitorData = {
-        visitorName: visitor.name,
-        visitorId: visitor.raw?.VVR_Visitor_id || visitor.id,
-        VV_Name: visitor.name,
-        VV_Visitor_id: visitor.raw?.VVR_Visitor_id,
-      };
-      const qrCode = await SubVisitorQRService.GenerateSubVisitorQR(subVisitorData, mainVisitorData, visitor.id);
-      setQrCache((prev) => ({ ...prev, [idx]: qrCode }));
-      setPopupQR((prev) => ({ ...prev, loading: false, qrCode, error: null }));
-    } catch (err) {
-      setPopupQR((prev) => ({ ...prev, loading: false, error: err.message || "Failed to generate QR" }));
-    }
-  }, [qrCache, visitor]);
+  const handleOpenSubVisitorQR = useCallback(
+    async (member, idx) => {
+      const cached = qrCache[idx];
+      if (cached) {
+        setPopupQR({
+          open: true,
+          member,
+          idx,
+          loading: false,
+          qrCode: cached,
+          error: null,
+        });
+        return;
+      }
+      setPopupQR({
+        open: true,
+        member,
+        idx,
+        loading: true,
+        qrCode: null,
+        error: null,
+      });
+      try {
+        const subVisitorData = { name: member.fullName, nic: member.nic };
+        const mainVisitorData = {
+          visitorName: visitor.name,
+          visitorId: visitor.raw?.VVR_Visitor_id || visitor.id,
+          VV_Name: visitor.name,
+          VV_Visitor_id: visitor.raw?.VVR_Visitor_id,
+        };
+        const qrCode = await SubVisitorQRService.GenerateSubVisitorQR(
+          subVisitorData,
+          mainVisitorData,
+          visitor.id,
+        );
+        setQrCache((prev) => ({ ...prev, [idx]: qrCode }));
+        setPopupQR((prev) => ({
+          ...prev,
+          loading: false,
+          qrCode,
+          error: null,
+        }));
+      } catch (err) {
+        setPopupQR((prev) => ({
+          ...prev,
+          loading: false,
+          error: err.message || "Failed to generate QR",
+        }));
+      }
+    },
+    [qrCache, visitor],
+  );
 
-  const handleClosePopup = () => setPopupQR({ open: false, member: null, idx: null, loading: false, qrCode: null, error: null });
+  const handleClosePopup = () =>
+    setPopupQR({
+      open: false,
+      member: null,
+      idx: null,
+      loading: false,
+      qrCode: null,
+      error: null,
+    });
 
   const handleDownloadSubQR = (memberName) => {
     const svgEl = document.querySelector("#sub-qr-popup svg");
@@ -211,18 +266,38 @@ const PersonnelAuthProtocol = ({
   };
 
   const openViewAttachments = async (visitorId, visitorName) => {
-    setViewAttachments({ open: true, visitorId, visitorName, loading: true, list: [], error: null });
+    setViewAttachments({
+      open: true,
+      visitorId,
+      visitorName,
+      loading: true,
+      list: [],
+      error: null,
+    });
     try {
-      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
-      const list = res?.data?.ResultSet || res?.data || [];
+      const res =
+        await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const list = Array.isArray(rawList) ? rawList : [];
       setViewAttachments((prev) => ({ ...prev, loading: false, list }));
     } catch (err) {
-      setViewAttachments((prev) => ({ ...prev, loading: false, error: err?.message || "Failed to load attachments." }));
+      setViewAttachments((prev) => ({
+        ...prev,
+        loading: false,
+        error: err?.message || "Failed to load attachments.",
+      }));
     }
   };
 
   const closeViewAttachments = () => {
-    setViewAttachments({ open: false, visitorId: null, visitorName: "", loading: false, list: [], error: null });
+    setViewAttachments({
+      open: false,
+      visitorId: null,
+      visitorName: "",
+      loading: false,
+      list: [],
+      error: null,
+    });
   };
 
   if (!visitor) return null;
@@ -243,7 +318,9 @@ const PersonnelAuthProtocol = ({
                 <div className="w-[3px] h-3.5 bg-primary rounded-full" />
                 <div className="flex items-center gap-1.5">
                   <User size={13} className="text-primary/70" />
-                  <h3 className={`text-[13px] font-medium capitalize tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                  <h3
+                    className={`text-[13px] font-medium capitalize tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                  >
                     Visitor details
                   </h3>
                 </div>
@@ -261,7 +338,12 @@ const PersonnelAuthProtocol = ({
                 <button
                   type="button"
                   title="View uploaded attachments"
-                  onClick={() => openViewAttachments(visitor.id || visitor.raw?.VVR_Visitor_id, visitor.name || visitor.fullName)}
+                  onClick={() =>
+                    openViewAttachments(
+                      visitor.id || visitor.raw?.VVR_Visitor_id,
+                      visitor.name || visitor.fullName,
+                    )
+                  }
                   className={`absolute -top-7 right-0 p-2 rounded-lg border-2 transition-all font-semibold z-10 ${
                     isLight
                       ? "bg-primary/15 border-primary/40 text-primary hover:bg-primary/25 hover:border-primary/60 active:scale-95"
@@ -292,17 +374,24 @@ const PersonnelAuthProtocol = ({
             </div>
 
             {/* Items carried by the main visitor — embedded as a subsection */}
-            <div className={`mt-3 pt-3 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}>
+            <div
+              className={`mt-3 pt-3 border-t ${isLight ? "border-gray-100" : "border-white/10"}`}
+            >
               <div className="flex items-center gap-2 mb-2">
                 <Package size={13} className="text-primary/70" />
-                <p className={`capitalize text-[12px] font-medium tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                <p
+                  className={`capitalize text-[12px] font-medium tracking-tight ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                >
                   Items carried
                 </p>
               </div>
               {itemsCarried && itemsCarried.length > 0 ? (
                 <div className="grid grid-cols-1 gap-2">
                   {itemsCarried.map((item, idx) => {
-                    const s = (item.status || "").toString().trim().toUpperCase();
+                    const s = (item.status || "")
+                      .toString()
+                      .trim()
+                      .toUpperCase();
                     const isTaken = s === "A";
                     const isNotTaken = s === "I";
                     return (
@@ -316,9 +405,24 @@ const PersonnelAuthProtocol = ({
                             : "bg-black/30 border-white/8"
                         }`}
                       >
-                        <Field label="Item name" value={item.itemName} icon={Package} isLight={isLight} />
-                        <Field label="Qty" value={item.quantity ? String(item.quantity) : "—"} icon={Hash} isLight={isLight} />
-                        <Field label="Description" value={item.description || "—"} icon={Briefcase} isLight={isLight} />
+                        <Field
+                          label="Item name"
+                          value={item.itemName}
+                          icon={Package}
+                          isLight={isLight}
+                        />
+                        <Field
+                          label="Qty"
+                          value={item.quantity ? String(item.quantity) : "—"}
+                          icon={Hash}
+                          isLight={isLight}
+                        />
+                        <Field
+                          label="Description"
+                          value={item.description || "—"}
+                          icon={Briefcase}
+                          isLight={isLight}
+                        />
                         {/* Status chip — full width */}
                         <div className="md:col-span-3 flex items-center gap-2">
                           {isTaken ? (
@@ -343,8 +447,12 @@ const PersonnelAuthProtocol = ({
                   })}
                 </div>
               ) : (
-                <div className={`border border-dashed rounded-xl p-2 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}>
-                  <p className={`text-[10px] font-semibold capitalize tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}>
+                <div
+                  className={`border border-dashed rounded-xl p-2 text-center ${isLight ? "border-gray-200" : "border-white/10"}`}
+                >
+                  <p
+                    className={`text-[10px] font-semibold capitalize tracking-[0.16em] ${isLight ? "text-gray-400" : "text-gray-500"}`}
+                  >
                     No items declared
                   </p>
                 </div>
@@ -358,25 +466,27 @@ const PersonnelAuthProtocol = ({
         <div className="p-3 md:p-5">
           <SplitSection title="Places to visit" icon={MapPin} isLight={isLight}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-              {(visitor.areas || visitor.selectedAreas) && (visitor.areas || visitor.selectedAreas).map((area, idx) => (
-                <motion.div
-                  key={idx}
-                  whileHover={{
-                    scale: 1.02,
-                    borderColor: "var(--color-primary)",
-                  }}
-                  className={`px-4 py-2.5 border rounded-xl text-[10px] font-bold capitalize tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm group/zone ${isLight
-                    ? "bg-gray-50 border-gray-100 text-[#1A1A1A]"
-                    : "bg-black/40 border-white/10 text-white"
+              {(visitor.areas || visitor.selectedAreas) &&
+                (visitor.areas || visitor.selectedAreas).map((area, idx) => (
+                  <motion.div
+                    key={idx}
+                    whileHover={{
+                      scale: 1.02,
+                      borderColor: "var(--color-primary)",
+                    }}
+                    className={`px-4 py-2.5 border rounded-xl text-[10px] font-bold capitalize tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm group/zone ${
+                      isLight
+                        ? "bg-gray-50 border-gray-100 text-[#1A1A1A]"
+                        : "bg-black/40 border-white/10 text-white"
                     }`}
-                >
-                  <MapPin
-                    size={12}
-                    className="text-primary/50 group-hover/zone:text-primary transition-colors"
-                  />
-                  {area}
-                </motion.div>
-              ))}
+                  >
+                    <MapPin
+                      size={12}
+                      className="text-primary/50 group-hover/zone:text-primary transition-colors"
+                    />
+                    {area}
+                  </motion.div>
+                ))}
             </div>
           </SplitSection>
         </div>
@@ -390,7 +500,7 @@ const PersonnelAuthProtocol = ({
                 isLight={isLight}
                 columns={[
                   { label: "Vehicle registration", key: "plateNumber" },
-                  { label: "Vehicle type", key: "vehicleType" }
+                  { label: "Vehicle type", key: "vehicleType" },
                 ]}
                 data={vehiclesList}
               />
@@ -402,13 +512,17 @@ const PersonnelAuthProtocol = ({
       {groupMembers && groupMembers.length > 0 && (
         <SectionCard isLight={isLight}>
           <div className="p-2 md:p-3">
-            <SplitSection title="Additional visitors" icon={Users} isLight={isLight}>
+            <SplitSection
+              title="Additional visitors"
+              icon={Users}
+              isLight={isLight}
+            >
               <SimpleTable
                 isLight={isLight}
                 columns={[
                   { label: "Full name", key: "fullName" },
                   { label: "NIC", key: "nic" },
-                  { label: "Contact", key: "contact" }
+                  { label: "Contact", key: "contact" },
                 ]}
                 data={groupMembers}
               />
@@ -477,17 +591,20 @@ const PersonnelAuthProtocol = ({
       )}
       */}
 
-
       {onAction && (
-        <div className={`mt-6 pt-6 border-t ${isLight ? "border-gray-100" : "border-white/5"} flex items-center justify-end gap-3`}>
-          {(visitor.status === "Accepted by Contact Person" || visitor.status === "Accepted by Visitor") && (
+        <div
+          className={`mt-6 pt-6 border-t ${isLight ? "border-gray-100" : "border-white/5"} flex items-center justify-end gap-3`}
+        >
+          {(visitor.status === "Accepted by Contact Person" ||
+            visitor.status === "Accepted by Visitor") && (
             <>
               <button
                 onClick={() => onAction(visitor, "Reject")}
-                className={`px-6 py-2.5 border font-bold text-[11px] tracking-[0.15em] capitalize rounded-xl transition-all flex items-center gap-1.5 active:scale-95 ${isLight
-                  ? "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                  : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
-                  }`}
+                className={`px-6 py-2.5 border font-bold text-[11px] tracking-[0.15em] capitalize rounded-xl transition-all flex items-center gap-1.5 active:scale-95 ${
+                  isLight
+                    ? "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                    : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
+                }`}
               >
                 <AlertCircle size={14} />
                 Reject request
@@ -557,19 +674,27 @@ const PersonnelAuthProtocol = ({
                 <div className="p-6 flex flex-col items-center gap-5 relative z-10">
                   {popupQR.loading ? (
                     <div className="flex flex-col items-center gap-4 py-8">
-                      <Loader2 size={36} className="text-green-500 animate-spin" />
+                      <Loader2
+                        size={36}
+                        className="text-green-500 animate-spin"
+                      />
                       <p className="text-gray-500 text-[10px] capitalize tracking-[0.22em] font-bold">
                         Generating QR code…
                       </p>
                     </div>
                   ) : popupQR.error ? (
                     <div className="flex flex-col items-center gap-3 py-6">
-                      <AlertCircle size={32} className="text-primary opacity-60" />
+                      <AlertCircle
+                        size={32}
+                        className="text-primary opacity-60"
+                      />
                       <p className="text-gray-400 text-[10px] capitalize tracking-[0.16em] font-semibold text-center">
                         {popupQR.error}
                       </p>
                       <button
-                        onClick={() => handleOpenSubVisitorQR(popupQR.member, popupQR.idx)}
+                        onClick={() =>
+                          handleOpenSubVisitorQR(popupQR.member, popupQR.idx)
+                        }
                         className="px-5 py-2 bg-primary/10 border border-primary/30 text-primary text-[9px] font-bold capitalize tracking-[0.18em] rounded-xl hover:bg-primary/20 transition-all"
                       >
                         Retry
@@ -605,7 +730,9 @@ const PersonnelAuthProtocol = ({
 
                       {/* Download */}
                       <button
-                        onClick={() => handleDownloadSubQR(popupQR.member?.fullName)}
+                        onClick={() =>
+                          handleDownloadSubQR(popupQR.member?.fullName)
+                        }
                         className="w-full flex items-center justify-center gap-2 py-3 bg-green-500/10 border border-green-500/25 text-green-500 hover:bg-green-500 hover:text-white text-[10px] font-bold capitalize tracking-[0.18em] rounded-2xl transition-all"
                       >
                         <Download size={13} />
@@ -636,7 +763,8 @@ const PersonnelAuthProtocol = ({
                   </h2>
                   {viewAttachments.visitorName && (
                     <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
-                      {viewAttachments.visitorName} · #{viewAttachments.visitorId}
+                      {viewAttachments.visitorName} · #
+                      {viewAttachments.visitorId}
                     </p>
                   )}
                 </div>
@@ -654,7 +782,9 @@ const PersonnelAuthProtocol = ({
               {viewAttachments.loading ? (
                 <div className="flex flex-col items-center justify-center py-10 gap-3">
                   <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
-                  <p className="text-[11px] text-white/30 tracking-widest uppercase">Loading...</p>
+                  <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                    Loading...
+                  </p>
                 </div>
               ) : viewAttachments.error ? (
                 <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
@@ -664,36 +794,63 @@ const PersonnelAuthProtocol = ({
               ) : viewAttachments.list.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
                   <FolderOpen size={32} />
-                  <p className="text-[11px] tracking-widest uppercase">No attachments found</p>
+                  <p className="text-[11px] tracking-widest uppercase">
+                    No attachments found
+                  </p>
                 </div>
               ) : (
-                <ul className="space-y-2">
+                <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
                   {viewAttachments.list.map((att, idx) => {
-                    const category = att.VAT_File_Category || att.FileCategory || "document";
-                    const fileName = att.VAT_File_Name || att.FileName || att.FilePath || `file-${idx + 1}`;
-                    const fileUrl = att.VAT_File_Path || att.FilePath || att.FileUrl || null;
-                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+                    const category =
+                      att.VAT_File_Category || att.FileCategory || "document";
+                    const fileName =
+                      att.VAT_File_Name ||
+                      att.FileName ||
+                      att.FilePath ||
+                      `file-${idx + 1}`;
+                    const vatId =
+                      att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
+                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                      fileName,
+                    );
                     return (
-                      <li key={idx} className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group">
-                        {isImage
-                          ? <ImageIcon size={15} className="text-primary/60 shrink-0" />
-                          : <FileText size={15} className="text-primary/60 shrink-0" />
-                        }
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[11px] font-medium text-white truncate">{fileName}</p>
-                          <p className="text-[9px] text-white/40 capitalize">{category}</p>
-                        </div>
-                        {fileUrl && (
-                          <a
-                            href={fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/10 text-primary/70 hover:bg-primary/25 hover:text-primary transition-all shrink-0"
-                            title="Download file"
-                          >
-                            <Download size={12} />
-                          </a>
+                      <li
+                        key={idx}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                      >
+                        {isImage ? (
+                          <ImageIcon
+                            size={15}
+                            className="text-primary/60 shrink-0"
+                          />
+                        ) : (
+                          <FileText
+                            size={15}
+                            className="text-primary/60 shrink-0"
+                          />
                         )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-medium text-white truncate">
+                            {fileName}
+                          </p>
+                          <p className="text-[9px] text-white/40 capitalize">
+                            {category}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          title="Download file"
+                          onClick={() =>
+                            vatId &&
+                            VisitorAttachmentService.DownloadAttachment(
+                              vatId,
+                              fileName,
+                            )
+                          }
+                          className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
+                        >
+                          <Download size={18} />
+                        </button>
                       </li>
                     );
                   })}

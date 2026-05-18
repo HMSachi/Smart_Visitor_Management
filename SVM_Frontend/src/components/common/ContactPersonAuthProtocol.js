@@ -226,7 +226,8 @@ const ContactPersonAuthProtocol = ({
     try {
       const res =
         await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
-      const list = res?.data?.ResultSet || res?.data || [];
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const list = Array.isArray(rawList) ? rawList : [];
       setViewAttachments((prev) => ({ ...prev, loading: false, list }));
     } catch (err) {
       setViewAttachments((prev) => ({
@@ -857,7 +858,7 @@ const ContactPersonAuthProtocol = ({
                   </p>
                 </div>
               ) : (
-                <ul className="space-y-2">
+                <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
                   {viewAttachments.list.map((att, idx) => {
                     const category =
                       att.VAT_File_Category || att.FileCategory || "document";
@@ -866,8 +867,8 @@ const ContactPersonAuthProtocol = ({
                       att.FileName ||
                       att.FilePath ||
                       `file-${idx + 1}`;
-                    const fileUrl =
-                      att.VAT_File_Path || att.FilePath || att.FileUrl || null;
+                    const vatId =
+                      att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
                     const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
                       fileName,
                     );
@@ -895,17 +896,20 @@ const ContactPersonAuthProtocol = ({
                             {category}
                           </p>
                         </div>
-                        {fileUrl && (
-                          <a
-                            href={fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/10 text-primary/70 hover:bg-primary/25 hover:text-primary transition-all shrink-0"
-                            title="Download file"
-                          >
-                            <Download size={12} />
-                          </a>
-                        )}
+                        <button
+                          type="button"
+                          title="Download file"
+                          onClick={() =>
+                            vatId &&
+                            VisitorAttachmentService.DownloadAttachment(
+                              vatId,
+                              fileName,
+                            )
+                          }
+                          className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
+                        >
+                          <Download size={18} />
+                        </button>
                       </li>
                     );
                   })}

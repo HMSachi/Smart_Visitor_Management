@@ -38,6 +38,7 @@ import {
   FolderOpen,
   ExternalLink,
   ImageIcon,
+  Download,
 } from "lucide-react";
 import {
   validateName,
@@ -91,18 +92,38 @@ const ContactAllVisitors = () => {
   });
 
   const openViewAttachments = async (visitorId, visitorName) => {
-    setViewAttachments({ open: true, visitorId, visitorName, loading: true, list: [], error: null });
+    setViewAttachments({
+      open: true,
+      visitorId,
+      visitorName,
+      loading: true,
+      list: [],
+      error: null,
+    });
     try {
-      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
-      const list = res?.data?.ResultSet || res?.data || [];
+      const res =
+        await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const list = Array.isArray(rawList) ? rawList : [];
       setViewAttachments((prev) => ({ ...prev, loading: false, list }));
     } catch (err) {
-      setViewAttachments((prev) => ({ ...prev, loading: false, error: err?.message || "Failed to load attachments." }));
+      setViewAttachments((prev) => ({
+        ...prev,
+        loading: false,
+        error: err?.message || "Failed to load attachments.",
+      }));
     }
   };
 
   const closeViewAttachments = () => {
-    setViewAttachments({ open: false, visitorId: null, visitorName: "", loading: false, list: [], error: null });
+    setViewAttachments({
+      open: false,
+      visitorId: null,
+      visitorName: "",
+      loading: false,
+      list: [],
+      error: null,
+    });
   };
 
   // Attachment Modal State
@@ -147,14 +168,20 @@ const ContactAllVisitors = () => {
 
   const handleAttachFileChange = (e) => {
     const f = e.target.files?.[0];
-    if (f) { setAttachFile(f); setAttachResult(null); }
+    if (f) {
+      setAttachFile(f);
+      setAttachResult(null);
+    }
   };
 
   const handleAttachDrop = (e) => {
     e.preventDefault();
     setAttachDragOver(false);
     const f = e.dataTransfer.files?.[0];
-    if (f) { setAttachFile(f); setAttachResult(null); }
+    if (f) {
+      setAttachFile(f);
+      setAttachResult(null);
+    }
   };
 
   // Upload for existing visitor (opened from table row)
@@ -168,11 +195,18 @@ const ContactAllVisitors = () => {
         attachmentModal.visitorId,
         attachCategory,
         pUid,
-        attachFile
+        attachFile,
       );
-      setAttachResult({ success: true, message: "Attachment uploaded successfully." });
+      setAttachResult({
+        success: true,
+        message: "Attachment uploaded successfully.",
+      });
     } catch (err) {
-      setAttachResult({ success: false, message: err?.response?.data?.Message || err?.message || "Upload failed." });
+      setAttachResult({
+        success: false,
+        message:
+          err?.response?.data?.Message || err?.message || "Upload failed.",
+      });
     } finally {
       setAttachUploading(false);
     }
@@ -416,13 +450,17 @@ const ContactAllVisitors = () => {
       // reliably get the new visitor's ID (AddVisitor response may not include it)
       if (pendingAttachFile) {
         try {
-          const refreshed = await VisitorService.GetVisitorsByContactPerson(cpId);
-          const allVisitors = refreshed?.data?.ResultSet || refreshed?.data || [];
+          const refreshed =
+            await VisitorService.GetVisitorsByContactPerson(cpId);
+          const allVisitors =
+            refreshed?.data?.ResultSet || refreshed?.data || [];
           // Match the new visitor by email or NIC
           const newVisitor = allVisitors.find(
             (v) =>
-              v.VV_Email?.trim().toLowerCase() === formData.VV_Email?.trim().toLowerCase() ||
-              v.VV_NIC_Passport_NO?.trim() === formData.VV_NIC_Passport_NO?.trim()
+              v.VV_Email?.trim().toLowerCase() ===
+                formData.VV_Email?.trim().toLowerCase() ||
+              v.VV_NIC_Passport_NO?.trim() ===
+                formData.VV_NIC_Passport_NO?.trim(),
           );
           const newVisitorId = newVisitor?.VV_Visitor_id || null;
           console.log("Resolved new visitor ID for attachment:", newVisitorId);
@@ -433,11 +471,16 @@ const ContactAllVisitors = () => {
               newVisitorId,
               pendingAttachCategory,
               pUid,
-              pendingAttachFile
+              pendingAttachFile,
             );
-            console.log("Attachment uploaded successfully for visitor", newVisitorId);
+            console.log(
+              "Attachment uploaded successfully for visitor",
+              newVisitorId,
+            );
           } else {
-            console.warn("Could not resolve new visitor ID — attachment skipped.");
+            console.warn(
+              "Could not resolve new visitor ID — attachment skipped.",
+            );
           }
         } catch (attachErr) {
           console.error("Attachment upload failed:", attachErr?.message);
@@ -739,7 +782,12 @@ const ContactAllVisitors = () => {
                               <button
                                 type="button"
                                 title="View uploaded attachments"
-                                onClick={() => openViewAttachments(visitor.VV_Visitor_id, visitor.VV_Name)}
+                                onClick={() =>
+                                  openViewAttachments(
+                                    visitor.VV_Visitor_id,
+                                    visitor.VV_Name,
+                                  )
+                                }
                                 className="p-1.5 rounded-lg bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary transition-all"
                               >
                                 <FolderOpen size={13} />
@@ -818,7 +866,8 @@ const ContactAllVisitors = () => {
 
                   <div className="space-y-1">
                     <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <Hash size={10} className="text-primary/60 shrink-0" /> ID or passport
+                      <Hash size={10} className="text-primary/60 shrink-0" /> ID
+                      or passport
                     </label>
                     <div className="flex items-stretch gap-2">
                       <input
@@ -837,26 +886,38 @@ const ContactAllVisitors = () => {
                       <button
                         type="button"
                         title="Attach NIC / Passport document"
-                        onClick={() => openAttachmentModal(null, formData.VV_Name?.trim())}
+                        onClick={() =>
+                          openAttachmentModal(null, formData.VV_Name?.trim())
+                        }
                         className={`shrink-0 p-1.5 rounded-lg transition-all ${
                           pendingAttachFile
                             ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
                             : "bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary"
                         }`}
                       >
-                        {pendingAttachFile ? <CheckCircle size={13} /> : <Paperclip size={13} />}
+                        {pendingAttachFile ? (
+                          <CheckCircle size={13} />
+                        ) : (
+                          <Paperclip size={13} />
+                        )}
                       </button>
                     </div>
                     {/* File badge — shows when user has selected a file */}
                     {pendingAttachFile && (
                       <div className="flex items-center gap-1.5 mt-1">
-                        <FileText size={10} className="text-green-400 shrink-0" />
+                        <FileText
+                          size={10}
+                          className="text-green-400 shrink-0"
+                        />
                         <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[180px]">
                           {pendingAttachFile.name}
                         </span>
                         <button
                           type="button"
-                          onClick={() => { setPendingAttachFile(null); setPendingAttachCategory("nic"); }}
+                          onClick={() => {
+                            setPendingAttachFile(null);
+                            setPendingAttachCategory("nic");
+                          }}
                           className="ml-auto text-white/30 hover:text-red-400 transition-colors"
                           title="Remove file"
                         >
@@ -994,7 +1055,11 @@ const ContactAllVisitors = () => {
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
                       }`}
                     >
-                      <option value="" disabled className="text-gray-500 bg-white">
+                      <option
+                        value=""
+                        disabled
+                        className="text-gray-500 bg-white"
+                      >
                         Select visiting area...
                       </option>
                       {(places || [])
@@ -1003,13 +1068,17 @@ const ContactAllVisitors = () => {
                             (p.VAIL_Status || p.Status || "A")
                               .toString()
                               .trim()
-                              .toUpperCase() === "A"
+                              .toUpperCase() === "A",
                         )
                         .map((place) => {
                           const placeName =
-                            place.VAIL_Item_Name || place.Item_Name || "Unnamed";
+                            place.VAIL_Item_Name ||
+                            place.Item_Name ||
+                            "Unnamed";
                           const placeId =
-                            place.VAIL_Item_List_ID || place.Item_List_ID || place.Id;
+                            place.VAIL_Item_List_ID ||
+                            place.Item_List_ID ||
+                            place.Id;
                           return (
                             <option
                               key={placeId}
@@ -1111,7 +1180,9 @@ const ContactAllVisitors = () => {
                     {attachmentModal.visitorName && (
                       <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
                         {attachmentModal.visitorName}
-                        {attachmentModal.visitorId ? ` · #${attachmentModal.visitorId}` : ""}
+                        {attachmentModal.visitorId
+                          ? ` · #${attachmentModal.visitorId}`
+                          : ""}
                       </p>
                     )}
                   </div>
@@ -1126,7 +1197,6 @@ const ContactAllVisitors = () => {
 
               {/* Body */}
               <div className="p-5 space-y-4 relative z-10">
-
                 {/* Category selector */}
                 <div className="space-y-1.5">
                   <label className="text-[11px] text-gray-400 tracking-[0.14em] font-normal">
@@ -1152,7 +1222,10 @@ const ContactAllVisitors = () => {
 
                 {/* Drop zone */}
                 <div
-                  onDragOver={(e) => { e.preventDefault(); setAttachDragOver(true); }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setAttachDragOver(true);
+                  }}
                   onDragLeave={() => setAttachDragOver(false)}
                   onDrop={handleAttachDrop}
                   onClick={() => fileInputRef.current?.click()}
@@ -1160,8 +1233,8 @@ const ContactAllVisitors = () => {
                     attachDragOver
                       ? "border-primary/70 bg-primary/10"
                       : attachFile
-                      ? "border-green-500/40 bg-green-500/5"
-                      : "border-white/10 bg-black/20 hover:border-white/20 hover:bg-black/30"
+                        ? "border-green-500/40 bg-green-500/5"
+                        : "border-white/10 bg-black/20 hover:border-white/20 hover:bg-black/30"
                   }`}
                 >
                   <input
@@ -1178,7 +1251,8 @@ const ContactAllVisitors = () => {
                         {attachFile.name}
                       </p>
                       <p className="text-[10px] text-white/30">
-                        {(attachFile.size / 1024).toFixed(1)} KB · Click to change
+                        {(attachFile.size / 1024).toFixed(1)} KB · Click to
+                        change
                       </p>
                     </>
                   ) : (
@@ -1196,12 +1270,18 @@ const ContactAllVisitors = () => {
 
                 {/* Result message */}
                 {attachResult && (
-                  <div className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-[11px] font-normal tracking-wide ${
-                    attachResult.success
-                      ? "bg-green-500/10 border border-green-500/20 text-green-300"
-                      : "bg-red-500/10 border border-red-500/20 text-red-300"
-                  }`}>
-                    {attachResult.success ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
+                  <div
+                    className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-[11px] font-normal tracking-wide ${
+                      attachResult.success
+                        ? "bg-green-500/10 border border-green-500/20 text-green-300"
+                        : "bg-red-500/10 border border-red-500/20 text-red-300"
+                    }`}
+                  >
+                    {attachResult.success ? (
+                      <CheckCircle size={14} />
+                    ) : (
+                      <AlertCircle size={14} />
+                    )}
                     {attachResult.message}
                   </div>
                 )}
@@ -1231,15 +1311,24 @@ const ContactAllVisitors = () => {
                     <button
                       type="button"
                       onClick={handleAttachUpload}
-                      disabled={!attachFile || attachUploading || attachResult?.success}
+                      disabled={
+                        !attachFile || attachUploading || attachResult?.success
+                      }
                       className="flex-1 py-2 rounded-lg text-[11px] font-normal tracking-[0.14em] bg-primary hover:bg-[var(--color-primary-hover)] text-white shadow-lg shadow-primary/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {attachUploading ? (
-                        <><div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Uploading...</>
+                        <>
+                          <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                          Uploading...
+                        </>
                       ) : attachResult?.success ? (
-                        <><CheckCircle size={13} /> Uploaded</>
+                        <>
+                          <CheckCircle size={13} /> Uploaded
+                        </>
                       ) : (
-                        <><Upload size={13} /> Upload</>
+                        <>
+                          <Upload size={13} /> Upload
+                        </>
                       )}
                     </button>
                   )}
@@ -1265,7 +1354,8 @@ const ContactAllVisitors = () => {
                     </h2>
                     {viewAttachments.visitorName && (
                       <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
-                        {viewAttachments.visitorName} · #{viewAttachments.visitorId}
+                        {viewAttachments.visitorName} · #
+                        {viewAttachments.visitorId}
                       </p>
                     )}
                   </div>
@@ -1283,7 +1373,9 @@ const ContactAllVisitors = () => {
                 {viewAttachments.loading ? (
                   <div className="flex flex-col items-center justify-center py-10 gap-3">
                     <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
-                    <p className="text-[11px] text-white/30 tracking-widest uppercase">Loading...</p>
+                    <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                      Loading...
+                    </p>
                   </div>
                 ) : viewAttachments.error ? (
                   <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
@@ -1293,44 +1385,71 @@ const ContactAllVisitors = () => {
                 ) : viewAttachments.list.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
                     <FolderOpen size={32} />
-                    <p className="text-[11px] tracking-widest uppercase">No attachments found</p>
+                    <p className="text-[11px] tracking-widest uppercase">
+                      No attachments found
+                    </p>
                   </div>
                 ) : (
-                  <ul className="space-y-2">
+                  <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
                     {viewAttachments.list.map((att, idx) => {
-                      const category = att.VAT_File_Category || att.FileCategory || "document";
-                      const fileName = att.VAT_File_Name || att.FileName || att.FilePath || `file-${idx + 1}`;
-                      const fileUrl  = att.VAT_File_Path || att.FilePath || att.FileUrl || null;
-                      const isImage  = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+                      const category =
+                        att.VAT_File_Category || att.FileCategory || "document";
+                      const fileName =
+                        att.VAT_File_Name ||
+                        att.FileName ||
+                        att.FilePath ||
+                        `file-${idx + 1}`;
+                      const vatId =
+                        att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
+                      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                        fileName,
+                      );
                       return (
-                        <li key={idx} className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group">
-                          {isImage
-                            ? <ImageIcon size={15} className="text-primary/60 shrink-0" />
-                            : <FileText size={15} className="text-primary/60 shrink-0" />
-                          }
+                        <li
+                          key={idx}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                        >
+                          {isImage ? (
+                            <ImageIcon
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          ) : (
+                            <FileText
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          )}
                           <div className="flex-1 min-w-0">
-                            <p className="text-[11px] text-white/80 font-normal truncate">{fileName}</p>
-                            <span className={`text-[9px] font-normal uppercase tracking-widest px-1.5 py-0.5 rounded mt-0.5 inline-block ${
-                              category.toLowerCase() === "nic"
-                                ? "bg-blue-500/20 text-blue-300"
-                                : category.toLowerCase() === "passport"
-                                ? "bg-purple-500/20 text-purple-300"
-                                : "bg-white/10 text-white/40"
-                            }`}>
+                            <p className="text-[11px] text-white/80 font-normal truncate">
+                              {fileName}
+                            </p>
+                            <span
+                              className={`text-[9px] font-normal uppercase tracking-widest px-1.5 py-0.5 rounded mt-0.5 inline-block ${
+                                category.toLowerCase() === "nic"
+                                  ? "bg-blue-500/20 text-blue-300"
+                                  : category.toLowerCase() === "passport"
+                                    ? "bg-purple-500/20 text-purple-300"
+                                    : "bg-white/10 text-white/40"
+                              }`}
+                            >
                               {category}
                             </span>
                           </div>
-                          {fileUrl && (
-                            <a
-                              href={fileUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              title="Open file"
-                              className="p-1 rounded-lg text-white/20 hover:text-primary hover:bg-primary/10 transition-all opacity-0 group-hover:opacity-100"
-                            >
-                              <ExternalLink size={13} />
-                            </a>
-                          )}
+                          <button
+                            type="button"
+                            title="Download file"
+                            onClick={() =>
+                              vatId &&
+                              VisitorAttachmentService.DownloadAttachment(
+                                vatId,
+                                fileName,
+                              )
+                            }
+                            className={`p-2 rounded-lg text-primary/80 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
+                          >
+                            <Download size={18} />
+                          </button>
                         </li>
                       );
                     })}
