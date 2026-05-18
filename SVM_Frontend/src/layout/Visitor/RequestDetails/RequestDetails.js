@@ -22,6 +22,8 @@ import {
   ImageIcon,
   Download,
   X,
+  CreditCard,
+  Shield,
 } from "lucide-react";
 import VisitorService from "../../../services/VisitorService";
 import VisitGroupService from "../../../services/VisitGroupService";
@@ -136,9 +138,10 @@ const RequestDetails = () => {
     loading: false,
     list: [],
     error: null,
+    filterCategory: null,
   });
 
-  const openViewAttachments = async (visitorId, visitorName) => {
+  const openViewAttachments = async (visitorId, visitorName, filterCategory = null) => {
     setViewAttachments({
       open: true,
       visitorId,
@@ -146,6 +149,7 @@ const RequestDetails = () => {
       loading: true,
       list: [],
       error: null,
+      filterCategory,
     });
     try {
       const response =
@@ -390,6 +394,7 @@ const RequestDetails = () => {
                     openViewAttachments(
                       visitorRecord?.VV_Visitor_id,
                       summary.name,
+                      ["nic", "passport", "driving licence"]
                     )
                   }
                   className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all shrink-0 cursor-pointer active:scale-95"
@@ -502,8 +507,11 @@ const RequestDetails = () => {
                 <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 min-w-[100px]">
                   Vehicle type
                 </span>
-                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-right min-w-[100px]">
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-1 text-center min-w-[100px]">
                   Vehicle number
+                </span>
+                <span className="text-[10px] font-bold text-text-secondary capitalize tracking-wider flex-[2] text-right min-w-[200px]">
+                  Attachments
                 </span>
               </div>
               <div className="divide-y divide-border-soft">
@@ -515,9 +523,26 @@ const RequestDetails = () => {
                     <span className="text-[11px] font-medium text-text-secondary capitalize flex-1 min-w-[100px]">
                       {vehicle.VV_Vehicle_Type}
                     </span>
-                    <span className="text-[11px] font-medium text-text-primary flex-1 text-right min-w-[100px]">
+                    <span className="text-[11px] font-medium text-text-primary flex-1 text-center min-w-[100px]">
                       {vehicle.VV_Vehicle_Number}
                     </span>
+                    <div className="flex-[2] flex justify-end gap-2 min-w-[200px]">
+                      <button
+                        type="button"
+                        title="Vehicle Insurance"
+                        onClick={() =>
+                          openViewAttachments(
+                            visitorRecord?.VV_Visitor_id,
+                            summary.name,
+                            "Vehicle Insurance"
+                          )
+                        }
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all text-[10px] font-semibold tracking-wide bg-primary/10 border-primary/30 text-primary hover:bg-primary/20 active:scale-95"
+                      >
+                        <Shield size={12} />
+                        Insurance
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -636,7 +661,11 @@ const RequestDetails = () => {
                 <div className="w-1.5 h-5 bg-primary rounded-full" />
                 <div>
                   <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
-                    Uploaded Documents
+                    {viewAttachments.filterCategory
+                      ? Array.isArray(viewAttachments.filterCategory)
+                        ? "Uploaded Documents"
+                        : viewAttachments.filterCategory
+                      : "Uploaded Documents"}
                   </h2>
                   {viewAttachments.visitorName && (
                     <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
@@ -678,7 +707,37 @@ const RequestDetails = () => {
                 </div>
               ) : (
                 <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
-                  {viewAttachments.list.map((att, idx) => {
+                  {(viewAttachments.filterCategory
+                    ? viewAttachments.list.filter(
+                        (att) => {
+                          const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
+                          if (Array.isArray(viewAttachments.filterCategory)) {
+                             return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
+                          }
+                          return cat === viewAttachments.filterCategory.toLowerCase();
+                        }
+                      )
+                    : viewAttachments.list
+                  ).length === 0 && !viewAttachments.loading ? (
+                    <li className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                      <FolderOpen size={28} />
+                      <p className="text-[11px] tracking-widest uppercase">
+                        No {Array.isArray(viewAttachments.filterCategory) ? "" : viewAttachments.filterCategory || ""} attachments found
+                      </p>
+                    </li>
+                  ) : (
+                    (viewAttachments.filterCategory
+                      ? viewAttachments.list.filter(
+                          (att) => {
+                            const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
+                            if (Array.isArray(viewAttachments.filterCategory)) {
+                               return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
+                            }
+                            return cat === viewAttachments.filterCategory.toLowerCase();
+                          }
+                        )
+                      : viewAttachments.list
+                    ).map((att, idx) => {
                     const category =
                       att.VAT_File_Category || att.FileCategory || "document";
                     const fileName =
@@ -731,7 +790,7 @@ const RequestDetails = () => {
                         </button>
                       </li>
                     );
-                  })}
+                  }))}
                 </ul>
               )}
             </div>
