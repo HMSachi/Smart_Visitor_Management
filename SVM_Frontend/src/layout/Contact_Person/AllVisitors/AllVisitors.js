@@ -9,6 +9,7 @@ import {
 import { AddAdministrator } from "../../../actions/AdministratorAction";
 import { GetAllContactPersons } from "../../../actions/ContactPersonAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
+import { GetAllPlaces } from "../../../actions/PlacesAction";
 import Header from "../../../components/Contact_Person/Layout/Header";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
@@ -54,6 +55,9 @@ const ContactAllVisitors = () => {
   const { contactPersons } = useSelector((state) => state.contactPerson);
   const { blacklists } = useSelector(
     (state) => state.blacklistState || { blacklists: [] },
+  );
+  const { places } = useSelector(
+    (state) => state.placesState || { places: [] },
   );
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
@@ -196,6 +200,7 @@ const ContactAllVisitors = () => {
         // Dispatch Redux action to fetch all contact persons (only once)
         dispatch(GetAllContactPersons());
         dispatch(GetAllBlacklist());
+        dispatch(GetAllPlaces());
       } catch (err) {
         console.error("Error loading contact persons:", err);
       }
@@ -979,8 +984,7 @@ const ContactAllVisitors = () => {
                       <MapPin size={10} className="text-primary/60 shrink-0" />{" "}
                       Where to visit
                     </label>
-                    <input
-                      type="text"
+                    <select
                       name="VV_Visiting_places"
                       value={formData.VV_Visiting_places}
                       onChange={handleInputChange}
@@ -989,8 +993,34 @@ const ContactAllVisitors = () => {
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
                       }`}
-                      placeholder="e.g., Building A, Floor 3, Room 301"
-                    />
+                    >
+                      <option value="" disabled className="text-gray-500 bg-white">
+                        Select visiting area...
+                      </option>
+                      {(places || [])
+                        .filter(
+                          (p) =>
+                            (p.VAIL_Status || p.Status || "A")
+                              .toString()
+                              .trim()
+                              .toUpperCase() === "A"
+                        )
+                        .map((place) => {
+                          const placeName =
+                            place.VAIL_Item_Name || place.Item_Name || "Unnamed";
+                          const placeId =
+                            place.VAIL_Item_List_ID || place.Item_List_ID || place.Id;
+                          return (
+                            <option
+                              key={placeId}
+                              value={placeName}
+                              className="text-black bg-white"
+                            >
+                              {placeName}
+                            </option>
+                          );
+                        })}
+                    </select>
                     {errors.VV_Visiting_places && (
                       <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Visiting_places}
