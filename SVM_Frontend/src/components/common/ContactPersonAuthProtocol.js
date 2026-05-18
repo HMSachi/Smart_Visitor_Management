@@ -21,6 +21,8 @@ import {
   FolderOpen,
   ImageIcon,
   FileText,
+  CreditCard,
+  Shield,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
@@ -128,6 +130,7 @@ const ContactPersonAuthProtocol = ({
     loading: false,
     list: [],
     error: null,
+    filterCategory: null,
   });
 
   const handleOpenSubVisitorQR = useCallback(
@@ -214,7 +217,7 @@ const ContactPersonAuthProtocol = ({
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
-  const openViewAttachments = async (visitorId, visitorName) => {
+  const openViewAttachments = async (visitorId, visitorName, filterCategory = null) => {
     setViewAttachments({
       open: true,
       visitorId,
@@ -222,6 +225,7 @@ const ContactPersonAuthProtocol = ({
       loading: true,
       list: [],
       error: null,
+      filterCategory,
     });
     try {
       const res =
@@ -289,8 +293,9 @@ const ContactPersonAuthProtocol = ({
                   title="View uploaded attachments"
                   onClick={() =>
                     openViewAttachments(
-                      visitor.id || visitor.raw?.VVR_Visitor_id,
+                      visitor.visitorId || visitor.raw?.VVR_Visitor_id || visitor.id,
                       visitor.name || visitor.fullName,
+                      ["nic", "passport", "driving licence"]
                     )
                   }
                   className={`absolute -top-7 right-0 p-2 rounded-lg border-2 transition-all font-semibold z-10 ${
@@ -526,9 +531,14 @@ const ContactPersonAuthProtocol = ({
                     Vehicle type
                   </span>
                   <span
-                    className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[100px] text-right ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                    className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[100px] text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}
                   >
                     Vehicle number
+                  </span>
+                  <span
+                    className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-[2] text-right min-w-[200px] ${isLight ? "text-gray-400" : "text-gray-400"}`}
+                  >
+                    Attachments
                   </span>
                 </div>
                 <div
@@ -545,10 +555,32 @@ const ContactPersonAuthProtocol = ({
                         {vehicle.vehicleType}
                       </span>
                       <span
-                        className={`text-[11px] md:text-[12px] font-medium flex-1 min-w-[100px] text-right ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                        className={`text-[11px] md:text-[12px] font-medium flex-1 min-w-[100px] text-center ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
                       >
                         {vehicle.plateNumber}
                       </span>
+                      {/* Attachment buttons */}
+                      <div className="flex-[2] flex justify-end gap-2 min-w-[200px]">
+                        <button
+                          type="button"
+                          title="Vehicle Insurance"
+                          onClick={() =>
+                            openViewAttachments(
+                              visitor.visitorId || visitor.raw?.VVR_Visitor_id || visitor.id,
+                              visitor.name || visitor.fullName,
+                              "Vehicle Insurance"
+                            )
+                          }
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all text-[10px] font-semibold tracking-wide ${
+                            isLight
+                              ? "bg-primary/10 border-primary/30 text-primary hover:bg-primary/20 active:scale-95"
+                              : "bg-primary/15 border-primary/30 text-primary hover:bg-primary/25 active:scale-95"
+                          }`}
+                        >
+                          <Shield size={12} />
+                          Insurance
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -818,7 +850,11 @@ const ContactPersonAuthProtocol = ({
                 <div className="w-1.5 h-5 bg-primary rounded-full" />
                 <div>
                   <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
-                    Uploaded Documents
+                    {viewAttachments.filterCategory
+                      ? Array.isArray(viewAttachments.filterCategory)
+                        ? "Uploaded Documents"
+                        : viewAttachments.filterCategory
+                      : "Uploaded Documents"}
                   </h2>
                   {viewAttachments.visitorName && (
                     <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
@@ -859,7 +895,37 @@ const ContactPersonAuthProtocol = ({
                 </div>
               ) : (
                 <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
-                  {viewAttachments.list.map((att, idx) => {
+                  {(viewAttachments.filterCategory
+                    ? viewAttachments.list.filter(
+                        (att) => {
+                          const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
+                          if (Array.isArray(viewAttachments.filterCategory)) {
+                             return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
+                          }
+                          return cat === viewAttachments.filterCategory.toLowerCase();
+                        }
+                      )
+                    : viewAttachments.list
+                  ).length === 0 && !viewAttachments.loading ? (
+                    <li className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                      <FolderOpen size={28} />
+                      <p className="text-[11px] tracking-widest uppercase">
+                        No {Array.isArray(viewAttachments.filterCategory) ? "" : viewAttachments.filterCategory || ""} attachments found
+                      </p>
+                    </li>
+                  ) : (
+                    (viewAttachments.filterCategory
+                      ? viewAttachments.list.filter(
+                          (att) => {
+                            const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
+                            if (Array.isArray(viewAttachments.filterCategory)) {
+                               return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
+                            }
+                            return cat === viewAttachments.filterCategory.toLowerCase();
+                          }
+                        )
+                      : viewAttachments.list
+                    ).map((att, idx) => {
                     const category =
                       att.VAT_File_Category || att.FileCategory || "document";
                     const fileName =
@@ -912,7 +978,7 @@ const ContactPersonAuthProtocol = ({
                         </button>
                       </li>
                     );
-                  })}
+                  }))}
                 </ul>
               )}
             </div>

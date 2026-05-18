@@ -37,6 +37,7 @@ const toReviewModel = (request, visitorRecord) => {
 
   return {
     id: request.VVR_Request_id,
+    visitorId: visitor?.VV_Visitor_id || request.VVR_Visitor_id,
     status: normalizeStatus(request.VVR_Status),
     fullName:
       visitor?.VV_Name ||
