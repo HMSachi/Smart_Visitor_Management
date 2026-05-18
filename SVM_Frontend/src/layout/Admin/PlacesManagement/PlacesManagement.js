@@ -131,14 +131,14 @@ const PlacesManagement = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Filter locations..."
-                  className="w-full bg-[var(--color-bg-paper)] border border-white/10 text-white text-[13px] rounded-full py-2 pl-9 pr-4 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-white/20"
+                  className="w-full bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] text-[var(--color-text-primary)] text-[13px] rounded-full py-2 pl-9 pr-4 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-[var(--color-text-dim)]"
                 />
               </div>
 
               {/* Add Form Inline */}
               <form
                 onSubmit={handleAddPlace}
-                className="flex gap-2 w-full sm:w-auto p-1.5 bg-white/5 border border-white/5 rounded-[12px] backdrop-blur-md"
+                className="flex gap-2 w-full sm:w-auto p-1.5 bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-[12px] backdrop-blur-md"
               >
                 <input
                   type="text"
@@ -146,7 +146,7 @@ const PlacesManagement = () => {
                   onChange={(e) => setPlaceName(e.target.value)}
                   placeholder="Add new facility..."
                   disabled={isSubmitting}
-                  className="bg-transparent text-[13px] text-white focus:outline-none px-3 w-full sm:w-[200px] placeholder:text-white/20"
+                  className="bg-transparent text-[13px] text-[var(--color-text-primary)] focus:outline-none px-3 w-full sm:w-[200px] placeholder:text-[var(--color-text-dim)]"
                 />
                 <button
                   type="submit"
