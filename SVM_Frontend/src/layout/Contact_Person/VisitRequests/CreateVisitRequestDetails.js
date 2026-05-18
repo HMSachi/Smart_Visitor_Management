@@ -73,7 +73,7 @@ const CreateVisitRequestDetails = () => {
     try {
       await VisitorAttachmentService.UploadAttachment(
         visitorId,
-        "Driving Licence",
+        "Vehicle Insurance",
         pUid,
         file
       );
@@ -342,22 +342,22 @@ const CreateVisitRequestDetails = () => {
     <div className="contact-theme-root flex bg-[#F8F9FA] overflow-hidden text-[#1A1A1A] h-screen w-full">
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-hidden">
         <Header title="Additional Details" />
-        
+
         <main className="flex-1 overflow-y-auto p-6 pt-12 custom-scrollbar">
           <div className="max-w-6xl mx-auto space-y-4 animate-fade-in-slow pb-4">
-            
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-green-500 text-white text-[12px] font-normal flex items-center justify-center"><CheckCircle2 size={12} /></div>
-                        <span className="text-[12px] font-normal capitalize tracking-widest text-gray-500">Core info</span>
-                      </div>
-                      <div className="h-[1px] w-12 bg-gray-200"></div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-primary text-white text-[12px] font-normal flex items-center justify-center">2</div>
-                        <span className="text-[12px] font-normal capitalize tracking-widest text-primary">Details</span>
-                      </div>
+
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-green-500 text-white text-[12px] font-normal flex items-center justify-center"><CheckCircle2 size={12} /></div>
+              <span className="text-[12px] font-normal capitalize tracking-widest text-gray-500">Core info</span>
+            </div>
+            <div className="h-[1px] w-12 bg-gray-200"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-primary text-white text-[12px] font-normal flex items-center justify-center">2</div>
+              <span className="text-[12px] font-normal capitalize tracking-widest text-primary">Details</span>
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-8 mt-20">
-              
+
               <div className="bg-white p-3 rounded-[12px] shadow-[0_5px_15px_rgba(0,0,0,0.015)] border border-gray-100">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 mb-2">
                   <SectionHeader title="Vehicle Details" icon={Car} />
@@ -371,10 +371,10 @@ const CreateVisitRequestDetails = () => {
                     <div key={index} className={`grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-2 rounded-xl border transition-all ${v.isConfirmed ? "bg-green-50/30 border-green-200" : "bg-gray-50/50 border-gray-100"} relative group`}>
                       <div className="md:col-span-3">
                         <label className="text-[12px] font-medium text-gray-400 capitalize tracking-[0.15em] mb-1 flex px-0.5">Type</label>
-                        <select 
+                        <select
                           disabled={v.isConfirmed}
-                          value={v.type} 
-                          onChange={(e) => dispatch(updateVehicle({ index, field: "type", value: e.target.value }))} 
+                          value={v.type}
+                          onChange={(e) => dispatch(updateVehicle({ index, field: "type", value: e.target.value }))}
                           className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[12px] font-normal appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 disabled:opacity-60"
                         >
                           <option value="Car">Car</option>
@@ -410,14 +410,13 @@ const CreateVisitRequestDetails = () => {
                           type="button"
                           onClick={() => handleLicenseUpload(index)}
                           disabled={licenseUploading[index] === "uploading"}
-                          title="License"
-                          className={`p-2 rounded-lg transition-all disabled:opacity-50 border ${
-                            licenseUploading[index] === "done"
-                              ? "border-green-300 text-green-600 bg-green-50"
-                              : licenseUploading[index] === "error"
+                          title="Vehicle Insurance"
+                          className={`p-2 rounded-lg transition-all disabled:opacity-50 border ${licenseUploading[index] === "done"
+                            ? "border-green-300 text-green-600 bg-green-50"
+                            : licenseUploading[index] === "error"
                               ? "border-red-300 text-red-500 bg-red-50"
                               : "border-primary/20 text-primary/70 bg-primary/5 hover:bg-primary/10 hover:text-primary"
-                          }`}
+                            }`}
                         >
                           {licenseUploading[index] === "uploading" ? (
                             <Loader2 size={15} className="animate-spin" />
