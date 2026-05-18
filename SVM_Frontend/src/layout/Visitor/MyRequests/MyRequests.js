@@ -19,6 +19,7 @@ import VisitRequestService from "../../../services/VisitRequestService";
 import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
 import { validateNIC, validatePhone } from "../../../utils/validation";
 import {
   ClipboardList,
@@ -38,6 +39,7 @@ import {
   Loader2,
   Plus,
   Eye,
+  Paperclip,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -136,6 +138,33 @@ const MyRequests = () => {
   const [memberSavingIdx, setMemberSavingIdx] = useState(null);
   const [itemSavingIdx, setItemSavingIdx] = useState(null);
   const [newVehicleSavingIdx, setNewVehicleSavingIdx] = useState(null);
+
+  // Vehicle Insurance upload state per vehicle row: 'uploading' | 'done' | 'error'
+  const [insuranceUploading, setInsuranceUploading] = useState({});
+  const insuranceInputRefs = useRef({});
+
+  const handleInsuranceUpload = (idx) => {
+    if (insuranceInputRefs.current[idx]) insuranceInputRefs.current[idx].click();
+  };
+
+  const handleInsuranceFileChange = async (idx, file) => {
+    if (!file) return;
+    if (!visitorId) {
+      alert("Visitor ID not found. Please try again.");
+      return;
+    }
+    const pUid = user?.ResultSet?.[0]?.VA_Name || "Visitor";
+    setInsuranceUploading((prev) => ({ ...prev, [idx]: "uploading" }));
+    try {
+      await VisitorAttachmentService.UploadAttachment(visitorId, "Vehicle Insurance", pUid, file);
+      setInsuranceUploading((prev) => ({ ...prev, [idx]: "done" }));
+      setTimeout(() => setInsuranceUploading((prev) => { const n = { ...prev }; delete n[idx]; return n; }), 3000);
+    } catch (err) {
+      console.error("Insurance upload failed:", err);
+      setInsuranceUploading((prev) => ({ ...prev, [idx]: "error" }));
+      setTimeout(() => setInsuranceUploading((prev) => { const n = { ...prev }; delete n[idx]; return n; }), 3000);
+    }
+  };
   const [newMemberSavingIdx, setNewMemberSavingIdx] = useState(null);
   const [newItemSavingIdx, setNewItemSavingIdx] = useState(null);
   const [subItemSavingIdx, setSubItemSavingIdx] = useState(null);
@@ -1588,61 +1617,112 @@ const MyRequests = () => {
                                   <CheckCircle2 size={12} /> Saved
                                 </span>
                               )}
-                              {vehicle._isNew ? (
-                                <div className="flex gap-2">
+                              <div className="flex gap-2 items-center">
+                                {/* Hidden file input for insurance upload */}
+                                <input
+                                  type="file"
+                                  accept=".png,.jpg,.jpeg,.pdf,.xlsx"
+                                  className="hidden"
+                                  ref={(el) => { insuranceInputRefs.current[idx] = el; }}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleInsuranceFileChange(idx, file);
+                                    e.target.value = "";
+                                  }}
+                                />
+                                {/* Vehicle Insurance icon-only button */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleInsuranceUpload(idx)}
+                                  disabled={insuranceUploading[idx] === "uploading"}
+                                  title="Vehicle Insurance"
+                                  style={{
+                                    padding: "9px 12px",
+                                    fontSize: 12,
+                                    border: insuranceUploading[idx] === "done"
+                                      ? "1px solid rgba(34,197,94,0.4)"
+                                      : insuranceUploading[idx] === "error"
+                                      ? "1px solid rgba(239,68,68,0.4)"
+                                      : "1px solid var(--color-border-soft)",
+                                    color: insuranceUploading[idx] === "done"
+                                      ? "var(--color-success)"
+                                      : insuranceUploading[idx] === "error"
+                                      ? "#ef4444"
+                                      : "var(--color-text-secondary)",
+                                    background: insuranceUploading[idx] === "done"
+                                      ? "rgba(34,197,94,0.08)"
+                                      : insuranceUploading[idx] === "error"
+                                      ? "rgba(239,68,68,0.08)"
+                                      : "var(--color-bg-alt)",
+                                  }}
+                                  className="btn-outline whitespace-nowrap disabled:opacity-50"
+                                >
+                                  {insuranceUploading[idx] === "uploading" ? (
+                                    <div className="w-3.5 h-3.5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+                                  ) : insuranceUploading[idx] === "done" ? (
+                                    <CheckCircle2 size={13} />
+                                  ) : insuranceUploading[idx] === "error" ? (
+                                    <AlertCircle size={13} />
+                                  ) : (
+                                    <Paperclip size={13} />
+                                  )}
+                                </button>
+                                {vehicle._isNew ? (
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() =>
+                                        handleRemoveNewRow("vehicle", idx)
+                                      }
+                                      className="btn-outline whitespace-nowrap"
+                                      style={{
+                                        padding: "9px 14px",
+                                        fontSize: 11,
+                                      }}
+                                    >
+                                      <X size={12} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleAddVehicle(idx)}
+                                      disabled={newVehicleSavingIdx !== null}
+                                      className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                      style={{
+                                        padding: "9px 18px",
+                                        fontSize: 12,
+                                        background: "var(--color-success)",
+                                      }}
+                                    >
+                                      {newVehicleSavingIdx === idx ? (
+                                        <>
+                                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                          Submitting…
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Plus size={12} /> Submit
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                ) : (
                                   <button
-                                    onClick={() =>
-                                      handleRemoveNewRow("vehicle", idx)
-                                    }
-                                    className="btn-outline whitespace-nowrap"
-                                    style={{
-                                      padding: "9px 14px",
-                                      fontSize: 11,
-                                    }}
-                                  >
-                                    <X size={12} />
-                                  </button>
-                                  <button
-                                    onClick={() => handleAddVehicle(idx)}
-                                    disabled={newVehicleSavingIdx !== null}
+                                    onClick={() => handleUpdateVehicle(idx)}
+                                    disabled={vehicleSavingIdx !== null}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                    style={{
-                                      padding: "9px 18px",
-                                      fontSize: 12,
-                                      background: "var(--color-success)",
-                                    }}
+                                    style={{ padding: "9px 18px", fontSize: 12 }}
                                   >
-                                    {newVehicleSavingIdx === idx ? (
+                                    {vehicleSavingIdx === idx ? (
                                       <>
                                         <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
-                                        Submitting…
+                                        Updating…
                                       </>
                                     ) : (
                                       <>
-                                        <Plus size={12} /> Submit
+                                        <Save size={12} /> Update
                                       </>
                                     )}
                                   </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => handleUpdateVehicle(idx)}
-                                  disabled={vehicleSavingIdx !== null}
-                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                  style={{ padding: "9px 18px", fontSize: 12 }}
-                                >
-                                  {vehicleSavingIdx === idx ? (
-                                    <>
-                                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
-                                      Updating…
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Save size={12} /> Update
-                                    </>
-                                  )}
-                                </button>
-                              )}
+                                )}
+                              </div>
                             </div>
                           </div>
                         ))}

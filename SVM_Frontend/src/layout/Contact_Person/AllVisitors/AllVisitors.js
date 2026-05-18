@@ -1240,7 +1240,7 @@ const ContactAllVisitors = () => {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/*,.pdf"
+                    accept=".png,.jpg,.jpeg,.pdf,.xlsx"
                     className="hidden"
                     onChange={handleAttachFileChange}
                   />

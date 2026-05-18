@@ -396,7 +396,7 @@ const CreateVisitRequestDetails = () => {
                         {/* Hidden file input for license */}
                         <input
                           type="file"
-                          accept="image/*,application/pdf"
+                          accept=".png,.jpg,.jpeg,.pdf,.xlsx"
                           className="hidden"
                           ref={(el) => { licenseInputRefs.current[index] = el; }}
                           onChange={(e) => {

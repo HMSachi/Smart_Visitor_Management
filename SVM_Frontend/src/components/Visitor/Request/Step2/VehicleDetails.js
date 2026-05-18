@@ -67,7 +67,7 @@ const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onSave, savingId,
                                 {/* Hidden file input for license upload */}
                                 <input
                                     type="file"
-                                    accept="image/*,application/pdf"
+                                    accept=".png,.jpg,.jpeg,.pdf,.xlsx"
                                     className="hidden"
                                     ref={(el) => { licenseInputRefs.current[vehicle.id] = el; }}
                                     onChange={(e) => {
