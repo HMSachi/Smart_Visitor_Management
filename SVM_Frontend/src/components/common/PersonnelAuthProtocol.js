@@ -24,6 +24,7 @@ import {
   ImageIcon,
   FileText,
   CreditCard,
+  Paperclip,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
@@ -172,7 +173,7 @@ const PersonnelAuthProtocol = ({
   // Cache generated QRs by index so re-opening is instant
   const [qrCache, setQrCache] = useState({});
 
-  // View Attachments Modal State
+  // View Attachments Modal State (main visitor)
   const [viewAttachments, setViewAttachments] = useState({
     open: false,
     visitorId: null,
@@ -181,6 +182,16 @@ const PersonnelAuthProtocol = ({
     list: [],
     error: null,
     filterCategory: null,
+  });
+
+  // Sub-Visitor Attachments Modal State
+  const [subVisitorAttachments, setSubVisitorAttachments] = useState({
+    open: false,
+    groupId: null,
+    memberName: "",
+    loading: false,
+    list: [],
+    error: null,
   });
 
   const handleOpenSubVisitorQR = useCallback(
@@ -297,6 +308,40 @@ const PersonnelAuthProtocol = ({
       open: false,
       visitorId: null,
       visitorName: "",
+      loading: false,
+      list: [],
+      error: null,
+    });
+  };
+
+  const openSubVisitorAttachments = async (groupId, memberName) => {
+    setSubVisitorAttachments({
+      open: true,
+      groupId,
+      memberName,
+      loading: true,
+      list: [],
+      error: null,
+    });
+    try {
+      const res = await VisitorAttachmentService.GetAttachmentsByGroupId(groupId);
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const list = Array.isArray(rawList) ? rawList : [];
+      setSubVisitorAttachments((prev) => ({ ...prev, loading: false, list }));
+    } catch (err) {
+      setSubVisitorAttachments((prev) => ({
+        ...prev,
+        loading: false,
+        error: err?.message || "Failed to load attachments.",
+      }));
+    }
+  };
+
+  const closeSubVisitorAttachments = () => {
+    setSubVisitorAttachments({
+      open: false,
+      groupId: null,
+      memberName: "",
       loading: false,
       list: [],
       error: null,
@@ -580,15 +625,46 @@ const PersonnelAuthProtocol = ({
               icon={Users}
               isLight={isLight}
             >
-              <SimpleTable
-                isLight={isLight}
-                columns={[
-                  { label: "Full name", key: "fullName" },
-                  { label: "NIC", key: "nic" },
-                  { label: "Contact", key: "contact" },
-                ]}
-                data={groupMembers}
-              />
+              <div
+                className={`border rounded-lg overflow-auto max-h-[250px] ${isLight ? "border-gray-100" : "border-white/10"}`}
+              >
+                {/* Header */}
+                <div
+                  className={`flex justify-between items-center px-3 py-1.5 border-b min-w-max ${isLight ? "bg-gray-50 border-gray-100" : "bg-white/5 border-white/10"}`}
+                >
+                  <span className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[120px] ${isLight ? "text-gray-400" : "text-gray-400"}`}>Name</span>
+                  <span className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[130px] text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}>NIC</span>
+                  <span className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight flex-1 min-w-[120px] text-center ${isLight ? "text-gray-400" : "text-gray-400"}`}>Contact</span>
+                  <span className={`text-[11px] md:text-[12px] font-medium capitalize tracking-tight w-28 text-right min-w-[110px] ${isLight ? "text-gray-400" : "text-gray-400"}`}>Attachments</span>
+                </div>
+                {/* Rows */}
+                <div className={`divide-y ${isLight ? "divide-gray-50/50" : "divide-white/5"}`}>
+                  {groupMembers.map((member, idx) => (
+                    <div
+                      key={member.id || idx}
+                      className={`flex flex-row items-center justify-between gap-2 px-3 py-1.5 min-w-max ${isLight ? (idx % 2 === 0 ? "bg-white" : "bg-gray-50/30") : idx % 2 === 0 ? "bg-transparent" : "bg-white/5"}`}
+                    >
+                      <span className={`text-[11px] md:text-[12px] font-medium flex-1 min-w-[120px] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>{member.fullName}</span>
+                      <span className={`text-[11px] md:text-[12px] font-medium capitalize flex-1 min-w-[130px] text-center ${isLight ? "text-gray-600" : "text-gray-400"}`}>{member.nic}</span>
+                      <span className={`text-[11px] md:text-[12px] font-medium flex-1 min-w-[120px] text-center ${isLight ? "text-gray-600" : "text-gray-400"}`}>{member.contact || "-"}</span>
+                      <div className="w-28 flex justify-end min-w-[110px]">
+                        <button
+                          type="button"
+                          title="Attachments"
+                          onClick={() => openSubVisitorAttachments(member.id, member.fullName)}
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all text-[10px] font-semibold tracking-wide ${
+                            isLight
+                              ? "bg-primary/10 border-primary/30 text-primary hover:bg-primary/20 active:scale-95"
+                              : "bg-primary/15 border-primary/30 text-primary hover:bg-primary/25 active:scale-95"
+                          }`}
+                        >
+                          <Paperclip size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </SplitSection>
           </div>
         </SectionCard>
@@ -951,6 +1027,89 @@ const PersonnelAuthProtocol = ({
                       </li>
                     );
                   }))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Sub-Visitor Attachments Modal ── */}
+      {subVisitorAttachments.open && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <div>
+                  <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">Uploaded Documents</h2>
+                  {subVisitorAttachments.memberName && (
+                    <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                      {subVisitorAttachments.memberName} · #{subVisitorAttachments.groupId}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={closeSubVisitorAttachments}
+                className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 relative z-10 min-h-[120px]">
+              {subVisitorAttachments.loading ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3">
+                  <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
+                  <p className="text-[11px] text-white/30 tracking-widest uppercase">Loading...</p>
+                </div>
+              ) : subVisitorAttachments.error ? (
+                <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
+                  <AlertCircle size={13} className="shrink-0" />
+                  {subVisitorAttachments.error}
+                </div>
+              ) : subVisitorAttachments.list.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                  <FolderOpen size={32} />
+                  <p className="text-[11px] tracking-widest uppercase">No attachments found</p>
+                </div>
+              ) : (
+                <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
+                  {subVisitorAttachments.list.map((att, idx) => {
+                    const category = att.VAT_File_Category || att.FileCategory || "document";
+                    const fileName = att.VAT_File_Name || att.FileName || att.FilePath || `file-${idx + 1}`;
+                    const vatId = att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
+                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+                    return (
+                      <li
+                        key={idx}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                      >
+                        {isImage ? (
+                          <ImageIcon size={15} className="text-primary/60 shrink-0" />
+                        ) : (
+                          <FileText size={15} className="text-primary/60 shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-medium text-white truncate">{fileName}</p>
+                          <p className="text-[9px] text-white/40 capitalize">{category}</p>
+                        </div>
+                        <button
+                          type="button"
+                          title="Download file"
+                          onClick={() => vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName)}
+                          className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
+                        >
+                          <Download size={18} />
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>

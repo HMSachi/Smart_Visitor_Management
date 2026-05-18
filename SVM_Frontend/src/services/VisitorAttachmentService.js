@@ -82,6 +82,20 @@ const GetAttachmentsByVisitorId = async (visitorId) => {
 };
 
 /**
+ * Get all attachments for a sub-visitor (group member).
+ * @param {number|string} groupId - VVG_id of the sub-visitor
+ */
+const GetAttachmentsByGroupId = async (groupId) => {
+  const config = {
+    method: "get",
+    url: getApiUrl(
+      `/VisitorAttachment/GetAttachmentsByGroupId?VVG_id=${encodeURIComponent(groupId)}`
+    ),
+  };
+  return axios.request(config).then((response) => response);
+};
+
+/**
  * Download an attachment file by its VAT_Id.
  * @param {number|string} vatId    - VAT_Id of the attachment record
  * @param {string}        fileName - Suggested file name for the download
@@ -119,5 +133,6 @@ export default {
   UploadAttachment,
   UploadSubVisitorAttachment,
   GetAttachmentsByVisitorId,
+  GetAttachmentsByGroupId,
   DownloadAttachment,
 };
