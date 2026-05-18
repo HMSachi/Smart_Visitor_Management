@@ -28,7 +28,7 @@ const Panel = ({ iconName, label, value, trend }) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-[var(--color-bg-paper)] border border-white/5 p-5 md:p-6 rounded-[24px] flex flex-col justify-between group cursor-pointer hover:border-white/10 transition-all duration-500 relative overflow-hidden shadow-2xl h-full"
+      className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] p-5 md:p-6 rounded-[10px] flex flex-col justify-between group cursor-pointer hover:border-[var(--color-border-medium)] transition-all duration-500 relative overflow-hidden shadow-2xl h-full"
     >
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all"></div>
 

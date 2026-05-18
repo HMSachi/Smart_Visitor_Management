@@ -54,9 +54,12 @@ const ActiveVisitors = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-2xl p-6 hover:border-primary/20 transition-all duration-300"
+            className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-[10px] p-6 hover:border-[var(--color-border-medium)] transition-all duration-500 shadow-2xl group relative overflow-hidden"
         >
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-700 shadow-[0_0_10px_var(--color-primary)] z-20"></div>
+
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 relative z-10">
                 <div>
                     <h2 className="text-[var(--color-text-primary)] text-lg md:text-xl font-bold tracking-tight flex items-center gap-3">
                         <Users size={20} className="text-primary" />

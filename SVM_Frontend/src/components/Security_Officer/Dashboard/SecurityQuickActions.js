@@ -11,24 +11,24 @@ const QuickActionButton = ({ icon: Icon, label, description, onClick, index }) =
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
             onClick={onClick}
-            className="group relative overflow-hidden h-full min-h-[140px] md:min-h-[160px] bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-2xl p-6 hover:border-primary/40 transition-all duration-500 flex flex-col justify-between"
+            className="group relative overflow-hidden bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-[10px] p-5 md:p-6 hover:border-[var(--color-border-medium)] transition-all duration-500 shadow-2xl cursor-pointer w-full min-h-[110px] flex flex-col justify-center"
         >
             {/* Background glow effect */}
-            <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>
+            <div className="absolute -top-10 -right-10 w-20 h-20 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>
             
             {/* Content */}
-            <div className="relative z-10 flex flex-col h-full justify-between">
-                <div>
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all duration-300">
-                        <Icon className="text-primary group-hover:scale-110 transition-transform" size={24} strokeWidth={2} />
-                    </div>
-                    <h3 className="text-[var(--color-text-primary)] font-bold text-sm tracking-wide mb-1 text-left">
+            <div className="flex justify-between items-start relative z-10 w-full text-left">
+                <div className="pr-4 flex-1">
+                    <h3 className="text-[var(--color-text-primary)] text-[14px] md:text-[16px] font-bold tracking-tight group-hover:text-primary transition-colors mb-1.5">
                         {label}
                     </h3>
+                    <p className="text-[var(--color-text-secondary)] text-[11px] opacity-80 leading-relaxed group-hover:opacity-100 transition-opacity">
+                        {description}
+                    </p>
                 </div>
-                <p className="text-[var(--color-text-secondary)] text-xs opacity-75 text-left leading-relaxed">
-                    {description}
-                </p>
+                <div className="p-2.5 rounded-lg bg-primary/5 group-hover:bg-primary/10 transition-all duration-500 shrink-0 border-0">
+                    <Icon className="text-primary group-hover:scale-110 transition-transform" size={18} strokeWidth={2.5} />
+                </div>
             </div>
 
             {/* Bottom accent line */}
