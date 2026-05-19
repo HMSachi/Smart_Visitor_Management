@@ -44,6 +44,8 @@ import VisitorService from "../../../services/VisitorService";
 import GatePassService from "../../../services/GatePassService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
+import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
+import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
 
 // ── Helper: a single icon + label + value row ──────────────────────────────
 const InfoRow = ({ icon, label, value }) => (
@@ -85,6 +87,7 @@ const InfoRow = ({ icon, label, value }) => (
 const LiveFeed = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const { previewData, openPreview, closePreview } = useAttachmentPreview();
   const videoRef = useRef(null);
   const controlsRef = useRef(null);
   const scannerRef = useRef(null);
@@ -1597,7 +1600,8 @@ const LiveFeed = () => {
                     return (
                       <li
                         key={idx}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                        onClick={() => vatId && openPreview(vatId, fileName)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
                       >
                         {isImage ? (
                           <ImageIcon
@@ -1621,13 +1625,10 @@ const LiveFeed = () => {
                         <button
                           type="button"
                           title="Download file"
-                          onClick={() =>
-                            vatId &&
-                            VisitorAttachmentService.DownloadAttachment(
-                              vatId,
-                              fileName,
-                            )
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                          }}
                           className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                         >
                           <Download size={18} />
@@ -1641,6 +1642,7 @@ const LiveFeed = () => {
           </div>
         </div>
       )}
+      <AttachmentPreviewModal previewData={previewData} onClose={closePreview} />
     </div>
   );
 };

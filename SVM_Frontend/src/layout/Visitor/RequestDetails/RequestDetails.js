@@ -32,6 +32,8 @@ import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
 import { UpdateVisitRequest } from "../../../actions/VisitRequestAction";
+import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
+import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
 
 const RAW_FIELD_LABELS = {
   VVR_Contact_person_id: "Contact Person ID",
@@ -113,6 +115,7 @@ const RequestDetails = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const { requestId } = useParams();
+  const { previewData, openPreview, closePreview } = useAttachmentPreview();
 
   const { visitRequestsByVis } = useSelector(
     (state) => state.visitRequestsState,
@@ -811,7 +814,8 @@ const RequestDetails = () => {
                     return (
                       <li
                         key={idx}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                        onClick={() => vatId && openPreview(vatId, fileName)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
                       >
                         {isImage ? (
                           <ImageIcon
@@ -835,13 +839,10 @@ const RequestDetails = () => {
                         <button
                           type="button"
                           title="Download file"
-                          onClick={() =>
-                            vatId &&
-                            VisitorAttachmentService.DownloadAttachment(
-                              vatId,
-                              fileName,
-                            )
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                          }}
                           className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                         >
                           <Download size={18} />
@@ -911,7 +912,8 @@ const RequestDetails = () => {
                     return (
                       <li
                         key={idx}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all"
+                        onClick={() => vatId && openPreview(vatId, fileName)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
                       >
                         {isImage ? (
                           <ImageIcon size={15} className="text-primary/60 shrink-0" />
@@ -925,7 +927,10 @@ const RequestDetails = () => {
                         <button
                           type="button"
                           title="Download file"
-                          onClick={() => vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                          }}
                           className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                         >
                           <Download size={18} />
@@ -939,6 +944,7 @@ const RequestDetails = () => {
           </div>
         </div>
       )}
+      <AttachmentPreviewModal previewData={previewData} onClose={closePreview} />
     </div>
   );
 };

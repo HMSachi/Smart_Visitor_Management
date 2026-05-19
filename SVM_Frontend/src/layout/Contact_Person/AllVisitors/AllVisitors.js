@@ -48,8 +48,12 @@ import {
   validatePassword,
 } from "../../../utils/validation";
 
+import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
+import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
+
 const ContactAllVisitors = () => {
   const dispatch = useDispatch();
+  const { previewData, openPreview, closePreview } = useAttachmentPreview();
   const { visitorsByCP, isLoading, error } = useSelector(
     (state) => state.visitorManagement,
   );
@@ -1505,7 +1509,8 @@ const ContactAllVisitors = () => {
                       return (
                         <li
                           key={idx}
-                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                          onClick={() => vatId && openPreview(vatId, fileName)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
                         >
                           {isImage ? (
                             <ImageIcon
@@ -1540,13 +1545,10 @@ const ContactAllVisitors = () => {
                           <button
                             type="button"
                             title="Download file"
-                            onClick={() =>
-                              vatId &&
-                              VisitorAttachmentService.DownloadAttachment(
-                                vatId,
-                                fileName,
-                              )
-                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                            }}
                             className={`p-2 rounded-lg text-primary/80 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                           >
                             <Download size={18} />
@@ -1572,6 +1574,8 @@ const ContactAllVisitors = () => {
           </div>
         )}
       </div>
+
+      <AttachmentPreviewModal previewData={previewData} onClose={closePreview} />
     </div>
   );
 };

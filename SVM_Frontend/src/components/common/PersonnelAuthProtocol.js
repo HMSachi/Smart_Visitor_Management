@@ -31,6 +31,8 @@ import { QRCodeSVG } from "qrcode.react";
 import { useThemeMode } from "../../theme/ThemeModeContext";
 import SubVisitorQRService from "../../services/SubVisitorQRService";
 import VisitorAttachmentService from "../../services/VisitorAttachmentService";
+import AttachmentPreviewModal from "../../components/common/AttachmentPreviewModal";
+import { useAttachmentPreview } from "../../hooks/useAttachmentPreview";
 
 const SplitSection = ({ title, icon: Icon, isLight, children }) => (
   <div className="flex flex-col gap-1">
@@ -143,6 +145,7 @@ const PersonnelAuthProtocol = ({
 }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
+  const { previewData, openPreview, closePreview } = useAttachmentPreview();
 
   // Check whether the main visitor has a gate pass (same logic as VisitorTable)
   const hasGatePass = () => {
@@ -989,7 +992,8 @@ const PersonnelAuthProtocol = ({
                     return (
                       <li
                         key={idx}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                        onClick={() => vatId && openPreview(vatId, fileName)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
                       >
                         {isImage ? (
                           <ImageIcon
@@ -1013,13 +1017,10 @@ const PersonnelAuthProtocol = ({
                         <button
                           type="button"
                           title="Download file"
-                          onClick={() =>
-                            vatId &&
-                            VisitorAttachmentService.DownloadAttachment(
-                              vatId,
-                              fileName,
-                            )
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                          }}
                           className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                         >
                           <Download size={18} />
@@ -1088,7 +1089,8 @@ const PersonnelAuthProtocol = ({
                     return (
                       <li
                         key={idx}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                        onClick={() => vatId && openPreview(vatId, fileName)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
                       >
                         {isImage ? (
                           <ImageIcon size={15} className="text-primary/60 shrink-0" />
@@ -1102,7 +1104,10 @@ const PersonnelAuthProtocol = ({
                         <button
                           type="button"
                           title="Download file"
-                          onClick={() => vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                          }}
                           className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                         >
                           <Download size={18} />
@@ -1116,6 +1121,7 @@ const PersonnelAuthProtocol = ({
           </div>
         </div>
       )}
+      <AttachmentPreviewModal previewData={previewData} onClose={closePreview} />
     </motion.div>
   );
 };

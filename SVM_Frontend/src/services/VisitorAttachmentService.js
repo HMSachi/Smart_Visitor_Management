@@ -129,10 +129,36 @@ const DownloadAttachment = async (vatId, fileName = "attachment") => {
   return response;
 };
 
+/**
+ * Get preview data for an attachment file by its VAT_Id.
+ * @param {number|string} vatId    - VAT_Id of the attachment record
+ */
+const GetAttachmentPreviewData = async (vatId) => {
+  const config = {
+    method: "get",
+    url: getApiUrl(
+      `/VisitorAttachment/DownloadAttachment?VAT_Id=${encodeURIComponent(vatId)}`
+    ),
+    responseType: "blob",
+  };
+
+  const response = await axios.request(config);
+
+  const contentType = response.headers?.["content-type"] || "application/octet-stream";
+  const blobUrl = window.URL.createObjectURL(new Blob([response.data], { type: contentType }));
+  
+  const disposition = response.headers?.["content-disposition"] || "";
+  const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+  const resolvedName = match ? match[1].replace(/['"]/g, "") : null;
+
+  return { blobUrl, fileType: contentType, fileName: resolvedName };
+};
+
 export default {
   UploadAttachment,
   UploadSubVisitorAttachment,
   GetAttachmentsByVisitorId,
   GetAttachmentsByGroupId,
   DownloadAttachment,
+  GetAttachmentPreviewData,
 };
