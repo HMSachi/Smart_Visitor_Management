@@ -57,7 +57,7 @@ const SecurityQuickActions = () => {
             icon: Users,
             label: 'Active Visitors',
             description: 'View currently on-premise visitors',
-            onClick: () => navigate('/security_officer/active-visitors'),
+            onClick: () => navigate('/Security_Officer/active-visitors'),
         },
         {
             icon: AlertCircle,

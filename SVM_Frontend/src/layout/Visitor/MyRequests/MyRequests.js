@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,6 +21,8 @@ import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
+import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
+import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
 import { validateNIC, validatePhone } from "../../../utils/validation";
 import {
   ClipboardList,
@@ -40,6 +43,11 @@ import {
   Plus,
   Eye,
   Paperclip,
+  Download,
+  FileText,
+  FolderOpen,
+  ImageIcon,
+  Upload,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -141,28 +149,130 @@ const MyRequests = () => {
 
   // Vehicle Insurance upload state per vehicle row: 'uploading' | 'done' | 'error'
   const [insuranceUploading, setInsuranceUploading] = useState({});
-  const insuranceInputRefs = useRef({});
+  const [insuranceModal, setInsuranceModal] = useState({
+    open: false,
+    visitorId: null,
+    visitorName: "",
+    vehicleIdx: null,
+    loading: false,
+    list: [],
+    error: null,
+  });
+  const [insuranceFile, setInsuranceFile] = useState(null);
+  const [insuranceUploadResult, setInsuranceUploadResult] = useState(null);
+  const insuranceFileInputRef = useRef(null);
+  const { previewData, openPreview, closePreview } = useAttachmentPreview();
 
-  const handleInsuranceUpload = (idx) => {
-    if (insuranceInputRefs.current[idx]) insuranceInputRefs.current[idx].click();
-  };
-
-  const handleInsuranceFileChange = async (idx, file) => {
-    if (!file) return;
+  const openInsuranceModal = async (idx) => {
     if (!visitorId) {
       alert("Visitor ID not found. Please try again.");
       return;
     }
+    const modalName = visitorName || editingRequest?.VV_Name || "";
+    setInsuranceModal({
+      open: true,
+      visitorId,
+      visitorName: modalName,
+      vehicleIdx: idx,
+      loading: true,
+      list: [],
+      error: null,
+    });
+    setInsuranceFile(null);
+    setInsuranceUploadResult(null);
+    try {
+      const res =
+        await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const allAttachments = Array.isArray(rawList) ? rawList : [];
+      const list = allAttachments.filter(
+        (att) =>
+          (att.VAT_File_Category || att.FileCategory || "").toLowerCase() ===
+          "vehicle insurance",
+      );
+      setInsuranceModal((prev) => ({ ...prev, loading: false, list }));
+    } catch (err) {
+      setInsuranceModal((prev) => ({
+        ...prev,
+        loading: false,
+        error: err?.message || "Failed to load attachments.",
+      }));
+    }
+  };
+
+  const closeInsuranceModal = () => {
+    setInsuranceModal({
+      open: false,
+      visitorId: null,
+      visitorName: "",
+      vehicleIdx: null,
+      loading: false,
+      list: [],
+      error: null,
+    });
+    setInsuranceFile(null);
+    setInsuranceUploadResult(null);
+  };
+
+  const handleInsuranceFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setInsuranceFile(file);
+    setInsuranceUploadResult(null);
+  };
+
+  const handleInsuranceUpload = async () => {
+    if (!insuranceFile || !insuranceModal.visitorId) return;
+    const idx = insuranceModal.vehicleIdx;
     const pUid = user?.ResultSet?.[0]?.VA_Name || "Visitor";
     setInsuranceUploading((prev) => ({ ...prev, [idx]: "uploading" }));
+    setInsuranceUploadResult(null);
     try {
-      await VisitorAttachmentService.UploadAttachment(visitorId, "Vehicle Insurance", pUid, file);
+      await VisitorAttachmentService.UploadAttachment(
+        insuranceModal.visitorId,
+        "Vehicle Insurance",
+        pUid,
+        insuranceFile,
+      );
+      setInsuranceUploadResult({ success: true, message: "Uploaded" });
+      setInsuranceFile(null);
+      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(
+        insuranceModal.visitorId,
+      );
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const allAttachments = Array.isArray(rawList) ? rawList : [];
+      const list = allAttachments.filter(
+        (att) =>
+          (att.VAT_File_Category || att.FileCategory || "").toLowerCase() ===
+          "vehicle insurance",
+      );
+      setInsuranceModal((prev) => ({ ...prev, list }));
       setInsuranceUploading((prev) => ({ ...prev, [idx]: "done" }));
-      setTimeout(() => setInsuranceUploading((prev) => { const n = { ...prev }; delete n[idx]; return n; }), 3000);
+      setTimeout(
+        () =>
+          setInsuranceUploading((prev) => {
+            const n = { ...prev };
+            delete n[idx];
+            return n;
+          }),
+        3000,
+      );
     } catch (err) {
       console.error("Insurance upload failed:", err);
+      setInsuranceUploadResult({
+        success: false,
+        message: err?.message || "Upload failed.",
+      });
       setInsuranceUploading((prev) => ({ ...prev, [idx]: "error" }));
-      setTimeout(() => setInsuranceUploading((prev) => { const n = { ...prev }; delete n[idx]; return n; }), 3000);
+      setTimeout(
+        () =>
+          setInsuranceUploading((prev) => {
+            const n = { ...prev };
+            delete n[idx];
+            return n;
+          }),
+        3000,
+      );
     }
   };
   const [newMemberSavingIdx, setNewMemberSavingIdx] = useState(null);
@@ -1618,42 +1728,35 @@ const MyRequests = () => {
                                 </span>
                               )}
                               <div className="flex gap-2 items-center">
-                                {/* Hidden file input for insurance upload */}
-                                <input
-                                  type="file"
-                                  accept=".png,.jpg,.jpeg,.pdf,.xlsx"
-                                  className="hidden"
-                                  ref={(el) => { insuranceInputRefs.current[idx] = el; }}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleInsuranceFileChange(idx, file);
-                                    e.target.value = "";
-                                  }}
-                                />
-                                {/* Vehicle Insurance icon-only button */}
+                                {/* Vehicle Insurance button */}
                                 <button
                                   type="button"
-                                  onClick={() => handleInsuranceUpload(idx)}
-                                  disabled={insuranceUploading[idx] === "uploading"}
+                                  onClick={() => openInsuranceModal(idx)}
+                                  disabled={
+                                    insuranceUploading[idx] === "uploading"
+                                  }
                                   title="Vehicle Insurance"
                                   style={{
                                     padding: "9px 12px",
                                     fontSize: 12,
-                                    border: insuranceUploading[idx] === "done"
-                                      ? "1px solid rgba(34,197,94,0.4)"
-                                      : insuranceUploading[idx] === "error"
-                                      ? "1px solid rgba(239,68,68,0.4)"
-                                      : "1px solid var(--color-border-soft)",
-                                    color: insuranceUploading[idx] === "done"
-                                      ? "var(--color-success)"
-                                      : insuranceUploading[idx] === "error"
-                                      ? "#ef4444"
-                                      : "var(--color-text-secondary)",
-                                    background: insuranceUploading[idx] === "done"
-                                      ? "rgba(34,197,94,0.08)"
-                                      : insuranceUploading[idx] === "error"
-                                      ? "rgba(239,68,68,0.08)"
-                                      : "var(--color-bg-alt)",
+                                    border:
+                                      insuranceUploading[idx] === "done"
+                                        ? "1px solid rgba(34,197,94,0.4)"
+                                        : insuranceUploading[idx] === "error"
+                                          ? "1px solid rgba(239,68,68,0.4)"
+                                          : "1px solid var(--color-border-soft)",
+                                    color:
+                                      insuranceUploading[idx] === "done"
+                                        ? "var(--color-success)"
+                                        : insuranceUploading[idx] === "error"
+                                          ? "#ef4444"
+                                          : "var(--color-text-secondary)",
+                                    background:
+                                      insuranceUploading[idx] === "done"
+                                        ? "rgba(34,197,94,0.08)"
+                                        : insuranceUploading[idx] === "error"
+                                          ? "rgba(239,68,68,0.08)"
+                                          : "var(--color-bg-alt)",
                                   }}
                                   className="btn-outline whitespace-nowrap disabled:opacity-50"
                                 >
@@ -1708,7 +1811,10 @@ const MyRequests = () => {
                                     onClick={() => handleUpdateVehicle(idx)}
                                     disabled={vehicleSavingIdx !== null}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                    style={{ padding: "9px 18px", fontSize: 12 }}
+                                    style={{
+                                      padding: "9px 18px",
+                                      fontSize: 12,
+                                    }}
                                   >
                                     {vehicleSavingIdx === idx ? (
                                       <>
@@ -1829,18 +1935,22 @@ const MyRequests = () => {
                               <input
                                 type="text"
                                 value={member.VVG_Visitor_Name}
-                                onChange={(e) =>
+                                onChange={(e) => {
+                                  const val = e.target.value.replace(
+                                    /[^A-Za-z\s]/g,
+                                    "",
+                                  );
                                   setEditGroupMembers((arr) =>
                                     arr.map((m, i) =>
                                       i === idx
                                         ? {
                                             ...m,
-                                            VVG_Visitor_Name: e.target.value,
+                                            VVG_Visitor_Name: val,
                                           }
                                         : m,
                                     ),
-                                  )
-                                }
+                                  );
+                                }}
                                 className="mas-input"
                               />
                             </div>
@@ -2541,6 +2651,281 @@ const MyRequests = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Vehicle Insurance Modal - using Portal to escape parent constraints */}
+      {insuranceModal.open &&
+        ReactDOM.createPortal(
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 9999,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <div
+              className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden"
+              style={{ zIndex: 10000, maxWidth: "28rem", width: "100%" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1.5 h-5 bg-primary rounded-full" />
+                  <div>
+                    <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
+                      Vehicle Insurance Attachments
+                    </h2>
+                    {insuranceModal.visitorName && (
+                      <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                        insurance files · {insuranceModal.visitorName}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={closeInsuranceModal}
+                  className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+                  title="Close"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 relative z-10 min-h-[120px]">
+                {insuranceModal.loading ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3">
+                    <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
+                    <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                      Loading...
+                    </p>
+                  </div>
+                ) : insuranceModal.error ? (
+                  <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
+                    <AlertCircle size={13} className="shrink-0" />
+                    {insuranceModal.error}
+                  </div>
+                ) : insuranceModal.list.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                    <FolderOpen size={32} />
+                    <p className="text-[11px] tracking-widest uppercase">
+                      No attachments found
+                    </p>
+                  </div>
+                ) : (
+                  <ul className="space-y-2 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
+                    {insuranceModal.list.map((att, idx) => {
+                      const category =
+                        att.VAT_File_Category || att.FileCategory || "document";
+                      const fileName =
+                        att.VAT_File_Name ||
+                        att.FileName ||
+                        att.FilePath ||
+                        `file-${idx + 1}`;
+                      const vatId =
+                        att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
+                      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                        fileName,
+                      );
+                      return (
+                        <li
+                          key={idx}
+                          onClick={() => vatId && openPreview(vatId, fileName)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
+                        >
+                          {isImage ? (
+                            <ImageIcon
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          ) : (
+                            <FileText
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] text-white/80 font-normal truncate">
+                              {fileName}
+                            </p>
+                            <span
+                              className={`text-[9px] font-normal uppercase tracking-widest px-1.5 py-0.5 rounded mt-0.5 inline-block ${
+                                category.toLowerCase() === "vehicle insurance"
+                                  ? "bg-emerald-500/20 text-emerald-300"
+                                  : "bg-white/10 text-white/40"
+                              }`}
+                            >
+                              {category}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            title="Download file"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              vatId &&
+                                VisitorAttachmentService.DownloadAttachment(
+                                  vatId,
+                                  fileName,
+                                );
+                            }}
+                            className={`p-2 rounded-lg text-primary/80 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
+                          >
+                            <Download size={18} />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+
+                <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
+                  <div>
+                    <h3 className="text-[11px] font-semibold text-white mb-3 uppercase tracking-widest flex items-center gap-2">
+                      <Upload size={14} />
+                      Add New Insurance File
+                    </h3>
+                  </div>
+
+                  <div className="relative">
+                    <input
+                      type="file"
+                      ref={(el) => (insuranceFileInputRef.current = el)}
+                      accept=".png,.jpg,.jpeg,.pdf,.xlsx,.doc,.docx"
+                      onChange={handleInsuranceFileSelect}
+                      className="hidden"
+                      id="insurance-file-input"
+                    />
+                    <label
+                      htmlFor="insurance-file-input"
+                      className={`flex flex-col gap-2.5 p-4 rounded-xl border-2 border-dashed transition-all cursor-pointer group ${
+                        insuranceFile
+                          ? "border-emerald-500/30 bg-emerald-500/10"
+                          : "border-white/20 hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      {insuranceFile ? (
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-2 min-w-0">
+                            <FileText
+                              size={18}
+                              className="text-emerald-400 shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <p className="text-[11px] text-emerald-200 font-medium truncate">
+                                {insuranceFile.name}
+                              </p>
+                              <p className="text-[9px] text-emerald-200/60">
+                                Ready to upload ·{" "}
+                                {(insuranceFile.size / 1024 / 1024).toFixed(2)}{" "}
+                                MB
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setInsuranceFile(null);
+                              setInsuranceUploadResult(null);
+                            }}
+                            className="text-emerald-300/70 hover:text-emerald-200 transition-colors p-1 hover:bg-emerald-500/10 rounded shrink-0"
+                            title="Remove file"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <div className="flex items-center gap-2">
+                            <Upload
+                              size={18}
+                              className="text-white/40 group-hover:text-white/60"
+                            />
+                            <span className="text-[11px] text-white/50 group-hover:text-white/70">
+                              Click to browse or drag file here
+                            </span>
+                          </div>
+                          <span className="text-[9px] text-white/30">
+                            Supported: PNG, JPG, PDF, XLSX, DOC
+                          </span>
+                        </div>
+                      )}
+                    </label>
+                  </div>
+
+                  {insuranceUploadResult && (
+                    <div
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-[11px] ${
+                        insuranceUploadResult.success
+                          ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-200"
+                          : "bg-red-500/10 border border-red-500/20 text-red-300"
+                      }`}
+                    >
+                      {insuranceUploadResult.success ? (
+                        <CheckCircle2 size={14} className="shrink-0" />
+                      ) : (
+                        <AlertCircle size={14} className="shrink-0" />
+                      )}
+                      {insuranceUploadResult.message}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleInsuranceUpload}
+                    disabled={
+                      !insuranceFile ||
+                      insuranceUploading[insuranceModal.vehicleIdx] ===
+                        "uploading"
+                    }
+                    className="w-full py-2.5 rounded-lg text-[11px] font-semibold tracking-[0.14em] text-white uppercase transition-all border-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      background:
+                        insuranceFile &&
+                        insuranceUploading[insuranceModal.vehicleIdx] !==
+                          "uploading"
+                          ? "linear-gradient(135deg, rgb(16 185 129) 0%, rgb(5 150 105) 100%)"
+                          : "rgba(255, 255, 255, 0.1)",
+                      boxShadow:
+                        insuranceFile &&
+                        insuranceUploading[insuranceModal.vehicleIdx] !==
+                          "uploading"
+                          ? "0 4px 12px rgba(16, 185, 129, 0.2)"
+                          : "none",
+                    }}
+                  >
+                    {insuranceUploading[insuranceModal.vehicleIdx] ===
+                    "uploading" ? (
+                      <span className="inline-flex items-center justify-center gap-2">
+                        <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Uploading...
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center justify-center gap-2">
+                        <Upload size={14} /> Upload Insurance File
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
+
+      <AttachmentPreviewModal
+        previewData={previewData}
+        onClose={closePreview}
+      />
     </div>
   );
 };

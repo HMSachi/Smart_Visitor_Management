@@ -39,6 +39,7 @@ import {
   ExternalLink,
   ImageIcon,
   Download,
+  Edit,
 } from "lucide-react";
 import {
   validateName,
@@ -46,10 +47,22 @@ import {
   validatePhone,
   validateEmail,
   validatePassword,
+  validatePlateNumber,
+  validateCompanyName,
+  validateVehicleType,
+  sanitizeTextInput,
+  sanitizeNumberInput,
+  sanitizePhoneInput,
+  sanitizeNICInput,
+  sanitizePlateInput,
 } from "../../../utils/validation";
+
+import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
+import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
 
 const ContactAllVisitors = () => {
   const dispatch = useDispatch();
+  const { previewData, openPreview, closePreview } = useAttachmentPreview();
   const { visitorsByCP, isLoading, error } = useSelector(
     (state) => state.visitorManagement,
   );
@@ -80,6 +93,8 @@ const ContactAllVisitors = () => {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingVisitorId, setEditingVisitorId] = useState(null);
+  const [hasExistingAttachments, setHasExistingAttachments] = useState(false);
 
   // View Attachments Modal State
   const [viewAttachments, setViewAttachments] = useState({
@@ -137,31 +152,47 @@ const ContactAllVisitors = () => {
   const [attachUploading, setAttachUploading] = useState(false);
   const [attachResult, setAttachResult] = useState(null); // { success, message }
   const [attachDragOver, setAttachDragOver] = useState(false);
-  // Pending attachment: file chosen in the form before visitor is created
-  const [pendingAttachFile, setPendingAttachFile] = useState(null);
-  const [pendingAttachCategory, setPendingAttachCategory] = useState("nic");
+  // Pending attachments: files chosen in the form before visitor is created
+  const [pendingAttachFiles, setPendingAttachFiles] = useState({
+    nic: null,
+    passport: null,
+    driving_licence: null,
+  });
   const fileInputRef = useRef(null);
+
+  // Helper to format category for API: "nic" → "NIC", "passport" → "Passport", "driving_licence" → "Driving Licence"
+  const formatCategoryForAPI = (cat) => {
+    if (cat === "nic") return "NIC";
+    if (cat === "passport") return "Passport";
+    if (cat === "driving_licence") return "Driving Licence";
+    return cat;
+  };
 
   const openAttachmentModal = (visitorId, visitorName = "") => {
     setAttachmentModal({ open: true, visitorId, visitorName });
     // Pre-populate with any pending file already chosen from the form
-    setAttachFile(visitorId ? null : pendingAttachFile);
-    setAttachCategory(visitorId ? "nic" : pendingAttachCategory);
+    const initialCategory = visitorId ? "nic" : attachCategory;
+    setAttachCategory(initialCategory);
+    setAttachFile(
+      visitorId ? null : pendingAttachFiles[initialCategory] || null,
+    );
     setAttachResult(null);
     setAttachUploading(false);
   };
 
   // Confirm file selection from the form-context modal (no visitorId yet)
   const confirmAttachFile = () => {
-    setPendingAttachFile(attachFile);
-    setPendingAttachCategory(attachCategory);
+    setPendingAttachFiles((prev) => ({
+      ...prev,
+      [attachCategory]: attachFile,
+    }));
     setAttachmentModal({ open: false, visitorId: null, visitorName: "" });
     setAttachResult(null);
   };
 
   const closeAttachmentModal = () => {
     setAttachmentModal({ open: false, visitorId: null, visitorName: "" });
-    // Don't clear attachFile — leave pendingAttachFile intact
+    // Don't clear attachFile — leave pendingAttachFiles intact
     setAttachFile(null);
     setAttachResult(null);
   };
@@ -193,7 +224,7 @@ const ContactAllVisitors = () => {
     try {
       await VisitorAttachmentService.UploadAttachment(
         attachmentModal.visitorId,
-        attachCategory,
+        formatCategoryForAPI(attachCategory),
         pUid,
         attachFile,
       );
@@ -296,7 +327,8 @@ const ContactAllVisitors = () => {
 
   const openModal = () => {
     console.log("Opening modal with cpId:", cpId);
-
+    setEditingVisitorId(null);
+    setHasExistingAttachments(false);
     setFormData({
       VV_Contact_person_id: cpId,
       VV_Name: "",
@@ -311,29 +343,70 @@ const ContactAllVisitors = () => {
       VV_Vehicle_Number: "",
     });
     // Reset pending attachment for each new form session
-    setPendingAttachFile(null);
-    setPendingAttachCategory("nic");
+    setPendingAttachFiles({ nic: null, passport: null, driving_licence: null });
+    setIsModalOpen(true);
+    setShowPassword(false);
+  };
+
+  const openEditModal = async (visitor) => {
+    console.log("Editing visitor:", visitor);
+    setEditingVisitorId(visitor.VV_Visitor_id);
+    setFormData({
+      VV_Contact_person_id: cpId || visitor.VV_Contact_person_id,
+      VV_Name: visitor.VV_Name || "",
+      VV_NIC_Passport_NO: visitor.VV_NIC_Passport_NO || "",
+      VV_Visiting_places: visitor.VV_Visiting_places || "",
+      VV_Visitor_Type: visitor.VV_Visitor_Type || "",
+      VV_Phone: visitor.VV_Phone || "",
+      VV_Email: visitor.VV_Email || "",
+      VV_Company: visitor.VV_Company || "",
+      VA_Password: "",
+      VV_Vehicle_Type: "",
+      VV_Vehicle_Number: "",
+    });
+    setPendingAttachFiles({ nic: null, passport: null, driving_licence: null });
+    setHasExistingAttachments(false);
+
+    try {
+      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(visitor.VV_Visitor_id);
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      if (rawList.length > 0) {
+        setHasExistingAttachments(true);
+      }
+    } catch (err) {
+      console.error("Error checking visitor attachments:", err);
+    }
+
     setIsModalOpen(true);
     setShowPassword(false);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setEditingVisitorId(null);
+    setHasExistingAttachments(false);
     setErrors({});
-    setPendingAttachFile(null);
-    setPendingAttachCategory("nic");
+    setPendingAttachFiles({ nic: null, passport: null, driving_licence: null });
   };
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
 
-    // Real-time filtering and length enforcement
+    // Real-time sanitization - enforce input types
     if (name === "VV_Name") {
-      value = value.replace(/[^A-Za-z\s]/g, "");
+      value = sanitizeTextInput(value);
     } else if (name === "VV_NIC_Passport_NO") {
-      value = value.replace(/[^0-9]/g, "").slice(0, 12);
+      value = sanitizeNICInput(value);
     } else if (name === "VV_Phone") {
-      value = value.replace(/[^0-9]/g, "").slice(0, 10);
+      value = sanitizePhoneInput(value);
+    } else if (name === "VV_Company") {
+      value = sanitizeTextInput(value);
+    } else if (name === "VV_Visitor_Type") {
+      value = sanitizeTextInput(value);
+    } else if (name === "VV_Vehicle_Type") {
+      value = sanitizeTextInput(value);
+    } else if (name === "VV_Vehicle_Number") {
+      value = sanitizePlateInput(value);
     } else if (name === "VA_Password") {
       value = value.slice(0, 5);
     }
@@ -360,22 +433,25 @@ const ContactAllVisitors = () => {
     const phoneErr = validatePhone(formData.VV_Phone);
     if (phoneErr) newErrors.VV_Phone = phoneErr;
 
-    const passErr = validatePassword(formData.VA_Password);
-    if (passErr) newErrors.VA_Password = passErr;
+    if (!editingVisitorId || formData.VA_Password) {
+      const passErr = validatePassword(formData.VA_Password);
+      if (passErr) newErrors.VA_Password = passErr;
+    }
 
     // Organization validation
-    if (!formData.VV_Company?.trim()) {
-      newErrors.VV_Company = "Organization name is required";
+    const companyErr = validateCompanyName(formData.VV_Company);
+    if (companyErr) newErrors.VV_Company = companyErr;
+
+    // Vehicle Type validation (only validate if provided)
+    if (formData.VV_Vehicle_Type?.trim()) {
+      const vehicleErr = validateVehicleType(formData.VV_Vehicle_Type);
+      if (vehicleErr) newErrors.VV_Vehicle_Type = vehicleErr;
     }
 
-    // Purpose of Visit validation
-    if (!formData.VV_Visitor_Type?.trim()) {
-      newErrors.VV_Visitor_Type = "Purpose of visit is required";
-    }
-
-    // Where to Visit validation
-    if (!formData.VV_Visiting_places?.trim()) {
-      newErrors.VV_Visiting_places = "Visiting area is required";
+    // Plate number validation (only validate if provided)
+    if (formData.VV_Vehicle_Number?.trim()) {
+      const plateErr = validatePlateNumber(formData.VV_Vehicle_Number);
+      if (plateErr) newErrors.VV_Vehicle_Number = plateErr;
     }
 
     // Blacklist validation
@@ -438,48 +514,74 @@ const ContactAllVisitors = () => {
         VV_Company: formData.VV_Company?.trim(),
       };
 
-      console.log("AddAdministrator payload:", adminPayload);
-      const adminResponse = await dispatch(AddAdministrator(adminPayload));
-      console.log("AddAdministrator response:", adminResponse);
+      let targetVisitorId = null;
 
-      console.log("AddVisitor payload:", visitorPayload);
-      const visitorResponse = await dispatch(AddVisitor(visitorPayload));
-      console.log("AddVisitor response:", visitorResponse);
+      if (editingVisitorId) {
+        const updatePayload = {
+          VV_Visitor_id: editingVisitorId,
+          VV_Contact_person_id: cpId,
+          VV_Name: formData.VV_Name?.trim(),
+          VV_NIC_Passport_NO: formData.VV_NIC_Passport_NO?.trim(),
+          VV_Visiting_places: formData.VV_Visiting_places?.trim(),
+          VV_Visitor_Type: formData.VV_Visitor_Type?.trim(),
+          VV_Phone: formData.VV_Phone?.trim(),
+          VV_Email: formData.VV_Email?.trim(),
+          VV_Company: formData.VV_Company?.trim(),
+        };
+        console.log("UpdateVisitor payload:", updatePayload);
+        await VisitorService.UpdateVisitor(updatePayload);
+        targetVisitorId = editingVisitorId;
+      } else {
+        console.log("AddAdministrator payload:", adminPayload);
+        const adminResponse = await dispatch(AddAdministrator(adminPayload));
+        console.log("AddAdministrator response:", adminResponse);
+
+        console.log("AddVisitor payload:", visitorPayload);
+        const visitorResponse = await dispatch(AddVisitor(visitorPayload));
+        console.log("AddVisitor response:", visitorResponse);
+      }
 
       // If user pre-selected an attachment, fetch the fresh visitor list to
       // reliably get the new visitor's ID (AddVisitor response may not include it)
-      if (pendingAttachFile) {
+      const pendingEntries = Object.entries(pendingAttachFiles).filter(
+        ([, file]) => !!file,
+      );
+      if (pendingEntries.length > 0) {
         try {
-          const refreshed =
-            await VisitorService.GetVisitorsByContactPerson(cpId);
-          const allVisitors =
-            refreshed?.data?.ResultSet || refreshed?.data || [];
-          // Match the new visitor by email or NIC
-          const newVisitor = allVisitors.find(
-            (v) =>
-              v.VV_Email?.trim().toLowerCase() ===
-                formData.VV_Email?.trim().toLowerCase() ||
-              v.VV_NIC_Passport_NO?.trim() ===
-                formData.VV_NIC_Passport_NO?.trim(),
-          );
-          const newVisitorId = newVisitor?.VV_Visitor_id || null;
-          console.log("Resolved new visitor ID for attachment:", newVisitorId);
-
-          if (newVisitorId) {
-            const pUid = user?.ResultSet?.[0]?.VA_Name || "Admin";
-            await VisitorAttachmentService.UploadAttachment(
-              newVisitorId,
-              pendingAttachCategory,
-              pUid,
-              pendingAttachFile,
+          if (!targetVisitorId) {
+            const refreshed =
+              await VisitorService.GetVisitorsByContactPerson(cpId);
+            const allVisitors =
+              refreshed?.data?.ResultSet || refreshed?.data || [];
+            // Match the new visitor by email or NIC
+            const newVisitor = allVisitors.find(
+              (v) =>
+                v.VV_Email?.trim().toLowerCase() ===
+                  formData.VV_Email?.trim().toLowerCase() ||
+                v.VV_NIC_Passport_NO?.trim() ===
+                  formData.VV_NIC_Passport_NO?.trim(),
             );
+            targetVisitorId = newVisitor?.VV_Visitor_id || null;
+          }
+          console.log("Resolved visitor ID for attachment:", targetVisitorId);
+
+          if (targetVisitorId) {
+            const pUid = user?.ResultSet?.[0]?.VA_Name || "Admin";
+            for (const [category, file] of pendingEntries) {
+              await VisitorAttachmentService.UploadAttachment(
+                targetVisitorId,
+                formatCategoryForAPI(category),
+                pUid,
+                file,
+              );
+            }
             console.log(
-              "Attachment uploaded successfully for visitor",
-              newVisitorId,
+              "Attachments uploaded successfully for visitor",
+              targetVisitorId,
             );
           } else {
             console.warn(
-              "Could not resolve new visitor ID — attachment skipped.",
+              "Could not resolve visitor ID — attachment skipped.",
             );
           }
         } catch (attachErr) {
@@ -705,6 +807,9 @@ const ContactAllVisitors = () => {
                       <th className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Docs
                       </th>
+                      <th className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary">
+                        Edit
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-soft">
@@ -793,13 +898,23 @@ const ContactAllVisitors = () => {
                                 <FolderOpen size={13} />
                               </button>
                             </td>
+                            <td className="px-3 py-1 text-center">
+                              <button
+                                type="button"
+                                title="Edit Visitor"
+                                onClick={() => openEditModal(visitor)}
+                                className="p-1.5 rounded-lg bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary transition-all"
+                              >
+                                <Edit size={13} />
+                              </button>
+                            </td>
                           </tr>
                         );
                       })
                     ) : (
                       <tr>
                         <td
-                          colSpan={6}
+                          colSpan={8}
                           className="text-[12px] font-normal px-2.5 py-12 text-center tracking-[0.24em] text-text-dim"
                         >
                           No visitors detected matching criteria
@@ -823,7 +938,7 @@ const ContactAllVisitors = () => {
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="w-1.5 h-5 sm:h-6 bg-primary rounded-full"></div>
                   <h2 className="text-[11px] sm:text-[12px] font-normal text-white tracking-[0.16em]">
-                    Pre-approve visitor
+                    {editingVisitorId ? "Edit visitor pre-approval" : "Pre-approve visitor"}
                   </h2>
                 </div>
                 <button
@@ -883,46 +998,117 @@ const ContactAllVisitors = () => {
                         }`}
                         placeholder="e.g., 123456789"
                       />
-                      <button
-                        type="button"
-                        title="Attach NIC / Passport document"
-                        onClick={() =>
-                          openAttachmentModal(null, formData.VV_Name?.trim())
-                        }
-                        className={`shrink-0 p-1.5 rounded-lg transition-all ${
-                          pendingAttachFile
-                            ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
-                            : "bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary"
-                        }`}
-                      >
-                        {pendingAttachFile ? (
-                          <CheckCircle size={13} />
-                        ) : (
-                          <Paperclip size={13} />
-                        )}
-                      </button>
-                    </div>
-                    {/* File badge — shows when user has selected a file */}
-                    {pendingAttachFile && (
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <FileText
-                          size={10}
-                          className="text-green-400 shrink-0"
-                        />
-                        <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[180px]">
-                          {pendingAttachFile.name}
-                        </span>
+                      {(!editingVisitorId || !hasExistingAttachments) && (
                         <button
                           type="button"
-                          onClick={() => {
-                            setPendingAttachFile(null);
-                            setPendingAttachCategory("nic");
-                          }}
-                          className="ml-auto text-white/30 hover:text-red-400 transition-colors"
-                          title="Remove file"
+                          title="Attach NIC / Passport document"
+                          onClick={() =>
+                            openAttachmentModal(null, formData.VV_Name?.trim())
+                          }
+                          className={`shrink-0 p-1.5 rounded-lg transition-all ${
+                            pendingAttachFiles.nic ||
+                            pendingAttachFiles.passport ||
+                            pendingAttachFiles.driving_licence
+                              ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                              : "bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary"
+                          }`}
                         >
-                          <X size={10} />
+                          {pendingAttachFiles.nic ||
+                          pendingAttachFiles.passport ||
+                          pendingAttachFiles.driving_licence ? (
+                            <CheckCircle size={13} />
+                          ) : (
+                            <Paperclip size={13} />
+                          )}
                         </button>
+                      )}
+                    </div>
+                    {/* File badges — show when user has selected files */}
+                    {(pendingAttachFiles.nic ||
+                      pendingAttachFiles.passport ||
+                      pendingAttachFiles.driving_licence) && (
+                      <div className="space-y-1 mt-1">
+                        {pendingAttachFiles.nic && (
+                          <div className="flex items-center gap-1.5">
+                            <FileText
+                              size={10}
+                              className="text-green-400 shrink-0"
+                            />
+                            <span className="text-[9px] uppercase tracking-widest text-blue-300">
+                              NIC
+                            </span>
+                            <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[150px]">
+                              {pendingAttachFiles.nic.name}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPendingAttachFiles((prev) => ({
+                                  ...prev,
+                                  nic: null,
+                                }))
+                              }
+                              className="ml-auto text-white/30 hover:text-red-400 transition-colors"
+                              title="Remove NIC file"
+                            >
+                              <X size={10} />
+                            </button>
+                          </div>
+                        )}
+                        {pendingAttachFiles.passport && (
+                          <div className="flex items-center gap-1.5">
+                            <FileText
+                              size={10}
+                              className="text-green-400 shrink-0"
+                            />
+                            <span className="text-[9px] uppercase tracking-widest text-purple-300">
+                              Passport
+                            </span>
+                            <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[150px]">
+                              {pendingAttachFiles.passport.name}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPendingAttachFiles((prev) => ({
+                                  ...prev,
+                                  passport: null,
+                                }))
+                              }
+                              className="ml-auto text-white/30 hover:text-red-400 transition-colors"
+                              title="Remove passport file"
+                            >
+                              <X size={10} />
+                            </button>
+                          </div>
+                        )}
+                        {pendingAttachFiles.driving_licence && (
+                          <div className="flex items-center gap-1.5">
+                            <FileText
+                              size={10}
+                              className="text-green-400 shrink-0"
+                            />
+                            <span className="text-[9px] uppercase tracking-widest text-amber-300">
+                              Driving Licence
+                            </span>
+                            <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[150px]">
+                              {pendingAttachFiles.driving_licence.name}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPendingAttachFiles((prev) => ({
+                                  ...prev,
+                                  driving_licence: null,
+                                }))
+                              }
+                              className="ml-auto text-white/30 hover:text-red-400 transition-colors"
+                              title="Remove driving licence file"
+                            >
+                              <X size={10} />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                     {errors.VV_NIC_Passport_NO && (
@@ -1013,134 +1199,54 @@ const ContactAllVisitors = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <Briefcase
-                        size={10}
-                        className="text-primary/60 shrink-0"
-                      />{" "}
-                      Reason for visit
-                    </label>
-                    <input
-                      type="text"
-                      name="VV_Visitor_Type"
-                      value={formData.VV_Visitor_Type}
-                      onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                        errors.VV_Visitor_Type
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                      placeholder="e.g., Meeting, Delivery, Interview"
-                    />
-                    {errors.VV_Visitor_Type && (
-                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
-                        {errors.VV_Visitor_Type}
-                      </p>
-                    )}
-                  </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <MapPin size={10} className="text-primary/60 shrink-0" />{" "}
-                      Where to visit
-                    </label>
-                    <select
-                      name="VV_Visiting_places"
-                      value={formData.VV_Visiting_places}
-                      onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                        errors.VV_Visiting_places
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                    >
-                      <option
-                        value=""
-                        disabled
-                        className="text-gray-500 bg-white"
-                      >
-                        Select visiting area...
-                      </option>
-                      {(places || [])
-                        .filter(
-                          (p) =>
-                            (p.VAIL_Status || p.Status || "A")
-                              .toString()
-                              .trim()
-                              .toUpperCase() === "A",
-                        )
-                        .map((place) => {
-                          const placeName =
-                            place.VAIL_Item_Name ||
-                            place.Item_Name ||
-                            "Unnamed";
-                          const placeId =
-                            place.VAIL_Item_List_ID ||
-                            place.Item_List_ID ||
-                            place.Id;
-                          return (
-                            <option
-                              key={placeId}
-                              value={placeName}
-                              className="text-black bg-white"
-                            >
-                              {placeName}
-                            </option>
-                          );
-                        })}
-                    </select>
-                    {errors.VV_Visiting_places && (
-                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
-                        {errors.VV_Visiting_places}
-                      </p>
-                    )}
-                  </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <AlertCircle
-                        size={10}
-                        className="text-primary/60 shrink-0"
-                      />{" "}
-                      Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        name="VA_Password"
-                        value={formData.VA_Password}
-                        onChange={handleInputChange}
-                        maxLength={5}
-                        className={`w-full rounded-lg pl-3 sm:pl-3.5 pr-8 sm:pr-10 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                          errors.VA_Password
-                            ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                            : "bg-black/60 border border-primary/20 focus:border-primary/50"
-                        }`}
-                        placeholder="••••••••"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
-                      >
-                        {showPassword ? (
-                          <EyeOff size={14} className="sm:w-4 sm:h-4" />
-                        ) : (
-                          <Eye size={14} className="sm:w-4 sm:h-4" />
-                        )}
-                      </button>
+                  {!editingVisitorId && (
+                    <div className="space-y-1">
+                      <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                        <AlertCircle
+                          size={10}
+                          className="text-primary/60 shrink-0"
+                        />{" "}
+                        Password
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          name="VA_Password"
+                          value={formData.VA_Password}
+                          onChange={handleInputChange}
+                          maxLength={5}
+                          className={`w-full rounded-lg pl-3 sm:pl-3.5 pr-8 sm:pr-10 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                            errors.VA_Password
+                              ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                              : "bg-black/60 border border-primary/20 focus:border-primary/50"
+                          }`}
+                          placeholder="••••••••"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                        >
+                          {showPassword ? (
+                            <EyeOff size={14} className="sm:w-4 sm:h-4" />
+                          ) : (
+                            <Eye size={14} className="sm:w-4 sm:h-4" />
+                          )}
+                        </button>
+                      </div>
+                      {errors.VA_Password ? (
+                        <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
+                          {errors.VA_Password}
+                        </p>
+                      ) : (
+                        <p className="text-[11px] sm:text-[12px] text-white/35 tracking-[0.12em] px-0.5 mt-1">
+                          Max 5 chars, Capital &amp; Special
+                        </p>
+                      )}
                     </div>
-                    {errors.VA_Password ? (
-                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
-                        {errors.VA_Password}
-                      </p>
-                    ) : (
-                      <p className="text-[11px] sm:text-[12px] text-white/35 tracking-[0.12em] px-0.5 mt-1">
-                        Max 5 chars, Capital &amp; Special
-                      </p>
-                    )}
-                  </div>
+                  )}
                 </div>
 
                 <div className="pt-3 sm:pt-5 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 border-t border-white/5">
@@ -1155,7 +1261,7 @@ const ContactAllVisitors = () => {
                     type="submit"
                     className="px-5 sm:px-7 py-2 sm:py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[11px] sm:text-[12px] font-normal tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
                   >
-                    Send pre-approval
+                    {editingVisitorId ? "Update pre-approval" : "Send pre-approval"}
                   </button>
                 </div>
               </form>
@@ -1203,18 +1309,28 @@ const ContactAllVisitors = () => {
                     Document type
                   </label>
                   <div className="flex gap-2">
-                    {["nic", "passport"].map((cat) => (
+                    {["nic", "passport", "driving_licence"].map((cat) => (
                       <button
                         key={cat}
                         type="button"
-                        onClick={() => setAttachCategory(cat)}
+                        onClick={() => {
+                          setAttachCategory(cat);
+                          if (!attachmentModal.visitorId) {
+                            setAttachFile(pendingAttachFiles[cat] || null);
+                          }
+                          setAttachResult(null);
+                        }}
                         className={`flex-1 py-2 rounded-lg text-[11px] font-normal tracking-widest uppercase transition-all border ${
                           attachCategory === cat
                             ? "bg-primary/20 border-primary/50 text-primary"
                             : "bg-black/30 border-white/10 text-gray-400 hover:border-white/20"
                         }`}
                       >
-                        {cat === "nic" ? "NIC" : "Passport"}
+                        {cat === "nic"
+                          ? "NIC"
+                          : cat === "passport"
+                            ? "Passport"
+                            : "Driving Licence"}
                       </button>
                     ))}
                   </div>
@@ -1304,7 +1420,7 @@ const ContactAllVisitors = () => {
                       disabled={!attachFile}
                       className="flex-1 py-2 rounded-lg text-[11px] font-normal tracking-[0.14em] bg-primary hover:bg-[var(--color-primary-hover)] text-white shadow-lg shadow-primary/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      <CheckCircle size={13} /> Confirm
+                      <CheckCircle size={13} /> Save file
                     </button>
                   ) : (
                     /* Table context: visitor id exists — upload immediately */
@@ -1407,7 +1523,8 @@ const ContactAllVisitors = () => {
                       return (
                         <li
                           key={idx}
-                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group"
+                          onClick={() => vatId && openPreview(vatId, fileName)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
                         >
                           {isImage ? (
                             <ImageIcon
@@ -1430,7 +1547,10 @@ const ContactAllVisitors = () => {
                                   ? "bg-blue-500/20 text-blue-300"
                                   : category.toLowerCase() === "passport"
                                     ? "bg-purple-500/20 text-purple-300"
-                                    : "bg-white/10 text-white/40"
+                                    : category.toLowerCase() ===
+                                        "driving_licence"
+                                      ? "bg-amber-500/20 text-amber-300"
+                                      : "bg-white/10 text-white/40"
                               }`}
                             >
                               {category}
@@ -1439,13 +1559,10 @@ const ContactAllVisitors = () => {
                           <button
                             type="button"
                             title="Download file"
-                            onClick={() =>
-                              vatId &&
-                              VisitorAttachmentService.DownloadAttachment(
-                                vatId,
-                                fileName,
-                              )
-                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                            }}
                             className={`p-2 rounded-lg text-primary/80 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                           >
                             <Download size={18} />
@@ -1471,6 +1588,8 @@ const ContactAllVisitors = () => {
           </div>
         )}
       </div>
+
+      <AttachmentPreviewModal previewData={previewData} onClose={closePreview} />
     </div>
   );
 };

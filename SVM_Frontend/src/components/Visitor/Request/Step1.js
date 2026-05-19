@@ -19,7 +19,7 @@ import {
   setSubmitting,
   setError,
 } from "../../../reducers/visitorSlice";
-import { validateName, validateNIC, validatePhone, validateEmail } from "../../../utils/validation";
+import { validateName, validateNIC, validatePhone, validateEmail, validatePlateNumber } from "../../../utils/validation";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 
 
@@ -134,6 +134,12 @@ const Step1Main = () => {
     if (isBlacklisted) {
       errors.emailAddress = "Access Restricted: Contact system administrator.";
       errors.fullName = "Access Restricted: Contact system administrator.";
+    }
+
+    // Plate number validation (only if provided)
+    if (formData.plateNumber?.trim()) {
+      const plateErr = validatePlateNumber(formData.plateNumber);
+      if (plateErr) errors.plateNumber = plateErr;
     }
 
     setFormErrors(errors);

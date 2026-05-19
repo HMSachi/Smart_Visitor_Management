@@ -1,4 +1,5 @@
 import React from 'react';
+import { sanitizeTextInput, sanitizePlateInput } from '../../../../utils/validation';
 import { Car, Plus, X, Save, Edit2, Loader2, Paperclip, CheckCircle2, AlertCircle } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 
@@ -44,7 +45,7 @@ const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onSave, savingId,
                                     placeholder="E.G. CAR, VAN"
                                     disabled={vehicle.isConfirmed}
                                     value={vehicle.vehicleType}
-                                    onChange={(e) => onChange(vehicle.id, 'vehicleType', e.target.value)}
+                                    onChange={(e) => onChange(vehicle.id, 'vehicleType', sanitizeTextInput(e.target.value))}
                                     className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white focus:border-primary/50 outline-none disabled:opacity-50"
                                 />
                             </div>
@@ -58,7 +59,7 @@ const VehicleDetails = ({ vehicles, onAdd, onRemove, onChange, onSave, savingId,
                                     placeholder="WP CAS 1234"
                                     disabled={vehicle.isConfirmed}
                                     value={vehicle.plateNumber}
-                                    onChange={(e) => onChange(vehicle.id, 'plateNumber', e.target.value)}
+                                    onChange={(e) => onChange(vehicle.id, 'plateNumber', sanitizePlateInput(e.target.value))}
                                     className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white focus:border-primary/50 outline-none disabled:opacity-50"
                                 />
                             </div>

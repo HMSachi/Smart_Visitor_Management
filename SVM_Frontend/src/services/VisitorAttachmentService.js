@@ -40,6 +40,34 @@ const UploadAttachment = async (visitorId, fileCategory, pUid, file) => {
 };
 
 /**
+ * Upload an attachment for a sub-visitor.
+ * @param {number|string} subVisitorId - VVG_id of the sub-visitor
+ * @param {number|string} visitorId    - VV_Visitor_id of the main visitor
+ * @param {string}        fileCategory - e.g. "NIC", "Passport", "Driving License"
+ * @param {string}        pUid         - logged-in user name / UID
+ * @param {File}          file         - the file object to upload
+ */
+const UploadSubVisitorAttachment = async (subVisitorId, visitorId, fileCategory, pUid, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("VVG_id", subVisitorId);
+  formData.append("VV_Visitor_id", visitorId);
+  formData.append("VAT_File_Category", fileCategory);
+  formData.append("P_UID", pUid);
+
+  const config = {
+    method: "post",
+    url: getApiUrl("/VisitorAttachment/UploadAttachment"),
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  };
+
+  return axios.request(config).then((response) => response);
+};
+
+/**
  * Get all attachments for a visitor.
  * @param {number|string} visitorId - VV_Visitor_id
  */
@@ -48,6 +76,20 @@ const GetAttachmentsByVisitorId = async (visitorId) => {
     method: "get",
     url: getApiUrl(
       `/VisitorAttachment/GetAttachmentsByVisitorId?VV_Visitor_id=${encodeURIComponent(visitorId)}`
+    ),
+  };
+  return axios.request(config).then((response) => response);
+};
+
+/**
+ * Get all attachments for a sub-visitor (group member).
+ * @param {number|string} groupId - VVG_id of the sub-visitor
+ */
+const GetAttachmentsByGroupId = async (groupId) => {
+  const config = {
+    method: "get",
+    url: getApiUrl(
+      `/VisitorAttachment/GetAttachmentsByGroupId?VVG_id=${encodeURIComponent(groupId)}`
     ),
   };
   return axios.request(config).then((response) => response);
@@ -87,8 +129,36 @@ const DownloadAttachment = async (vatId, fileName = "attachment") => {
   return response;
 };
 
+/**
+ * Get preview data for an attachment file by its VAT_Id.
+ * @param {number|string} vatId    - VAT_Id of the attachment record
+ */
+const GetAttachmentPreviewData = async (vatId) => {
+  const config = {
+    method: "get",
+    url: getApiUrl(
+      `/VisitorAttachment/DownloadAttachment?VAT_Id=${encodeURIComponent(vatId)}`
+    ),
+    responseType: "blob",
+  };
+
+  const response = await axios.request(config);
+
+  const contentType = response.headers?.["content-type"] || "application/octet-stream";
+  const blobUrl = window.URL.createObjectURL(new Blob([response.data], { type: contentType }));
+  
+  const disposition = response.headers?.["content-disposition"] || "";
+  const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+  const resolvedName = match ? match[1].replace(/['"]/g, "") : null;
+
+  return { blobUrl, fileType: contentType, fileName: resolvedName };
+};
+
 export default {
   UploadAttachment,
+  UploadSubVisitorAttachment,
   GetAttachmentsByVisitorId,
+  GetAttachmentsByGroupId,
   DownloadAttachment,
+  GetAttachmentPreviewData,
 };

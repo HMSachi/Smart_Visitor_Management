@@ -9,6 +9,7 @@ import { AddItem } from "../../../actions/ItemCarriedAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 import { GetAllVisitors } from "../../../actions/VisitorAction";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
+import VisitGroupService from "../../../services/VisitGroupService";
 
 import {
   addVehicle, toggleVehicleConfirmed, removeVehicle, updateVehicle, markVehicleSaved,
@@ -19,9 +20,9 @@ import {
 } from "../../../reducers/visitRequestFormSlice";
 import { SectionHeader, InputField } from "../../../components/Contact_Person/VisitRequests/FormComponents";
 import {
-  Car, Users, Package, Plus, Trash2, ArrowLeft, CheckCircle2, Save, Edit2, Loader2, Paperclip, AlertCircle
+  Car, Users, Package, Plus, Trash2, ArrowLeft, CheckCircle2, Save, Edit2, Loader2, Paperclip, AlertCircle, X, FileText, Upload, CheckCircle
 } from "lucide-react";
-import { validateName, validateNIC, validatePhone } from "../../../utils/validation";
+import { validateName, validateNIC, validatePhone, validatePlateNumber } from "../../../utils/validation";
 
 const CreateVisitRequestDetails = () => {
   const navigate = useNavigate();
@@ -51,9 +52,122 @@ const CreateVisitRequestDetails = () => {
   // formData.VVR_Visitor_id holds it directly; no extra API call needed.
   const user = useSelector((state) => state.login.user);
 
-  // License upload state per vehicle index: 'uploading' | 'done' | 'error'
   const [licenseUploading, setLicenseUploading] = useState({});
   const licenseInputRefs = useRef({});
+
+  // Sub-visitor attachment upload state
+  const [personUploading, setPersonUploading] = useState({});
+  
+  // Sub-visitor attachment modal state
+  const [attachmentModal, setAttachmentModal] = useState({
+    open: false,
+    personIndex: null,
+    personName: "",
+  });
+  const [attachFile, setAttachFile] = useState(null);
+  const [attachCategory, setAttachCategory] = useState("nic");
+  const [attachUploading, setAttachUploading] = useState(false);
+  const [attachResult, setAttachResult] = useState(null);
+  const [attachDragOver, setAttachDragOver] = useState(false);
+  const attachFileInputRef = useRef(null);
+
+  const openAttachmentModal = (index, name) => {
+    setAttachmentModal({ open: true, personIndex: index, personName: name });
+    setAttachFile(null);
+    setAttachCategory("nic");
+    setAttachResult(null);
+  };
+
+  const closeAttachmentModal = () => {
+    setAttachmentModal({ open: false, personIndex: null, personName: "" });
+    setAttachFile(null);
+    setAttachResult(null);
+  };
+
+  const handleAttachFileChange = (e) => {
+    const f = e.target.files?.[0];
+    if (f) {
+      setAttachFile(f);
+      setAttachResult(null);
+    }
+  };
+
+  const handleAttachDrop = (e) => {
+    e.preventDefault();
+    setAttachDragOver(false);
+    const f = e.dataTransfer.files?.[0];
+    if (f) {
+      setAttachFile(f);
+      setAttachResult(null);
+    }
+  };
+
+  const handleAttachUpload = async () => {
+    const { personIndex } = attachmentModal;
+    if (personIndex === null || !attachFile) return;
+
+    const person = people[personIndex];
+    if (!person.isSavedToServer) {
+      setAttachResult({ success: false, message: "Please save the sub-visitor first before uploading an attachment." });
+      return;
+    }
+    const pUid = user?.ResultSet?.[0]?.VA_Name || "ContactPerson";
+
+    // Primary: use VVG_id stored in Redux from AddVisitGroup ResultSet
+    let subVisitorId = person.vvgId;
+
+    // Fallback lookup
+    if (!subVisitorId && effectiveRequestId) {
+      try {
+        const res = await VisitGroupService.GetAllVisitGroup();
+        const groups = res?.data?.ResultSet || res?.data || [];
+        const match = Array.isArray(groups)
+          ? groups.find(
+              (g) =>
+                String(g.VVR_Request_id) === String(effectiveRequestId) &&
+                g.VVG_Visitor_Name?.trim().toLowerCase() === person.name?.trim().toLowerCase()
+            )
+          : null;
+        if (match?.VVG_id) {
+          subVisitorId = match.VVG_id;
+          dispatch(updatePerson({ index: personIndex, field: "vvgId", value: subVisitorId }));
+        }
+      } catch (e) {
+        console.error("Fallback VVG_id lookup failed:", e);
+      }
+    }
+
+    if (!subVisitorId) {
+      setAttachResult({ success: false, message: "Sub-visitor ID not found. Please save the visitor again and retry." });
+      return;
+    }
+
+    setAttachUploading(true);
+    setAttachResult(null);
+    setPersonUploading((prev) => ({ ...prev, [personIndex]: "uploading" }));
+    
+    const catFormatted = attachCategory === "nic" ? "NIC" : attachCategory === "passport" ? "Passport" : "Driving Licence";
+    try {
+      await VisitorAttachmentService.UploadSubVisitorAttachment(
+        subVisitorId,
+        formData.VVR_Visitor_id,
+        catFormatted,
+        pUid,
+        attachFile
+      );
+      setAttachResult({ success: true, message: "Attachment uploaded successfully." });
+      setPersonUploading((prev) => ({ ...prev, [personIndex]: "done" }));
+      setTimeout(() => setPersonUploading((prev) => { const n = { ...prev }; delete n[personIndex]; return n; }), 3000);
+      setTimeout(() => closeAttachmentModal(), 1000);
+    } catch (err) {
+      console.error("Sub-visitor attachment upload failed:", err);
+      setAttachResult({ success: false, message: err?.message || "Upload failed." });
+      setPersonUploading((prev) => ({ ...prev, [personIndex]: "error" }));
+      setTimeout(() => setPersonUploading((prev) => { const n = { ...prev }; delete n[personIndex]; return n; }), 3000);
+    } finally {
+      setAttachUploading(false);
+    }
+  };
 
   const handleLicenseUpload = (index) => {
     if (licenseInputRefs.current[index]) {
@@ -95,6 +209,11 @@ const CreateVisitRequestDetails = () => {
     }
     if (!vehicle.number?.trim()) {
       alert("Please enter a plate number before saving.");
+      return;
+    }
+    const plateErr = validatePlateNumber(vehicle.number);
+    if (plateErr) {
+      alert(plateErr);
       return;
     }
     if (!effectiveRequestId) {
@@ -160,13 +279,25 @@ const CreateVisitRequestDetails = () => {
     }
     setPersonSavingIndex(index);
     try {
-      await dispatch(AddVisitGroup({
+      const response = await dispatch(AddVisitGroup({
         VVG_Visitor_Name: person.name,
         VVG_NIC_Passport_Number: person.nic,
         VVG_Designation: person.phone,
         VVR_Request_id: effectiveRequestId,
         VVG_Status: "A"
       }));
+
+      // Log the raw response so we can verify the exact shape in DevTools
+      console.log("[AddVisitGroup response]", response);
+
+      // Extract the sub-visitor's VVG_id from the API response ResultSet
+      const vvgId = response?.ResultSet?.[0]?.VVG_id;
+      if (vvgId) {
+        dispatch(updatePerson({ index, field: "vvgId", value: vvgId }));
+      } else {
+        console.warn("[AddVisitGroup] VVG_id not found in ResultSet. Full response:", JSON.stringify(response));
+      }
+
       dispatch(markPersonSaved(index));
       dispatch(togglePersonConfirmed(index));
     } catch (err) {
@@ -178,11 +309,12 @@ const CreateVisitRequestDetails = () => {
   };
 
   const handlePersonNameChange = (index, value) => {
-    dispatch(updatePerson({ index, field: "name", value }));
+    const sanitizedValue = value.replace(/[^A-Za-z\s]/g, "");
+    dispatch(updatePerson({ index, field: "name", value: sanitizedValue }));
 
     // Find if the entered name matches a known visitor for autocomplete
     const matchedVisitor = allVisitors.find(v =>
-      v.VV_Name?.trim().toLowerCase() === value?.trim().toLowerCase()
+      v.VV_Name?.trim().toLowerCase() === sanitizedValue?.trim().toLowerCase()
     );
     if (matchedVisitor) {
       // Auto-fill NIC and Phone if matched
@@ -505,6 +637,28 @@ const CreateVisitRequestDetails = () => {
                       <div className="md:col-span-2 flex justify-end gap-2 pb-1">
                         <button
                           type="button"
+                          onClick={() => openAttachmentModal(index, p.name)}
+                          disabled={personUploading[index] === "uploading"}
+                          title="Attach ID Document"
+                          className={`p-2 rounded-lg transition-all disabled:opacity-50 border ${personUploading[index] === "done"
+                            ? "border-green-300 text-green-600 bg-green-50"
+                            : personUploading[index] === "error"
+                              ? "border-red-300 text-red-500 bg-red-50"
+                              : "border-primary/20 text-primary/70 bg-primary/5 hover:bg-primary/10 hover:text-primary"
+                            }`}
+                        >
+                          {personUploading[index] === "uploading" ? (
+                            <Loader2 size={15} className="animate-spin" />
+                          ) : personUploading[index] === "done" ? (
+                            <CheckCircle2 size={15} />
+                          ) : personUploading[index] === "error" ? (
+                            <AlertCircle size={15} />
+                          ) : (
+                            <Paperclip size={15} />
+                          )}
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => handlePersonSave(index)}
                           disabled={personSavingIndex === index}
                           className={`p-2 rounded-lg transition-all disabled:opacity-50 ${p.isConfirmed ? "bg-green-500 text-white shadow-lg shadow-green-500/20" : "text-gray-300 hover:text-primary hover:bg-primary/5"}`}
@@ -639,6 +793,149 @@ const CreateVisitRequestDetails = () => {
           </div>
         </main>
       </div>
+
+      {/* ── Attachment Upload Modal ── */}
+      {attachmentModal.open && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <div>
+                  <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">Upload ID Document</h2>
+                  {attachmentModal.personName && (
+                    <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                      {attachmentModal.personName}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={closeAttachmentModal}
+                className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 space-y-4 relative z-10">
+              {/* Category selector */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] text-gray-400 tracking-[0.14em] font-normal">
+                  Document type
+                </label>
+                <div className="flex gap-2">
+                  {["nic", "passport", "driving_licence"].map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setAttachCategory(cat)}
+                      className={`flex-1 py-2 rounded-lg text-[11px] font-normal tracking-widest uppercase transition-all border ${
+                        attachCategory === cat
+                          ? "bg-primary/20 border-primary/50 text-primary"
+                          : "bg-black/30 border-white/10 text-gray-400 hover:border-white/20"
+                      }`}
+                    >
+                      {cat === "nic" ? "NIC" : cat === "passport" ? "Passport" : "Driving Licence"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Drop zone */}
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setAttachDragOver(true);
+                }}
+                onDragLeave={() => setAttachDragOver(false)}
+                onDrop={handleAttachDrop}
+                onClick={() => attachFileInputRef.current?.click()}
+                className={`cursor-pointer rounded-xl border-2 border-dashed transition-all p-6 flex flex-col items-center justify-center gap-3 ${
+                  attachDragOver
+                    ? "border-primary/70 bg-primary/10"
+                    : attachFile
+                      ? "border-green-500/40 bg-green-500/5"
+                      : "border-white/10 bg-black/20 hover:border-white/20 hover:bg-black/30"
+                }`}
+              >
+                <input
+                  ref={attachFileInputRef}
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.pdf,.xlsx"
+                  className="hidden"
+                  onChange={handleAttachFileChange}
+                />
+                {attachFile ? (
+                  <>
+                    <FileText size={28} className="text-green-400" />
+                    <p className="text-[11px] text-green-300 tracking-wide text-center">{attachFile.name}</p>
+                    <p className="text-[10px] text-white/30">
+                      {(attachFile.size / 1024).toFixed(1)} KB · Click to change
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <Upload size={28} className="text-white/20" />
+                    <p className="text-[11px] text-white/40 tracking-wide text-center">Drag & drop or click to select</p>
+                    <p className="text-[10px] text-white/20">JPG, PNG, PDF accepted</p>
+                  </>
+                )}
+              </div>
+
+              {/* Result message */}
+              {attachResult && (
+                <div
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-[11px] font-normal tracking-wide ${
+                    attachResult.success
+                      ? "bg-green-500/10 border border-green-500/20 text-green-300"
+                      : "bg-red-500/10 border border-red-500/20 text-red-300"
+                  }`}
+                >
+                  {attachResult.success ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
+                  {attachResult.message}
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={closeAttachmentModal}
+                  className="flex-1 py-2 rounded-lg text-[11px] font-normal tracking-[0.14em] text-gray-400 hover:bg-white/5 transition-all border border-white/5"
+                >
+                  {attachResult?.success ? "Done" : "Cancel"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleAttachUpload}
+                  disabled={!attachFile || attachUploading || attachResult?.success}
+                  className="flex-1 py-2 rounded-lg text-[11px] font-normal tracking-[0.14em] bg-primary hover:bg-[var(--color-primary-hover)] text-white shadow-lg shadow-primary/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {attachUploading ? (
+                    <>
+                      <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Uploading...
+                    </>
+                  ) : attachResult?.success ? (
+                    <>
+                      <CheckCircle size={13} /> Uploaded
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={13} /> Upload
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

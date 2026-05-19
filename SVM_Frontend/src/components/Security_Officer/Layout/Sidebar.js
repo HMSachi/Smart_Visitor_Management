@@ -8,6 +8,7 @@ import {
   ChevronRight,
   LogOut,
   ShieldAlert,
+  Users,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Drawer, Box, IconButton } from "@mui/material";
@@ -28,17 +29,17 @@ const menuItems = [
     path: "/Security_Officer/scanner",
   },
   {
+    id: "active-visitors",
+    label: "Active/Left Visitors",
+    icon: Users,
+    path: "/Security_Officer/active-visitors",
+  },
+  {
     id: "blacklist",
     label: "Restricted Visitors",
     icon: ShieldAlert,
     path: "/Security_Officer/blacklist-management",
   },
-//   {
-//     id: "approval",
-//     label: "Review Entry Requests",
-//     icon: UserCheck,
-//     path: "/Security_Officer/entry-approval",
-//   },
 ];
 
 const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (

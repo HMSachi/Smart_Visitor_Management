@@ -4,11 +4,12 @@ import { AnimatePresence } from 'framer-motion';
 
 const VisitorGroup = ({ visitors, allVisitors = [], onAdd, onRemove, onChange, onSave, savingId }) => {
     const handleNameChange = (id, value) => {
-        onChange(id, 'fullName', value);
+        const sanitizedValue = value.replace(/[^A-Za-z\s]/g, "");
+        onChange(id, 'fullName', sanitizedValue);
         
         // Find if the entered name matches a known visitor for autocomplete
         const matchedVisitor = allVisitors.find(v => 
-            v.VV_Name?.trim().toLowerCase() === value?.trim().toLowerCase()
+            v.VV_Name?.trim().toLowerCase() === sanitizedValue?.trim().toLowerCase()
         );
         if (matchedVisitor) {
             // Auto-fill NIC and Contact if matched
@@ -87,7 +88,7 @@ const VisitorGroup = ({ visitors, allVisitors = [], onAdd, onRemove, onChange, o
                                     value={visitor.nic}
                                     maxLength={12}
                                     onChange={(e) => {
-                                        const val = e.target.value;
+                                        const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 12);
                                         onChange(visitor.id, 'nic', val);
                                     }}
                                     className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-2.5 text-[11px] text-white outline-none disabled:opacity-50"
