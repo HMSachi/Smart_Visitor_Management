@@ -33,6 +33,8 @@ import {
   Download,
   X,
   AlertCircle,
+  Car,
+  Shield,
 } from "lucide-react";
 import { GetGatePassById, UpdateGatePassStatus } from "../../../actions/GatePassAction";
 import { motion, AnimatePresence } from "framer-motion";
@@ -43,6 +45,8 @@ import {
 import VisitorService from "../../../services/VisitorService";
 import GatePassService from "../../../services/GatePassService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
+import VehicleService from "../../../services/VehicleService";
+import VisitGroupService from "../../../services/VisitGroupService";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
 import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
 import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
@@ -120,7 +124,11 @@ const LiveFeed = () => {
     loading: false,
     list: [],
     error: null,
+    filterCategory: null,
   });
+
+  // Vehicle registry state
+  const [vehiclesList, setVehiclesList] = useState([]);
 
   const getTodayDateKey = () => new Date().toISOString().slice(0, 10);
 
@@ -315,6 +323,28 @@ const LiveFeed = () => {
           ) || rows[0]; // fall back to first row if NIC not matched
 
         setSubVisitorApiData(matchedRow);
+
+        // Fetch vehicles for this request
+        try {
+          const vehicleResponse = await VehicleService.GetAllVehicles();
+          const allVehicles =
+            vehicleResponse?.data?.ResultSet || vehicleResponse?.data || [];
+          const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
+            .filter(
+              (v) =>
+                String(v?.VVR_Request_id) === String(passId),
+            )
+            .map((v) => ({
+              id: v.VV_Vehicle_id,
+              vehicleType: v.VV_Vehicle_Type,
+              plateNumber: v.VV_Vehicle_Number,
+            }));
+          setVehiclesList(matchedVehicles);
+          console.log("[LiveFeed] Fetched vehicles for sub-visitor:", matchedVehicles);
+        } catch (err) {
+          console.warn("[LiveFeed] Could not fetch vehicles for sub-visitor:", err);
+        }
+
         setScanStatus("details");
         setScanMessage("Sub-visitor QR verified successfully.");
         setIsLoading(false);
@@ -394,10 +424,22 @@ const LiveFeed = () => {
           setScanType("CHECK_IN");
         }
 
-        // Fetch sub-visitor data live from the VisitorJoint API
+        // Fetch sub-visitor data live from the VisitGroupService and VisitorJoint API
         const requestId = details.VGP_Request_id || details.VVR_Request_id;
         if (requestId) {
           try {
+            // Fetch sub-visitor records from VisitGroupService as the reliable source of VVG_id
+            let allGroupMembers = [];
+            try {
+              const groupResponse = await VisitGroupService.GetAllVisitGroup();
+              const payload = groupResponse?.data?.ResultSet || groupResponse?.data || [];
+              allGroupMembers = (Array.isArray(payload) ? payload : []).filter(
+                (item) => String(item?.VVR_Request_id) === String(requestId)
+              );
+            } catch (err) {
+              console.warn("[LiveFeed] Could not fetch group members from VisitGroup:", err);
+            }
+
             const jointResponse =
               await VisitorService.GetVisitorJoint(requestId);
             const rows =
@@ -419,12 +461,31 @@ const LiveFeed = () => {
               const key = nic || name;
               if (!seen.has(key)) {
                 seen.add(key);
-                uniqueSubVisitors.push({ name, nic: nic || "N/A" });
+                // Try to find the VVG_id by matching against VisitGroupService results (by NIC or name)
+                const matchedGroupMember = allGroupMembers.find(
+                  (m) =>
+                    (nic && m.VVG_NIC_Passport_Number && String(m.VVG_NIC_Passport_Number) === String(nic)) ||
+                    String(m.VVG_Visitor_Name).toLowerCase() === String(name).toLowerCase()
+                );
+                const id = matchedGroupMember?.VVG_id || row.VVG_id || row.id || null;
+                uniqueSubVisitors.push({ id, name, nic: nic || "N/A" });
               }
             }
+
+            // Fallback: if uniqueSubVisitors is empty but allGroupMembers has items, populate it
+            if (uniqueSubVisitors.length === 0 && allGroupMembers.length > 0) {
+              allGroupMembers.forEach((m) => {
+                uniqueSubVisitors.push({
+                  id: m.VVG_id,
+                  name: m.VVG_Visitor_Name,
+                  nic: m.VVG_NIC_Passport_Number || "N/A",
+                });
+              });
+            }
+
             setSubVisitorsData(uniqueSubVisitors);
             console.log(
-              "[LiveFeed] Fetched sub-visitors from API:",
+              "[LiveFeed] Fetched and matched sub-visitors:",
               uniqueSubVisitors,
             );
           } catch (err) {
@@ -454,6 +515,27 @@ const LiveFeed = () => {
             console.log("[LiveFeed] Fetched main-visitor items:", matchedItems);
           } catch (err) {
             console.warn("[LiveFeed] Could not fetch items carried:", err);
+          }
+
+          // Fetch vehicles for this request
+          try {
+            const vehicleResponse = await VehicleService.GetAllVehicles();
+            const allVehicles =
+              vehicleResponse?.data?.ResultSet || vehicleResponse?.data || [];
+            const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
+              .filter(
+                (v) =>
+                  String(v?.VVR_Request_id) === String(requestId),
+              )
+              .map((v) => ({
+                id: v.VV_Vehicle_id,
+                vehicleType: v.VV_Vehicle_Type,
+                plateNumber: v.VV_Vehicle_Number,
+              }));
+            setVehiclesList(matchedVehicles);
+            console.log("[LiveFeed] Fetched vehicles:", matchedVehicles);
+          } catch (err) {
+            console.warn("[LiveFeed] Could not fetch vehicles:", err);
           }
         }
       } else {
@@ -568,7 +650,11 @@ const LiveFeed = () => {
       subVisitorsData && subVisitorsData.length > 0 ? subVisitorsData : null;
     const qrSubVisitors =
       qrData?.subVisitors && Array.isArray(qrData.subVisitors)
-        ? qrData.subVisitors
+        ? qrData.subVisitors.map((sv) => ({
+            id: sv.id || sv.groupId || sv.VVG_id || null,
+            name: sv.name || sv.Visitor_Group_Name || sv.Group_Members || "N/A",
+            nic: sv.nic || sv.Visit_Group_NIC_Passport_Number || sv.Members_NIC_Passport_Number || "N/A",
+          }))
         : null;
     const combinedSubVisitors = liveSubVisitors || qrSubVisitors;
     if (combinedSubVisitors && combinedSubVisitors.length > 0) {
@@ -590,7 +676,7 @@ const LiveFeed = () => {
     (value) => value !== "N/A" && !Array.isArray(value),
   );
 
-  const openViewAttachments = async (visitorId, visitorName) => {
+  const openViewAttachments = async (visitorId, visitorName, filterCategory = null, isSubVisitor = false) => {
     setViewAttachments((prev) => ({
       ...prev,
       open: true,
@@ -599,16 +685,19 @@ const LiveFeed = () => {
       loading: true,
       error: null,
       list: [],
+      filterCategory,
     }));
 
     try {
-      const response =
-        await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
-      const attachments = response?.data || [];
+      const response = isSubVisitor
+        ? await VisitorAttachmentService.GetAttachmentsByGroupId(visitorId)
+        : await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const rawList = response?.data?.ResultSet || response?.data || [];
+      const list = Array.isArray(rawList) ? rawList : [];
       setViewAttachments((prev) => ({
         ...prev,
         loading: false,
-        list: Array.isArray(attachments) ? attachments : [],
+        list,
       }));
     } catch (err) {
       console.error("Error fetching attachments:", err);
@@ -628,6 +717,7 @@ const LiveFeed = () => {
       loading: false,
       list: [],
       error: null,
+      filterCategory: null,
     });
   };
 
@@ -640,6 +730,7 @@ const LiveFeed = () => {
     setSubVisitorApiData(null);
     setMainVisitorItems([]);
     setItemCheckStates({});
+    setVehiclesList([]);
     setIsLoading(false);
     setScanStatus("idle");
     setScanMessage("Point your camera at the QR code to get started.");
@@ -654,6 +745,7 @@ const LiveFeed = () => {
       loading: false,
       list: [],
       error: null,
+      filterCategory: null,
     });
   };
 
@@ -980,8 +1072,12 @@ const LiveFeed = () => {
                           passDetails?.Visitor_Id ||
                           passDetails?.VV_Visitor_id ||
                           passDetails?.Visitor_ID ||
-                          passDetails?.VGP_Visitor_id;
-                        openViewAttachments(vid, profileData.Name);
+                          passDetails?.VGP_Visitor_id ||
+                          subVisitorApiData?.Visitor_Id ||
+                          subVisitorApiData?.VV_Visitor_id ||
+                          qrData?.mainVisitor?.id ||
+                          qrData?.id;
+                        openViewAttachments(vid, profileData.Name, ["nic", "passport", "driving licence"]);
                       }}
                       className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all shrink-0 cursor-pointer active:scale-95"
                     >
@@ -1076,6 +1172,66 @@ const LiveFeed = () => {
                 </div>
               )}
 
+              {/* Section: Vehicle Details */}
+              {vehiclesList && vehiclesList.length > 0 && (
+                <div className="px-4 py-2.5 border-t border-[var(--color-border-soft)]">
+                  <p className="text-[8px] uppercase tracking-[0.3em] font-bold mb-2 text-[var(--color-text-dim)]">
+                    Vehicle Details
+                  </p>
+                  <div className="space-y-1.5">
+                    {vehiclesList.map((vehicle, idx) => (
+                      <div
+                        key={vehicle.id || idx}
+                        className="p-2 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border-soft)] flex items-center justify-between gap-2.5"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                          <div
+                            className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                            style={{
+                              background: "rgba(34,197,94,0.1)",
+                              color: "var(--color-success)",
+                            }}
+                          >
+                            <Car size={14} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[8px] uppercase tracking-[0.18em] font-bold leading-none mb-0.5 text-[var(--color-text-dim)]">
+                              {vehicle.vehicleType || "Vehicle"}
+                            </p>
+                            <p className="text-xs font-semibold text-[var(--color-text-primary)] truncate">
+                              {vehicle.plateNumber || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+                        {/* Attachment Viewer Buttons */}
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <button
+                            type="button"
+                            title="Vehicle Insurance"
+                            onClick={() => {
+                              const vid =
+                                passDetails?.Visitor_Id ||
+                                passDetails?.VV_Visitor_id ||
+                                passDetails?.Visitor_ID ||
+                                passDetails?.VGP_Visitor_id ||
+                                subVisitorApiData?.Visitor_Id ||
+                                subVisitorApiData?.VV_Visitor_id ||
+                                qrData?.mainVisitor?.id ||
+                                qrData?.id;
+                              openViewAttachments(vid, profileData.Name, "Vehicle Insurance");
+                            }}
+                            className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all cursor-pointer active:scale-95 text-[10px] font-semibold flex items-center gap-1"
+                          >
+                            <Shield size={12} />
+                            Insurance
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Section: Items Carried (for sub-visitors) */}
               {profileData.items && profileData.items.length > 0 && (
                 <div className="px-4 py-2.5 border-t border-[var(--color-border-soft)]">
@@ -1117,30 +1273,46 @@ const LiveFeed = () => {
                       {profileData.subVisitors.map((subVisitor, index) => (
                         <div
                           key={index}
-                          className="p-2 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border-soft)] flex items-center gap-2"
+                          className="p-2 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border-soft)] flex items-center justify-between gap-2.5"
                         >
-                          <div
-                            className="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black flex-shrink-0"
-                            style={{
-                              background: "rgba(34,197,94,0.1)",
-                              color: "var(--color-success)",
-                            }}
-                          >
-                            {(subVisitor.name || "?")
-                              .split(" ")
-                              .map((w) => w[0])
-                              .join("")
-                              .slice(0, 2)
-                              .toUpperCase()}
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <div
+                              className="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black flex-shrink-0"
+                              style={{
+                                background: "rgba(34,197,94,0.1)",
+                                color: "var(--color-success)",
+                              }}
+                            >
+                              {(subVisitor.name || "?")
+                                .split(" ")
+                                .map((w) => w[0])
+                                .join("")
+                                .slice(0, 2)
+                                .toUpperCase()}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-semibold text-[var(--color-text-primary)] truncate">
+                                {subVisitor.name || "N/A"}
+                              </p>
+                              <p className="text-[10px] text-[var(--color-text-dim)] truncate">
+                                {subVisitor.nic || "N/A"}
+                              </p>
+                            </div>
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-xs font-semibold text-[var(--color-text-primary)] truncate">
-                              {subVisitor.name || "N/A"}
-                            </p>
-                            <p className="text-[10px] text-[var(--color-text-dim)] truncate">
-                              {subVisitor.nic || "N/A"}
-                            </p>
-                          </div>
+                          {/* Folder Attachment Button */}
+                          {(subVisitor.id || subVisitor.VVG_id) && (
+                            <button
+                              type="button"
+                              title="View uploaded attachments"
+                              onClick={() => {
+                                const svId = subVisitor.id || subVisitor.VVG_id;
+                                openViewAttachments(svId, subVisitor.name, ["nic", "passport", "driving licence"], true);
+                              }}
+                              className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all shrink-0 cursor-pointer active:scale-95"
+                            >
+                              <FolderOpen size={13} />
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -1547,8 +1719,8 @@ const LiveFeed = () => {
 
       {/* Attachments Modal */}
       {viewAttachments.open && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto animate-fade-in">
+          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md my-auto relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
 
             {/* Header */}
@@ -1557,7 +1729,11 @@ const LiveFeed = () => {
                 <div className="w-1.5 h-5 bg-primary rounded-full" />
                 <div>
                   <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
-                    Uploaded Documents
+                    {viewAttachments.filterCategory
+                      ? Array.isArray(viewAttachments.filterCategory)
+                        ? "Uploaded Documents"
+                        : viewAttachments.filterCategory
+                      : "Uploaded Documents"}
                   </h2>
                   {viewAttachments.visitorName && (
                     <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
@@ -1577,7 +1753,7 @@ const LiveFeed = () => {
             </div>
 
             {/* Body */}
-            <div className="p-5 relative z-10 min-h-[120px]">
+            <div className="p-4 sm:p-5 relative z-10 min-h-[120px] overflow-y-auto flex-1">
               {viewAttachments.loading ? (
                 <div className="flex flex-col items-center justify-center py-10 gap-3">
                   <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
@@ -1590,16 +1766,38 @@ const LiveFeed = () => {
                   <AlertCircle size={13} className="shrink-0" />
                   {viewAttachments.error}
                 </div>
-              ) : viewAttachments.list.length === 0 ? (
+              ) : (viewAttachments.filterCategory
+                ? viewAttachments.list.filter(
+                    (att) => {
+                      const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
+                      if (Array.isArray(viewAttachments.filterCategory)) {
+                         return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
+                      }
+                      return cat === viewAttachments.filterCategory.toLowerCase();
+                    }
+                  )
+                : viewAttachments.list
+              ).length === 0 && !viewAttachments.loading ? (
                 <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
                   <FolderOpen size={32} />
                   <p className="text-[11px] tracking-widest uppercase">
-                    No attachments found
+                    No {Array.isArray(viewAttachments.filterCategory) ? "" : viewAttachments.filterCategory || ""} attachments found
                   </p>
                 </div>
               ) : (
                 <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
-                  {viewAttachments.list.map((att, idx) => {
+                  {(viewAttachments.filterCategory
+                    ? viewAttachments.list.filter(
+                        (att) => {
+                          const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
+                          if (Array.isArray(viewAttachments.filterCategory)) {
+                             return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
+                          }
+                          return cat === viewAttachments.filterCategory.toLowerCase();
+                        }
+                      )
+                    : viewAttachments.list
+                  ).map((att, idx) => {
                     const category =
                       att.VAT_File_Category || att.FileCategory || "document";
                     const fileName =
