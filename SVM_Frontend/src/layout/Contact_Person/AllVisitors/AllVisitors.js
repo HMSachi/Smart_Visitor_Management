@@ -137,31 +137,47 @@ const ContactAllVisitors = () => {
   const [attachUploading, setAttachUploading] = useState(false);
   const [attachResult, setAttachResult] = useState(null); // { success, message }
   const [attachDragOver, setAttachDragOver] = useState(false);
-  // Pending attachment: file chosen in the form before visitor is created
-  const [pendingAttachFile, setPendingAttachFile] = useState(null);
-  const [pendingAttachCategory, setPendingAttachCategory] = useState("nic");
+  // Pending attachments: files chosen in the form before visitor is created
+  const [pendingAttachFiles, setPendingAttachFiles] = useState({
+    nic: null,
+    passport: null,
+    driving_licence: null,
+  });
   const fileInputRef = useRef(null);
+
+  // Helper to format category for API: "nic" → "NIC", "passport" → "Passport", "driving_licence" → "Driving Licence"
+  const formatCategoryForAPI = (cat) => {
+    if (cat === "nic") return "NIC";
+    if (cat === "passport") return "Passport";
+    if (cat === "driving_licence") return "Driving Licence";
+    return cat;
+  };
 
   const openAttachmentModal = (visitorId, visitorName = "") => {
     setAttachmentModal({ open: true, visitorId, visitorName });
     // Pre-populate with any pending file already chosen from the form
-    setAttachFile(visitorId ? null : pendingAttachFile);
-    setAttachCategory(visitorId ? "nic" : pendingAttachCategory);
+    const initialCategory = visitorId ? "nic" : attachCategory;
+    setAttachCategory(initialCategory);
+    setAttachFile(
+      visitorId ? null : pendingAttachFiles[initialCategory] || null,
+    );
     setAttachResult(null);
     setAttachUploading(false);
   };
 
   // Confirm file selection from the form-context modal (no visitorId yet)
   const confirmAttachFile = () => {
-    setPendingAttachFile(attachFile);
-    setPendingAttachCategory(attachCategory);
+    setPendingAttachFiles((prev) => ({
+      ...prev,
+      [attachCategory]: attachFile,
+    }));
     setAttachmentModal({ open: false, visitorId: null, visitorName: "" });
     setAttachResult(null);
   };
 
   const closeAttachmentModal = () => {
     setAttachmentModal({ open: false, visitorId: null, visitorName: "" });
-    // Don't clear attachFile — leave pendingAttachFile intact
+    // Don't clear attachFile — leave pendingAttachFiles intact
     setAttachFile(null);
     setAttachResult(null);
   };
@@ -193,7 +209,7 @@ const ContactAllVisitors = () => {
     try {
       await VisitorAttachmentService.UploadAttachment(
         attachmentModal.visitorId,
-        attachCategory,
+        formatCategoryForAPI(attachCategory),
         pUid,
         attachFile,
       );
@@ -311,8 +327,7 @@ const ContactAllVisitors = () => {
       VV_Vehicle_Number: "",
     });
     // Reset pending attachment for each new form session
-    setPendingAttachFile(null);
-    setPendingAttachCategory("nic");
+    setPendingAttachFiles({ nic: null, passport: null, driving_licence: null });
     setIsModalOpen(true);
     setShowPassword(false);
   };
@@ -320,8 +335,7 @@ const ContactAllVisitors = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setErrors({});
-    setPendingAttachFile(null);
-    setPendingAttachCategory("nic");
+    setPendingAttachFiles({ nic: null, passport: null, driving_licence: null });
   };
 
   const handleInputChange = (e) => {
@@ -448,7 +462,10 @@ const ContactAllVisitors = () => {
 
       // If user pre-selected an attachment, fetch the fresh visitor list to
       // reliably get the new visitor's ID (AddVisitor response may not include it)
-      if (pendingAttachFile) {
+      const pendingEntries = Object.entries(pendingAttachFiles).filter(
+        ([, file]) => !!file,
+      );
+      if (pendingEntries.length > 0) {
         try {
           const refreshed =
             await VisitorService.GetVisitorsByContactPerson(cpId);
@@ -467,14 +484,16 @@ const ContactAllVisitors = () => {
 
           if (newVisitorId) {
             const pUid = user?.ResultSet?.[0]?.VA_Name || "Admin";
-            await VisitorAttachmentService.UploadAttachment(
-              newVisitorId,
-              pendingAttachCategory,
-              pUid,
-              pendingAttachFile,
-            );
+            for (const [category, file] of pendingEntries) {
+              await VisitorAttachmentService.UploadAttachment(
+                newVisitorId,
+                formatCategoryForAPI(category),
+                pUid,
+                file,
+              );
+            }
             console.log(
-              "Attachment uploaded successfully for visitor",
+              "Attachments uploaded successfully for visitor",
               newVisitorId,
             );
           } else {
@@ -890,39 +909,108 @@ const ContactAllVisitors = () => {
                           openAttachmentModal(null, formData.VV_Name?.trim())
                         }
                         className={`shrink-0 p-1.5 rounded-lg transition-all ${
-                          pendingAttachFile
+                          pendingAttachFiles.nic ||
+                          pendingAttachFiles.passport ||
+                          pendingAttachFiles.driving_licence
                             ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
                             : "bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary"
                         }`}
                       >
-                        {pendingAttachFile ? (
+                        {pendingAttachFiles.nic ||
+                        pendingAttachFiles.passport ||
+                        pendingAttachFiles.driving_licence ? (
                           <CheckCircle size={13} />
                         ) : (
                           <Paperclip size={13} />
                         )}
                       </button>
                     </div>
-                    {/* File badge — shows when user has selected a file */}
-                    {pendingAttachFile && (
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <FileText
-                          size={10}
-                          className="text-green-400 shrink-0"
-                        />
-                        <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[180px]">
-                          {pendingAttachFile.name}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPendingAttachFile(null);
-                            setPendingAttachCategory("nic");
-                          }}
-                          className="ml-auto text-white/30 hover:text-red-400 transition-colors"
-                          title="Remove file"
-                        >
-                          <X size={10} />
-                        </button>
+                    {/* File badges — show when user has selected files */}
+                    {(pendingAttachFiles.nic ||
+                      pendingAttachFiles.passport ||
+                      pendingAttachFiles.driving_licence) && (
+                      <div className="space-y-1 mt-1">
+                        {pendingAttachFiles.nic && (
+                          <div className="flex items-center gap-1.5">
+                            <FileText
+                              size={10}
+                              className="text-green-400 shrink-0"
+                            />
+                            <span className="text-[9px] uppercase tracking-widest text-blue-300">
+                              NIC
+                            </span>
+                            <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[150px]">
+                              {pendingAttachFiles.nic.name}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPendingAttachFiles((prev) => ({
+                                  ...prev,
+                                  nic: null,
+                                }))
+                              }
+                              className="ml-auto text-white/30 hover:text-red-400 transition-colors"
+                              title="Remove NIC file"
+                            >
+                              <X size={10} />
+                            </button>
+                          </div>
+                        )}
+                        {pendingAttachFiles.passport && (
+                          <div className="flex items-center gap-1.5">
+                            <FileText
+                              size={10}
+                              className="text-green-400 shrink-0"
+                            />
+                            <span className="text-[9px] uppercase tracking-widest text-purple-300">
+                              Passport
+                            </span>
+                            <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[150px]">
+                              {pendingAttachFiles.passport.name}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPendingAttachFiles((prev) => ({
+                                  ...prev,
+                                  passport: null,
+                                }))
+                              }
+                              className="ml-auto text-white/30 hover:text-red-400 transition-colors"
+                              title="Remove passport file"
+                            >
+                              <X size={10} />
+                            </button>
+                          </div>
+                        )}
+                        {pendingAttachFiles.driving_licence && (
+                          <div className="flex items-center gap-1.5">
+                            <FileText
+                              size={10}
+                              className="text-green-400 shrink-0"
+                            />
+                            <span className="text-[9px] uppercase tracking-widest text-amber-300">
+                              Driving Licence
+                            </span>
+                            <span className="text-[10px] text-green-300 tracking-wide truncate max-w-[150px]">
+                              {pendingAttachFiles.driving_licence.name}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPendingAttachFiles((prev) => ({
+                                  ...prev,
+                                  driving_licence: null,
+                                }))
+                              }
+                              className="ml-auto text-white/30 hover:text-red-400 transition-colors"
+                              title="Remove driving licence file"
+                            >
+                              <X size={10} />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                     {errors.VV_NIC_Passport_NO && (
@@ -1203,18 +1291,28 @@ const ContactAllVisitors = () => {
                     Document type
                   </label>
                   <div className="flex gap-2">
-                    {["nic", "passport"].map((cat) => (
+                    {["nic", "passport", "driving_licence"].map((cat) => (
                       <button
                         key={cat}
                         type="button"
-                        onClick={() => setAttachCategory(cat)}
+                        onClick={() => {
+                          setAttachCategory(cat);
+                          if (!attachmentModal.visitorId) {
+                            setAttachFile(pendingAttachFiles[cat] || null);
+                          }
+                          setAttachResult(null);
+                        }}
                         className={`flex-1 py-2 rounded-lg text-[11px] font-normal tracking-widest uppercase transition-all border ${
                           attachCategory === cat
                             ? "bg-primary/20 border-primary/50 text-primary"
                             : "bg-black/30 border-white/10 text-gray-400 hover:border-white/20"
                         }`}
                       >
-                        {cat === "nic" ? "NIC" : "Passport"}
+                        {cat === "nic"
+                          ? "NIC"
+                          : cat === "passport"
+                            ? "Passport"
+                            : "Driving Licence"}
                       </button>
                     ))}
                   </div>
@@ -1304,7 +1402,7 @@ const ContactAllVisitors = () => {
                       disabled={!attachFile}
                       className="flex-1 py-2 rounded-lg text-[11px] font-normal tracking-[0.14em] bg-primary hover:bg-[var(--color-primary-hover)] text-white shadow-lg shadow-primary/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      <CheckCircle size={13} /> Confirm
+                      <CheckCircle size={13} /> Save file
                     </button>
                   ) : (
                     /* Table context: visitor id exists — upload immediately */
@@ -1430,7 +1528,10 @@ const ContactAllVisitors = () => {
                                   ? "bg-blue-500/20 text-blue-300"
                                   : category.toLowerCase() === "passport"
                                     ? "bg-purple-500/20 text-purple-300"
-                                    : "bg-white/10 text-white/40"
+                                    : category.toLowerCase() ===
+                                        "driving_licence"
+                                      ? "bg-amber-500/20 text-amber-300"
+                                      : "bg-white/10 text-white/40"
                               }`}
                             >
                               {category}
