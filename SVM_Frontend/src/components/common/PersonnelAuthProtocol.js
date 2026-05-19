@@ -733,35 +733,7 @@ const PersonnelAuthProtocol = ({
       )}
       */}
 
-      {onAction && (
-        <div
-          className={`mt-6 pt-6 border-t ${isLight ? "border-gray-100" : "border-white/5"} flex items-center justify-end gap-3`}
-        >
-          {(visitor.status === "Accepted by Contact Person" ||
-            visitor.status === "Accepted by Visitor") && (
-            <>
-              <button
-                onClick={() => onAction(visitor, "Reject")}
-                className={`px-6 py-2.5 border font-bold text-[11px] tracking-[0.15em] capitalize rounded-xl transition-all flex items-center gap-1.5 active:scale-95 ${
-                  isLight
-                    ? "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                    : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                <AlertCircle size={14} />
-                Reject request
-              </button>
-              <button
-                onClick={() => onAction(visitor, "Approve")}
-                className="px-8 py-2.5 bg-[#00B14F] hover:bg-[#009e46] text-white text-[11px] font-bold tracking-[0.15em] capitalize rounded-xl transition-all shadow-lg shadow-green-500/20 flex items-center gap-1.5 active:scale-95"
-              >
-                <CheckCircle2 size={14} />
-                Approve entry
-              </button>
-            </>
-          )}
-        </div>
-      )}
+
 
       {/* ── Sub-Visitor QR Popup Modal ── */}
       <AnimatePresence>
