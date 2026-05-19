@@ -386,16 +386,6 @@ const ContactAllVisitors = () => {
       newErrors.VV_Company = "Organization name is required";
     }
 
-    // Purpose of Visit validation
-    if (!formData.VV_Visitor_Type?.trim()) {
-      newErrors.VV_Visitor_Type = "Purpose of visit is required";
-    }
-
-    // Where to Visit validation
-    if (!formData.VV_Visiting_places?.trim()) {
-      newErrors.VV_Visiting_places = "Visiting area is required";
-    }
-
     // Blacklist validation
     const isBlacklisted = blacklists.some(
       (b) =>
@@ -1105,89 +1095,6 @@ const ContactAllVisitors = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <Briefcase
-                        size={10}
-                        className="text-primary/60 shrink-0"
-                      />{" "}
-                      Reason for visit
-                    </label>
-                    <input
-                      type="text"
-                      name="VV_Visitor_Type"
-                      value={formData.VV_Visitor_Type}
-                      onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                        errors.VV_Visitor_Type
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                      placeholder="e.g., Meeting, Delivery, Interview"
-                    />
-                    {errors.VV_Visitor_Type && (
-                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
-                        {errors.VV_Visitor_Type}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <MapPin size={10} className="text-primary/60 shrink-0" />{" "}
-                      Where to visit
-                    </label>
-                    <select
-                      name="VV_Visiting_places"
-                      value={formData.VV_Visiting_places}
-                      onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                        errors.VV_Visiting_places
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                    >
-                      <option
-                        value=""
-                        disabled
-                        className="text-gray-500 bg-white"
-                      >
-                        Select visiting area...
-                      </option>
-                      {(places || [])
-                        .filter(
-                          (p) =>
-                            (p.VAIL_Status || p.Status || "A")
-                              .toString()
-                              .trim()
-                              .toUpperCase() === "A",
-                        )
-                        .map((place) => {
-                          const placeName =
-                            place.VAIL_Item_Name ||
-                            place.Item_Name ||
-                            "Unnamed";
-                          const placeId =
-                            place.VAIL_Item_List_ID ||
-                            place.Item_List_ID ||
-                            place.Id;
-                          return (
-                            <option
-                              key={placeId}
-                              value={placeName}
-                              className="text-black bg-white"
-                            >
-                              {placeName}
-                            </option>
-                          );
-                        })}
-                    </select>
-                    {errors.VV_Visiting_places && (
-                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
-                        {errors.VV_Visiting_places}
-                      </p>
-                    )}
-                  </div>
 
                   <div className="space-y-1">
                     <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
