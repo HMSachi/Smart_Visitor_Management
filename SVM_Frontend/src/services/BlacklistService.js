@@ -10,7 +10,12 @@ const getApiUrl = (endpoint) => {
 
 const GetAllBlacklist = async (status = "") => {
   let url = getApiUrl("/Blacklist/GetAllBlacklist");
-  if (status) {
+  if (status === "Pending" || status === "Approved" || status === "Rejected") {
+    url += `?VB_Approval_Status=${encodeURIComponent(status)}`;
+  } else if (status === "A" || status === "I") {
+    url += `?VB_Status=${encodeURIComponent(status)}`;
+  } else if (status) {
+    // Fallback if there's any other status provided
     url += `?VB_Approval_Status=${encodeURIComponent(status)}`;
   }
   let config = {
@@ -35,7 +40,27 @@ const GetBlacklistById = async (id) => {
   let config = {
     method: "get",
     url: getApiUrl(
-      `/Blacklist/GetByIdBlacklist?VB_id=${encodeURIComponent(id)}`,
+      `/Blacklist/GetBlacklistById?VB_id=${encodeURIComponent(id)}`,
+    ),
+  };
+  return axios.request(config).then((response) => response);
+};
+
+const GetBlacklistByVisitorId = async (visitorId) => {
+  let config = {
+    method: "get",
+    url: getApiUrl(
+      `/Blacklist/GetBlacklistByVisitorId?VB_Visitor_id=${encodeURIComponent(visitorId)}`,
+    ),
+  };
+  return axios.request(config).then((response) => response);
+};
+
+const GetBlacklistByGroupID = async (groupId) => {
+  let config = {
+    method: "get",
+    url: getApiUrl(
+      `/Blacklist/GetBlacklistByGroupID?VVG_id=${encodeURIComponent(groupId)}`,
     ),
   };
   return axios.request(config).then((response) => response);
@@ -114,6 +139,8 @@ const RejectBlacklist = async (id, adminId, rejectReason, pUid) => {
 export default {
   GetAllBlacklist,
   GetBlacklistById,
+  GetBlacklistByVisitorId,
+  GetBlacklistByGroupID,
   AddBlacklist,
   UpdateBlacklist,
   UpdateBlacklistStatus,
