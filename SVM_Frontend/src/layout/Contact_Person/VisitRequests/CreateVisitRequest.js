@@ -202,7 +202,7 @@ const CreateVisitRequest = () => {
                   </div>
 
                   {selectedVisitorDetails && (
-                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-4 p-3 rounded-xl bg-background-alt/50 border border-border-soft text-text-primary">
+                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 p-3 rounded-xl bg-background-alt/50 border border-border-soft text-text-primary">
                       <div className="space-y-0.5 text-center md:text-left">
                         <span className="text-[12px] font-medium text-text-secondary capitalize tracking-widest">Email</span>
                         <p className="text-[12px] font-medium truncate">{selectedVisitorDetails.VV_Email || "N/A"}</p>
@@ -215,10 +215,10 @@ const CreateVisitRequest = () => {
                         <span className="text-[12px] font-medium text-text-secondary capitalize tracking-widest">Company</span>
                         <p className="text-[12px] font-medium truncate">{selectedVisitorDetails.VV_Company || "N/A"}</p>
                       </div>
-                      <div className="space-y-0.5 text-center md:text-left">
+                      {/* <div className="space-y-0.5 text-center md:text-left">
                         <span className="text-[12px] font-medium text-text-secondary capitalize tracking-widest">Type</span>
                         <p className="text-[12px] font-medium text-primary">{selectedVisitorDetails.VV_Visitor_Type || "N/A"}</p>
-                      </div>
+                      </div> */}
                     </div>
                   )}
 

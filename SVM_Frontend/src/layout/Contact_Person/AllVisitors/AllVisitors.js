@@ -39,6 +39,7 @@ import {
   ExternalLink,
   ImageIcon,
   Download,
+  Edit,
 } from "lucide-react";
 import {
   validateName,
@@ -92,6 +93,8 @@ const ContactAllVisitors = () => {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingVisitorId, setEditingVisitorId] = useState(null);
+  const [hasExistingAttachments, setHasExistingAttachments] = useState(false);
 
   // View Attachments Modal State
   const [viewAttachments, setViewAttachments] = useState({
@@ -324,7 +327,8 @@ const ContactAllVisitors = () => {
 
   const openModal = () => {
     console.log("Opening modal with cpId:", cpId);
-
+    setEditingVisitorId(null);
+    setHasExistingAttachments(false);
     setFormData({
       VV_Contact_person_id: cpId,
       VV_Name: "",
@@ -344,8 +348,43 @@ const ContactAllVisitors = () => {
     setShowPassword(false);
   };
 
+  const openEditModal = async (visitor) => {
+    console.log("Editing visitor:", visitor);
+    setEditingVisitorId(visitor.VV_Visitor_id);
+    setFormData({
+      VV_Contact_person_id: cpId || visitor.VV_Contact_person_id,
+      VV_Name: visitor.VV_Name || "",
+      VV_NIC_Passport_NO: visitor.VV_NIC_Passport_NO || "",
+      VV_Visiting_places: visitor.VV_Visiting_places || "",
+      VV_Visitor_Type: visitor.VV_Visitor_Type || "",
+      VV_Phone: visitor.VV_Phone || "",
+      VV_Email: visitor.VV_Email || "",
+      VV_Company: visitor.VV_Company || "",
+      VA_Password: "",
+      VV_Vehicle_Type: "",
+      VV_Vehicle_Number: "",
+    });
+    setPendingAttachFiles({ nic: null, passport: null, driving_licence: null });
+    setHasExistingAttachments(false);
+
+    try {
+      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(visitor.VV_Visitor_id);
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      if (rawList.length > 0) {
+        setHasExistingAttachments(true);
+      }
+    } catch (err) {
+      console.error("Error checking visitor attachments:", err);
+    }
+
+    setIsModalOpen(true);
+    setShowPassword(false);
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
+    setEditingVisitorId(null);
+    setHasExistingAttachments(false);
     setErrors({});
     setPendingAttachFiles({ nic: null, passport: null, driving_licence: null });
   };
@@ -394,17 +433,14 @@ const ContactAllVisitors = () => {
     const phoneErr = validatePhone(formData.VV_Phone);
     if (phoneErr) newErrors.VV_Phone = phoneErr;
 
-    const passErr = validatePassword(formData.VA_Password);
-    if (passErr) newErrors.VA_Password = passErr;
+    if (!editingVisitorId || formData.VA_Password) {
+      const passErr = validatePassword(formData.VA_Password);
+      if (passErr) newErrors.VA_Password = passErr;
+    }
 
     // Organization validation
     const companyErr = validateCompanyName(formData.VV_Company);
     if (companyErr) newErrors.VV_Company = companyErr;
-
-    // Purpose of Visit validation
-    if (!formData.VV_Visitor_Type?.trim()) {
-      newErrors.VV_Visitor_Type = "Purpose of visit is required";
-    }
 
     // Vehicle Type validation (only validate if provided)
     if (formData.VV_Vehicle_Type?.trim()) {
@@ -478,13 +514,32 @@ const ContactAllVisitors = () => {
         VV_Company: formData.VV_Company?.trim(),
       };
 
-      console.log("AddAdministrator payload:", adminPayload);
-      const adminResponse = await dispatch(AddAdministrator(adminPayload));
-      console.log("AddAdministrator response:", adminResponse);
+      let targetVisitorId = null;
 
-      console.log("AddVisitor payload:", visitorPayload);
-      const visitorResponse = await dispatch(AddVisitor(visitorPayload));
-      console.log("AddVisitor response:", visitorResponse);
+      if (editingVisitorId) {
+        const updatePayload = {
+          VV_Visitor_id: editingVisitorId,
+          VV_Contact_person_id: cpId,
+          VV_Name: formData.VV_Name?.trim(),
+          VV_NIC_Passport_NO: formData.VV_NIC_Passport_NO?.trim(),
+          VV_Visiting_places: formData.VV_Visiting_places?.trim(),
+          VV_Visitor_Type: formData.VV_Visitor_Type?.trim(),
+          VV_Phone: formData.VV_Phone?.trim(),
+          VV_Email: formData.VV_Email?.trim(),
+          VV_Company: formData.VV_Company?.trim(),
+        };
+        console.log("UpdateVisitor payload:", updatePayload);
+        await VisitorService.UpdateVisitor(updatePayload);
+        targetVisitorId = editingVisitorId;
+      } else {
+        console.log("AddAdministrator payload:", adminPayload);
+        const adminResponse = await dispatch(AddAdministrator(adminPayload));
+        console.log("AddAdministrator response:", adminResponse);
+
+        console.log("AddVisitor payload:", visitorPayload);
+        const visitorResponse = await dispatch(AddVisitor(visitorPayload));
+        console.log("AddVisitor response:", visitorResponse);
+      }
 
       // If user pre-selected an attachment, fetch the fresh visitor list to
       // reliably get the new visitor's ID (AddVisitor response may not include it)
@@ -493,26 +548,28 @@ const ContactAllVisitors = () => {
       );
       if (pendingEntries.length > 0) {
         try {
-          const refreshed =
-            await VisitorService.GetVisitorsByContactPerson(cpId);
-          const allVisitors =
-            refreshed?.data?.ResultSet || refreshed?.data || [];
-          // Match the new visitor by email or NIC
-          const newVisitor = allVisitors.find(
-            (v) =>
-              v.VV_Email?.trim().toLowerCase() ===
-                formData.VV_Email?.trim().toLowerCase() ||
-              v.VV_NIC_Passport_NO?.trim() ===
-                formData.VV_NIC_Passport_NO?.trim(),
-          );
-          const newVisitorId = newVisitor?.VV_Visitor_id || null;
-          console.log("Resolved new visitor ID for attachment:", newVisitorId);
+          if (!targetVisitorId) {
+            const refreshed =
+              await VisitorService.GetVisitorsByContactPerson(cpId);
+            const allVisitors =
+              refreshed?.data?.ResultSet || refreshed?.data || [];
+            // Match the new visitor by email or NIC
+            const newVisitor = allVisitors.find(
+              (v) =>
+                v.VV_Email?.trim().toLowerCase() ===
+                  formData.VV_Email?.trim().toLowerCase() ||
+                v.VV_NIC_Passport_NO?.trim() ===
+                  formData.VV_NIC_Passport_NO?.trim(),
+            );
+            targetVisitorId = newVisitor?.VV_Visitor_id || null;
+          }
+          console.log("Resolved visitor ID for attachment:", targetVisitorId);
 
-          if (newVisitorId) {
+          if (targetVisitorId) {
             const pUid = user?.ResultSet?.[0]?.VA_Name || "Admin";
             for (const [category, file] of pendingEntries) {
               await VisitorAttachmentService.UploadAttachment(
-                newVisitorId,
+                targetVisitorId,
                 formatCategoryForAPI(category),
                 pUid,
                 file,
@@ -520,11 +577,11 @@ const ContactAllVisitors = () => {
             }
             console.log(
               "Attachments uploaded successfully for visitor",
-              newVisitorId,
+              targetVisitorId,
             );
           } else {
             console.warn(
-              "Could not resolve new visitor ID — attachment skipped.",
+              "Could not resolve visitor ID — attachment skipped.",
             );
           }
         } catch (attachErr) {
@@ -750,6 +807,9 @@ const ContactAllVisitors = () => {
                       <th className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Docs
                       </th>
+                      <th className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary">
+                        Edit
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-soft">
@@ -838,13 +898,23 @@ const ContactAllVisitors = () => {
                                 <FolderOpen size={13} />
                               </button>
                             </td>
+                            <td className="px-3 py-1 text-center">
+                              <button
+                                type="button"
+                                title="Edit Visitor"
+                                onClick={() => openEditModal(visitor)}
+                                className="p-1.5 rounded-lg bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary transition-all"
+                              >
+                                <Edit size={13} />
+                              </button>
+                            </td>
                           </tr>
                         );
                       })
                     ) : (
                       <tr>
                         <td
-                          colSpan={6}
+                          colSpan={8}
                           className="text-[12px] font-normal px-2.5 py-12 text-center tracking-[0.24em] text-text-dim"
                         >
                           No visitors detected matching criteria
@@ -868,7 +938,7 @@ const ContactAllVisitors = () => {
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="w-1.5 h-5 sm:h-6 bg-primary rounded-full"></div>
                   <h2 className="text-[11px] sm:text-[12px] font-normal text-white tracking-[0.16em]">
-                    Pre-approve visitor
+                    {editingVisitorId ? "Edit visitor pre-approval" : "Pre-approve visitor"}
                   </h2>
                 </div>
                 <button
@@ -928,28 +998,30 @@ const ContactAllVisitors = () => {
                         }`}
                         placeholder="e.g., 123456789"
                       />
-                      <button
-                        type="button"
-                        title="Attach NIC / Passport document"
-                        onClick={() =>
-                          openAttachmentModal(null, formData.VV_Name?.trim())
-                        }
-                        className={`shrink-0 p-1.5 rounded-lg transition-all ${
-                          pendingAttachFiles.nic ||
+                      {(!editingVisitorId || !hasExistingAttachments) && (
+                        <button
+                          type="button"
+                          title="Attach NIC / Passport document"
+                          onClick={() =>
+                            openAttachmentModal(null, formData.VV_Name?.trim())
+                          }
+                          className={`shrink-0 p-1.5 rounded-lg transition-all ${
+                            pendingAttachFiles.nic ||
+                            pendingAttachFiles.passport ||
+                            pendingAttachFiles.driving_licence
+                              ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                              : "bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary"
+                          }`}
+                        >
+                          {pendingAttachFiles.nic ||
                           pendingAttachFiles.passport ||
-                          pendingAttachFiles.driving_licence
-                            ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
-                            : "bg-primary/10 hover:bg-primary/25 text-primary/70 hover:text-primary"
-                        }`}
-                      >
-                        {pendingAttachFiles.nic ||
-                        pendingAttachFiles.passport ||
-                        pendingAttachFiles.driving_licence ? (
-                          <CheckCircle size={13} />
-                        ) : (
-                          <Paperclip size={13} />
-                        )}
-                      </button>
+                          pendingAttachFiles.driving_licence ? (
+                            <CheckCircle size={13} />
+                          ) : (
+                            <Paperclip size={13} />
+                          )}
+                        </button>
+                      )}
                     </div>
                     {/* File badges — show when user has selected files */}
                     {(pendingAttachFiles.nic ||
@@ -1127,131 +1199,54 @@ const ContactAllVisitors = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <Briefcase
-                        size={10}
-                        className="text-primary/60 shrink-0"
-                      />{" "}
-                      Reason for visit
-                    </label>
-                    <input
-                      type="text"
-                      name="VV_Visitor_Type"
-                      value={formData.VV_Visitor_Type}
-                      onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                        errors.VV_Visitor_Type
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                      placeholder="e.g., Meeting, Delivery, Interview"
-                    />
-                    {errors.VV_Visitor_Type && (
-                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
-                        {errors.VV_Visitor_Type}
-                      </p>
-                    )}
-                  </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <Car
-                        size={10}
-                        className="text-primary/60 shrink-0"
-                      />{" "}
-                      Vehicle type
-                    </label>
-                    <input
-                      type="text"
-                      name="VV_Vehicle_Type"
-                      value={formData.VV_Vehicle_Type}
-                      onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                        errors.VV_Vehicle_Type
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                      placeholder="e.g., Car, Van, Truck"
-                    />
-                    {errors.VV_Vehicle_Type && (
-                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
-                        {errors.VV_Vehicle_Type}
-                      </p>
-                    )}
-                  </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <Hash
-                        size={10}
-                        className="text-primary/60 shrink-0"
-                      />{" "}
-                      Plate number
-                    </label>
-                    <input
-                      type="text"
-                      name="VV_Vehicle_Number"
-                      value={formData.VV_Vehicle_Number}
-                      onChange={handleInputChange}
-                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                        errors.VV_Vehicle_Number
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                      placeholder="e.g., WP CAS 1234"
-                    />
-                    {errors.VV_Vehicle_Number && (
-                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
-                        {errors.VV_Vehicle_Number}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
-                      <AlertCircle
-                        size={10}
-                        className="text-primary/60 shrink-0"
-                      />{" "}
-                      Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        name="VA_Password"
-                        value={formData.VA_Password}
-                        onChange={handleInputChange}
-                        maxLength={5}
-                        className={`w-full rounded-lg pl-3 sm:pl-3.5 pr-8 sm:pr-10 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
-                          errors.VA_Password
-                            ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                            : "bg-black/60 border border-primary/20 focus:border-primary/50"
-                        }`}
-                        placeholder="••••••••"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
-                      >
-                        {showPassword ? (
-                          <EyeOff size={14} className="sm:w-4 sm:h-4" />
-                        ) : (
-                          <Eye size={14} className="sm:w-4 sm:h-4" />
-                        )}
-                      </button>
+                  {!editingVisitorId && (
+                    <div className="space-y-1">
+                      <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                        <AlertCircle
+                          size={10}
+                          className="text-primary/60 shrink-0"
+                        />{" "}
+                        Password
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          name="VA_Password"
+                          value={formData.VA_Password}
+                          onChange={handleInputChange}
+                          maxLength={5}
+                          className={`w-full rounded-lg pl-3 sm:pl-3.5 pr-8 sm:pr-10 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                            errors.VA_Password
+                              ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                              : "bg-black/60 border border-primary/20 focus:border-primary/50"
+                          }`}
+                          placeholder="••••••••"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                        >
+                          {showPassword ? (
+                            <EyeOff size={14} className="sm:w-4 sm:h-4" />
+                          ) : (
+                            <Eye size={14} className="sm:w-4 sm:h-4" />
+                          )}
+                        </button>
+                      </div>
+                      {errors.VA_Password ? (
+                        <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
+                          {errors.VA_Password}
+                        </p>
+                      ) : (
+                        <p className="text-[11px] sm:text-[12px] text-white/35 tracking-[0.12em] px-0.5 mt-1">
+                          Max 5 chars, Capital &amp; Special
+                        </p>
+                      )}
                     </div>
-                    {errors.VA_Password ? (
-                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
-                        {errors.VA_Password}
-                      </p>
-                    ) : (
-                      <p className="text-[11px] sm:text-[12px] text-white/35 tracking-[0.12em] px-0.5 mt-1">
-                        Max 5 chars, Capital &amp; Special
-                      </p>
-                    )}
-                  </div>
+                  )}
                 </div>
 
                 <div className="pt-3 sm:pt-5 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 border-t border-white/5">
@@ -1266,7 +1261,7 @@ const ContactAllVisitors = () => {
                     type="submit"
                     className="px-5 sm:px-7 py-2 sm:py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[11px] sm:text-[12px] font-normal tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
                   >
-                    Send pre-approval
+                    {editingVisitorId ? "Update pre-approval" : "Send pre-approval"}
                   </button>
                 </div>
               </form>
