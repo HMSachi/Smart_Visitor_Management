@@ -2444,18 +2444,19 @@ const VisitRequests = () => {
                                 <input
                                   type="text"
                                   value={m.VVG_Visitor_Name}
-                                  onChange={(e) =>
+                                  onChange={(e) => {
+                                    const val = e.target.value.replace(/[^A-Za-z\s]/g, "");
                                     setEditGroupMembers((a) =>
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
                                             ...x,
-                                            VVG_Visitor_Name: e.target.value,
+                                            VVG_Visitor_Name: val,
                                           }
                                           : x,
                                       ),
-                                    )
-                                  }
+                                    );
+                                  }}
                                   className="mas-input"
                                 />
                               </div>
@@ -2474,18 +2475,19 @@ const VisitRequests = () => {
                                 <input
                                   type="text"
                                   value={m.VVG_Designation}
-                                  onChange={(e) =>
+                                  onChange={(e) => {
+                                    const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
                                     setEditGroupMembers((a) =>
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
                                             ...x,
-                                            VVG_Designation: e.target.value,
+                                            VVG_Designation: val,
                                           }
                                           : x,
                                       ),
-                                    )
-                                  }
+                                    );
+                                  }}
                                   className="mas-input"
                                 />
                               </div>

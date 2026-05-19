@@ -309,11 +309,12 @@ const CreateVisitRequestDetails = () => {
   };
 
   const handlePersonNameChange = (index, value) => {
-    dispatch(updatePerson({ index, field: "name", value }));
+    const sanitizedValue = value.replace(/[^A-Za-z\s]/g, "");
+    dispatch(updatePerson({ index, field: "name", value: sanitizedValue }));
 
     // Find if the entered name matches a known visitor for autocomplete
     const matchedVisitor = allVisitors.find(v =>
-      v.VV_Name?.trim().toLowerCase() === value?.trim().toLowerCase()
+      v.VV_Name?.trim().toLowerCase() === sanitizedValue?.trim().toLowerCase()
     );
     if (matchedVisitor) {
       // Auto-fill NIC and Phone if matched

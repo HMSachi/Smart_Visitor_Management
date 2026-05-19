@@ -47,6 +47,13 @@ import {
   validateEmail,
   validatePassword,
   validatePlateNumber,
+  validateCompanyName,
+  validateVehicleType,
+  sanitizeTextInput,
+  sanitizeNumberInput,
+  sanitizePhoneInput,
+  sanitizeNICInput,
+  sanitizePlateInput,
 } from "../../../utils/validation";
 
 import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
@@ -346,13 +353,21 @@ const ContactAllVisitors = () => {
   const handleInputChange = (e) => {
     let { name, value } = e.target;
 
-    // Real-time filtering and length enforcement
+    // Real-time sanitization - enforce input types
     if (name === "VV_Name") {
-      value = value.replace(/[^A-Za-z\s]/g, "");
+      value = sanitizeTextInput(value);
     } else if (name === "VV_NIC_Passport_NO") {
-      value = value.replace(/[^0-9]/g, "").slice(0, 12);
+      value = sanitizeNICInput(value);
     } else if (name === "VV_Phone") {
-      value = value.replace(/[^0-9]/g, "").slice(0, 10);
+      value = sanitizePhoneInput(value);
+    } else if (name === "VV_Company") {
+      value = sanitizeTextInput(value);
+    } else if (name === "VV_Visitor_Type") {
+      value = sanitizeTextInput(value);
+    } else if (name === "VV_Vehicle_Type") {
+      value = sanitizeTextInput(value);
+    } else if (name === "VV_Vehicle_Number") {
+      value = sanitizePlateInput(value);
     } else if (name === "VA_Password") {
       value = value.slice(0, 5);
     }
@@ -383,13 +398,18 @@ const ContactAllVisitors = () => {
     if (passErr) newErrors.VA_Password = passErr;
 
     // Organization validation
-    if (!formData.VV_Company?.trim()) {
-      newErrors.VV_Company = "Organization name is required";
-    }
+    const companyErr = validateCompanyName(formData.VV_Company);
+    if (companyErr) newErrors.VV_Company = companyErr;
 
     // Purpose of Visit validation
     if (!formData.VV_Visitor_Type?.trim()) {
       newErrors.VV_Visitor_Type = "Purpose of visit is required";
+    }
+
+    // Vehicle Type validation (only validate if provided)
+    if (formData.VV_Vehicle_Type?.trim()) {
+      const vehicleErr = validateVehicleType(formData.VV_Vehicle_Type);
+      if (vehicleErr) newErrors.VV_Vehicle_Type = vehicleErr;
     }
 
     // Plate number validation (only validate if provided)

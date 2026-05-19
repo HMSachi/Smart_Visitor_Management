@@ -1829,18 +1829,19 @@ const MyRequests = () => {
                               <input
                                 type="text"
                                 value={member.VVG_Visitor_Name}
-                                onChange={(e) =>
+                                onChange={(e) => {
+                                  const val = e.target.value.replace(/[^A-Za-z\s]/g, "");
                                   setEditGroupMembers((arr) =>
                                     arr.map((m, i) =>
                                       i === idx
                                         ? {
                                             ...m,
-                                            VVG_Visitor_Name: e.target.value,
+                                            VVG_Visitor_Name: val,
                                           }
                                         : m,
                                     ),
-                                  )
-                                }
+                                  );
+                                }}
                                 className="mas-input"
                               />
                             </div>
