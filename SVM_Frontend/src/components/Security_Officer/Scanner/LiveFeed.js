@@ -34,7 +34,7 @@ import {
   X,
   AlertCircle,
 } from "lucide-react";
-import { GetGatePassById } from "../../../actions/GatePassAction";
+import { GetGatePassById, UpdateGatePassStatus } from "../../../actions/GatePassAction";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   decodeSecureQrPayload,
@@ -342,6 +342,12 @@ const LiveFeed = () => {
 
       if (details && details.VGP_Pass_id) {
         // Database validation successful
+        if (useDemoScanLog) {
+          const localStatus = localStorage.getItem(`svm.gatePassStatus.${details.VGP_Pass_id}`);
+          if (localStatus) {
+            details.VGP_Status = localStatus;
+          }
+        }
         setPassDetails(details);
         setScanStatus("details");
         setScanMessage(
@@ -694,6 +700,15 @@ const LiveFeed = () => {
       }
 
       if (result?.data?.Status === "Success" || result?.status === 200) {
+        // Update gate pass status in backend and localStorage
+        const newStatus = scanType === "CHECK_IN" ? "IN" : "OUT";
+        try {
+          await dispatch(UpdateGatePassStatus(passDetails.VGP_Pass_id, newStatus));
+        } catch (statusErr) {
+          console.warn("[LiveFeed] Could not update gate pass status in backend:", statusErr);
+        }
+        localStorage.setItem(`svm.gatePassStatus.${passDetails.VGP_Pass_id}`, newStatus);
+
         const actionText = scanType === "CHECK_IN" ? "Check-in" : "Check-out";
         setScanMessage(
           `${actionText} successful! ${scanType === "CHECK_OUT" && remarks ? "Remarks logged." : ""}`,
