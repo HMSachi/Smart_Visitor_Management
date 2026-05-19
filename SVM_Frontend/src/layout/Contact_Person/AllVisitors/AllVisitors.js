@@ -391,8 +391,6 @@ const ContactAllVisitors = () => {
       newErrors.VV_Visitor_Type = "Purpose of visit is required";
     }
 
-
-
     // Blacklist validation
     const isBlacklisted = blacklists.some(
       (b) =>
@@ -1128,8 +1126,6 @@ const ContactAllVisitors = () => {
                       </p>
                     )}
                   </div>
-
-
 
                   <div className="space-y-1">
                     <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
