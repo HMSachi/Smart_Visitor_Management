@@ -181,7 +181,8 @@ const MyRequests = () => {
     setInsuranceFile(null);
     setInsuranceUploadResult(null);
     try {
-      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const res =
+        await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
       const rawList = res?.data?.ResultSet || res?.data || [];
       const allAttachments = Array.isArray(rawList) ? rawList : [];
       const list = allAttachments.filter(
@@ -1731,26 +1732,31 @@ const MyRequests = () => {
                                 <button
                                   type="button"
                                   onClick={() => openInsuranceModal(idx)}
-                                  disabled={insuranceUploading[idx] === "uploading"}
+                                  disabled={
+                                    insuranceUploading[idx] === "uploading"
+                                  }
                                   title="Vehicle Insurance"
                                   style={{
                                     padding: "9px 12px",
                                     fontSize: 12,
-                                    border: insuranceUploading[idx] === "done"
-                                      ? "1px solid rgba(34,197,94,0.4)"
-                                      : insuranceUploading[idx] === "error"
-                                      ? "1px solid rgba(239,68,68,0.4)"
-                                      : "1px solid var(--color-border-soft)",
-                                    color: insuranceUploading[idx] === "done"
-                                      ? "var(--color-success)"
-                                      : insuranceUploading[idx] === "error"
-                                      ? "#ef4444"
-                                      : "var(--color-text-secondary)",
-                                    background: insuranceUploading[idx] === "done"
-                                      ? "rgba(34,197,94,0.08)"
-                                      : insuranceUploading[idx] === "error"
-                                      ? "rgba(239,68,68,0.08)"
-                                      : "var(--color-bg-alt)",
+                                    border:
+                                      insuranceUploading[idx] === "done"
+                                        ? "1px solid rgba(34,197,94,0.4)"
+                                        : insuranceUploading[idx] === "error"
+                                          ? "1px solid rgba(239,68,68,0.4)"
+                                          : "1px solid var(--color-border-soft)",
+                                    color:
+                                      insuranceUploading[idx] === "done"
+                                        ? "var(--color-success)"
+                                        : insuranceUploading[idx] === "error"
+                                          ? "#ef4444"
+                                          : "var(--color-text-secondary)",
+                                    background:
+                                      insuranceUploading[idx] === "done"
+                                        ? "rgba(34,197,94,0.08)"
+                                        : insuranceUploading[idx] === "error"
+                                          ? "rgba(239,68,68,0.08)"
+                                          : "var(--color-bg-alt)",
                                   }}
                                   className="btn-outline whitespace-nowrap disabled:opacity-50"
                                 >
@@ -1805,7 +1811,10 @@ const MyRequests = () => {
                                     onClick={() => handleUpdateVehicle(idx)}
                                     disabled={vehicleSavingIdx !== null}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                    style={{ padding: "9px 18px", fontSize: 12 }}
+                                    style={{
+                                      padding: "9px 18px",
+                                      fontSize: 12,
+                                    }}
                                   >
                                     {vehicleSavingIdx === idx ? (
                                       <>
@@ -1927,7 +1936,10 @@ const MyRequests = () => {
                                 type="text"
                                 value={member.VVG_Visitor_Name}
                                 onChange={(e) => {
-                                  const val = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                                  const val = e.target.value.replace(
+                                    /[^A-Za-z\s]/g,
+                                    "",
+                                  );
                                   setEditGroupMembers((arr) =>
                                     arr.map((m, i) =>
                                       i === idx
@@ -2720,7 +2732,9 @@ const MyRequests = () => {
                         `file-${idx + 1}`;
                       const vatId =
                         att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
-                      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+                      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                        fileName,
+                      );
                       return (
                         <li
                           key={idx}
@@ -2728,9 +2742,15 @@ const MyRequests = () => {
                           className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
                         >
                           {isImage ? (
-                            <ImageIcon size={15} className="text-primary/60 shrink-0" />
+                            <ImageIcon
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
                           ) : (
-                            <FileText size={15} className="text-primary/60 shrink-0" />
+                            <FileText
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
                           )}
                           <div className="flex-1 min-w-0">
                             <p className="text-[11px] text-white/80 font-normal truncate">
@@ -2786,64 +2806,61 @@ const MyRequests = () => {
                     />
                     <label
                       htmlFor="insurance-file-input"
-                      className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-xl border-2 border-dashed border-white/20 hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer group"
+                      className={`flex flex-col gap-2.5 p-4 rounded-xl border-2 border-dashed transition-all cursor-pointer group ${
+                        insuranceFile
+                          ? "border-emerald-500/30 bg-emerald-500/10"
+                          : "border-white/20 hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04]"
+                      }`}
                     >
-                      <div className="flex items-center gap-2">
-                        {insuranceFile ? (
-                          <>
-                            <FileText size={18} className="text-emerald-400 group-hover:text-emerald-300" />
-                            <span className="text-[11px] text-white/80 font-medium">
-                              {insuranceFile.name}
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <Upload size={18} className="text-white/40 group-hover:text-white/60" />
+                      {insuranceFile ? (
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-2 min-w-0">
+                            <FileText
+                              size={18}
+                              className="text-emerald-400 shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <p className="text-[11px] text-emerald-200 font-medium truncate">
+                                {insuranceFile.name}
+                              </p>
+                              <p className="text-[9px] text-emerald-200/60">
+                                Ready to upload ·{" "}
+                                {(insuranceFile.size / 1024 / 1024).toFixed(2)}{" "}
+                                MB
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setInsuranceFile(null);
+                              setInsuranceUploadResult(null);
+                            }}
+                            className="text-emerald-300/70 hover:text-emerald-200 transition-colors p-1 hover:bg-emerald-500/10 rounded shrink-0"
+                            title="Remove file"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <div className="flex items-center gap-2">
+                            <Upload
+                              size={18}
+                              className="text-white/40 group-hover:text-white/60"
+                            />
                             <span className="text-[11px] text-white/50 group-hover:text-white/70">
                               Click to browse or drag file here
                             </span>
-                          </>
-                        )}
-                      </div>
-                      {insuranceFile && (
-                        <span className="text-[9px] text-white/30">
-                          {(insuranceFile.size / 1024 / 1024).toFixed(2)} MB
-                        </span>
-                      )}
-                      {!insuranceFile && (
-                        <span className="text-[9px] text-white/30">
-                          Supported: PNG, JPG, PDF, XLSX, DOC
-                        </span>
+                          </div>
+                          <span className="text-[9px] text-white/30">
+                            Supported: PNG, JPG, PDF, XLSX, DOC
+                          </span>
+                        </div>
                       )}
                     </label>
                   </div>
-
-                  {insuranceFile && (
-                    <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <FileText size={14} className="text-emerald-400 shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-[10px] text-emerald-300 truncate font-medium">
-                            {insuranceFile.name}
-                          </p>
-                          <p className="text-[9px] text-emerald-300/60">
-                            Ready to upload
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setInsuranceFile(null);
-                          setInsuranceUploadResult(null);
-                        }}
-                        className="text-emerald-400/60 hover:text-emerald-300 transition-colors p-1 hover:bg-emerald-500/10 rounded shrink-0"
-                        title="Remove file"
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  )}
 
                   {insuranceUploadResult && (
                     <div
@@ -2905,7 +2922,10 @@ const MyRequests = () => {
           document.body,
         )}
 
-      <AttachmentPreviewModal previewData={previewData} onClose={closePreview} />
+      <AttachmentPreviewModal
+        previewData={previewData}
+        onClose={closePreview}
+      />
     </div>
   );
 };

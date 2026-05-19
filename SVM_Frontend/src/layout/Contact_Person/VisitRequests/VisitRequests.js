@@ -3486,59 +3486,61 @@ const VisitRequests = () => {
                     />
                     <label
                       htmlFor="insurance-file-input"
-                      className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-xl border-2 border-dashed border-white/20 hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer group"
+                      className={`flex flex-col gap-2.5 p-4 rounded-xl border-2 border-dashed transition-all cursor-pointer group ${
+                        insuranceFile
+                          ? "border-emerald-500/30 bg-emerald-500/10"
+                          : "border-white/20 hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04]"
+                      }`}
                     >
-                      <div className="flex items-center gap-2">
-                        {insuranceFile ? (
-                          <>
-                            <FileText size={18} className="text-emerald-400 group-hover:text-emerald-300" />
-                            <span className="text-[11px] text-white/80 font-medium">{insuranceFile.name}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Upload size={18} className="text-white/40 group-hover:text-white/60" />
-                            <span className="text-[11px] text-white/50 group-hover:text-white/70">Click to browse or drag file here</span>
-                          </>
-                        )}
-                      </div>
-                      {insuranceFile && (
-                        <span className="text-[9px] text-white/30">
-                          {(insuranceFile.size / 1024 / 1024).toFixed(2)} MB
-                        </span>
-                      )}
-                      {!insuranceFile && (
-                        <span className="text-[9px] text-white/30">Supported: PNG, JPG, PDF, XLSX, DOC</span>
+                      {insuranceFile ? (
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-2 min-w-0">
+                            <FileText
+                              size={18}
+                              className="text-emerald-400 shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <p className="text-[11px] text-emerald-200 font-medium truncate">
+                                {insuranceFile.name}
+                              </p>
+                              <p className="text-[9px] text-emerald-200/60">
+                                Ready to upload ·{" "}
+                                {(insuranceFile.size / 1024 / 1024).toFixed(2)}{" "}
+                                MB
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setInsuranceFile(null);
+                              setInsuranceUploadResult(null);
+                            }}
+                            className="text-emerald-300/70 hover:text-emerald-200 transition-colors p-1 hover:bg-emerald-500/10 rounded shrink-0"
+                            title="Remove file"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <div className="flex items-center gap-2">
+                            <Upload
+                              size={18}
+                              className="text-white/40 group-hover:text-white/60"
+                            />
+                            <span className="text-[11px] text-white/50 group-hover:text-white/70">
+                              Click to browse or drag file here
+                            </span>
+                          </div>
+                          <span className="text-[9px] text-white/30">
+                            Supported: PNG, JPG, PDF, XLSX, DOC
+                          </span>
+                        </div>
                       )}
                     </label>
                   </div>
-
-                  {/* Selected File Info */}
-                  {insuranceFile && (
-                    <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <FileText size={14} className="text-emerald-400 shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-[10px] text-emerald-300 truncate font-medium">
-                            {insuranceFile.name}
-                          </p>
-                          <p className="text-[9px] text-emerald-300/60">
-                            Ready to upload
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setInsuranceFile(null);
-                          setInsuranceUploadResult(null);
-                        }}
-                        className="text-emerald-400/60 hover:text-emerald-300 transition-colors p-1 hover:bg-emerald-500/10 rounded shrink-0"
-                        title="Remove file"
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  )}
 
                   {/* Upload Result Message */}
                   {insuranceUploadResult && (
@@ -3564,16 +3566,23 @@ const VisitRequests = () => {
                     onClick={handleInsuranceUpload}
                     disabled={
                       !insuranceFile ||
-                      insuranceUploading[insuranceModal.vehicleIdx] === "uploading"
+                      insuranceUploading[insuranceModal.vehicleIdx] ===
+                        "uploading"
                     }
                     className="w-full py-2.5 rounded-lg text-[11px] font-semibold tracking-[0.14em] text-white uppercase transition-all border-0 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
-                      background: insuranceFile && insuranceUploading[insuranceModal.vehicleIdx] !== "uploading"
-                        ? "linear-gradient(135deg, rgb(16 185 129) 0%, rgb(5 150 105) 100%)"
-                        : "rgba(255, 255, 255, 0.1)",
-                      boxShadow: insuranceFile && insuranceUploading[insuranceModal.vehicleIdx] !== "uploading"
-                        ? "0 4px 12px rgba(16, 185, 129, 0.2)"
-                        : "none"
+                      background:
+                        insuranceFile &&
+                        insuranceUploading[insuranceModal.vehicleIdx] !==
+                          "uploading"
+                          ? "linear-gradient(135deg, rgb(16 185 129) 0%, rgb(5 150 105) 100%)"
+                          : "rgba(255, 255, 255, 0.1)",
+                      boxShadow:
+                        insuranceFile &&
+                        insuranceUploading[insuranceModal.vehicleIdx] !==
+                          "uploading"
+                          ? "0 4px 12px rgba(16, 185, 129, 0.2)"
+                          : "none",
                     }}
                   >
                     {insuranceUploading[insuranceModal.vehicleIdx] ===

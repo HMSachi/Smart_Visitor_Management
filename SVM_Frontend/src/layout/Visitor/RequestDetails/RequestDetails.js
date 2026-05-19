@@ -154,7 +154,11 @@ const RequestDetails = () => {
     error: null,
   });
 
-  const openViewAttachments = async (visitorId, visitorName, filterCategory = null) => {
+  const openViewAttachments = async (
+    visitorId,
+    visitorName,
+    filterCategory = null,
+  ) => {
     setViewAttachments({
       open: true,
       visitorId,
@@ -200,7 +204,8 @@ const RequestDetails = () => {
       error: null,
     });
     try {
-      const res = await VisitorAttachmentService.GetAttachmentsByGroupId(groupId);
+      const res =
+        await VisitorAttachmentService.GetAttachmentsByGroupId(groupId);
       const rawList = res?.data?.ResultSet || res?.data || [];
       const list = Array.isArray(rawList) ? rawList : [];
       setSubVisitorAttachments((prev) => ({ ...prev, loading: false, list }));
@@ -441,7 +446,7 @@ const RequestDetails = () => {
                     openViewAttachments(
                       visitorRecord?.VV_Visitor_id,
                       summary.name,
-                      ["nic", "passport", "driving licence"]
+                      ["nic", "passport", "driving licence"],
                     )
                   }
                   className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all shrink-0 cursor-pointer active:scale-95"
@@ -581,7 +586,7 @@ const RequestDetails = () => {
                           openViewAttachments(
                             visitorRecord?.VV_Visitor_id,
                             summary.name,
-                            "Vehicle Insurance"
+                            "Vehicle Insurance",
                           )
                         }
                         className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all text-[10px] font-semibold tracking-wide bg-primary/10 border-primary/30 text-primary hover:bg-primary/20 active:scale-95"
@@ -638,7 +643,12 @@ const RequestDetails = () => {
                       <button
                         type="button"
                         title="Attachments"
-                        onClick={() => openSubVisitorAttachments(member.VVG_id, member.VVG_Visitor_Name)}
+                        onClick={() =>
+                          openSubVisitorAttachments(
+                            member.VVG_id,
+                            member.VVG_Visitor_Name,
+                          )
+                        }
                         className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all text-[10px] font-semibold tracking-wide bg-primary/10 border-primary/30 text-primary hover:bg-primary/20 active:scale-95"
                       >
                         <Paperclip size={12} />
@@ -769,36 +779,170 @@ const RequestDetails = () => {
               ) : (
                 <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
                   {(viewAttachments.filterCategory
-                    ? viewAttachments.list.filter(
-                        (att) => {
-                          const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
-                          if (Array.isArray(viewAttachments.filterCategory)) {
-                             return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
-                          }
-                          return cat === viewAttachments.filterCategory.toLowerCase();
+                    ? viewAttachments.list.filter((att) => {
+                        const cat = (
+                          att.VAT_File_Category ||
+                          att.FileCategory ||
+                          ""
+                        ).toLowerCase();
+                        if (Array.isArray(viewAttachments.filterCategory)) {
+                          return viewAttachments.filterCategory
+                            .map((c) => c.toLowerCase())
+                            .includes(cat);
                         }
-                      )
+                        return (
+                          cat === viewAttachments.filterCategory.toLowerCase()
+                        );
+                      })
                     : viewAttachments.list
                   ).length === 0 && !viewAttachments.loading ? (
                     <li className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
                       <FolderOpen size={28} />
                       <p className="text-[11px] tracking-widest uppercase">
-                        No {Array.isArray(viewAttachments.filterCategory) ? "" : viewAttachments.filterCategory || ""} attachments found
+                        No{" "}
+                        {Array.isArray(viewAttachments.filterCategory)
+                          ? ""
+                          : viewAttachments.filterCategory || ""}{" "}
+                        attachments found
                       </p>
                     </li>
                   ) : (
                     (viewAttachments.filterCategory
-                      ? viewAttachments.list.filter(
-                          (att) => {
-                            const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
-                            if (Array.isArray(viewAttachments.filterCategory)) {
-                               return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
-                            }
-                            return cat === viewAttachments.filterCategory.toLowerCase();
+                      ? viewAttachments.list.filter((att) => {
+                          const cat = (
+                            att.VAT_File_Category ||
+                            att.FileCategory ||
+                            ""
+                          ).toLowerCase();
+                          if (Array.isArray(viewAttachments.filterCategory)) {
+                            return viewAttachments.filterCategory
+                              .map((c) => c.toLowerCase())
+                              .includes(cat);
                           }
-                        )
+                          return (
+                            cat === viewAttachments.filterCategory.toLowerCase()
+                          );
+                        })
                       : viewAttachments.list
                     ).map((att, idx) => {
+                      const category =
+                        att.VAT_File_Category || att.FileCategory || "document";
+                      const fileName =
+                        att.VAT_File_Name ||
+                        att.FileName ||
+                        att.FilePath ||
+                        `file-${idx + 1}`;
+                      const vatId =
+                        att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
+                      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                        fileName,
+                      );
+                      return (
+                        <li
+                          key={idx}
+                          onClick={() => vatId && openPreview(vatId, fileName)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
+                        >
+                          {isImage ? (
+                            <ImageIcon
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          ) : (
+                            <FileText
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] font-medium text-white truncate">
+                              {fileName}
+                            </p>
+                            <p className="text-[9px] text-white/40 capitalize">
+                              {category}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            title="Download file"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              vatId &&
+                                VisitorAttachmentService.DownloadAttachment(
+                                  vatId,
+                                  fileName,
+                                );
+                            }}
+                            className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
+                          >
+                            <Download size={18} />
+                          </button>
+                        </li>
+                      );
+                    })
+                  )}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sub-Visitor Attachments Modal */}
+      {subVisitorAttachments.open && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-1.5 h-5 bg-primary rounded-full" />
+                <div>
+                  <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
+                    Uploaded Documents
+                  </h2>
+                  {subVisitorAttachments.memberName && (
+                    <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                      {subVisitorAttachments.memberName} · #
+                      {subVisitorAttachments.groupId}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={closeSubVisitorAttachments}
+                className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+                title="Close"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 relative z-10 min-h-[120px]">
+              {subVisitorAttachments.loading ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3">
+                  <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
+                  <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                    Loading...
+                  </p>
+                </div>
+              ) : subVisitorAttachments.error ? (
+                <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
+                  <AlertCircle size={13} className="shrink-0" />
+                  {subVisitorAttachments.error}
+                </div>
+              ) : subVisitorAttachments.list.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                  <FolderOpen size={32} />
+                  <p className="text-[11px] tracking-widest uppercase">
+                    No attachments found
+                  </p>
+                </div>
+              ) : (
+                <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
+                  {subVisitorAttachments.list.map((att, idx) => {
                     const category =
                       att.VAT_File_Category || att.FileCategory || "document";
                     const fileName =
@@ -841,95 +985,11 @@ const RequestDetails = () => {
                           title="Download file"
                           onClick={(e) => {
                             e.stopPropagation();
-                            vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
-                          }}
-                          className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
-                        >
-                          <Download size={18} />
-                        </button>
-                      </li>
-                    );
-                  }))}
-                </ul>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Sub-Visitor Attachments Modal */}
-      {subVisitorAttachments.open && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
-
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
-              <div className="flex items-center gap-2.5">
-                <div className="w-1.5 h-5 bg-primary rounded-full" />
-                <div>
-                  <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">Uploaded Documents</h2>
-                  {subVisitorAttachments.memberName && (
-                    <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
-                      {subVisitorAttachments.memberName} · #{subVisitorAttachments.groupId}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <button
-                onClick={closeSubVisitorAttachments}
-                className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
-                title="Close"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="p-5 relative z-10 min-h-[120px]">
-              {subVisitorAttachments.loading ? (
-                <div className="flex flex-col items-center justify-center py-10 gap-3">
-                  <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
-                  <p className="text-[11px] text-white/30 tracking-widest uppercase">Loading...</p>
-                </div>
-              ) : subVisitorAttachments.error ? (
-                <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
-                  <AlertCircle size={13} className="shrink-0" />
-                  {subVisitorAttachments.error}
-                </div>
-              ) : subVisitorAttachments.list.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
-                  <FolderOpen size={32} />
-                  <p className="text-[11px] tracking-widest uppercase">No attachments found</p>
-                </div>
-              ) : (
-                <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
-                  {subVisitorAttachments.list.map((att, idx) => {
-                    const category = att.VAT_File_Category || att.FileCategory || "document";
-                    const fileName = att.VAT_File_Name || att.FileName || att.FilePath || `file-${idx + 1}`;
-                    const vatId = att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
-                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
-                    return (
-                      <li
-                        key={idx}
-                        onClick={() => vatId && openPreview(vatId, fileName)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
-                      >
-                        {isImage ? (
-                          <ImageIcon size={15} className="text-primary/60 shrink-0" />
-                        ) : (
-                          <FileText size={15} className="text-primary/60 shrink-0" />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[11px] font-medium text-white truncate">{fileName}</p>
-                          <p className="text-[9px] text-white/40 capitalize">{category}</p>
-                        </div>
-                        <button
-                          type="button"
-                          title="Download file"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                            vatId &&
+                              VisitorAttachmentService.DownloadAttachment(
+                                vatId,
+                                fileName,
+                              );
                           }}
                           className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                         >
@@ -944,7 +1004,10 @@ const RequestDetails = () => {
           </div>
         </div>
       )}
-      <AttachmentPreviewModal previewData={previewData} onClose={closePreview} />
+      <AttachmentPreviewModal
+        previewData={previewData}
+        onClose={closePreview}
+      />
     </div>
   );
 };
