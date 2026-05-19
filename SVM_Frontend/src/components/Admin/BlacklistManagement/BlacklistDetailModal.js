@@ -11,6 +11,9 @@ import {
   Calendar,
   UserCheck,
   Shield,
+  Phone,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 
@@ -44,11 +47,42 @@ const Field = ({ icon: Icon, label, value, accent, isLight }) => (
 /* ──────────────────────────────────────────────
    Main modal
 ────────────────────────────────────────────── */
-const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
+const BlacklistDetailModal = ({ isOpen, onClose, person, onApprove, onReject, isSecurityPortal }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
+  const [visitorDetails, setVisitorDetails] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isOpen && person?.VB_Visitor_id) {
+      const fetchVisitor = async () => {
+        setIsLoading(true);
+        try {
+          const { default: VisitorService } = await import("../../../services/VisitorService");
+          const response = await VisitorService.GetVisitorById(person.VB_Visitor_id);
+          const data = response.data?.ResultSet || response.data;
+          if (Array.isArray(data) && data.length > 0) {
+            setVisitorDetails(data[0]);
+          } else if (data && !Array.isArray(data)) {
+            setVisitorDetails(data);
+          }
+        } catch (error) {
+          console.error("Failed to fetch visitor details:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchVisitor();
+    } else {
+      setVisitorDetails(null);
+    }
+  }, [isOpen, person]);
 
   if (!person) return null;
+
+  const displayName = visitorDetails?.VV_Name || person.VB_Name || (person.VB_Visitor_id ? `Visitor ID: ${person.VB_Visitor_id}` : "");
+  const displayEmail = visitorDetails?.VV_Email || person.VB_Email || "—";
+  const displayPhone = visitorDetails?.VV_Phone || person.VB_Phone || person.VB_Contact_Number || person.VB_Mobile || "—";
 
   return createPortal(
     <AnimatePresence>
@@ -70,7 +104,7 @@ const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 24 }}
               transition={{ type: "spring", bounce: 0.18, duration: 0.5 }}
-              className={`w-full max-w-xl backdrop-blur-2xl border rounded-[28px] pointer-events-auto overflow-hidden relative ${
+              className={`w-full max-w-2xl backdrop-blur-2xl border rounded-[28px] pointer-events-auto overflow-hidden relative ${
                 isLight
                   ? "bg-white border-gray-200 shadow-[0_24px_70px_rgba(15,23,42,0.18)]"
                   : "bg-[#141416]/98 border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.75)]"
@@ -141,28 +175,33 @@ const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
                   </div>
 
                   <div
-                    className={`rounded-2xl px-5 py-1.5 shadow-inner border ${
+                    className={`rounded-2xl px-5 py-1.5 shadow-inner border relative ${
                       isLight
                         ? "bg-white border-gray-200 shadow-gray-100/70"
                         : "bg-[var(--color-bg-paper)] border-white/[0.06]"
                     }`}
                   >
+                    {isLoading && (
+                      <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex justify-center items-center rounded-2xl z-20">
+                        <div className="w-5 h-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                      </div>
+                    )}
                     <Field
                       icon={User}
                       label="Full Name"
-                      value={person.VB_Name}
+                      value={displayName}
                       isLight={isLight}
                     />
                     <Field
                       icon={Mail}
                       label="Email Address"
-                      value={person.VB_Email}
+                      value={displayEmail}
                       isLight={isLight}
                     />
                     <Field
-                      icon={Briefcase}
-                      label="Role"
-                      value={person.VB_Role}
+                      icon={Phone}
+                      label="Phone Number"
+                      value={displayPhone}
                       isLight={isLight}
                     />
                   </div>
@@ -232,12 +271,36 @@ const BlacklistDetailModal = ({ isOpen, onClose, person }) => {
 
               {/* ── Footer ── */}
               <div
-                className={`px-5 py-4 border-t flex justify-end relative z-10 ${
+                className={`px-5 py-4 border-t flex justify-end items-center gap-3 relative z-10 ${
                   isLight
                     ? "border-gray-200 bg-[#F8F9FA]"
                     : "border-white/5 bg-black/20"
                 }`}
               >
+                {!isSecurityPortal && person.VB_Approval_Status === "Pending" && (
+                  <>
+                    <button
+                      onClick={() => {
+                        onReject(person);
+                        onClose();
+                      }}
+                      className="px-6 py-2.5 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20 text-[11px] font-bold uppercase tracking-widest transition-all rounded-xl shadow-xl flex items-center gap-2"
+                    >
+                      <XCircle size={14} />
+                      Reject
+                    </button>
+                    <button
+                      onClick={() => {
+                        onApprove(person);
+                        onClose();
+                      }}
+                      className="px-6 py-2.5 bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white border border-green-500/20 text-[11px] font-bold uppercase tracking-widest transition-all rounded-xl shadow-xl flex items-center gap-2"
+                    >
+                      <CheckCircle size={14} />
+                      Approve
+                    </button>
+                  </>
+                )}
                 <button
                   onClick={onClose}
                   className={`px-6 py-2.5 border text-[11px] font-medium capitalize tracking-widest transition-all rounded-xl shadow-xl ${
