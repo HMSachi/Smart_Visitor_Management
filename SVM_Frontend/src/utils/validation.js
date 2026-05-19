@@ -47,3 +47,15 @@ export const validatePassword = (password) => {
   
   return "";
 };
+
+export const validatePlateNumber = (plateNumber) => {
+  if (!plateNumber) return "Plate number is required";
+  
+  // Format: 3-4 letters, optional separator (space or dash), 3-4 numbers
+  // Examples: "WP CAS 1234", "WP-CAS-1234", "ABC 123"
+  const plateRegex = /^[A-Z]{3,4}[\s\-]?[0-9]{3,4}$/i;
+  if (!plateRegex.test(plateNumber.trim())) {
+    return "Plate number must be 3-4 letters followed by 3-4 numbers (e.g., WP CAS 1234)";
+  }
+  return "";
+};

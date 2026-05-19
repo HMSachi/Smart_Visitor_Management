@@ -46,6 +46,7 @@ import {
   validatePhone,
   validateEmail,
   validatePassword,
+  validatePlateNumber,
 } from "../../../utils/validation";
 
 import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
@@ -389,6 +390,12 @@ const ContactAllVisitors = () => {
     // Purpose of Visit validation
     if (!formData.VV_Visitor_Type?.trim()) {
       newErrors.VV_Visitor_Type = "Purpose of visit is required";
+    }
+
+    // Plate number validation (only validate if provided)
+    if (formData.VV_Vehicle_Number?.trim()) {
+      const plateErr = validatePlateNumber(formData.VV_Vehicle_Number);
+      if (plateErr) newErrors.VV_Vehicle_Number = plateErr;
     }
 
     // Blacklist validation
@@ -1123,6 +1130,60 @@ const ContactAllVisitors = () => {
                     {errors.VV_Visitor_Type && (
                       <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
                         {errors.VV_Visitor_Type}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Car
+                        size={10}
+                        className="text-primary/60 shrink-0"
+                      />{" "}
+                      Vehicle type
+                    </label>
+                    <input
+                      type="text"
+                      name="VV_Vehicle_Type"
+                      value={formData.VV_Vehicle_Type}
+                      onChange={handleInputChange}
+                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VV_Vehicle_Type
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
+                      placeholder="e.g., Car, Van, Truck"
+                    />
+                    {errors.VV_Vehicle_Type && (
+                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
+                        {errors.VV_Vehicle_Type}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] sm:text-[12px] text-gray-400 tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Hash
+                        size={10}
+                        className="text-primary/60 shrink-0"
+                      />{" "}
+                      Plate number
+                    </label>
+                    <input
+                      type="text"
+                      name="VV_Vehicle_Number"
+                      value={formData.VV_Vehicle_Number}
+                      onChange={handleInputChange}
+                      className={`w-full rounded-lg px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors placeholder-white/10 ${
+                        errors.VV_Vehicle_Number
+                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                          : "bg-black/40 border border-white/10 focus:border-primary/50"
+                      }`}
+                      placeholder="e.g., WP CAS 1234"
+                    />
+                    {errors.VV_Vehicle_Number && (
+                      <p className="text-[11px] sm:text-[12px] text-red-400 font-normal mt-1">
+                        {errors.VV_Vehicle_Number}
                       </p>
                     )}
                   </div>

@@ -22,7 +22,7 @@ import { SectionHeader, InputField } from "../../../components/Contact_Person/Vi
 import {
   Car, Users, Package, Plus, Trash2, ArrowLeft, CheckCircle2, Save, Edit2, Loader2, Paperclip, AlertCircle, X, FileText, Upload, CheckCircle
 } from "lucide-react";
-import { validateName, validateNIC, validatePhone } from "../../../utils/validation";
+import { validateName, validateNIC, validatePhone, validatePlateNumber } from "../../../utils/validation";
 
 const CreateVisitRequestDetails = () => {
   const navigate = useNavigate();
@@ -209,6 +209,11 @@ const CreateVisitRequestDetails = () => {
     }
     if (!vehicle.number?.trim()) {
       alert("Please enter a plate number before saving.");
+      return;
+    }
+    const plateErr = validatePlateNumber(vehicle.number);
+    if (plateErr) {
+      alert(plateErr);
       return;
     }
     if (!effectiveRequestId) {
