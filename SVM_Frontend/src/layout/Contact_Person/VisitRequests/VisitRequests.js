@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
+import ReactDOM from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +24,8 @@ import ContactPersonService from "../../../services/ContactPersonService";
 import VisitorService from "../../../services/VisitorService";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
 import Header from "../../../components/Contact_Person/Layout/Header";
+import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
+import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
 
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
@@ -53,9 +56,13 @@ import {
   Briefcase,
   QrCode,
   Download,
+  FileText,
+  FolderOpen,
+  ImageIcon,
   ShieldCheck,
   Phone,
   Paperclip,
+  Upload,
 } from "lucide-react";
 import { setSelectedRequest } from "../../../reducers/contactPersonSlice";
 import { QRCodeSVG } from "qrcode.react";
@@ -132,14 +139,17 @@ const VisitRequests = () => {
     (state) => state.gatePassState || { gatePasses: [] },
   );
   const visitorMgmtData = useSelector((state) => state.visitorManagement);
-  const visitorsByCP = Array.isArray(visitorMgmtData?.visitorsByCP) ? visitorMgmtData.visitorsByCP : [];
+  const visitorsByCP = Array.isArray(visitorMgmtData?.visitorsByCP)
+    ? visitorMgmtData.visitorsByCP
+    : [];
   const { blacklists } = useSelector(
-    (state) => state.blacklistState || { blacklists: [] }
+    (state) => state.blacklistState || { blacklists: [] },
   );
   const { places: placesList, loading: placesLoading } = useSelector(
-    (state) => state.placesState || { places: [], loading: false }
+    (state) => state.placesState || { places: [], loading: false },
   );
   const { themeMode } = useThemeMode();
+  const { previewData, openPreview, closePreview } = useAttachmentPreview();
   const isLight = themeMode === "light";
 
   const user = useSelector((state) => state.login.user);
@@ -198,29 +208,137 @@ const VisitRequests = () => {
 
   // Vehicle Insurance upload state per vehicle index: 'uploading' | 'done' | 'error'
   const [insuranceUploading, setInsuranceUploading] = useState({});
-  const insuranceInputRefs = useRef({});
+  const [insuranceModal, setInsuranceModal] = useState({
+    open: false,
+    visitorId: null,
+    visitorName: "",
+    vehicleIdx: null,
+    loading: false,
+    list: [],
+    error: null,
+  });
+  const [insuranceFile, setInsuranceFile] = useState(null);
+  const [insuranceUploadResult, setInsuranceUploadResult] = useState(null);
 
-  const handleInsuranceUpload = (idx) => {
-    if (insuranceInputRefs.current[idx]) insuranceInputRefs.current[idx].click();
-  };
-
-  const handleInsuranceFileChange = async (idx, file) => {
-    if (!file) return;
+  const openInsuranceModal = async (idx) => {
+    console.log("[Insurance Modal] Button clicked for vehicle index:", idx);
+    console.log("[Insurance Modal] editingRequest:", editingRequest);
     const visitorId = editingRequest?.VVR_Visitor_id;
+    console.log("[Insurance Modal] visitorId:", visitorId);
     if (!visitorId) {
+      console.error("[Insurance Modal] No visitor ID found!");
       alert("Visitor ID not found in this request.");
       return;
     }
+    const visitorName =
+      editingRequest?.VV_Name || editingRequest?.VVR_Visitor_Name || "";
+    console.log(
+      "[Insurance Modal] Opening modal with visitorName:",
+      visitorName,
+    );
+    setInsuranceModal({
+      open: true,
+      visitorId,
+      visitorName,
+      vehicleIdx: idx,
+      loading: true,
+      list: [],
+      error: null,
+    });
+    setInsuranceFile(null);
+    setInsuranceUploadResult(null);
+    try {
+      console.log("[Insurance Modal] Fetching attachments...");
+      const res =
+        await VisitorAttachmentService.GetAttachmentsByVisitorId(visitorId);
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const allAttachments = Array.isArray(rawList) ? rawList : [];
+      // Filter to show only vehicle insurance attachments
+      const list = allAttachments.filter(
+        (att) =>
+          (att.VAT_File_Category || att.FileCategory || "").toLowerCase() ===
+          "vehicle insurance",
+      );
+      console.log("[Insurance Modal] Attachments loaded:", list);
+      setInsuranceModal((prev) => ({ ...prev, loading: false, list }));
+    } catch (err) {
+      console.error("[Insurance Modal] Error loading attachments:", err);
+      setInsuranceModal((prev) => ({
+        ...prev,
+        loading: false,
+        error: err?.message || "Failed to load attachments.",
+      }));
+    }
+  };
+
+  const closeInsuranceModal = () => {
+    setInsuranceModal({
+      open: false,
+      visitorId: null,
+      visitorName: "",
+      vehicleIdx: null,
+      loading: false,
+      list: [],
+      error: null,
+    });
+    setInsuranceFile(null);
+    setInsuranceUploadResult(null);
+  };
+
+  const handleInsuranceFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setInsuranceFile(file);
+    setInsuranceUploadResult(null);
+  };
+
+  const handleInsuranceUpload = async () => {
+    if (!insuranceFile || !insuranceModal.visitorId) return;
+    const idx = insuranceModal.vehicleIdx;
     const pUid = user?.ResultSet?.[0]?.VA_Name || "ContactPerson";
     setInsuranceUploading((prev) => ({ ...prev, [idx]: "uploading" }));
+    setInsuranceUploadResult(null);
     try {
-      await VisitorAttachmentService.UploadAttachment(visitorId, "Vehicle Insurance", pUid, file);
+      await VisitorAttachmentService.UploadAttachment(
+        insuranceModal.visitorId,
+        "Vehicle Insurance",
+        pUid,
+        insuranceFile,
+      );
+      setInsuranceUploadResult({ success: true, message: "Uploaded" });
+      setInsuranceFile(null);
+      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(
+        insuranceModal.visitorId,
+      );
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const list = Array.isArray(rawList) ? rawList : [];
+      setInsuranceModal((prev) => ({ ...prev, list }));
       setInsuranceUploading((prev) => ({ ...prev, [idx]: "done" }));
-      setTimeout(() => setInsuranceUploading((prev) => { const n = { ...prev }; delete n[idx]; return n; }), 3000);
+      setTimeout(
+        () =>
+          setInsuranceUploading((prev) => {
+            const n = { ...prev };
+            delete n[idx];
+            return n;
+          }),
+        3000,
+      );
     } catch (err) {
       console.error("Insurance upload failed:", err);
+      setInsuranceUploadResult({
+        success: false,
+        message: err?.message || "Upload failed.",
+      });
       setInsuranceUploading((prev) => ({ ...prev, [idx]: "error" }));
-      setTimeout(() => setInsuranceUploading((prev) => { const n = { ...prev }; delete n[idx]; return n; }), 3000);
+      setTimeout(
+        () =>
+          setInsuranceUploading((prev) => {
+            const n = { ...prev };
+            delete n[idx];
+            return n;
+          }),
+        3000,
+      );
     }
   };
   const [newMemberSavingIdx, setNewMemberSavingIdx] = useState(null);
@@ -232,6 +350,7 @@ const VisitRequests = () => {
   const [dirtyRows, setDirtyRows] = useState(new Set());
   const [warnDirty, setWarnDirty] = useState(false);
   const rowRefs = useRef({});
+  const insuranceFileInputRef = useRef(null);
 
   // ─── Gate Pass Modal State ──────────────────────────────────────────────────
   const [isGatePassModalOpen, setIsGatePassModalOpen] = useState(false);
@@ -417,7 +536,10 @@ const VisitRequests = () => {
     if (!gatePassId) return;
 
     // Instead of navigating, open the modal
-    setSelectedGatePass({ ...gatePass, visitorName: getVisitorDisplayName(req) });
+    setSelectedGatePass({
+      ...gatePass,
+      visitorName: getVisitorDisplayName(req),
+    });
     setIsGatePassModalOpen(true);
     setIsGeneratingQr(true);
 
@@ -596,21 +718,25 @@ const VisitRequests = () => {
           })),
       );
       const rawJoint = jRes?.data?.ResultSet || jRes?.data || [];
-      setEditJointItems(Array.isArray(rawJoint) ? rawJoint.map(i => ({
-        ...i,
-        subVisitorName: i.Group_Members || "",
-        subVisitorNic: i.VVG_NIC_Passport_Number || i.NIC || "",
-        subVisitorPhone: i.VVG_Designation || i.Contact || "",
-        VIC_Item_Name: i.VIC_Item_Name || i.itemName || "",
-        VIC_Quantity: String(i.VIC_Quantity || i.quantity || "1"),
-        VIC_Designation: i.VIC_Designation || i.description || "",
-        _original: {
-          subVisitorName: i.Group_Members || "",
-          VIC_Item_Name: i.VIC_Item_Name || i.itemName || "",
-          VIC_Quantity: String(i.VIC_Quantity || i.quantity || "1"),
-          VIC_Designation: i.VIC_Designation || i.description || "",
-        }
-      })) : []);
+      setEditJointItems(
+        Array.isArray(rawJoint)
+          ? rawJoint.map((i) => ({
+              ...i,
+              subVisitorName: i.Group_Members || "",
+              subVisitorNic: i.VVG_NIC_Passport_Number || i.NIC || "",
+              subVisitorPhone: i.VVG_Designation || i.Contact || "",
+              VIC_Item_Name: i.VIC_Item_Name || i.itemName || "",
+              VIC_Quantity: String(i.VIC_Quantity || i.quantity || "1"),
+              VIC_Designation: i.VIC_Designation || i.description || "",
+              _original: {
+                subVisitorName: i.Group_Members || "",
+                VIC_Item_Name: i.VIC_Item_Name || i.itemName || "",
+                VIC_Quantity: String(i.VIC_Quantity || i.quantity || "1"),
+                VIC_Designation: i.VIC_Designation || i.description || "",
+              },
+            }))
+          : [],
+      );
     } catch (e) {
       console.error(e);
     } finally {
@@ -698,12 +824,12 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-              ...x,
-              _original: {
-                VV_Vehicle_Number: x.VV_Vehicle_Number,
-                VV_Vehicle_Type: x.VV_Vehicle_Type,
-              },
-            }
+                ...x,
+                _original: {
+                  VV_Vehicle_Number: x.VV_Vehicle_Number,
+                  VV_Vehicle_Type: x.VV_Vehicle_Type,
+                },
+              }
             : x,
         ),
       );
@@ -734,14 +860,14 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-              ...x,
-              _isNew: false,
-              VV_Vehicle_id: "saved",
-              _original: {
-                VV_Vehicle_Number: x.VV_Vehicle_Number,
-                VV_Vehicle_Type: x.VV_Vehicle_Type,
-              },
-            }
+                ...x,
+                _isNew: false,
+                VV_Vehicle_id: "saved",
+                _original: {
+                  VV_Vehicle_Number: x.VV_Vehicle_Number,
+                  VV_Vehicle_Type: x.VV_Vehicle_Type,
+                },
+              }
             : x,
         ),
       );
@@ -763,10 +889,12 @@ const VisitRequests = () => {
       (b) =>
         b.VB_Name &&
         b.VB_Name.toLowerCase() === m.VVG_Visitor_Name?.toLowerCase() &&
-        b.VB_Status === "A"
+        b.VB_Status === "A",
     );
     if (isBlacklisted) {
-      setEditError(`Access Restricted for ${m.VVG_Visitor_Name}. They are blacklisted.`);
+      setEditError(
+        `Access Restricted for ${m.VVG_Visitor_Name}. They are blacklisted.`,
+      );
       return;
     }
 
@@ -783,12 +911,12 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-              ...x,
-              _original: {
-                VVG_Visitor_Name: x.VVG_Visitor_Name,
-                VVG_Designation: x.VVG_Designation,
-              },
-            }
+                ...x,
+                _original: {
+                  VVG_Visitor_Name: x.VVG_Visitor_Name,
+                  VVG_Designation: x.VVG_Designation,
+                },
+              }
             : x,
         ),
       );
@@ -813,10 +941,12 @@ const VisitRequests = () => {
       (b) =>
         b.VB_Name &&
         b.VB_Name.toLowerCase() === m.VVG_Visitor_Name?.toLowerCase() &&
-        b.VB_Status === "A"
+        b.VB_Status === "A",
     );
     if (isBlacklisted) {
-      setEditError(`Access Restricted for ${m.VVG_Visitor_Name}. They are blacklisted.`);
+      setEditError(
+        `Access Restricted for ${m.VVG_Visitor_Name}. They are blacklisted.`,
+      );
       return;
     }
 
@@ -834,14 +964,14 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-              ...x,
-              _isNew: false,
-              VVG_id: "saved",
-              _original: {
-                VVG_Visitor_Name: x.VVG_Visitor_Name,
-                VVG_Designation: x.VVG_Designation,
-              },
-            }
+                ...x,
+                _isNew: false,
+                VVG_id: "saved",
+                _original: {
+                  VVG_Visitor_Name: x.VVG_Visitor_Name,
+                  VVG_Designation: x.VVG_Designation,
+                },
+              }
             : x,
         ),
       );
@@ -869,13 +999,13 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-              ...x,
-              _original: {
-                VIC_Item_Name: x.VIC_Item_Name,
-                VIC_Quantity: x.VIC_Quantity,
-                VIC_Designation: x.VIC_Designation,
-              },
-            }
+                ...x,
+                _original: {
+                  VIC_Item_Name: x.VIC_Item_Name,
+                  VIC_Quantity: x.VIC_Quantity,
+                  VIC_Designation: x.VIC_Designation,
+                },
+              }
             : x,
         ),
       );
@@ -907,15 +1037,15 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-              ...x,
-              _isNew: false,
-              VIC_Item_id: "saved",
-              _original: {
-                VIC_Item_Name: x.VIC_Item_Name,
-                VIC_Quantity: x.VIC_Quantity,
-                VIC_Designation: x.VIC_Designation,
-              },
-            }
+                ...x,
+                _isNew: false,
+                VIC_Item_id: "saved",
+                _original: {
+                  VIC_Item_Name: x.VIC_Item_Name,
+                  VIC_Quantity: x.VIC_Quantity,
+                  VIC_Designation: x.VIC_Designation,
+                },
+              }
             : x,
         ),
       );
@@ -929,10 +1059,13 @@ const VisitRequests = () => {
     }
   };
   const handleRemoveNewRow = (section, idx) => {
-    if (section === "vehicle") setEditVehicles((a) => a.filter((_, i) => i !== idx));
-    if (section === "member") setEditGroupMembers((a) => a.filter((_, i) => i !== idx));
+    if (section === "vehicle")
+      setEditVehicles((a) => a.filter((_, i) => i !== idx));
+    if (section === "member")
+      setEditGroupMembers((a) => a.filter((_, i) => i !== idx));
     if (section === "item") setEditItems((a) => a.filter((_, i) => i !== idx));
-    if (section === "subItem") setEditJointItems((a) => a.filter((_, i) => i !== idx));
+    if (section === "subItem")
+      setEditJointItems((a) => a.filter((_, i) => i !== idx));
   };
 
   const handleUpdateSubItem = async (idx) => {
@@ -945,14 +1078,14 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-              ...x,
-              _original: {
-                subVisitorName: x.subVisitorName,
-                VIC_Item_Name: x.VIC_Item_Name,
-                VIC_Quantity: x.VIC_Quantity,
-                VIC_Designation: x.VIC_Designation,
-              },
-            }
+                ...x,
+                _original: {
+                  subVisitorName: x.subVisitorName,
+                  VIC_Item_Name: x.VIC_Item_Name,
+                  VIC_Quantity: x.VIC_Quantity,
+                  VIC_Designation: x.VIC_Designation,
+                },
+              }
             : x,
         ),
       );
@@ -980,15 +1113,15 @@ const VisitRequests = () => {
         a.map((x, i) =>
           i === idx
             ? {
-              ...x,
-              _isNew: false,
-              _original: {
-                subVisitorName: x.subVisitorName,
-                VIC_Item_Name: x.VIC_Item_Name,
-                VIC_Quantity: x.VIC_Quantity,
-                VIC_Designation: x.VIC_Designation,
-              },
-            }
+                ...x,
+                _isNew: false,
+                _original: {
+                  subVisitorName: x.subVisitorName,
+                  VIC_Item_Name: x.VIC_Item_Name,
+                  VIC_Quantity: x.VIC_Quantity,
+                  VIC_Designation: x.VIC_Designation,
+                },
+              }
             : x,
         ),
       );
@@ -1147,12 +1280,13 @@ const VisitRequests = () => {
                 <button
                   key={option.id}
                   onClick={() => setStatusFilter(option.id)}
-                  className={`relative px-4 py-2 rounded-full text-[13px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${statusFilter === option.id
-                    ? "text-white"
-                    : isLight
-                      ? "text-gray-500 hover:text-primary"
-                      : "text-white/40 hover:text-white"
-                    }`}
+                  className={`relative px-4 py-2 rounded-full text-[13px] font-medium tracking-wide transition-all duration-300 whitespace-nowrap ${
+                    statusFilter === option.id
+                      ? "text-white"
+                      : isLight
+                        ? "text-gray-500 hover:text-primary"
+                        : "text-white/40 hover:text-white"
+                  }`}
                 >
                   {statusFilter === option.id && (
                     <motion.div
@@ -1165,7 +1299,9 @@ const VisitRequests = () => {
                       }}
                     />
                   )}
-                  <span className="relative z-10 capitalize">{option.label}</span>
+                  <span className="relative z-10 capitalize">
+                    {option.label}
+                  </span>
                 </button>
               ))}
             </div>
@@ -1207,7 +1343,10 @@ const VisitRequests = () => {
           {isLoading ? (
             <div className="p-8 space-y-4">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className={`h-16 rounded-2xl animate-pulse ${isLight ? "bg-gray-50" : "bg-white/[0.02]"}`} />
+                <div
+                  key={i}
+                  className={`h-16 rounded-2xl animate-pulse ${isLight ? "bg-gray-50" : "bg-white/[0.02]"}`}
+                />
               ))}
             </div>
           ) : error ? (
@@ -1234,11 +1373,14 @@ const VisitRequests = () => {
                       >
                         <div className="flex justify-between items-start mb-6">
                           <div>
-                            <h4 className={`text-[13px] font-black uppercase tracking-tight ${isLight ? "text-gray-900" : "text-white"}`}>
+                            <h4
+                              className={`text-[13px] font-black uppercase tracking-tight ${isLight ? "text-gray-900" : "text-white"}`}
+                            >
                               {getVisitorDisplayName(req)}
                             </h4>
                             <p className="text-gray-400 text-[9px] font-bold tracking-[0.2em] mt-1 uppercase opacity-70">
-                              BATCH-{new Date().getFullYear()}-{req.VVR_Request_id.toString().padStart(3, '0')}
+                              BATCH-{new Date().getFullYear()}-
+                              {req.VVR_Request_id.toString().padStart(3, "0")}
                             </p>
                           </div>
                           <div className="flex flex-col items-end gap-3">
@@ -1256,27 +1398,43 @@ const VisitRequests = () => {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3 text-gray-400">
                               <Calendar size={14} className="text-primary/70" />
-                              <span className="text-[9px] font-black uppercase tracking-[0.15em]">Deployed</span>
+                              <span className="text-[9px] font-black uppercase tracking-[0.15em]">
+                                Deployed
+                              </span>
                             </div>
-                            <span className={`text-[10px] font-bold ${isLight ? "text-gray-700" : "text-gray-200"}`}>
-                              {req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0] : "N/A"} // {req.VVR_Visit_Time || "08:30 AM"}
+                            <span
+                              className={`text-[10px] font-bold ${isLight ? "text-gray-700" : "text-gray-200"}`}
+                            >
+                              {req.VVR_Visit_Date
+                                ? req.VVR_Visit_Date.split("T")[0]
+                                : "N/A"}{" "}
+                              // {req.VVR_Visit_Time || "08:30 AM"}
                             </span>
                           </div>
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3 text-gray-400">
                               <MapPin size={14} className="text-primary/70" />
-                              <span className="text-[9px] font-black uppercase tracking-[0.15em]">Areas</span>
+                              <span className="text-[9px] font-black uppercase tracking-[0.15em]">
+                                Areas
+                              </span>
                             </div>
-                            <span className={`text-[10px] font-bold truncate max-w-[160px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}>
+                            <span
+                              className={`text-[10px] font-bold truncate max-w-[160px] text-right ${isLight ? "text-gray-700" : "text-gray-200"}`}
+                            >
                               {req.VVR_Purpose || "General Access"}
                             </span>
                           </div>
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3 text-gray-400">
-                              <AlertCircle size={14} className="text-primary/70" />
-                              <span className="text-[9px] font-black uppercase tracking-[0.15em]">Request</span>
+                              <AlertCircle
+                                size={14}
+                                className="text-primary/70"
+                              />
+                              <span className="text-[9px] font-black uppercase tracking-[0.15em]">
+                                Request
+                              </span>
                             </div>
                             <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[9px] font-black border border-primary/20">
                               1
@@ -1295,7 +1453,9 @@ const VisitRequests = () => {
                   ) : (
                     <div className="py-20 text-center opacity-40">
                       <ClipboardList size={40} className="mx-auto mb-3" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest">No Requests Found</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest">
+                        No Requests Found
+                      </p>
                     </div>
                   )}
                 </div>
@@ -1306,14 +1466,30 @@ const VisitRequests = () => {
                       <tr
                         className={`text-[12px] font-normal tracking-[0.3em] border-b ${isLight ? "bg-[#FAFAFB] text-gray-400 border-gray-100" : "bg-white/[0.02] text-white/40 border-white/5"}`}
                       >
-                        <th className="px-3 py-2 text-center w-[60px] font-normal text-[12px] hidden md:table-cell">ID</th>
-                        <th className="px-3 py-2 text-left font-normal text-[12px]">Visitor</th>
-                        <th className="px-3 py-2 text-center font-normal text-[12px] hidden md:table-cell">Date</th>
-                        <th className="px-3 py-2 text-left font-normal text-[12px] hidden lg:table-cell">Reason</th>
-                        <th className="px-3 py-2 text-left font-normal text-[12px] hidden xl:table-cell">Areas</th>
-                        <th className="px-3 py-2 text-center font-normal text-[12px]">Status</th>
-                        <th className="px-3 py-2 text-center w-[80px] font-normal text-[12px]">Gatepass</th>
-                        <th className="px-3 py-2 text-center w-[120px] font-normal text-[12px]">Actions</th>
+                        <th className="px-3 py-2 text-center w-[60px] font-normal text-[12px] hidden md:table-cell">
+                          ID
+                        </th>
+                        <th className="px-3 py-2 text-left font-normal text-[12px]">
+                          Visitor
+                        </th>
+                        <th className="px-3 py-2 text-center font-normal text-[12px] hidden md:table-cell">
+                          Date
+                        </th>
+                        <th className="px-3 py-2 text-left font-normal text-[12px] hidden lg:table-cell">
+                          Reason
+                        </th>
+                        <th className="px-3 py-2 text-left font-normal text-[12px] hidden xl:table-cell">
+                          Areas
+                        </th>
+                        <th className="px-3 py-2 text-center font-normal text-[12px]">
+                          Status
+                        </th>
+                        <th className="px-3 py-2 text-center w-[80px] font-normal text-[12px]">
+                          Gatepass
+                        </th>
+                        <th className="px-3 py-2 text-center w-[120px] font-normal text-[12px]">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -1340,8 +1516,8 @@ const VisitRequests = () => {
                                 <span className="font-normal tracking-wide">
                                   {req.VVR_Visit_Date
                                     ? req.VVR_Visit_Date.split("T")[0].split(
-                                      " ",
-                                    )[0]
+                                        " ",
+                                      )[0]
                                     : "N/A"}
                                 </span>
                               </div>
@@ -1380,7 +1556,10 @@ const VisitRequests = () => {
                                     className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all group/btn ${isLight ? "bg-green-500/5 text-green-600 border-green-500/20 hover:bg-green-500 hover:text-white hover:shadow-lg hover:shadow-green-500/25" : "bg-green-400/5 text-green-400 border-green-400/20 hover:bg-green-400 hover:text-white hover:shadow-lg hover:shadow-green-400/25"}`}
                                     title="View Gate Pass"
                                   >
-                                    <QrCode size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
+                                    <QrCode
+                                      size={14}
+                                      className="shrink-0 transition-transform group-hover/btn:scale-110"
+                                    />
                                   </button>
                                 )}
                               </div>
@@ -1388,11 +1567,16 @@ const VisitRequests = () => {
                             <td className="px-3 py-1 text-center font-normal text-[12px]">
                               <div className="flex items-center justify-center gap-2">
                                 <button
-                                  onClick={() => handleReview(req.VVR_Request_id)}
+                                  onClick={() =>
+                                    handleReview(req.VVR_Request_id)
+                                  }
                                   className={`inline-flex h-8.5 w-8.5 items-center justify-center rounded-xl border border-transparent transition-all group/btn ${isLight ? "bg-primary/5 text-primary border-primary/20 hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/25" : "bg-blue-400/5 text-blue-400 border-blue-400/20 hover:bg-blue-400 hover:text-white hover:shadow-lg hover:shadow-blue-400/25"}`}
                                   title="View Request Details"
                                 >
-                                  <Eye size={14} className="shrink-0 transition-transform group-hover/btn:scale-110" />
+                                  <Eye
+                                    size={14}
+                                    className="shrink-0 transition-transform group-hover/btn:scale-110"
+                                  />
                                 </button>
                                 <button
                                   onClick={() => handleOpenEdit(req)}
@@ -1407,7 +1591,10 @@ const VisitRequests = () => {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={8} className="py-24 text-center font-normal text-[12px]">
+                          <td
+                            colSpan={8}
+                            className="py-24 text-center font-normal text-[12px]"
+                          >
                             <div className="flex flex-col items-center justify-center opacity-20">
                               <ClipboardList
                                 size={48}
@@ -1427,8 +1614,7 @@ const VisitRequests = () => {
                 </div>
               )}
             </div>
-          )
-          }
+          )}
         </div>
 
         {/* Modal for Add/Update Visit Request */}
@@ -1484,18 +1670,19 @@ const VisitRequests = () => {
                             setVisitorSearchOpen(!visitorSearchOpen);
                             setVisitorSearchTerm("");
                           }}
-                          className={`w-full border rounded-xl px-5 py-4 text-[13px] text-left focus:outline-none focus:border-primary/50 appearance-none cursor-pointer transition-all flex items-center justify-between ${isLight
-                            ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
-                            : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                            } ${formData.VVR_Visitor_id ? (isLight ? "text-[#1A1A1A]" : "text-white") : isLight ? "text-gray-400" : "text-white/50"}`}
+                          className={`w-full border rounded-xl px-5 py-4 text-[13px] text-left focus:outline-none focus:border-primary/50 appearance-none cursor-pointer transition-all flex items-center justify-between ${
+                            isLight
+                              ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
+                              : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                          } ${formData.VVR_Visitor_id ? (isLight ? "text-[#1A1A1A]" : "text-white") : isLight ? "text-gray-400" : "text-white/50"}`}
                         >
                           <span>
                             {formData.VVR_Visitor_id
                               ? activeVisitors.find(
-                                (v) =>
-                                  String(v.VV_Visitor_id) ===
-                                  String(formData.VVR_Visitor_id),
-                              )?.VV_Name || "Select a visitor"
+                                  (v) =>
+                                    String(v.VV_Visitor_id) ===
+                                    String(formData.VVR_Visitor_id),
+                                )?.VV_Name || "Select a visitor"
                               : "Select a visitor"}
                           </span>
                           <ChevronDown
@@ -1506,10 +1693,11 @@ const VisitRequests = () => {
 
                         {visitorSearchOpen && (
                           <div
-                            className={`absolute top-full left-0 right-0 z-50 mt-2 border rounded-xl shadow-lg ${isLight
-                              ? "bg-white border-gray-200 shadow-gray-200/40"
-                              : "bg-[#0A0A0B] border-white/10 shadow-black/50"
-                              }`}
+                            className={`absolute top-full left-0 right-0 z-50 mt-2 border rounded-xl shadow-lg ${
+                              isLight
+                                ? "bg-white border-gray-200 shadow-gray-200/40"
+                                : "bg-[#0A0A0B] border-white/10 shadow-black/50"
+                            }`}
                           >
                             <div className="p-3 border-b border-white/5 sticky top-0 bg-inherit">
                               <input
@@ -1519,10 +1707,11 @@ const VisitRequests = () => {
                                 onChange={(e) =>
                                   setVisitorSearchTerm(e.target.value)
                                 }
-                                className={`w-full border rounded-lg px-3 py-2 text-[12px] focus:outline-none focus:border-primary/50 transition-all ${isLight
-                                  ? "bg-gray-50 border-gray-200 text-[#1A1A1A]"
-                                  : "bg-white/[0.02] border-white/10 text-white"
-                                  }`}
+                                className={`w-full border rounded-lg px-3 py-2 text-[12px] focus:outline-none focus:border-primary/50 transition-all ${
+                                  isLight
+                                    ? "bg-gray-50 border-gray-200 text-[#1A1A1A]"
+                                    : "bg-white/[0.02] border-white/10 text-white"
+                                }`}
                                 autoFocus
                               />
                             </div>
@@ -1545,33 +1734,35 @@ const VisitRequests = () => {
                                       setVisitorSearchOpen(false);
                                       setVisitorSearchTerm("");
                                     }}
-                                    className={`w-full px-4 py-1.5 text-left text-[12px] font-medium transition-all border-b border-white/5 last:border-b-0 flex items-center justify-between group ${String(formData.VVR_Visitor_id) ===
+                                    className={`w-full px-4 py-1.5 text-left text-[12px] font-medium transition-all border-b border-white/5 last:border-b-0 flex items-center justify-between group ${
+                                      String(formData.VVR_Visitor_id) ===
                                       String(v.VV_Visitor_id)
-                                      ? isLight
-                                        ? "bg-primary/10 text-primary"
-                                        : "bg-primary/10 text-primary"
-                                      : isLight
-                                        ? "hover:bg-gray-50 text-[#1A1A1A]"
-                                        : "hover:bg-white/[0.05] text-white/80"
-                                      }`}
+                                        ? isLight
+                                          ? "bg-primary/10 text-primary"
+                                          : "bg-primary/10 text-primary"
+                                        : isLight
+                                          ? "hover:bg-gray-50 text-[#1A1A1A]"
+                                          : "hover:bg-white/[0.05] text-white/80"
+                                    }`}
                                   >
                                     <div className="flex flex-col">
                                       <span className="font-semibold">
                                         {v.VV_Name}
                                       </span>
                                       <span
-                                        className={`text-[10px] ${isLight
-                                          ? "text-gray-500"
-                                          : "text-white/40"
-                                          }`}
+                                        className={`text-[10px] ${
+                                          isLight
+                                            ? "text-gray-500"
+                                            : "text-white/40"
+                                        }`}
                                       >
                                         ID: {v.VV_Visitor_id}
                                       </span>
                                     </div>
                                     {String(formData.VVR_Visitor_id) ===
                                       String(v.VV_Visitor_id) && (
-                                        <CheckCircle2 size={16} />
-                                      )}
+                                      <CheckCircle2 size={16} />
+                                    )}
                                   </button>
                                 ))}
                               {activeVisitors.filter((v) =>
@@ -1579,13 +1770,14 @@ const VisitRequests = () => {
                                   .toLowerCase()
                                   .includes(visitorSearchTerm.toLowerCase()),
                               ).length === 0 && (
-                                  <div
-                                    className={`px-4 py-6 text-center text-[11px] font-semibold tracking-[0.1em] uppercase ${isLight ? "text-gray-400" : "text-white/40"
-                                      }`}
-                                  >
-                                    No visitors found
-                                  </div>
-                                )}
+                                <div
+                                  className={`px-4 py-6 text-center text-[11px] font-semibold tracking-[0.1em] uppercase ${
+                                    isLight ? "text-gray-400" : "text-white/40"
+                                  }`}
+                                >
+                                  No visitors found
+                                </div>
+                              )}
                             </div>
                           </div>
                         )}
@@ -1603,10 +1795,11 @@ const VisitRequests = () => {
                       name="VVR_Visit_Date"
                       value={formData.VVR_Visit_Date}
                       onChange={handleInputChange}
-                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${isLight
-                        ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
-                        : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                        }`}
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all ${
+                        isLight
+                          ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
+                          : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                      }`}
                       style={{ colorScheme: isLight ? "light" : "dark" }}
                     />
                   </div>
@@ -1621,24 +1814,48 @@ const VisitRequests = () => {
                       value={formData.VVR_Places_to_Visit}
                       onChange={handleInputChange}
                       disabled={placesLoading}
-                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all appearance-none cursor-pointer ${isLight
-                        ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
-                        : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                        } ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 transition-all appearance-none cursor-pointer ${
+                        isLight
+                          ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
+                          : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                      } ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
                     >
-                      <option value="">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
-                      {placesList && placesList.length > 0 && placesList
-                        .filter((place) => {
-                          const status = (place.VAIL_Status || place.Status || 'A').toString().trim().toUpperCase();
-                          return status === 'A';
-                        })
-                        .map((place, idx) => {
-                          const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
-                          const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
-                          return (
-                            <option key={id} value={name}>{name}</option>
-                          );
-                        })}
+                      <option value="">
+                        {placesLoading
+                          ? "Loading places..."
+                          : "Select a place to visit"}
+                      </option>
+                      {placesList &&
+                        placesList.length > 0 &&
+                        placesList
+                          .filter((place) => {
+                            const status = (
+                              place.VAIL_Status ||
+                              place.Status ||
+                              "A"
+                            )
+                              .toString()
+                              .trim()
+                              .toUpperCase();
+                            return status === "A";
+                          })
+                          .map((place, idx) => {
+                            const id =
+                              place.VAIL_Item_List_ID ||
+                              place.Item_List_ID ||
+                              place.Id ||
+                              idx;
+                            const name =
+                              place.VAIL_Item_Name ||
+                              place.Item_Name ||
+                              place.Name ||
+                              "Unknown";
+                            return (
+                              <option key={id} value={name}>
+                                {name}
+                              </option>
+                            );
+                          })}
                     </select>
                   </div>
 
@@ -1652,10 +1869,11 @@ const VisitRequests = () => {
                       value={formData.VVR_Purpose}
                       onChange={handleInputChange}
                       rows="3"
-                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 resize-none transition-all ${isLight
-                        ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
-                        : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
-                        }`}
+                      className={`w-full border rounded-xl px-5 py-4 text-[13px] focus:outline-none focus:border-primary/50 resize-none transition-all ${
+                        isLight
+                          ? "bg-gray-50 border-gray-200 text-[#1A1A1A] hover:bg-gray-100"
+                          : "bg-white/[0.03] border-white/10 text-white hover:bg-white/[0.05]"
+                      }`}
                       placeholder="Tell us why the visitor is coming"
                     ></textarea>
                   </div>
@@ -1733,7 +1951,8 @@ const VisitRequests = () => {
               <XCircle size={7} /> Disable Request
             </div>
           </MenuItem>
-          {(selectedReq?.VVR_Status === "ACCEPTED" || selectedReq?.VVR_Status === "Accepted by Visitor") && (
+          {(selectedReq?.VVR_Status === "ACCEPTED" ||
+            selectedReq?.VVR_Status === "Accepted by Visitor") && (
             <MenuItem
               onClick={handleSendToAdmin}
               className="px-1.5 py-0.5 text-[3px] uppercase font-semibold tracking-[0.006em] text-green-500 hover:bg-green-500/5 transition-colors min-h-0 leading-none"
@@ -1793,7 +2012,10 @@ const VisitRequests = () => {
                   <div className="relative group/qr p-6 mas-glass rounded-[22px] mb-8 shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 visitor-qr-svg-container gate-pass-modal-qr">
                     {isGeneratingQr ? (
                       <div className="w-[160px] h-[160px] flex items-center justify-center">
-                        <Loader2 className="animate-spin text-primary" size={24} />
+                        <Loader2
+                          className="animate-spin text-primary"
+                          size={24}
+                        />
                       </div>
                     ) : (
                       <QRCodeSVG
@@ -1804,7 +2026,9 @@ const VisitRequests = () => {
                     )}
                     <div className="absolute inset-x-0 -bottom-2 flex justify-center">
                       <span className="bg-black text-white px-4 py-1.5 rounded-full text-[10px] font-bold tracking-[0.2em] capitalize border border-white/20">
-                        Pass No. {selectedGatePass.VGP_Pass_id || selectedGatePass.vgp_Pass_id}
+                        Pass No.{" "}
+                        {selectedGatePass.VGP_Pass_id ||
+                          selectedGatePass.vgp_Pass_id}
                       </span>
                     </div>
                   </div>
@@ -1819,7 +2043,8 @@ const VisitRequests = () => {
                     </p>
                     <div className="h-[1px] w-12 bg-white/10 mx-auto my-3"></div>
                     <p className="text-gray-400 text-[11px] capitalize tracking-widest leading-relaxed max-w-[300px]">
-                      Present this digital gate pass at the security checkpoint for verification.
+                      Present this digital gate pass at the security checkpoint
+                      for verification.
                     </p>
                   </div>
                 </div>
@@ -1966,7 +2191,9 @@ const VisitRequests = () => {
                 className="space-y-2"
               >
                 {/* ── Request Summary card (mirrors View "Visit Details" section) ── */}
-                <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                <div
+                  className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}
+                >
                   <div className="p-4 md:p-5">
                     {/* SplitSection header */}
                     <div className="flex flex-col gap-2 mb-4">
@@ -1974,7 +2201,9 @@ const VisitRequests = () => {
                         <div className="w-[3px] h-3.5 bg-primary rounded-full" />
                         <div className="flex items-center gap-1.5">
                           <Hash size={13} className="text-primary/70" />
-                          <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                          <h3
+                            className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                          >
                             Request Summary
                           </h3>
                         </div>
@@ -1991,7 +2220,9 @@ const VisitRequests = () => {
                       <div className="group/field flex flex-col gap-1">
                         <div className="flex items-center gap-1.5 px-0.5">
                           <Calendar size={11} className="text-primary/50" />
-                          <label className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}>
+                          <label
+                            className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}
+                          >
                             Visit Date
                           </label>
                         </div>
@@ -2012,7 +2243,9 @@ const VisitRequests = () => {
                       <div className="group/field flex flex-col gap-1">
                         <div className="flex items-center gap-1.5 px-0.5">
                           <MapPin size={11} className="text-primary/50" />
-                          <label className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}>
+                          <label
+                            className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}
+                          >
                             Places to Visit
                           </label>
                         </div>
@@ -2027,26 +2260,51 @@ const VisitRequests = () => {
                           disabled={placesLoading}
                           className={`mas-input appearance-none cursor-pointer ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
                         >
-                          <option value="">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
-                          {placesList && placesList.length > 0 && placesList
-                            .filter((place) => {
-                              const status = (place.VAIL_Status || place.Status || 'A').toString().trim().toUpperCase();
-                              return status === 'A';
-                            })
-                            .map((place, idx) => {
-                              const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
-                              const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
-                              return (
-                                <option key={id} value={name}>{name}</option>
-                              );
-                            })}
+                          <option value="">
+                            {placesLoading
+                              ? "Loading places..."
+                              : "Select a place to visit"}
+                          </option>
+                          {placesList &&
+                            placesList.length > 0 &&
+                            placesList
+                              .filter((place) => {
+                                const status = (
+                                  place.VAIL_Status ||
+                                  place.Status ||
+                                  "A"
+                                )
+                                  .toString()
+                                  .trim()
+                                  .toUpperCase();
+                                return status === "A";
+                              })
+                              .map((place, idx) => {
+                                const id =
+                                  place.VAIL_Item_List_ID ||
+                                  place.Item_List_ID ||
+                                  place.Id ||
+                                  idx;
+                                const name =
+                                  place.VAIL_Item_Name ||
+                                  place.Item_Name ||
+                                  place.Name ||
+                                  "Unknown";
+                                return (
+                                  <option key={id} value={name}>
+                                    {name}
+                                  </option>
+                                );
+                              })}
                         </select>
                       </div>
                       {/* Purpose */}
                       <div className="md:col-span-2 group/field flex flex-col gap-1">
                         <div className="flex items-center gap-1.5 px-0.5">
                           <Briefcase size={11} className="text-primary/50" />
-                          <label className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}>
+                          <label
+                            className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? "text-gray-500" : "text-white/40"}`}
+                          >
                             Purpose
                           </label>
                         </div>
@@ -2088,7 +2346,9 @@ const VisitRequests = () => {
                 ) : (
                   <>
                     {/* ── Vehicle Registry card (mirrors View "Vehicle Registry" section) ── */}
-                    <div className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                    <div
+                      className={`rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}
+                    >
                       <div className="p-4 md:p-5 space-y-4">
                         {/* SplitSection header */}
                         <div className="flex flex-col gap-2">
@@ -2096,13 +2356,22 @@ const VisitRequests = () => {
                             <div className="w-[3px] h-3.5 bg-primary rounded-full" />
                             <div className="flex items-center gap-1.5">
                               <Car size={13} className="text-primary/70" />
-                              <h3 className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                              <h3
+                                className={`text-[11px] font-bold uppercase tracking-[0.1em] ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                              >
                                 Vehicle Registry
                               </h3>
-                              {editVehicles.filter((v) => !v._isNew).length > 0 && (
-                                <span className={`text-[10px] font-semibold ml-1 ${isLight ? "text-gray-400" : "text-white/30"}`}>
-                                  {editVehicles.filter((v) => !v._isNew).length} vehicle
-                                  {editVehicles.filter((v) => !v._isNew).length > 1 ? "s" : ""}
+                              {editVehicles.filter((v) => !v._isNew).length >
+                                0 && (
+                                <span
+                                  className={`text-[10px] font-semibold ml-1 ${isLight ? "text-gray-400" : "text-white/30"}`}
+                                >
+                                  {editVehicles.filter((v) => !v._isNew).length}{" "}
+                                  vehicle
+                                  {editVehicles.filter((v) => !v._isNew)
+                                    .length > 1
+                                    ? "s"
+                                    : ""}
                                 </span>
                               )}
                             </div>
@@ -2118,15 +2387,22 @@ const VisitRequests = () => {
                                 ])
                               }
                               className="btn-outline ml-auto whitespace-nowrap"
-                              style={{ padding: "5px 14px", fontSize: 11, gap: 5 }}
+                              style={{
+                                padding: "5px 14px",
+                                fontSize: 11,
+                                gap: 5,
+                              }}
                             >
                               <Plus size={12} /> Add Vehicle
                             </button>
                           </div>
                         </div>
                         {editVehicles.length === 0 && (
-                          <p className={`text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
-                            No vehicles. Click <strong>Add Vehicle</strong> to add one.
+                          <p
+                            className={`text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}
+                          >
+                            No vehicles. Click <strong>Add Vehicle</strong> to
+                            add one.
                           </p>
                         )}
                         <div className="space-y-3">
@@ -2177,9 +2453,9 @@ const VisitRequests = () => {
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
-                                            ...x,
-                                            VV_Vehicle_Number: e.target.value,
-                                          }
+                                              ...x,
+                                              VV_Vehicle_Number: e.target.value,
+                                            }
                                           : x,
                                       ),
                                     )
@@ -2215,9 +2491,9 @@ const VisitRequests = () => {
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
-                                            ...x,
-                                            VV_Vehicle_Type: e.target.value,
-                                          }
+                                              ...x,
+                                              VV_Vehicle_Type: e.target.value,
+                                            }
                                           : x,
                                       ),
                                     )
@@ -2245,42 +2521,35 @@ const VisitRequests = () => {
                                   </span>
                                 )}
                                 <div className="flex gap-2 items-center">
-                                  {/* Hidden file input for insurance upload */}
-                                  <input
-                                    type="file"
-                                    accept=".png,.jpg,.jpeg,.pdf,.xlsx"
-                                    className="hidden"
-                                    ref={(el) => { insuranceInputRefs.current[idx] = el; }}
-                                    onChange={(e) => {
-                                      const file = e.target.files?.[0];
-                                      if (file) handleInsuranceFileChange(idx, file);
-                                      e.target.value = "";
-                                    }}
-                                  />
                                   {/* Vehicle Insurance attachment button — icon only, title as tooltip */}
                                   <button
                                     type="button"
-                                    onClick={() => handleInsuranceUpload(idx)}
-                                    disabled={insuranceUploading[idx] === "uploading"}
-                                    title="Vehicle Insurance"
+                                    onClick={() => openInsuranceModal(idx)}
+                                    disabled={
+                                      insuranceUploading[idx] === "uploading"
+                                    }
+                                    title="Vehicle Insurance Attachments"
                                     style={{
                                       padding: "9px 12px",
                                       fontSize: 12,
-                                      border: insuranceUploading[idx] === "done"
-                                        ? "1px solid rgba(34,197,94,0.4)"
-                                        : insuranceUploading[idx] === "error"
-                                        ? "1px solid rgba(239,68,68,0.4)"
-                                        : "1px solid var(--color-border-soft)",
-                                      color: insuranceUploading[idx] === "done"
-                                        ? "var(--color-success)"
-                                        : insuranceUploading[idx] === "error"
-                                        ? "#ef4444"
-                                        : "var(--color-text-secondary)",
-                                      background: insuranceUploading[idx] === "done"
-                                        ? "rgba(34,197,94,0.08)"
-                                        : insuranceUploading[idx] === "error"
-                                        ? "rgba(239,68,68,0.08)"
-                                        : "var(--color-bg-alt)",
+                                      border:
+                                        insuranceUploading[idx] === "done"
+                                          ? "1px solid rgba(34,197,94,0.4)"
+                                          : insuranceUploading[idx] === "error"
+                                            ? "1px solid rgba(239,68,68,0.4)"
+                                            : "1px solid var(--color-border-soft)",
+                                      color:
+                                        insuranceUploading[idx] === "done"
+                                          ? "var(--color-success)"
+                                          : insuranceUploading[idx] === "error"
+                                            ? "#ef4444"
+                                            : "var(--color-text-secondary)",
+                                      background:
+                                        insuranceUploading[idx] === "done"
+                                          ? "rgba(34,197,94,0.08)"
+                                          : insuranceUploading[idx] === "error"
+                                            ? "rgba(239,68,68,0.08)"
+                                            : "var(--color-bg-alt)",
                                     }}
                                     className="btn-outline whitespace-nowrap disabled:opacity-50"
                                   >
@@ -2335,7 +2604,10 @@ const VisitRequests = () => {
                                       onClick={() => handleUpdateVehicle(idx)}
                                       disabled={vehicleSavingIdx !== null}
                                       className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                      style={{ padding: "9px 18px", fontSize: 12 }}
+                                      style={{
+                                        padding: "9px 18px",
+                                        fontSize: 12,
+                                      }}
                                     >
                                       {vehicleSavingIdx === idx ? (
                                         <>
@@ -2358,21 +2630,38 @@ const VisitRequests = () => {
                     </div>
 
                     {/* ── Visiting People card (mirrors View "Visiting People" section) ── */}
-                    <div className={`rounded-xl sm:rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                    <div
+                      className={`rounded-xl sm:rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}
+                    >
                       <div className="p-3 sm:p-4 md:p-5 space-y-3 sm:space-y-4">
                         {/* SplitSection header */}
                         <div className="flex flex-col gap-2">
                           <div className="flex items-center gap-2">
                             <div className="w-[3px] h-2.5 sm:h-3.5 bg-primary rounded-full" />
                             <div className="flex items-center gap-1 sm:gap-1.5 flex-1 min-w-0">
-                              <Users size={11} className="sm:size-[13px] text-primary/70 flex-shrink-0" />
-                              <h3 className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                              <Users
+                                size={11}
+                                className="sm:size-[13px] text-primary/70 flex-shrink-0"
+                              />
+                              <h3
+                                className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                              >
                                 People Visiting
                               </h3>
-                              {editGroupMembers.filter((m) => !m._isNew).length > 0 && (
-                                <span className={`text-[9px] sm:text-[10px] font-semibold ml-1 flex-shrink-0 ${isLight ? "text-gray-400" : "text-white/30"}`}>
-                                  {editGroupMembers.filter((m) => !m._isNew).length} visitor
-                                  {editGroupMembers.filter((m) => !m._isNew).length > 1 ? "s" : ""}
+                              {editGroupMembers.filter((m) => !m._isNew)
+                                .length > 0 && (
+                                <span
+                                  className={`text-[9px] sm:text-[10px] font-semibold ml-1 flex-shrink-0 ${isLight ? "text-gray-400" : "text-white/30"}`}
+                                >
+                                  {
+                                    editGroupMembers.filter((m) => !m._isNew)
+                                      .length
+                                  }{" "}
+                                  visitor
+                                  {editGroupMembers.filter((m) => !m._isNew)
+                                    .length > 1
+                                    ? "s"
+                                    : ""}
                                 </span>
                               )}
                             </div>
@@ -2385,20 +2674,25 @@ const VisitRequests = () => {
                                     VVG_Visitor_Name: "",
                                     VVG_NIC_Passport_Number: "",
                                     VVG_Designation: "",
-                                    VVR_Request_id: editingRequest?.VVR_Request_id,
+                                    VVR_Request_id:
+                                      editingRequest?.VVR_Request_id,
                                   },
                                 ])
                               }
                               className="btn-outline ml-auto whitespace-nowrap px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] flex-shrink-0"
                               style={{ gap: 4 }}
                             >
-                              <Plus size={10} className="sm:size-[12px]" /> Add Visitor
+                              <Plus size={10} className="sm:size-[12px]" /> Add
+                              Visitor
                             </button>
                           </div>
                         </div>
                         {editGroupMembers.length === 0 && (
-                          <p className={`text-[10px] sm:text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
-                            No visitors. Click <strong>Add Visitor</strong> to add one.
+                          <p
+                            className={`text-[10px] sm:text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}
+                          >
+                            No visitors. Click <strong>Add Visitor</strong> to
+                            add one.
                           </p>
                         )}
                         <div className="space-y-2 sm:space-y-3">
@@ -2445,14 +2739,17 @@ const VisitRequests = () => {
                                   type="text"
                                   value={m.VVG_Visitor_Name}
                                   onChange={(e) => {
-                                    const val = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                                    const val = e.target.value.replace(
+                                      /[^A-Za-z\s]/g,
+                                      "",
+                                    );
                                     setEditGroupMembers((a) =>
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
-                                            ...x,
-                                            VVG_Visitor_Name: val,
-                                          }
+                                              ...x,
+                                              VVG_Visitor_Name: val,
+                                            }
                                           : x,
                                       ),
                                     );
@@ -2476,14 +2773,16 @@ const VisitRequests = () => {
                                   type="text"
                                   value={m.VVG_Designation}
                                   onChange={(e) => {
-                                    const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+                                    const val = e.target.value
+                                      .replace(/[^0-9]/g, "")
+                                      .slice(0, 10);
                                     setEditGroupMembers((a) =>
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
-                                            ...x,
-                                            VVG_Designation: val,
-                                          }
+                                              ...x,
+                                              VVG_Designation: val,
+                                            }
                                           : x,
                                       ),
                                     );
@@ -2515,14 +2814,16 @@ const VisitRequests = () => {
                                   maxLength={12}
                                   onChange={(e) => {
                                     if (m._isNew) {
-                                      const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 12);
+                                      const val = e.target.value
+                                        .replace(/[^0-9]/g, "")
+                                        .slice(0, 12);
                                       setEditGroupMembers((a) =>
                                         a.map((x, i) =>
                                           i === idx
                                             ? {
-                                              ...x,
-                                              VVG_NIC_Passport_Number: val,
-                                            }
+                                                ...x,
+                                                VVG_NIC_Passport_Number: val,
+                                              }
                                             : x,
                                         ),
                                       );
@@ -2590,7 +2891,10 @@ const VisitRequests = () => {
                                     onClick={() => handleUpdateMember(idx)}
                                     disabled={memberSavingIdx !== null}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                    style={{ padding: "9px 18px", fontSize: 12 }}
+                                    style={{
+                                      padding: "9px 18px",
+                                      fontSize: 12,
+                                    }}
                                   >
                                     {memberSavingIdx === idx ? (
                                       <>
@@ -2612,21 +2916,35 @@ const VisitRequests = () => {
                     </div>
 
                     {/* ── Items to Bring card (mirrors View "Items Carried" section) ── */}
-                    <div className={`rounded-xl sm:rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}>
+                    <div
+                      className={`rounded-xl sm:rounded-[12px] border overflow-hidden ${isLight ? "bg-white border-gray-200" : "bg-black/25 border-white/10"}`}
+                    >
                       <div className="p-3 sm:p-4 md:p-5 space-y-3 sm:space-y-4">
                         {/* SplitSection header */}
                         <div className="flex flex-col gap-2">
                           <div className="flex items-center gap-2">
                             <div className="w-[3px] h-2.5 sm:h-3.5 bg-primary rounded-full" />
                             <div className="flex items-center gap-1 sm:gap-1.5 flex-1 min-w-0">
-                              <Package size={11} className="sm:size-[13px] text-primary/70 flex-shrink-0" />
-                              <h3 className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                              <Package
+                                size={11}
+                                className="sm:size-[13px] text-primary/70 flex-shrink-0"
+                              />
+                              <h3
+                                className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] truncate ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
+                              >
                                 Items to Bring
                               </h3>
-                              {editItems.filter((it) => !it._isNew).length > 0 && (
-                                <span className={`text-[9px] sm:text-[10px] font-semibold ml-1 flex-shrink-0 ${isLight ? "text-gray-400" : "text-white/30"}`}>
-                                  {editItems.filter((it) => !it._isNew).length} item
-                                  {editItems.filter((it) => !it._isNew).length > 1 ? "s" : ""}
+                              {editItems.filter((it) => !it._isNew).length >
+                                0 && (
+                                <span
+                                  className={`text-[9px] sm:text-[10px] font-semibold ml-1 flex-shrink-0 ${isLight ? "text-gray-400" : "text-white/30"}`}
+                                >
+                                  {editItems.filter((it) => !it._isNew).length}{" "}
+                                  item
+                                  {editItems.filter((it) => !it._isNew).length >
+                                  1
+                                    ? "s"
+                                    : ""}
                                 </span>
                               )}
                             </div>
@@ -2645,13 +2963,17 @@ const VisitRequests = () => {
                               className="btn-outline ml-auto whitespace-nowrap px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] flex-shrink-0"
                               style={{ gap: 4 }}
                             >
-                              <Plus size={10} className="sm:size-[12px]" /> Add Item
+                              <Plus size={10} className="sm:size-[12px]" /> Add
+                              Item
                             </button>
                           </div>
                         </div>
                         {editItems.length === 0 && (
-                          <p className={`text-[10px] sm:text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}>
-                            No items. Click <strong>Add Item</strong> to add one.
+                          <p
+                            className={`text-[10px] sm:text-[11px] font-medium ${isLight ? "text-gray-400" : "text-white/30"}`}
+                          >
+                            No items. Click <strong>Add Item</strong> to add
+                            one.
                           </p>
                         )}
                         <div className="space-y-2 sm:space-y-3">
@@ -2702,9 +3024,9 @@ const VisitRequests = () => {
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
-                                            ...x,
-                                            VIC_Item_Name: e.target.value,
-                                          }
+                                              ...x,
+                                              VIC_Item_Name: e.target.value,
+                                            }
                                           : x,
                                       ),
                                     )
@@ -2731,7 +3053,10 @@ const VisitRequests = () => {
                                     setEditItems((a) =>
                                       a.map((x, i) =>
                                         i === idx
-                                          ? { ...x, VIC_Quantity: e.target.value }
+                                          ? {
+                                              ...x,
+                                              VIC_Quantity: e.target.value,
+                                            }
                                           : x,
                                       ),
                                     )
@@ -2759,9 +3084,9 @@ const VisitRequests = () => {
                                       a.map((x, i) =>
                                         i === idx
                                           ? {
-                                            ...x,
-                                            VIC_Designation: e.target.value,
-                                          }
+                                              ...x,
+                                              VIC_Designation: e.target.value,
+                                            }
                                           : x,
                                       ),
                                     )
@@ -2822,7 +3147,10 @@ const VisitRequests = () => {
                                     onClick={() => handleUpdateItem(idx)}
                                     disabled={itemSavingIdx !== null}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                    style={{ padding: "9px 18px", fontSize: 12 }}
+                                    style={{
+                                      padding: "9px 18px",
+                                      fontSize: 12,
+                                    }}
                                   >
                                     {itemSavingIdx === idx ? (
                                       <>
@@ -3001,6 +3329,275 @@ const VisitRequests = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Vehicle Insurance Modal - using Portal to escape parent constraints */}
+      {insuranceModal.open &&
+        ReactDOM.createPortal(
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 9999,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <div
+              className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden"
+              style={{ zIndex: 10000, maxWidth: "28rem", width: "100%" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1.5 h-5 bg-primary rounded-full" />
+                  <div>
+                    <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
+                      Vehicle Insurance Attachments
+                    </h2>
+                    {insuranceModal.visitorName && (
+                      <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                        Showing insurance files only ·{" "}
+                        {insuranceModal.visitorName}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={closeInsuranceModal}
+                  className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+                  title="Close"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 relative z-10 min-h-[120px]">
+                {insuranceModal.loading ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3">
+                    <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
+                    <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                      Loading...
+                    </p>
+                  </div>
+                ) : insuranceModal.error ? (
+                  <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
+                    <AlertCircle size={13} className="shrink-0" />
+                    {insuranceModal.error}
+                  </div>
+                ) : insuranceModal.list.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                    <FolderOpen size={32} />
+                    <p className="text-[11px] tracking-widest uppercase">
+                      No attachments found
+                    </p>
+                  </div>
+                ) : (
+                  <ul className="space-y-2 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
+                    {insuranceModal.list.map((att, idx) => {
+                      const category =
+                        att.VAT_File_Category || att.FileCategory || "document";
+                      const fileName =
+                        att.VAT_File_Name ||
+                        att.FileName ||
+                        att.FilePath ||
+                        `file-${idx + 1}`;
+                      const vatId =
+                        att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
+                      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                        fileName,
+                      );
+                      return (
+                        <li
+                          key={idx}
+                          onClick={() => vatId && openPreview(vatId, fileName)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
+                        >
+                          {isImage ? (
+                            <ImageIcon
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          ) : (
+                            <FileText
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] text-white/80 font-normal truncate">
+                              {fileName}
+                            </p>
+                            <span
+                              className={`text-[9px] font-normal uppercase tracking-widest px-1.5 py-0.5 rounded mt-0.5 inline-block ${
+                                category.toLowerCase() === "vehicle insurance"
+                                  ? "bg-emerald-500/20 text-emerald-300"
+                                  : "bg-white/10 text-white/40"
+                              }`}
+                            >
+                              {category}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            title="Download file"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              vatId &&
+                                VisitorAttachmentService.DownloadAttachment(
+                                  vatId,
+                                  fileName,
+                                );
+                            }}
+                            className={`p-2 rounded-lg text-primary/80 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
+                          >
+                            <Download size={18} />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+
+                <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
+                  <div>
+                    <h3 className="text-[11px] font-semibold text-white mb-3 uppercase tracking-widest flex items-center gap-2">
+                      <Upload size={14} />
+                      Add New Insurance File
+                    </h3>
+                  </div>
+
+                  {/* File Input Area */}
+                  <div className="relative">
+                    <input
+                      type="file"
+                      ref={(el) => (insuranceFileInputRef.current = el)}
+                      accept=".png,.jpg,.jpeg,.pdf,.xlsx,.doc,.docx"
+                      onChange={handleInsuranceFileSelect}
+                      className="hidden"
+                      id="insurance-file-input"
+                    />
+                    <label
+                      htmlFor="insurance-file-input"
+                      className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-xl border-2 border-dashed border-white/20 hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-2">
+                        {insuranceFile ? (
+                          <>
+                            <FileText size={18} className="text-emerald-400 group-hover:text-emerald-300" />
+                            <span className="text-[11px] text-white/80 font-medium">{insuranceFile.name}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload size={18} className="text-white/40 group-hover:text-white/60" />
+                            <span className="text-[11px] text-white/50 group-hover:text-white/70">Click to browse or drag file here</span>
+                          </>
+                        )}
+                      </div>
+                      {insuranceFile && (
+                        <span className="text-[9px] text-white/30">
+                          {(insuranceFile.size / 1024 / 1024).toFixed(2)} MB
+                        </span>
+                      )}
+                      {!insuranceFile && (
+                        <span className="text-[9px] text-white/30">Supported: PNG, JPG, PDF, XLSX, DOC</span>
+                      )}
+                    </label>
+                  </div>
+
+                  {/* Selected File Info */}
+                  {insuranceFile && (
+                    <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText size={14} className="text-emerald-400 shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-[10px] text-emerald-300 truncate font-medium">
+                            {insuranceFile.name}
+                          </p>
+                          <p className="text-[9px] text-emerald-300/60">
+                            Ready to upload
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInsuranceFile(null);
+                          setInsuranceUploadResult(null);
+                        }}
+                        className="text-emerald-400/60 hover:text-emerald-300 transition-colors p-1 hover:bg-emerald-500/10 rounded shrink-0"
+                        title="Remove file"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Upload Result Message */}
+                  {insuranceUploadResult && (
+                    <div
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-[11px] ${
+                        insuranceUploadResult.success
+                          ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-200"
+                          : "bg-red-500/10 border border-red-500/20 text-red-300"
+                      }`}
+                    >
+                      {insuranceUploadResult.success ? (
+                        <CheckCircle2 size={14} className="shrink-0" />
+                      ) : (
+                        <AlertCircle size={14} className="shrink-0" />
+                      )}
+                      {insuranceUploadResult.message}
+                    </div>
+                  )}
+
+                  {/* Upload Button */}
+                  <button
+                    type="button"
+                    onClick={handleInsuranceUpload}
+                    disabled={
+                      !insuranceFile ||
+                      insuranceUploading[insuranceModal.vehicleIdx] === "uploading"
+                    }
+                    className="w-full py-2.5 rounded-lg text-[11px] font-semibold tracking-[0.14em] text-white uppercase transition-all border-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      background: insuranceFile && insuranceUploading[insuranceModal.vehicleIdx] !== "uploading"
+                        ? "linear-gradient(135deg, rgb(16 185 129) 0%, rgb(5 150 105) 100%)"
+                        : "rgba(255, 255, 255, 0.1)",
+                      boxShadow: insuranceFile && insuranceUploading[insuranceModal.vehicleIdx] !== "uploading"
+                        ? "0 4px 12px rgba(16, 185, 129, 0.2)"
+                        : "none"
+                    }}
+                  >
+                    {insuranceUploading[insuranceModal.vehicleIdx] ===
+                    "uploading" ? (
+                      <span className="inline-flex items-center justify-center gap-2">
+                        <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Uploading...
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center justify-center gap-2">
+                        <Upload size={14} /> Upload Insurance File
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
+      <AttachmentPreviewModal
+        previewData={previewData}
+        onClose={closePreview}
+      />
     </div>
   );
 };

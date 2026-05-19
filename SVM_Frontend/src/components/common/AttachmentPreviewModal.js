@@ -5,7 +5,8 @@ import { X, FileText, Download } from "lucide-react";
 import VisitorAttachmentService from "../../services/VisitorAttachmentService";
 
 const AttachmentPreviewModal = ({ previewData, onClose }) => {
-  const { open, fileUrl, fileType, fileName, vatId, loading, error } = previewData || {};
+  const { open, fileUrl, fileType, fileName, vatId, loading, error } =
+    previewData || {};
 
   if (!open) return null;
 
@@ -14,7 +15,7 @@ const AttachmentPreviewModal = ({ previewData, onClose }) => {
 
   return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto animate-fade-in">
+      <div className="fixed inset-0 z-[10001] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto animate-fade-in">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -30,14 +31,20 @@ const AttachmentPreviewModal = ({ previewData, onClose }) => {
                   {fileName || "Document Preview"}
                 </h2>
                 <p className="text-[10px] text-white/40 tracking-widest mt-0.5 uppercase">
-                  {isImage ? "Image Viewer" : isPdf ? "PDF Viewer" : "Document Viewer"}
+                  {isImage
+                    ? "Image Viewer"
+                    : isPdf
+                      ? "PDF Viewer"
+                      : "Document Viewer"}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {vatId && (
                 <button
-                  onClick={() => VisitorAttachmentService.DownloadAttachment(vatId, fileName)}
+                  onClick={() =>
+                    VisitorAttachmentService.DownloadAttachment(vatId, fileName)
+                  }
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all text-[11px] font-medium"
                 >
                   <Download size={14} />
@@ -59,7 +66,9 @@ const AttachmentPreviewModal = ({ previewData, onClose }) => {
             {loading ? (
               <div className="flex flex-col items-center gap-3">
                 <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
-                <p className="text-[11px] text-white/30 tracking-widest uppercase">Loading Preview...</p>
+                <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                  Loading Preview...
+                </p>
               </div>
             ) : error ? (
               <div className="flex flex-col items-center gap-3 text-red-400">
@@ -84,7 +93,10 @@ const AttachmentPreviewModal = ({ previewData, onClose }) => {
                   Preview not available for this file type.
                 </p>
                 <button
-                  onClick={() => vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName)}
+                  onClick={() =>
+                    vatId &&
+                    VisitorAttachmentService.DownloadAttachment(vatId, fileName)
+                  }
                   className="px-4 py-2 mt-2 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-all text-[12px] font-medium border border-primary/20"
                 >
                   Download File Instead
@@ -95,7 +107,7 @@ const AttachmentPreviewModal = ({ previewData, onClose }) => {
         </motion.div>
       </div>
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 };
 
