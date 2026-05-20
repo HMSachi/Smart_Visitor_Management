@@ -313,7 +313,7 @@ const PlacesManagement = () => {
                                     : "svm-status-pill--danger hover:bg-primary/20"
                                 }`}
                               >
-                                {isActive ? "ACTIVE" : "INACTIVE"}
+                                {isActive ? "Active" : "Inactive"}
                               </button>
                             </TableCell>
                             <TableCell
