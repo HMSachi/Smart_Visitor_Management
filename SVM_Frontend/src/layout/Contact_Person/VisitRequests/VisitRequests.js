@@ -2742,7 +2742,7 @@ const VisitRequests = () => {
                                     <button
                                       onClick={() => handleUpdateVehicle(idx)}
                                       disabled={vehicleSavingIdx !== null || !isVehicleDirty(v)}
-                                      className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                      className={`whitespace-nowrap ${vehicleSavingIdx !== null || !isVehicleDirty(v) ? "btn-outline opacity-50" : "btn-primary"}`}
                                       style={{
                                         padding: "9px 18px",
                                         fontSize: 12,
@@ -3089,7 +3089,7 @@ const VisitRequests = () => {
                                     <button
                                       onClick={() => handleUpdateMember(idx)}
                                       disabled={memberSavingIdx !== null || !isMemberDirty(m)}
-                                      className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                      className={`whitespace-nowrap ${memberSavingIdx !== null || !isMemberDirty(m) ? "btn-outline opacity-50" : "btn-primary"}`}
                                       style={{
                                         padding: "9px 18px",
                                         fontSize: 12,
@@ -3346,7 +3346,7 @@ const VisitRequests = () => {
                                   <button
                                     onClick={() => handleUpdateItem(idx)}
                                     disabled={itemSavingIdx !== null || !isItemDirty(it)}
-                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                    className={`whitespace-nowrap ${itemSavingIdx !== null || !isItemDirty(it) ? "btn-outline opacity-50" : "btn-primary"}`}
                                     style={{
                                       padding: "9px 18px",
                                       fontSize: 12,
@@ -3505,7 +3505,7 @@ const VisitRequests = () => {
                                   <button
                                     onClick={() => handleUpdateSubItem(idx)}
                                     disabled={subItemSavingIdx !== null || !isSubItemDirty(it)}
-                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                    className={`whitespace-nowrap ${subItemSavingIdx !== null || !isSubItemDirty(it) ? "btn-outline opacity-50" : "btn-primary"}`}
                                     style={{ padding: "9px 18px", fontSize: 12 }}
                                   >
                                     {subItemSavingIdx === idx ? (

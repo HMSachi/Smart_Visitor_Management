@@ -1951,7 +1951,7 @@ const MyRequests = () => {
                                   <button
                                     onClick={() => handleUpdateVehicle(idx)}
                                     disabled={vehicleSavingIdx !== null || !isVehicleDirty(vehicle, idx)}
-                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                    className={`whitespace-nowrap ${vehicleSavingIdx !== null || !isVehicleDirty(vehicle, idx) ? "btn-outline opacity-50" : "btn-primary"}`}
                                     style={{
                                       padding: "9px 18px",
                                       fontSize: 12,
@@ -2287,7 +2287,7 @@ const MyRequests = () => {
                                   <button
                                     onClick={() => handleUpdateMember(idx)}
                                     disabled={memberSavingIdx !== null || !isMemberDirty(member)}
-                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                    className={`whitespace-nowrap ${memberSavingIdx !== null || !isMemberDirty(member) ? "btn-outline opacity-50" : "btn-primary"}`}
                                     style={{ padding: "9px 18px", fontSize: 12 }}
                                   >
                                     {memberSavingIdx === idx ? (
@@ -2533,7 +2533,7 @@ const MyRequests = () => {
                                 <button
                                   onClick={() => handleUpdateItem(idx)}
                                   disabled={itemSavingIdx !== null || !isItemDirty(item)}
-                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                  className={`whitespace-nowrap ${itemSavingIdx !== null || !isItemDirty(item) ? "btn-outline opacity-50" : "btn-primary"}`}
                                   style={{ padding: "9px 18px", fontSize: 12 }}
                                 >
                                   {itemSavingIdx === idx ? (
@@ -2824,7 +2824,7 @@ const MyRequests = () => {
                                 <button
                                   onClick={() => handleUpdateSubItem(idx)}
                                   disabled={subItemSavingIdx !== null || !isSubItemDirty(item)}
-                                  className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                  className={`whitespace-nowrap ${subItemSavingIdx !== null || !isSubItemDirty(item) ? "btn-outline opacity-50" : "btn-primary"}`}
                                   style={{ padding: "9px 18px", fontSize: 12 }}
                                 >
                                   {subItemSavingIdx === idx ? (
