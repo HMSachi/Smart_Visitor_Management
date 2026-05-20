@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { User, Mail, Lock, Save, AlertCircle } from "lucide-react";
-import { validateName, validateEmail, validatePassword } from "../../../utils/validation";
+import { validateName, validateEmail, validatePassword, sanitizeTextInput } from "../../../utils/validation";
 
 const ProfileForm = () => {
   const [formData, setFormData] = useState({
@@ -15,9 +15,9 @@ const ProfileForm = () => {
   const handleInputChange = (e) => {
     let { name, value } = e.target;
     
-    // Real-time filtering
+    // Real-time sanitization
     if (name === "name") {
-      value = value.replace(/[^A-Za-z\s]/g, "");
+      value = sanitizeTextInput(value);
     } else if (name.toLowerCase().includes("password")) {
       value = value.slice(0, 5);
     }

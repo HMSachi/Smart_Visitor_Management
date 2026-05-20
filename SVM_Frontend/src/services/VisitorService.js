@@ -76,6 +76,17 @@ const GetVisitorJoint = async (requestId) => {
   }
 };
 
+const UpdateVisitor = async (visitorData) => {
+  let config = {
+    method: "post",
+    url: getApiUrl(
+      `/Visitor/UpdateVisitor?VV_Visitor_id=${encodeURIComponent(visitorData.VV_Visitor_id)}&VV_Name=${encodeURIComponent(visitorData.VV_Name)}&VV_NIC_Passport_NO=${encodeURIComponent(visitorData.VV_NIC_Passport_NO)}&VV_Visiting_places=${encodeURIComponent(visitorData.VV_Visiting_places || "")}&VV_Visitor_Type=${encodeURIComponent(visitorData.VV_Visitor_Type || "")}&VV_Phone=${encodeURIComponent(visitorData.VV_Phone)}&VV_Email=${encodeURIComponent(visitorData.VV_Email)}&VV_Company=${encodeURIComponent(visitorData.VV_Company)}`,
+    ),
+    data: "",
+  };
+  return axios.request(config).then((response) => response);
+};
+
 export default {
   GetAllVisitors,
   AddVisitor,
@@ -83,4 +94,5 @@ export default {
   ActivateVisitor,
   GetVisitorsByContactPerson,
   GetVisitorJoint,
+  UpdateVisitor,
 };

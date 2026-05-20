@@ -8,6 +8,7 @@ import {
   Search,
   Power,
   CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +17,9 @@ import {
   AddBlacklist,
   UpdateBlacklistStatus,
   UpdateBlacklist,
+  AddBlacklistReport,
+  ApproveBlacklist,
+  RejectBlacklist,
 } from "../../../actions/BlacklistAction";
 import BlacklistDetailModal from "./BlacklistDetailModal";
 import AddBlacklistModal from "./AddBlacklistModal";
@@ -47,13 +51,14 @@ const BlacklistTable = () => {
   const safeBlacklists = Array.isArray(blacklists) ? blacklists : [];
 
   const filtered = safeBlacklists
-    .filter(
-      (item) =>
-        (item.VB_Name &&
-          item.VB_Name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (item.VB_Email &&
-          item.VB_Email.toLowerCase().includes(searchTerm.toLowerCase())),
-    )
+    .filter((item) => {
+      if (!searchTerm) return true;
+      const searchLower = searchTerm.toLowerCase();
+      const nameMatch = item.VB_Name && item.VB_Name.toLowerCase().includes(searchLower);
+      const emailMatch = item.VB_Email && item.VB_Email.toLowerCase().includes(searchLower);
+      const visitorIdMatch = item.VB_Visitor_id && String(item.VB_Visitor_id).includes(searchLower);
+      return nameMatch || emailMatch || visitorIdMatch;
+    })
     .sort((a, b) => {
       const dateA = new Date(a.VB_Created_Date || 0);
       const dateB = new Date(b.VB_Created_Date || 0);
@@ -65,8 +70,37 @@ const BlacklistTable = () => {
     setIsDetailModalOpen(true);
   };
 
+  const isSecurityPortal = window.location.pathname.includes("Security") || window.location.pathname.includes("security");
+
   const handleAddPerson = (newPerson) => {
-    dispatch(AddBlacklist(newPerson));
+    if (isSecurityPortal) {
+      let reporterName = "Security Officer";
+      let reporterEmail = "security@example.com";
+      let pUid = "Security";
+      try {
+        const session = JSON.parse(localStorage.getItem('user_session') || '{}');
+        if (session.ResultSet) {
+            reporterName = session.ResultSet.P_Name || reporterName;
+            reporterEmail = session.ResultSet.P_Email || reporterEmail;
+            pUid = session.ResultSet.P_UID || pUid;
+        }
+      } catch(e) {}
+      
+      const reportData = {
+        VB_Visitor_id: newPerson.VB_Visitor_id,
+        VVG_id: newPerson.VVG_id || "", 
+        VB_Reporter_Name: reporterName,
+        VB_Reporter_Role: "Security",
+        VB_Reporter_Email: reporterEmail,
+        VB_Description: newPerson.VB_Description,
+        VB_Alert_Type: newPerson.VB_Alert_Type || "Security",
+        VB_Reported_By: reporterName,
+        P_UID: pUid
+      };
+      dispatch(AddBlacklistReport(reportData));
+    } else {
+      dispatch(AddBlacklist(newPerson));
+    }
   };
 
   const handleEditClick = (item) => {
@@ -90,6 +124,41 @@ const BlacklistTable = () => {
     }
   };
 
+  const handleApprove = (item) => {
+    if (window.confirm("Are you sure you want to approve this blacklist report?")) {
+      let adminId = "1";
+      let pUid = "Admin";
+      try {
+        const session = JSON.parse(localStorage.getItem('user_session') || '{}');
+        if (session.ResultSet) {
+            adminId = session.ResultSet.Admin_id || session.ResultSet.P_ID || adminId;
+            pUid = session.ResultSet.P_UID || pUid;
+        }
+      } catch(e) {}
+      dispatch(ApproveBlacklist(item.VB_id, adminId, pUid));
+    }
+  };
+
+  const handleReject = (item) => {
+    const reason = window.prompt("Please enter a reason for rejecting this blacklist report:");
+    if (reason !== null) {
+      if (!reason.trim()) {
+        alert("Reject reason is required.");
+        return;
+      }
+      let adminId = "1";
+      let pUid = "Admin";
+      try {
+        const session = JSON.parse(localStorage.getItem('user_session') || '{}');
+        if (session.ResultSet) {
+            adminId = session.ResultSet.Admin_id || session.ResultSet.P_ID || adminId;
+            pUid = session.ResultSet.P_UID || pUid;
+        }
+      } catch(e) {}
+      dispatch(RejectBlacklist(item.VB_id, adminId, reason, pUid));
+    }
+  };
+
   return (
     <>
       {/* ── Blacklist detail modal ── */}
@@ -97,6 +166,9 @@ const BlacklistTable = () => {
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
         person={selectedPerson}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        isSecurityPortal={isSecurityPortal}
       />
 
       {/* ── Add new blacklist modal ── */}
@@ -217,7 +289,7 @@ const BlacklistTable = () => {
                         <td className="px-6 py-4 align-middle">
                           <div className="flex flex-col">
                             <span className="text-[13px] font-medium text-white tracking-wide group-hover:text-primary transition-colors">
-                              {item.VB_Name}
+                              {item.VB_Name || `Visitor ID: ${item.VB_Visitor_id}`}
                             </span>
                             <span className="text-[11px] text-[var(--color-text-dim)] lowercase tracking-wider mt-0.5">
                               {item.VB_Email || "system-restricted"}
@@ -254,6 +326,19 @@ const BlacklistTable = () => {
                             >
                               {item.VB_Status === "I" ? "DEACTIVATED" : "ACTIVE"}
                             </span>
+                            {item.VB_Approval_Status && (
+                              <span
+                                className={`svm-status-pill mt-1 ${
+                                  item.VB_Approval_Status === "Pending"
+                                    ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-500"
+                                    : item.VB_Approval_Status === "Approved"
+                                    ? "svm-status-pill--success"
+                                    : "bg-red-500/10 border-red-500/20 text-red-500"
+                                }`}
+                              >
+                                {item.VB_Approval_Status.toUpperCase()}
+                              </span>
+                            )}
                           </div>
                         </td>
 
@@ -266,6 +351,25 @@ const BlacklistTable = () => {
                             >
                               <Eye size={16} className="group-hover/btn:scale-110 transition-transform" />
                             </button>
+
+                            {!isSecurityPortal && item.VB_Approval_Status === "Pending" && (
+                              <>
+                                <button
+                                  onClick={() => handleApprove(item)}
+                                  title="Approve Report"
+                                  className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border bg-green-500/5 border-green-500/20 text-green-400 hover:text-white hover:bg-green-500 hover:border-green-500"
+                                >
+                                  <CheckCircle size={15} className="group-hover/btn:scale-110 transition-transform" />
+                                </button>
+                                <button
+                                  onClick={() => handleReject(item)}
+                                  title="Reject Report"
+                                  className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border bg-red-500/5 border-red-500/20 text-red-400 hover:text-white hover:bg-red-500 hover:border-red-500"
+                                >
+                                  <XCircle size={15} className="group-hover/btn:scale-110 transition-transform" />
+                                </button>
+                              </>
+                            )}
 
                             {/* Edit button */}
                             <button

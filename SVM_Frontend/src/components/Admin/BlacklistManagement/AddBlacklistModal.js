@@ -258,7 +258,7 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
       setFormData((prev) => ({
         ...prev,
         VB_Name: subVisitor.VVG_Visitor_Name || "",
-        VB_Email: subVisitor.VVG_NIC_Passport_Number || "N/A", 
+        VB_Email: subVisitor.VVG_NIC_Passport_Number || "N/A",
         VB_Role: "Visitor Companion",
       }));
     } else if (selectedVisitor) {
@@ -292,6 +292,7 @@ const AddBlacklistModal = ({ isOpen, onClose, onAdd }) => {
       ...formData,
       VB_Admin_id: adminId,
       VB_Visitor_id: selectedVisitor.VV_Visitor_id,
+      VVG_id: selectedSubVisitor ? selectedSubVisitor.VVG_id : "",
     });
     onClose();
     setFormData({

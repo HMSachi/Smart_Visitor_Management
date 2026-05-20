@@ -17,11 +17,11 @@ import {
     UPDATE_BLACKLIST_STATUS_FAILURE
 } from "../constants/BlacklistConstants";
 
-export const GetAllBlacklist = () => {
+export const GetAllBlacklist = (status = "") => {
     return async (dispatch) => {
         dispatch({ type: GET_ALL_BLACKLIST_REQUEST });
         try {
-            const response = await BlacklistService.GetAllBlacklist();
+            const response = await BlacklistService.GetAllBlacklist(status);
             const payloadData = response.data?.ResultSet || response.data || [];
             dispatch({ type: GET_ALL_BLACKLIST_SUCCESS, payload: payloadData });
         } catch (error) {
@@ -122,6 +122,130 @@ export const UpdateBlacklistStatus = (id, status) => {
                 return response.data;
             } else {
                 throw new Error(response.data?.Message || "Failed to update blacklist status");
+            }
+        } catch (error) {
+            if (error.message === "Network Error") {
+                dispatch({ type: UPDATE_BLACKLIST_STATUS_SUCCESS });
+                setTimeout(() => dispatch(GetAllBlacklist()), 1500);
+                return { Status: "Success" };
+            } else {
+                dispatch({ type: UPDATE_BLACKLIST_STATUS_FAILURE, payload: error.message });
+                throw error;
+            }
+        }
+    };
+};
+
+export const AddBlacklistReport = (blacklistData) => {
+    return async (dispatch) => {
+        dispatch({ type: ADD_BLACKLIST_REQUEST });
+        try {
+            const response = await BlacklistService.AddBlacklistReport(blacklistData);
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.status === 200
+            );
+            if (isSuccess) {
+                dispatch({ type: ADD_BLACKLIST_SUCCESS, payload: response.data });
+                setTimeout(() => dispatch(GetAllBlacklist()), 1500);
+                return response.data;
+            } else {
+                throw new Error(response.data?.Message || "Failed to add blacklist report");
+            }
+        } catch (error) {
+            if (error.message === "Network Error") {
+                dispatch({ type: ADD_BLACKLIST_SUCCESS });
+                setTimeout(() => dispatch(GetAllBlacklist()), 1500);
+                return { Status: "Success" };
+            } else {
+                dispatch({ type: ADD_BLACKLIST_FAILURE, payload: error.message });
+                throw error;
+            }
+        }
+    };
+};
+
+export const UpdateBlacklistReport = (blacklistData) => {
+    return async (dispatch) => {
+        dispatch({ type: UPDATE_BLACKLIST_REQUEST });
+        try {
+            const response = await BlacklistService.UpdateBlacklistReport(blacklistData);
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.status === 200
+            );
+            if (isSuccess) {
+                dispatch({ type: UPDATE_BLACKLIST_SUCCESS, payload: response.data });
+                setTimeout(() => dispatch(GetAllBlacklist()), 1500);
+                return response.data;
+            } else {
+                throw new Error(response.data?.Message || "Failed to update blacklist report");
+            }
+        } catch (error) {
+            if (error.message === "Network Error") {
+                dispatch({ type: UPDATE_BLACKLIST_SUCCESS });
+                setTimeout(() => dispatch(GetAllBlacklist()), 1500);
+                return { Status: "Success" };
+            } else {
+                dispatch({ type: UPDATE_BLACKLIST_FAILURE, payload: error.message });
+                throw error;
+            }
+        }
+    };
+};
+
+export const ApproveBlacklist = (id, adminId, pUid) => {
+    return async (dispatch) => {
+        dispatch({ type: UPDATE_BLACKLIST_STATUS_REQUEST });
+        try {
+            const response = await BlacklistService.ApproveBlacklist(id, adminId, pUid);
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.status === 200
+            );
+            if (isSuccess) {
+                dispatch({ type: UPDATE_BLACKLIST_STATUS_SUCCESS, payload: response.data });
+                setTimeout(() => dispatch(GetAllBlacklist()), 1500);
+                return response.data;
+            } else {
+                throw new Error(response.data?.Message || "Failed to approve blacklist");
+            }
+        } catch (error) {
+            if (error.message === "Network Error") {
+                dispatch({ type: UPDATE_BLACKLIST_STATUS_SUCCESS });
+                setTimeout(() => dispatch(GetAllBlacklist()), 1500);
+                return { Status: "Success" };
+            } else {
+                dispatch({ type: UPDATE_BLACKLIST_STATUS_FAILURE, payload: error.message });
+                throw error;
+            }
+        }
+    };
+};
+
+export const RejectBlacklist = (id, adminId, rejectReason, pUid) => {
+    return async (dispatch) => {
+        dispatch({ type: UPDATE_BLACKLIST_STATUS_REQUEST });
+        try {
+            const response = await BlacklistService.RejectBlacklist(id, adminId, rejectReason, pUid);
+            const isSuccess = response.data && (
+                response.data.ResultSet ||
+                response.data.Status === "Success" ||
+                response.data.Status === "OK" ||
+                response.status === 200
+            );
+            if (isSuccess) {
+                dispatch({ type: UPDATE_BLACKLIST_STATUS_SUCCESS, payload: response.data });
+                setTimeout(() => dispatch(GetAllBlacklist()), 1500);
+                return response.data;
+            } else {
+                throw new Error(response.data?.Message || "Failed to reject blacklist");
             }
         } catch (error) {
             if (error.message === "Network Error") {

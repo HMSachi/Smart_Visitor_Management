@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -9,6 +9,8 @@ import {
     AlertCircle,
     Loader2
 } from 'lucide-react';
+import VisitorAttachmentService from '../../../services/VisitorAttachmentService';
+import VisitorService from '../../../services/VisitorService';
 import VehicleDetails from './Step2/VehicleDetails';
 import VisitorGroup from './Step2/VisitorGroup';
 import EquipmentDeclaration from './Step2/EquipmentDeclaration';
@@ -65,6 +67,15 @@ const Step2Main = () => {
     const [visitorSavingId, setVisitorSavingId] = useState(null);
     const [equipmentSavingId, setEquipmentSavingId] = useState(null);
 
+    // Logged-in visitor ID (resolved from email)
+    const user = useSelector(state => state.login.user);
+    const userEmail = user?.ResultSet?.[0]?.VA_Email;
+    const [resolvedVisitorId, setResolvedVisitorId] = useState(null);
+
+    // License upload state: { [vehicleLocalId]: 'uploading' | 'done' | 'error' }
+    const [licenseUploading, setLicenseUploading] = useState({});
+    const licenseInputRefs = useRef({});
+
     // Ensure at least one blank row exists per section
     useEffect(() => {
         if (!vehicles.length) dispatch(addVehicle());
@@ -73,6 +84,65 @@ const Step2Main = () => {
         dispatch(GetAllBlacklist());
         dispatch(GetAllVisitors());
     }, [dispatch]);
+
+    // Resolve the logged-in visitor's VV_Visitor_id from their email
+    useEffect(() => {
+        const resolveVisitorId = async () => {
+            if (!userEmail) return;
+            try {
+                const response = await VisitorService.GetAllVisitors();
+                const visitors = response?.data?.ResultSet || [];
+                const match = visitors.find(
+                    (v) => v?.VV_Email?.trim().toLowerCase() === userEmail.trim().toLowerCase()
+                );
+                if (match) setResolvedVisitorId(match.VV_Visitor_id);
+            } catch (err) {
+                console.error('Failed to resolve visitor ID:', err);
+            }
+        };
+        resolveVisitorId();
+    }, [userEmail]);
+
+    // ── LICENSE UPLOAD ────────────────────────────────────────────────────────
+    const handleLicenseUpload = (vehicleId) => {
+        // Trigger hidden file input for this vehicle row
+        if (licenseInputRefs.current[vehicleId]) {
+            licenseInputRefs.current[vehicleId].click();
+        }
+    };
+
+    const handleLicenseFileChange = async (vehicleId, file) => {
+        if (!file) return;
+        if (!resolvedVisitorId) {
+            alert('Visitor ID not found. Please ensure you are logged in.');
+            return;
+        }
+        const pUid = user?.ResultSet?.[0]?.VA_Name || 'Visitor';
+        setLicenseUploading(prev => ({ ...prev, [vehicleId]: 'uploading' }));
+        try {
+            await VisitorAttachmentService.UploadAttachment(
+                resolvedVisitorId,
+                'Driving Licence',
+                pUid,
+                file
+            );
+            setLicenseUploading(prev => ({ ...prev, [vehicleId]: 'done' }));
+            // Clear the success indicator after 3 s
+            setTimeout(() => setLicenseUploading(prev => {
+                const next = { ...prev };
+                delete next[vehicleId];
+                return next;
+            }), 3000);
+        } catch (err) {
+            console.error('License upload failed:', err);
+            setLicenseUploading(prev => ({ ...prev, [vehicleId]: 'error' }));
+            setTimeout(() => setLicenseUploading(prev => {
+                const next = { ...prev };
+                delete next[vehicleId];
+                return next;
+            }), 3000);
+        }
+    };
 
 
     // ── VEHICLES ──────────────────────────────────────────────────────────────
@@ -328,6 +398,10 @@ const Step2Main = () => {
                     onChange={(id, field, value) => dispatch(updateVehicleDetail({ id, field, value }))}
                     onSave={handleVehicleSave}
                     savingId={vehicleSavingId}
+                    onLicenseUpload={handleLicenseUpload}
+                    onLicenseFileChange={handleLicenseFileChange}
+                    licenseUploading={licenseUploading}
+                    licenseInputRefs={licenseInputRefs}
                 />
 
                 <VisitorGroup
