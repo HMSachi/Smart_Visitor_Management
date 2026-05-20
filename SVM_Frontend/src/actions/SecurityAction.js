@@ -5,7 +5,11 @@ export const FetchSecurityDashboardData = () => async (dispatch) => {
   try {
     // 1. Fetch Active Gate Passes (People Inside)
     const activeResponse = await GatePassService.GetActiveGatePasses();
-    const activePasses = activeResponse.data || [];
+    let activePasses = activeResponse.data || [];
+    // Ensure activePasses is an array
+    if (!Array.isArray(activePasses)) {
+        activePasses = activePasses?.ResultSet || [];
+    }
     
     // Map backend data to frontend structure for ActiveVisitors
     const mappedActiveVisitors = activePasses.map(pass => ({
