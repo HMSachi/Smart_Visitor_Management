@@ -1950,7 +1950,7 @@ const MyRequests = () => {
                                 ) : (
                                   <button
                                     onClick={() => handleUpdateVehicle(idx)}
-                                    disabled={vehicleSavingIdx !== null}
+                                    disabled={vehicleSavingIdx !== null || !isVehicleDirty(vehicle, idx)}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
                                     style={{
                                       padding: "9px 18px",
@@ -2286,7 +2286,7 @@ const MyRequests = () => {
                                   </button>
                                   <button
                                     onClick={() => handleUpdateMember(idx)}
-                                    disabled={memberSavingIdx !== null}
+                                    disabled={memberSavingIdx !== null || !isMemberDirty(member)}
                                     className="btn-primary disabled:opacity-60 whitespace-nowrap"
                                     style={{ padding: "9px 18px", fontSize: 12 }}
                                   >
@@ -2532,7 +2532,7 @@ const MyRequests = () => {
                               ) : (
                                 <button
                                   onClick={() => handleUpdateItem(idx)}
-                                  disabled={itemSavingIdx !== null}
+                                  disabled={itemSavingIdx !== null || !isItemDirty(item)}
                                   className="btn-primary disabled:opacity-60 whitespace-nowrap"
                                   style={{ padding: "9px 18px", fontSize: 12 }}
                                 >
@@ -2823,7 +2823,7 @@ const MyRequests = () => {
                               ) : (
                                 <button
                                   onClick={() => handleUpdateSubItem(idx)}
-                                  disabled={subItemSavingIdx !== null}
+                                  disabled={subItemSavingIdx !== null || !isSubItemDirty(item)}
                                   className="btn-primary disabled:opacity-60 whitespace-nowrap"
                                   style={{ padding: "9px 18px", fontSize: 12 }}
                                 >
