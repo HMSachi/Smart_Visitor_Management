@@ -15,7 +15,7 @@ const QuickActionButton = ({ icon: Icon, label, description, onClick, index }) =
         >
             {/* Background glow effect */}
             <div className="absolute -top-10 -right-10 w-20 h-20 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>
-            
+
             {/* Content */}
             <div className="flex justify-between items-start relative z-10 w-full text-left">
                 <div className="pr-4 flex-1">

@@ -104,11 +104,17 @@ const AddBlacklistReport = async (data) => {
 };
 
 const UpdateBlacklistReport = async (data) => {
+  let url = `/Blacklist/UpdateBlacklistReport?VB_id=${encodeURIComponent(data.VB_id)}` +
+            `&VB_Description=${encodeURIComponent(data.VB_Description || "")}` +
+            `&VB_Alert_Type=${encodeURIComponent(data.VB_Alert_Type || "")}` +
+            `&VB_Reporter_Name=${encodeURIComponent(data.VB_Reporter_Name || "")}` +
+            `&VB_Reporter_Role=${encodeURIComponent(data.VB_Reporter_Role || "")}` +
+            `&VB_Reporter_Email=${encodeURIComponent(data.VB_Reporter_Email || "")}` +
+            `&P_UID=${encodeURIComponent(data.P_UID || "")}`;
+
   let config = {
     method: "post",
-    url: getApiUrl(
-      `/Blacklist/UpdateBlacklistReport?VB_id=${encodeURIComponent(data.VB_id)}&VB_Description=${encodeURIComponent(data.VB_Description || "")}&VB_Alert_Type=${encodeURIComponent(data.VB_Alert_Type || "")}&P_UID=${encodeURIComponent(data.P_UID || "")}`
-    ),
+    url: getApiUrl(url),
     data: "",
   };
   return axios.request(config).then((response) => response);

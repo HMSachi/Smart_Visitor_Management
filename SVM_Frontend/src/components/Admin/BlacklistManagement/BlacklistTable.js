@@ -25,10 +25,12 @@ import BlacklistDetailModal from "./BlacklistDetailModal";
 import AddBlacklistModal from "./AddBlacklistModal";
 import EditBlacklistModal from "./EditBlacklistModal";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
+import VisitorService from "../../../services/VisitorService";
+import VisitGroupService from "../../../services/VisitGroupService";
 
 /* ─────────────────────────────────────────────
    Main table component
-───────────────────────────────────────────── */
+ ───────────────────────────────────────────── */
 const BlacklistTable = () => {
   const dispatch = useDispatch();
   const { themeMode } = useThemeMode();
@@ -39,6 +41,8 @@ const BlacklistTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEditPerson, setSelectedEditPerson] = useState(null);
+  const [visitorMap, setVisitorMap] = useState({});
+  const [companionMap, setCompanionMap] = useState({});
 
   const { blacklists, isLoading } = useSelector(
     (state) => state.blacklistState || { blacklists: [] },
@@ -46,16 +50,66 @@ const BlacklistTable = () => {
 
   useEffect(() => {
     dispatch(GetAllBlacklist());
+    
+    // Load dynamic lookup maps
+    const loadMaps = async () => {
+      try {
+        const [visitorsRes, groupsRes] = await Promise.all([
+          VisitorService.GetAllVisitors(),
+          VisitGroupService.GetAllVisitGroup()
+        ]);
+        
+        const visitors = visitorsRes.data?.ResultSet || visitorsRes.data || [];
+        const groups = groupsRes.data?.ResultSet || groupsRes.data || [];
+        
+        const vMap = {};
+        visitors.forEach(v => {
+          if (v.VV_Visitor_id) {
+            vMap[String(v.VV_Visitor_id)] = {
+              name: v.VV_Name,
+              email: v.VV_Email
+            };
+          }
+        });
+        
+        const cMap = {};
+        groups.forEach(g => {
+          if (g.VVG_id) {
+            cMap[String(g.VVG_id)] = {
+              name: g.VVG_Visitor_Name,
+              email: g.VVG_NIC_Passport_Number || "N/A"
+            };
+          }
+        });
+        
+        setVisitorMap(vMap);
+        setCompanionMap(cMap);
+      } catch (e) {
+        console.error("Error loading lookup maps:", e);
+      }
+    };
+    
+    loadMaps();
   }, [dispatch]);
 
   const safeBlacklists = Array.isArray(blacklists) ? blacklists : [];
 
   const filtered = safeBlacklists
     .filter((item) => {
+      const resolvedName = item.VB_Name || 
+        (item.VVG_id && companionMap[String(item.VVG_id)]?.name) ||
+        (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.name) || 
+        "";
+        
+      const resolvedEmail = item.VB_Email ||
+        (item.VVG_id && companionMap[String(item.VVG_id)]?.email) ||
+        (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.email) || 
+        "";
+
       if (!searchTerm) return true;
       const searchLower = searchTerm.toLowerCase();
-      const nameMatch = item.VB_Name && item.VB_Name.toLowerCase().includes(searchLower);
-      const emailMatch = item.VB_Email && item.VB_Email.toLowerCase().includes(searchLower);
+      const nameMatch = resolvedName && resolvedName.toLowerCase().includes(searchLower);
+      const emailMatch = resolvedEmail && resolvedEmail.toLowerCase().includes(searchLower);
       const visitorIdMatch = item.VB_Visitor_id && String(item.VB_Visitor_id).includes(searchLower);
       return nameMatch || emailMatch || visitorIdMatch;
     })
@@ -66,11 +120,27 @@ const BlacklistTable = () => {
     });
 
   const handleViewDetails = (item) => {
-    setSelectedPerson(item);
+    // Inject dynamic names into details modal so details modal is perfectly synced
+    const resolvedName = item.VB_Name || 
+      (item.VVG_id && companionMap[String(item.VVG_id)]?.name) ||
+      (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.name) || 
+      `Visitor ID: ${item.VB_Visitor_id}`;
+      
+    const resolvedEmail = item.VB_Email ||
+      (item.VVG_id && companionMap[String(item.VVG_id)]?.email) ||
+      (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.email) || 
+      "system-restricted";
+
+    setSelectedPerson({
+      ...item,
+      VB_Name: resolvedName,
+      VB_Email: resolvedEmail
+    });
     setIsDetailModalOpen(true);
   };
 
   const isSecurityPortal = window.location.pathname.includes("Security") || window.location.pathname.includes("security");
+  const isContactPerson = window.location.pathname.includes("Contact_Person") || window.location.pathname.includes("contact_person") || window.location.pathname.includes("Contact-Person");
 
   const handleAddPerson = (newPerson) => {
     if (isSecurityPortal) {
@@ -229,13 +299,15 @@ const BlacklistTable = () => {
               />
             </div>
 
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold uppercase tracking-[0.1em] transition-all shadow-[0_8px_20px_-4px_rgba(255,107,0,0.4)] active:scale-95 group shrink-0"
-            >
-              <UserPlus size={16} />
-              Add Restricted User
-            </button>
+            {!isContactPerson && (
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold uppercase tracking-[0.1em] transition-all shadow-[0_8px_20px_-4px_rgba(255,107,0,0.4)] active:scale-95 group shrink-0"
+              >
+                <UserPlus size={16} />
+                Add Restricted User
+              </button>
+            )}
           </div>
         </header>
 
@@ -248,13 +320,19 @@ const BlacklistTable = () => {
               <thead>
                 <tr className="bg-inherit">
                   <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
-                    Visitor Information
+                    Visitor Name
+                  </th>
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
+                    Visitor Email
                   </th>
                   <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
                     Reason for Restriction
                   </th>
                   <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">
                     Added Date
+                  </th>
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">
+                    Status
                   </th>
                   <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-primary border-b border-white/5 text-right whitespace-nowrap">
                     Management
@@ -269,7 +347,7 @@ const BlacklistTable = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                     >
-                      <td colSpan="4" className="py-20 text-center">
+                      <td colSpan="6" className="py-20 text-center">
                         <div className="flex flex-col items-center gap-3">
                           <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
                           <span className="text-[11px] text-[var(--color-text-dim)] uppercase tracking-widest font-medium">Fetching restricted list...</span>
@@ -285,16 +363,24 @@ const BlacklistTable = () => {
                         transition={{ delay: idx * 0.03 }}
                         className="group hover:bg-white/[0.02] transition-colors"
                       >
-                        {/* Visitor */}
+                        {/* Visitor Name */}
                         <td className="px-6 py-4 align-middle">
-                          <div className="flex flex-col">
-                            <span className="text-[13px] font-medium text-white tracking-wide group-hover:text-primary transition-colors">
-                              {item.VB_Name || `Visitor ID: ${item.VB_Visitor_id}`}
-                            </span>
-                            <span className="text-[11px] text-[var(--color-text-dim)] lowercase tracking-wider mt-0.5">
-                              {item.VB_Email || "system-restricted"}
-                            </span>
-                          </div>
+                          <span className="text-[13px] font-medium text-white tracking-wide group-hover:text-primary transition-colors block">
+                            {item.VB_Name || 
+                             (item.VVG_id && companionMap[String(item.VVG_id)]?.name) ||
+                             (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.name) || 
+                             `Visitor ID: ${item.VB_Visitor_id}`}
+                          </span>
+                        </td>
+
+                        {/* Visitor Email */}
+                        <td className="px-6 py-4 align-middle">
+                          <span className="text-[13px] font-medium text-white tracking-wide block">
+                            {item.VB_Email || 
+                             (item.VVG_id && companionMap[String(item.VVG_id)]?.email) ||
+                             (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.email) || 
+                             "—"}
+                          </span>
                         </td>
 
                         {/* Reason */}
@@ -317,29 +403,26 @@ const BlacklistTable = () => {
                                   : "—"}
                               </span>
                             </div>
-                            <span
-                              className={`svm-status-pill ${
-                                item.VB_Status === "I"
-                                  ? "bg-gray-500/10 border-gray-500/20 text-gray-500"
-                                  : "svm-status-pill--success"
-                              }`}
-                            >
-                              {item.VB_Status === "I" ? "DEACTIVATED" : "ACTIVE"}
-                            </span>
-                            {item.VB_Approval_Status && (
-                              <span
-                                className={`svm-status-pill mt-1 ${
-                                  item.VB_Approval_Status === "Pending"
-                                    ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-500"
-                                    : item.VB_Approval_Status === "Approved"
-                                    ? "svm-status-pill--success"
-                                    : "bg-red-500/10 border-red-500/20 text-red-500"
-                                }`}
-                              >
-                                {item.VB_Approval_Status.toUpperCase()}
-                              </span>
-                            )}
                           </div>
+                        </td>
+
+                        {/* Status */}
+                        <td className="px-6 py-4 align-middle text-center">
+                          {item.VB_Approval_Status ? (
+                            <span
+                              className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-bold border ${
+                                item.VB_Approval_Status === "Pending"
+                                  ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-400"
+                                  : item.VB_Approval_Status === "Approved"
+                                  ? "bg-green-500/10 border-green-500/20 text-green-400"
+                                  : "bg-red-500/10 border-red-500/20 text-red-400"
+                              } min-w-[110px]`}
+                            >
+                              {item.VB_Approval_Status.charAt(0).toUpperCase() + item.VB_Approval_Status.slice(1).toLowerCase()}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400/55 font-mono text-[11px]">—</span>
+                          )}
                         </td>
 
                         {/* Actions */}
@@ -352,7 +435,7 @@ const BlacklistTable = () => {
                               <Eye size={16} className="group-hover/btn:scale-110 transition-transform" />
                             </button>
 
-                            {!isSecurityPortal && item.VB_Approval_Status === "Pending" && (
+                            {!isContactPerson && !isSecurityPortal && item.VB_Approval_Status === "Pending" && (
                               <>
                                 <button
                                   onClick={() => handleApprove(item)}
@@ -372,54 +455,29 @@ const BlacklistTable = () => {
                             )}
 
                             {/* Edit button */}
-                            <button
-                              onClick={() => handleEditClick(item)}
-                              title="Edit Blacklist"
-                              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${isLight ? "bg-amber-500/5 border-amber-500/20 text-amber-500 hover:text-white hover:bg-amber-500 hover:border-amber-500" : "bg-yellow-500/5 border-yellow-500/20 text-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-yellow-500"}`}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="15"
-                                height="15"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-edit-3 group-hover/btn:scale-110 transition-transform"
+                            {!isContactPerson && (
+                              <button
+                                onClick={() => handleEditClick(item)}
+                                title="Edit Blacklist"
+                                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${isLight ? "bg-amber-500/5 border-amber-500/20 text-amber-500 hover:text-white hover:bg-amber-500 hover:border-amber-500" : "bg-yellow-500/5 border-yellow-500/20 text-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-yellow-500"}`}
                               >
-                                <path d="M12 20h9" />
-                                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                              </svg>
-                            </button>
-
-                            {/* Toggle Status */}
-                            <button
-                              onClick={() => handleToggleStatus(item)}
-                              title={
-                                item.VB_Status === "I"
-                                  ? "Activate Blacklist"
-                                  : "Deactivate Blacklist"
-                              }
-                              className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-all duration-500 shadow-xl group/btn ${
-                                item.VB_Status === "I"
-                                  ? "bg-green-500/5 border-green-500/20 text-green-400 hover:text-white hover:bg-green-500 hover:border-green-500"
-                                  : "bg-red-500/5 border-red-500/20 text-red-400 hover:text-white hover:bg-red-500 hover:border-red-500"
-                              }`}
-                            >
-                              {item.VB_Status === "I" ? (
-                                <CheckCircle
-                                  size={15}
-                                  className="group-hover/btn:scale-110 transition-transform"
-                                />
-                              ) : (
-                                <Power
-                                  size={15}
-                                  className="group-hover/btn:scale-110 transition-transform"
-                                />
-                              )}
-                            </button>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="15"
+                                  height="15"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="lucide lucide-edit-3 group-hover/btn:scale-110 transition-transform"
+                                >
+                                  <path d="M12 20h9" />
+                                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                                </svg>
+                              </button>
+                            )}
                           </div>
                         </td>
                       </motion.tr>
@@ -431,7 +489,7 @@ const BlacklistTable = () => {
                       className="block sm:table-row"
                     >
                       <td
-                        colSpan="4"
+                        colSpan="6"
                         className="px-6 py-14 text-center block sm:table-cell"
                       >
                         <div className="flex flex-col items-center gap-4">
