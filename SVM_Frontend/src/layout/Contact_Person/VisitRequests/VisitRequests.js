@@ -341,6 +341,139 @@ const VisitRequests = () => {
       );
     }
   };
+
+  // Sub-Visitor NIC upload state per subvisitor index: 'uploading' | 'done' | 'error'
+  const [subVisitorNicUploading, setSubVisitorNicUploading] = useState({});
+  const [subVisitorNicModal, setSubVisitorNicModal] = useState({
+    open: false,
+    memberIdx: null,
+    subVisitorId: null,
+    subVisitorName: "",
+    loading: false,
+    list: [],
+    error: null,
+  });
+  const [subVisitorNicFile, setSubVisitorNicFile] = useState(null);
+  const [subVisitorNicUploadResult, setSubVisitorNicUploadResult] = useState(null);
+  const subVisitorNicFileInputRef = useRef(null);
+
+  const openSubVisitorNicModal = async (idx) => {
+    console.log("[SubVisitor NIC Modal] Button clicked for member index:", idx);
+    const member = editGroupMembers[idx];
+    if (!member) return;
+    const subVisitorId = member.VVG_id;
+    if (!subVisitorId) {
+      alert("Please submit/save this visitor first before uploading attachments.");
+      return;
+    }
+    const visitorId = editingRequest?.VVR_Visitor_id;
+    if (!visitorId) {
+      alert("Visitor ID not found in this request.");
+      return;
+    }
+
+    setSubVisitorNicModal({
+      open: true,
+      memberIdx: idx,
+      subVisitorId,
+      subVisitorName: member.VVG_Visitor_Name || "Sub-Visitor",
+      loading: true,
+      list: [],
+      error: null,
+    });
+    setSubVisitorNicFile(null);
+    setSubVisitorNicUploadResult(null);
+
+    try {
+      console.log("[SubVisitor NIC Modal] Fetching attachments...");
+      const res = await VisitorAttachmentService.GetAttachmentsByGroupId(subVisitorId);
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const list = Array.isArray(rawList) ? rawList : [];
+      console.log("[SubVisitor NIC Modal] Attachments loaded:", list);
+      setSubVisitorNicModal((prev) => ({ ...prev, loading: false, list }));
+    } catch (err) {
+      console.error("[SubVisitor NIC Modal] Error loading attachments:", err);
+      setSubVisitorNicModal((prev) => ({
+        ...prev,
+        loading: false,
+        error: err?.message || "Failed to load attachments.",
+      }));
+    }
+  };
+
+  const closeSubVisitorNicModal = () => {
+    setSubVisitorNicModal({
+      open: false,
+      memberIdx: null,
+      subVisitorId: null,
+      subVisitorName: "",
+      loading: false,
+      list: [],
+      error: null,
+    });
+    setSubVisitorNicFile(null);
+    setSubVisitorNicUploadResult(null);
+  };
+
+  const handleSubVisitorNicFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSubVisitorNicFile(file);
+    setSubVisitorNicUploadResult(null);
+  };
+
+  const handleSubVisitorNicUpload = async () => {
+    if (!subVisitorNicFile || !subVisitorNicModal.subVisitorId) return;
+    const idx = subVisitorNicModal.memberIdx;
+    const visitorId = editingRequest?.VVR_Visitor_id;
+    if (!visitorId) return;
+    const pUid = user?.ResultSet?.[0]?.VA_Name || "ContactPerson";
+    setSubVisitorNicUploading((prev) => ({ ...prev, [idx]: "uploading" }));
+    setSubVisitorNicUploadResult(null);
+    try {
+      await VisitorAttachmentService.UploadSubVisitorAttachment(
+        subVisitorNicModal.subVisitorId,
+        visitorId,
+        "NIC",
+        pUid,
+        subVisitorNicFile,
+      );
+      setSubVisitorNicUploadResult({ success: true, message: "Uploaded" });
+      setSubVisitorNicFile(null);
+      const res = await VisitorAttachmentService.GetAttachmentsByGroupId(
+        subVisitorNicModal.subVisitorId,
+      );
+      const rawList = res?.data?.ResultSet || res?.data || [];
+      const list = Array.isArray(rawList) ? rawList : [];
+      setSubVisitorNicModal((prev) => ({ ...prev, list }));
+      setSubVisitorNicUploading((prev) => ({ ...prev, [idx]: "done" }));
+      setTimeout(
+        () =>
+          setSubVisitorNicUploading((prev) => {
+            const n = { ...prev };
+            delete n[idx];
+            return n;
+          }),
+        3000,
+      );
+    } catch (err) {
+      console.error("SubVisitor NIC upload failed:", err);
+      setSubVisitorNicUploadResult({
+        success: false,
+        message: err?.message || "Upload failed.",
+      });
+      setSubVisitorNicUploading((prev) => ({ ...prev, [idx]: "error" }));
+      setTimeout(
+        () =>
+          setSubVisitorNicUploading((prev) => {
+            const n = { ...prev };
+            delete n[idx];
+            return n;
+          }),
+        3000,
+      );
+    }
+  };
   const [newMemberSavingIdx, setNewMemberSavingIdx] = useState(null);
   const [newItemSavingIdx, setNewItemSavingIdx] = useState(null);
   const [subItemSavingIdx, setSubItemSavingIdx] = useState(null);
@@ -953,20 +1086,26 @@ const VisitRequests = () => {
     setNewMemberSavingIdx(idx);
     setEditError("");
     try {
-      await VisitGroupService.AddVisitGroup({
+      const res = await VisitGroupService.AddVisitGroup({
         VVG_Visitor_Name: m.VVG_Visitor_Name,
         VVG_NIC_Passport_Number: m.VVG_NIC_Passport_Number,
         VVG_Designation: m.VVG_Designation,
         VVG_Status: "A",
         VVR_Request_id: editingRequest.VVR_Request_id,
       });
+      const vvgId =
+        res?.data?.ResultSet?.[0]?.VGIdParam ||
+        res?.data?.ResultSet?.VGIdParam ||
+        res?.data?.VGIdParam ||
+        res?.ResultSet?.[0]?.VGIdParam ||
+        "saved";
       setEditGroupMembers((a) =>
         a.map((x, i) =>
           i === idx
             ? {
                 ...x,
                 _isNew: false,
-                VVG_id: "saved",
+                VVG_id: vvgId,
                 _original: {
                   VVG_Visitor_Name: x.VVG_Visitor_Name,
                   VVG_Designation: x.VVG_Designation,
@@ -2851,7 +2990,24 @@ const VisitRequests = () => {
                                   </span>
                                 )}
                                 {m._isNew ? (
-                                  <div className="flex gap-2">
+                                  <div className="flex gap-2 items-center">
+                                    <button
+                                      type="button"
+                                      disabled={true}
+                                      title="Sub-Visitor NIC Attachments (Save visitor first)"
+                                      style={{
+                                        padding: "9px 12px",
+                                        fontSize: 12,
+                                        border: "1px solid var(--color-border-soft)",
+                                        color: "var(--color-text-secondary)",
+                                        background: "var(--color-bg-alt)",
+                                        opacity: 0.5,
+                                        cursor: "not-allowed",
+                                      }}
+                                      className="btn-outline whitespace-nowrap"
+                                    >
+                                      <Paperclip size={13} />
+                                    </button>
                                     <button
                                       onClick={() =>
                                         handleRemoveNewRow("member", idx)
@@ -2887,26 +3043,70 @@ const VisitRequests = () => {
                                     </button>
                                   </div>
                                 ) : (
-                                  <button
-                                    onClick={() => handleUpdateMember(idx)}
-                                    disabled={memberSavingIdx !== null}
-                                    className="btn-primary disabled:opacity-60 whitespace-nowrap"
-                                    style={{
-                                      padding: "9px 18px",
-                                      fontSize: 12,
-                                    }}
-                                  >
-                                    {memberSavingIdx === idx ? (
-                                      <>
-                                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
-                                        Updating…
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Save size={12} /> Update
-                                      </>
-                                    )}
-                                  </button>
+                                  <div className="flex gap-2 items-center">
+                                    {/* Sub-Visitor NIC attachment button — icon only, title as tooltip */}
+                                    <button
+                                      type="button"
+                                      onClick={() => openSubVisitorNicModal(idx)}
+                                      disabled={
+                                        subVisitorNicUploading[idx] === "uploading"
+                                      }
+                                      title="Sub-Visitor NIC Attachments"
+                                      style={{
+                                        padding: "9px 12px",
+                                        fontSize: 12,
+                                        border:
+                                          subVisitorNicUploading[idx] === "done"
+                                            ? "1px solid rgba(34,197,94,0.4)"
+                                            : subVisitorNicUploading[idx] === "error"
+                                              ? "1px solid rgba(239,68,68,0.4)"
+                                              : "1px solid var(--color-border-soft)",
+                                        color:
+                                          subVisitorNicUploading[idx] === "done"
+                                            ? "var(--color-success)"
+                                            : subVisitorNicUploading[idx] === "error"
+                                              ? "#ef4444"
+                                              : "var(--color-text-secondary)",
+                                        background:
+                                          subVisitorNicUploading[idx] === "done"
+                                            ? "rgba(34,197,94,0.08)"
+                                            : subVisitorNicUploading[idx] === "error"
+                                              ? "rgba(239,68,68,0.08)"
+                                              : "var(--color-bg-alt)",
+                                      }}
+                                      className="btn-outline whitespace-nowrap disabled:opacity-50"
+                                    >
+                                      {subVisitorNicUploading[idx] === "uploading" ? (
+                                        <div className="w-3.5 h-3.5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+                                      ) : subVisitorNicUploading[idx] === "done" ? (
+                                        <CheckCircle2 size={13} />
+                                      ) : subVisitorNicUploading[idx] === "error" ? (
+                                        <AlertCircle size={13} />
+                                      ) : (
+                                        <Paperclip size={13} />
+                                      )}
+                                    </button>
+                                    <button
+                                      onClick={() => handleUpdateMember(idx)}
+                                      disabled={memberSavingIdx !== null}
+                                      className="btn-primary disabled:opacity-60 whitespace-nowrap"
+                                      style={{
+                                        padding: "9px 18px",
+                                        fontSize: 12,
+                                      }}
+                                    >
+                                      {memberSavingIdx === idx ? (
+                                        <>
+                                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{" "}
+                                          Updating…
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Save size={12} /> Update
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
                                 )}
                               </div>
                             </div>
@@ -3594,6 +3794,279 @@ const VisitRequests = () => {
                     ) : (
                       <span className="inline-flex items-center justify-center gap-2">
                         <Upload size={14} /> Upload Insurance File
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
+      {/* Sub-Visitor NIC Modal - using Portal to escape parent constraints */}
+      {subVisitorNicModal.open &&
+        ReactDOM.createPortal(
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 9999,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <div
+              className="bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden"
+              style={{ zIndex: 10000, maxWidth: "28rem", width: "100%" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 relative z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1.5 h-5 bg-primary rounded-full" />
+                  <div>
+                    <h2 className="text-[12px] font-normal text-white tracking-[0.16em]">
+                      Sub-Visitor NIC Attachments
+                    </h2>
+                    {subVisitorNicModal.subVisitorName && (
+                      <p className="text-[10px] text-white/40 tracking-widest mt-0.5">
+                        Showing NIC files only ·{" "}
+                        {subVisitorNicModal.subVisitorName}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={closeSubVisitorNicModal}
+                  className="text-gray-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"
+                  title="Close"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 relative z-10 min-h-[120px]">
+                {subVisitorNicModal.loading ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3">
+                    <div className="w-8 h-8 border-2 border-border-soft border-t-primary rounded-full animate-spin" />
+                    <p className="text-[11px] text-white/30 tracking-widest uppercase">
+                      Loading...
+                    </p>
+                  </div>
+                ) : subVisitorNicModal.error ? (
+                  <div className="flex items-center gap-2 px-3 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 text-[11px]">
+                    <AlertCircle size={13} className="shrink-0" />
+                    {subVisitorNicModal.error}
+                  </div>
+                ) : subVisitorNicModal.list.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
+                    <FolderOpen size={32} />
+                    <p className="text-[11px] tracking-widest uppercase">
+                      No attachments found
+                    </p>
+                  </div>
+                ) : (
+                  <ul className="space-y-2 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
+                    {subVisitorNicModal.list.map((att, idx) => {
+                      const category =
+                        att.VAT_File_Category || att.FileCategory || "document";
+                      const fileName =
+                        att.VAT_File_Name ||
+                        att.FileName ||
+                        att.FilePath ||
+                        `file-${idx + 1}`;
+                      const vatId =
+                        att.VAT_Id || att.VAT_Attachment_id || att.Id || null;
+                      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(
+                        fileName,
+                      );
+                      return (
+                        <li
+                          key={idx}
+                          onClick={() => vatId && openPreview(vatId, fileName)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 transition-all group cursor-pointer"
+                        >
+                          {isImage ? (
+                            <ImageIcon
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          ) : (
+                            <FileText
+                              size={15}
+                              className="text-primary/60 shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] text-white/80 font-normal truncate">
+                              {fileName}
+                            </p>
+                            <span
+                              className={`text-[9px] font-normal uppercase tracking-widest px-1.5 py-0.5 rounded mt-0.5 inline-block ${
+                                category.toLowerCase() === "nic"
+                                  ? "bg-emerald-500/20 text-emerald-300"
+                                  : "bg-white/10 text-white/40"
+                              }`}
+                            >
+                              {category}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            title="Download file"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              vatId &&
+                                VisitorAttachmentService.DownloadAttachment(
+                                  vatId,
+                                  fileName,
+                                );
+                            }}
+                            className={`p-2 rounded-lg text-primary/80 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
+                          >
+                            <Download size={18} />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+
+                <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
+                  <div>
+                    <h3 className="text-[11px] font-semibold text-white mb-3 uppercase tracking-widest flex items-center gap-2">
+                      <Upload size={14} />
+                      Add New NIC File
+                    </h3>
+                  </div>
+
+                  {/* File Input Area */}
+                  <div className="relative">
+                    <input
+                      type="file"
+                      ref={(el) => (subVisitorNicFileInputRef.current = el)}
+                      accept=".png,.jpg,.jpeg,.pdf,.xlsx,.doc,.docx"
+                      onChange={handleSubVisitorNicFileSelect}
+                      className="hidden"
+                      id="subvisitor-nic-file-input"
+                    />
+                    <label
+                      htmlFor="subvisitor-nic-file-input"
+                      className={`flex flex-col gap-2.5 p-4 rounded-xl border-2 border-dashed transition-all cursor-pointer group ${
+                        subVisitorNicFile
+                          ? "border-emerald-500/30 bg-emerald-500/10"
+                          : "border-white/20 hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      {subVisitorNicFile ? (
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-2 min-w-0">
+                            <FileText
+                              size={18}
+                              className="text-emerald-400 shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <p className="text-[11px] text-emerald-200 font-medium truncate">
+                                {subVisitorNicFile.name}
+                              </p>
+                              <p className="text-[9px] text-emerald-200/60">
+                                Ready to upload ·{" "}
+                                {(subVisitorNicFile.size / 1024 / 1024).toFixed(2)}{" "}
+                                MB
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSubVisitorNicFile(null);
+                              setSubVisitorNicUploadResult(null);
+                            }}
+                            className="text-emerald-300/70 hover:text-emerald-200 transition-colors p-1 hover:bg-emerald-500/10 rounded shrink-0"
+                            title="Remove file"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <div className="flex items-center gap-2">
+                            <Upload
+                              size={18}
+                              className="text-white/40 group-hover:text-white/60"
+                            />
+                            <span className="text-[11px] text-white/50 group-hover:text-white/70">
+                              Click to browse or drag file here
+                            </span>
+                          </div>
+                          <span className="text-[9px] text-white/30">
+                            Supported: PNG, JPG, PDF, XLSX, DOC
+                          </span>
+                        </div>
+                      )}
+                    </label>
+                  </div>
+
+                  {/* Upload Result Message */}
+                  {subVisitorNicUploadResult && (
+                    <div
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-[11px] ${
+                        subVisitorNicUploadResult.success
+                          ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-200"
+                          : "bg-red-500/10 border border-red-500/20 text-red-300"
+                      }`}
+                    >
+                      {subVisitorNicUploadResult.success ? (
+                        <CheckCircle2 size={14} className="shrink-0" />
+                      ) : (
+                        <AlertCircle size={14} className="shrink-0" />
+                      )}
+                      {subVisitorNicUploadResult.message}
+                    </div>
+                  )}
+
+                  {/* Upload Button */}
+                  <button
+                    type="button"
+                    onClick={handleSubVisitorNicUpload}
+                    disabled={
+                      !subVisitorNicFile ||
+                      subVisitorNicUploading[subVisitorNicModal.memberIdx] ===
+                        "uploading"
+                    }
+                    className="w-full py-2.5 rounded-lg text-[11px] font-semibold tracking-[0.14em] text-white uppercase transition-all border-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      background:
+                        subVisitorNicFile &&
+                        subVisitorNicUploading[subVisitorNicModal.memberIdx] !==
+                          "uploading"
+                          ? "linear-gradient(135deg, rgb(16 185 129) 0%, rgb(5 150 105) 100%)"
+                          : "rgba(255, 255, 255, 0.1)",
+                      boxShadow:
+                        subVisitorNicFile &&
+                        subVisitorNicUploading[subVisitorNicModal.memberIdx] !==
+                          "uploading"
+                          ? "0 4px 12px rgba(16, 185, 129, 0.2)"
+                          : "none",
+                    }}
+                  >
+                    {subVisitorNicUploading[subVisitorNicModal.memberIdx] ===
+                    "uploading" ? (
+                      <span className="inline-flex items-center justify-center gap-2">
+                        <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Uploading...
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center justify-center gap-2">
+                        <Upload size={14} /> Upload NIC File
                       </span>
                     )}
                   </button>
