@@ -7,6 +7,16 @@ import ThemeToggleButton from "../../common/ThemeToggleButton";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 
 const Header = ({ title }) => {
+  const formatTitle = (str) => {
+    if (!str) return "";
+    const cleanStr = str.replace(/_/g, " ");
+    return cleanStr
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isMobile = useSelector((state) => state.ui.isMobile);
@@ -180,9 +190,12 @@ const Header = ({ title }) => {
         )}
 
         {title && (
-          <h2 className="text-[var(--color-text-primary)] text-[9px] md:text-[10.5px] font-bold uppercase tracking-[0.25em] truncate m-0 opacity-80">
-            {title}
-          </h2>
+          <div className="flex items-center gap-3 ml-2 border-l border-[var(--color-border-soft)] pl-4">
+            <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-primary rounded-full shadow-[0_0_15px_var(--color-primary)] animate-pulse hidden sm:block"></div>
+            <span className="text-[var(--color-text-primary)] text-[14px] sm:text-[15px] font-semibold tracking-wide truncate">
+              {formatTitle(title)}
+            </span>
+          </div>
         )}
       </div>
 

@@ -251,7 +251,7 @@ const ApprovalManagement = () => {
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] h-screen">
       <Header
-        title={viewMode === "details" ? "Review Visit Request" : undefined}
+        title={viewMode === "details" ? "Review Visit Request" : "Approvals"}
         showBack={viewMode === "details"}
         onBack={handleBackToList}
       />

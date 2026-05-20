@@ -261,27 +261,8 @@ const BlacklistTable = () => {
         className={`space-y-6 animate-fade-in-slow ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
       >
         {/* ── Toolbar ── */}
-        <header className="flex flex-col xl:flex-row justify-between items-center gap-6 relative z-10 px-1">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center text-primary shadow-xl backdrop-blur-md">
-              <Shield size={22} strokeWidth={1.5} />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-white tracking-tight">
-                Restricted Visitors
-              </h2>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">
-                  {filtered.length} {filtered.length === 1 ? "Record" : "Records"}
-                </span>
-                <span className="text-[10px] text-[var(--color-text-dim)] uppercase tracking-widest font-medium">
-                  Security Database
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 items-center shrink-0 w-full xl:w-auto">
+        <header className="flex flex-col sm:flex-row justify-end items-center gap-4 relative z-10 px-1 w-full">
+          <div className="flex flex-col sm:flex-row gap-3 items-center shrink-0 w-full sm:w-auto ml-auto">
             {/* Search Box - Rounded Style */}
             <div className="relative w-full sm:w-80 group">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -295,7 +276,7 @@ const BlacklistTable = () => {
                 placeholder="Filter restricted visitors..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[var(--color-bg-paper)] border border-white/10 text-white text-[13px] rounded-full py-2 pl-9 pr-4 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-white/20 shadow-inner"
+                className="w-full bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] text-[var(--color-text-primary)] text-[13px] rounded-full py-2 pl-9 pr-4 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-gray-400/60 shadow-inner"
               />
             </div>
 
@@ -319,22 +300,22 @@ const BlacklistTable = () => {
             <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
                 <tr className="bg-inherit">
-                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
                     Visitor Name
                   </th>
-                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
                     Visitor Email
                   </th>
-                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
                     Reason for Restriction
                   </th>
-                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">
                     Added Date
                   </th>
-                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-primary border-b border-white/5 text-right whitespace-nowrap">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-primary border-b border-white/5 text-right whitespace-nowrap">
                     Management
                   </th>
                 </tr>
@@ -364,7 +345,7 @@ const BlacklistTable = () => {
                         className="group hover:bg-white/[0.02] transition-colors"
                       >
                         {/* Visitor Name */}
-                        <td className="px-6 py-4 align-middle">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
                           <span className="text-[13px] font-medium text-white tracking-wide group-hover:text-primary transition-colors block">
                             {item.VB_Name || 
                              (item.VVG_id && companionMap[String(item.VVG_id)]?.name) ||
@@ -374,7 +355,7 @@ const BlacklistTable = () => {
                         </td>
 
                         {/* Visitor Email */}
-                        <td className="px-6 py-4 align-middle">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
                           <span className="text-[13px] font-medium text-white tracking-wide block">
                             {item.VB_Email || 
                              (item.VVG_id && companionMap[String(item.VVG_id)]?.email) ||
@@ -384,7 +365,7 @@ const BlacklistTable = () => {
                         </td>
 
                         {/* Reason */}
-                        <td className="px-6 py-4 align-middle">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
                           <div className="max-w-xs xl:max-w-md">
                             <p className="text-[12px] text-white/70 leading-relaxed line-clamp-2">
                               {item.VB_Description || "—"}
@@ -393,7 +374,7 @@ const BlacklistTable = () => {
                         </td>
 
                         {/* Date Added */}
-                        <td className="px-6 py-4 align-middle">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
                           <div className="flex flex-col items-center gap-2">
                             <div className="flex items-center gap-1.5 text-[12px] text-white/60">
                               <Clock size={12} className="text-primary/40" />
@@ -407,7 +388,7 @@ const BlacklistTable = () => {
                         </td>
 
                         {/* Status */}
-                        <td className="px-6 py-4 align-middle text-center">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-center">
                           {item.VB_Approval_Status ? (
                             <span
                               className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-bold border ${
@@ -426,7 +407,7 @@ const BlacklistTable = () => {
                         </td>
 
                         {/* Actions */}
-                        <td className="px-6 py-4 align-middle">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
                           <div className="flex justify-end items-center gap-2">
                             <button
                               onClick={() => handleViewDetails(item)}
