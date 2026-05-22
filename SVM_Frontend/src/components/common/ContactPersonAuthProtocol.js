@@ -495,7 +495,7 @@ const ContactPersonAuthProtocol = ({
             icon={Briefcase}
             isLight={isLight}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               <Field
                 label="Visit date"
                 value={visitor.date || visitor.proposedVisitDate}
@@ -514,12 +514,12 @@ const ContactPersonAuthProtocol = ({
                 icon={Briefcase}
                 isLight={isLight}
               />
-              <Field
+              {/* <Field
                 label="Visitor type"
                 value={visitor.visitorClassification}
                 icon={Users}
                 isLight={isLight}
-              />
+              /> */}
             </div>
           </SplitSection>
         </div>
