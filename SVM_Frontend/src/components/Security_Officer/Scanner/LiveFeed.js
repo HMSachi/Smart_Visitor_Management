@@ -47,6 +47,7 @@ import {
 } from "../../../utils/secureQrPayload";
 import VisitorService from "../../../services/VisitorService";
 import GatePassService from "../../../services/GatePassService";
+import VisitLogService from "../../../services/VisitLogService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
@@ -90,6 +91,50 @@ const InfoRow = ({ icon, label, value }) => (
     </div>
   </div>
 );
+
+const formatDateYYYYMMDD = (date) => {
+  if (!date || Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const parseDateOnly = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  const raw = String(value).trim();
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    const year = Number(match[1]);
+    const month = Number(match[2]) - 1;
+    const day = Number(match[3]);
+    return new Date(year, month, day);
+  }
+
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed;
+};
+
+const getExpiryDateFromVisitDate = (visitDate) => {
+  const base = parseDateOnly(visitDate);
+  if (!base) {
+    return null;
+  }
+
+  const expiry = new Date(base);
+  expiry.setDate(expiry.getDate() + 1);
+  return formatDateYYYYMMDD(expiry);
+};
 
 const LiveFeed = () => {
   const dispatch = useDispatch();
@@ -841,6 +886,28 @@ const LiveFeed = () => {
       }
 
       if (result?.data?.Status === "Success" || result?.status === 200) {
+        if (scanType === "CHECK_IN") {
+          const expiryDate = getExpiryDateFromVisitDate(
+            passDetails?.VVR_Visit_Date,
+          );
+          if (!expiryDate) {
+            throw new Error(
+              "Visit date is missing or invalid; unable to calculate expiry date.",
+            );
+          }
+
+          const accessedAreas =
+            passDetails?.VVR_Places_to_Visit ||
+            passDetails?.VGP_Visiting_Area ||
+            "N/A";
+
+          await VisitLogService.AddVisitLog(
+            passDetails.VGP_Pass_id,
+            accessedAreas,
+            expiryDate,
+          );
+        }
+
         // Update gate pass status in backend and localStorage
         const newStatus = scanType === "CHECK_IN" ? "IN" : "OUT";
         try {
