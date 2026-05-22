@@ -829,9 +829,9 @@ const ContactAllVisitors = () => {
                       <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Company
                       </th>
-                      <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] min-w-[250px] text-text-secondary">
+                      {/* <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] min-w-[250px] text-text-secondary">
                         Visiting area
-                      </th>
+                      </th> */}
                       <th className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Status
                       </th>
@@ -887,7 +887,7 @@ const ContactAllVisitors = () => {
                                 {visitor.VV_Company || "-"}
                               </span>
                             </td>
-                            <td className="px-3 py-1 text-left font-normal text-[12px] min-w-[250px]">
+                            {/* <td className="px-3 py-1 text-left font-normal text-[12px] min-w-[250px]">
                               <span
                                 title={
                                   visitor.VV_Visiting_places ||
@@ -897,7 +897,7 @@ const ContactAllVisitors = () => {
                               >
                                 {visitor.VV_Visiting_places || "-"}
                               </span>
-                            </td>
+                            </td> */}
                             <td className="px-3 py-1 text-center font-normal text-[10px]">
                               <div className="flex items-center justify-center gap-2">
                                 <button
