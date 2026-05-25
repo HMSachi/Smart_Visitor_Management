@@ -36,7 +36,10 @@ import {
   Car,
   Shield,
 } from "lucide-react";
-import { GetGatePassById, UpdateGatePassStatus } from "../../../actions/GatePassAction";
+import {
+  GetGatePassById,
+  UpdateGatePassStatus,
+} from "../../../actions/GatePassAction";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   decodeSecureQrPayload,
@@ -44,6 +47,7 @@ import {
 } from "../../../utils/secureQrPayload";
 import VisitorService from "../../../services/VisitorService";
 import GatePassService from "../../../services/GatePassService";
+import VisitLogService from "../../../services/VisitLogService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
@@ -87,6 +91,50 @@ const InfoRow = ({ icon, label, value }) => (
     </div>
   </div>
 );
+
+const formatDateYYYYMMDD = (date) => {
+  if (!date || Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const parseDateOnly = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  const raw = String(value).trim();
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    const year = Number(match[1]);
+    const month = Number(match[2]) - 1;
+    const day = Number(match[3]);
+    return new Date(year, month, day);
+  }
+
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed;
+};
+
+const getExpiryDateFromVisitDate = (visitDate) => {
+  const base = parseDateOnly(visitDate);
+  if (!base) {
+    return null;
+  }
+
+  const expiry = new Date(base);
+  expiry.setDate(expiry.getDate() + 1);
+  return formatDateYYYYMMDD(expiry);
+};
 
 const LiveFeed = () => {
   const dispatch = useDispatch();
@@ -134,6 +182,28 @@ const LiveFeed = () => {
 
   const getDemoScanLogKey = (passId, dateKey) =>
     `svm.scanLog.${passId}.${dateKey}`;
+
+  const persistGatePassMeta = (details) => {
+    if (!details?.VGP_Pass_id || typeof window === "undefined") {
+      return;
+    }
+
+    const payload = {
+      id: details.VGP_Pass_id,
+      name: details.Visitor_Name || details.VV_Name || "Unknown Visitor",
+      location: details.VGP_Visiting_Area || "Main Premises",
+      issueDate: details.VGP_Issue_Date || null,
+    };
+
+    try {
+      window.localStorage.setItem(
+        `svm.gatePassMeta.${details.VGP_Pass_id}`,
+        JSON.stringify(payload),
+      );
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
+    }
+  };
 
   const getTodayScanCountDemo = (passId) => {
     const dateKey = getTodayDateKey();
@@ -329,20 +399,25 @@ const LiveFeed = () => {
           const vehicleResponse = await VehicleService.GetAllVehicles();
           const allVehicles =
             vehicleResponse?.data?.ResultSet || vehicleResponse?.data || [];
-          const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
-            .filter(
-              (v) =>
-                String(v?.VVR_Request_id) === String(passId),
-            )
+          const matchedVehicles = (
+            Array.isArray(allVehicles) ? allVehicles : []
+          )
+            .filter((v) => String(v?.VVR_Request_id) === String(passId))
             .map((v) => ({
               id: v.VV_Vehicle_id,
               vehicleType: v.VV_Vehicle_Type,
               plateNumber: v.VV_Vehicle_Number,
             }));
           setVehiclesList(matchedVehicles);
-          console.log("[LiveFeed] Fetched vehicles for sub-visitor:", matchedVehicles);
+          console.log(
+            "[LiveFeed] Fetched vehicles for sub-visitor:",
+            matchedVehicles,
+          );
         } catch (err) {
-          console.warn("[LiveFeed] Could not fetch vehicles for sub-visitor:", err);
+          console.warn(
+            "[LiveFeed] Could not fetch vehicles for sub-visitor:",
+            err,
+          );
         }
 
         setScanStatus("details");
@@ -373,12 +448,15 @@ const LiveFeed = () => {
       if (details && details.VGP_Pass_id) {
         // Database validation successful
         if (useDemoScanLog) {
-          const localStatus = localStorage.getItem(`svm.gatePassStatus.${details.VGP_Pass_id}`);
+          const localStatus = localStorage.getItem(
+            `svm.gatePassStatus.${details.VGP_Pass_id}`,
+          );
           if (localStatus) {
             details.VGP_Status = localStatus;
           }
         }
         setPassDetails(details);
+        persistGatePassMeta(details);
         setScanStatus("details");
         setScanMessage(
           "The visitor details were found and verified successfully.",
@@ -432,12 +510,16 @@ const LiveFeed = () => {
             let allGroupMembers = [];
             try {
               const groupResponse = await VisitGroupService.GetAllVisitGroup();
-              const payload = groupResponse?.data?.ResultSet || groupResponse?.data || [];
+              const payload =
+                groupResponse?.data?.ResultSet || groupResponse?.data || [];
               allGroupMembers = (Array.isArray(payload) ? payload : []).filter(
-                (item) => String(item?.VVR_Request_id) === String(requestId)
+                (item) => String(item?.VVR_Request_id) === String(requestId),
               );
             } catch (err) {
-              console.warn("[LiveFeed] Could not fetch group members from VisitGroup:", err);
+              console.warn(
+                "[LiveFeed] Could not fetch group members from VisitGroup:",
+                err,
+              );
             }
 
             const jointResponse =
@@ -464,10 +546,14 @@ const LiveFeed = () => {
                 // Try to find the VVG_id by matching against VisitGroupService results (by NIC or name)
                 const matchedGroupMember = allGroupMembers.find(
                   (m) =>
-                    (nic && m.VVG_NIC_Passport_Number && String(m.VVG_NIC_Passport_Number) === String(nic)) ||
-                    String(m.VVG_Visitor_Name).toLowerCase() === String(name).toLowerCase()
+                    (nic &&
+                      m.VVG_NIC_Passport_Number &&
+                      String(m.VVG_NIC_Passport_Number) === String(nic)) ||
+                    String(m.VVG_Visitor_Name).toLowerCase() ===
+                      String(name).toLowerCase(),
                 );
-                const id = matchedGroupMember?.VVG_id || row.VVG_id || row.id || null;
+                const id =
+                  matchedGroupMember?.VVG_id || row.VVG_id || row.id || null;
                 uniqueSubVisitors.push({ id, name, nic: nic || "N/A" });
               }
             }
@@ -522,11 +608,10 @@ const LiveFeed = () => {
             const vehicleResponse = await VehicleService.GetAllVehicles();
             const allVehicles =
               vehicleResponse?.data?.ResultSet || vehicleResponse?.data || [];
-            const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
-              .filter(
-                (v) =>
-                  String(v?.VVR_Request_id) === String(requestId),
-              )
+            const matchedVehicles = (
+              Array.isArray(allVehicles) ? allVehicles : []
+            )
+              .filter((v) => String(v?.VVR_Request_id) === String(requestId))
               .map((v) => ({
                 id: v.VV_Vehicle_id,
                 vehicleType: v.VV_Vehicle_Type,
@@ -653,7 +738,11 @@ const LiveFeed = () => {
         ? qrData.subVisitors.map((sv) => ({
             id: sv.id || sv.groupId || sv.VVG_id || null,
             name: sv.name || sv.Visitor_Group_Name || sv.Group_Members || "N/A",
-            nic: sv.nic || sv.Visit_Group_NIC_Passport_Number || sv.Members_NIC_Passport_Number || "N/A",
+            nic:
+              sv.nic ||
+              sv.Visit_Group_NIC_Passport_Number ||
+              sv.Members_NIC_Passport_Number ||
+              "N/A",
           }))
         : null;
     const combinedSubVisitors = liveSubVisitors || qrSubVisitors;
@@ -676,7 +765,12 @@ const LiveFeed = () => {
     (value) => value !== "N/A" && !Array.isArray(value),
   );
 
-  const openViewAttachments = async (visitorId, visitorName, filterCategory = null, isSubVisitor = false) => {
+  const openViewAttachments = async (
+    visitorId,
+    visitorName,
+    filterCategory = null,
+    isSubVisitor = false,
+  ) => {
     setViewAttachments((prev) => ({
       ...prev,
       open: true,
@@ -792,14 +886,44 @@ const LiveFeed = () => {
       }
 
       if (result?.data?.Status === "Success" || result?.status === 200) {
+        if (scanType === "CHECK_IN") {
+          const expiryDate = getExpiryDateFromVisitDate(
+            passDetails?.VVR_Visit_Date,
+          );
+          if (!expiryDate) {
+            throw new Error(
+              "Visit date is missing or invalid; unable to calculate expiry date.",
+            );
+          }
+
+          const accessedAreas =
+            passDetails?.VVR_Places_to_Visit ||
+            passDetails?.VGP_Visiting_Area ||
+            "N/A";
+
+          await VisitLogService.AddVisitLog(
+            passDetails.VGP_Pass_id,
+            accessedAreas,
+            expiryDate,
+          );
+        }
+
         // Update gate pass status in backend and localStorage
         const newStatus = scanType === "CHECK_IN" ? "IN" : "OUT";
         try {
-          await dispatch(UpdateGatePassStatus(passDetails.VGP_Pass_id, newStatus));
+          await dispatch(
+            UpdateGatePassStatus(passDetails.VGP_Pass_id, newStatus),
+          );
         } catch (statusErr) {
-          console.warn("[LiveFeed] Could not update gate pass status in backend:", statusErr);
+          console.warn(
+            "[LiveFeed] Could not update gate pass status in backend:",
+            statusErr,
+          );
         }
-        localStorage.setItem(`svm.gatePassStatus.${passDetails.VGP_Pass_id}`, newStatus);
+        localStorage.setItem(
+          `svm.gatePassStatus.${passDetails.VGP_Pass_id}`,
+          newStatus,
+        );
 
         const actionText = scanType === "CHECK_IN" ? "Check-in" : "Check-out";
         setScanMessage(
@@ -1077,7 +1201,11 @@ const LiveFeed = () => {
                           subVisitorApiData?.VV_Visitor_id ||
                           qrData?.mainVisitor?.id ||
                           qrData?.id;
-                        openViewAttachments(vid, profileData.Name, ["nic", "passport", "driving licence"]);
+                        openViewAttachments(vid, profileData.Name, [
+                          "nic",
+                          "passport",
+                          "driving licence",
+                        ]);
                       }}
                       className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all shrink-0 cursor-pointer active:scale-95"
                     >
@@ -1218,7 +1346,11 @@ const LiveFeed = () => {
                                 subVisitorApiData?.VV_Visitor_id ||
                                 qrData?.mainVisitor?.id ||
                                 qrData?.id;
-                              openViewAttachments(vid, profileData.Name, "Vehicle Insurance");
+                              openViewAttachments(
+                                vid,
+                                profileData.Name,
+                                "Vehicle Insurance",
+                              );
                             }}
                             className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all cursor-pointer active:scale-95 text-[10px] font-semibold flex items-center gap-1"
                           >
@@ -1306,7 +1438,12 @@ const LiveFeed = () => {
                               title="View uploaded attachments"
                               onClick={() => {
                                 const svId = subVisitor.id || subVisitor.VVG_id;
-                                openViewAttachments(svId, subVisitor.name, ["nic", "passport", "driving licence"], true);
+                                openViewAttachments(
+                                  svId,
+                                  subVisitor.name,
+                                  ["nic", "passport", "driving licence"],
+                                  true,
+                                );
                               }}
                               className="p-1.5 rounded-lg border border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/60 transition-all shrink-0 cursor-pointer active:scale-95"
                             >
@@ -1767,35 +1904,51 @@ const LiveFeed = () => {
                   {viewAttachments.error}
                 </div>
               ) : (viewAttachments.filterCategory
-                ? viewAttachments.list.filter(
-                    (att) => {
-                      const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
+                  ? viewAttachments.list.filter((att) => {
+                      const cat = (
+                        att.VAT_File_Category ||
+                        att.FileCategory ||
+                        ""
+                      ).toLowerCase();
                       if (Array.isArray(viewAttachments.filterCategory)) {
-                         return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
+                        return viewAttachments.filterCategory
+                          .map((c) => c.toLowerCase())
+                          .includes(cat);
                       }
-                      return cat === viewAttachments.filterCategory.toLowerCase();
-                    }
-                  )
-                : viewAttachments.list
-              ).length === 0 && !viewAttachments.loading ? (
+                      return (
+                        cat === viewAttachments.filterCategory.toLowerCase()
+                      );
+                    })
+                  : viewAttachments.list
+                ).length === 0 && !viewAttachments.loading ? (
                 <div className="flex flex-col items-center justify-center py-10 gap-3 opacity-40">
                   <FolderOpen size={32} />
                   <p className="text-[11px] tracking-widest uppercase">
-                    No {Array.isArray(viewAttachments.filterCategory) ? "" : viewAttachments.filterCategory || ""} attachments found
+                    No{" "}
+                    {Array.isArray(viewAttachments.filterCategory)
+                      ? ""
+                      : viewAttachments.filterCategory || ""}{" "}
+                    attachments found
                   </p>
                 </div>
               ) : (
                 <ul className="space-y-2 max-h-[312px] overflow-y-auto pr-1 custom-scrollbar">
                   {(viewAttachments.filterCategory
-                    ? viewAttachments.list.filter(
-                        (att) => {
-                          const cat = (att.VAT_File_Category || att.FileCategory || "").toLowerCase();
-                          if (Array.isArray(viewAttachments.filterCategory)) {
-                             return viewAttachments.filterCategory.map(c => c.toLowerCase()).includes(cat);
-                          }
-                          return cat === viewAttachments.filterCategory.toLowerCase();
+                    ? viewAttachments.list.filter((att) => {
+                        const cat = (
+                          att.VAT_File_Category ||
+                          att.FileCategory ||
+                          ""
+                        ).toLowerCase();
+                        if (Array.isArray(viewAttachments.filterCategory)) {
+                          return viewAttachments.filterCategory
+                            .map((c) => c.toLowerCase())
+                            .includes(cat);
                         }
-                      )
+                        return (
+                          cat === viewAttachments.filterCategory.toLowerCase()
+                        );
+                      })
                     : viewAttachments.list
                   ).map((att, idx) => {
                     const category =
@@ -1840,7 +1993,11 @@ const LiveFeed = () => {
                           title="Download file"
                           onClick={(e) => {
                             e.stopPropagation();
-                            vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                            vatId &&
+                              VisitorAttachmentService.DownloadAttachment(
+                                vatId,
+                                fileName,
+                              );
                           }}
                           className={`flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/25 transition-all shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                         >
@@ -1855,7 +2012,10 @@ const LiveFeed = () => {
           </div>
         </div>
       )}
-      <AttachmentPreviewModal previewData={previewData} onClose={closePreview} />
+      <AttachmentPreviewModal
+        previewData={previewData}
+        onClose={closePreview}
+      />
     </div>
   );
 };

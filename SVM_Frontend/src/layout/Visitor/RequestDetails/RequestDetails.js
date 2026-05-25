@@ -465,11 +465,11 @@ const RequestDetails = () => {
               value={summary.company}
               icon={Building2}
             />
-            <SmallField
+            {/* <SmallField
               label="Visitor type"
               value={summary.visitorType}
               icon={Briefcase}
-            />
+            /> */}
           </div>
 
           {/* Items carried by the main visitor */}

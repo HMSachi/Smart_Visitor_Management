@@ -5,6 +5,7 @@ import {
   GetVisitorsByCP,
   ToggleVisitorStatus,
   AddVisitor,
+  GetAllVisitors,
 } from "../../../actions/VisitorAction";
 import { AddAdministrator } from "../../../actions/AdministratorAction";
 import { GetAllContactPersons } from "../../../actions/ContactPersonAction";
@@ -63,7 +64,7 @@ import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
 const ContactAllVisitors = () => {
   const dispatch = useDispatch();
   const { previewData, openPreview, closePreview } = useAttachmentPreview();
-  const { visitorsByCP, isLoading, error } = useSelector(
+  const { visitors, visitorsByCP, isLoading, error } = useSelector(
     (state) => state.visitorManagement,
   );
   const { contactPersons } = useSelector((state) => state.contactPerson);
@@ -266,6 +267,7 @@ const ContactAllVisitors = () => {
         dispatch(GetAllContactPersons());
         dispatch(GetAllBlacklist());
         dispatch(GetAllPlaces());
+        dispatch(GetAllVisitors());
       } catch (err) {
         console.error("Error loading contact persons:", err);
       }
@@ -368,7 +370,9 @@ const ContactAllVisitors = () => {
     setHasExistingAttachments(false);
 
     try {
-      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(visitor.VV_Visitor_id);
+      const res = await VisitorAttachmentService.GetAttachmentsByVisitorId(
+        visitor.VV_Visitor_id,
+      );
       const rawList = res?.data?.ResultSet || res?.data || [];
       if (rawList.length > 0) {
         setHasExistingAttachments(true);
@@ -420,6 +424,8 @@ const ContactAllVisitors = () => {
 
   const validateForm = () => {
     const newErrors = {};
+    const allVisitors = Array.isArray(visitors) ? visitors : [];
+    const normalize = (value) => value?.toString().trim().toLowerCase();
 
     const nameErr = validateName(formData.VV_Name);
     if (nameErr) newErrors.VV_Name = nameErr;
@@ -432,6 +438,33 @@ const ContactAllVisitors = () => {
 
     const phoneErr = validatePhone(formData.VV_Phone);
     if (phoneErr) newErrors.VV_Phone = phoneErr;
+
+    const emailKey = normalize(formData.VV_Email);
+    const nicKey = normalize(formData.VV_NIC_Passport_NO);
+    const hasDuplicateEmail =
+      emailKey &&
+      allVisitors.some(
+        (v) =>
+          normalize(v.VV_Email) === emailKey &&
+          (!editingVisitorId || v.VV_Visitor_id !== editingVisitorId),
+      );
+    const hasDuplicateNic =
+      nicKey &&
+      allVisitors.some(
+        (v) =>
+          normalize(v.VV_NIC_Passport_NO) === nicKey &&
+          (!editingVisitorId || v.VV_Visitor_id !== editingVisitorId),
+      );
+
+    if (hasDuplicateEmail) {
+      newErrors.VV_Email =
+        "This email is already registered for another visitor.";
+    }
+
+    if (hasDuplicateNic) {
+      newErrors.VV_NIC_Passport_NO =
+        "This NIC/Passport is already registered for another visitor.";
+    }
 
     if (!editingVisitorId || formData.VA_Password) {
       const passErr = validatePassword(formData.VA_Password);
@@ -580,9 +613,7 @@ const ContactAllVisitors = () => {
               targetVisitorId,
             );
           } else {
-            console.warn(
-              "Could not resolve visitor ID — attachment skipped.",
-            );
+            console.warn("Could not resolve visitor ID — attachment skipped.");
           }
         } catch (attachErr) {
           console.error("Attachment upload failed:", attachErr?.message);
@@ -798,9 +829,9 @@ const ContactAllVisitors = () => {
                       <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Company
                       </th>
-                      <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] min-w-[250px] text-text-secondary">
+                      {/* <th className="px-3 py-1.5 text-left font-normal tracking-[0.3em] text-[12px] min-w-[250px] text-text-secondary">
                         Visiting area
-                      </th>
+                      </th> */}
                       <th className="px-3 py-1 text-center font-normal tracking-[0.3em] text-[12px] text-text-secondary">
                         Status
                       </th>
@@ -856,7 +887,7 @@ const ContactAllVisitors = () => {
                                 {visitor.VV_Company || "-"}
                               </span>
                             </td>
-                            <td className="px-3 py-1 text-left font-normal text-[12px] min-w-[250px]">
+                            {/* <td className="px-3 py-1 text-left font-normal text-[12px] min-w-[250px]">
                               <span
                                 title={
                                   visitor.VV_Visiting_places ||
@@ -866,7 +897,7 @@ const ContactAllVisitors = () => {
                               >
                                 {visitor.VV_Visiting_places || "-"}
                               </span>
-                            </td>
+                            </td> */}
                             <td className="px-3 py-1 text-center font-normal text-[10px]">
                               <div className="flex items-center justify-center gap-2">
                                 <button
@@ -938,7 +969,9 @@ const ContactAllVisitors = () => {
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="w-1.5 h-5 sm:h-6 bg-primary rounded-full"></div>
                   <h2 className="text-[11px] sm:text-[12px] font-normal text-white tracking-[0.16em]">
-                    {editingVisitorId ? "Edit visitor pre-approval" : "Pre-approve visitor"}
+                    {editingVisitorId
+                      ? "Edit visitor pre-approval"
+                      : "Pre-approve visitor"}
                   </h2>
                 </div>
                 <button
@@ -1199,8 +1232,6 @@ const ContactAllVisitors = () => {
                     )}
                   </div>
 
-
-
                   {!editingVisitorId && (
                     <div className="space-y-1">
                       <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
@@ -1261,7 +1292,9 @@ const ContactAllVisitors = () => {
                     type="submit"
                     className="px-5 sm:px-7 py-2 sm:py-2.5 rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[11px] sm:text-[12px] font-normal tracking-[0.16em] shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
                   >
-                    {editingVisitorId ? "Update pre-approval" : "Send pre-approval"}
+                    {editingVisitorId
+                      ? "Update pre-approval"
+                      : "Send pre-approval"}
                   </button>
                 </div>
               </form>
@@ -1561,7 +1594,11 @@ const ContactAllVisitors = () => {
                             title="Download file"
                             onClick={(e) => {
                               e.stopPropagation();
-                              vatId && VisitorAttachmentService.DownloadAttachment(vatId, fileName);
+                              vatId &&
+                                VisitorAttachmentService.DownloadAttachment(
+                                  vatId,
+                                  fileName,
+                                );
                             }}
                             className={`p-2 rounded-lg text-primary/80 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 ${!vatId ? "opacity-30 cursor-not-allowed" : ""}`}
                           >
@@ -1589,7 +1626,10 @@ const ContactAllVisitors = () => {
         )}
       </div>
 
-      <AttachmentPreviewModal previewData={previewData} onClose={closePreview} />
+      <AttachmentPreviewModal
+        previewData={previewData}
+        onClose={closePreview}
+      />
     </div>
   );
 };

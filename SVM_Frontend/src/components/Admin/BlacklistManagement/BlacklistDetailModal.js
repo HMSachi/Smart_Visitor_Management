@@ -47,10 +47,18 @@ const Field = ({ icon: Icon, label, value, accent, isLight }) => (
 /* ──────────────────────────────────────────────
    Main modal
 ────────────────────────────────────────────── */
-const BlacklistDetailModal = ({ isOpen, onClose, person, onApprove, onReject, isSecurityPortal, isContactPortal = false }) => {
+const BlacklistDetailModal = ({
+  isOpen,
+  onClose,
+  person,
+  onApprove,
+  onReject,
+  isSecurityPortal,
+}) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
   const [visitorDetails, setVisitorDetails] = React.useState(null);
+  const [blacklistDetails, setBlacklistDetails] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -58,8 +66,11 @@ const BlacklistDetailModal = ({ isOpen, onClose, person, onApprove, onReject, is
       const fetchVisitor = async () => {
         setIsLoading(true);
         try {
-          const { default: VisitorService } = await import("../../../services/VisitorService");
-          const response = await VisitorService.GetVisitorById(person.VB_Visitor_id);
+          const { default: VisitorService } =
+            await import("../../../services/VisitorService");
+          const response = await VisitorService.GetVisitorById(
+            person.VB_Visitor_id,
+          );
           const data = response.data?.ResultSet || response.data;
           if (Array.isArray(data) && data.length > 0) {
             setVisitorDetails(data[0]);
@@ -78,11 +89,54 @@ const BlacklistDetailModal = ({ isOpen, onClose, person, onApprove, onReject, is
     }
   }, [isOpen, person]);
 
+  React.useEffect(() => {
+    if (isOpen && person?.VB_Visitor_id) {
+      const fetchBlacklistDetails = async () => {
+        try {
+          const { default: BlacklistService } =
+            await import("../../../services/BlacklistService");
+          const response = await BlacklistService.GetBlacklistByVisitorId(
+            person.VB_Visitor_id,
+          );
+          const data = response.data?.ResultSet || response.data || [];
+          const resolved = Array.isArray(data) ? data[0] : data;
+          setBlacklistDetails(resolved || null);
+        } catch (error) {
+          console.error("Failed to fetch blacklist details:", error);
+          setBlacklistDetails(null);
+        }
+      };
+      fetchBlacklistDetails();
+    } else {
+      setBlacklistDetails(null);
+    }
+  }, [isOpen, person]);
+
   if (!person) return null;
 
-  const displayName = visitorDetails?.VV_Name || person.VB_Name || (person.VB_Visitor_id ? `Visitor ID: ${person.VB_Visitor_id}` : "");
+  const displayName =
+    visitorDetails?.VV_Name ||
+    person.VB_Name ||
+    (person.VB_Visitor_id ? `Visitor ID: ${person.VB_Visitor_id}` : "");
   const displayEmail = visitorDetails?.VV_Email || person.VB_Email || "—";
-  const displayPhone = visitorDetails?.VV_Phone || person.VB_Phone || person.VB_Contact_Number || person.VB_Mobile || "—";
+  const displayPhone =
+    visitorDetails?.VV_Phone ||
+    person.VB_Phone ||
+    person.VB_Contact_Number ||
+    person.VB_Mobile ||
+    "—";
+  const displayReason =
+    blacklistDetails?.VB_Description || person.VB_Description || "—";
+  const displayDate =
+    blacklistDetails?.VB_Created_Date || person.VB_Created_Date || "";
+  const approvalStatus =
+    blacklistDetails?.VB_Approval_Status || person.VB_Approval_Status || "";
+  const displayStatus = approvalStatus
+    ? approvalStatus.charAt(0).toUpperCase() +
+      approvalStatus.slice(1).toLowerCase()
+    : person.VB_Status === "I"
+      ? "Inactive"
+      : "Active";
 
   return createPortal(
     <AnimatePresence>
@@ -242,26 +296,21 @@ const BlacklistDetailModal = ({ isOpen, onClose, person, onApprove, onReject, is
                           isLight ? "text-[#1A1A1A]" : "text-white/90"
                         }`}
                       >
-                        {person.VB_Description || "—"}
+                        {displayReason}
                       </p>
                     </div>
 
                     <Field
                       icon={Calendar}
                       label="Date Added"
-                      value={
-                        person.VB_Created_Date
-                          ? person.VB_Created_Date.split(" ")[0]
-                          : ""
-                      }
+                      value={displayDate ? displayDate.split(" ")[0] : ""}
                       isLight={isLight}
                     />
-
 
                     <Field
                       icon={Shield}
                       label="Status"
-                      value={person.VB_Status === "I" ? "Inactive" : "Active"}
+                      value={displayStatus}
                       accent
                       isLight={isLight}
                     />
@@ -277,30 +326,31 @@ const BlacklistDetailModal = ({ isOpen, onClose, person, onApprove, onReject, is
                     : "border-white/5 bg-black/20"
                 }`}
               >
-                {!isSecurityPortal && !isContactPortal && person.VB_Approval_Status === "Pending" && (
-                  <>
-                    <button
-                      onClick={() => {
-                        onReject(person);
-                        onClose();
-                      }}
-                      className="px-6 py-2.5 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20 text-[11px] font-bold uppercase tracking-widest transition-all rounded-xl shadow-xl flex items-center gap-2"
-                    >
-                      <XCircle size={14} />
-                      Reject
-                    </button>
-                    <button
-                      onClick={() => {
-                        onApprove(person);
-                        onClose();
-                      }}
-                      className="px-6 py-2.5 bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white border border-green-500/20 text-[11px] font-bold uppercase tracking-widest transition-all rounded-xl shadow-xl flex items-center gap-2"
-                    >
-                      <CheckCircle size={14} />
-                      Approve
-                    </button>
-                  </>
-                )}
+                {!isSecurityPortal &&
+                  person.VB_Approval_Status === "Pending" && (
+                    <>
+                      <button
+                        onClick={() => {
+                          onReject(person);
+                          onClose();
+                        }}
+                        className="px-6 py-2.5 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20 text-[11px] font-bold uppercase tracking-widest transition-all rounded-xl shadow-xl flex items-center gap-2"
+                      >
+                        <XCircle size={14} />
+                        Reject
+                      </button>
+                      <button
+                        onClick={() => {
+                          onApprove(person);
+                          onClose();
+                        }}
+                        className="px-6 py-2.5 bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white border border-green-500/20 text-[11px] font-bold uppercase tracking-widest transition-all rounded-xl shadow-xl flex items-center gap-2"
+                      >
+                        <CheckCircle size={14} />
+                        Approve
+                      </button>
+                    </>
+                  )}
                 <button
                   onClick={onClose}
                   className={`px-6 py-2.5 border text-[11px] font-medium capitalize tracking-widest transition-all rounded-xl shadow-xl ${

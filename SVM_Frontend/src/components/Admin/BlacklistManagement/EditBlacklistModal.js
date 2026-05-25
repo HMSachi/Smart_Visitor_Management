@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
-import { X, Edit3, User, Mail, Save, Briefcase } from "lucide-react";
+import { X, Edit3, User, Mail, Save, Phone } from "lucide-react";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 
 const InputField = ({
@@ -40,8 +40,8 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
   const [formData, setFormData] = useState({
     VB_id: "",
     VB_Name: "",
-    VB_Role: "",
     VB_Email: "",
+    VB_Phone: "",
     VB_Alert_Type: "Level 01",
   });
 
@@ -50,21 +50,51 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
       setFormData({
         VB_id: initialData.VB_id || "",
         VB_Name: initialData.VB_Name || "",
-        VB_Role: initialData.VB_Role || "",
         VB_Email: initialData.VB_Email || "",
+        VB_Phone:
+          initialData.VB_Phone ||
+          initialData.VB_Contact_Number ||
+          initialData.VB_Mobile ||
+          "",
         VB_Alert_Type: initialData.VB_Alert_Type || "Level 01",
       });
     }
   }, [initialData, isOpen]);
 
+  useEffect(() => {
+    if (!isOpen || !initialData?.VB_Visitor_id) return;
+
+    const loadPhone = async () => {
+      try {
+        const { default: VisitorService } =
+          await import("../../../services/VisitorService");
+        const response = await VisitorService.GetVisitorById(
+          initialData.VB_Visitor_id,
+        );
+        const data = response.data?.ResultSet || response.data;
+        const visitor = Array.isArray(data) ? data[0] : data;
+        const phone = visitor?.VV_Phone;
+        if (phone) {
+          setFormData((prev) =>
+            prev.VB_Phone ? prev : { ...prev, VB_Phone: phone },
+          );
+        }
+      } catch (error) {
+        console.error("Failed to fetch visitor phone:", error);
+      }
+    };
+
+    loadPhone();
+  }, [initialData, isOpen]);
+
   const handleChange = (e) => {
     let { name, value } = e.target;
-    
+
     // Real-time filtering
     if (name === "VB_Name") {
       value = value.replace(/[^A-Za-z\s]/g, "");
     }
-    
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -159,16 +189,15 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
                   />
                   <InputField
                     isLight={isLight}
-                    label="Role"
-                    icon={Briefcase}
-                    name="VB_Role"
-                    value={formData.VB_Role}
+                    label="Phone Number"
+                    icon={Phone}
+                    name="VB_Phone"
+                    value={formData.VB_Phone}
                     onChange={handleChange}
-                    placeholder="e.g. visitor, contractor"
+                    type="tel"
+                    placeholder="e.g. +94 77 123 4567"
                   />
                 </div>
-
-
 
                 {/* Footer */}
                 <div
