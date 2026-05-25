@@ -88,7 +88,7 @@ const DashboardCharts = () => {
   const totalRequests = approvedRequests + pendingRequests + rejectedRequests;
 
   const trendData = history.length > 0 ? history : [];
-  const sharedChartRadius = { innerRadius: 58, outerRadius: 78, paddingAngle: 4 };
+  const sharedChartRadius = { innerRadius: 40, outerRadius: 54, paddingAngle: 3 };
 
   const quickStats = [
     { label: "Active Visitors", value: activeVisitors, hint: "Currently on premise", icon: Users, color: "#2563EB" },
@@ -132,19 +132,19 @@ const DashboardCharts = () => {
                 background: "var(--color-bg-paper)",
                 border: "1px solid var(--color-border-soft)",
                 borderRadius: "24px",
-                padding: "1.65rem",
+                padding: "1.25rem",
                 boxShadow: "var(--shadow-card)",
               }}
             >
               <div className="flex items-start justify-between gap-4 relative z-10">
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--color-text-dim)] font-semibold mb-1">
+                  <p className="text-[12px] sm:text-[13px] tracking-wide text-[var(--color-text-dim)] font-bold mb-1">
                     {item.label}
                   </p>
-                  <p className="text-[28px] font-extrabold leading-none text-[var(--color-text-primary)] m-0">
+                  <p className="text-[18px] sm:text-[20px] font-extrabold leading-none text-[var(--color-text-primary)] m-0">
                     {item.value}{item.suffix || ""}
                   </p>
-                  <p className="text-[11px] text-[var(--color-text-secondary)] mt-3 leading-relaxed max-w-[13rem]">
+                  <p className="text-[10px] sm:text-[11px] text-[var(--color-text-secondary)] mt-1.5 leading-relaxed max-w-[13rem]">
                     {item.hint}
                   </p>
                 </div>
@@ -174,8 +174,8 @@ const DashboardCharts = () => {
           style={{
             background: "var(--color-bg-paper)",
             border: "1px solid var(--color-border-soft)",
-            borderRadius: "28px",
-            padding: "1.9rem",
+            borderRadius: "20px",
+            padding: "1.25rem",
             boxShadow: "var(--shadow-card)",
           }}
         >
@@ -189,7 +189,7 @@ const DashboardCharts = () => {
             </div>
           </div>
 
-          <div className="h-64 w-full relative z-10 flex items-center justify-center pb-2">
+          <div className="h-44 w-full relative z-10 flex items-center justify-center pb-2">
             {userChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -221,7 +221,7 @@ const DashboardCharts = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.05 }}
           className="group relative overflow-hidden"
-          style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)", borderRadius: "28px", padding: "1.9rem", boxShadow: "var(--shadow-card)" }}
+          style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)", borderRadius: "20px", padding: "1.25rem", boxShadow: "var(--shadow-card)" }}
         >
           <div className="flex items-center justify-between mb-6 relative z-10">
             <div>
@@ -233,7 +233,7 @@ const DashboardCharts = () => {
             </div>
           </div>
 
-          <div className="h-64 w-full relative z-10 flex items-center justify-center pb-2">
+          <div className="h-44 w-full relative z-10 flex items-center justify-center pb-2">
             {restrictedChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -268,7 +268,7 @@ const DashboardCharts = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="group relative overflow-hidden"
-          style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)", borderRadius: "28px", padding: "1.75rem", boxShadow: "var(--shadow-card)" }}
+          style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)", borderRadius: "20px", padding: "1.25rem", boxShadow: "var(--shadow-card)" }}
         >
           <div className="flex items-center justify-between mb-6 relative z-10">
             <div>
@@ -280,7 +280,7 @@ const DashboardCharts = () => {
             </div>
           </div>
 
-          <div className="h-64 w-full relative z-10 flex items-center justify-center pb-2">
+          <div className="h-44 w-full relative z-10 flex items-center justify-center pb-2">
             {requestChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
