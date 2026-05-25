@@ -137,6 +137,7 @@ const MyRequests = () => {
     VVR_Places_to_Visit: "",
     VVR_Purpose: "",
   });
+  const [currentEditSelectedPlace, setCurrentEditSelectedPlace] = useState("");
   const [editVehicles, setEditVehicles] = useState([]); // [{ VV_Vehicle_id, VV_Vehicle_Number, VV_Vehicle_Type, _isNew? }]
   const [editGroupMembers, setEditGroupMembers] = useState([]); // [{ VVG_id, VVG_Visitor_Name, VVG_Designation, VVG_NIC_Passport_Number }]
   const [editItems, setEditItems] = useState([]); // [{ VIC_Item_id, VIC_Item_Name, VIC_Quantity, VIC_Designation }]
@@ -1598,54 +1599,102 @@ const MyRequests = () => {
                         <MapPin size={11} className="text-primary" /> Places to
                         Visit
                       </label>
-                      <select
-                        value={editForm.VVR_Places_to_Visit}
-                        onChange={(e) =>
-                          setEditForm((f) => ({
-                            ...f,
-                            VVR_Places_to_Visit: e.target.value,
-                          }))
-                        }
-                        disabled={placesLoading}
-                        className={`mas-input appearance-none cursor-pointer ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
-                      >
-                        <option value="">
-                          {placesLoading
-                            ? "Loading places..."
-                            : "Select a place to visit"}
-                        </option>
-                        {placesList &&
-                          placesList.length > 0 &&
-                          placesList
-                            .filter((place) => {
-                              const status = (
-                                place.VAIL_Status ||
-                                place.Status ||
-                                "A"
-                              )
-                                .toString()
-                                .trim()
-                                .toUpperCase();
-                              return status === "A";
-                            })
-                            .map((place, idx) => {
-                              const id =
-                                place.VAIL_Item_List_ID ||
-                                place.Item_List_ID ||
-                                place.Id ||
-                                idx;
-                              const name =
-                                place.VAIL_Item_Name ||
-                                place.Item_Name ||
-                                place.Name ||
-                                "Unknown";
-                              return (
-                                <option key={id} value={name}>
-                                  {name}
-                                </option>
-                              );
-                            })}
-                      </select>
+                      <div className="flex gap-2">
+                        <div className="relative flex-grow">
+                          <select
+                            value={currentEditSelectedPlace}
+                            onChange={(e) => setCurrentEditSelectedPlace(e.target.value)}
+                            disabled={placesLoading}
+                            className={`mas-input appearance-none cursor-pointer ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                          >
+                            <option value="">
+                              {placesLoading
+                                ? "Loading places..."
+                                : "Select a place to visit"}
+                            </option>
+                            {placesList &&
+                              placesList.length > 0 &&
+                              placesList
+                                .filter((place) => {
+                                  const status = (
+                                    place.VAIL_Status ||
+                                    place.Status ||
+                                    "A"
+                                  )
+                                    .toString()
+                                    .trim()
+                                    .toUpperCase();
+                                  return status === "A";
+                                })
+                                .map((place, idx) => {
+                                  const id =
+                                    place.VAIL_Item_List_ID ||
+                                    place.Item_List_ID ||
+                                    place.Id ||
+                                    idx;
+                                  const name =
+                                    place.VAIL_Item_Name ||
+                                    place.Item_Name ||
+                                    place.Name ||
+                                    "Unknown";
+                                  return (
+                                    <option key={id} value={name}>
+                                      {name}
+                                    </option>
+                                  );
+                                })}
+                          </select>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (currentEditSelectedPlace) {
+                              const selectedPlaces = editForm.VVR_Places_to_Visit
+                                ? editForm.VVR_Places_to_Visit.split(",").map(p => p.trim()).filter(Boolean)
+                                : [];
+                              if (!selectedPlaces.includes(currentEditSelectedPlace)) {
+                                const updated = [...selectedPlaces, currentEditSelectedPlace].join(", ");
+                                setEditForm((f) => ({ ...f, VVR_Places_to_Visit: updated }));
+                              }
+                              setCurrentEditSelectedPlace("");
+                            }
+                          }}
+                          disabled={!currentEditSelectedPlace || placesLoading}
+                          className="px-4 h-[38px] rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-bold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-primary/10 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                        >
+                          <Plus size={14} /> Add
+                        </button>
+                      </div>
+
+                      {/* Selected Places Tags */}
+                      {(() => {
+                        const selectedPlaces = editForm.VVR_Places_to_Visit
+                          ? editForm.VVR_Places_to_Visit.split(",").map(p => p.trim()).filter(Boolean)
+                          : [];
+                        if (selectedPlaces.length === 0) return null;
+                        return (
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            {selectedPlaces.map((place, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20 animate-fade-in"
+                              >
+                                {place}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = selectedPlaces.filter(p => p !== place).join(", ");
+                                    setEditForm((f) => ({ ...f, VVR_Places_to_Visit: updated }));
+                                  }}
+                                  className="w-3.5 h-3.5 rounded-full flex items-center justify-center text-primary/80 hover:text-primary hover:bg-primary/20 transition-all cursor-pointer"
+                                >
+                                  <X size={10} />
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </div>
                     <div className="md:col-span-2 space-y-1.5">
                       <label

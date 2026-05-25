@@ -23,7 +23,9 @@ import {
   MapPin, 
   FileText, 
   ArrowLeft,
-  HelpCircle
+  HelpCircle,
+  Plus,
+  X
 } from "lucide-react";
 import { SectionHeader, InputField } from "../../../components/Contact_Person/VisitRequests/FormComponents";
 
@@ -43,6 +45,34 @@ const CreateVisitRequest = () => {
   const { visitationDetails: formData, selectedVisitorDetails, isSubmitting } = useSelector((state) => state.visitRequestForm);
   const [cpId, setCpId] = useState(null);
   const [errors, setErrors] = useState({});
+  const [selectedPlaces, setSelectedPlaces] = useState([]);
+  const [currentSelectedPlace, setCurrentSelectedPlace] = useState("");
+
+  useEffect(() => {
+    if (formData.VVR_Places_to_Visit) {
+      const places = formData.VVR_Places_to_Visit.split(",").map(p => p.trim()).filter(Boolean);
+      setSelectedPlaces(places);
+    } else {
+      setSelectedPlaces([]);
+    }
+  }, [formData.VVR_Places_to_Visit]);
+
+  const addPlace = (placeName) => {
+    if (!placeName || selectedPlaces.includes(placeName)) return;
+    const updated = [...selectedPlaces, placeName];
+    setSelectedPlaces(updated);
+    dispatch(updateVisitationDetails({ VVR_Places_to_Visit: updated.join(", ") }));
+    setCurrentSelectedPlace("");
+    if (errors.VVR_Places_to_Visit) {
+      setErrors({ ...errors, VVR_Places_to_Visit: "" });
+    }
+  };
+
+  const removePlace = (placeName) => {
+    const updated = selectedPlaces.filter(p => p !== placeName);
+    setSelectedPlaces(updated);
+    dispatch(updateVisitationDetails({ VVR_Places_to_Visit: updated.join(", ") }));
+  };
 
   useEffect(() => {
     const loadContactPersonId = async () => {
@@ -228,30 +258,66 @@ const CreateVisitRequest = () => {
                     <label className="text-[12px] font-medium text-text-secondary capitalize tracking-[0.15em] flex items-center gap-1.5 px-0.5">
                       <MapPin size={11} className="text-primary" /> Places to Visit
                     </label>
-                    <select
-                      name="VVR_Places_to_Visit"
-                      value={formData.VVR_Places_to_Visit}
-                      onChange={handleInputChange}
-                      disabled={placesLoading}
-                      className={`w-full bg-background-paper border rounded-lg px-3 py-1.5 text-[12px] font-normal text-text-primary transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
-                        errors.VVR_Places_to_Visit ? "border-red-500" : "border-border-soft focus:border-primary/50"
-                      } ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
-                    >
-                      <option value="" className="bg-background-paper">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
-                      {placesList && placesList.length > 0 && placesList
-                        .filter((place) => {
-                          const status = (place.VAIL_Status || place.Status || place.status || 'A').toString().trim().toUpperCase();
-                          return status === 'A';
-                        })
-                        .map((place, idx) => {
-                          const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
-                          const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
-                          return (
-                            <option key={id} value={name} className="bg-background-paper">{name}</option>
-                          );
-                        })}
-                    </select>
-                    {errors.VVR_Places_to_Visit && <p className="text-[12px] text-red-500 font-normal px-0.5 capitalize">{errors.VVR_Places_to_Visit}</p>}
+                    <div className="flex gap-2">
+                      <div className="relative flex-grow">
+                        <select
+                          value={currentSelectedPlace}
+                          onChange={(e) => setCurrentSelectedPlace(e.target.value)}
+                          disabled={placesLoading}
+                          className={`w-full bg-background-paper border rounded-lg px-3 py-1.5 text-[12px] font-normal text-text-primary transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/5 ${
+                            errors.VVR_Places_to_Visit && selectedPlaces.length === 0 ? "border-red-500" : "border-border-soft focus:border-primary/50"
+                          } ${placesLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                        >
+                          <option value="" className="bg-background-paper">{placesLoading ? "Loading places..." : "Select a place to visit"}</option>
+                          {placesList && placesList.length > 0 && placesList
+                            .filter((place) => {
+                              const status = (place.VAIL_Status || place.Status || place.status || 'A').toString().trim().toUpperCase();
+                              return status === 'A';
+                            })
+                            .map((place, idx) => {
+                              const id = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || idx;
+                              const name = place.VAIL_Item_Name || place.Item_Name || place.Name || "Unknown";
+                              return (
+                                <option key={id} value={name} className="bg-background-paper">{name}</option>
+                              );
+                            })}
+                        </select>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (currentSelectedPlace) {
+                            addPlace(currentSelectedPlace);
+                          }
+                        }}
+                        disabled={!currentSelectedPlace || placesLoading}
+                        className="px-4 h-[33px] rounded-lg bg-primary hover:bg-[var(--color-primary-hover)] text-white text-[12px] font-bold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-primary/10 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                      >
+                        <Plus size={14} /> Add
+                      </button>
+                    </div>
+                    {errors.VVR_Places_to_Visit && selectedPlaces.length === 0 && <p className="text-[12px] text-red-500 font-normal px-0.5 capitalize">{errors.VVR_Places_to_Visit}</p>}
+
+                    {/* Selected Places Tags */}
+                    {selectedPlaces.length > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {selectedPlaces.map((place, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20 animate-fade-in"
+                          >
+                            {place}
+                            <button
+                              type="button"
+                              onClick={() => removePlace(place)}
+                              className="w-3.5 h-3.5 rounded-full flex items-center justify-center text-primary/80 hover:text-primary hover:bg-primary/20 transition-all cursor-pointer"
+                            >
+                              <X size={10} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="md:col-span-2">
                     <InputField label="What Is The Reason?" name="VVR_Purpose" placeholder="e.g. Maintenance, Meeting" value={formData.VVR_Purpose} onChange={handleInputChange} error={errors.VVR_Purpose} icon={HelpCircle} />
