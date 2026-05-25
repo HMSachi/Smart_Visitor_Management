@@ -1,9 +1,32 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Users, UserCheck, AlertTriangle, TrendingUp } from 'lucide-react';
+import {
+  Users,
+  UserCheck,
+  AlertTriangle,
+  TrendingUp,
+  Shield,
+  Phone,
+  Building2,
+  CheckCircle2,
+  Clock3,
+  XCircle,
+  ShieldAlert,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const iconMap = { Users, UserCheck, AlertTriangle };
+const iconMap = {
+  Users,
+  UserCheck,
+  AlertTriangle,
+  Shield,
+  Phone,
+  Building2,
+  CheckCircle2,
+  Clock3,
+  XCircle,
+  ShieldAlert,
+};
 
 const colorMap = {
   blue: {
@@ -106,15 +129,71 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
 };
 
 const OverviewPanels = () => {
-  const { todayStats } = useSelector(state => state.admin.metrics);
+  const { todayVisits, lastSyncedAt } = useSelector((state) => state.admin.metrics);
+  const administrators = useSelector((state) => state.administrator.administrators || []);
+  const contactPersons = useSelector((state) => state.contactPerson.contactPersons || []);
+  const visitors = useSelector((state) => state.visitorManagement.visitors || []);
+  const visitRequests = useSelector((state) => state.visitRequestsState.visitRequests || []);
+  const blacklists = useSelector((state) => state.blacklistState.blacklists || []);
+
+  const normalizedRole = (value) => (value || '').toString().trim().toLowerCase();
+  const normalizedStatus = (value) => (value || '').toString().trim().toUpperCase();
+
+  const approvedRequests = visitRequests.filter((request) => {
+    const status = normalizedStatus(request.VVR_Status);
+    return status === 'A' || status === 'APPROVED' || status === 'ADMIN APPROVED' || status === 'ADMIN_APPROVED';
+  }).length;
+
+  const rejectedRequests = visitRequests.filter((request) => {
+    const status = normalizedStatus(request.VVR_Status);
+    return status === 'R' || status === 'REJECTED';
+  }).length;
+
+  const pendingRequests = Math.max(visitRequests.length - approvedRequests - rejectedRequests, 0);
+
+  const adminCount = administrators.filter((person) => normalizedRole(person.VA_Role).includes('admin')).length;
+  const securityCount = administrators.filter((person) => normalizedRole(person.VA_Role).includes('security')).length;
+  const visitorRoleCount = administrators.filter((person) => normalizedRole(person.VA_Role).includes('visitor')).length;
+
+  const liveCards = [
+    { label: 'Administrators', value: String(adminCount), iconName: 'Shield', trend: 'Database count', colorClass: 'blue' },
+    { label: 'Security Officers', value: String(securityCount), iconName: 'ShieldAlert', trend: 'Database count', colorClass: 'green' },
+    { label: 'Contact Persons', value: String(contactPersons.length), iconName: 'Phone', trend: 'Database count', colorClass: 'yellow' },
+    { label: 'Registered Visitors', value: String(visitors.length || visitorRoleCount), iconName: 'Building2', trend: 'Database count', colorClass: 'blue' },
+    { label: 'Approved Requests', value: String(approvedRequests), iconName: 'CheckCircle2', trend: 'Live approvals', colorClass: 'green' },
+    { label: 'Pending Requests', value: String(pendingRequests), iconName: 'Clock3', trend: 'Waiting review', colorClass: 'yellow' },
+    { label: 'Rejected Requests', value: String(rejectedRequests), iconName: 'XCircle', trend: 'Live rejections', colorClass: 'red' },
+    { label: 'Restricted List', value: String(blacklists.length), iconName: 'Shield', trend: 'Blocked visitors', colorClass: 'red' },
+  ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-      {todayStats?.map((stat, index) => (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3 px-1">
+        <div>
+          <p className="text-[10px] font-semibold tracking-[0.24em] uppercase text-[var(--color-text-dim)] mb-1">
+            Live Snapshot
+          </p>
+          <h3 className="text-[14px] font-bold text-[var(--color-text-primary)] m-0">
+            Core dashboard totals
+          </h3>
+        </div>
+        <div className="text-right">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-dim)] m-0">
+            Auto refresh
+          </p>
+          <p className="text-[11px] font-semibold text-[var(--color-text-primary)] m-0">
+            {lastSyncedAt ? new Date(lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Every 30s'}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {liveCards.map((stat, index) => (
         <div key={`stat-${index}`}>
           {Panel(stat, index)}
         </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

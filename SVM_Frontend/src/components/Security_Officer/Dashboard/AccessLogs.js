@@ -77,9 +77,6 @@ const AccessLogs = () => {
                         History Logs
                     </h2>
                 </div>
-                <button className="mt-4 md:mt-0 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all text-xs font-bold uppercase tracking-wide">
-                    Download Report
-                </button>
             </div>
 
             <div className="overflow-x-auto">

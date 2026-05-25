@@ -17,7 +17,8 @@ const QuickActionButton = ({
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
       onClick={onClick}
-      className="group relative overflow-hidden h-full min-h-[90px] bg-background-alt border border-border-soft rounded-xl p-3 sm:p-3.5 hover:border-primary/40 transition-all duration-500 flex flex-col justify-between"
+      className="group relative overflow-hidden h-full min-h-[90px] bg-background-paper hover:border-primary/40 transition-all duration-500 flex flex-col justify-between"
+      style={{ border: "1px solid var(--color-border-soft)", borderRadius: "24px", padding: "1.3rem", boxShadow: "var(--shadow-card)" }}
     >
       {/* Background glow effect */}
       <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>

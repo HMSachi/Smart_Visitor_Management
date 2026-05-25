@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Activity } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import MetricsGrid from "./MetricsGrid";
 import QuickActions from "./QuickActions";
-import SystemStatus from "./SystemStatus";
-import RequestDistribution from "./RequestDistribution";
-import ActivityTimeline from "./ActivityTimeline";
+import DashboardCharts from "./DashboardCharts";
 import RecentRequests from "./RecentRequests";
 import { GetVisitRequestsByCP } from "../../../actions/VisitRequestAction";
 import ContactPersonService from "../../../services/ContactPersonService";
@@ -58,6 +55,16 @@ const DashboardMain = () => {
         {/* Header Section */}
         <div className="h-4" /> {/* Spacer instead of header */}
 
+        {/* Charts Section - Moved to top */}
+        <motion.section
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="relative z-10"
+        >
+          <DashboardCharts />
+        </motion.section>
+
         {/* Metrics Grid */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -77,49 +84,15 @@ const DashboardMain = () => {
           <QuickActions />
         </motion.section>
 
-        {/* System Status & Request Distribution (2-Column Layout) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
-          {/* System Status - Wider on desktop */}
-          <motion.section
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="lg:col-span-2"
-          >
-            <SystemStatus />
-          </motion.section>
-
-          {/* Request Distribution */}
-          <motion.section
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <RequestDistribution />
-          </motion.section>
-        </div>
-
-        {/* Activity Timeline & Recent Requests (2-Column Layout) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 pb-10">
-          {/* Activity Timeline */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-2xl p-6 md:p-8 hover:border-primary/20 transition-all duration-300"
-          >
-            <ActivityTimeline />
-          </motion.section>
-
-          {/* Recent Requests */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <RecentRequests />
-          </motion.section>
-        </div>
+        {/* Recent Requests (Full Width since Timeline is removed) */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="pb-10"
+        >
+          <RecentRequests />
+        </motion.section>
       </div>
 
     </div>

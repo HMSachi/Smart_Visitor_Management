@@ -7,7 +7,7 @@ import { AddGatePass, GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
 import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
-const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
+const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnly = false }) => {
   const dispatch = useDispatch();
   const [gatePassId, setGatePassId] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -32,6 +32,14 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
       });
       if (existing) {
         setGatePassId(existing.VGP_Pass_id);
+        try {
+          const key = `svm.gatepass.sent.${existing.VGP_Pass_id}`;
+          const sentFlag = typeof window !== 'undefined' && window.localStorage.getItem(key);
+          if (sentFlag === '1') setWasSent(true);
+          else setWasSent(false);
+        } catch (e) {
+          setWasSent(false);
+        }
       }
     }
   }, [isOpen, visitorData, gatePasses]);
@@ -109,6 +117,13 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
   const handleSend = () => {
     // Simulate API call for sending notification
     setWasSent(true);
+    try {
+      if (gatePassId && typeof window !== 'undefined') {
+        window.localStorage.setItem(`svm.gatepass.sent.${gatePassId}`, '1');
+      }
+    } catch (e) {
+      // ignore storage errors
+    }
     // Optional: Real integration would happen here
   };
 
@@ -344,21 +359,24 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [] }) => {
               <div className="p-3 border-t border-white/5 bg-white/[0.01] relative z-10 flex flex-col md:flex-row gap-2">
                 {gatePassId && (
                   <>
-                    <button
-                      onClick={handleSend}
-                      disabled={wasSent}
-                      className={`flex-1 py-2 text-white text-[11px] font-medium capitalize tracking-[0.1em] rounded-[10px] transition-all shadow-md flex items-center justify-center gap-2 ${wasSent ? "bg-green-500/20 text-green-500 cursor-default" : "bg-primary hover:bg-[#A00D25]"}`}
-                    >
-                      {wasSent ? (
-                        <>
-                          <CheckSquare size={13} /> Dispatched
-                        </>
-                      ) : (
-                        <>
-                          <Send size={13} /> Send
-                        </>
-                      )}
-                    </button>
+                    {!readOnly && (
+                      <button
+                        onClick={handleSend}
+                        disabled={wasSent}
+                        className={`flex-1 py-2 text-white text-[11px] font-medium capitalize tracking-[0.1em] rounded-[10px] transition-all shadow-md flex items-center justify-center gap-2 ${wasSent ? "bg-green-500/20 text-green-500 cursor-default" : "bg-primary hover:bg-[#A00D25]"}`}
+                      >
+                        {wasSent ? (
+                          <>
+                            <CheckSquare size={13} /> Dispatched
+                          </>
+                        ) : (
+                          <>
+                            <Send size={13} /> Send
+                          </>
+                        )}
+                      </button>
+                    )}
+
                     <button
                       onClick={handleDownloadQR}
                       className="flex-1 py-2 bg-green-500/10 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white text-[11px] font-medium capitalize tracking-[0.1em] rounded-[10px] transition-all shadow-md flex items-center justify-center gap-2"

@@ -24,6 +24,8 @@ import {
   UpdateContactPersonStatus,
   AddContactPerson,
 } from "../../../actions/ContactPersonAction";
+import AdministratorService from "../../../services/AdministratorService";
+import ContactPersonService from "../../../services/ContactPersonService";
 import Header from "../../../components/Admin/Layout/Header";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
@@ -164,34 +166,32 @@ const AllUsers = () => {
     }
   };
 
-  const openModal = (mode, item = null, type = "ADMIN") => {
-    setModalMode(mode);
-    if (item) {
-      if (type === "CONTACT") {
-        setFormData({
-          id: item.VCP_Contact_person_id || "",
-          name: item.VCP_Name || "",
-          email: item.VCP_Email || "",
-          role: "CONTACT",
-          password: "",
-          phone: item.VCP_Phone || "",
-          department: item.VCP_Department || "",
-          type: "CONTACT",
-        });
-      } else {
-        setFormData({
-          id: item.VA_Admin_id || "",
-          name: item.VA_Name || "",
-          email: item.VA_Email || "",
-          role: item.VA_Role || "",
-          password: item.VA_Password || "",
-          phone: item.VA_Phone || "",
-          department: item.VA_Department || "",
-          type: "ADMIN",
-        });
-      }
-    } else {
-      setFormData({
+  const getCachedProfile = (type, id) => {
+    if (!id || typeof window === "undefined") return null;
+
+    try {
+      const cacheKey = `svm.userProfile.${type}.${id}`;
+      const cached = window.localStorage.getItem(cacheKey);
+      return cached ? JSON.parse(cached) : null;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const cacheProfile = (type, id, profile) => {
+    if (!id || typeof window === "undefined") return;
+
+    try {
+      const cacheKey = `svm.userProfile.${type}.${id}`;
+      window.localStorage.setItem(cacheKey, JSON.stringify(profile));
+    } catch (error) {
+      // ignore storage issues
+    }
+  };
+
+  const buildFormDataFromItem = (item = null, type = "ADMIN") => {
+    if (!item) {
+      return {
         id: "",
         name: "",
         email: "",
@@ -200,10 +200,120 @@ const AllUsers = () => {
         phone: "",
         department: "",
         type: "ADMIN",
-      });
+      };
     }
+
+    if (type === "CONTACT") {
+      return {
+        id: item.VCP_Contact_person_id || "",
+        name: item.VCP_Name || "",
+        email: item.VCP_Email || "",
+        role: "Contact_Person",
+        password: "",
+        phone: item.VCP_Phone || item.VCP_Mobile || item.VCP_Contact_Number || "",
+        department: item.VCP_Department || item.VCP_Designation || item.VCP_Dept || "",
+        type: "CONTACT",
+      };
+    }
+
+    return {
+      id: item.VA_Admin_id || "",
+      name: item.VA_Name || "",
+      email: item.VA_Email || "",
+      role: item.VA_Role || item.VA_Role_Name || "",
+      password: "",
+      phone: item.VA_Phone || item.VA_Mobile || item.VA_Contact_Number || "",
+      department: item.VA_Department || item.VA_Designation || item.VA_Dept || "",
+      type: "ADMIN",
+    };
+  };
+
+  const openModal = async (mode, item = null, type = "ADMIN") => {
+    setModalMode(mode);
     setErrors({});
     setShowPassword(false);
+
+    if (!item) {
+      setFormData(buildFormDataFromItem(null));
+      setIsModalOpen(true);
+      return;
+    }
+
+    const baseFormData = buildFormDataFromItem(item, type);
+    const resolvedRole =
+      baseFormData.role ||
+      item?.VA_Role ||
+      item?.VA_Role_Name ||
+      (type === "ADMIN" ? "Admin" : type === "SECURITY" ? "Security" : "");
+
+    try {
+      if (type === "CONTACT") {
+        const response = await ContactPersonService.GetContactPersonById(
+          baseFormData.id,
+        );
+        const record =
+          response?.data?.ResultSet?.[0] || response?.data?.ResultSet || response?.data || item;
+        const cached = getCachedProfile("CONTACT", baseFormData.id);
+        setFormData({
+          ...baseFormData,
+          id: record.VCP_Contact_person_id || baseFormData.id,
+          name: record.VCP_Name || cached?.name || baseFormData.name,
+          email: record.VCP_Email || cached?.email || baseFormData.email,
+          role: baseFormData.role || "Contact_Person",
+          phone:
+            record.VCP_Phone ||
+            record.VCP_Mobile ||
+            record.VCP_Contact_Number ||
+            cached?.phone ||
+            baseFormData.phone,
+          department:
+            record.VCP_Department ||
+            record.VCP_Designation ||
+            record.VCP_Dept ||
+            cached?.department ||
+            baseFormData.department,
+        });
+      } else {
+        const response = await AdministratorService.GetAdministratorById(
+          baseFormData.id,
+        );
+        const record =
+          response?.data?.ResultSet?.[0] || response?.data?.ResultSet || response?.data || item;
+        const cached = getCachedProfile("ADMIN", baseFormData.id) || getCachedProfile("ADMIN", baseFormData.email);
+        setFormData({
+          ...baseFormData,
+          id: record.VA_Admin_id || baseFormData.id,
+          name: record.VA_Name || cached?.name || baseFormData.name,
+          email: record.VA_Email || cached?.email || baseFormData.email,
+          role: record.VA_Role || cached?.role || resolvedRole,
+          phone:
+            record.VA_Phone ||
+            record.VA_Mobile ||
+            record.VA_Contact_Number ||
+            cached?.phone ||
+            baseFormData.phone,
+          department:
+            record.VA_Department ||
+            record.VA_Designation ||
+            record.VA_Dept ||
+            cached?.department ||
+            baseFormData.department,
+          password: cached?.password || record.VA_Password || baseFormData.password,
+        });
+      }
+    } catch (error) {
+      const cached = getCachedProfile(type === "CONTACT" ? "CONTACT" : "ADMIN", baseFormData.id) || getCachedProfile(type === "CONTACT" ? "CONTACT" : "ADMIN", baseFormData.email);
+      setFormData({
+        ...baseFormData,
+        name: cached?.name || baseFormData.name,
+        email: cached?.email || baseFormData.email,
+        role: cached?.role || resolvedRole || baseFormData.role,
+        phone: cached?.phone || baseFormData.phone,
+        department: cached?.department || baseFormData.department,
+        password: cached?.password || baseFormData.password,
+      });
+    }
+
     setIsModalOpen(true);
   };
 
@@ -273,10 +383,21 @@ const AllUsers = () => {
         VA_Email: formData.email,
         VA_Password: formData.password,
         VA_Role: formData.role,
+        VA_Phone: formData.phone,
+        VA_Department: formData.department,
       };
 
       // Always save login details in Administrator table
       dispatch(AddAdministrator(adminData));
+      cacheProfile("ADMIN", formData.id || formData.email, {
+        id: formData.id,
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+        phone: formData.phone,
+        department: formData.department,
+        password: formData.password,
+      });
 
       // If role is Contact Person, also save in ContactPerson table
       if (formData.role === "Contact_Person") {
@@ -288,6 +409,13 @@ const AllUsers = () => {
             formData.phone,
           ),
         );
+        cacheProfile("CONTACT", formData.id || formData.email, {
+          id: formData.id,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          department: formData.department,
+        });
 
         setTimeout(() => {
           dispatch(GetAllAdministrator());
@@ -310,6 +438,13 @@ const AllUsers = () => {
             formData.phone,
           ),
         );
+        cacheProfile("CONTACT", formData.id, {
+          id: formData.id,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          department: formData.department,
+        });
         setTimeout(() => dispatch(GetAllContactPersons()), 2500);
       } else {
         // Administator Flow
@@ -319,8 +454,19 @@ const AllUsers = () => {
           VA_Email: formData.email,
           VA_Password: formData.password,
           VA_Role: formData.role,
+          VA_Phone: formData.phone,
+          VA_Department: formData.department,
         };
         dispatch(UpdateAdministrator(adminData));
+        cacheProfile("ADMIN", formData.id, {
+          id: formData.id,
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          phone: formData.phone,
+          department: formData.department,
+          password: formData.password,
+        });
         setTimeout(() => dispatch(GetAllAdministrator()), 2500);
       }
     }

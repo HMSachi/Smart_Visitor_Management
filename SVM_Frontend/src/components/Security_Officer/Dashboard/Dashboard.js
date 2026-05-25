@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
 import { FetchSecurityDashboardData } from "../../../actions/SecurityAction";
 import SecurityMetrics from "./SecurityMetrics";
+import DashboardCharts from "../../Admin/Dashboard/DashboardCharts";
 import SecurityQuickActions from "./SecurityQuickActions";
 import SecurityAlerts from "./SecurityAlerts";
 import AccessControl from "./AccessControl";
@@ -36,6 +37,7 @@ const DashboardMain = () => {
           </div>
         </div>
 
+        <DashboardCharts />
         <SecurityMetrics />
         <SecurityQuickActions />
         

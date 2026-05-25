@@ -53,6 +53,7 @@ const ApprovalManagement = () => {
   const [modalType, setModalType] = useState("Approve");
   const [showQRModal, setShowQRModal] = useState(false);
   const [approvedVisitorData, setApprovedVisitorData] = useState(null);
+  const [qrReadOnly, setQrReadOnly] = useState(false);
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
@@ -241,6 +242,7 @@ const ApprovalManagement = () => {
     setSelectedVisitor(visitor);
     if (type === "ViewGatePass") {
       setApprovedVisitorData(visitor);
+      setQrReadOnly(true);
       setShowQRModal(true);
     } else {
       setModalType(type);
@@ -354,6 +356,7 @@ const ApprovalManagement = () => {
                   setApprovedVisitorData(
                     mappedRequests.find((v) => v.id === id) || selectedVisitor,
                   );
+                  setQrReadOnly(false);
                   setShowQRModal(true);
                 }
                 if (viewMode === "details") setViewMode("list");
@@ -366,6 +369,7 @@ const ApprovalManagement = () => {
               onClose={() => setShowQRModal(false)}
               visitorData={approvedVisitorData}
               gatePasses={gatePasses}
+              readOnly={qrReadOnly}
             />
           </div>
         </div>

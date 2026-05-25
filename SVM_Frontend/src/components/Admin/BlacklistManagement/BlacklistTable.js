@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
   Shield,
-  User,
   Clock,
   Eye,
   UserPlus,
   Search,
-  Power,
   CheckCircle,
   XCircle,
 } from "lucide-react";
@@ -15,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   GetAllBlacklist,
   AddBlacklist,
-  UpdateBlacklistStatus,
   UpdateBlacklist,
   AddBlacklistReport,
   ApproveBlacklist,
@@ -93,6 +90,20 @@ const BlacklistTable = () => {
   }, [dispatch]);
 
   const safeBlacklists = Array.isArray(blacklists) ? blacklists : [];
+
+  const normalizeApprovalStatus = (value) => {
+    const status = (value || "").toString().trim().toLowerCase();
+    if (["pending", "p", "in review", "waiting"].includes(status)) {
+      return "Pending";
+    }
+    if (["approved", "a", "accept", "accepted"].includes(status)) {
+      return "Approved";
+    }
+    if (["rejected", "reject", "r", "declined", "denied"].includes(status)) {
+      return "Rejected";
+    }
+    return value ? value.toString().trim() : "";
+  };
 
   const filtered = safeBlacklists
     .filter((item) => {
@@ -210,18 +221,6 @@ const BlacklistTable = () => {
 
   const handleEditPerson = (updatedData) => {
     dispatch(UpdateBlacklist(updatedData));
-  };
-
-  const handleToggleStatus = (item) => {
-    const newStatus = item.VB_Status === "I" ? "A" : "I";
-    const actionText = newStatus === "I" ? "deactivate" : "activate";
-    if (
-      window.confirm(
-        `Are you sure you want to ${actionText} this blacklist entry?`,
-      )
-    ) {
-      dispatch(UpdateBlacklistStatus(item.VB_id, newStatus));
-    }
   };
 
   const handleApprove = (item) => {
@@ -438,18 +437,24 @@ const BlacklistTable = () => {
                         {/* Status */}
                         <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-center">
                           {item.VB_Approval_Status ? (
+                            (() => {
+                              const displayStatus = normalizeApprovalStatus(
+                                item.VB_Approval_Status,
+                              );
+                              return (
                             <span
                               className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-bold border ${
-                                item.VB_Approval_Status === "Pending"
+                                displayStatus === "Pending"
                                   ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-400"
-                                  : item.VB_Approval_Status === "Approved"
+                                  : displayStatus === "Approved"
                                     ? "bg-green-500/10 border-green-500/20 text-green-400"
                                     : "bg-red-500/10 border-red-500/20 text-red-400"
                               } min-w-[110px]`}
                             >
-                              {item.VB_Approval_Status.charAt(0).toUpperCase() +
-                                item.VB_Approval_Status.slice(1).toLowerCase()}
+                              {displayStatus}
                             </span>
+                              );
+                            })()
                           ) : (
                             <span className="text-gray-400/55 font-mono text-[11px]">
                               —
@@ -472,7 +477,7 @@ const BlacklistTable = () => {
 
                             {!isContactPerson &&
                               !isSecurityPortal &&
-                              item.VB_Approval_Status === "Pending" && (
+                              normalizeApprovalStatus(item.VB_Approval_Status) === "Pending" && (
                                 <>
                                   <button
                                     onClick={() => handleApprove(item)}

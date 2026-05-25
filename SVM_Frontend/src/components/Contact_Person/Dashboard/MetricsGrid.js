@@ -14,7 +14,8 @@ const Panel = ({ icon, label, value, trend, onClick }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       onClick={onClick}
-      className="bg-background-paper border border-border-soft p-2.5 sm:p-3.5 md:p-4 rounded-xl flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 relative overflow-hidden shadow-md h-full"
+      className="bg-background-paper relative overflow-hidden flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 h-full"
+      style={{ border: "1px solid var(--color-border-soft)", borderRadius: "28px", padding: "1.9rem", boxShadow: "var(--shadow-card)" }}
     >
       <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all"></div>
 

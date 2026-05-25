@@ -40,15 +40,18 @@ const RecentRequests = () => {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "approved":
+        return "text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20";
       case "accepted":
-        return "text-status-success bg-status-success/10 border-status-success/20";
-      case "pending":
-        return "text-status-warning bg-status-warning/10 border-status-warning/20";
+        return "text-[#eab308] bg-[#eab308]/10 border-[#eab308]/20";
+      case "sent to admin":
+        return "text-[#f97316] bg-[#f97316]/10 border-[#f97316]/20";
+      case "sent to visitor":
+        return "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/20";
       case "declined":
       case "rejected":
-        return "text-status-error bg-status-error/10 border-status-error/20";
+        return "text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/20";
       default:
-        return "text-text-secondary bg-background-alt border-border-soft";
+        return "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/20";
     }
   };
 
@@ -57,9 +60,10 @@ const RecentRequests = () => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-background-alt border border-border-soft rounded-xl overflow-hidden hover:border-primary/20 transition-all duration-300 h-full flex flex-col"
+      className="bg-background-paper overflow-hidden hover:border-primary/20 transition-all duration-300 h-full flex flex-col"
+      style={{ border: "1px solid var(--color-border-soft)", borderRadius: "28px", padding: "1.9rem", boxShadow: "var(--shadow-card)" }}
     >
-      <div className="p-3 border-b border-border-soft flex items-center justify-between flex-shrink-0">
+      <div className="pb-4 mb-4 border-b border-border-soft flex items-center justify-between flex-shrink-0">
         <div>
           <h3 className="text-text-primary text-xs font-black uppercase tracking-widest leading-none">
             Recent Requests
