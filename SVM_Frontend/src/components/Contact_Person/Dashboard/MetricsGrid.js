@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { GetVisitRequestsByCP } from '../../../actions/VisitRequestAction';
 import ContactPersonService from '../../../services/ContactPersonService';
 
-const Panel = ({ label, value, color, hoverBorder, onClick }) => {
+const Panel = ({ label, value, color, hoverBorder, onClick, description }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -16,13 +16,18 @@ const Panel = ({ label, value, color, hoverBorder, onClick }) => {
       className="bg-white relative overflow-hidden flex flex-col justify-center items-center group cursor-pointer transition-all duration-500 py-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
       style={{ border: "1px solid #f0f0f0", borderRadius: "16px" }}
     >
-      <div className="flex flex-col items-center justify-center space-y-3 relative z-10 w-full">
+      <div className="flex flex-col items-center justify-center space-y-3 relative z-10 w-full px-4 text-center">
         <p className={`text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.15em] ${color}`}>
           {label}
         </p>
         <h3 className={`text-4xl sm:text-5xl font-black ${color}`}>
           {value}
         </h3>
+        {description && (
+          <p className="text-[10px] sm:text-[11px] text-gray-500 font-normal tracking-wide mt-1 max-w-[90%] mx-auto leading-normal">
+            {description}
+          </p>
+        )}
       </div>
       <div className={`absolute bottom-0 left-0 h-[4px] w-0 ${hoverBorder} group-hover:w-full transition-all duration-700`}></div>
     </motion.div>
@@ -92,10 +97,10 @@ const MetricsGrid = () => {
         }).length;
 
         return [
-            { label: 'In Progress', value: pending.toString(), color: 'text-blue-500', hoverBorder: 'bg-blue-500', filter: 'P' },
-            { label: 'Approved', value: accepted.toString(), color: 'text-green-500', hoverBorder: 'bg-green-500', filter: 'A' },
-            { label: 'Rejected/Cancelled', value: rejected.toString(), color: 'text-red-500', hoverBorder: 'bg-red-500', filter: 'R' },
-            { label: 'Sent to Admin', value: sent.toString(), color: 'text-orange-500', hoverBorder: 'bg-orange-500', filter: 'SENT' },
+            { label: 'In Progress', value: pending.toString(), color: 'text-blue-500', hoverBorder: 'bg-blue-500', filter: 'P', description: 'Waiting for visitor or contact person' },
+            { label: 'Approved', value: accepted.toString(), color: 'text-green-500', hoverBorder: 'bg-green-500', filter: 'A', description: 'Visitor accepted or Admin approved' },
+            { label: 'Rejected/Cancelled', value: rejected.toString(), color: 'text-red-500', hoverBorder: 'bg-red-500', filter: 'R', description: 'Declined or cancelled requests' },
+            { label: 'Sent to Admin', value: sent.toString(), color: 'text-orange-500', hoverBorder: 'bg-orange-500', filter: 'SENT', description: 'Awaiting final admin approval' },
         ];
     };
 

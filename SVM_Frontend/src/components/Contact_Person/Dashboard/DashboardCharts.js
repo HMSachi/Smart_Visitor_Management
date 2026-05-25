@@ -211,35 +211,40 @@ const DashboardCharts = () => {
         </motion.div>
       </div>
 
-       {/* Optional Stats Overview */}
-       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-6">
-         {[
-           { label: 'Total Requests', value: totalRequests, color: 'text-gray-800', hoverBorder: 'bg-gray-800', delay: 0.1 },
-           { label: 'Approved', value: adminApproved, color: 'text-green-500', hoverBorder: 'bg-green-500', delay: 0.15 },
-           { label: 'In Progress', value: sentToVisitor + visitorAccepted + sentToAdmin, color: 'text-blue-500', hoverBorder: 'bg-blue-500', delay: 0.2 },
-           { label: 'Rejected/Cancelled', value: rejected, color: 'text-red-500', hoverBorder: 'bg-red-500', delay: 0.25 },
-         ].map((stat, i) => (
-           <motion.div
-             key={i}
-             initial={{ opacity: 0, y: 15 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true }}
-             transition={{ duration: 0.5, delay: stat.delay }}
-             className="bg-white relative overflow-hidden flex flex-col justify-center items-center group cursor-default transition-all duration-500 py-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
-             style={{ border: "1px solid #f0f0f0", borderRadius: "16px" }}
-           >
-             <div className="flex flex-col items-center justify-center space-y-3 relative z-10 w-full">
-               <p className={`text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.15em] ${stat.color}`}>
-                 {stat.label}
-               </p>
-               <h3 className={`text-4xl sm:text-5xl font-black ${stat.color}`}>
-                 {stat.value}
-               </h3>
-             </div>
-             <div className={`absolute bottom-0 left-0 h-[4px] w-0 ${stat.hoverBorder} group-hover:w-full transition-all duration-700`}></div>
-           </motion.div>
-         ))}
-       </div>
+        {/* Optional Stats Overview */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-6">
+          {[
+            { label: 'Total Requests', value: totalRequests, color: 'text-gray-800', hoverBorder: 'bg-gray-800', delay: 0.1, description: 'All visit requests created' },
+            { label: 'Approved', value: adminApproved, color: 'text-green-500', hoverBorder: 'bg-green-500', delay: 0.15, description: 'Fully approved by Administrator' },
+            { label: 'In Progress', value: sentToVisitor + visitorAccepted + sentToAdmin, color: 'text-blue-500', hoverBorder: 'bg-blue-500', delay: 0.2, description: 'Awaiting visitor or CP action' },
+            { label: 'Rejected/Cancelled', value: rejected, color: 'text-red-500', hoverBorder: 'bg-red-500', delay: 0.25, description: 'Declined or cancelled requests' },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: stat.delay }}
+              className="bg-white relative overflow-hidden flex flex-col justify-center items-center group cursor-default transition-all duration-500 py-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+              style={{ border: "1px solid #f0f0f0", borderRadius: "16px" }}
+            >
+              <div className="flex flex-col items-center justify-center space-y-3 relative z-10 w-full px-4 text-center">
+                <p className={`text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.15em] ${stat.color}`}>
+                  {stat.label}
+                </p>
+                <h3 className={`text-4xl sm:text-5xl font-black ${stat.color}`}>
+                  {stat.value}
+                </h3>
+                {stat.description && (
+                  <p className="text-[10px] sm:text-[11px] text-gray-500 font-normal tracking-wide mt-1 max-w-[90%] mx-auto leading-normal">
+                    {stat.description}
+                  </p>
+                )}
+              </div>
+              <div className={`absolute bottom-0 left-0 h-[4px] w-0 ${stat.hoverBorder} group-hover:w-full transition-all duration-700`}></div>
+            </motion.div>
+          ))}
+        </div>
     </div>
   );
 };
