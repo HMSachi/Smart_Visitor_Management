@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity, ArrowUpRight } from "lucide-react";
+import { Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -118,14 +118,7 @@ const ActivityTimeline = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3 flex-shrink-0 ml-3">
-              <span className="text-text-dim text-[9px] font-bold tracking-wider whitespace-nowrap">
-                {act.time}
-              </span>
-              <div className="w-7 h-7 rounded-lg bg-background-alt flex items-center justify-center text-text-dim group-hover:text-primary group-hover:bg-primary/10 transition-all border border-transparent group-hover:border-primary/20">
-                <ArrowUpRight size={13} />
-              </div>
-            </div>
+
           </motion.div>
         ))}
       </div>

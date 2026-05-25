@@ -239,6 +239,7 @@ const BlacklistTable = () => {
         onApprove={handleApprove}
         onReject={handleReject}
         isSecurityPortal={isSecurityPortal}
+        isContactPortal={isContactPerson}
       />
 
       {/* ── Add new blacklist modal ── */}

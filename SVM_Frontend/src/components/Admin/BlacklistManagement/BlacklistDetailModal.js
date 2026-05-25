@@ -47,7 +47,7 @@ const Field = ({ icon: Icon, label, value, accent, isLight }) => (
 /* ──────────────────────────────────────────────
    Main modal
 ────────────────────────────────────────────── */
-const BlacklistDetailModal = ({ isOpen, onClose, person, onApprove, onReject, isSecurityPortal }) => {
+const BlacklistDetailModal = ({ isOpen, onClose, person, onApprove, onReject, isSecurityPortal, isContactPortal = false }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
   const [visitorDetails, setVisitorDetails] = React.useState(null);
@@ -277,7 +277,7 @@ const BlacklistDetailModal = ({ isOpen, onClose, person, onApprove, onReject, is
                     : "border-white/5 bg-black/20"
                 }`}
               >
-                {!isSecurityPortal && person.VB_Approval_Status === "Pending" && (
+                {!isSecurityPortal && !isContactPortal && person.VB_Approval_Status === "Pending" && (
                   <>
                     <button
                       onClick={() => {

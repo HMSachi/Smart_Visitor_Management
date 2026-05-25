@@ -12,7 +12,6 @@ import {
   Calendar,
   MapPin,
   Briefcase,
-  Smartphone,
 } from "lucide-react";
 import GatePassService from "../../../services/GatePassService";
 import VisitorService from "../../../services/VisitorService";
@@ -462,17 +461,7 @@ const GatePass = () => {
               </div>
             </div>
 
-            <div className="space-y-1">
-              <span className="text-[9px] font-bold text-[var(--color-text-dim)] uppercase tracking-[0.16em] block">
-                Clearance level
-              </span>
-              <div className="flex items-center gap-1.5">
-                <Smartphone size={12} className="text-[var(--color-primary)] shrink-0" />
-                <span className="text-[11px] font-bold text-[var(--color-text-primary)] uppercase tracking-tight">
-                  Standard Gate
-                </span>
-              </div>
-            </div>
+
           </div>
 
           {/* Action buttons */}

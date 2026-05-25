@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, LogOut, Users, AlertCircle } from 'lucide-react';
+import { CheckCircle, LogOut, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const QuickActionButton = ({ icon: Icon, label, description, onClick, index }) => {
@@ -59,12 +59,7 @@ const SecurityQuickActions = () => {
             description: 'View currently on-premise visitors',
             onClick: () => navigate('/Security_Officer/active-visitors'),
         },
-        {
-            icon: AlertCircle,
-            label: 'Report Issue',
-            description: 'Create a security report',
-            onClick: () => navigate('/security_officer/incident-report'),
-        },
+
     ];
 
     return (

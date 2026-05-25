@@ -1,5 +1,5 @@
 import React from "react";
-import { Shield, ArrowLeft, Menu, X, Bell } from "lucide-react";
+import { Shield, ArrowLeft, Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleMobileMenu } from "../../../reducers/uiSlice";
@@ -103,17 +103,6 @@ const Header = ({ title }) => {
       {/* Right: Actions */}
       <div className="flex items-center gap-2 sm:gap-3">
         <ThemeToggleButton />
-
-        <button
-          className="relative w-9 h-9 flex items-center justify-center rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-          style={{
-            background: "var(--color-surface-1)",
-            border: "1px solid var(--color-border-soft)",
-          }}
-        >
-          <Bell size={17} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary" />
-        </button>
 
         <div className="hidden sm:block w-px h-5 bg-[var(--color-border-soft)]" />
 

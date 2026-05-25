@@ -104,12 +104,47 @@ const Header = ({ title }) => {
         purpose: req.VVR_Purpose || "Visitation",
         date: req.VVR_Visit_Date ? req.VVR_Visit_Date.split("T")[0] : "N/A",
       }))
+      .filter((n) => !readNotifications.includes(String(n.id)))
       .sort((a, b) => b.id - a.id); // newest first
-  }, [visitRequestsByCP]);
+  }, [visitRequestsByCP, readNotifications]);
 
-  const unreadCount = notifications.filter(
-    (n) => !readNotifications.includes(String(n.id)),
-  ).length;
+  const unreadCount = notifications.length;
+
+  const prevShowNotifications = useRef(showNotifications);
+
+  useEffect(() => {
+    if (prevShowNotifications.current && !showNotifications) {
+      if (notifications.length > 0) {
+        const allIds = notifications.map((n) => String(n.id));
+        setReadNotifications((prev) => {
+          const merged = Array.from(new Set([...prev, ...allIds]));
+          try {
+            localStorage.setItem("read_notifications", JSON.stringify(merged));
+          } catch (err) {
+            console.warn("localStorage access blocked:", err);
+          }
+          return merged;
+        });
+      }
+    }
+    prevShowNotifications.current = showNotifications;
+  }, [showNotifications, notifications]);
+
+  useEffect(() => {
+    return () => {
+      if (prevShowNotifications.current && notifications.length > 0) {
+        const allIds = notifications.map((n) => String(n.id));
+        try {
+          const stored = localStorage.getItem("read_notifications");
+          const prev = stored ? JSON.parse(stored) : [];
+          const merged = Array.from(new Set([...prev, ...allIds]));
+          localStorage.setItem("read_notifications", JSON.stringify(merged));
+        } catch (err) {
+          console.warn("localStorage access blocked:", err);
+        }
+      }
+    };
+  }, [notifications]);
 
   const handleNotificationClick = (id) => {
     if (!readNotifications.includes(String(id))) {
