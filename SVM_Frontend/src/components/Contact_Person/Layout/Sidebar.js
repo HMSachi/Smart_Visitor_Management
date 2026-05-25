@@ -125,7 +125,7 @@ const SidebarContent = ({
       <nav className="flex-1 px-3 py-4 overflow-y-auto no-scrollbar">
         {!isCollapsed && (
           <p className="text-[10.5px] uppercase font-semibold text-text-dim tracking-widest px-3 mb-3">
-            Navigation
+             <br></br>
           </p>
         )}
         {menuItems.map((item) => (
