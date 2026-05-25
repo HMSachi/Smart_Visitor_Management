@@ -6,30 +6,25 @@ import { useNavigate } from 'react-router-dom';
 import { GetVisitRequestsByCP } from '../../../actions/VisitRequestAction';
 import ContactPersonService from '../../../services/ContactPersonService';
 
-const Panel = ({ icon, label, value, trend, onClick }) => {
-  const Icon = icon;
+const Panel = ({ label, value, color, hoverBorder, onClick }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       onClick={onClick}
-      className="bg-background-paper relative overflow-hidden flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 h-full"
-      style={{ border: "1px solid var(--color-border-soft)", borderRadius: "28px", padding: "1.9rem", boxShadow: "var(--shadow-card)" }}
+      className="bg-white relative overflow-hidden flex flex-col justify-center items-center group cursor-pointer transition-all duration-500 py-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+      style={{ border: "1px solid #f0f0f0", borderRadius: "16px" }}
     >
-      <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all"></div>
-
-      <div className="flex justify-between items-start relative z-10">
-        <div>
-          <p className="text-text-dim text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.15em] mb-1 sm:mb-2 group-hover:text-primary transition-opacity">{label}</p>
-          <h3 className="text-text-primary text-lg sm:text-xl md:text-2xl font-semibold tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
-        </div>
-        <div className="p-2.5 rounded-xl bg-background-alt border border-border-soft group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-500 shadow-sm">
-          <Icon className="text-primary group-hover:scale-110 transition-transform" size={16} strokeWidth={2.5} />
-        </div>
+      <div className="flex flex-col items-center justify-center space-y-3 relative z-10 w-full">
+        <p className={`text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.15em] ${color}`}>
+          {label}
+        </p>
+        <h3 className={`text-4xl sm:text-5xl font-black ${color}`}>
+          {value}
+        </h3>
       </div>
-
-      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(200,16,46,0.5)]"></div>
+      <div className={`absolute bottom-0 left-0 h-[4px] w-0 ${hoverBorder} group-hover:w-full transition-all duration-700`}></div>
     </motion.div>
   );
 };
@@ -97,17 +92,17 @@ const MetricsGrid = () => {
         }).length;
 
         return [
-            { label: 'Pending Requests', value: pending.toString(), icon: Clock, trend: 'Awaiting Action', filter: 'P' },
-            { label: 'Accepted Forms', value: accepted.toString(), icon: CheckSquare, trend: 'Clearance Granted', filter: 'A' },
-            { label: 'Declined Forms', value: rejected.toString(), icon: XCircle, trend: 'Access Denied', filter: 'R' },
-            { label: 'Sent to Admin', value: sent.toString(), icon: Send, trend: 'Escalated', filter: 'SENT' },
+            { label: 'In Progress', value: pending.toString(), color: 'text-blue-500', hoverBorder: 'bg-blue-500', filter: 'P' },
+            { label: 'Approved', value: accepted.toString(), color: 'text-green-500', hoverBorder: 'bg-green-500', filter: 'A' },
+            { label: 'Rejected/Cancelled', value: rejected.toString(), color: 'text-red-500', hoverBorder: 'bg-red-500', filter: 'R' },
+            { label: 'Sent to Admin', value: sent.toString(), color: 'text-orange-500', hoverBorder: 'bg-orange-500', filter: 'SENT' },
         ];
     };
 
     const stats = calculateStats();
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-5 md:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8 mt-2">
             {stats.map((stat, i) => (
                 <Panel 
                     key={i} 

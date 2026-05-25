@@ -3,9 +3,7 @@ import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
 import { FetchSecurityDashboardData } from "../../../actions/SecurityAction";
-import SecurityMetrics from "./SecurityMetrics";
 import DashboardCharts from "../../Admin/Dashboard/DashboardCharts";
-import SecurityQuickActions from "./SecurityQuickActions";
 import SecurityAlerts from "./SecurityAlerts";
 import AccessControl from "./AccessControl";
 import ActiveVisitors from "./ActiveVisitors";
@@ -38,9 +36,6 @@ const DashboardMain = () => {
         </div>
 
         <DashboardCharts />
-        <SecurityMetrics />
-        <SecurityQuickActions />
-        
         {/* Security Alerts & Access Control */}
         {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           <motion.section initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="lg:col-span-2">

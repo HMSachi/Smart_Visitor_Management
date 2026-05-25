@@ -212,47 +212,34 @@ const DashboardCharts = () => {
       </div>
 
        {/* Optional Stats Overview */}
-       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-        <motion.div
-           initial={{ opacity: 0, y: 15 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.5, delay: 0.1 }}
-           className="bg-background-paper border border-border-soft rounded-2xl p-4 text-center"
-        >
-          <p className="text-[10px] uppercase font-bold tracking-widest text-text-secondary mb-1">Total Requests</p>
-          <p className="text-2xl font-extrabold text-text-primary">{totalRequests}</p>
-        </motion.div>
-        
-        <motion.div
-           initial={{ opacity: 0, y: 15 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.5, delay: 0.15 }}
-           className="bg-background-paper border border-border-soft rounded-2xl p-4 text-center"
-        >
-          <p className="text-[10px] uppercase font-bold tracking-widest text-[#22c55e] mb-1">Approved</p>
-          <p className="text-2xl font-extrabold text-[#22c55e]">{adminApproved}</p>
-        </motion.div>
-
-        <motion.div
-           initial={{ opacity: 0, y: 15 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.5, delay: 0.2 }}
-           className="bg-background-paper border border-border-soft rounded-2xl p-4 text-center"
-        >
-          <p className="text-[10px] uppercase font-bold tracking-widest text-[#3b82f6] mb-1">In Progress</p>
-          <p className="text-2xl font-extrabold text-[#3b82f6]">{sentToVisitor + visitorAccepted + sentToAdmin}</p>
-        </motion.div>
-        
-        <motion.div
-           initial={{ opacity: 0, y: 15 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.5, delay: 0.25 }}
-           className="bg-background-paper border border-border-soft rounded-2xl p-4 text-center"
-        >
-          <p className="text-[10px] uppercase font-bold tracking-widest text-[#EF4444] mb-1">Rejected/Cancelled</p>
-          <p className="text-2xl font-extrabold text-[#EF4444]">{rejected}</p>
-        </motion.div>
-      </div>
+       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-6">
+         {[
+           { label: 'Total Requests', value: totalRequests, color: 'text-gray-800', hoverBorder: 'bg-gray-800', delay: 0.1 },
+           { label: 'Approved', value: adminApproved, color: 'text-green-500', hoverBorder: 'bg-green-500', delay: 0.15 },
+           { label: 'In Progress', value: sentToVisitor + visitorAccepted + sentToAdmin, color: 'text-blue-500', hoverBorder: 'bg-blue-500', delay: 0.2 },
+           { label: 'Rejected/Cancelled', value: rejected, color: 'text-red-500', hoverBorder: 'bg-red-500', delay: 0.25 },
+         ].map((stat, i) => (
+           <motion.div
+             key={i}
+             initial={{ opacity: 0, y: 15 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             viewport={{ once: true }}
+             transition={{ duration: 0.5, delay: stat.delay }}
+             className="bg-white relative overflow-hidden flex flex-col justify-center items-center group cursor-default transition-all duration-500 py-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+             style={{ border: "1px solid #f0f0f0", borderRadius: "16px" }}
+           >
+             <div className="flex flex-col items-center justify-center space-y-3 relative z-10 w-full">
+               <p className={`text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.15em] ${stat.color}`}>
+                 {stat.label}
+               </p>
+               <h3 className={`text-4xl sm:text-5xl font-black ${stat.color}`}>
+                 {stat.value}
+               </h3>
+             </div>
+             <div className={`absolute bottom-0 left-0 h-[4px] w-0 ${stat.hoverBorder} group-hover:w-full transition-all duration-700`}></div>
+           </motion.div>
+         ))}
+       </div>
     </div>
   );
 };
