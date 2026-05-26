@@ -498,7 +498,10 @@ const ContactPersonAuthProtocol = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               <Field
                 label="Visit date"
-                value={visitor.date || visitor.proposedVisitDate}
+                value={(() => {
+                  const raw = visitor.date || visitor.proposedVisitDate || "";
+                  return raw ? String(raw).split(" ")[0].split("T")[0] : "—";
+                })()}
                 icon={Calendar}
                 isLight={isLight}
               />

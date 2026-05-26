@@ -514,6 +514,41 @@ const PersonnelAuthProtocol = ({
         </SectionCard>
       </div>
 
+      {/* ── 2. Visit Details ── */}
+      <SectionCard isLight={isLight}>
+        <div className="p-3 md:p-5">
+          <SplitSection
+            title="Visit details"
+            icon={Briefcase}
+            isLight={isLight}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              <Field
+                label="Visit date"
+                value={(() => {
+                  const raw = visitor.date || visitor.proposedVisitDate || "";
+                  return raw ? String(raw).split(" ")[0].split("T")[0] : "—";
+                })()}
+                icon={Calendar}
+                isLight={isLight}
+              />
+              <Field
+                label="Reason for visit"
+                value={visitor.purpose || visitor.purposeOfVisitation}
+                icon={Info}
+                isLight={isLight}
+              />
+              <Field
+                label="Company"
+                value={visitor.representingCompany}
+                icon={Briefcase}
+                isLight={isLight}
+              />
+            </div>
+          </SplitSection>
+        </div>
+      </SectionCard>
+
       <SectionCard isLight={isLight}>
         <div className="p-3 md:p-5">
           <SplitSection title="Places to visit" icon={MapPin} isLight={isLight}>
