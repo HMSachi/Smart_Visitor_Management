@@ -22,15 +22,17 @@ export const GetAllBlacklist = (status = "") => {
         dispatch({ type: GET_ALL_BLACKLIST_REQUEST });
         try {
             if (status === "") {
-                const [approvedRes, pendingRes] = await Promise.all([
+                const [approvedRes, pendingRes, rejectedRes] = await Promise.all([
                     BlacklistService.GetAllBlacklist("Approved"),
-                    BlacklistService.GetAllBlacklist("Pending")
+                    BlacklistService.GetAllBlacklist("Pending"),
+                    BlacklistService.GetAllBlacklist("Rejected")
                 ]);
                 const approvedList = approvedRes.data?.ResultSet || approvedRes.data || [];
                 const pendingList = pendingRes.data?.ResultSet || pendingRes.data || [];
+                const rejectedList = rejectedRes.data?.ResultSet || rejectedRes.data || [];
                 
                 // Combine and deduplicate by VB_id
-                const combined = [...approvedList, ...pendingList];
+                const combined = [...approvedList, ...pendingList, ...rejectedList];
                 const seen = new Set();
                 const deduplicated = [];
                 for (const item of combined) {

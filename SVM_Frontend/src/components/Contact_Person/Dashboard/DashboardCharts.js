@@ -22,11 +22,17 @@ const DashboardCharts = () => {
   
   const activeVisitors = useSelector((state) => state.visitorManagement.visitors?.length || 0);
 
-  // Parse Date utility
+  // Parse Date utility (Avoid timezone shift and normalize format)
   const formatDateOnly = (value) => {
     if (!value) return "N/A";
     const date = new Date(value);
-    return isNaN(date) ? String(value).split("T")[0] : date.toISOString().split("T")[0];
+    if (isNaN(date)) return String(value).split("T")[0];
+    
+    // Use local methods to prevent UTC timezone shift while standardizing format to YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   // 1. Calculate Request Status Distribution
@@ -71,15 +77,28 @@ const DashboardCharts = () => {
       { name: "Rejected", value: rejected, color: "#ef4444" }
     ];
 
-    // Build Bar Chart Data
-    const trendData = Object.keys(dateCounts).sort().slice(-7).map(date => ({
-      name: new Date(date).toLocaleDateString('en-US', { day: 'numeric', month: 'short' }),
-      "Admin approved": dateCounts[date].AdminApproved,
-      "Accepted by visitor": dateCounts[date].VisitorAccepted,
-      "Contact person accepted": dateCounts[date].SentToAdmin,
-      "Sent to visitor": dateCounts[date].SentToVisitor,
-      "Rejected": dateCounts[date].Rejected
-  }));
+    // Build Bar Chart Data (Upcoming 7 Calendar Days)
+    const trendData = Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      
+      // Format as YYYY-MM-DD timezone-agnostically to match database string prefixes
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      
+      const counts = dateCounts[dateStr] || { AdminApproved: 0, VisitorAccepted: 0, SentToAdmin: 0, SentToVisitor: 0, Rejected: 0 };
+      
+      return {
+        name: d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }),
+        "Admin approved": counts.AdminApproved,
+        "Accepted by visitor": counts.VisitorAccepted,
+        "Contact person accepted": counts.SentToAdmin,
+        "Sent to visitor": counts.SentToVisitor,
+        "Rejected": counts.Rejected
+      };
+    });
 
   const sharedChartRadius = { innerRadius: 65, outerRadius: 90, paddingAngle: 4 };
 
@@ -159,8 +178,8 @@ const DashboardCharts = () => {
         >
           <div className="flex items-center justify-between mb-4 relative z-10 flex-shrink-0">
             <div>
-              <h3 className="text-[14px] font-bold text-[var(--color-text-primary)] m-0">Recent Visit Volume</h3>
-              <p className="text-[var(--color-text-dim)] text-[11px] font-medium mt-0.5">Visits scheduled over last 7 active days</p>
+              <h3 className="text-[14px] font-bold text-[var(--color-text-primary)] m-0">Upcoming Visit Volume</h3>
+              <p className="text-[var(--color-text-dim)] text-[11px] font-medium mt-0.5">Visits scheduled over upcoming 7 days</p>
             </div>
             <div className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--color-primary)]" style={{ background: "var(--color-primary-light)", border: "1px solid var(--color-primary-light-border)" }}>
               <TrendingUp size={15} />
