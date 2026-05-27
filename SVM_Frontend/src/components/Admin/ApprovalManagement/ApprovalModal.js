@@ -1,20 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, AlertCircle, CheckCircle2 } from "lucide-react";
 
 const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
-  const [comment, setComment] = useState("");
-  const [error, setError] = useState(false);
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (type === "Reject" && !comment.trim()) {
-      setError(true);
-      return;
-    }
-    onConfirm(visitor.id, type, comment);
-    setComment("");
-    setError(false);
+    onConfirm(visitor.id, type);
     onClose();
   };
 
@@ -97,37 +88,6 @@ const ApprovalModal = ({ isOpen, onClose, visitor, type, onConfirm }) => {
                       {visitor?.id || visitor?.batchId}
                     </p>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between items-end">
-                    <label className="text-gray-300/90 capitalize text-[10px] font-medium tracking-widest flex items-center gap-1.5">
-                      <Send size={10} className="text-primary/40" />
-                      Comments{" "}
-                      {type === "Reject" && (
-                        <span className="text-primary animate-pulse">*</span>
-                      )}
-                    </label>
-                    {error && (
-                      <span className="text-primary text-[10px] font-medium capitalize animate-pulse flex items-center gap-1.5 tracking-widest">
-                        <AlertCircle size={10} /> Comment required
-                      </span>
-                    )}
-                  </div>
-                  <textarea
-                    rows="2"
-                    value={comment}
-                    onChange={(e) => {
-                      setComment(e.target.value);
-                      if (e.target.value.trim()) setError(false);
-                    }}
-                    placeholder={
-                      type === "Approve"
-                        ? "Add an optional note..."
-                        : "Please provide a reason for rejection..."
-                    }
-                    className={`w-full bg-[var(--color-bg-default)] border border-white/5 text-white text-[12px] font-normal tracking-wide p-2.5 rounded-xl focus:ring-0 focus:border-primary/40 focus:bg-[#161618] transition-all duration-500 resize-none shadow-inner placeholder:text-gray-300/80 ${error ? "border-primary/50 bg-primary/5" : ""}`}
-                  />
                 </div>
 
                 {/* Footer Actions */}

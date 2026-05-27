@@ -1,6 +1,6 @@
 import React from "react";
 
-const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
+const ApprovalModal = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
@@ -23,21 +23,6 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
             Review this request and add a short note if needed before sending
             your approval.
           </p>
-        </div>
-
-        <div className="space-y-4 mb-6 relative z-10">
-          <div className="space-y-3">
-            <label className="text-gray-300 text-[13px] font-medium tracking-wide">
-              Approval notes
-            </label>
-            <textarea
-              rows="4"
-              placeholder="Add a note for the requester or security team (optional)"
-              className="w-full bg-[var(--color-bg-default)] border border-white/5 rounded-2xl p-5 text-white text-sm leading-6 placeholder:text-gray-400 focus:outline-none focus:border-primary/40 focus:bg-[#161618] transition-all resize-none shadow-inner"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            ></textarea>
-          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 relative z-10">

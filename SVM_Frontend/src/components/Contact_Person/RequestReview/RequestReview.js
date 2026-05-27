@@ -86,7 +86,6 @@ const RequestReviewMain = () => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [rejectionComment, setRejectionComment] = useState("");
   const [showApproveModal, setShowApproveModal] = useState(false);
-  const [approvalComment, setApprovalComment] = useState("");
 
   useEffect(() => {
     if (!selectedId) return;
@@ -241,7 +240,6 @@ const RequestReviewMain = () => {
         VVR_Purpose: apiRequest.VVR_Purpose,
         VVR_Status: "SENT",
         VVR_Contact_person_id: apiRequest.VVR_Contact_person_id,
-        approvalComment,
       }),
     );
 
@@ -348,8 +346,6 @@ const RequestReviewMain = () => {
         isOpen={showApproveModal}
         onClose={() => setShowApproveModal(false)}
         onConfirm={confirmApprove}
-        comment={approvalComment}
-        setComment={setApprovalComment}
       />
       <RejectionModal
         isOpen={showRejectModal}
