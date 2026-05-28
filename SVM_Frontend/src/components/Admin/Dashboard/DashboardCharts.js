@@ -18,7 +18,7 @@ import { Users, ShieldAlert, CheckCircle, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 
-const DashboardCharts = ({ hideUserDistribution = false }) => {
+const DashboardCharts = ({ hideUserDistribution = false, isSecurityDashboard = false }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
@@ -164,7 +164,7 @@ const DashboardCharts = ({ hideUserDistribution = false }) => {
         })}
       </div>
 
-      <div className={`grid grid-cols-1 ${hideUserDistribution ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-5`}>
+      <div className={`grid grid-cols-1 ${hideUserDistribution ? (isSecurityDashboard ? 'md:grid-cols-1 md:max-w-md md:mx-auto w-full' : 'md:grid-cols-2') : 'md:grid-cols-3'} gap-5`}>
         {/* User Distribution */}
         {!hideUserDistribution && (
         <motion.div
@@ -227,8 +227,8 @@ const DashboardCharts = ({ hideUserDistribution = false }) => {
         >
           <div className="flex items-center justify-between mb-6 relative z-10">
             <div>
-              <h3 className="text-[14px] font-bold text-[var(--color-text-primary)] m-0">Restricted Visitors</h3>
-              <p className="text-[var(--color-text-dim)] text-[11px] font-medium mt-0.5">Blacklist status</p>
+              <h3 className="text-[14px] font-bold text-[var(--color-text-primary)] m-0">{isSecurityDashboard ? "Blacklist Approval Analytics" : "Restricted Visitors"}</h3>
+              <p className="text-[var(--color-text-dim)] text-[11px] font-medium mt-0.5">{isSecurityDashboard ? "Blacklist statuses" : "Blacklist status"}</p>
             </div>
             <div className="w-9 h-9 rounded-xl flex items-center justify-center text-red-500" style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
               <ShieldAlert size={15} />
@@ -265,6 +265,7 @@ const DashboardCharts = ({ hideUserDistribution = false }) => {
         </motion.div>
 
         {/* Approval Analytics */}
+        {!isSecurityDashboard && (
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -307,6 +308,7 @@ const DashboardCharts = ({ hideUserDistribution = false }) => {
             ))}
           </div>
         </motion.div>
+        )}
       </div>
     </div>
   );

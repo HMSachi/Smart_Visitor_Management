@@ -202,6 +202,7 @@ const PlacesManagement = () => {
                         sx={{
                           padding: "8px 24px",
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
+                          width: "40%",
                         }}
                         className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                       >
@@ -290,6 +291,7 @@ const PlacesManagement = () => {
                               sx={{
                                 padding: "8px 24px",
                                 borderBottom: "none",
+                                width: "40%",
                               }}
                               className={`font-normal align-middle transition-colors text-[12px] ${
                                 isActive ? "text-white" : "text-white/40 line-through"
