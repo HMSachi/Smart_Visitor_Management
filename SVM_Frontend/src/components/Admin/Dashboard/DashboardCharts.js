@@ -18,7 +18,7 @@ import { Users, ShieldAlert, CheckCircle, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 
-const DashboardCharts = () => {
+const DashboardCharts = ({ hideUserDistribution = false }) => {
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
@@ -164,8 +164,9 @@ const DashboardCharts = () => {
         })}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className={`grid grid-cols-1 ${hideUserDistribution ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-5`}>
         {/* User Distribution */}
+        {!hideUserDistribution && (
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -214,6 +215,7 @@ const DashboardCharts = () => {
             ))}
           </div>
         </motion.div>
+        )}
 
         {/* Restricted Visitors */}
         <motion.div
