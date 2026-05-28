@@ -35,7 +35,7 @@ const DashboardMain = () => {
           </div>
         </div>
 
-        <DashboardCharts />
+        <DashboardCharts hideUserDistribution={true} />
         {/* Security Alerts & Access Control */}
         {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           <motion.section initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="lg:col-span-2">
