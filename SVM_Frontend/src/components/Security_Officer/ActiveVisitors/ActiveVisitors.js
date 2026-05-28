@@ -27,6 +27,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import PageSpinner from "../../../components/common/PageSpinner";
 import GatePassService from "../../../services/GatePassService";
 
 const ActiveVisitorsMain = () => {
@@ -287,10 +288,7 @@ const ActiveVisitorsMain = () => {
         <div className="overflow-x-auto w-full max-w-full pb-4">
           {isLoading ? (
             <div className="p-20 text-center space-y-4">
-              <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"></div>
-              <p className="text-[11px] text-[var(--color-text-dim)] uppercase tracking-widest font-bold">
-                Synchronizing registry...
-              </p>
+              <PageSpinner size={42} color="var(--color-primary)" />
             </div>
           ) : filteredVisitors.length === 0 ? (
             <div className="p-20 text-center space-y-4">

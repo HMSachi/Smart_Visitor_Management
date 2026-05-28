@@ -13,6 +13,7 @@ import { GetAllVisitors } from "../../../actions/VisitorAction";
 import { GetAllVisitRequests } from "../../../actions/VisitRequestAction";
 import { GetAllBlacklist } from "../../../actions/BlacklistAction";
 import DashboardCharts from "../../../components/Admin/Dashboard/DashboardCharts";
+import PageSpinner from "../../../components/common/PageSpinner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -90,8 +91,7 @@ const Dashboard = () => {
           {/* Key Metrics - Stats Grid */}
           {liveDataAvailable === null ? (
             <div className="flex flex-col items-center justify-center py-10" style={{ background: 'var(--color-bg-paper)', borderRadius: '24px', border: '1px solid var(--color-border-soft)' }}>
-              <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <span className="mt-2 text-[var(--color-text-dim)] text-xs tracking-wider uppercase font-medium">Loading live dashboard metrics...</span>
+              <PageSpinner size={40} color="var(--color-primary)" />
             </div>
           ) : (
             <>

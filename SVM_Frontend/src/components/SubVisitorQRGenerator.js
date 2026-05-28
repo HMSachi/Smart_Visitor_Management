@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Download, AlertCircle, Loader2, Package, ArrowRight, ShieldCheck } from "lucide-react";
+import { Download, AlertCircle, ShieldCheck } from "lucide-react";
+import PageSpinner from "./common/PageSpinner";
 import SubVisitorQRService from "../services/SubVisitorQRService";
 
 const SubVisitorQRGenerator = ({ subVisitorsData, mainVisitorData, requestId, gatePassId }) => {
@@ -83,10 +84,7 @@ const SubVisitorQRGenerator = ({ subVisitorsData, mainVisitorData, requestId, ga
     return (
       <div className="w-full max-w-[430px] mx-auto bg-[#161618]/95 backdrop-blur-3xl border border-white/20 shadow-[0_24px_80px_rgba(0,0,0,0.9)] rounded-[32px] overflow-hidden">
         <div className="p-12 flex flex-col items-center justify-center text-center">
-          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">
-            Generating QR codes for sub-visitors...
-          </p>
+          <PageSpinner size={44} color="var(--color-primary)" />
         </div>
       </div>
     );

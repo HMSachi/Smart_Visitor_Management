@@ -8,7 +8,6 @@ import {
 import { MapPin, Plus, Edit, ToggleLeft, ToggleRight, Search, Hash } from "lucide-react";
 import PageSpinner from "../../../components/common/PageSpinner";
 import Header from "../../../components/Admin/Layout/Header";
-import { useThemeMode } from "../../../theme/ThemeModeContext";
 import { AddPlace, GetAllPlaces, UpdatePlace, UpdatePlaceStatus } from "../../../actions/PlacesAction";
 
 const PlacesManagement = () => {
@@ -24,8 +23,6 @@ const PlacesManagement = () => {
   const user = useSelector((state) => state.login.user);
   const { places, loading } = useSelector((state) => state.placesState);
   const dispatch = useDispatch();
-  const { themeMode } = useThemeMode();
-  const isLight = themeMode === "light";
 
   useEffect(() => { dispatch(GetAllPlaces()); }, [dispatch]);
 
@@ -178,7 +175,7 @@ const PlacesManagement = () => {
                   overflow: "auto",
                 }}
               >
-                <Table stickyHeader aria-label="places table">
+                <Table stickyHeader aria-label="places table" sx={{ tableLayout: "fixed", width: "100%" }}>
                   <TableHead>
                     <TableRow
                       sx={{
@@ -188,9 +185,9 @@ const PlacesManagement = () => {
                     >
                       <TableCell
                         sx={{
-                          padding: "8px 24px",
+                          padding: "8px 16px",
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "15%",
+                          width: "110px",
                         }}
                         className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                       >
@@ -198,9 +195,9 @@ const PlacesManagement = () => {
                       </TableCell>
                       <TableCell
                         sx={{
-                          padding: "8px 24px",
+                          padding: "8px 12px 8px 12px",
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "40%",
+                          width: "260px",
                         }}
                         className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                       >
@@ -209,20 +206,20 @@ const PlacesManagement = () => {
                       <TableCell
                         align="center"
                         sx={{
-                          padding: "8px 24px",
+                          padding: "8px 0px 8px 0px",
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "20%",
+                          width: "170px",
                         }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit text-center"
                       >
                         Status
                       </TableCell>
                       <TableCell
-                        align="right"
+                        align="left"
                         sx={{
-                          padding: "8px 24px",
+                          padding: "8px 0px 8px 0px",
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "15%",
+                          width: "120px",
                         }}
                         className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                       >
@@ -275,8 +272,9 @@ const PlacesManagement = () => {
                           >
                             <TableCell
                               sx={{
-                                padding: "8px 24px",
+                                padding: "8px 16px",
                                 borderBottom: "none",
+                                width: "110px",
                               }}
                               className="text-white align-middle font-normal text-[12px]"
                             >
@@ -287,9 +285,8 @@ const PlacesManagement = () => {
                             </TableCell>
                             <TableCell
                               sx={{
-                                padding: "8px 24px",
-                                borderBottom: "none",
-                                width: "40%",
+                                padding: "8px 12px 8px 12px",
+                                width: "260px",
                               }}
                               className={`font-normal align-middle transition-colors text-[12px] ${
                                 isActive ? "text-white" : "text-white/40 line-through"
@@ -298,11 +295,13 @@ const PlacesManagement = () => {
                               {placeNameVal}
                             </TableCell>
                             <TableCell
-                              align="center"
+                              align="left"
                               sx={{
-                                padding: "8px 24px",
+                                padding: "8px 0px 8px 0px",
                                 borderBottom: "none",
+                                width: "170px",
                               }}
+                              className="text-left"
                             >
                               <button
                                 onClick={() => handleToggleStatus(place)}
@@ -317,13 +316,14 @@ const PlacesManagement = () => {
                               </button>
                             </TableCell>
                             <TableCell
-                              align="right"
+                              align="left"
                               sx={{
-                                padding: "8px 24px",
+                                padding: "8px 0px 8px 0px",
                                 borderBottom: "none",
+                                width: "120px",
                               }}
                             >
-                              <div className="flex items-center justify-end gap-1">
+                              <div className="flex items-center justify-start gap-1">
                                 <IconButton
                                   onClick={() => handleToggleStatus(place)}
                                   size="small"

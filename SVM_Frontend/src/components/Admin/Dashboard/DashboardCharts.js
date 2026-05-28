@@ -96,6 +96,13 @@ const DashboardCharts = ({ hideUserDistribution = false, isSecurityDashboard = f
     { label: "Approval Rate", value: totalRequests ? Math.round((approvedRequests / totalRequests) * 100) : 0, hint: "Approved requests", icon: CheckCircle, color: "#10B981", suffix: "%" },
   ];
 
+  const securitySnapshot = [
+    { label: "Active on site", value: activeVisitors, color: "#2563EB" },
+    { label: "Restricted profiles", value: blacklists.length, color: "#EF4444" },
+    { label: "Pending approvals", value: pendingRequests, color: "#F59E0B" },
+    { label: "Approval rate", value: totalRequests ? `${Math.round((approvedRequests / totalRequests) * 100)}%` : "0%", color: "#10B981" },
+  ];
+
   // Custom tooltips for Recharts
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -164,7 +171,7 @@ const DashboardCharts = ({ hideUserDistribution = false, isSecurityDashboard = f
         })}
       </div>
 
-      <div className={`grid grid-cols-1 ${hideUserDistribution ? (isSecurityDashboard ? 'md:grid-cols-1 md:max-w-md md:mx-auto w-full' : 'md:grid-cols-2') : 'md:grid-cols-3'} gap-5`}>
+      <div className={`grid grid-cols-1 ${hideUserDistribution ? (isSecurityDashboard ? 'md:grid-cols-2 md:max-w-none' : 'md:grid-cols-2') : 'md:grid-cols-3'} gap-5`}>
         {/* User Distribution */}
         {!hideUserDistribution && (
         <motion.div
@@ -263,6 +270,38 @@ const DashboardCharts = ({ hideUserDistribution = false, isSecurityDashboard = f
             ))}
           </div>
         </motion.div>
+
+        {isSecurityDashboard && (
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.08 }}
+          className="group relative overflow-hidden min-h-full"
+          style={{ background: "var(--color-bg-paper)", border: "1px solid var(--color-border-soft)", borderRadius: "20px", padding: "1.25rem", boxShadow: "var(--shadow-card)" }}
+        >
+          <div className="flex items-center justify-between mb-6 relative z-10">
+            <div>
+              <h3 className="text-[14px] font-bold text-[var(--color-text-primary)] m-0">Security Snapshot</h3>
+              <p className="text-[var(--color-text-dim)] text-[11px] font-medium mt-0.5">Live operational overview</p>
+            </div>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-primary" style={{ background: "rgba(200, 16, 46, 0.1)", border: "1px solid rgba(200, 16, 46, 0.2)" }}>
+              <Activity size={15} />
+            </div>
+          </div>
+
+          <div className="space-y-3 relative z-10">
+            {securitySnapshot.map((item) => (
+              <div key={item.label} className="flex items-center justify-between rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface-1)] px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: item.color }} />
+                  <span className="text-[12px] font-semibold text-[var(--color-text-secondary)]">{item.label}</span>
+                </div>
+                <span className="text-[13px] font-bold text-[var(--color-text-primary)]">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+        )}
 
         {/* Approval Analytics */}
         {!isSecurityDashboard && (
