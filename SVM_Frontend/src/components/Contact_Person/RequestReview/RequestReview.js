@@ -18,6 +18,7 @@ import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
+import PageSpinner from "../../common/PageSpinner";
 
 const normalizeStatus = (status) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -324,10 +325,8 @@ const RequestReviewMain = () => {
 
         <div className="space-y-1.5 max-h-[calc(100vh-140px)] overflow-y-auto pr-1 custom-scrollbar">
           {detailsLoading ? (
-            <div className="space-y-4 animate-pulse">
-              <div className={`h-48 rounded-[12px] ${isLight ? "bg-gray-100/50" : "bg-white/5"}`} />
-              <div className={`h-32 rounded-[12px] ${isLight ? "bg-gray-100/50" : "bg-white/5"}`} />
-              <div className={`h-32 rounded-[12px] ${isLight ? "bg-gray-100/50" : "bg-white/5"}`} />
+            <div className="py-24 flex items-center justify-center">
+              <PageSpinner size={40} color={isLight ? "var(--color-primary)" : "#fff"} />
             </div>
           ) : (
             <ContactPersonAuthProtocol

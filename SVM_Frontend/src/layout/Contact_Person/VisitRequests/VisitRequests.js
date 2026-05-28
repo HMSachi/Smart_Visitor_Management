@@ -1480,13 +1480,11 @@ const VisitRequests = () => {
           className={`border rounded-[20px] overflow-hidden relative ${isLight ? "bg-white border-gray-200 shadow-lg shadow-gray-200/40" : "bg-[#0F0F10] border-white/5"}`}
         >
           {isLoading ? (
-            <div className="p-8 space-y-4">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`h-16 rounded-2xl animate-pulse ${isLight ? "bg-gray-50" : "bg-white/[0.02]"}`}
-                />
-              ))}
+            <div className="p-20 flex items-center justify-center">
+              <Loader2
+                size={44}
+                className={`${isLight ? "text-primary" : "text-white"} animate-spin`}
+              />
             </div>
           ) : error ? (
             <div className="p-24 text-center">

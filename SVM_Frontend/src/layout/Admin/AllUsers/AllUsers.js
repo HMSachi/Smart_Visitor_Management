@@ -10,7 +10,6 @@ import {
   TableRow,
   Paper,
   IconButton,
-  CircularProgress,
 } from "@mui/material";
 import {
   GetAllAdministrator,
@@ -46,7 +45,9 @@ import {
   Phone,
   Eye,
   EyeOff,
+  
 } from "lucide-react";
+import PageSpinner from "../../../components/common/PageSpinner";
 import {
   validateName,
   validateNIC,
@@ -670,10 +671,7 @@ const AllUsers = () => {
           <div className="flex-1 space-y-4">
             {loading ? (
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
-                <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
-                <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
-                  Hang tight, we’re loading the user list.
-                </p>
+                <PageSpinner size={44} color="var(--color-primary)" />
               </div>
             ) : error ? (
               <div className="p-8 md:p-20 text-center">

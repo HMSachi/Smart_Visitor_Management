@@ -39,7 +39,7 @@ import {
   Users,
   Package,
   Briefcase,
-  Loader2,
+  
   Plus,
   Eye,
   Paperclip,
@@ -48,7 +48,9 @@ import {
   FolderOpen,
   ImageIcon,
   Upload,
+  Loader2,
 } from "lucide-react";
+import PageSpinner from "../../../components/common/PageSpinner";
 import { motion, AnimatePresence } from "framer-motion";
 
 const StatusBadge = ({ status }) => {
@@ -1149,12 +1151,9 @@ const MyRequests = () => {
 
         <div>
           {isLoading ? (
-            <div className="bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl p-24 flex flex-col items-center justify-center">
-              <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="mt-6 text-gray-400 font-bold uppercase tracking-[0.4em] text-xs">
-                Hang tight, we're loading your visit requests.
-              </p>
-            </div>
+              <div className="bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl p-24 flex items-center justify-center">
+                <PageSpinner size={40} color="var(--color-primary)" />
+              </div>
           ) : error ? (
             <div className="bg-black/20 border border-white/5 rounded-[20px] overflow-hidden backdrop-blur-xl shadow-2xl p-24 text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary border border-primary/20">

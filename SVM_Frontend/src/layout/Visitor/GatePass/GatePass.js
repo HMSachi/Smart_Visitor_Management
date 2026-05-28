@@ -7,12 +7,12 @@ import {
   Download,
   ShieldCheck,
   AlertCircle,
-  Loader2,
   User,
   Calendar,
   MapPin,
   Briefcase,
 } from "lucide-react";
+import PageSpinner from "../../../components/common/PageSpinner";
 import GatePassService from "../../../services/GatePassService";
 import VisitorService from "../../../services/VisitorService";
 import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
@@ -289,11 +289,8 @@ const GatePass = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[var(--color-bg-default)] px-4 md:px-8 pt-28 pb-8 text-[var(--color-text-primary)] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-6">
-          <div className="w-12 h-12 border-4 border-[var(--color-primary-low)] border-t-[var(--color-primary)] rounded-full animate-spin"></div>
-          <p className="text-[var(--color-text-secondary)] font-bold uppercase tracking-[0.3em] text-[10px]">
-            Hang tight, we’re preparing your gate pass.
-          </p>
+        <div className="flex items-center justify-center">
+          <PageSpinner size={44} color="var(--color-primary)" />
         </div>
       </div>
     );

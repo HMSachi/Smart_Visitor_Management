@@ -42,6 +42,7 @@ import {
   Download,
   Edit,
 } from "lucide-react";
+import PageSpinner from "../../../components/common/PageSpinner";
 import {
   validateName,
   validateNIC,
@@ -694,10 +695,7 @@ const ContactAllVisitors = () => {
           <div className="border rounded-[32px] overflow-hidden relative z-10 bg-background-paper border-border-soft shadow-xl shadow-black/5">
             {isLoading ? (
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
-                <div className="w-12 h-12 border-4 border-border-soft border-t-primary rounded-full animate-spin mb-6"></div>
-                <p className="text-text-secondary text-[12px] uppercase tracking-[0.3em] font-normal">
-                  Hang tight, we’re loading visitor records.
-                </p>
+                <PageSpinner size={44} color="var(--color-primary)" />
               </div>
             ) : error ? (
               <div className="p-8 md:p-20 text-center">

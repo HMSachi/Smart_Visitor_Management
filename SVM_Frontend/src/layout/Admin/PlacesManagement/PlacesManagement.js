@@ -3,9 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
   IconButton, Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, TextField, Snackbar, Alert, CircularProgress,
+  Button, TextField, Snackbar, Alert,
 } from "@mui/material";
 import { MapPin, Plus, Edit, ToggleLeft, ToggleRight, Search, Hash } from "lucide-react";
+import PageSpinner from "../../../components/common/PageSpinner";
 import Header from "../../../components/Admin/Layout/Header";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import { AddPlace, GetAllPlaces, UpdatePlace, UpdatePlaceStatus } from "../../../actions/PlacesAction";
@@ -164,11 +165,8 @@ const PlacesManagement = () => {
           <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
             {loading ? (
-              <div className="p-20 flex flex-col items-center justify-center">
-                <CircularProgress size={24} className="text-primary mb-4" />
-                <p className="text-[var(--color-text-dim)] text-[12px] uppercase tracking-[0.3em]">
-                  Syncing data...
-                </p>
+              <div className="p-20 flex items-center justify-center">
+                <PageSpinner size={44} color="var(--color-primary)" />
               </div>
             ) : (
               <TableContainer

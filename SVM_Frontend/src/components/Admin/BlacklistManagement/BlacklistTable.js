@@ -7,7 +7,9 @@ import {
   Search,
   CheckCircle,
   XCircle,
+  
 } from "lucide-react";
+import PageSpinner from "../../common/PageSpinner";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -369,11 +371,8 @@ const BlacklistTable = () => {
                       animate={{ opacity: 1 }}
                     >
                       <td colSpan="6" className="py-20 text-center">
-                        <div className="flex flex-col items-center gap-3">
-                          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                          <span className="text-[11px] text-[var(--color-text-dim)] uppercase tracking-widest font-medium">
-                            Fetching restricted list...
-                          </span>
+                        <div className="flex items-center justify-center">
+                          <PageSpinner size={40} color="var(--color-primary)" />
                         </div>
                       </td>
                     </motion.tr>

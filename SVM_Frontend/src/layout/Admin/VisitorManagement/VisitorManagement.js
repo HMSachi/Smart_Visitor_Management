@@ -8,7 +8,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  CircularProgress,
 } from "@mui/material";
 import {
   GetAllVisitors,
@@ -23,6 +22,7 @@ import {
   Users,
   Hash,
 } from "lucide-react";
+import PageSpinner from "../../../components/common/PageSpinner";
 
 const VisitorManagement = () => {
   const dispatch = useDispatch();
@@ -130,10 +130,7 @@ const VisitorManagement = () => {
 
             {isLoading ? (
               <div className="p-20 flex flex-col items-center justify-center text-center">
-                <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
-                <p className="text-[var(--color-text-dim)] text-[12px] uppercase tracking-[0.3em] font-medium">
-                  Synchronizing records...
-                </p>
+                <PageSpinner size={40} color="var(--color-primary)" />
               </div>
             ) : error ? (
               <div className="p-20 text-center">
