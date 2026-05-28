@@ -205,6 +205,35 @@ const UserManagement = () => {
       return;
     }
 
+    // Check for duplicate email when adding new contact person
+    if (!isEditing && formData.email) {
+      const emailExists = contactPersons.some(
+        (contact) =>
+          contact.VCP_Email?.toLowerCase() === formData.email.toLowerCase(),
+      );
+      if (emailExists) {
+        setError(
+          "This email is already registered. Please use a different email address.",
+        );
+        return;
+      }
+    }
+
+    // When editing, check if email is used by another contact person
+    if (isEditing && formData.email) {
+      const emailExists = contactPersons.some(
+        (contact) =>
+          contact.VCP_Email?.toLowerCase() === formData.email.toLowerCase() &&
+          contact.VCP_Contact_person_id !== formData.id,
+      );
+      if (emailExists) {
+        setError(
+          "This email is already registered. Please use a different email address.",
+        );
+        return;
+      }
+    }
+
     const phoneErr = validatePhone(formData.phone);
     if (phoneErr) {
       setError(phoneErr);
@@ -532,33 +561,33 @@ const UserManagement = () => {
             >
               <Table sx={{ minWidth: 650 }} aria-label="user management table">
                 <TableHead className="bg-black/40">
-                    <TableRow>
+                  <TableRow>
+                    <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
+                      ID
+                    </th>
+                    <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
+                      Name
+                    </th>
+                    <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
+                      {activeTab === "CONTACT" ? "Department" : "System Role"}
+                    </th>
+                    <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
+                      {activeTab === "CONTACT"
+                        ? "Email"
+                        : "Authentication Origin"}
+                    </th>
+                    {activeTab === "CONTACT" && (
                       <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
-                        ID
+                        Phone
                       </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
-                        Name
-                      </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
-                        {activeTab === "CONTACT" ? "Department" : "System Role"}
-                      </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
-                        {activeTab === "CONTACT"
-                          ? "Email"
-                          : "Authentication Origin"}
-                      </th>
-                      {activeTab === "CONTACT" && (
-                        <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
-                          Phone
-                        </th>
-                      )}
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
-                        Status
-                      </th>
-                      <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-right">
-                        Actions
-                      </th>
-                    </TableRow>
+                    )}
+                    <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-left">
+                      Status
+                    </th>
+                    <th className="text-white/40 font-normal uppercase tracking-[0.3em] text-[12px] border-b border-b-white/5 px-2.5 py-1.5 text-right">
+                      Actions
+                    </th>
+                  </TableRow>
                 </TableHead>
                 <TableBody>
                   {isLoading &&
@@ -606,7 +635,7 @@ const UserManagement = () => {
                           {item.VCP_Contact_person_id || item.VA_Admin_id}
                         </TableCell>
                         <TableCell
-                          className={`font-normal border-b-white/5 transition-colors text-[12px] py-1 ${(item.VCP_Status || item.VA_Status) ==="A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white" : "text-white/30 line-through"}`}
+                          className={`font-normal border-b-white/5 transition-colors text-[12px] py-1 ${(item.VCP_Status || item.VA_Status) === "A" || (item.VCP_Status || item.VA_Status) === "ACTIVE" ? "text-white" : "text-white/30 line-through"}`}
                         >
                           {item.VCP_Name || item.VA_Name || "-"}
                         </TableCell>
@@ -640,7 +669,10 @@ const UserManagement = () => {
                               : "INACTIVE"}
                           </button>
                         </TableCell>
-                        <TableCell align="right" className="border-b-white/5 py-1 font-normal text-[12px]">
+                        <TableCell
+                          align="right"
+                          className="border-b-white/5 py-1 font-normal text-[12px]"
+                        >
                           {activeTab === "CONTACT" ? (
                             <IconButton
                               onClick={() => handleOpenForm(item)}

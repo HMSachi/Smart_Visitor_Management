@@ -210,8 +210,10 @@ const AllUsers = () => {
         email: item.VCP_Email || "",
         role: "Contact_Person",
         password: "",
-        phone: item.VCP_Phone || item.VCP_Mobile || item.VCP_Contact_Number || "",
-        department: item.VCP_Department || item.VCP_Designation || item.VCP_Dept || "",
+        phone:
+          item.VCP_Phone || item.VCP_Mobile || item.VCP_Contact_Number || "",
+        department:
+          item.VCP_Department || item.VCP_Designation || item.VCP_Dept || "",
         type: "CONTACT",
       };
     }
@@ -223,7 +225,8 @@ const AllUsers = () => {
       role: item.VA_Role || item.VA_Role_Name || "",
       password: "",
       phone: item.VA_Phone || item.VA_Mobile || item.VA_Contact_Number || "",
-      department: item.VA_Department || item.VA_Designation || item.VA_Dept || "",
+      department:
+        item.VA_Department || item.VA_Designation || item.VA_Dept || "",
       type: "ADMIN",
     };
   };
@@ -252,7 +255,10 @@ const AllUsers = () => {
           baseFormData.id,
         );
         const record =
-          response?.data?.ResultSet?.[0] || response?.data?.ResultSet || response?.data || item;
+          response?.data?.ResultSet?.[0] ||
+          response?.data?.ResultSet ||
+          response?.data ||
+          item;
         const cached = getCachedProfile("CONTACT", baseFormData.id);
         setFormData({
           ...baseFormData,
@@ -278,8 +284,13 @@ const AllUsers = () => {
           baseFormData.id,
         );
         const record =
-          response?.data?.ResultSet?.[0] || response?.data?.ResultSet || response?.data || item;
-        const cached = getCachedProfile("ADMIN", baseFormData.id) || getCachedProfile("ADMIN", baseFormData.email);
+          response?.data?.ResultSet?.[0] ||
+          response?.data?.ResultSet ||
+          response?.data ||
+          item;
+        const cached =
+          getCachedProfile("ADMIN", baseFormData.id) ||
+          getCachedProfile("ADMIN", baseFormData.email);
         setFormData({
           ...baseFormData,
           id: record.VA_Admin_id || baseFormData.id,
@@ -298,11 +309,20 @@ const AllUsers = () => {
             record.VA_Dept ||
             cached?.department ||
             baseFormData.department,
-          password: cached?.password || record.VA_Password || baseFormData.password,
+          password:
+            cached?.password || record.VA_Password || baseFormData.password,
         });
       }
     } catch (error) {
-      const cached = getCachedProfile(type === "CONTACT" ? "CONTACT" : "ADMIN", baseFormData.id) || getCachedProfile(type === "CONTACT" ? "CONTACT" : "ADMIN", baseFormData.email);
+      const cached =
+        getCachedProfile(
+          type === "CONTACT" ? "CONTACT" : "ADMIN",
+          baseFormData.id,
+        ) ||
+        getCachedProfile(
+          type === "CONTACT" ? "CONTACT" : "ADMIN",
+          baseFormData.email,
+        );
       setFormData({
         ...baseFormData,
         name: cached?.name || baseFormData.name,
@@ -348,6 +368,29 @@ const AllUsers = () => {
 
     const emailErr = validateEmail(formData.email);
     if (emailErr) nextErrors.email = emailErr;
+
+    // Check for duplicate email when adding new user
+    if (modalMode === "add" && formData.email && !emailErr) {
+      // Check in administrators
+      const emailExists = administrators.some(
+        (admin) =>
+          admin.VA_Email?.toLowerCase() === formData.email.toLowerCase(),
+      );
+      if (emailExists) {
+        nextErrors.email = "Email already registered in system";
+      }
+
+      // Check in contact persons if role is Contact_Person
+      if (!emailExists && formData.role === "Contact_Person") {
+        const contactEmailExists = contactPersons.some(
+          (contact) =>
+            contact.VCP_Email?.toLowerCase() === formData.email.toLowerCase(),
+        );
+        if (contactEmailExists) {
+          nextErrors.email = "Email already registered as contact person";
+        }
+      }
+    }
 
     const phoneErr = validatePhone(formData.phone);
     if (phoneErr) nextErrors.phone = phoneErr;
