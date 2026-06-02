@@ -30,6 +30,7 @@ import AllUsers from "./layout/Admin/AllUsers/AllUsers";
 import VisitorManagement from "./layout/Admin/VisitorManagement/VisitorManagement";
 import PlacesManagement from "./layout/Admin/PlacesManagement/PlacesManagement";
 import Login from "./layout/Login/Login";
+import ServerConfig from "./layout/ServerConfig/ServerConfig";
 
 import ContactDashboard from "./layout/Contact_Person/Dashboard/Dashboard";
 // import RequestsInbox from "./layout/Contact_Person/RequestsInbox/RequestsInbox";
@@ -196,6 +197,7 @@ const AppContent = () => {
           {/* Entry Route */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/server-config" element={<ServerConfig />} />
 
           {/* Visitor Routes */}
           <Route path="/home" element={<Home />} />
