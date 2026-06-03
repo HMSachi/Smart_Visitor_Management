@@ -1,20 +1,41 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CheckSquare, QrCode, Send, Loader2, Download } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { AddGatePass, GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
+import VisitorProfileTokenService from "../../../services/VisitorProfileTokenService";
 import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
 const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnly = false }) => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.login?.user);
   const [gatePassId, setGatePassId] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSendingProfileLink, setIsSendingProfileLink] = useState(false);
   const [wasSent, setWasSent] = useState(false);
   const [error, setError] = useState(null);
+  const [profileToken, setProfileToken] = useState(null);
   const [encodedQrValue, setEncodedQrValue] = useState("");
   const [visitorJointData, setVisitorJointData] = useState(null);
+
+  const pUid =
+    user?.ResultSet?.[0]?.VA_Name ||
+    user?.ResultSet?.[0]?.P_UID ||
+    user?.ResultSet?.[0]?.VA_Email ||
+    "Admin";
+
+  const markProfileLinkSent = (passId) => {
+    setWasSent(true);
+    try {
+      if (passId && typeof window !== "undefined") {
+        window.localStorage.setItem(`svm.gatepass.sent.${passId}`, "1");
+      }
+    } catch (e) {
+      // ignore storage errors
+    }
+  };
 
   useEffect(() => {
     if (isOpen) setWasSent(false);
@@ -84,6 +105,20 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
         "GP-" + Date.now();
       setGatePassId(newPassId);
       dispatch(GetAllGatePasses());
+
+      try {
+        const tokenResponse = await VisitorProfileTokenService.GenerateProfileToken(
+          visitorData.raw.VVR_Visitor_id,
+          pUid,
+        );
+        setProfileToken(VisitorProfileTokenService.extractToken(tokenResponse));
+        markProfileLinkSent(newPassId);
+      } catch (tokenErr) {
+        console.error("Profile token notification failed:", tokenErr);
+        setError(
+          "Gate pass generated, but SMS/email profile link could not be sent.",
+        );
+      }
     } catch (err) {
       console.error("GatePass generation failed:", err);
       setError("Failed to generate digital gate pass protocol.");
@@ -114,33 +149,34 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
-  const handleSend = () => {
-    // Simulate API call for sending notification
-    setWasSent(true);
+  const handleSend = async () => {
+    if (!visitorData?.raw?.VVR_Visitor_id || wasSent) return;
+
+    setIsSendingProfileLink(true);
+    setError(null);
     try {
-      if (gatePassId && typeof window !== 'undefined') {
-        window.localStorage.setItem(`svm.gatepass.sent.${gatePassId}`, '1');
-      }
-    } catch (e) {
-      // ignore storage errors
+      const tokenResponse = await VisitorProfileTokenService.GenerateProfileToken(
+        visitorData.raw.VVR_Visitor_id,
+        pUid,
+      );
+      setProfileToken(VisitorProfileTokenService.extractToken(tokenResponse));
+      markProfileLinkSent(gatePassId);
+    } catch (err) {
+      console.error("Profile token resend failed:", err);
+      setError("Failed to send SMS/email profile link. Please try again.");
+    } finally {
+      setIsSendingProfileLink(false);
     }
-    // Optional: Real integration would happen here
   };
 
   const handleClose = () => {
     setGatePassId(null);
     setError(null);
     setWasSent(false);
+    setProfileToken(null);
     setVisitorJointData(null);
     onClose();
   };
-
-  const visitingArea = Array.isArray(visitorData?.areas)
-    ? visitorData.areas.join(" | ")
-    : visitorData?.areas ||
-    visitorData?.raw?.VVR_Places_to_Visit ||
-    visitorData?.raw?.VV_Visiting_places ||
-    "N/A";
 
   // Extract sub-visitor information from joint data
   const subVisitors = useMemo(() => {
@@ -348,11 +384,21 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
                       <div className="h-[1px] w-12 bg-white/10 mx-auto my-1"></div>
                       <p className="text-gray-400 text-[10px] capitalize tracking-wider leading-relaxed max-w-[280px]">
                         {wasSent
-                          ? `Transmitted to ${visitorData?.contact || visitorData?.email || "Visitor"}.`
+                          ? `SMS and email sent to ${visitorData?.contact || visitorData?.email || "Visitor"}.`
                           : "Present this digital gate pass at the checkpoint."}
                       </p>
+                      {profileToken && (
+                        <p className="text-green-400/80 text-[9px] tracking-wide max-w-[280px] break-all">
+                          Profile link token generated successfully.
+                        </p>
+                      )}
                     </div>
                   </div>
+                )}
+                {error && gatePassId && (
+                  <p className="mt-4 text-primary text-[10px] capitalize tracking-widest bg-primary/10 p-3 rounded-lg border border-primary/20">
+                    {error}
+                  </p>
                 )}
               </div>
 
@@ -362,12 +408,16 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
                     {!readOnly && (
                       <button
                         onClick={handleSend}
-                        disabled={wasSent}
+                        disabled={wasSent || isSendingProfileLink}
                         className={`flex-1 py-2 text-white text-[11px] font-medium capitalize tracking-[0.1em] rounded-[10px] transition-all shadow-md flex items-center justify-center gap-2 ${wasSent ? "bg-green-500/20 text-green-500 cursor-default" : "bg-primary hover:bg-[#A00D25]"}`}
                       >
                         {wasSent ? (
                           <>
                             <CheckSquare size={13} /> Dispatched
+                          </>
+                        ) : isSendingProfileLink ? (
+                          <>
+                            <Loader2 size={13} className="animate-spin" /> Sending
                           </>
                         ) : (
                           <>

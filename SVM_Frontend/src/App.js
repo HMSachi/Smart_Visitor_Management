@@ -20,6 +20,7 @@ import GatePass from "./layout/Visitor/GatePass/GatePass";
 import InstructionsPage from "./layout/Visitor/Instructions/Instructions";
 import MyRequests from "./layout/Visitor/MyRequests/MyRequests";
 import RequestDetails from "./layout/Visitor/RequestDetails/RequestDetails";
+import ProfileTokenValidation from "./layout/Visitor/ProfileToken/ProfileTokenValidation";
 import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
 import ApprovalManagement from "./layout/Admin/ApprovalManagement/ApprovalManagement";
 import SecurityMonitoringPage from "./layout/Admin/SecurityMonitoring/SecurityMonitoring";
@@ -183,6 +184,7 @@ const AppContent = () => {
   }, [dispatch]);
 
   const isLoginPage = location.pathname === "/login";
+  const isProfileTokenPage = location.pathname.startsWith("/visitor/profile-token");
   const isDashboardPath =
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/contact_person") ||
@@ -191,7 +193,7 @@ const AppContent = () => {
 
   return (
     <>
-      {!isLoginPage && !isDashboardPath && <HeaderComponent />}
+      {!isLoginPage && !isProfileTokenPage && !isDashboardPath && <HeaderComponent />}
       <Layout>
         <Routes>
           {/* Entry Route */}
@@ -209,6 +211,8 @@ const AppContent = () => {
           <Route path="/visitor/my-requests" element={<MyRequests />} />
           <Route path="/visitor/request-details/:requestId" element={<RequestDetails />} />
           <Route path="/visitor/gate-pass/:gatePassId" element={<GatePass />} />
+          <Route path="/visitor/profile-token" element={<ProfileTokenValidation />} />
+          <Route path="/visitor/profile-token/:token" element={<ProfileTokenValidation />} />
 
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
