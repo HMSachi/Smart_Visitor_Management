@@ -28,30 +28,30 @@ const AlertsSection = () => {
 
   return (
     <div
-      className="flex flex-col h-full"
+      className="flex flex-col h-full transition-all duration-500"
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '16px',
+        borderRadius: '28px',
         padding: '1.5rem',
         boxShadow: 'var(--shadow-card)',
-        minHeight: '420px',
+        minHeight: '380px',
       }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-5 pb-4" style={{ borderBottom: '1px solid var(--color-border-soft)' }}>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-primary"
-            style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.2)' }}
+            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300"
+            style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-soft)', color: 'var(--color-text-secondary)' }}
           >
-            <Bell size={16} />
+            <Bell size={16} strokeWidth={2.5} />
           </div>
           <div>
-            <h2 className="text-[var(--color-text-primary)] text-[15px] font-semibold m-0">
+            <h2 className="text-[var(--color-text-primary)] text-[16px] font-bold m-0">
               System Alerts
             </h2>
-            <p className="text-[var(--color-text-dim)] text-[11px] font-medium">Live notifications</p>
+            <p className="text-[var(--color-text-dim)] text-[11px] font-medium mt-0.5">Live notifications</p>
           </div>
         </div>
         <span
@@ -74,7 +74,7 @@ const AlertsSection = () => {
                 initial={{ opacity: 0, x: 16 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.08 }}
-                className="flex items-start gap-3 p-4 rounded-xl cursor-pointer group transition-all duration-200"
+                className="flex items-start gap-3 p-4 rounded-[18px] cursor-pointer group transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   background: style.bg,
                   border: `1px solid ${style.border}`,

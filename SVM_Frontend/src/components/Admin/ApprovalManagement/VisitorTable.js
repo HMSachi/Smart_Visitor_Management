@@ -13,30 +13,27 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 
 const StatusBadge = ({ status }) => {
-  const styles = {
-    "Admin Approved": "border-green-500/20 text-green-500 bg-green-500/5",
-    "Accepted by Admin": "border-green-500/20 text-green-500 bg-green-500/5",
-    "Accepted by Visitor":
-      "border-yellow-500/20 text-yellow-500 bg-yellow-500/5",
-    "Sent to Visitor": "border-blue-500/20 text-blue-500 bg-blue-500/5",
-    "Accepted by Contact Person":
-      "border-orange-500/20 text-orange-500 bg-orange-500/5",
-    "Sent to Admin": "border-orange-500/20 text-orange-500 bg-orange-500/5",
-    Accepted: "border-purple-500/20 text-purple-500 bg-purple-500/5",
-    Rejected: "border-white/10 text-gray-300 bg-white/5",
-    "Checked In": "border-blue-500/20 text-blue-500 bg-blue-500/5",
-    "Checked Out": "border-white/5 text-gray-300/80 bg-transparent",
-    Pending: "border-white/10 text-gray-300 bg-white/5",
+  const variants = {
+    "Admin Approved": "svm-status-pill--success",
+    "Accepted by Admin": "svm-status-pill--success",
+    "Accepted by Visitor": "svm-status-pill--warning",
+    "Sent to Visitor": "svm-status-pill--info",
+    "Accepted by Contact Person": "svm-status-pill--orange",
+    "Sent to Admin": "svm-status-pill--orange",
+    Accepted: "svm-status-pill--purple",
+    Rejected: "svm-status-pill--danger",
+    "Checked In": "svm-status-pill--info",
+    "Checked Out": "svm-status-pill--muted",
+    Pending: "svm-status-pill--muted",
   };
+
+  const formattedStatus = status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : "";
 
   return (
     <div
-      className={`px-3 py-1 rounded-full text-[10px] font-medium tracking-[0.15em] uppercase border flex items-center gap-1.5 w-fit mx-auto ${styles[status] || styles.Pending}`}
+      className={`svm-status-pill w-[200px] mx-auto ${variants[status] || variants.Pending}`}
     >
-      <span
-        className={`w-1.5 h-1.5 rounded-full ${status === "Admin Approved" || status === "Accepted by Admin" || status === "Checked In" ? "bg-green-500 shadow-[0_0_5px_#22c55e]" : status === "Accepted" ? "bg-purple-500 shadow-[0_0_5px_#a855f7]" : status === "Sent to Admin" ? "bg-orange-500 shadow-[0_0_5px_#f97316] animate-pulse" : status === "Pending" ? "bg-primary shadow-[0_0_5px_var(--color-primary)] animate-pulse" : "bg-mas-text-dim opacity-80"}`}
-      />
-      {status}
+      {formattedStatus}
     </div>
   );
 };
@@ -48,7 +45,8 @@ const VisitorTable = ({
   gatePasses = [],
 }) => {
   const desktopTableViewportStyle = {
-    maxHeight: "min(31rem, calc(100vh - 24rem))",
+    height: "calc(100vh - 8rem)",
+    minHeight: "600px",
   };
 
   const [loading, setLoading] = useState(true);
@@ -120,26 +118,26 @@ const VisitorTable = ({
   }
 
   const statusOptions = [
-    { id: "All", label: "All Forms" },
-    { id: "Sent to Visitor", label: "Sent to Visitor" },
-    { id: "Accepted by Contact Person", label: "Contact Person Accepted" },
-    { id: "Accepted by Visitor", label: "Accepted by Visitor" },
-    { id: "Admin Approved", label: "Admin Approved" },
+    { id: "All", label: "All forms" },
+    { id: "Sent to Visitor", label: "Sent to visitor" },
+    { id: "Accepted by Contact Person", label: "Contact person accepted" },
+    { id: "Accepted by Visitor", label: "Accepted by visitor" },
+    { id: "Admin Approved", label: "Admin approved" },
     { id: "Rejected", label: "Rejected" },
   ];
 
   return (
-    <div className="space-y-4 animate-fade-in-slow">
-      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] shadow-xl relative overflow-hidden">
+    <div className="space-y-2 sm:space-y-3 md:space-y-4 animate-fade-in-slow">
+      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
-        <div className="p-4 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 relative z-10">
-          <div className="flex bg-[var(--color-surface-2)] p-0.5 rounded-xl border border-white/5 relative overflow-x-auto no-scrollbar max-w-full">
+        <div className="px-3 sm:px-4 md:px-5 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
+          <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto relative max-w-full overflow-x-auto no-scrollbar">
             {statusOptions.map((btn) => (
               <button
                 key={btn.id}
                 onClick={() => setStatusFilter(btn.id)}
-                className={`relative px-1.5 sm:px-2 md:px-3 lg:px-3 py-1 sm:py-1.5 rounded-lg text-[6px] xs:text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[13px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${statusFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
               >
                 {statusFilter === btn.id && (
                   <motion.div
@@ -160,20 +158,8 @@ const VisitorTable = ({
         </div>
       </div>
 
-      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] shadow-2xl relative overflow-hidden">
+      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-
-        <div className="px-5 py-4 border-b border-white/5 bg-[var(--color-surface-1)] flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-[var(--color-text-secondary)]">
-              Approval Queue
-            </p>
-            <p className="mt-1 text-[12px] text-[var(--color-text-dim)]">
-              Five-row preview with vertical scrolling for the remaining
-              records.
-            </p>
-          </div>
-        </div>
 
         <div className="bg-transparent">
           <div
@@ -181,41 +167,25 @@ const VisitorTable = ({
             style={desktopTableViewportStyle}
           >
             <table className="w-full min-w-[920px] text-left border-collapse">
-              <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)]">
+              <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)] font-normal text-[12px]">
                 <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
-                  <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center w-20 opacity-60">
-                    NO.
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-left">
+                    Visitor name
                   </th>
-                  <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] opacity-60">
-                    VISITOR NAME
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center min-w-[180px]">
+                    Visit date
                   </th>
-                  <th
-                    className="px-6 py-3 text-[12px] font-medium tracking-[0.3em] capitalize text-white/70 cursor-pointer hover:text-primary transition-colors group"
-                    onClick={() =>
-                      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
-                    }
-                  >
-                    <div className="flex flex-col md:flex-row items-center gap-3 md:gap-2">
-                      VISIT DATE & TIME
-                      <div
-                        className={`transition-transform duration-300 ${sortOrder === "asc" ? "rotate-180" : ""}`}
-                      >
-                        <ChevronDown
-                          size={14}
-                          className={
-                            sortOrder
-                              ? "text-primary"
-                              : "text-[var(--color-text-dim)]"
-                          }
-                        />
-                      </div>
-                    </div>
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-left min-w-[300px]">
+                    Visiting place
                   </th>
-                  <th className="px-6 py-3 text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--color-text-secondary)] text-center">
-                    STATUS
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center w-[220px]">
+                    Status
                   </th>
-                  <th className="px-6 py-3 text-[11px] font-bold tracking-[0.3em] uppercase text-primary text-right pr-6">
-                    ACTIONS
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center w-28">
+                    Gatepass
+                  </th>
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-primary text-right md:pr-4 lg:pr-6 w-32">
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -228,113 +198,92 @@ const VisitorTable = ({
                     <React.Fragment
                       key={visitor.batchId || visitor.id || index}
                     >
-                      <tr
-                        className={`group transition-colors duration-300 ${isExpanded ? "bg-primary/[0.03]" : "hover:bg-white/[0.02]"}`}
-                      >
-                        <td className="px-6 py-4 text-center align-middle">
-                          {memberList.length > 0 ? (
-                            <button
-                              onClick={() => toggleBatch(visitor.batchId)}
-                              className={`w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-500 shadow-lg ${isExpanded ? "bg-primary text-white border-primary rotate-180" : "bg-[var(--color-bg-default)] border-white/5 text-gray-300 hover:text-white hover:border-primary/50"}`}
-                            >
-                              {isExpanded ? (
-                                <ChevronUp size={14} />
-                              ) : (
-                                <div className="text-[12px] font-medium">
-                                  {index + 1}
-                                </div>
-                              )}
-                            </button>
-                          ) : (
-                            <div className="w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-500 shadow-lg bg-[var(--color-bg-default)] border-white/5 text-gray-300 mx-auto">
-                              <div className="text-[12px] font-medium">
-                                {index + 1}
-                              </div>
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 align-middle">
-                          <p className="text-white capitalize text-[12px] font-medium tracking-widest mb-0.5">
-                            {visitor.name}
-                          </p>
-                        </td>
-                        <td className="px-6 py-4 align-middle">
-                          <div className="flex flex-col gap-1">
-                            <div className="flex flex-col md:flex-row items-center gap-3 md:gap-2">
-                              <Calendar size={11} className="text-primary/60" />
-                              <span className="text-white capitalize text-[12px] font-medium tracking-widest">
-                                {visitor.date}
-                              </span>
-                            </div>
-                            <p className="text-white/70 capitalize text-[11px] font-medium tracking-widest truncate max-w-[200px] flex flex-col md:flex-row items-center gap-3 md:gap-2">
-                              <MapPin size={10} className="text-primary/70" />
-                              {Array.isArray(visitor.areas)
-                                ? visitor.areas.join(" | ")
-                                : visitor.areas}
+                      <tr className={`group transition-colors duration-200 ${isExpanded ? "bg-primary/[0.03]" : "hover:bg-white/[0.02]"}`}>
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 align-middle font-normal text-[12px]">
+                          <div className="flex items-center gap-2">
+                            {memberList.length > 0 && (
+                              <button
+                                onClick={() => toggleBatch(visitor.batchId)}
+                                className={`w-5 h-5 rounded flex items-center justify-center transition-all duration-300 ${isExpanded ? "bg-primary text-white" : "bg-white/5 text-gray-400 hover:text-white hover:bg-primary/20"}`}
+                              >
+                                <ChevronDown size={10} className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                              </button>
+                            )}
+                            <p className="text-white capitalize text-[12px] font-normal tracking-wide mb-0">
+                              {visitor.name}
                             </p>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-center align-middle">
-                          <div className="flex flex-col items-center gap-1.5">
-                            <StatusBadge status={visitor.status} />
-                            {hasGatePass(visitor.id) &&
-                              visitor.status === "Admin Approved" && (
-                                <button
-                                  onClick={() =>
-                                    onAction(visitor, "ViewGatePass")
-                                  }
-                                  className="flex items-center justify-center gap-2 text-[10px] font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
-                                >
-                                  <QrCode
-                                    size={11}
-                                    className="group-hover/gp:scale-110 transition-transform"
-                                  />
-                                  View Gate Pass
-                                </button>
-                              )}
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
+                          <span className="text-white/90 text-[12px] font-normal tracking-wide">
+                            {visitor.date?.split(" ")[0]}
+                          </span>
+                        </td>
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 align-middle font-normal text-[12px]">
+                          <div className="flex items-center gap-1.5 text-white/60 text-[12px] font-normal tracking-wide max-w-[350px]">
+                            <MapPin size={11} className="text-primary/50 shrink-0" />
+                            <span className="truncate">
+                              {Array.isArray(visitor.areas)
+                                ? visitor.areas.join(" | ")
+                                : visitor.areas}
+                            </span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-right pr-6 align-middle">
-                          <div className="flex justify-end gap-2">
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
+                          <StatusBadge status={visitor.status} />
+                        </td>
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-center align-middle font-normal text-[12px]">
+                          {hasGatePass(visitor.id) && (
+                              <button
+                                onClick={() =>
+                                  onAction(visitor, "ViewGatePass")
+                                }
+                                className="w-8 h-8 rounded-lg flex items-center justify-center bg-green-500/5 border border-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all group/gp mx-auto shadow-sm"
+                                title="View Gate Pass"
+                              >
+                                <QrCode
+                                  size={13}
+                                  className="group-hover/gp:scale-110 transition-transform"
+                                />
+                              </button>
+                            )}
+                        </td>
+                        <td className="px-3 md:px-2.5 lg:px-6 py-1 text-right md:pr-4 lg:pr-6 align-middle font-normal text-[12px]">
+                          <div className="flex justify-end gap-1.5">
                             {(visitor.status === "Pending" ||
                               visitor.status === "Sent to Admin" ||
                               visitor.status === "Accepted by Visitor" ||
                               visitor.status ===
-                                "Accepted by Contact Person") && (
-                              <>
-                                <button
-                                  onClick={() => onAction(visitor, "Approve")}
-                                  title="AUTHORIZE BATCH"
-                                  className="w-9 h-9 rounded-lg flex items-center justify-center bg-green-500/5 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-500 shadow-lg group/btn"
-                                >
-                                  <Check
-                                    size={14}
-                                    strokeWidth={3}
-                                    className="group-hover/btn:scale-110 transition-transform"
-                                  />
-                                </button>
-                                <button
-                                  onClick={() => onAction(visitor, "Reject")}
-                                  title="DENY BATCH"
-                                  className="w-9 h-9 rounded-lg flex items-center justify-center bg-primary/5 border border-primary/20 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-500 shadow-lg group/btn"
-                                >
-                                  <X
-                                    size={14}
-                                    strokeWidth={3}
-                                    className="group-hover/btn:scale-110 transition-transform"
-                                  />
-                                </button>
-                              </>
-                            )}
+                              "Accepted by Contact Person") && (
+                                <>
+                                  <button
+                                    onClick={() => onAction(visitor, "Approve")}
+                                    title="APPROVE"
+                                    className="w-7 h-7 rounded-md flex items-center justify-center bg-green-500/5 border border-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all duration-300 group/btn"
+                                  >
+                                    <Check
+                                      size={13}
+                                      strokeWidth={3}
+                                    />
+                                  </button>
+                                  <button
+                                    onClick={() => onAction(visitor, "Reject")}
+                                    title="REJECT"
+                                    className="w-7 h-7 rounded-md flex items-center justify-center bg-primary/5 border border-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 group/btn"
+                                  >
+                                    <X
+                                      size={13}
+                                      strokeWidth={3}
+                                    />
+                                  </button>
+                                </>
+                              )}
                             <button
                               onClick={() => onViewDetails(visitor)}
-                              title="INSPECT PROTOCOL"
-                              className="w-9 h-9 rounded-lg flex items-center justify-center bg-white/[0.02] border border-white/5 text-gray-300 hover:text-white hover:bg-[var(--color-bg-paper)] hover:border-white/20 transition-all duration-500 shadow-lg group/btn"
+                              title="VIEW DETAILS"
+                              className="w-8 h-8 rounded-md flex items-center justify-center bg-white/[0.03] border border-white/5 text-gray-400 hover:text-white hover:border-white/20 transition-all duration-300"
                             >
-                              <Eye
-                                size={14}
-                                className="group-hover/btn:rotate-12 transition-transform"
-                              />
+                              <Eye size={18} />
                             </button>
                           </div>
                         </td>
@@ -349,15 +298,15 @@ const VisitorTable = ({
                             className="bg-[var(--color-bg-default)] border-b border-primary/10"
                           >
                             <td
-                              colSpan="5"
-                              className="px-0 py-0 overflow-hidden"
+                              colSpan="6"
+                              className="px-0 py-0 overflow-hidden font-normal text-[12px]"
                             >
                               <div className="p-4 md:p-6 pl-24 space-y-4 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
                                 <div className="flex flex-col md:flex-row items-center gap-3 md:gap-3 mb-6">
                                   <div className="w-1 h-3 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]" />
-                                  <p className="text-primary text-[12px] font-medium capitalize tracking-[0.3em]">
+                                  <p className="text-primary text-[12px] font-normal capitalize tracking-[0.3em]">
                                     Personnel Unit Breakdown
                                     <span className="text-gray-300/80 ml-2">
                                       // Institutional Registry
@@ -375,16 +324,16 @@ const VisitorTable = ({
                                       className="flex items-center justify-between p-4 bg-[var(--color-bg-paper)] border border-white/5 hover:border-primary/30 transition-all duration-500 rounded-[20px] group/member shadow-lg"
                                     >
                                       <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
-                                        <div className="w-9 h-9 rounded-lg bg-[var(--color-bg-default)] border border-white/5 flex items-center justify-center text-gray-300 text-[12px] font-medium group-hover/member:border-primary transition-all">
+                                        <div className="w-9 h-9 rounded-lg bg-[var(--color-bg-default)] border border-white/5 flex items-center justify-center text-gray-300 text-[12px] font-normal group-hover/member:border-primary transition-all">
                                           {(idx + 2)
                                             .toString()
                                             .padStart(2, "0")}
                                         </div>
                                         <div className="flex flex-col gap-0.5">
-                                          <span className="text-white text-[12px] font-medium capitalize tracking-widest group-hover/member:text-primary transition-colors">
+                                          <span className="text-white text-[12px] font-normal capitalize tracking-widest group-hover/member:text-primary transition-colors">
                                             {member.name}
                                           </span>
-                                          <span className="text-gray-300/80 text-[11px] font-medium capitalize tracking-[0.2em] flex flex-col md:flex-row items-center gap-3 md:gap-1.5">
+                                          <span className="text-gray-300/80 text-[11px] font-normal capitalize tracking-[0.2em] flex flex-col md:flex-row items-center gap-3 md:gap-1.5">
                                             <Shield
                                               size={9}
                                               className="text-primary/40"
@@ -394,10 +343,10 @@ const VisitorTable = ({
                                         </div>
                                       </div>
                                       <div className="text-right">
-                                        <span className="text-[12px] text-gray-300/80 font-medium capitalize tracking-[0.3em] block mb-0.5">
+                                        <span className="text-[12px] text-gray-300/80 font-normal capitalize tracking-[0.3em] block mb-0.5">
                                           Contact
                                         </span>
-                                        <span className="px-3 py-1.5 bg-black/40 border border-white/5 text-white/90 text-[12px] font-medium tracking-widest rounded-lg shadow-inner group-hover/member:border-primary/20 transition-all">
+                                        <span className="px-3 py-1.5 bg-black/40 border border-white/5 text-white/90 text-[12px] font-normal tracking-widest rounded-lg shadow-inner group-hover/member:border-primary/20 transition-all">
                                           {member.contact}
                                         </span>
                                       </div>
@@ -416,158 +365,92 @@ const VisitorTable = ({
             </table>
           </div>
 
-          <div className="md:hidden flex flex-col p-4 sm:p-8 gap-8">
+          <div className="md:hidden flex flex-col p-2 gap-2">
             {filteredVisitors.map((visitor, index) => {
               const memberList = visitor.members || [];
               const isExpanded = expandedBatches.includes(visitor.batchId);
 
               return (
                 <div
-                  key={visitor.batchId || visitor.id || index}
-                  className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative group"
+                  key={visitor.id || index}
+                  className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] overflow-hidden shadow-lg relative group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                  <div className="p-4 border-b border-white/5 flex justify-between items-start bg-black/20 relative z-10">
+                  <div className="p-3 border-b border-white/5 flex justify-between items-start bg-black/10 relative z-10">
                     <div>
-                      <p className="text-white capitalize text-[12px] font-medium tracking-widest mb-0.5 leading-tight">
+                      <p className="text-white capitalize text-[12px] font-semibold tracking-wide mb-0.5 leading-tight">
                         {visitor.name}
                       </p>
-                      <p className="text-gray-300/80 capitalize text-[11px] font-medium tracking-widest">
-                        {visitor.batchId}
+                      <p className="text-gray-400 text-[10px] font-medium tracking-widest">
+                        {visitor.batchId || `ID: ${visitor.id}`}
                       </p>
                     </div>
-                    <div className="flex flex-col items-end gap-1.5">
+                    <div className="flex flex-col items-end gap-1">
                       <StatusBadge status={visitor.status} />
-                      {hasGatePass(visitor.id) &&
-                        visitor.status === "Admin Approved" && (
+                      {hasGatePass(visitor.id) && (
                           <button
                             onClick={() => onAction(visitor, "ViewGatePass")}
-                            className="flex items-center gap-2 text-[10px] font-bold capitalize tracking-[0.2em] text-primary hover:text-white transition-colors group/gp"
+                            className="flex items-center gap-1 text-[9px] font-bold tracking-[0.1em] text-primary/80 hover:text-primary transition-colors"
                           >
-                            <QrCode
-                              size={11}
-                              className="group-hover/gp:scale-110 transition-transform"
-                            />
-                            View Pass
+                            <QrCode size={10} />
+                            Gatepass
                           </button>
-                        )}
+                      )}
                     </div>
                   </div>
 
-                  <div className="p-4 space-y-4 relative z-10">
-                    <div className="flex justify-between items-center text-[12px] font-medium capitalize tracking-[0.2em] border-b border-white/[0.03] pb-3">
-                      <span className="text-gray-300/80 flex items-center gap-2">
-                        <Calendar size={11} className="text-primary/60" />
-                        Deployed
+                  <div className="p-3 space-y-2 relative z-10">
+                    <div className="flex justify-between items-center text-[12px] font-medium tracking-wide border-b border-white/[0.03] pb-1.5">
+                      <span className="text-gray-400 flex items-center gap-1.5">
+                        <Calendar size={12} className="text-primary/60" />
+                        Date
                       </span>
-                      <span className="text-white text-[11px]">
-                        {visitor.date}{" "}
-                        <span className="text-primary mx-1">//</span>{" "}
-                        {visitor.timeIn}
+                      <span className="text-white/90">
+                        {visitor.date?.split(" ")[0]}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-[12px] font-medium capitalize tracking-[0.2em] border-b border-white/[0.03] pb-3">
-                      <span className="text-gray-300/80 flex items-center gap-2">
-                        <MapPin size={11} className="text-primary/60" />
+                    <div className="flex justify-between items-start text-[12px] font-medium tracking-wide border-b border-white/[0.03] pb-1.5">
+                      <span className="text-gray-400 flex items-center gap-1.5 shrink-0">
+                        <MapPin size={12} className="text-primary/60" />
                         Zones
                       </span>
-                      <span className="text-white text-right max-w-[150px] truncate text-[11px]">
+                      <span className="text-white/70 text-right truncate max-w-[150px]">
                         {Array.isArray(visitor.areas)
                           ? visitor.areas.join(" | ")
                           : visitor.areas}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-[12px] font-medium capitalize tracking-[0.2em]">
-                      <span className="text-gray-300/80 flex items-center gap-2">
-                        <Shield size={11} className="text-primary/60" />
-                        Request
-                      </span>
-                      <span className="text-primary bg-primary/10 px-3 py-1 rounded-full text-[11px]">
-                        {index + 1}
-                      </span>
-                    </div>
                   </div>
 
-                  {memberList.length > 0 && (
-                    <div className="relative z-10">
-                      <button
-                        onClick={() => toggleBatch(visitor.batchId)}
-                        className={`w-full py-3 px-4 flex justify-between items-center text-[12px] font-medium capitalize tracking-[0.3em] border-t transition-all ${isExpanded ? "bg-primary/5 border-primary/20 text-primary" : "bg-black/20 border-white/5 text-gray-300/80 hover:text-white"}`}
-                      >
-                        <span>Unit Breakdown</span>
-                        {isExpanded ? (
-                          <ChevronUp size={16} />
-                        ) : (
-                          <ChevronDown size={16} />
-                        )}
-                      </button>
-
-                      <AnimatePresence>
-                        {isExpanded && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden bg-black/40 relative"
-                          >
-                            <div className="p-4 space-y-3">
-                              {memberList.map((member, idx) => (
-                                <div
-                                  key={idx}
-                                  className="bg-[var(--color-bg-default)] border border-white/5 p-4 rounded-lg flex justify-between items-center shadow-lg group/mem"
-                                >
-                                  <div>
-                                    <span className="text-white text-[12px] font-medium capitalize tracking-widest block mb-0.5 group-hover/mem:text-primary transition-colors">
-                                      {idx + 2}. {member.name}
-                                    </span>
-                                    <span className="text-gray-300/30 text-[11px] font-medium capitalize tracking-[0.2em] block">
-                                      NIC_: {member.nic}
-                                    </span>
-                                  </div>
-                                  <div className="text-right">
-                                    <span className="text-[12px] text-gray-300/80 font-medium capitalize tracking-widest block mb-0.5">
-                                      Contact
-                                    </span>
-                                    <span className="text-white/90 text-[11px] font-medium">
-                                      {member.contact}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  )}
-
-                  <div className="p-4 border-t border-white/5 bg-black/40 flex flex-col md:flex-row gap-3 md:gap-3 relative z-10">
+                  <div className="p-2 bg-black/30 flex gap-2 relative z-10">
                     {(visitor.status === "Pending" ||
                       visitor.status === "Sent to Admin" ||
                       visitor.status === "Accepted by Visitor" ||
                       visitor.status === "Accepted by Contact Person") && (
-                      <>
-                        <button
-                          onClick={() => onAction(visitor, "Approve")}
-                          className="flex-1 h-12 flex justify-center items-center gap-3 bg-green-500/5 border border-green-500/20 text-green-500 text-[12px] font-medium capitalize tracking-[0.2em] rounded-lg hover:bg-green-500 hover:text-white transition-all shadow-lg"
-                        >
-                          <Check size={14} strokeWidth={3} />{" "}
-                          <span>Approve</span>
-                        </button>
-                        <button
-                          onClick={() => onAction(visitor, "Reject")}
-                          className="flex-1 h-12 flex justify-center items-center gap-3 bg-primary/5 border border-primary/20 text-primary text-[12px] font-medium capitalize tracking-[0.2em] rounded-lg hover:bg-primary hover:text-white transition-all shadow-lg"
-                        >
-                          <X size={14} strokeWidth={3} /> <span>Reject</span>
-                        </button>
-                      </>
-                    )}
+                        <>
+                            <button
+                              onClick={() => onAction(visitor, "Approve")}
+                              className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-bold tracking-wider rounded-lg hover:bg-green-500 hover:text-white transition-all"
+                            >
+                              <Check size={11} strokeWidth={3} />
+                              Approve
+                            </button>
+                          <button
+                            onClick={() => onAction(visitor, "Reject")}
+                            className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-wider rounded-lg hover:bg-primary hover:text-white transition-all"
+                          >
+                            <X size={11} strokeWidth={3} />
+                            Reject
+                          </button>
+                        </>
+                      )}
                     <button
                       onClick={() => onViewDetails(visitor)}
-                      className="flex-1 h-12 flex justify-center items-center gap-3 bg-white/[0.02] border border-white/5 text-white text-[12px] font-medium capitalize tracking-[0.2em] rounded-lg hover:bg-white hover:text-black transition-all shadow-lg"
+                      className="flex-1 h-8 flex justify-center items-center gap-1.5 bg-white/[0.03] border border-white/5 text-gray-300 text-[10px] font-bold tracking-wider rounded-lg hover:bg-white hover:text-black transition-all"
                     >
-                      <Eye size={14} /> <span>Inspect</span>
+                      <Eye size={11} />
+                      View details
                     </button>
                   </div>
                 </div>
@@ -575,11 +458,14 @@ const VisitorTable = ({
             })}
 
             {filteredVisitors.length === 0 && (
-              <div className="p-6 md:p-10 text-center bg-white/[0.01] border border-white/5 rounded-[32px] shadow-lg">
-                <div className="w-14 h-14 bg-[var(--color-bg-paper)] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
-                  <Shield size={20} className="text-primary opacity-70" />
+              <div className="p-4 sm:p-8 md:p-10 text-center bg-white/[0.01] border border-white/5 rounded-lg md:rounded-[32px] shadow-lg">
+                <div className="w-12 sm:w-14 h-12 sm:h-14 bg-[var(--color-bg-paper)] rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 border border-white/5">
+                  <Shield
+                    size={18}
+                    className="sm:w-[20px] sm:h-[20px] text-primary opacity-70"
+                  />
                 </div>
-                <p className="text-gray-300 text-[12px] font-medium capitalize tracking-[0.3em] opacity-80">
+                <p className="text-gray-300 text-[11px] sm:text-[12px] font-medium capitalize tracking-[0.2em] sm:tracking-[0.3em] opacity-80">
                   No matching records found
                 </p>
               </div>

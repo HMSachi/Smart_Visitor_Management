@@ -20,6 +20,7 @@ import GatePass from "./layout/Visitor/GatePass/GatePass";
 import InstructionsPage from "./layout/Visitor/Instructions/Instructions";
 import MyRequests from "./layout/Visitor/MyRequests/MyRequests";
 import RequestDetails from "./layout/Visitor/RequestDetails/RequestDetails";
+import ProfileTokenValidation from "./layout/Visitor/ProfileToken/ProfileTokenValidation";
 import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
 import ApprovalManagement from "./layout/Admin/ApprovalManagement/ApprovalManagement";
 import SecurityMonitoringPage from "./layout/Admin/SecurityMonitoring/SecurityMonitoring";
@@ -28,8 +29,9 @@ import RestrictedManagement from "./layout/Admin/BlacklistManagement/BlacklistMa
 import UserManagement from "./layout/Admin/UserManagement/UserManagement";
 import AllUsers from "./layout/Admin/AllUsers/AllUsers";
 import VisitorManagement from "./layout/Admin/VisitorManagement/VisitorManagement";
-
+import PlacesManagement from "./layout/Admin/PlacesManagement/PlacesManagement";
 import Login from "./layout/Login/Login";
+import ServerConfig from "./layout/ServerConfig/ServerConfig";
 
 import ContactDashboard from "./layout/Contact_Person/Dashboard/Dashboard";
 // import RequestsInbox from "./layout/Contact_Person/RequestsInbox/RequestsInbox";
@@ -43,6 +45,8 @@ import ContactVisitRequests from "./layout/Contact_Person/VisitRequests/VisitReq
 import CreateVisitRequest from "./layout/Contact_Person/VisitRequests/CreateVisitRequest";
 import CreateVisitRequestDetails from "./layout/Contact_Person/VisitRequests/CreateVisitRequestDetails";
 import VisitRequestSuccess from "./layout/Contact_Person/VisitRequests/VisitRequestSuccess";
+import ContactRestrictedManagement from "./layout/Contact_Person/BlacklistManagement/BlacklistManagement";
+
 
 
 // Security Support Layouts
@@ -55,6 +59,8 @@ import IncidentReport from "./layout/Security_Officer/IncidentReport/IncidentRep
 import LogsHistory from "./layout/Security_Officer/LogsHistory/LogsHistory";
 import SecurityNotifications from "./layout/Security_Officer/Notifications/Notifications";
 import SecurityDashboard from "./layout/Security_Officer/Dashboard/Dashboard";
+import SecurityRestrictedManagement from "./layout/Security_Officer/BlacklistManagement/BlacklistManagement";
+
 
 import { useEffect, useMemo } from "react";
 import { updateIsMobile } from "./reducers/uiSlice";
@@ -178,6 +184,7 @@ const AppContent = () => {
   }, [dispatch]);
 
   const isLoginPage = location.pathname === "/login";
+  const isProfileTokenPage = location.pathname.startsWith("/visitor/profile-token");
   const isDashboardPath =
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/contact_person") ||
@@ -186,12 +193,13 @@ const AppContent = () => {
 
   return (
     <>
-      {!isLoginPage && !isDashboardPath && <HeaderComponent />}
+      {!isLoginPage && !isProfileTokenPage && !isDashboardPath && <HeaderComponent />}
       <Layout>
         <Routes>
           {/* Entry Route */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/server-config" element={<ServerConfig />} />
 
           {/* Visitor Routes */}
           <Route path="/home" element={<Home />} />
@@ -203,6 +211,8 @@ const AppContent = () => {
           <Route path="/visitor/my-requests" element={<MyRequests />} />
           <Route path="/visitor/request-details/:requestId" element={<RequestDetails />} />
           <Route path="/visitor/gate-pass/:gatePassId" element={<GatePass />} />
+          <Route path="/visitor/profile-token" element={<ProfileTokenValidation />} />
+          <Route path="/visitor/profile-token/:token" element={<ProfileTokenValidation />} />
 
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -222,7 +232,7 @@ const AppContent = () => {
           <Route path="/admin/user-management" element={<UserManagement />} />
           <Route path="/admin/all-users" element={<AllUsers />} />
           <Route path="/admin/visitor-management" element={<VisitorManagement />} />
-          <Route
+          <Route path="/admin/places-management" element={<PlacesManagement />} />          <Route
             path="/admin-dashboard"
             element={<Navigate to="/admin/dashboard" replace />}
           />
@@ -280,6 +290,11 @@ const AppContent = () => {
             path="/contact_person/visit-request-success/:requestId"
             element={<VisitRequestSuccess />}
           />
+          <Route
+            path="/contact_person/blacklist-management"
+            element={<ContactRestrictedManagement />}
+          />
+
 
           {/* Security Support Routes */}
           <Route path="/Security_Officer/scanner" element={<Scanner />} />
@@ -315,6 +330,11 @@ const AppContent = () => {
             path="/Security_Officer/dashboard"
             element={<SecurityDashboard />}
           />
+          <Route
+            path="/Security_Officer/blacklist-management"
+            element={<SecurityRestrictedManagement />}
+          />
+
 
           <Route
             path="/security-dashboard"

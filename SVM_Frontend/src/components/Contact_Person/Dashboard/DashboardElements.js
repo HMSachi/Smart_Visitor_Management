@@ -47,7 +47,7 @@ export const NodeConfiguration = () => (
                 <p className="text-gray-500 text-[11px] font-medium leading-relaxed mb-6 flex-1 uppercase tracking-widest">
                     System synchronization with MAS-HQ active. All entry points are secured.
                 </p>
-                <button className="w-full py-3 rounded-xl bg-gray-50 border border-gray-100 text-[#1A1A1A] text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm">
+                <button className="w-full py-1.5 rounded-xl bg-gray-50 border border-gray-100 text-[#1A1A1A] text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm">
                     Sync Matrix
                 </button>
             </div>

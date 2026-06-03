@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { User, Mail, Lock, Save, AlertCircle } from "lucide-react";
-import { validateName, validateEmail, validatePassword } from "../../../utils/validation";
+import { validateName, validateEmail, validatePassword, sanitizeTextInput } from "../../../utils/validation";
 
 const ProfileForm = () => {
   const [formData, setFormData] = useState({
@@ -15,9 +15,9 @@ const ProfileForm = () => {
   const handleInputChange = (e) => {
     let { name, value } = e.target;
     
-    // Real-time filtering
+    // Real-time sanitization
     if (name === "name") {
-      value = value.replace(/[^A-Za-z\s]/g, "");
+      value = sanitizeTextInput(value);
     } else if (name.toLowerCase().includes("password")) {
       value = value.slice(0, 5);
     }
@@ -57,10 +57,10 @@ const ProfileForm = () => {
 
   //  ONE PLACE STYLE CONTROL (edit here only)
   const inputClass = (name) => 
-    `w-full px-4 py-3 border ${errors[name] ? "border-red-500" : "border-white/30 focus:border-primary"} text-gray-400 rounded-md outline-none bg-transparent transition-all`;
+    `w-full px-4 py-1.5 border ${errors[name] ? "border-red-500" : "border-white/30 focus:border-primary"} text-gray-400 rounded-md outline-none bg-transparent transition-all`;
 
   const inputClassReadonly =
-    "w-full px-4 py-3 border border-white/20 text-white rounded-md opacity-50 cursor-not-allowed bg-transparent";
+    "w-full px-4 py-1.5 border border-white/20 text-white rounded-md opacity-50 cursor-not-allowed bg-transparent";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 md:space-y-12 max-w-2xl">

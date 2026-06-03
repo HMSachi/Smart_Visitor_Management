@@ -10,7 +10,6 @@ import {
   TableRow,
   Paper,
   IconButton,
-  CircularProgress,
 } from "@mui/material";
 import {
   GetAllAdministrator,
@@ -24,6 +23,8 @@ import {
   UpdateContactPersonStatus,
   AddContactPerson,
 } from "../../../actions/ContactPersonAction";
+import AdministratorService from "../../../services/AdministratorService";
+import ContactPersonService from "../../../services/ContactPersonService";
 import Header from "../../../components/Admin/Layout/Header";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
@@ -31,7 +32,6 @@ import {
   Mail,
   Calendar,
   Hash,
-  CheckCircle2,
   AlertCircle,
   Search,
   Plus,
@@ -43,24 +43,28 @@ import {
   ShieldAlert,
   UserCheck,
   Phone,
+  Eye,
+  EyeOff,
+  
 } from "lucide-react";
-import { 
-  validateName, validateNIC, validatePhone, validateEmail, validatePassword 
+import PageSpinner from "../../../components/common/PageSpinner";
+import {
+  validateName,
+  validateNIC,
+  validatePhone,
+  validateEmail,
+  validatePassword,
 } from "../../../utils/validation";
 
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
   if (s === "ACTIVE" || s === "A") {
     return (
-      <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
-        <CheckCircle2 size={12} /> Active
-      </div>
+      <div className="svm-status-pill svm-status-pill--success">Active</div>
     );
   }
   return (
-    <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-lg text-[12px] font-medium tracking-[0.2em] uppercase flex flex-col md:flex-row items-center gap-4 md:gap-2 w-max">
-      <AlertCircle size={12} /> Inactive
-    </div>
+    <div className="svm-status-pill svm-status-pill--danger">Inactive</div>
   );
 };
 
@@ -96,6 +100,7 @@ const AllUsers = () => {
     type: "ADMIN", // Current being edited type
   });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     dispatch(GetAllAdministrator());
@@ -162,34 +167,32 @@ const AllUsers = () => {
     }
   };
 
-  const openModal = (mode, item = null, type = "ADMIN") => {
-    setModalMode(mode);
-    if (item) {
-      if (type === "CONTACT") {
-        setFormData({
-          id: item.VCP_Contact_person_id || "",
-          name: item.VCP_Name || "",
-          email: item.VCP_Email || "",
-          role: "CONTACT",
-          password: "",
-          phone: item.VCP_Phone || "",
-          department: item.VCP_Department || "",
-          type: "CONTACT",
-        });
-      } else {
-        setFormData({
-          id: item.VA_Admin_id || "",
-          name: item.VA_Name || "",
-          email: item.VA_Email || "",
-          role: item.VA_Role || "",
-          password: item.VA_Password || "",
-          phone: item.VA_Phone || "",
-          department: item.VA_Department || "",
-          type: "ADMIN",
-        });
-      }
-    } else {
-      setFormData({
+  const getCachedProfile = (type, id) => {
+    if (!id || typeof window === "undefined") return null;
+
+    try {
+      const cacheKey = `svm.userProfile.${type}.${id}`;
+      const cached = window.localStorage.getItem(cacheKey);
+      return cached ? JSON.parse(cached) : null;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const cacheProfile = (type, id, profile) => {
+    if (!id || typeof window === "undefined") return;
+
+    try {
+      const cacheKey = `svm.userProfile.${type}.${id}`;
+      window.localStorage.setItem(cacheKey, JSON.stringify(profile));
+    } catch (error) {
+      // ignore storage issues
+    }
+  };
+
+  const buildFormDataFromItem = (item = null, type = "ADMIN") => {
+    if (!item) {
+      return {
         id: "",
         name: "",
         email: "",
@@ -198,9 +201,140 @@ const AllUsers = () => {
         phone: "",
         department: "",
         type: "ADMIN",
+      };
+    }
+
+    if (type === "CONTACT") {
+      return {
+        id: item.VCP_Contact_person_id || "",
+        name: item.VCP_Name || "",
+        email: item.VCP_Email || "",
+        role: "Contact_Person",
+        password: "",
+        phone:
+          item.VCP_Phone || item.VCP_Mobile || item.VCP_Contact_Number || "",
+        department:
+          item.VCP_Department || item.VCP_Designation || item.VCP_Dept || "",
+        type: "CONTACT",
+      };
+    }
+
+    return {
+      id: item.VA_Admin_id || "",
+      name: item.VA_Name || "",
+      email: item.VA_Email || "",
+      role: item.VA_Role || item.VA_Role_Name || "",
+      password: "",
+      phone: item.VA_Phone || item.VA_Mobile || item.VA_Contact_Number || "",
+      department:
+        item.VA_Department || item.VA_Designation || item.VA_Dept || "",
+      type: "ADMIN",
+    };
+  };
+
+  const openModal = async (mode, item = null, type = "ADMIN") => {
+    setModalMode(mode);
+    setErrors({});
+    setShowPassword(false);
+
+    if (!item) {
+      setFormData(buildFormDataFromItem(null));
+      setIsModalOpen(true);
+      return;
+    }
+
+    const baseFormData = buildFormDataFromItem(item, type);
+    const resolvedRole =
+      baseFormData.role ||
+      item?.VA_Role ||
+      item?.VA_Role_Name ||
+      (type === "ADMIN" ? "Admin" : type === "SECURITY" ? "Security" : "");
+
+    try {
+      if (type === "CONTACT") {
+        const response = await ContactPersonService.GetContactPersonById(
+          baseFormData.id,
+        );
+        const record =
+          response?.data?.ResultSet?.[0] ||
+          response?.data?.ResultSet ||
+          response?.data ||
+          item;
+        const cached = getCachedProfile("CONTACT", baseFormData.id);
+        setFormData({
+          ...baseFormData,
+          id: record.VCP_Contact_person_id || baseFormData.id,
+          name: record.VCP_Name || cached?.name || baseFormData.name,
+          email: record.VCP_Email || cached?.email || baseFormData.email,
+          role: baseFormData.role || "Contact_Person",
+          phone:
+            record.VCP_Phone ||
+            record.VCP_Mobile ||
+            record.VCP_Contact_Number ||
+            cached?.phone ||
+            baseFormData.phone,
+          department:
+            record.VCP_Department ||
+            record.VCP_Designation ||
+            record.VCP_Dept ||
+            cached?.department ||
+            baseFormData.department,
+        });
+      } else {
+        const response = await AdministratorService.GetAdministratorById(
+          baseFormData.id,
+        );
+        const record =
+          response?.data?.ResultSet?.[0] ||
+          response?.data?.ResultSet ||
+          response?.data ||
+          item;
+        const cached =
+          getCachedProfile("ADMIN", baseFormData.id) ||
+          getCachedProfile("ADMIN", baseFormData.email);
+        setFormData({
+          ...baseFormData,
+          id: record.VA_Admin_id || baseFormData.id,
+          name: record.VA_Name || cached?.name || baseFormData.name,
+          email: record.VA_Email || cached?.email || baseFormData.email,
+          role: record.VA_Role || cached?.role || resolvedRole,
+          phone:
+            record.VA_Phone ||
+            record.VA_Mobile ||
+            record.VA_Contact_Number ||
+            cached?.phone ||
+            baseFormData.phone,
+          department:
+            record.VA_Department ||
+            record.VA_Designation ||
+            record.VA_Dept ||
+            cached?.department ||
+            baseFormData.department,
+          password:
+            cached?.password || record.VA_Password || baseFormData.password,
+        });
+      }
+    } catch (error) {
+      const cached =
+        getCachedProfile(
+          type === "CONTACT" ? "CONTACT" : "ADMIN",
+          baseFormData.id,
+        ) ||
+        getCachedProfile(
+          type === "CONTACT" ? "CONTACT" : "ADMIN",
+          baseFormData.email,
+        );
+      setFormData({
+        ...baseFormData,
+        name: cached?.name || baseFormData.name,
+        email: cached?.email || baseFormData.email,
+        role: cached?.role || resolvedRole || baseFormData.role,
+        phone: cached?.phone || baseFormData.phone,
+        department: cached?.department || baseFormData.department,
+        password: cached?.password || baseFormData.password,
       });
     }
-    setErrors({});
+
     setIsModalOpen(true);
   };
 
@@ -211,7 +345,7 @@ const AllUsers = () => {
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
-    
+
     // Real-time filtering and length enforcement
     if (name === "name") {
       value = value.replace(/[^A-Za-z\s]/g, "");
@@ -220,7 +354,7 @@ const AllUsers = () => {
     } else if (name === "password") {
       value = value.slice(0, 5);
     }
-    
+
     setFormData({ ...formData, [name]: value });
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -235,6 +369,29 @@ const AllUsers = () => {
 
     const emailErr = validateEmail(formData.email);
     if (emailErr) nextErrors.email = emailErr;
+
+    // Check for duplicate email when adding new user
+    if (modalMode === "add" && formData.email && !emailErr) {
+      // Check in administrators
+      const emailExists = administrators.some(
+        (admin) =>
+          admin.VA_Email?.toLowerCase() === formData.email.toLowerCase(),
+      );
+      if (emailExists) {
+        nextErrors.email = "Email already registered in system";
+      }
+
+      // Check in contact persons if role is Contact_Person
+      if (!emailExists && formData.role === "Contact_Person") {
+        const contactEmailExists = contactPersons.some(
+          (contact) =>
+            contact.VCP_Email?.toLowerCase() === formData.email.toLowerCase(),
+        );
+        if (contactEmailExists) {
+          nextErrors.email = "Email already registered as contact person";
+        }
+      }
+    }
 
     const phoneErr = validatePhone(formData.phone);
     if (phoneErr) nextErrors.phone = phoneErr;
@@ -270,10 +427,21 @@ const AllUsers = () => {
         VA_Email: formData.email,
         VA_Password: formData.password,
         VA_Role: formData.role,
+        VA_Phone: formData.phone,
+        VA_Department: formData.department,
       };
 
       // Always save login details in Administrator table
       dispatch(AddAdministrator(adminData));
+      cacheProfile("ADMIN", formData.id || formData.email, {
+        id: formData.id,
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+        phone: formData.phone,
+        department: formData.department,
+        password: formData.password,
+      });
 
       // If role is Contact Person, also save in ContactPerson table
       if (formData.role === "Contact_Person") {
@@ -285,6 +453,13 @@ const AllUsers = () => {
             formData.phone,
           ),
         );
+        cacheProfile("CONTACT", formData.id || formData.email, {
+          id: formData.id,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          department: formData.department,
+        });
 
         setTimeout(() => {
           dispatch(GetAllAdministrator());
@@ -307,6 +482,13 @@ const AllUsers = () => {
             formData.phone,
           ),
         );
+        cacheProfile("CONTACT", formData.id, {
+          id: formData.id,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          department: formData.department,
+        });
         setTimeout(() => dispatch(GetAllContactPersons()), 2500);
       } else {
         // Administator Flow
@@ -316,8 +498,19 @@ const AllUsers = () => {
           VA_Email: formData.email,
           VA_Password: formData.password,
           VA_Role: formData.role,
+          VA_Phone: formData.phone,
+          VA_Department: formData.department,
         };
         dispatch(UpdateAdministrator(adminData));
+        cacheProfile("ADMIN", formData.id, {
+          id: formData.id,
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          phone: formData.phone,
+          department: formData.department,
+          password: formData.password,
+        });
         setTimeout(() => dispatch(GetAllAdministrator()), 2500);
       }
     }
@@ -328,7 +521,7 @@ const AllUsers = () => {
     () => [
       {
         id: "ADMIN",
-        title: "System Administrators",
+        title: "Admin",
         icon: ShieldAlert,
         data: administrators
           .filter((a) => a.VA_Role === "Admin")
@@ -337,7 +530,7 @@ const AllUsers = () => {
       },
       {
         id: "SECURITY",
-        title: "Security Supports",
+        title: "Security",
         icon: Shield,
         data: administrators
           .filter((a) => a.VA_Role === "Security")
@@ -346,7 +539,7 @@ const AllUsers = () => {
       },
       {
         id: "CONTACT",
-        title: "Contact Persons",
+        title: "Contact person",
         icon: Users,
         data: contactPersons
           .slice()
@@ -357,7 +550,7 @@ const AllUsers = () => {
       },
       {
         id: "VISITOR",
-        title: "Visitor Accounts",
+        title: "Visitor",
         icon: UserCheck,
         data: administrators
           .filter((a) => a.VA_Role === "Visitor")
@@ -384,159 +577,101 @@ const AllUsers = () => {
       ? filteredCategories
       : filteredCategories.filter((cat) => cat.id === tableFilter);
 
+  const totalUsers = categories.reduce((sum, cat) => sum + cat.data.length, 0);
+
   const loading = adminLoading || contactLoading;
   const error = adminError || contactError;
+  const isMobile = window.innerWidth < 768;
   const isCompactAddForm = modalMode === "add";
-  const modalWidthClass = isCompactAddForm ? "max-w-sm" : "max-w-md";
-  const headerPaddingClass = isCompactAddForm ? "p-4" : "p-6";
-  const formSpacingClass = isCompactAddForm ? "p-4 space-y-3" : "p-6 space-y-4";
-  const fieldSizeClass = isCompactAddForm
-    ? "px-3 py-2.5 text-[12px]"
-    : "px-4 py-3 text-[13px]";
+  const modalWidthClass = "max-w-sm sm:max-w-2xl md:max-w-3xl";
+  const headerPaddingClass = isCompactAddForm
+    ? "p-3 sm:p-4 md:p-5"
+    : "p-3 sm:p-4 md:p-6";
+  const formSpacingClass = isCompactAddForm
+    ? "p-3 sm:p-4 md:p-5 space-y-3 sm:space-y-4"
+    : "p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4";
+  const fieldSizeClass =
+    "px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-[12px]";
   const actionsPaddingClass = isCompactAddForm
-    ? "pt-4 mt-2 gap-2"
-    : "pt-6 mt-4 gap-3";
-  const actionButtonSizeClass = isCompactAddForm
-    ? "px-4 py-2.5 text-[12px]"
-    : "px-6 py-3 text-[13px]";
+    ? "pt-3 sm:pt-4 md:pt-4 mt-2 gap-2 flex flex-col-reverse sm:flex-row"
+    : "pt-4 sm:pt-6 mt-3 sm:mt-4 gap-2 sm:gap-3 flex flex-col-reverse sm:flex-row";
+  const actionButtonSizeClass =
+    "px-4 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[12px]";
 
   return (
     <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
-      <Header />
+      <Header title="All System Users" />
 
-      <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
-        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-        <div className="max-w-[1500px] mx-auto">
-          <header className="mb-4 md:mb-5 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.06] pb-4 md:pb-5 gap-4 relative z-10">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-7 h-[2.5px] bg-gradient-to-r from-primary to-primary/50 rounded-full"></div>
-                <span className="text-primary/90 uppercase tracking-widest text-[9px] font-semibold letter-spacing-1">
-                  User Directory
-                </span>
-              </div>
-              <h1 className="text-white uppercase text-base font-semibold tracking-wide">
-                All System Users
-              </h1>
-            </div>
+      <div className="flex-1 p-2 md:p-3 space-y-2 md:space-y-4 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
+        {/* Dynamic Operational Aura */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-stretch sm:items-center">
-              {/* Search Form */}
-              <form
-                onSubmit={handleSearch}
-                className="flex items-center bg-black/30 border border-white/15 hover:border-primary/40 transition-all duration-300 rounded-lg px-3 py-2 w-full sm:min-w-[240px] sm:w-auto shadow-sm"
-              >
-                <Search size={14} className="text-gray-500 mr-2.5" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search users..."
-                  className="bg-transparent text-[12px] text-white placeholder-gray-500 focus:outline-none w-full"
-                />
-                {searchTerm && (
+        <div className="max-w-none mx-auto relative z-10 flex flex-col min-h-full">
+          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-lg sm:rounded-2xl md:rounded-[32px] shadow-xl relative overflow-hidden mb-2 sm:mb-4">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+
+            <div className="px-3 sm:px-4 md:px-5 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
+              <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto relative max-w-full overflow-x-auto no-scrollbar">
+                {categories.map((cat) => (
                   <button
-                    type="button"
-                    onClick={() => setSearchTerm("")}
-                    className="text-gray-600 hover:text-gray-400 transition-colors"
+                    key={cat.id}
+                    onClick={() => setTableFilter(cat.id)}
+                    className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[13px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${tableFilter === cat.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
                   >
-                    <X size={12} />
+                    {tableFilter === cat.id && (
+                      <motion.div
+                        layoutId="activeFilter"
+                        className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
+                        transition={{
+                          type: "spring",
+                          bounce: 0.2,
+                          duration: 0.6,
+                        }}
+                      />
+                    )}
+                    <span className="relative z-10">{cat.title}</span>
                   </button>
-                )}
-              </form>
-
-              <div
-                className="flex items-center transition-all rounded-lg px-2.5 py-1.5 w-full sm:min-w-[160px] sm:w-auto border border-white/15 hover:border-primary/40 shadow-sm"
-                style={{
-                  background:
-                    themeMode === "light" ? "#ffffff" : "rgba(0,0,0,0.3)",
-                }}
-              >
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`text-[11px] focus:outline-none w-full transition-colors ${themeMode === "light" ? "text-black bg-white" : "bg-transparent text-gray-300 hover:text-white"}`}
-                >
-                  <option
-                    value="ALL"
-                    className={
-                      themeMode === "light"
-                        ? "bg-white text-black"
-                        : "bg-[#0f0f10] text-white"
-                    }
-                  >
-                    All Statuses
-                  </option>
-                  <option
-                    value="ACTIVE"
-                    className={
-                      themeMode === "light"
-                        ? "bg-white text-black"
-                        : "bg-[#0f0f10] text-white"
-                    }
-                  >
-                    Active
-                  </option>
-                  <option
-                    value="INACTIVE"
-                    className={
-                      themeMode === "light"
-                        ? "bg-white text-black"
-                        : "bg-[#0f0f10] text-white"
-                    }
-                  >
-                    Inactive
-                  </option>
-                </select>
+                ))}
               </div>
 
-              <button
-                onClick={() => openModal("add")}
-                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/85 text-white px-4 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-primary/30 w-full sm:w-auto"
-              >
-                <Plus size={14} strokeWidth={2.5} /> Add User
-              </button>
-            </div>
-          </header>
+              <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full xl:w-auto">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-black/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-white/80 shrink-0">
+                  <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
+                  {totalUsers} records
+                </div>
 
-          <div className="flex flex-col gap-3 mb-6 md:mb-7">
-            <div className="flex flex-wrap bg-[var(--color-surface-2)] p-1 rounded-xl border border-white/5 relative max-w-full shadow-sm gap-1 w-full sm:w-auto">
-              {[
-                ...categories.map((cat) => ({
-                  id: cat.id,
-                  label: cat.title,
-                })),
-              ].map((btn) => (
+                <div className="flex items-center bg-black/40 border border-white/10 px-4 py-1.5 rounded-full group focus-within:border-primary transition-all w-full md:w-64">
+                  <Search
+                    size={14}
+                    className="text-white/20 group-focus-within:text-primary"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="bg-transparent border-none focus:outline-none text-white text-[12px] font-medium ml-2 w-full placeholder:text-white/20"
+                  />
+                </div>
+
                 <button
-                  key={btn.id}
-                  type="button"
-                  onClick={() => setTableFilter(btn.id)}
-                  className={`relative px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-500 z-10 whitespace-nowrap min-w-max flex-1 sm:flex-none ${tableFilter === btn.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                  onClick={() => openModal("add")}
+                  className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold tracking-wider transition-all shadow-lg active:scale-95 group shrink-0"
                 >
-                  {tableFilter === btn.id && (
-                    <motion.div
-                      layoutId="userTableFilter"
-                      className="absolute inset-0 bg-primary rounded-lg shadow-[0_0_20px_rgba(200,16,46,0.2)]"
-                      transition={{
-                        type: "spring",
-                        bounce: 0.2,
-                        duration: 0.6,
-                      }}
-                    />
-                  )}
-                  <span className="relative z-10">{btn.label}</span>
+                  <Plus
+                    size={14}
+                    className="group-hover:rotate-90 transition-transform"
+                  />
+                  Add user
                 </button>
-              ))}
+              </div>
             </div>
           </div>
 
-          <div className="space-y-10">
+          <div className="flex-1 space-y-4">
             {loading ? (
               <div className="p-8 md:p-20 flex flex-col items-center justify-center text-center">
-                <div className="w-12 h-12 border-4 border-white/5 border-t-primary rounded-full animate-spin mb-6"></div>
-                <p className="text-gray-300 text-[13px] uppercase tracking-[0.3em] font-medium">
-                  Hang tight, we’re loading the user list.
-                </p>
+                <PageSpinner size={44} color="var(--color-primary)" />
               </div>
             ) : error ? (
               <div className="p-8 md:p-20 text-center">
@@ -567,13 +702,14 @@ const AllUsers = () => {
                       <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent"></div>
                     </div>
 
-                    <div className="bg-[var(--color-bg-paper)] border border-white/8 rounded-2xl overflow-hidden shadow-xl relative hover:border-white/12 transition-colors duration-300">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none"></div>
+                    <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
                       <TableContainer
                         component={Paper}
-                        className="bg-transparent border-none z-10 relative"
+                        className="bg-transparent border-none z-10 relative shadow-none"
                         sx={{
-                          maxHeight: "453px",
+                          maxHeight: "600px",
+                          minHeight: "400px",
                           overflow: "auto",
                           overflowX: "auto",
                         }}
@@ -586,80 +722,91 @@ const AllUsers = () => {
                           <TableHead>
                             <TableRow
                               sx={{
-                                height: "40px",
-                                backgroundColor: "rgba(255,255,255,0.03)",
+                                height: "24px",
+                                backgroundColor: "var(--color-bg-paper)",
                               }}
                             >
                               <TableCell
                                 sx={{
-                                  padding: "8px 14px",
+                                  padding: "8px 24px",
                                   borderBottom:
-                                    "1px solid rgba(255,255,255,0.08)",
-                                  width: "12%",
+                                    "1px solid rgba(255,255,255,0.05)",
+                                  width: "8%",
                                 }}
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                               >
                                 User ID
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "8px 14px",
+                                  padding: "8px 24px",
                                   borderBottom:
-                                    "1px solid rgba(255,255,255,0.08)",
-                                  width: "28%",
+                                    "1px solid rgba(255,255,255,0.05)",
+                                  width: "15%",
                                 }}
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                               >
-                                Name & Email
+                                Name
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "8px 14px",
+                                  padding: "8px 24px",
                                   borderBottom:
-                                    "1px solid rgba(255,255,255,0.08)",
-                                  width: "18%",
+                                    "1px solid rgba(255,255,255,0.05)",
+                                  width: "20%",
                                 }}
-                                className="hidden sm:table-cell text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                              >
+                                Email
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  padding: "8px 24px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
+                                  width: "12%",
+                                }}
+                                className={`hidden sm:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit`}
                               >
                                 {cat.id === "CONTACT" ? "Department" : "Role"}
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "8px 14px",
+                                  padding: "8px 24px",
                                   borderBottom:
-                                    "1px solid rgba(255,255,255,0.08)",
-                                  width: "16%",
+                                    "1px solid rgba(255,255,255,0.05)",
+                                  width: "15%",
                                 }}
-                                className="hidden md:table-cell text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                                className={`hidden md:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit`}
                               >
                                 {cat.id === "CONTACT" ? "Contact" : "Joined"}
                               </TableCell>
                               <TableCell
                                 sx={{
-                                  padding: "8px 14px",
+                                  padding: "8px 24px",
                                   borderBottom:
-                                    "1px solid rgba(255,255,255,0.08)",
-                                  width: "14%",
+                                    "1px solid rgba(255,255,255,0.05)",
+                                  width: "10%",
                                 }}
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                               >
                                 Status
                               </TableCell>
                               <TableCell
-                                sx={{
-                                  padding: "8px 14px",
-                                  borderBottom:
-                                    "1px solid rgba(255,255,255,0.08)",
-                                  width: "12%",
-                                }}
                                 align="right"
-                                className="text-white/50 font-semibold text-[9px] tracking-widest uppercase whitespace-nowrap"
+                                sx={{
+                                  padding: "8px 24px",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,0.05)",
+                                  width: "10%",
+                                }}
+                                className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
                               >
                                 Actions
                               </TableCell>
                             </TableRow>
                           </TableHead>
-                          <TableBody>
+                          <TableBody className="divide-y divide-white/[0.04]">
                             {cat.data.length === 0 ? (
                               <TableRow
                                 sx={{
@@ -668,14 +815,14 @@ const AllUsers = () => {
                                 }}
                               >
                                 <TableCell
-                                  colSpan={6}
+                                  colSpan={7}
                                   align="center"
                                   sx={{
-                                    padding: "12px",
+                                    padding: "8px",
                                     borderBottom:
                                       "1px solid rgba(255,255,255,0.05)",
                                   }}
-                                  className="text-white/30 text-[11px] font-medium"
+                                  className="text-[var(--color-text-dim)] text-[12px] font-normal"
                                 >
                                   No users in this category
                                 </TableCell>
@@ -701,17 +848,21 @@ const AllUsers = () => {
                                     sx={{
                                       "&:hover": {
                                         backgroundColor:
-                                          "rgba(255,255,255,0.04)",
+                                          "rgba(255,255,255,0.02)",
                                       },
-                                      height: "44px",
+                                      height: "28px",
                                       borderBottom:
                                         "1px solid rgba(255,255,255,0.05)",
                                       transition: "background-color 0.2s ease",
                                     }}
                                   >
                                     <TableCell
-                                      sx={{ padding: "8px 14px", width: "12%" }}
-                                      className="text-white/70 font-medium text-[11px] whitespace-nowrap"
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "8%",
+                                        borderBottom: "none",
+                                      }}
+                                      className="text-white align-middle font-normal text-[12px] whitespace-nowrap"
                                     >
                                       <div className="flex items-center gap-1">
                                         <Hash
@@ -725,32 +876,56 @@ const AllUsers = () => {
                                       </div>
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "8px 14px", width: "28%" }}
-                                      className={`font-medium transition-colors text-[11px] ${isActive ? "text-white" : "text-white/30 line-through"}`}
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "15%",
+                                        borderBottom: "none",
+                                      }}
+                                      className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40 line-through"}`}
                                     >
                                       {item.VA_Name || item.VCP_Name || "-"}
-                                      <p className="text-gray-400 text-[9px] tracking-[0.1em] lowercase mt-0.5 opacity-70">
-                                        {item.VA_Email || item.VCP_Email}
-                                      </p>
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "8px 14px", width: "18%" }}
-                                      className={`hidden sm:table-cell transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "20%",
+                                        borderBottom: "none",
+                                      }}
+                                      className={`font-normal align-middle transition-colors text-[12px] whitespace-nowrap ${isActive ? "text-white/70" : "text-white/20"}`}
+                                    >
+                                      {item.VA_Email || item.VCP_Email}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "12%",
+                                        borderBottom: "none",
+                                      }}
+                                      className={`hidden sm:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                     >
                                       {item.VA_Role ||
                                         item.VCP_Department ||
                                         "-"}
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "8px 14px", width: "16%" }}
-                                      className={`hidden md:table-cell transition-colors text-[11px] ${isActive ? "text-white/70" : "text-white/20"}`}
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "15%",
+                                        borderBottom: "none",
+                                      }}
+                                      className={`hidden md:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
                                     >
                                       {item.VA_Created_Date
                                         ? item.VA_Created_Date.split(" ")[0]
                                         : item.VCP_Phone || "AUTHEN.SYSTEM"}
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "8px 14px", width: "14%" }}
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "10%",
+                                        borderBottom: "none",
+                                      }}
+                                      className="text-[12px] align-middle font-normal"
                                     >
                                       <button
                                         onClick={() =>
@@ -758,14 +933,19 @@ const AllUsers = () => {
                                         }
                                         disabled={loading}
                                         title="Click to toggle status"
-                                        className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer rounded ${isActive ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-red-500/10 text-red-400 hover:bg-red-500/20"}`}
+                                        className={`svm-status-pill transition-colors cursor-pointer ${isActive ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"}`}
                                       >
-                                        {isActive ? "ACTIVE" : "INACTIVE"}
+                                        {isActive ? "Active" : "Inactive"}
                                       </button>
                                     </TableCell>
                                     <TableCell
-                                      sx={{ padding: "8px 14px", width: "12%" }}
+                                      sx={{
+                                        padding: "8px 24px",
+                                        width: "10%",
+                                        borderBottom: "none",
+                                      }}
                                       align="right"
+                                      className="text-[12px] align-middle font-normal"
                                     >
                                       <IconButton
                                         onClick={() =>
@@ -774,7 +954,7 @@ const AllUsers = () => {
                                         size="small"
                                         className="text-white/40 hover:text-white p-1"
                                       >
-                                        <Edit size={13} />
+                                        <Edit size={16} />
                                       </IconButton>
                                     </TableCell>
                                   </TableRow>
@@ -802,44 +982,41 @@ const AllUsers = () => {
 
       {/* Modal for Add / Edit Administrator */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 animate-fade-in overflow-y-auto">
           <div
-            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-3xl shadow-2xl w-full ${modalWidthClass} overflow-hidden relative`}
+            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl w-full ${modalWidthClass} overflow-hidden relative my-auto`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none rounded-2xl sm:rounded-3xl"></div>
 
             <div
-              className={`flex justify-between items-center ${headerPaddingClass} border-b border-white/5 relative z-10`}
+              className={`flex justify-between items-center ${headerPaddingClass} border-b border-white/5 relative z-10 bg-black/20`}
             >
-              <h2
-                className={`${isCompactAddForm ? "text-base" : "text-lg"} font-bold text-white uppercase tracking-wider`}
-              >
-                {modalMode === "add"
-                  ? "Add New System User"
-                  : "Edit User Profile"}
+              <h2 className="text-sm sm:text-base font-bold text-white tracking-wider">
+                {modalMode === "add" ? "Add system user" : "Edit user profile"}
               </h2>
               <button
                 onClick={closeModal}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors p-1.5 sm:p-2"
+                title="Close"
               >
-                <X size={20} />
+                <X size={18} className="sm:w-5 sm:h-5" />
               </button>
             </div>
 
             <form
               onSubmit={handleFormSubmit}
-              className={`${formSpacingClass} relative z-10`}
+              className={`${formSpacingClass} relative z-10 max-h-[85vh] sm:max-h-[80vh] overflow-y-auto custom-scrollbar`}
             >
               <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                  <User size={12} /> Name
+                <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                  <User size={10} className="text-primary/60 shrink-0" /> Name
                 </label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                  className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                     errors.name
                       ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                       : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -847,22 +1024,22 @@ const AllUsers = () => {
                   placeholder="e.g. John Doe"
                 />
                 {errors.name && (
-                  <p className="text-[10px] text-red-400 font-semibold mt-1">
+                  <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                     {errors.name}
                   </p>
                 )}
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                  <Mail size={12} /> Email
+                <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                  <Mail size={10} className="text-primary/60 shrink-0" /> Email
                 </label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                  className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                     errors.email
                       ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                       : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -870,7 +1047,7 @@ const AllUsers = () => {
                   placeholder="example@mas.com"
                 />
                 {errors.email && (
-                  <p className="text-[10px] text-red-400 font-semibold mt-1">
+                  <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                     {errors.email}
                   </p>
                 )}
@@ -879,15 +1056,16 @@ const AllUsers = () => {
               {formData.type === "CONTACT" ? (
                 <>
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Users size={12} /> Department
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Users size={10} className="text-primary/60 shrink-0" />{" "}
+                      Department
                     </label>
                     <input
                       type="text"
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.department
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -895,14 +1073,15 @@ const AllUsers = () => {
                       placeholder="e.g. Human Resources"
                     />
                     {errors.department && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.department}
                       </p>
                     )}
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <X size={12} /> Phone Connection
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Phone size={10} className="text-primary/60 shrink-0" />{" "}
+                      Phone
                     </label>
                     <input
                       type="text"
@@ -910,7 +1089,7 @@ const AllUsers = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       maxLength={10}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -918,7 +1097,7 @@ const AllUsers = () => {
                       placeholder="e.g. +94 123 4567"
                     />
                     {errors.phone && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.phone}
                       </p>
                     )}
@@ -927,15 +1106,16 @@ const AllUsers = () => {
               ) : (
                 <>
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Users size={12} /> Department
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Users size={10} className="text-primary/60 shrink-0" />{" "}
+                      Department
                     </label>
                     <input
                       type="text"
                       name="department"
                       value={formData.department}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.department
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -943,15 +1123,16 @@ const AllUsers = () => {
                       placeholder="e.g. Human Resources"
                     />
                     {errors.department && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.department}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Phone size={12} /> Phone
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Phone size={10} className="text-primary/60 shrink-0" />{" "}
+                      Phone
                     </label>
                     <input
                       type="text"
@@ -959,7 +1140,7 @@ const AllUsers = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       maxLength={10}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.phone
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -967,25 +1148,26 @@ const AllUsers = () => {
                       placeholder="e.g. 0712345678"
                     />
                     {errors.phone ? (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.phone}
                       </p>
                     ) : (
-                      <p className="text-[9px] text-white/30 uppercase tracking-widest mt-1">
+                      <p className="text-[9px] sm:text-[10px] text-white/30 uppercase tracking-widest mt-1">
                         10 digits only
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Shield size={12} /> Role
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Shield size={10} className="text-primary/60 shrink-0" />{" "}
+                      Role
                     </label>
                     <select
                       name="role"
                       value={formData.role}
                       onChange={handleInputChange}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
+                      className={`w-full rounded-lg ${fieldSizeClass} text-white focus:outline-none transition-colors ${
                         errors.role
                           ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
                           : "bg-black/40 border border-white/10 focus:border-primary/50"
@@ -997,59 +1179,75 @@ const AllUsers = () => {
                       <option value="Contact_Person">Contact Person</option>
                     </select>
                     {errors.role && (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.role}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] text-gray-400 uppercase tracking-widest font-semibold flex flex-col md:flex-row gap-4 md:gap-2">
-                      <Hash size={12} /> Password
+                    <label className="text-[11px] sm:text-[12px] text-primary tracking-[0.14em] font-normal flex items-center gap-1.5 sm:gap-2 px-0.5">
+                      <Hash size={10} className="text-primary/60 shrink-0" />{" "}
+                      Password
                     </label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      maxLength={5}
-                      className={`w-full rounded-xl ${fieldSizeClass} text-white focus:outline-none transition-colors ${
-                        errors.password
-                          ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
-                          : "bg-black/40 border border-white/10 focus:border-primary/50"
-                      }`}
-                      placeholder={
-                        modalMode === "add"
-                          ? "Max 5 chars, Capital & Special"
-                          : "Leave blank to keep current"
-                      }
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        maxLength={5}
+                        className={`w-full rounded-lg pl-3 sm:pl-3.5 pr-8 sm:pr-10 py-2 sm:py-2.5 text-[11px] sm:text-[12px] text-white focus:outline-none transition-colors ${
+                          errors.password
+                            ? "bg-red-500/20 border border-red-500/50 focus:border-red-500/70"
+                            : "bg-black/40 border border-white/10 focus:border-primary/50"
+                        }`}
+                        placeholder={
+                          modalMode === "add"
+                            ? "Max 5 chars, Capital & Special"
+                            : "Leave blank to keep current"
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1"
+                      >
+                        {showPassword ? (
+                          <EyeOff size={14} className="sm:w-4 sm:h-4" />
+                        ) : (
+                          <Eye size={14} className="sm:w-4 sm:h-4" />
+                        )}
+                      </button>
+                    </div>
                     {errors.password ? (
-                      <p className="text-[10px] text-red-400 font-semibold mt-1">
+                      <p className="text-[10px] sm:text-[11px] text-red-400 font-normal mt-1">
                         {errors.password}
                       </p>
                     ) : (
-                      <p className="text-[9px] text-white/30 uppercase tracking-widest mt-1">
-                        Max 5 chars, Capital &amp; Special Char
+                      <p className="text-[9px] sm:text-[10px] text-white/30 uppercase tracking-widest mt-1">
+                        Max 5 chars, Capital &amp; Special
                       </p>
                     )}
                   </div>
                 </>
               )}
 
-              <div className={`${actionsPaddingClass} flex justify-end`}>
+              <div
+                className={`${actionsPaddingClass} justify-end border-t border-white/5`}
+              >
                 <button
                   type="button"
                   onClick={closeModal}
-                  className={`${actionButtonSizeClass} rounded-xl font-bold text-gray-400 hover:bg-white/5 uppercase tracking-wider transition-all`}
+                  className={`${actionButtonSizeClass} rounded-lg font-normal text-gray-400 hover:bg-white/5 tracking-wider transition-all`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className={`${actionButtonSizeClass} rounded-xl bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary`}
+                  className={`${actionButtonSizeClass} rounded-lg bg-primary hover:bg-primary/90 text-white font-normal tracking-wider shadow-lg shadow-primary/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-primary`}
                 >
-                  {modalMode === "add" ? "Create User" : "Update Access"}
+                  {modalMode === "add" ? "Create user" : "Update access"}
                 </button>
               </div>
             </form>

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, Search } from "lucide-react";
+import PageSpinner from "../../common/PageSpinner";
 import RequestsTable from "./RequestsTable";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 import {
@@ -145,11 +146,9 @@ const RequestsInboxMain = () => {
       className={`p-3 md:p-5 animate-fade-in-slow relative max-w-[1600px] mx-auto w-full h-full min-h-0 overflow-hidden z-10 transition-colors duration-500`}
     >
       {isLoading && (
-        <p
-          className={`text-[10px] tracking-[0.2em] uppercase ${isLight ? "text-gray-400" : "text-white/40"}`}
-        >
-          Hang tight, we’re loading your requests.
-        </p>
+        <div className="py-12 flex items-center justify-center">
+          <PageSpinner size={34} className={`${isLight ? "text-primary" : "text-white"}`} color={isLight ? "var(--color-primary)" : "#fff"} />
+        </div>
       )}
       {!!error && (
         <p className="text-[10px] tracking-[0.2em] text-primary uppercase">

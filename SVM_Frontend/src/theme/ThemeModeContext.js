@@ -8,9 +8,14 @@ const ThemeModeContext = createContext({
 });
 
 const getInitialThemeMode = () => {
-  const savedMode = localStorage.getItem(THEME_STORAGE_KEY);
-  if (savedMode === "dark" || savedMode === "light") {
-    return savedMode;
+  try {
+    const savedMode = localStorage.getItem(THEME_STORAGE_KEY);
+    if (savedMode === "dark" || savedMode === "light") {
+      return savedMode;
+    }
+  } catch (err) {
+    // Storage access blocked by privacy settings - fall back to system preference
+    console.warn("localStorage access blocked:", err);
   }
 
   return window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -24,7 +29,12 @@ export const ThemeModeProvider = ({ children }) => {
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", themeMode);
     document.documentElement.style.colorScheme = themeMode;
-    localStorage.setItem(THEME_STORAGE_KEY, themeMode);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, themeMode);
+    } catch (err) {
+      // Storage access blocked by privacy settings - silently ignore
+      console.warn("localStorage access blocked:", err);
+    }
   }, [themeMode]);
 
   const toggleThemeMode = () => {

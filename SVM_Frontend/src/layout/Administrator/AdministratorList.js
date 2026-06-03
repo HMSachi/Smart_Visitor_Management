@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import PageSpinner from "../../components/common/PageSpinner";
 import { GetAllAdministrator } from "../../actions/AdministratorAction";
 
 const AdministratorList = () => {
@@ -16,7 +17,11 @@ const AdministratorList = () => {
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Administrators</h2>
 
-      {isLoading && <p>Hang tight, we’re loading administrators.</p>}
+      {isLoading && (
+        <div className="py-16 flex items-center justify-center">
+          <PageSpinner size={40} color="var(--color-primary)" />
+        </div>
+      )}
       {error && <p className="text-red-500">Error: {error}</p>}
 
       {!isLoading && !error && administrators && administrators.length > 0 && (

@@ -6,29 +6,30 @@ import { useNavigate } from 'react-router-dom';
 import { GetVisitRequestsByCP } from '../../../actions/VisitRequestAction';
 import ContactPersonService from '../../../services/ContactPersonService';
 
-const Panel = ({ icon, label, value, trend, onClick }) => {
-  const Icon = icon;
+const Panel = ({ label, value, color, hoverBorder, onClick, description }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       onClick={onClick}
-      className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] p-3 sm:p-4 md:p-5 rounded-lg sm:rounded-xl md:rounded-2xl flex flex-col justify-between group cursor-pointer hover:border-primary/20 transition-all duration-500 relative overflow-hidden shadow-lg h-full"
+      className="bg-white relative overflow-hidden flex flex-col justify-center items-center group cursor-pointer transition-all duration-500 py-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+      style={{ border: "1px solid #f0f0f0", borderRadius: "16px" }}
     >
-      <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all"></div>
-
-      <div className="flex justify-between items-start relative z-10">
-        <div>
-          <p className="text-[var(--color-text-dim)] text-[10px] sm:text-[11px] md:text-[12px] font-bold uppercase tracking-[0.15em] mb-2 sm:mb-3 group-hover:text-primary transition-opacity">{label}</p>
-          <h3 className="text-[var(--color-text-primary)] text-xl sm:text-2xl md:text-3xl font-black tracking-tighter group-hover:text-primary transition-colors">{value}</h3>
-        </div>
-        <div className="p-3.5 rounded-xl bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] group-hover:border-primary/40 group-hover:bg-primary/5 transition-all duration-500 shadow-sm">
-          <Icon className="text-primary group-hover:scale-110 transition-transform" size={18} strokeWidth={2.5} />
-        </div>
+      <div className="flex flex-col items-center justify-center space-y-3 relative z-10 w-full px-4 text-center">
+        <p className={`text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.15em] ${color}`}>
+          {label}
+        </p>
+        <h3 className={`text-4xl sm:text-5xl font-black ${color}`}>
+          {value}
+        </h3>
+        {description && (
+          <p className="text-[10px] sm:text-[11px] text-gray-500 font-normal tracking-wide mt-1 max-w-[90%] mx-auto leading-normal">
+            {description}
+          </p>
+        )}
       </div>
-
-      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-700 shadow-[0_0_10px_var(--color-primary)]"></div>
+      <div className={`absolute bottom-0 left-0 h-[4px] w-0 ${hoverBorder} group-hover:w-full transition-all duration-700`}></div>
     </motion.div>
   );
 };
@@ -96,17 +97,17 @@ const MetricsGrid = () => {
         }).length;
 
         return [
-            { label: 'Pending Requests', value: pending.toString(), icon: Clock, trend: 'Awaiting Action', filter: 'P' },
-            { label: 'Accepted Forms', value: accepted.toString(), icon: CheckSquare, trend: 'Clearance Granted', filter: 'A' },
-            { label: 'Declined Forms', value: rejected.toString(), icon: XCircle, trend: 'Access Denied', filter: 'R' },
-            { label: 'Sent to Admin', value: sent.toString(), icon: Send, trend: 'Escalated', filter: 'SENT' },
+            { label: 'In Progress', value: pending.toString(), color: 'text-blue-500', hoverBorder: 'bg-blue-500', filter: 'P', description: 'Waiting for visitor or contact person' },
+            { label: 'Approved', value: accepted.toString(), color: 'text-green-500', hoverBorder: 'bg-green-500', filter: 'A', description: 'Visitor accepted or Admin approved' },
+            { label: 'Rejected/Cancelled', value: rejected.toString(), color: 'text-red-500', hoverBorder: 'bg-red-500', filter: 'R', description: 'Declined or cancelled requests' },
+            { label: 'Sent to Admin', value: sent.toString(), color: 'text-orange-500', hoverBorder: 'bg-orange-500', filter: 'SENT', description: 'Awaiting final admin approval' },
         ];
     };
 
     const stats = calculateStats();
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-5 md:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8 mt-2">
             {stats.map((stat, i) => (
                 <Panel 
                     key={i} 

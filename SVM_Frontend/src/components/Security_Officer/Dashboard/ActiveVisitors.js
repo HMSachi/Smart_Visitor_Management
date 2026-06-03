@@ -14,7 +14,7 @@ const ActiveVisitors = () => {
             transition={{ delay: index * 0.05 }}
             className="group hover:bg-primary/5 transition-all border-b border-[var(--color-border-soft)]"
         >
-            <td className="px-4 md:px-6 py-3">
+            <td className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">
                 <div className="flex items-center gap-3">
                     <div className={`w-2.5 h-2.5 rounded-full ${
                         visitor.status === 'approved' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-yellow-500 shadow-[0_0_8px_#f59e0b]'
@@ -24,17 +24,17 @@ const ActiveVisitors = () => {
                     </span>
                 </div>
             </td>
-            <td className="px-4 md:px-6 py-3 text-[var(--color-text-secondary)] text-xs flex items-center gap-2">
+            <td className="px-2.5 md:px-6 py-1.5 text-[var(--color-text-secondary)] flex items-center gap-2 font-normal text-[12px]">
                 <MapPin size={14} className="opacity-75" />
                 {visitor.location}
             </td>
-            <td className="px-4 md:px-6 py-3 text-[var(--color-text-secondary)] text-xs">
+            <td className="px-2.5 md:px-6 py-1.5 text-[var(--color-text-secondary)] font-normal text-[12px]">
                 <div className="flex items-center gap-2">
                     <Clock size={14} className="opacity-75" />
                     {visitor.duration}
                 </div>
             </td>
-            <td className="px-4 md:px-6 py-3 text-center">
+            <td className="px-2.5 md:px-6 py-1.5 text-center font-normal text-[12px]">
                 <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border shadow-sm ${
                     visitor.status === 'approved'
                         ? 'text-green-500 bg-green-500/10 border-green-500/20'
@@ -43,7 +43,7 @@ const ActiveVisitors = () => {
                     {visitor.status}
                 </span>
             </td>
-            <td className="px-4 md:px-6 py-3 text-right">
+            <td className="px-2.5 md:px-6 py-1.5 text-right font-normal text-[12px]">
                 <span className="text-[var(--color-text-secondary)] text-xs font-mono">{visitor.badge}</span>
             </td>
         </motion.tr>
@@ -54,17 +54,17 @@ const ActiveVisitors = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-2xl p-6 hover:border-primary/20 transition-all duration-300"
+            className="bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] rounded-[10px] p-6 hover:border-[var(--color-border-medium)] transition-all duration-500 shadow-2xl group relative overflow-hidden"
         >
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-700 shadow-[0_0_10px_var(--color-primary)] z-20"></div>
+
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 relative z-10">
                 <div>
-                    <h2 className="text-[var(--color-text-primary)] text-lg md:text-xl font-bold tracking-tight flex items-center gap-3">
-                        <Users size={20} className="text-primary" />
-                        Active Visitors On-Premise
+                    <h2 className="text-[var(--color-text-primary)] text-[13px] md:text-[14px] font-bold uppercase tracking-[0.4em] flex items-center gap-3">
+                        <Users size={16} className="text-primary" />
+                        Visitors Inside
                     </h2>
-                    <p className="text-[var(--color-text-secondary)] text-xs opacity-75 mt-1 uppercase tracking-[0.2em]">
-                        Real-time visitor tracking ({visitors.length} present)
-                    </p>
                 </div>
                 <div className="flex items-center gap-2 mt-4 md:mt-0">
                     <Shield size={18} className="text-green-500" />
@@ -75,12 +75,12 @@ const ActiveVisitors = () => {
             <div className="overflow-x-auto">
                 <table className="w-full text-left">
                     <thead>
-                        <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[12px] uppercase tracking-[0.2em] font-bold border-b border-[var(--color-border-soft)] sticky top-0">
-                            <th className="px-4 md:px-6 py-3">Visitor Name</th>
-                            <th className="px-4 md:px-6 py-3">Location</th>
-                            <th className="px-4 md:px-6 py-3">Duration</th>
-                            <th className="px-4 md:px-6 py-3 text-center">Status</th>
-                            <th className="px-4 md:px-6 py-3 text-right">Badge ID</th>
+                        <tr className="bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] text-[12px] uppercase tracking-[0.2em] font-normal border-b border-[var(--color-border-soft)] sticky top-0">
+                            <th className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">Name</th>
+                            <th className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">Location</th>
+                            <th className="px-2.5 md:px-6 py-1.5 font-normal text-[12px]">Time Inside</th>
+                            <th className="px-2.5 md:px-6 py-1.5 text-center font-normal text-[12px]">Status</th>
+                            <th className="px-2.5 md:px-6 py-1.5 text-right font-normal text-[12px]">Badge ID</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-border-soft)]">

@@ -7,6 +7,13 @@ import PersonnelAuthProtocol from "../../../components/common/PersonnelAuthProto
 import ApprovalModal from "../../../components/Admin/ApprovalManagement/ApprovalModal";
 import QRSuccessModal from "../../../components/Admin/ApprovalManagement/QRSuccessModal";
 import {
+  ArrowLeft,
+  Shield,
+  CheckCircle2,
+  AlertCircle,
+  QrCode,
+} from "lucide-react";
+import {
   setSearchTerm as setAdminSearchTerm,
   updateVisitorStatus,
 } from "../../../reducers/adminSlice";
@@ -21,6 +28,7 @@ import { useThemeMode } from "../../../theme/ThemeModeContext";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
+import VisitorService from "../../../services/VisitorService";
 
 const ApprovalManagement = () => {
   const dispatch = useDispatch();
@@ -28,7 +36,10 @@ const ApprovalManagement = () => {
   const { visitRequests, isLoading: isVrLoading } = useSelector(
     (state) => state.visitRequestsState,
   );
-  const { visitors } = useSelector((state) => state.visitorManagement);
+  const visitorData = useSelector((state) => state.visitorManagement);
+  const visitors = Array.isArray(visitorData?.visitors)
+    ? visitorData.visitors
+    : [];
   const { vehicles } = useSelector(
     (state) => state.vehicleState || { vehicles: [] },
   );
@@ -42,20 +53,31 @@ const ApprovalManagement = () => {
   const [modalType, setModalType] = useState("Approve");
   const [showQRModal, setShowQRModal] = useState(false);
   const [approvedVisitorData, setApprovedVisitorData] = useState(null);
+  const [qrReadOnly, setQrReadOnly] = useState(false);
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
 
   const [visitorGroupMembers, setVisitorGroupMembers] = useState([]);
   const [itemsCarried, setItemsCarried] = useState([]);
   const [vehiclesForVisitor, setVehiclesForVisitor] = useState([]);
+  const [jointItems, setJointItems] = useState([]);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const formScrollRef = React.useRef(null);
 
   React.useEffect(() => {
-    dispatch(GetAllVisitRequests());
-    dispatch(GetAllVisitors());
-    dispatch(GetAllVehicles());
-    dispatch(GetAllGatePasses());
+    const fetchData = () => {
+      dispatch(GetAllVisitRequests());
+      dispatch(GetAllVisitors());
+      dispatch(GetAllVehicles());
+      dispatch(GetAllGatePasses());
+    };
+
+    fetchData();
+
+    // Polling: Refresh data every 30 seconds to keep the admin view current
+    const intervalId = setInterval(fetchData, 30000);
+
+    return () => clearInterval(intervalId);
   }, [dispatch]);
 
   // Load visitor group, items, and vehicles when a visitor is selected
@@ -90,13 +112,18 @@ const ApprovalManagement = () => {
               id: i.VIC_Item_id,
               itemName: i.VIC_Item_Name,
               quantity: i.VIC_Quantity,
+              description: i.VIC_Designation,
+              status: i.VIC_Status || null,
             }));
           setItemsCarried(matchedItems);
 
           // Load vehicles for this request
           const vehiclesRes = await VehicleService.GetAllVehicles();
-          const allVehicles = vehiclesRes?.data?.ResultSet || vehiclesRes?.data || [];
-          const matchedVehicles = (Array.isArray(allVehicles) ? allVehicles : [])
+          const allVehicles =
+            vehiclesRes?.data?.ResultSet || vehiclesRes?.data || [];
+          const matchedVehicles = (
+            Array.isArray(allVehicles) ? allVehicles : []
+          )
             .filter(
               (v) => String(v.VVR_Request_id) === String(selectedVisitor.id),
             )
@@ -106,6 +133,17 @@ const ApprovalManagement = () => {
               plateNumber: v.VV_Vehicle_Number,
             }));
           setVehiclesForVisitor(matchedVehicles);
+
+          // Load joint items (items grouped by sub-visitor) for "Items Carried In"
+          try {
+            const jointRes = await VisitorService.GetVisitorJoint(
+              selectedVisitor.id,
+            );
+            const jointData = jointRes?.data?.ResultSet || jointRes?.data || [];
+            setJointItems(Array.isArray(jointData) ? jointData : []);
+          } catch {
+            setJointItems([]);
+          }
         } catch (err) {
           console.error("Error loading details in Admin view:", err);
         } finally {
@@ -127,9 +165,11 @@ const ApprovalManagement = () => {
           status === "A" ||
           status === "R" ||
           status === "ACCEPTED" ||
+          status === "ACCEPTED BY VISITOR" ||
           status === "P" ||
           status === "PENDING" ||
-          status === "SENT_TO_ADMIN"
+          status === "SENT_TO_ADMIN" ||
+          status === "SENT TO ADMIN"
         );
       })
       .map((req) => {
@@ -142,12 +182,13 @@ const ApprovalManagement = () => {
         const s = (req.VVR_Status || "").toString().trim().toUpperCase();
 
         let displayStatus = "Sent to Visitor";
-        if (s === "SENT" || s === "SENT_TO_ADMIN")
+        if (s === "SENT" || s === "SENT_TO_ADMIN" || s === "SENT TO ADMIN")
           displayStatus = "Accepted by Contact Person";
         else if (s === "A" || s === "APPROVED")
           displayStatus = "Admin Approved";
         else if (s === "R" || s === "REJECTED") displayStatus = "Rejected";
-        else if (s === "ACCEPTED") displayStatus = "Accepted by Visitor";
+        else if (s === "ACCEPTED" || s === "ACCEPTED BY VISITOR")
+          displayStatus = "Accepted by Visitor";
 
         return {
           id: req.VVR_Request_id?.toString() || "",
@@ -201,6 +242,7 @@ const ApprovalManagement = () => {
     setSelectedVisitor(visitor);
     if (type === "ViewGatePass") {
       setApprovedVisitorData(visitor);
+      setQrReadOnly(true);
       setShowQRModal(true);
     } else {
       setModalType(type);
@@ -209,29 +251,19 @@ const ApprovalManagement = () => {
   };
 
   return (
-    <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
-      <Header />
+    <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] h-screen">
+      <Header
+        title={viewMode === "details" ? "Review Visit Request" : "Approvals"}
+        showBack={viewMode === "details"}
+        onBack={handleBackToList}
+      />
 
-      <div className="flex-1 p-4 md:p-8 !pt-2 space-y-3 md:space-y-6 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
+      <div className="flex-1 p-2 md:p-3 space-y-2 animate-fade-in-slow overflow-y-auto bg-[var(--color-bg-default)] relative">
         {/* Dynamic Operational Aura */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
-        <div className="max-w-[1700px] mx-auto relative z-10">
-          <header className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/[0.03] pb-3 gap-4 relative z-10">
-            <div className="bg-[var(--color-surface-1)] border-l-4 border-primary p-3 py-2 rounded-r-2xl backdrop-blur-sm w-full md:w-auto shadow-sm">
-              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-2 mb-1">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_var(--color-primary)]"></div>
-                <span className="text-[var(--color-text-primary)] text-[12px] font-bold uppercase tracking-[0.3em]">
-                  Approval Management
-                </span>
-              </div>
-              <p className="text-[var(--color-text-secondary)] text-[10px] uppercase font-bold tracking-[0.2em] opacity-80 leading-tight">
-                Monitor and authorize visitor access protocols
-              </p>
-            </div>
-          </header>
-
-          <div className="space-y-3 md:space-y-6">
+        <div className="max-w-none mx-auto relative z-10 flex flex-col min-h-full">
+          <div className="flex-1 flex flex-col space-y-2 md:space-y-4">
             <AnimatePresence mode="wait">
               {viewMode === "list" ? (
                 <motion.div
@@ -255,11 +287,38 @@ const ApprovalManagement = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex-1 flex flex-col"
                 >
                   <div
                     ref={formScrollRef}
-                    className="space-y-2 max-h-[calc(100vh-240px)] overflow-y-auto pr-2 custom-scrollbar"
+                    className="flex-1 flex flex-col space-y-2"
                   >
+                    <div className="flex items-center justify-end gap-2">
+                      {(selectedVisitor?.status ===
+                        "Accepted by Contact Person" ||
+                        selectedVisitor?.status === "Accepted by Visitor") && (
+                        <div className="flex flex-row items-center gap-2">
+                          <button
+                            onClick={() =>
+                              handleAction(selectedVisitor, "Approve")
+                            }
+                            className="px-4 py-2 bg-[#00B14F] hover:bg-[#009e46] text-white text-[9px] font-bold tracking-[0.15em] capitalize rounded-lg transition-all shadow-sm flex items-center gap-2"
+                          >
+                            <CheckCircle2 size={12} />
+                            Accept
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleAction(selectedVisitor, "Reject")
+                            }
+                            className="px-4 py-2 bg-primary hover:bg-[#A00D25] text-white text-[9px] font-bold tracking-[0.15em] capitalize rounded-lg transition-all shadow-sm flex items-center gap-2"
+                          >
+                            <AlertCircle size={12} />
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                    </div>
                     {detailsLoading ? (
                       <div className="flex items-center justify-center py-16">
                         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -273,6 +332,8 @@ const ApprovalManagement = () => {
                         groupMembers={visitorGroupMembers}
                         itemsCarried={itemsCarried}
                         vehiclesList={vehiclesForVisitor}
+                        jointItems={jointItems}
+                        gatePasses={gatePasses}
                       />
                     )}
                   </div>
@@ -295,6 +356,7 @@ const ApprovalManagement = () => {
                   setApprovedVisitorData(
                     mappedRequests.find((v) => v.id === id) || selectedVisitor,
                   );
+                  setQrReadOnly(false);
                   setShowQRModal(true);
                 }
                 if (viewMode === "details") setViewMode("list");
@@ -307,6 +369,7 @@ const ApprovalManagement = () => {
               onClose={() => setShowQRModal(false)}
               visitorData={approvedVisitorData}
               gatePasses={gatePasses}
+              readOnly={qrReadOnly}
             />
           </div>
         </div>

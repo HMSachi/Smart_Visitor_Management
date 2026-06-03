@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
-import { X, Edit3, User, Mail, Shield, Save, Briefcase } from "lucide-react";
+import { X, Edit3, User, Mail, Save, Phone } from "lucide-react";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 
 const InputField = ({
@@ -40,8 +40,8 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
   const [formData, setFormData] = useState({
     VB_id: "",
     VB_Name: "",
-    VB_Role: "",
     VB_Email: "",
+    VB_Phone: "",
     VB_Alert_Type: "Level 01",
   });
 
@@ -50,21 +50,51 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
       setFormData({
         VB_id: initialData.VB_id || "",
         VB_Name: initialData.VB_Name || "",
-        VB_Role: initialData.VB_Role || "",
         VB_Email: initialData.VB_Email || "",
+        VB_Phone:
+          initialData.VB_Phone ||
+          initialData.VB_Contact_Number ||
+          initialData.VB_Mobile ||
+          "",
         VB_Alert_Type: initialData.VB_Alert_Type || "Level 01",
       });
     }
   }, [initialData, isOpen]);
 
+  useEffect(() => {
+    if (!isOpen || !initialData?.VB_Visitor_id) return;
+
+    const loadPhone = async () => {
+      try {
+        const { default: VisitorService } =
+          await import("../../../services/VisitorService");
+        const response = await VisitorService.GetVisitorById(
+          initialData.VB_Visitor_id,
+        );
+        const data = response.data?.ResultSet || response.data;
+        const visitor = Array.isArray(data) ? data[0] : data;
+        const phone = visitor?.VV_Phone;
+        if (phone) {
+          setFormData((prev) =>
+            prev.VB_Phone ? prev : { ...prev, VB_Phone: phone },
+          );
+        }
+      } catch (error) {
+        console.error("Failed to fetch visitor phone:", error);
+      }
+    };
+
+    loadPhone();
+  }, [initialData, isOpen]);
+
   const handleChange = (e) => {
     let { name, value } = e.target;
-    
+
     // Real-time filtering
     if (name === "VB_Name") {
       value = value.replace(/[^A-Za-z\s]/g, "");
     }
-    
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -159,59 +189,14 @@ const EditBlacklistModal = ({ isOpen, onClose, onEdit, initialData }) => {
                   />
                   <InputField
                     isLight={isLight}
-                    label="Role"
-                    icon={Briefcase}
-                    name="VB_Role"
-                    value={formData.VB_Role}
+                    label="Phone Number"
+                    icon={Phone}
+                    name="VB_Phone"
+                    value={formData.VB_Phone}
                     onChange={handleChange}
-                    placeholder="e.g. visitor, contractor"
+                    type="tel"
+                    placeholder="e.g. +94 77 123 4567"
                   />
-                </div>
-
-                {/* Section 2: Restriction Logistics */}
-                <div
-                  className={`grid grid-cols-1 md:grid-cols-2 gap-4 pt-3.5 border-t ${isLight ? "border-gray-200" : "border-white/5"}`}
-                >
-                  <div className="col-span-full flex items-center gap-2.5">
-                    <div className="w-1 h-3.5 bg-primary rounded-full shadow-[0_0_6px_var(--color-primary)]"></div>
-                    <h3 className="text-primary text-[10px] font-bold uppercase tracking-[0.28em]">
-                      Blacklist Details
-                    </h3>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label
-                      className={`text-[9px] font-bold uppercase tracking-[0.18em] flex items-center gap-2 ${isLight ? "text-gray-500" : "text-gray-300/70"}`}
-                    >
-                      <Shield size={12} className="text-primary/60" />
-                      Risk Level
-                    </label>
-                    <select
-                      name="VB_Alert_Type"
-                      value={formData.VB_Alert_Type}
-                      onChange={handleChange}
-                      className={`w-full rounded-xl px-3.5 py-2.5 text-[12px] focus:outline-none focus:border-primary/50 transition-all appearance-none border ${isLight ? "bg-white border-gray-200 text-[#1A1A1A] shadow-sm shadow-gray-100/50" : "bg-white/[0.03] border-white/10 text-white shadow-inner shadow-black/20"}`}
-                    >
-                      <option
-                        value="Level 01"
-                        className={isLight ? "bg-white" : "bg-[#141416]"}
-                      >
-                        Level 01 - Monitoring Required
-                      </option>
-                      <option
-                        value="Level 02"
-                        className={isLight ? "bg-white" : "bg-[#141416]"}
-                      >
-                        Level 02 - Strict Access Control
-                      </option>
-                      <option
-                        value="Level 03"
-                        className={isLight ? "bg-white" : "bg-[#141416]"}
-                      >
-                        Level 03 - Denied Entry
-                      </option>
-                    </select>
-                  </div>
                 </div>
 
                 {/* Footer */}

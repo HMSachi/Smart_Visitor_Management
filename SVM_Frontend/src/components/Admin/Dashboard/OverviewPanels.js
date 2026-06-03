@@ -1,9 +1,32 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Users, UserCheck, AlertTriangle, TrendingUp } from 'lucide-react';
+import {
+  Users,
+  UserCheck,
+  AlertTriangle,
+  TrendingUp,
+  Shield,
+  Phone,
+  Building2,
+  CheckCircle2,
+  Clock3,
+  XCircle,
+  ShieldAlert,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const iconMap = { Users, UserCheck, AlertTriangle };
+const iconMap = {
+  Users,
+  UserCheck,
+  AlertTriangle,
+  Shield,
+  Phone,
+  Building2,
+  CheckCircle2,
+  Clock3,
+  XCircle,
+  ShieldAlert,
+};
 
 const colorMap = {
   blue: {
@@ -45,12 +68,17 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '16px',
-        padding: '1.5rem',
+        borderRadius: '24px',
+        padding: '1.25rem',
         boxShadow: 'var(--shadow-card)',
-        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+        transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
       }}
-      whileHover={{ y: -3, boxShadow: `0 8px 32px ${color.glow}, var(--shadow-card)` }}
+      whileHover={{ 
+        y: -5, 
+        scale: 1.02,
+        boxShadow: `0 20px 40px ${color.glow}, var(--shadow-card)`,
+        borderColor: color.text 
+      }}
     >
       {/* Background decoration */}
       <div
@@ -59,13 +87,13 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
       />
 
       {/* Top row */}
-      <div className="flex items-start justify-between relative z-10 mb-4">
+      <div className="flex items-start justify-between relative z-10 mb-3">
         <div>
-          <p className="text-[var(--color-text-secondary)] text-[12.5px] font-medium tracking-wide mb-1">
+          <p className="text-[var(--color-text-secondary)] text-[11.5px] font-medium tracking-wide mb-1">
             {label}
           </p>
           <p
-            className="text-3xl font-bold tracking-tight transition-colors duration-300"
+            className="text-2xl font-bold tracking-tight transition-colors duration-300"
             style={{ color: 'var(--color-text-primary)' }}
           >
             {value}
@@ -73,21 +101,21 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
         </div>
 
         <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300"
-          style={{ background: color.bg, border: `1px solid ${color.border}`, color: color.text }}
+          className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300"
+          style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-soft)', color: 'var(--color-text-secondary)' }}
         >
-          <Icon size={20} strokeWidth={2} />
+          <Icon size={16} strokeWidth={2.5} />
         </div>
       </div>
 
       {/* Trend row */}
       {trend && (
-        <div className="flex items-center gap-1.5 relative z-10">
-          <TrendingUp size={13} style={{ color: color.text }} />
-          <span className="text-[12px] font-medium" style={{ color: color.text }}>
+        <div className="flex items-center gap-1.5 relative z-10 mt-1">
+          <TrendingUp size={12} style={{ color: color.text }} />
+          <span className="text-[11.5px] font-medium" style={{ color: color.text }}>
             {trend}
           </span>
-          <span className="text-[var(--color-text-dim)] text-[12px]">vs last week</span>
+          <span className="text-[var(--color-text-dim)] text-[11px]">vs last week</span>
         </div>
       )}
 
@@ -101,11 +129,71 @@ const Panel = ({ iconName, label, value, trend, colorClass }, index) => {
 };
 
 const OverviewPanels = () => {
-  const { todayStats } = useSelector(state => state.admin.metrics);
+  const { todayVisits, lastSyncedAt } = useSelector((state) => state.admin.metrics);
+  const administrators = useSelector((state) => state.administrator.administrators || []);
+  const contactPersons = useSelector((state) => state.contactPerson.contactPersons || []);
+  const visitors = useSelector((state) => state.visitorManagement.visitors || []);
+  const visitRequests = useSelector((state) => state.visitRequestsState.visitRequests || []);
+  const blacklists = useSelector((state) => state.blacklistState.blacklists || []);
+
+  const normalizedRole = (value) => (value || '').toString().trim().toLowerCase();
+  const normalizedStatus = (value) => (value || '').toString().trim().toUpperCase();
+
+  const approvedRequests = visitRequests.filter((request) => {
+    const status = normalizedStatus(request.VVR_Status);
+    return status === 'A' || status === 'APPROVED' || status === 'ADMIN APPROVED' || status === 'ADMIN_APPROVED';
+  }).length;
+
+  const rejectedRequests = visitRequests.filter((request) => {
+    const status = normalizedStatus(request.VVR_Status);
+    return status === 'R' || status === 'REJECTED';
+  }).length;
+
+  const pendingRequests = Math.max(visitRequests.length - approvedRequests - rejectedRequests, 0);
+
+  const adminCount = administrators.filter((person) => normalizedRole(person.VA_Role).includes('admin')).length;
+  const securityCount = administrators.filter((person) => normalizedRole(person.VA_Role).includes('security')).length;
+  const visitorRoleCount = administrators.filter((person) => normalizedRole(person.VA_Role).includes('visitor')).length;
+
+  const liveCards = [
+    { label: 'Administrators', value: String(adminCount), iconName: 'Shield', trend: 'Database count', colorClass: 'blue' },
+    { label: 'Security Officers', value: String(securityCount), iconName: 'ShieldAlert', trend: 'Database count', colorClass: 'green' },
+    { label: 'Contact Persons', value: String(contactPersons.length), iconName: 'Phone', trend: 'Database count', colorClass: 'yellow' },
+    { label: 'Registered Visitors', value: String(visitors.length || visitorRoleCount), iconName: 'Building2', trend: 'Database count', colorClass: 'blue' },
+    { label: 'Approved Requests', value: String(approvedRequests), iconName: 'CheckCircle2', trend: 'Live approvals', colorClass: 'green' },
+    { label: 'Pending Requests', value: String(pendingRequests), iconName: 'Clock3', trend: 'Waiting review', colorClass: 'yellow' },
+    { label: 'Rejected Requests', value: String(rejectedRequests), iconName: 'XCircle', trend: 'Live rejections', colorClass: 'red' },
+    { label: 'Restricted List', value: String(blacklists.length), iconName: 'Shield', trend: 'Blocked visitors', colorClass: 'red' },
+  ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-      {todayStats.map((stat, index) => Panel(stat, index))}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3 px-1">
+        <div>
+          <p className="text-[10px] font-semibold tracking-[0.24em] uppercase text-[var(--color-text-dim)] mb-1">
+            Live Snapshot
+          </p>
+          <h3 className="text-[14px] font-bold text-[var(--color-text-primary)] m-0">
+            Core dashboard totals
+          </h3>
+        </div>
+        <div className="text-right">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-dim)] m-0">
+            Auto refresh
+          </p>
+          <p className="text-[11px] font-semibold text-[var(--color-text-primary)] m-0">
+            {lastSyncedAt ? new Date(lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Every 30s'}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {liveCards.map((stat, index) => (
+        <div key={`stat-${index}`}>
+          {Panel(stat, index)}
+        </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -13,6 +13,7 @@ const initialState = {
   vehicles: [],
   people: [],
   items: [],
+  subVisitorItems: [],
   isSubmitting: false,
   error: null,
 };
@@ -87,6 +88,38 @@ const visitRequestFormSlice = createSlice({
       const { index, field, value } = action.payload;
       state.items[index][field] = value;
     },
+    // Sub-Visitor Items
+    setSubVisitorItems: (state, action) => {
+      state.subVisitorItems = action.payload;
+    },
+    addSubVisitorItem: (state) => {
+      state.subVisitorItems = [
+        {
+          subVisitorName: "",
+          subVisitorNic: "",
+          subVisitorPhone: "",
+          name: "",
+          quantity: "",
+          description: "",
+          isConfirmed: false,
+          isSavedToServer: false,
+        },
+        ...state.subVisitorItems,
+      ];
+    },
+    markSubVisitorItemSaved: (state, action) => {
+      state.subVisitorItems[action.payload].isSavedToServer = true;
+    },
+    toggleSubVisitorItemConfirmed: (state, action) => {
+      state.subVisitorItems[action.payload].isConfirmed = !state.subVisitorItems[action.payload].isConfirmed;
+    },
+    removeSubVisitorItem: (state, action) => {
+      state.subVisitorItems = state.subVisitorItems.filter((_, i) => i !== action.payload);
+    },
+    updateSubVisitorItem: (state, action) => {
+      const { index, field, value } = action.payload;
+      state.subVisitorItems[index][field] = value;
+    },
     // Meta
     setSavedRequestId: (state, action) => {
       state.savedRequestId = action.payload;
@@ -123,6 +156,12 @@ export const {
   removeItem,
   updateItem,
   markItemSaved,
+  setSubVisitorItems,
+  addSubVisitorItem,
+  toggleSubVisitorItemConfirmed,
+  removeSubVisitorItem,
+  updateSubVisitorItem,
+  markSubVisitorItemSaved,
   resetForm,
   setSubmitting,
   setError

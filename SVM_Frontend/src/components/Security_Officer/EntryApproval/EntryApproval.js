@@ -111,7 +111,7 @@ const EntryApprovalMain = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search requests..."
-                    className="w-full pl-14 pr-6 py-2.5 sm:py-3 bg-white/[0.06] border border-white/10 rounded-2xl text-[12px] sm:text-[13px] uppercase font-medium tracking-widest text-white placeholder:text-gray-300 placeholder:opacity-80 focus:border-primary/40 outline-none transition-all duration-300 shadow-sm"
+                    className="w-full pl-14 pr-6 py-2.5 sm:py-1.5 bg-white/[0.06] border border-white/10 rounded-2xl text-[12px] sm:text-[13px] uppercase font-medium tracking-widest text-white placeholder:text-gray-300 placeholder:opacity-80 focus:border-primary/40 outline-none transition-all duration-300 shadow-sm"
                   />
                 </div>
               </div>
@@ -270,7 +270,7 @@ const EntryApprovalMain = () => {
                         </span>
                       </div>
                       {selectedVisitor?.equipment.length > 0 ? (
-                        <div className="flex flex-wrap gap-2.5">
+                        <div className="flex flex-wrap gap-1.5">
                           {selectedVisitor.equipment.map((eq, i) => (
                             <div
                               key={i}

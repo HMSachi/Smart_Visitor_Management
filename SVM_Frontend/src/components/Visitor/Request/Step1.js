@@ -19,7 +19,9 @@ import {
   setSubmitting,
   setError,
 } from "../../../reducers/visitorSlice";
-import { validateName, validateNIC, validatePhone, validateEmail } from "../../../utils/validation";
+import { validateName, validateNIC, validatePhone, validateEmail, validatePlateNumber } from "../../../utils/validation";
+import { GetAllBlacklist } from "../../../actions/BlacklistAction";
+
 
 const Step1Main = () => {
   const navigate = useNavigate();
@@ -28,6 +30,8 @@ const Step1Main = () => {
   const { isSubmitting, requestId, error: reduxError } = formData;
   const user = useSelector((state) => state.login.user);
   const userEmail = user?.ResultSet?.[0]?.VA_Email;
+  const { blacklists } = useSelector((state) => state.blacklistState || { blacklists: [] });
+
 
   const [formErrors, setFormErrors] = useState({});
   const [visitorRecord, setVisitorRecord] = useState(null);
@@ -48,7 +52,9 @@ const Step1Main = () => {
       }
     };
     if (userEmail) loadVisitorRecord();
-  }, [userEmail]);
+    dispatch(GetAllBlacklist());
+  }, [userEmail, dispatch]);
+
 
   // Pre-fill form with visitor record
   useEffect(() => {
@@ -118,9 +124,28 @@ const Step1Main = () => {
       if (err) errors.emailAddress = err;
     }
 
+    // Blacklist validation
+    const isBlacklisted = blacklists.some(
+      (b) => 
+        (b.VB_Email && b.VB_Email.toLowerCase() === formData.emailAddress?.toLowerCase() && b.VB_Status === "A") ||
+        (b.VB_Name && b.VB_Name.toLowerCase() === formData.fullName?.toLowerCase() && b.VB_Status === "A")
+    );
+
+    if (isBlacklisted) {
+      errors.emailAddress = "Access Restricted: Contact system administrator.";
+      errors.fullName = "Access Restricted: Contact system administrator.";
+    }
+
+    // Plate number validation (only if provided)
+    if (formData.plateNumber?.trim()) {
+      const plateErr = validatePlateNumber(formData.plateNumber);
+      if (plateErr) errors.plateNumber = plateErr;
+    }
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -206,7 +231,7 @@ const Step1Main = () => {
   };
 
   return (
-    <div className="h-full min-h-0 flex flex-col max-w-5xl mx-auto px-4 sm:px-6 py-3 pb-10 text-white bg-black overflow-hidden relative">
+    <div className="h-full min-h-0 flex flex-col max-w-5xl mx-auto px-4 sm:px-6 py-1.5 pb-10 text-white bg-black overflow-hidden relative">
 
       {/* Error Popup */}
       {showError && (

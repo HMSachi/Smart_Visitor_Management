@@ -3,8 +3,29 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   // Dashboard Metrics
   metrics: {
+    liveDataAvailable: null, // null = loading, true = online, false = offline/error
     totalVisits: 12540,
     activeVisitors: 42,
+    lastSyncedAt: null,
+    counts: {
+      admins: 0,
+      security: 0,
+      contactPersons: 0,
+      visitors: 0,
+      approvedRequests: 0,
+      pendingRequests: 0,
+      rejectedRequests: 0,
+      restrictedCount: 0,
+    },
+    history: [
+      { name: "Mon", visits: 400 },
+      { name: "Tue", visits: 300 },
+      { name: "Wed", visits: 500 },
+      { name: "Thu", visits: 280 },
+      { name: "Fri", visits: 590 },
+      { name: "Sat", visits: 320 },
+      { name: "Sun", visits: 450 },
+    ],
     todayStats: [
       {
         label: "Total Visits Today",
@@ -177,8 +198,46 @@ const adminSlice = createSlice({
   initialState,
   reducers: {
     // Dashboard actions
+    setLiveDataAvailable: (state, action) => {
+      state.metrics.liveDataAvailable = action.payload;
+    },
     updateActiveVisitors: (state, action) => {
       state.metrics.activeVisitors = action.payload;
+    },
+    setDashboardMetrics: (state, action) => {
+      const { todayVisits, activeVisitors, blacklistCount, totalVisits, counts, history, lastSyncedAt } = action.payload;
+      state.metrics.totalVisits = totalVisits;
+      state.metrics.activeVisitors = activeVisitors;
+      state.metrics.lastSyncedAt = lastSyncedAt || null;
+      if (Array.isArray(history) && history.length > 0) {
+        state.metrics.history = history;
+      }
+      state.metrics.todayStats = [
+        {
+          label: "Total Visits Today",
+          value: todayVisits.toString(),
+          iconName: "Users",
+          trend: "Today",
+          colorClass: "blue",
+        },
+        {
+          label: "Active Visitors",
+          value: activeVisitors.toString(),
+          iconName: "UserCheck",
+          trend: "On-Premise",
+          colorClass: "green",
+        },
+        {
+          label: "Alerts & Violations",
+          value: blacklistCount.toString(),
+          iconName: "AlertTriangle",
+          trend: "Restricted",
+          colorClass: "red",
+        },
+      ];
+      if (counts) {
+        state.metrics.counts = counts;
+      }
     },
 
     // Approval actions
@@ -197,15 +256,21 @@ const adminSlice = createSlice({
     addSecurityAlert: (state, action) => {
       state.monitoring.alerts.unshift(action.payload);
     },
+    setDashboardAlerts: (state, action) => {
+      state.metrics.alerts = action.payload;
+    },
   },
   extraReducers: (builder) => {},
 });
 
 export const {
   updateActiveVisitors,
+  setDashboardMetrics,
+  setDashboardAlerts,
   setSearchTerm,
   updateVisitorStatus,
   addSecurityAlert,
+  setLiveDataAvailable,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

@@ -99,7 +99,11 @@ const HeaderComponent = () => {
 
   const handleLogout = () => {
     if (!window.confirm("Are you sure you want to sign out?")) return;
-    localStorage.removeItem("user_session");
+    try {
+      localStorage.removeItem("user_session");
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
+    }
     dispatch({ type: LOGOUT });
     dispatch(setMobileMenu(false));
     navigate("/login");
@@ -148,7 +152,7 @@ const HeaderComponent = () => {
             </Link>
           ))}
 
-          {!isLatestVisitAccepted && (
+          {/* {!isLatestVisitAccepted && (
             <button
               onClick={() => navigate("/request-step-1")}
               className="flex items-center gap-2 ml-2 px-5 py-2.5 rounded-xl text-white text-[13px] font-semibold transition-all"
@@ -161,14 +165,14 @@ const HeaderComponent = () => {
               <Plus size={15} />
               Request a Visit
             </button>
-          )}
+          )} */}
 
           <ThemeToggleButton />
 
           {userEmail && (
             <>
               <div className="w-px h-6 bg-[var(--color-border-soft)] mx-1" />
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-1.5">
                 <p className="text-[var(--color-text-primary)] text-[12px] font-semibold truncate max-w-[130px]">
                   {userName || userEmail}
                 </p>
@@ -273,7 +277,7 @@ const HeaderComponent = () => {
               <button
                 key={item.path}
                 onClick={() => handleNavigate(item.path)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-[var(--color-text-primary)] text-[14px] font-medium transition-all"
+                className="w-full flex items-center gap-3 px-4 py-1.5 rounded-xl text-left text-[var(--color-text-primary)] text-[14px] font-medium transition-all"
                 style={{
                   background: "var(--color-surface-1)",
                   border: "1px solid var(--color-border-soft)",
@@ -290,7 +294,7 @@ const HeaderComponent = () => {
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-[var(--color-text-secondary)] text-[14px] font-medium transition-all hover:bg-red-500/10"
+              className="w-full flex items-center gap-3 px-4 py-1.5 rounded-xl text-left text-[var(--color-text-secondary)] text-[14px] font-medium transition-all hover:bg-red-500/10"
               style={{ border: "1px solid var(--color-border-soft)" }}
             >
               <LogOut size={18} className="text-primary" />
@@ -303,7 +307,7 @@ const HeaderComponent = () => {
           </div>
 
           {/* CTA */}
-          {!isLatestVisitAccepted && (
+          {/* {!isLatestVisitAccepted && (
             <button
               onClick={() => handleNavigate("/request-step-1")}
               className="mt-6 w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-white text-[14px] font-bold transition-all active:scale-95"
@@ -316,7 +320,7 @@ const HeaderComponent = () => {
               <Plus size={18} />
               Request a Visit
             </button>
-          )}
+          )} */}
         </Box>
       </Drawer>
     </header>

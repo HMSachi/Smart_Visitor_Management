@@ -1,20 +1,23 @@
 import React from 'react';
-import Sidebar from '../../../components/Security_Officer/Layout/Sidebar';
 import Header from '../../../components/Security_Officer/Layout/Header';
 import ActiveVisitorsComponent from '../../../components/Security_Officer/ActiveVisitors/ActiveVisitors';
+import { Users } from 'lucide-react';
 
 const ActiveVisitors = () => {
-    return (
-        <div className="security-theme-root flex bg-secondary overflow-hidden text-white h-screen w-full">
-            <Sidebar />
-            <div className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-default)] overflow-hidden">
-                <Header title="Live Personnel Tracking" />
-                <div className="flex-1 overflow-y-auto">
-                    <ActiveVisitorsComponent />
-                </div>
-            </div>
+  return (
+    <div className="flex flex-col min-w-0 bg-[var(--color-bg-default)] min-h-screen">
+      <Header title="Active & Left Visitors" />
+
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto w-full animate-fade-in">
+        <div className="max-w-[1600px] mx-auto">
+
+          <div className="p-0 min-h-[600px]">
+            <ActiveVisitorsComponent />
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default ActiveVisitors;

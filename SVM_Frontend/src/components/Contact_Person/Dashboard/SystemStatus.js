@@ -30,32 +30,32 @@ const SystemStatus = () => {
     systemHealth >= 90 ? "Optimal" : systemHealth >= 70 ? "Good" : "Warning";
   const healthColor =
     systemHealth >= 90
-      ? "text-green-500"
+      ? "text-status-success"
       : systemHealth >= 70
-        ? "text-yellow-500"
-        : "text-primary";
+        ? "text-status-warning"
+        : "text-status-error";
 
   const StatCard = ({ icon: Icon, label, value, unit, color }) => (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      className="flex-1 bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5 hover:border-primary/20 transition-all duration-300 group"
+      className="flex-1 bg-background-alt border border-border-soft rounded-lg sm:rounded-xl p-2.5 sm:p-3 hover:border-primary/20 transition-all duration-300 group"
     >
       <div className="flex items-center justify-between mb-2 sm:mb-3">
-        <span className="text-[var(--color-text-secondary)] text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em]">
+        <span className="text-text-secondary text-[9px] sm:text-[10px] md:text-[11px] font-medium uppercase tracking-[0.2em]">
           {label}
         </span>
-        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/15 transition-all">
+        <div className="w-7 h-7 sm:w-8 h-8 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center group-hover:bg-primary/10 transition-all">
           <Icon size={14} className={color} strokeWidth={2} />
         </div>
       </div>
-      <div className="flex items-baseline gap-1 sm:gap-2">
-        <span className="text-[var(--color-text-primary)] text-lg sm:text-xl md:text-2xl font-bold">
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-text-primary text-base sm:text-lg font-medium">
           {value}
         </span>
         {unit && (
-          <span className="text-[var(--color-text-secondary)] text-[10px] sm:text-xs opacity-75">
+          <span className="text-text-secondary text-[10px] sm:text-xs opacity-75">
             {unit}
           </span>
         )}
@@ -72,16 +72,16 @@ const SystemStatus = () => {
     >
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-3 sm:mb-4 md:mb-5">
         <div>
-          <h2 className="text-[var(--color-text-primary)] text-base sm:text-lg md:text-xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
-            <Activity size={18} className="text-primary" />
+          <h2 className="text-text-primary text-sm sm:text-base font-bold tracking-tight flex items-center gap-2">
+            <Activity size={16} className="text-primary" />
             System Status
           </h2>
-          <p className="text-[var(--color-text-secondary)] text-[10px] sm:text-xs opacity-75 mt-1 uppercase tracking-[0.2em]">
+          <p className="text-text-secondary text-[9px] opacity-75 mt-0.5 uppercase tracking-[0.2em]">
             Real-time infrastructure metrics
           </p>
         </div>
         <div
-          className={`px-3 sm:px-4 py-1 sm:py-2 rounded-lg bg-${healthColor === "text-green-500" ? "green" : healthColor === "text-yellow-500" ? "yellow" : "primary"}/10 border border-${healthColor === "text-green-500" ? "green" : healthColor === "text-yellow-500" ? "yellow" : "primary"}/20`}
+          className={`px-3 sm:px-4 py-1 sm:py-2 rounded-lg ${healthColor === "text-status-success" ? "bg-status-success/10 border-status-success/20" : healthColor === "text-status-warning" ? "bg-status-warning/10 border-status-warning/20" : "bg-status-error/10 border-status-error/20"}`}
         >
           <span
             className={`text-xs sm:text-sm font-bold uppercase tracking-wide ${healthColor}`}
@@ -96,18 +96,18 @@ const SystemStatus = () => {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        className="bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-lg sm:rounded-xl md:rounded-2xl p-4 md:p-5"
+        className="bg-background-alt border border-border-soft rounded-lg sm:rounded-xl md:rounded-2xl p-4 md:p-5"
       >
         <div className="mb-3 sm:mb-4">
-          <div className="flex justify-between items-baseline mb-2 sm:mb-3">
-            <span className="text-[var(--color-text-primary)] text-xs sm:text-sm font-bold uppercase tracking-[0.2em]">
+          <div className="flex justify-between items-baseline mb-2">
+            <span className="text-[var(--color-text-primary)] text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em]">
               Overall Performance
             </span>
-            <span className={`text-xl sm:text-2xl font-bold ${healthColor}`}>
+            <span className={`text-lg sm:text-xl font-medium ${healthColor}`}>
               {systemHealth}%
             </span>
           </div>
-          <div className="h-2 sm:h-3 bg-[var(--color-border-soft)] rounded-full overflow-hidden">
+          <div className="h-1.5 bg-[var(--color-border-soft)] rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               whileInView={{ width: `${systemHealth}%` }}
@@ -129,29 +129,29 @@ const SystemStatus = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <StatCard
           icon={Zap}
-          label="Response Time"
+          label="Speed"
           value={responseTime}
           unit="ms"
           color="text-primary"
         />
         <StatCard
           icon={Server}
-          label="Active Nodes"
+          label="Active Systems"
           value={activeNodes}
           color="text-green-500"
         />
         <StatCard
           icon={Activity}
-          label="Sync Status"
+          label="Connection"
           value="✓"
           color="text-green-500"
         />
         <StatCard
           icon={RefreshCw}
-          label="Last Sync"
+          label="Updated"
           value="OK"
           color="text-green-500"
         />

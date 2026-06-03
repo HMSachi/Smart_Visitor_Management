@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { validateEmail, validatePhone, sanitizePhoneInput, sanitizePlateInput } from "../../../utils/validation";
 
 const AccessMain = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,10 @@ const AccessMain = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    let next = value;
+    if (name === "phone") next = sanitizePhoneInput(value);
+    if (name === "refId") next = sanitizePlateInput(value);
+    setFormData({ ...formData, [name]: next });
     // Clear error when typing
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -20,18 +24,23 @@ const AccessMain = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simple mock validation
+    // Enhanced validation
     const newErrors = {};
-    if (!formData.email) newErrors.email = "Verification email required";
-    if (!formData.phone) newErrors.phone = "Contact number required";
-    if (!formData.refId) newErrors.refId = "Valid Reference ID required";
+    const emailErr = validateEmail(formData.email);
+    if (emailErr) newErrors.email = emailErr || "Verification email required";
+    const phoneErr = validatePhone(formData.phone);
+    if (phoneErr) newErrors.phone = phoneErr || "Contact number required";
+    if (!formData.refId || !/^[A-Z0-9\-\s]+$/i.test(formData.refId)) {
+      newErrors.refId = "Reference ID is required and must be alphanumeric";
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-    } else {
-      console.log("Accessing visit...", formData);
-      // Logic for access
+      return;
     }
+
+    console.log("Accessing visit...", formData);
+    // Logic for access
   };
 
   return (

@@ -11,7 +11,12 @@ export const GetLogin = (email, password) => {
         try {
             const response = await loginService.GetLogin(email, password);
             if (response.data) {
-                localStorage.setItem('user_session', JSON.stringify(response.data));
+                try {
+                    localStorage.setItem('user_session', JSON.stringify(response.data));
+                } catch (err) {
+                    // Storage access blocked by privacy settings
+                    console.warn("localStorage access blocked:", err);
+                }
             }
             dispatch({ type: LOGIN_SUCCESS, payload: response.data });
         } catch (error) {

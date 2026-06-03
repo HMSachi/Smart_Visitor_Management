@@ -27,7 +27,7 @@ const VisitorHistoryMain = () => {
                         <input
                             type="text"
                             placeholder="SEARCH ARCHIVES..."
-                            className={`text-[12px] font-bold uppercase tracking-widest placeholder:opacity-50 w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:border-primary focus:shadow-sm transition-all shadow-sm border ${
+                            className={`text-[12px] font-bold uppercase tracking-widest placeholder:opacity-50 w-full pl-10 pr-4 py-1.5 rounded-xl focus:outline-none focus:border-primary focus:shadow-sm transition-all shadow-sm border ${
                                 isLight 
                                     ? "bg-white border-gray-200 text-[#1A1A1A] placeholder:text-gray-400" 
                                     : "bg-black/40 border-white/10 text-white placeholder:text-white/40"

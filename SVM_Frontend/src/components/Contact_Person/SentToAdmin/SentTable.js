@@ -1,5 +1,4 @@
 import React from 'react';
-import {  CheckCircle, XCircle,  Activity } from 'lucide-react';
 
 const ProgressionTimeline = ({ status }) => {
     const steps = [
@@ -33,33 +32,40 @@ const SentTable = ({ requests }) => {
 <div className="overflow-x-auto w-full max-w-full pb-4">
 <table className="w-full text-left border-collapse text-[13px]">
                 <thead>
-                    <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] font-bold uppercase tracking-[0.2em]">
-                        <th className="px-6 py-4 whitespace-nowrap">Forward ID</th>
-                        <th className="px-6 py-4 whitespace-nowrap">Visitor Name</th>
-                        <th className="px-6 py-4 whitespace-nowrap">Timeline</th>
-                        <th className="px-6 py-4 whitespace-nowrap">Status</th>
+                    <tr className="bg-[var(--color-surface-1)] border-b border-[var(--color-border-soft)] text-[var(--color-text-dim)] font-normal uppercase tracking-[0.3em] text-[12px]">
+                        <th className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">Forward ID</th>
+                        <th className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">Visitor Name</th>
+                        <th className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">Timeline</th>
+                        <th className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {requests.map((req) => (
-                        <tr key={req.id} className="border-b border-[var(--color-border-soft)] bg-[var(--color-bg-paper)] hover:bg-[var(--color-surface-1)]/60 transition-all font-bold">
-                            <td className="px-6 py-6 whitespace-nowrap">
+                        <tr key={req.id} className="border-b border-[var(--color-border-soft)] bg-[var(--color-bg-paper)] hover:bg-[var(--color-surface-1)]/60 transition-all font-normal text-[12px]">
+                            <td className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">
                                 <span className="text-[var(--color-text-primary)]">#{req.id}</span>
                             </td>
-                            <td className="px-6 py-6 whitespace-nowrap">
+                            <td className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">
                                 <div className="flex flex-col">
-                                    <span className="uppercase text-[var(--color-text-primary)] mb-1">{req.name}</span>
-                                    <span className="text-[var(--color-text-dim)] uppercase text-[11px] tracking-widest font-bold">Awaiting Admin Response</span>
+                                    <span className="uppercase text-[var(--color-text-primary)] mb-0.5">{req.name}</span>
+                                    <span className="text-[var(--color-text-dim)] uppercase text-[9px] tracking-widest font-normal">Awaiting Admin Response</span>
                                 </div>
                             </td>
-                            <td className="px-6 py-6 whitespace-nowrap">
+                            <td className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">
                                 <ProgressionTimeline status={req.status} />
                             </td>
-                            <td className="px-6 py-6 whitespace-nowrap">
-                                <div className={`inline-flex flex-col md:flex-row items-center gap-4 md:gap-3 px-4 py-1.5 border uppercase ${req.status === 'Approved' ? 'text-green-500 border-green-500/20 bg-green-500/5' : req.status === 'Declined' ? 'text-primary border-primary/20 bg-primary/5' : 'text-blue-400 border-blue-400/20 bg-blue-400/5 animate-pulse'}`}>
-                                    {req.status === 'Approved' ? <CheckCircle size={12} /> : req.status === 'Declined' ? <XCircle size={12} /> : <Activity size={12} />}
-                                    {req.status}
-                                </div>
+                            <td className="px-6 py-2 whitespace-nowrap font-normal text-[12px]">
+                                                                <div
+                                                                    className={`svm-status-pill normal-case ${
+                                                                        req.status === 'Approved'
+                                                                            ? 'svm-status-pill--success'
+                                                                            : req.status === 'Declined'
+                                                                                ? 'svm-status-pill--danger'
+                                                                                : 'svm-status-pill--info animate-pulse'
+                                                                    }`}
+                                                                >
+                                                                    {req.status}
+                                                                </div>
                             </td>
                         </tr>
                     ))}

@@ -5,7 +5,7 @@ const InboxFilters = ({ searchTerm, setSearchTerm }) => {
     return (
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-8 border-b border-mas-border">
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
-                <div className="px-5 py-3 mas-glass border-mas-border flex flex-col md:flex-row items-center gap-4 md:gap-3 cursor-pointer hover:border-primary/40 transition-all group">
+                <div className="px-5 py-1.5 mas-glass border-mas-border flex flex-col md:flex-row items-center gap-4 md:gap-3 cursor-pointer hover:border-primary/40 transition-all group">
                     <Filter size={16} className="text-gray-300 group-hover:text-primary" />
                     <span className="uppercase">Advanced Filter</span>
                     <ChevronDown size={14} className="text-gray-300" />

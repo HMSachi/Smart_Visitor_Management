@@ -16,12 +16,12 @@ const TotalVisitsCard = () => {
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '16px',
-        padding: '1.5rem',
+        borderRadius: '28px',
+        padding: '1.75rem',
         boxShadow: 'var(--shadow-card)',
-        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+        transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
       }}
-      whileHover={{ y: -2 }}
+      whileHover={{ y: -5, scale: 1.015 }}
     >
       {/* Background decoration */}
       <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-25 blur-3xl group-hover:opacity-40 transition-all pointer-events-none" style={{ background: 'rgba(200,16,46,0.2)' }} />
@@ -35,10 +35,10 @@ const TotalVisitsCard = () => {
           </p>
         </div>
         <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center text-primary shrink-0 transition-all duration-300 group-hover:bg-primary group-hover:text-white"
-          style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.2)' }}
+          className="w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white shrink-0"
+          style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-soft)', color: 'var(--color-text-secondary)' }}
         >
-          <Users size={20} strokeWidth={2} />
+          <Users size={16} strokeWidth={2.5} />
         </div>
       </div>
 
@@ -55,9 +55,9 @@ const TotalVisitsCard = () => {
       </div>
 
       {/* Area Chart */}
-      <div className="h-28 w-full relative z-10 -mx-1">
-        <ResponsiveContainer width="105%" height="100%">
-          <AreaChart data={history}>
+      <div className="h-28 w-full relative z-10">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={history || []}>
             <defs>
               <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.25} />

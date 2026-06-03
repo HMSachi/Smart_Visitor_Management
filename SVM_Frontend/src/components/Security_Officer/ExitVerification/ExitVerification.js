@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ClipboardList, Briefcase, AlertTriangle, Check, ShieldCheck, ShieldAlert, Activity, Package, Camera, Laptop, RefreshCw, ChevronRight, Info, Zap, Lock, Terminal, Fingerprint, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDispatch } from 'react-redux';
+import { AddBlacklistReport } from '../../../actions/BlacklistAction';
+import VisitorService from '../../../services/VisitorService';
+import VisitGroupService from '../../../services/VisitGroupService';
 
 const ExitVerificationMain = () => {
+    const dispatch = useDispatch();
     const [checks, setChecks] = useState({
         equipment: false,
         noItems: false,
@@ -10,9 +15,36 @@ const ExitVerificationMain = () => {
     });
     const [authenticating, setAuthenticating] = useState(null);
     const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+    
+    // State for reporting security breach
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [visitorsList, setVisitorsList] = useState([]);
+    const [companionsList, setCompanionsList] = useState([]);
+    
+    const [selectedVisitorId, setSelectedVisitorId] = useState('');
+    const [selectedCompanionId, setSelectedCompanionId] = useState('');
+    const [breachDescription, setBreachDescription] = useState('');
+    const [breachAlertLevel, setBreachAlertLevel] = useState('Level 01');
+    const [submittingReport, setSubmittingReport] = useState(false);
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
+        
+        // Fetch database records
+        const loadReportData = async () => {
+            try {
+                const [visRes, compRes] = await Promise.all([
+                    VisitorService.GetAllVisitors(),
+                    VisitGroupService.GetAllVisitGroup()
+                ]);
+                setVisitorsList(visRes.data?.ResultSet || visRes.data || []);
+                setCompanionsList(compRes.data?.ResultSet || compRes.data || []);
+            } catch (e) {
+                console.error("Error loading visitors for reporting:", e);
+            }
+        };
+        
+        loadReportData();
         return () => clearInterval(timer);
     }, []);
 
@@ -36,6 +68,53 @@ const ExitVerificationMain = () => {
 
     const hasMismatch = equipmentList.some(item => item.mismatch);
     const allChecked = Object.values(checks).every(v => v);
+
+    const handleBreachSubmit = async (e) => {
+        e.preventDefault();
+        if (!selectedVisitorId) {
+            alert("Please select a visitor protocol node.");
+            return;
+        }
+        
+        setSubmittingReport(true);
+        try {
+            let reporterName = "Security Officer";
+            let reporterEmail = "security@example.com";
+            let pUid = "Security";
+            try {
+                const session = JSON.parse(localStorage.getItem('user_session') || '{}');
+                if (session.ResultSet) {
+                    reporterName = session.ResultSet.P_Name || reporterName;
+                    reporterEmail = session.ResultSet.P_Email || reporterEmail;
+                    pUid = session.ResultSet.P_UID || pUid;
+                }
+            } catch(e) {}
+            
+            const reportData = {
+                VB_Visitor_id: selectedVisitorId,
+                VVG_id: selectedCompanionId || "",
+                VB_Reporter_Name: reporterName,
+                VB_Reporter_Role: "Security",
+                VB_Reporter_Email: reporterEmail,
+                VB_Description: breachDescription,
+                VB_Alert_Type: breachAlertLevel,
+                VB_Reported_By: reporterName,
+                P_UID: String(pUid)
+            };
+            
+            await dispatch(AddBlacklistReport(reportData));
+            alert("Security Breach Report successfully logged to Admin Queue!");
+            setIsReportModalOpen(false);
+            setSelectedVisitorId('');
+            setSelectedCompanionId('');
+            setBreachDescription('');
+        } catch (error) {
+            console.error("Error submitting breach report:", error);
+            alert("Failed to submit breach report: " + error.message);
+        } finally {
+            setSubmittingReport(false);
+        }
+    };
 
     return (
         <div className="p-8 md:p-12 space-y-6 md:space-y-12 bg-[var(--color-bg-default)] min-h-full">
@@ -183,7 +262,10 @@ const ExitVerificationMain = () => {
 
                     {/* Exit Authorization Terminal */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <button className="group relative overflow-hidden w-full py-5 rounded-2xl border border-primary text-primary bg-transparent font-medium uppercase text-[14px] tracking-[0.4em] hover:bg-primary hover:text-white transition-all duration-700 flex items-center justify-center gap-4 shadow-xl active:scale-95">
+                        <button 
+                            onClick={() => setIsReportModalOpen(true)}
+                            className="group relative overflow-hidden w-full py-5 rounded-2xl border border-primary text-primary bg-transparent font-medium uppercase text-[14px] tracking-[0.4em] hover:bg-primary hover:text-white transition-all duration-700 flex items-center justify-center gap-4 shadow-xl active:scale-95"
+                        >
                             <ShieldAlert size={18} strokeWidth={2.5} className="group-hover:rotate-12 transition-transform duration-500" />
                             Report_Breach
                         </button>
@@ -208,6 +290,161 @@ const ExitVerificationMain = () => {
                     </div>
                 </div>
             </div>
+
+            {/* ── SECURITY BREACH REPORTING MODAL ── */}
+            <AnimatePresence>
+                {isReportModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        {/* Overlay backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsReportModalOpen(false)}
+                            className="absolute inset-0 bg-[#000000]/80 backdrop-blur-md"
+                        />
+
+                        {/* Modal content */}
+                        <motion.div
+                            initial={{ scale: 0.95, y: 30, opacity: 0 }}
+                            animate={{ scale: 1, y: 0, opacity: 1 }}
+                            exit={{ scale: 0.95, y: 30, opacity: 0 }}
+                            transition={{ type: "spring", duration: 0.5 }}
+                            className="relative w-full max-w-xl bg-[#0a0a0c] border border-primary/30 rounded-[32px] overflow-hidden shadow-[0_0_60px_rgba(200,16,46,0.2)]"
+                        >
+                            {/* Glowing cyber header boundary */}
+                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+                            <div className="p-8 space-y-6">
+                                {/* Header */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(200,16,46,0.1)]">
+                                            <ShieldAlert size={20} className="animate-pulse" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-base font-bold text-white tracking-widest uppercase">
+                                                Breach_Report_Protocol
+                                            </h3>
+                                            <p className="text-[10px] text-gray-300/40 tracking-[0.3em] font-mono mt-0.5">
+                                                SECURE_LOG_NODE_ACTV
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setIsReportModalOpen(false)}
+                                        className="p-2 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-95"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+
+                                <div className="h-[1px] w-full bg-gradient-to-r from-white/5 via-white/10 to-transparent" />
+
+                                {/* Form */}
+                                <form onSubmit={handleBreachSubmit} className="space-y-5">
+                                    {/* Visitor Dropdown */}
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase font-mono block">
+                                            Target_Visitor_Protocol
+                                        </label>
+                                        <select
+                                            value={selectedVisitorId}
+                                            onChange={(e) => setSelectedVisitorId(e.target.value)}
+                                            className="w-full bg-[#111114] border border-white/10 text-white rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all font-mono text-xs uppercase"
+                                            required
+                                        >
+                                            <option value="">-- SELECT VISITOR PROTOCOL --</option>
+                                            {visitorsList.map(v => (
+                                                <option key={v.VV_Visitor_id} value={v.VV_Visitor_id} className="bg-[#111114] text-white">
+                                                    {v.VV_Name} (ID: {v.VV_Visitor_id})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    {/* Companion Dropdown */}
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase font-mono block">
+                                            Companion_Unit (Optional)
+                                        </label>
+                                        <select
+                                            value={selectedCompanionId}
+                                            onChange={(e) => setSelectedCompanionId(e.target.value)}
+                                            className="w-full bg-[#111114] border border-white/10 text-white rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all font-mono text-xs uppercase"
+                                        >
+                                            <option value="">-- SELECT COMPANION (OPTIONAL) --</option>
+                                            {companionsList
+                                                .filter(c => !selectedVisitorId || String(c.VV_Visitor_id) === String(selectedVisitorId) || String(c.VVR_Request_id) === String(selectedVisitorId))
+                                                .map(c => (
+                                                    <option key={c.VVG_id} value={c.VVG_id} className="bg-[#111114] text-white">
+                                                        {c.VVG_Visitor_Name} (ID: {c.VVG_id})
+                                                    </option>
+                                                ))
+                                            }
+                                        </select>
+                                    </div>
+
+                                    {/* Alert level */}
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase font-mono block">
+                                            Alert_Level_Classification
+                                        </label>
+                                        <select
+                                            value={breachAlertLevel}
+                                            onChange={(e) => setBreachAlertLevel(e.target.value)}
+                                            className="w-full bg-[#111114] border border-white/10 text-white rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all font-mono text-xs uppercase"
+                                        >
+                                            <option value="Level 01">LEVEL 01 - MINOR ANOMALY</option>
+                                            <option value="Level 02">LEVEL 02 - MODERATE TRESPASS</option>
+                                            <option value="Level 03">LEVEL 03 - CRITICAL SECURITY BREACH</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Description */}
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase font-mono block">
+                                            Telemetry_Activity_Log
+                                        </label>
+                                        <textarea
+                                            value={breachDescription}
+                                            onChange={(e) => setBreachDescription(e.target.value)}
+                                            placeholder="IDENTIFY SPECIFIC DETAILS OF UNAUTHORIZED ACTIVITY..."
+                                            className="w-full bg-[#111114] border border-white/10 text-white rounded-xl py-3 px-4 h-24 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all font-mono text-xs placeholder:text-white/20 uppercase"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="h-[1px] w-full bg-gradient-to-r from-white/5 via-white/10 to-transparent" />
+
+                                    {/* Buttons */}
+                                    <div className="flex gap-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsReportModalOpen(false)}
+                                            className="w-1/2 py-3.5 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-all text-xs font-mono uppercase tracking-widest active:scale-95"
+                                        >
+                                            DISCARD
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={submittingReport}
+                                            className="w-1/2 py-3.5 rounded-xl bg-primary text-white hover:bg-primary-hover shadow-[0_0_20px_rgba(200,16,46,0.3)] transition-all text-xs font-mono font-bold uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                                        >
+                                            {submittingReport ? (
+                                                <RefreshCw size={14} className="animate-spin" />
+                                            ) : (
+                                                <ShieldAlert size={14} />
+                                            )}
+                                            LOG_BREACH
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

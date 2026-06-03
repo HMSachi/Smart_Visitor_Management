@@ -1,255 +1,591 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Clock, Search, ExternalLink, Shield, Activity, Zap, MapPin, Target, RefreshCw, Filter, MoreHorizontal, ChevronRight, Globe, AlertCircle, ChevronDown, ChevronUp, Car, Phone, Building, FileText, Calendar } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import {
+  Users,
+  Clock,
+  Search,
+  ExternalLink,
+  Shield,
+  Activity,
+  Zap,
+  MapPin,
+  Target,
+  RefreshCw,
+  Filter,
+  MoreHorizontal,
+  ChevronRight,
+  Globe,
+  AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  Car,
+  Phone,
+  Building,
+  FileText,
+  Calendar,
+  LogIn,
+  LogOut,
+  MessageSquare,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import PageSpinner from "../../../components/common/PageSpinner";
+import GatePassService from "../../../services/GatePassService";
 
 const ActiveVisitorsMain = () => {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [isSyncing, setIsSyncing] = useState(false);
-    const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-    const [expandedVisitor, setExpandedVisitor] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [currentTime, setCurrentTime] = useState(
+    new Date().toLocaleTimeString(),
+  );
+  const [expandedVisitor, setExpandedVisitor] = useState(null);
+  const [activeTab, setActiveTab] = useState("active"); // 'active' or 'left'
+  const [visitorsList, setVisitorsList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
-        return () => clearInterval(timer);
-    }, []);
-
-    const triggerSync = () => {
-        setIsSyncing(true);
-        setTimeout(() => setIsSyncing(false), 1500);
-    };
-
-    const toggleExpand = (id) => {
-        setExpandedVisitor(expandedVisitor === id ? null : id);
-    };
-
-    const activeVisitors = [
-        { id: 1, name: 'Malith Gunawardena', date: '2026-03-31', entryTime: '08:45:12 AM', areas: ['Alpha_Production', 'Storage_Beta'], status: 'Active', ref: 'SEC-4291', node: 'GATE_01', urgency: 'Low', vehicle: 'Toyota Prius (WP CAX-1234)', phone: '+94 77 123 4567', company: 'TechNova Solutions', purpose: 'Hardware Maintenance' },
-        { id: 2, name: 'Sahan Perera', date: '2026-03-31', entryTime: '09:20:44 AM', areas: ['Main_Operations'], status: 'Active', ref: 'SEC-4310', node: 'GATE_02', urgency: 'Med', vehicle: 'Honda Civic (WP CB-5678)', phone: '+94 71 987 6543', company: 'LogiCorp', purpose: 'Delivery' },
-        { id: 3, name: 'James Wilson', date: '2026-03-31', entryTime: '10:15:02 AM', areas: ['B_Sector_Prod'], status: 'Active', ref: 'SEC-4402', node: 'WEST_ENTRY', urgency: 'Low', vehicle: 'N/A (Walk-in)', phone: '+44 7911 123456', company: 'Global Audit Inc', purpose: 'Annual Audit' },
-        { id: 4, name: 'Emma Watson', date: '2026-03-31', entryTime: '11:05:33 AM', areas: ['HQ_Admin', 'Operations'], status: 'Active', ref: 'SEC-4415', node: 'GATE_01', urgency: 'High', vehicle: 'Range Rover (WP KIA-9999)', phone: '+1 555 0198', company: 'VIP Guest', purpose: 'Executive Visit' },
-    ];
-
-    const filteredVisitors = activeVisitors.filter(v =>
-        v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        v.ref.toLowerCase().includes(searchQuery.toLowerCase())
+  useEffect(() => {
+    const timer = setInterval(
+      () => setCurrentTime(new Date().toLocaleTimeString()),
+      1000,
     );
+    return () => clearInterval(timer);
+  }, []);
 
-    return (
-        <div className="p-8 md:p-12 space-y-10 min-h-full bg-[var(--color-bg-default)]">
-            {/* Tactical Monitor Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-                <div className="space-y-4">
-                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-4">
-                        <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(200,16,46,0.1)]">
-                            <Activity size={16} className="text-primary animate-pulse" />
-                        </div>
-                        <span className="text-primary font-medium uppercase text-[13px] tracking-[0.4em]">Real-Time_Operational_Monitor</span>
-                        <div className="h-[1px] w-12 bg-gradient-to-r from-primary/50 to-transparent"></div>
-                    </div>
-                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-                        <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tighter uppercase">
-                            Active_Visitors
-                        </h1>
-                        <div className="px-5 py-2 mas-glass border-primary/30 bg-primary/5 text-primary text-xs font-medium shadow-[0_0_30px_rgba(200,16,46,0.1)] rounded-xl border flex flex-col md:flex-row items-center gap-4 md:gap-3">
-                            <Users size={14} />
-                            {activeVisitors.length} SENSORS_ACTIVE
-                        </div>
-                    </div>
-                </div>
+  const getTodayDateKey = () => new Date().toISOString().slice(0, 10);
 
-                <div className="flex flex-col sm:flex-row items-center gap-6">
-                    <div className="relative w-full sm:w-80 group">
-                        <Search size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" />
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="FILTER_SENSORS (NAME/REF)..."
-                            className="w-full pl-14 pr-6 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-[13px] uppercase font-medium tracking-widest text-white placeholder:text-white/80 focus:border-primary/40 outline-none transition-all duration-500"
-                        />
-                    </div>
-                    <button
-                        onClick={triggerSync}
-                        className={`p-4 mas-glass border-white/5 text-gray-300 hover:text-primary hover:border-primary/40 transition-all rounded-2xl group ${isSyncing ? 'rotate-180' : ''}`}
-                    >
-                        <RefreshCw size={18} className={`${isSyncing ? 'animate-spin' : 'group-hover:scale-110'} transition-transform duration-700`} />
-                    </button>
-                    <div className="hidden lg:flex flex-col text-right">
-                        <p className="text-gray-300/80 text-[14px] font-medium uppercase tracking-widest">Global_Sync_Time</p>
-                        <p className="text-white text-sm font-mono font-medium tracking-widest">{currentTime}</p>
-                    </div>
-                </div>
+  const getTodayScanHistory = (passId) => {
+    const dateKey = getTodayDateKey();
+    const raw = localStorage.getItem(`svm.scanLog.${passId}.${dateKey}`);
+    return raw ? JSON.parse(raw) : [];
+  };
+
+  const fetchVisitors = async () => {
+    setIsLoading(true);
+    try {
+      const response = await GatePassService.GetAllGatePasses();
+      let allPasses = response.data || [];
+      if (!Array.isArray(allPasses)) {
+        allPasses = allPasses.ResultSet || [];
+      }
+
+      const todayKey = getTodayDateKey();
+      const mapped = allPasses.map((pass) => {
+        const history = getTodayScanHistory(pass.VGP_Pass_id);
+        let currentStatus = pass.VGP_Status || "Pending";
+        let entryTime = pass.VGP_Issue_Date
+          ? new Date(pass.VGP_Issue_Date).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            })
+          : "N/A";
+        let exitTime = "N/A";
+        let remarks = "";
+
+        if (history && history.length > 0) {
+          const lastScan = history[history.length - 1];
+          currentStatus = lastScan.type === "CHECK_IN" ? "IN" : "OUT";
+
+          const checkInScan = history.find((h) => h.type === "CHECK_IN");
+          if (checkInScan) {
+            entryTime = new Date(checkInScan.timestamp).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            });
+          }
+          const checkOutScan = history.find((h) => h.type === "CHECK_OUT");
+          if (checkOutScan) {
+            exitTime = new Date(checkOutScan.timestamp).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            });
+            remarks = checkOutScan.remarks || "";
+          }
+        }
+
+        return {
+          id: pass.VGP_Pass_id,
+          name: pass.Visitor_Name || pass.VV_Name || "Unknown Visitor",
+          nic: pass.Visitor_NIC || pass.VV_NIC_Passport_NO || "N/A",
+          date: pass.VGP_Issue_Date
+            ? pass.VGP_Issue_Date.slice(0, 10)
+            : todayKey,
+          entryTime: entryTime,
+          exitTime: exitTime,
+          areas: pass.VGP_Visiting_Area
+            ? [pass.VGP_Visiting_Area]
+            : ["Main Premises"],
+          status:
+            currentStatus === "IN"
+              ? "Active"
+              : currentStatus === "OUT"
+                ? "Left"
+                : "Pending",
+          ref: `SEC-${pass.VGP_Pass_id}`,
+          node: pass.VGP_Node || "GATE_01",
+          vehicle:
+            pass.Visitor_Vehicle_No || pass.VV_Vehicle_No || "N/A (Walk-in)",
+          phone: pass.Visitor_Phone || pass.VV_Phone || "N/A",
+          company: pass.Visitor_Company || pass.VV_Company || "N/A",
+          purpose: pass.VVR_Purpose || pass.VVR_Visiting_Purpose || "N/A",
+          remarks: remarks,
+        };
+      });
+
+      // Filter down to only visitors who checked in/out today or are currently IN/OUT
+      const relevant = mapped.filter(
+        (v) => v.status === "Active" || v.status === "Left",
+      );
+
+      setVisitorsList(relevant);
+    } catch (err) {
+      console.error("Error fetching gate passes:", err);
+      setVisitorsList([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchVisitors();
+  }, []);
+
+  const triggerSync = async () => {
+    setIsSyncing(true);
+    await fetchVisitors();
+    setIsSyncing(false);
+  };
+
+  const toggleExpand = (id) => {
+    setExpandedVisitor(expandedVisitor === id ? null : id);
+  };
+
+  const activeCount = visitorsList.filter((v) => v.status === "Active").length;
+  const leftCount = visitorsList.filter((v) => v.status === "Left").length;
+
+  const filteredVisitors = visitorsList.filter((v) => {
+    const matchesSearch =
+      v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      v.ref.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTab =
+      activeTab === "active" ? v.status === "Active" : v.status === "Left";
+    return matchesSearch && matchesTab;
+  });
+
+  const getLatestEvent = () => {
+    if (visitorsList.length === 0)
+      return { val: "N/A", detail: "NO EVENTS TODAY" };
+
+    // Find latest active visitor or left visitor
+    const activeOnly = visitorsList.filter((v) => v.status === "Active");
+    if (activeOnly.length > 0) {
+      const latest = activeOnly[activeOnly.length - 1];
+      return {
+        val: `${latest.ref} | ${latest.name.split(" ")[0]}`,
+        detail: `${latest.node} | ${latest.entryTime}`,
+      };
+    }
+    return { val: "N/A", detail: "NO ACTIVE VISITORS" };
+  };
+
+  const latestEvent = getLatestEvent();
+
+  return (
+    <div className="space-y-6 animate-fade-in-slow text-white">
+      {/* ── Toolbar ── */}
+      <header className="flex flex-col xl:flex-row justify-between items-center gap-6 relative z-10 px-1">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center text-primary shadow-xl backdrop-blur-md">
+            <Users size={22} strokeWidth={1.5} />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              {activeTab === "active"
+                ? "Active On-Premises"
+                : "Departed Visitors"}
+            </h2>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">
+                {activeTab === "active" ? activeCount : leftCount}{" "}
+                {(activeTab === "active" ? activeCount : leftCount) === 1
+                  ? "Visitor"
+                  : "Visitors"}
+              </span>
+              <span className="text-[10px] text-[var(--color-text-dim)] uppercase tracking-widest font-medium">
+                Registry Logs Today
+              </span>
             </div>
-
-            {/* Personnel Active Matrix */}
-            <div className="relative group">
-                {/* Decorative background pulse */}
-                <div className="absolute -inset-4 bg-primary/5 rounded-[40px] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-
-                <div className="relative mas-glass border-white/5 bg-[var(--color-bg-paper)]/60 backdrop-blur-3xl rounded-[32px] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.4)] border border-white/10">
-                    <div className="overflow-x-auto">
-                        
-<div className="overflow-x-auto w-full max-w-full pb-4">
-<table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-white/[0.02] border-b border-white/5">
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Unit_Identification</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Node_Sync_Entry</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em]">Operational_Grid</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em] text-center">Live_Pulse</th>
-                                    <th className="px-10 py-7 uppercase text-white/90 text-[13px] font-medium tracking-[0.4em] text-right">Control</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/[0.03]">
-                                <AnimatePresence mode='popLayout'>
-                                    {filteredVisitors.map((v) => (
-                                        <React.Fragment key={v.id}>
-                                            <motion.tr
-                                                initial={{ opacity: 0, x: -20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: 20 }}
-                                                whileHover={{ backgroundColor: 'rgba(200, 16, 46, 0.02)' }}
-                                                className={`group transition-all cursor-pointer ${expandedVisitor === v.id ? 'bg-primary/[0.04]' : ''}`}
-                                                onClick={() => toggleExpand(v.id)}
-                                            >
-                                                <td className="px-10 py-8">
-                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-                                                        <div className="relative overflow-visible">
-                                                            <div className="w-12 h-12 rounded-xl bg-mas-dark border border-white/10 flex items-center justify-center text-primary text-sm font-medium group-hover:border-primary group-hover:shadow-[0_0_20px_rgba(200,16,46,0.2)] transition-all duration-500">
-                                                                {v.name.split(' ').map(n => n[0]).join('')}
-                                                            </div>
-                                                            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-mas-dark shadow-[0_0_8px_#22c55e]"></div>
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-[13px] font-medium text-white uppercase tracking-wider group-hover:text-primary transition-colors duration-300">{v.name}</p>
-                                                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 mt-1">
-                                                                <Target size={10} className="text-primary opacity-90" />
-                                                                <p className="text-white/90 text-[12px] font-medium tracking-widest uppercase">{v.ref}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-10 py-8">
-                                                    <div className="space-y-1.5">
-                                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5">
-                                                            <Calendar size={12} className="text-primary opacity-70" />
-                                                            <span className="text-white text-[13px] font-medium tracking-widest">{v.date}</span>
-                                                        </div>
-                                                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2.5 ml-2">
-                                                            <Clock size={10} className="text-primary opacity-50" />
-                                                            <span className="text-white/70 text-[13px] font-medium tracking-widest">{v.entryTime}</span>
-                                                        </div>
-                                                        <p className="text-white/80 text-[13px] font-medium uppercase tracking-widest ml-5">via_{v.node}</p>
-                                                    </div>
-                                                </td>
-                                                <td className="px-10 py-8">
-                                                    <div className="flex flex-wrap gap-2.5 max-w-[280px]">
-                                                        {v.areas.map((area, i) => (
-                                                            <span key={i} className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-white/70 text-[13px] font-medium uppercase tracking-widest group-hover:border-primary/40 group-hover:text-white transition-all duration-300">
-                                                                {area}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </td>
-                                                <td className="px-10 py-8">
-                                                    <div className="flex flex-col items-center gap-2">
-                                                        <div className="relative">
-                                                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_12px_#22c55e]"></div>
-                                                            <div className="absolute inset-x-[-8px] inset-y-[-8px] border border-green-500/20 rounded-full scale-150 animate-ping opacity-30"></div>
-                                                        </div>
-                                                        <span className="text-green-500/80 text-[13px] font-medium uppercase tracking-widest">INSIDE_DOME</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-10 py-8 text-right">
-                                                    <button onClick={(e) => { e.stopPropagation(); toggleExpand(v.id); }} className={`p-3 mas-glass border-white/5 text-white/70 hover:text-white hover:border-primary/40 transition-all rounded-xl shadow-lg ${expandedVisitor === v.id ? 'bg-primary border-primary text-white' : 'hover:bg-primary/5'}`}>
-                                                        {expandedVisitor === v.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                                                    </button>
-                                                </td>
-                                            </motion.tr>
-                                            {expandedVisitor === v.id && (
-                                                <motion.tr
-                                                    initial={{ opacity: 0, height: 0 }}
-                                                    animate={{ opacity: 1, height: 'auto' }}
-                                                    exit={{ opacity: 0, height: 0 }}
-                                                    className="bg-[var(--color-bg-default)] border-b border-primary/20"
-                                                >
-                                                    <td colSpan="5" className="px-0 py-0">
-                                                        <div className="p-4 md:p-10 pl-24 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
-                                                            {/* Detailed View Decorations */}
-                                                            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
-                                                            <div className="w-1 h-12 bg-primary rounded-full absolute left-10 top-10 shadow-[0_0_10px_var(--color-primary)]"></div>
-
-                                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
-                                                                <div className="space-y-2">
-                                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
-                                                                        <Car size={14} className="text-primary/80" />
-                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Vehicle Details</span>
-                                                                    </div>
-                                                                    <p className="text-white text-sm font-medium tracking-widest">{v.vehicle}</p>
-                                                                </div>
-                                                                <div className="space-y-2">
-                                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
-                                                                        <Phone size={14} className="text-primary/80" />
-                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Contact Protocol</span>
-                                                                    </div>
-                                                                    <p className="text-white text-sm tracking-widest">{v.phone}</p>
-                                                                </div>
-                                                                <div className="space-y-2">
-                                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
-                                                                        <Building size={14} className="text-primary/80" />
-                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Organization</span>
-                                                                    </div>
-                                                                    <p className="text-white text-sm font-medium tracking-widest">{v.company}</p>
-                                                                </div>
-                                                                <div className="space-y-2">
-                                                                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-2 text-gray-300/90 mb-2">
-                                                                        <FileText size={14} className="text-primary/80" />
-                                                                        <span className="text-[12px] font-medium uppercase tracking-[0.3em]">Mission/Purpose</span>
-                                                                    </div>
-                                                                    <p className="text-white text-sm font-medium tracking-widest">{v.purpose}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </motion.tr>
-                                            )}
-                                        </React.Fragment>
-                                    ))}
-                                </AnimatePresence>
-                            </tbody>
-                        </table>
-</div>
-
-                    </div>
-                </div>
-            </div>
-
-            {/* Tactical Analytics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {[
-                    { label: 'Latest_Entry_Node', val: 'SEC-4415 | Emma W.', detail: 'GATE_01 | 11:05:33', icon: Zap, color: 'mas-red' },
-                    { label: 'Zone_Operations', val: '04 Units_Sync', detail: '3 SECTORS_COVERED', icon: Shield, color: 'white' },
-                    { label: 'System_Integrity', val: 'Active_Sync: 100%', detail: 'NODE_HEALTH: EXCELLENT', icon: RefreshCw, color: 'white' },
-                    { label: 'Global_Visibility', val: 'Encrypted_Stream', detail: 'PROTOCOL_V2_ACTIVE', icon: Globe, color: 'mas-red' }
-                ].map((stat, i) => (
-                    <motion.div
-                        key={i}
-                        whileHover={{ y: -5 }}
-                        className="p-8 mas-glass border-white/5 bg-[var(--color-bg-paper)]/40 rounded-[28px] space-y-5 group hover:border-primary/20 transition-all duration-500"
-                    >
-                        <div className="flex items-center justify-between">
-                            <p className="text-gray-300/80 text-[12px] font-medium uppercase tracking-[0.3em]">{stat.label}</p>
-                            <stat.icon size={16} className={stat.color === 'mas-red' ? 'text-primary' : 'text-gray-300/80'} />
-                        </div>
-                        <div className="space-y-1">
-                            <p className="text-white text-sm font-medium uppercase tracking-wider">{stat.val}</p>
-                            <p className="text-gray-300/80 text-[12px] font-medium tracking-widest uppercase">{stat.detail}</p>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
+          </div>
         </div>
-    );
+
+        <div className="flex flex-col sm:flex-row gap-3 items-center shrink-0 w-full xl:w-auto">
+          {/* Search Box - Rounded Style */}
+          <div className="relative w-full sm:w-80 group">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <Search
+                size={14}
+                className="text-[var(--color-text-dim)] group-focus-within:text-primary transition-colors"
+              />
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Filter visitors by name or ID..."
+              className="w-full bg-[var(--color-bg-paper)] border border-white/10 text-white text-[13px] rounded-full py-2 pl-9 pr-4 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-white/20 shadow-inner"
+            />
+          </div>
+
+          <button
+            onClick={triggerSync}
+            disabled={isSyncing}
+            className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold uppercase tracking-[0.1em] transition-all shadow-[0_8px_20px_-4px_rgba(255,107,0,0.4)] active:scale-95 group shrink-0 cursor-pointer"
+          >
+            <RefreshCw size={16} className={isSyncing ? "animate-spin" : ""} />
+            Sync Registry
+          </button>
+
+          <div className="hidden lg:flex flex-col text-right pl-4 border-l border-white/5 shrink-0">
+            <p className="text-gray-300/60 text-[11px] font-normal uppercase tracking-widest leading-none mb-1">
+              Sync Time
+            </p>
+            <p className="text-white text-xs font-mono font-medium tracking-wider">
+              {currentTime}
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {/* Tabs Selector */}
+      <div className="flex gap-4 border-b border-white/5 pb-2">
+        <button
+          onClick={() => setActiveTab("active")}
+          className={`px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 border cursor-pointer ${
+            activeTab === "active"
+              ? "bg-green-500/10 border-green-500/30 text-green-400"
+              : "border-transparent text-gray-400 hover:text-white hover:bg-white/5"
+          }`}
+        >
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+          On Premises ({activeCount})
+        </button>
+        <button
+          onClick={() => setActiveTab("left")}
+          className={`px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 border cursor-pointer ${
+            activeTab === "left"
+              ? "bg-orange-500/10 border-orange-500/30 text-orange-400"
+              : "border-transparent text-gray-400 hover:text-white hover:bg-white/5"
+          }`}
+        >
+          <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
+          Left Premises ({leftCount})
+        </button>
+      </div>
+
+      {/* Personnel Table Matrix */}
+      <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        <div className="overflow-x-auto w-full max-w-full pb-4">
+          {isLoading ? (
+            <div className="p-20 text-center space-y-4">
+              <PageSpinner size={42} color="var(--color-primary)" />
+            </div>
+          ) : filteredVisitors.length === 0 ? (
+            <div className="p-20 text-center space-y-4">
+              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mx-auto text-gray-500">
+                <Users size={24} />
+              </div>
+              <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">
+                No Visitors Listed
+              </p>
+              <p className="text-[11px] text-gray-500 max-w-xs mx-auto leading-relaxed">
+                No personnel match this security monitoring protocol at this
+                time.
+              </p>
+            </div>
+          ) : (
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr className="bg-inherit">
+                  <th className="px-6 py-4 uppercase text-[var(--color-text-secondary)] border-b border-white/5 font-normal tracking-[0.3em] text-[12px] whitespace-nowrap">
+                    Visitor Information
+                  </th>
+                  <th className="px-6 py-4 uppercase text-[var(--color-text-secondary)] border-b border-white/5 font-normal tracking-[0.3em] text-[12px] whitespace-nowrap">
+                    Time Log
+                  </th>
+                  <th className="px-6 py-4 uppercase text-[var(--color-text-secondary)] border-b border-white/5 font-normal tracking-[0.3em] text-[12px] whitespace-nowrap">
+                    Visiting Area
+                  </th>
+                  <th className="px-6 py-4 uppercase text-[var(--color-text-secondary)] border-b border-white/5 font-normal tracking-[0.3em] text-[12px] text-center whitespace-nowrap">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 uppercase text-primary border-b border-white/5 font-normal tracking-[0.3em] text-[12px] text-right whitespace-nowrap">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.04]">
+                <AnimatePresence mode="popLayout">
+                  {filteredVisitors.map((v) => (
+                    <React.Fragment key={v.id}>
+                      <motion.tr
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        whileHover={{
+                          backgroundColor: "rgba(255, 255, 255, 0.01)",
+                        }}
+                        className={`group transition-all cursor-pointer ${expandedVisitor === v.id ? "bg-white/[0.02]" : ""}`}
+                        onClick={() => toggleExpand(v.id)}
+                      >
+                        <td className="px-6 py-4 align-middle">
+                          <div className="flex items-center gap-4">
+                            <div className="relative overflow-visible">
+                              <div className="w-8 h-8 rounded-lg bg-[#0D0D0E] border border-white/10 flex items-center justify-center text-primary text-[12px] font-normal group-hover:border-primary transition-all duration-300">
+                                {v.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </div>
+                              <div
+                                className={`absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[#0D0D0E] ${
+                                  v.status === "Active"
+                                    ? "bg-green-500"
+                                    : "bg-orange-500"
+                                }`}
+                              ></div>
+                            </div>
+                            <div>
+                              <p className="text-[13px] font-medium text-white tracking-wide group-hover:text-primary transition-colors duration-300">
+                                {v.name}
+                              </p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <Target
+                                  size={10}
+                                  className="text-primary opacity-90"
+                                />
+                                <p className="text-[var(--color-text-dim)] text-[10px] font-normal tracking-widest uppercase">
+                                  {v.ref}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 align-middle">
+                          <div className="space-y-0.5">
+                            <div className="flex items-center gap-1.5 text-[12px]">
+                              <LogIn
+                                size={12}
+                                className="text-green-500 opacity-70 shrink-0"
+                              />
+                              <span className="text-white font-normal tracking-widest">
+                                IN: {v.entryTime}
+                              </span>
+                            </div>
+                            {v.status === "Left" && (
+                              <div className="flex items-center gap-1.5 text-[12px]">
+                                <LogOut
+                                  size={12}
+                                  className="text-orange-500 opacity-70 shrink-0"
+                                />
+                                <span className="text-orange-400 font-normal tracking-widest">
+                                  OUT: {v.exitTime}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 align-middle text-[12px]">
+                          <div className="flex flex-wrap gap-1.5 max-w-[280px]">
+                            {v.areas.map((area, i) => (
+                              <span
+                                key={i}
+                                className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300 text-[10px] font-normal uppercase tracking-widest group-hover:border-primary/40 group-hover:text-white transition-all duration-300"
+                              >
+                                {area}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 align-middle text-center text-[12px]">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 border rounded-md uppercase text-[10px] font-normal tracking-wider bg-white/[0.02]">
+                            {v.status === "Active" ? (
+                              <>
+                                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]"></div>
+                                <span className="text-green-500">
+                                  Active On-Premise
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <div className="w-1.5 h-1.5 bg-orange-500 rounded-full shadow-[0_0_8px_#f97316]"></div>
+                                <span className="text-orange-400">
+                                  Departed
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 align-middle text-right text-[12px]">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleExpand(v.id);
+                            }}
+                            className={`p-2 mas-glass border-white/5 text-white/70 hover:text-white hover:border-primary/40 transition-all rounded-lg shadow-lg cursor-pointer ${expandedVisitor === v.id ? "bg-primary border-primary text-white" : "hover:bg-primary/5"}`}
+                          >
+                            {expandedVisitor === v.id ? (
+                              <ChevronUp size={12} />
+                            ) : (
+                              <ChevronDown size={12} />
+                            )}
+                          </button>
+                        </td>
+                      </motion.tr>
+                      {expandedVisitor === v.id && (
+                        <motion.tr
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="bg-[var(--color-bg-default)] border-b border-white/5"
+                        >
+                          <td
+                            colSpan="5"
+                            className="px-0 py-0 font-normal text-[12px]"
+                          >
+                            <div className="p-6 pl-24 bg-gradient-to-br from-[var(--color-bg-default)] to-[#0E0E10] shadow-inner relative overflow-hidden">
+                              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+                              <div className="w-1 h-12 bg-primary rounded-full absolute left-10 top-6"></div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-gray-400 mb-1">
+                                    <Phone size={12} className="text-primary" />
+                                    <span className="text-[11px] font-normal uppercase tracking-wider">
+                                      Phone Number
+                                    </span>
+                                  </div>
+                                  <p className="text-white text-[12px] tracking-wide">
+                                    {v.phone}
+                                  </p>
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-gray-400 mb-1">
+                                    <Building
+                                      size={12}
+                                      className="text-primary"
+                                    />
+                                    <span className="text-[11px] font-normal uppercase tracking-wider">
+                                      Company / Organization
+                                    </span>
+                                  </div>
+                                  <p className="text-white text-[12px] font-normal tracking-wide">
+                                    {v.company}
+                                  </p>
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 text-gray-400 mb-1">
+                                    <FileText
+                                      size={12}
+                                      className="text-primary"
+                                    />
+                                    <span className="text-[11px] font-normal uppercase tracking-wider">
+                                      Visiting Purpose
+                                    </span>
+                                  </div>
+                                  <p className="text-white text-[12px] font-normal tracking-wide">
+                                    {v.purpose}
+                                  </p>
+                                </div>
+
+                                {v.remarks && (
+                                  <div className="col-span-1 md:col-span-2 lg:col-span-4 p-4 rounded-xl bg-orange-500/5 border border-orange-500/10 space-y-1.5 mt-2">
+                                    <div className="flex items-center gap-2 text-orange-400">
+                                      <MessageSquare size={12} />
+                                      <span className="text-[11px] font-normal uppercase tracking-wider">
+                                        Checkout Remarks
+                                      </span>
+                                    </div>
+                                    <p className="text-white text-[12px] font-normal tracking-wide italic">
+                                      "{v.remarks}"
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </AnimatePresence>
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+
+      {/* Standard Analytics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          {
+            label: "Latest Gate Scan",
+            val: latestEvent.val,
+            detail: latestEvent.detail,
+            icon: Zap,
+            color: "mas-red",
+          },
+          {
+            label: "Personnel Distribution",
+            val: `${activeCount} On-Premise | ${leftCount} Departed`,
+            detail: `${activeCount + leftCount} TOTAL VISITORS TODAY`,
+            icon: Shield,
+            color: "white",
+          },
+          {
+            label: "Database Status",
+            val: "Connected",
+            detail: "System Sync: 100%",
+            icon: RefreshCw,
+            color: "white",
+          },
+          {
+            label: "Security Level",
+            val: "Enforced",
+            detail: "Secure Core Active",
+            icon: Globe,
+            color: "mas-red",
+          },
+        ].map((stat, i) => (
+          <motion.div
+            key={i}
+            whileHover={{ y: -4 }}
+            className="p-6 mas-glass border-white/5 bg-[var(--color-bg-paper)]/40 rounded-[5px] space-y-4 group hover:border-primary/20 transition-all duration-300"
+          >
+            <div className="flex items-center justify-between">
+              <p className="text-[var(--color-text-dim)] text-[11px] font-normal uppercase tracking-wider">
+                {stat.label}
+              </p>
+              <stat.icon
+                size={14}
+                className={
+                  stat.color === "mas-red" ? "text-primary" : "text-gray-400"
+                }
+              />
+            </div>
+            <div className="space-y-0.5">
+              <p className="text-white text-[13px] font-semibold uppercase tracking-wider">
+                {stat.val}
+              </p>
+              <p className="text-[var(--color-text-dim)] text-[10px] font-normal uppercase tracking-wider">
+                {stat.detail}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default ActiveVisitorsMain;

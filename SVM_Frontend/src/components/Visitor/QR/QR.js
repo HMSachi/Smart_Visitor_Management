@@ -41,7 +41,7 @@ const QRMain = () => {
                 </button>
                 <button 
                     onClick={() => window.print()} 
-                    className="px-6 py-3 bg-white/[0.03] border border-white/10 text-white text-[13px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/[0.07] transition-all flex items-center justify-center gap-2"
+                    className="px-6 py-1.5 bg-white/[0.03] border border-white/10 text-white text-[13px] font-bold uppercase tracking-widest rounded-lg hover:bg-white/[0.07] transition-all flex items-center justify-center gap-2"
                 >
                     <Printer size={14} /> Print
                 </button>

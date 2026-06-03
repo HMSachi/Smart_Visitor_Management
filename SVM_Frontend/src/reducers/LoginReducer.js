@@ -5,7 +5,14 @@ import {
   LOGOUT,
 } from "../constants/LoginConstants";
 
-const persistedUser = localStorage.getItem('user_session');
+let persistedUser = null;
+try {
+  persistedUser = localStorage.getItem('user_session');
+} catch (err) {
+  // Storage access blocked by privacy settings
+  console.warn("localStorage access blocked:", err);
+}
+
 const initialState = {
   isLoading: false,
   user: persistedUser ? JSON.parse(persistedUser) : null,

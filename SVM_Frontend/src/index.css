@@ -40,6 +40,46 @@
 }
 
 /* ============================================================
+   GLOBAL TEXT STYLES (SENTENCE CASE & FONT SIZE)
+   ============================================================ */
+label, 
+.label-text,
+.text-label {
+  font-size: 12px !important;
+  text-transform: capitalize !important;
+}
+
+th, 
+.table-header,
+h3,
+.section-title {
+  font-size: 13px !important;
+  text-transform: capitalize !important;
+}
+
+th {
+  background-color: rgb(249 250 251 / 0.5) !important;
+  padding-top: 0.375rem !important; /* py-1.5 */
+  padding-bottom: 0.375rem !important;
+  border-bottom: 1px solid rgb(243 244 246) !important; /* border-gray-100 */
+}
+
+td {
+  padding-top: 0.375rem !important;
+  padding-bottom: 0.375rem !important;
+  border-bottom: 1px solid rgb(243 244 246) !important;
+}
+
+[data-theme="dark"] th {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] td {
+  border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ============================================================
    DESIGN TOKENS — LIGHT THEME
    ============================================================ */
 [data-theme="light"] {
@@ -93,8 +133,20 @@
   color: var(--color-text-primary) !important;
 }
 
-[data-theme="light"] [class*="text-gray-"] {
+[data-theme="light"] [class*="text-gray-"],
+[data-theme="light"] [class*="text-slate-"],
+[data-theme="light"] [class*="text-zinc-"] {
   color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] [class*="bg-white/5"],
+[data-theme="dark"] [class*="bg-white/10"] {
+  /* Keep subtle overlays in dark mode */
+}
+
+[data-theme="light"] [class*="bg-white/"],
+[data-theme="light"] [class*="bg-black/"] {
+  background-color: var(--color-surface-2) !important;
 }
 
 [data-theme="light"] [class*="placeholder:text-gray-"]::placeholder {
@@ -130,35 +182,54 @@
    ============================================================ */
 .contact-theme-root,
 .admin-theme-root,
-.visitor-theme-root {
+.visitor-theme-root,
+.security-theme-root {
   background-color: var(--color-bg-default);
   color: var(--color-text-primary);
 }
 
 .contact-theme-root [class*="text-white"],
 .admin-theme-root [class*="text-white"],
-.visitor-theme-root [class*="text-white"] {
+.visitor-theme-root [class*="text-white"],
+.security-theme-root [class*="text-white"] {
   color: var(--color-text-primary) !important;
 }
 
-.contact-theme-root [class*="text-gray-"],
-.admin-theme-root [class*="text-gray-"],
-.visitor-theme-root [class*="text-gray-"] {
-  color: var(--color-text-secondary) !important;
+[data-theme="light"] .contact-theme-root [class*="bg-white"],
+[data-theme="light"] .admin-theme-root [class*="bg-white"],
+[data-theme="light"] .visitor-theme-root [class*="bg-white"],
+[data-theme="light"] .security-theme-root [class*="bg-white"] {
+  background-color: var(--color-bg-paper) !important;
 }
 
-.contact-theme-root [class*="border-white"],
-.admin-theme-root [class*="border-white"],
-.visitor-theme-root [class*="border-white"] {
+[data-theme="light"] .contact-theme-root [class*="bg-gray-50"],
+[data-theme="light"] .admin-theme-root [class*="bg-gray-50"],
+[data-theme="light"] .visitor-theme-root [class*="bg-gray-50"],
+[data-theme="light"] .security-theme-root [class*="bg-gray-50"] {
+  background-color: var(--color-bg-alt) !important;
+}
+
+[data-theme="light"] .contact-theme-root [class*="border-gray-"],
+[data-theme="light"] .admin-theme-root [class*="border-gray-"],
+[data-theme="light"] .visitor-theme-root [class*="border-gray-"],
+[data-theme="light"] .security-theme-root [class*="border-gray-"] {
   border-color: var(--color-border-soft) !important;
 }
 
-.contact-theme-root [class*="bg-black/"],
-.admin-theme-root [class*="bg-black/"],
-.visitor-theme-root [class*="bg-black/"],
-.contact-theme-root [class*="bg-white/5"],
-.admin-theme-root [class*="bg-white/5"] {
-  background-color: var(--color-surface-2) !important;
+[data-theme="light"] .contact-theme-root [class*="text-gray-"],
+[data-theme="light"] .admin-theme-root [class*="text-gray-"],
+[data-theme="light"] .visitor-theme-root [class*="text-gray-"],
+[data-theme="light"] .security-theme-root [class*="text-gray-"] {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="light"] .contact-theme-root [class*="text-[#0A1D37]"],
+[data-theme="light"] .admin-theme-root [class*="text-[#0A1D37]"] {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="light"] .contact-theme-root [class*="bg-[#F8F9FA]"] {
+  background-color: var(--color-bg-default) !important;
 }
 
 .contact-theme-root [class*="bg-white"] {
@@ -197,11 +268,56 @@
   html {
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    font-size: 12px;
   }
 
   body {
+    background-color: var(--color-bg-default);
+    color: var(--color-text-primary);
+    overflow-x: hidden;
+    font-size: inherit;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Inter", sans-serif;
+  }
+}
+
+@layer components {
+  /* Forms Typography */
+  label {
     font-family: "Inter", sans-serif !important;
-    font-size: 14px !important;
+    font-size: 12px !important;
+    text-transform: capitalize !important;
+  }
+
+  input, select, textarea {
+    font-family: "Inter", sans-serif !important;
+    font-size: 12px !important;
+  }
+
+  h3 {
+    font-family: "Inter", sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+  }
+
+  /* Table Typography */
+  th {
+    text-transform: capitalize !important;
+    font-size: 12px !important;
+  }
+
+  td {
+    font-size: 12px !important;
+  }
+}
+
+
+  body {
+    font-family: "Inter", sans-serif !important;
+    font-size: 12px !important;
     font-weight: 400 !important;
     color: var(--color-text-primary) !important;
     line-height: 1.65 !important;
@@ -228,6 +344,18 @@
     font-size: 14px !important;
   }
 
+  /* Form Section Headers */
+  h3 {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  label, th, .uppercase, .tracking-widest, .tracking-[0.2em], [class*="tracking-"] {
+    text-transform: capitalize !important;
+  }
+
   h1,
   h2,
   h3,
@@ -243,8 +371,27 @@
   }
 
   table {
-    font-size: 13.5px !important;
+    font-size: 12px !important;
     width: 100%;
+  }
+
+  table th,
+  table td {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+  }
+
+  table th *,
+  table td * {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+  }
+
+  /* MUI tables: ensure consistency even when components set bold/size classes */
+  .MuiTableCell-root,
+  .MuiTableCell-root * {
+    font-size: 12px !important;
+    font-weight: 400 !important;
   }
 
   h1 *,
@@ -260,17 +407,18 @@
 
   label {
     font-family: "Inter", sans-serif !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     color: var(--color-text-secondary) !important;
     font-weight: 500 !important;
     letter-spacing: 0.01em !important;
+    text-transform: capitalize !important;
   }
 
   input,
   textarea,
   select {
     font-family: "Inter", sans-serif !important;
-    font-size: 14px !important;
+    font-size: 12px !important;
     font-weight: 400 !important;
     color: var(--color-text-primary) !important;
   }
@@ -284,12 +432,54 @@
     -webkit-text-fill-color: var(--color-text-primary) !important;
     transition: background-color 5000s ease-in-out 0s;
   }
-}
 
 /* ============================================================
    COMPONENT LAYER
    ============================================================ */
 @layer components {
+  /* ——— Status Pill (Tables) ——— */
+  .svm-status-pill {
+    @apply inline-flex items-center justify-center gap-1 rounded-[5px] border tracking-[0.05em] font-medium text-[10px] leading-none whitespace-nowrap transition-all duration-200 normal-case;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    height: 28px !important;
+    min-height: 28px !important;
+    width: auto !important;
+    min-width: 140px !important;
+    padding: 0 16px !important;
+  }
+
+  .svm-status-pill--success {
+    @apply bg-green-500/10 border-green-500/20 text-green-500;
+  }
+
+  .svm-status-pill--warning {
+    @apply bg-yellow-500/10 border-yellow-500/20 text-yellow-500;
+  }
+
+  .svm-status-pill--info {
+    @apply bg-blue-500/10 border-blue-500/20 text-blue-500;
+  }
+
+  .svm-status-pill--danger {
+    background-color: color-mix(in srgb, var(--color-primary), transparent 90%);
+    border-color: color-mix(in srgb, var(--color-primary), transparent 80%);
+    color: var(--color-primary);
+  }
+
+  .svm-status-pill--orange {
+    @apply bg-orange-500/10 border-orange-500/20 text-orange-500;
+  }
+
+  .svm-status-pill--purple {
+    @apply bg-purple-500/10 border-purple-500/20 text-purple-500;
+  }
+
+  .svm-status-pill--muted {
+    @apply bg-white/5 border-white/10 text-gray-400;
+  }
+
   /* ——— Glass Card ——— */
   .glass-card {
     background: var(--color-surface-1);
@@ -398,7 +588,8 @@
 
   /* ——— Buttons ——— */
   .compact-btn {
-    @apply px-5 py-2.5 bg-primary text-white text-[13px] font-semibold tracking-wide rounded-xl hover:bg-[var(--color-primary-hover)] active:scale-95 transition-all shadow-lg shadow-primary/20;
+    @apply px-5 py-2.5 bg-primary text-white text-[13px] font-semibold tracking-wide rounded-xl hover:bg-[var(--color-primary-hover)] active:scale-95 transition-all;
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-primary), transparent 80%);
   }
 
   .btn-primary {
@@ -538,9 +729,9 @@
 
   /* ——— Page Header ——— */
   .page-header {
-    padding: 1.5rem 0;
+    padding: 1rem 0;
     border-bottom: 1px solid var(--color-border-soft);
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.25rem;
   }
 
   /* ——— Table Styles ——— */
@@ -548,23 +739,23 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 13.5px;
+    font-size: 10px;
   }
 
   .mas-table th {
     background: var(--color-surface-1);
     color: var(--color-text-secondary);
-    font-weight: 600;
-    font-size: 11.5px;
+    font-weight: 400;
+    font-size: 10px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 0.75rem 1rem;
+    padding: 0.45rem 0.65rem;
     border-bottom: 1px solid var(--color-border-soft);
     white-space: nowrap;
   }
 
   .mas-table td {
-    padding: 0.875rem 1rem;
+    padding: 0.5rem 0.65rem;
     border-bottom: 1px solid var(--color-border-soft);
     color: var(--color-text-primary);
     vertical-align: middle;
@@ -807,6 +998,27 @@ a,
   .stack-mobile {
     flex-direction: column !important;
   }
+  
+  /* Normalize paddings for common containers */
+  .p-16, .py-16, .pt-16, .pb-16 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+  
+  .px-32, .px-24, .px-16 {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  /* Fix grid layouts on mobile */
+  .grid-cols-2, .grid-cols-3, .grid-cols-4 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  /* Custom scrollbar for mobile touch */
+  .custom-scrollbar {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* ——— Focus ring ——— */
@@ -826,8 +1038,8 @@ code {
 /* Make buttons smaller and remove heavy border radius as requested */
 button, .MuiButton-root, .MuiIconButton-root {
   border-radius: 4px !important;
-  padding: 6px 10px !important;
-  font-size: 13px !important;
+  padding: 5px 8px !important;
+  font-size: 10px !important;
 }
 
 /* Compact icon buttons */
@@ -837,45 +1049,36 @@ button, .MuiButton-root, .MuiIconButton-root {
 
 /* Make MUI table cells more compact */
 .MuiTableCell-root {
-  padding: 10px 12px !important;
+  padding: 6px 8px !important;
   border-bottom: 1px solid rgba(255,255,255,0.03) !important;
 }
 
 /* Smaller header labels */
 .MuiTableHead-root .MuiTableCell-root {
-  padding: 8px 12px !important;
-  font-size: 11px !important;
+  padding: 6px 8px !important;
+  font-size: 10px !important;
 }
 
 /* Compact action button inside table */
-table button, table .compact-action {
-  padding: 6px 8px !important;
-  font-size: 11px !important;
+table button:not(.svm-status-pill), table .compact-action {
+  padding: 4px 6px !important;
+  font-size: 10px !important;
 }
 
-/* Responsive: convert table rows into stacked cards on narrow screens */
+/* Responsive: keep table semantics and allow horizontal scroll on small screens */
 @media (max-width: 880px) {
-  .MuiTableContainer-root, .MuiTable-root {
-    display: block !important;
+  .MuiTableContainer-root {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
-  .MuiTableHead-root {
-    display: none !important;
+  .MuiTable-root {
+    min-width: 640px;
   }
-  .MuiTableBody-root .MuiTableRow-root {
-    display: block !important;
-    margin-bottom: 12px !important;
-    background: var(--color-bg-paper) !important;
-    border-radius: 8px !important;
-    padding: 8px !important;
-  }
-  .MuiTableCell-root {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 8px 12px !important;
-  }
-  .MuiTableCell-root p, .MuiTableCell-root span {
+  .MuiTableCell-root p,
+  .MuiTableCell-root span {
     white-space: normal !important;
+    word-break: break-word;
   }
 }
 
@@ -894,4 +1097,89 @@ table button, table .compact-action {
   padding: 4px 8px !important;
   border-radius: 6px !important;
   font-size: 11px !important;
+}
+
+/* Responsive foundation for all pages/forms without changing flow logic */
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+select,
+textarea,
+.MuiInputBase-root,
+.MuiFormControl-root {
+  max-width: 100%;
+}
+
+.MuiDialog-paper,
+.MuiModal-root .rounded-3xl,
+.MuiModal-root .rounded-\[28px\] {
+  width: min(95%, 680px) !important;
+  margin: 10px !important;
+}
+
+@media (max-width: 1024px) {
+  .page-header {
+    padding: 1rem 0;
+    margin-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 13px !important;
+  }
+
+  .btn-primary,
+  .btn-outline,
+  .compact-btn {
+    width: 100%;
+    min-height: 40px;
+    padding-left: 0.875rem;
+    padding-right: 0.875rem;
+  }
+
+  .stat-card,
+  .premium-card,
+  .glass-card,
+  .glass-panel {
+    padding: 1rem;
+  }
+
+  .MuiTable-root {
+    min-width: 560px;
+  }
+
+  .MuiTableCell-root {
+    padding: 8px 10px !important;
+  }
+  
+  /* Ensure modals don't overflow */
+  .MuiDialog-paper {
+    max-height: calc(100% - 20px) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-heading {
+    margin-bottom: 1rem;
+    gap: 8px;
+  }
+
+  .section-heading::before {
+    height: 16px;
+  }
+
+  .MuiTable-root {
+    min-width: 520px;
+  }
+
+  .custom-scrollbar {
+    -webkit-overflow-scrolling: touch;
+  }
 }

@@ -10,7 +10,7 @@ const ActiveVisitorsCard = () => {
 
   useEffect(() => {
     let start = displayCount;
-    const end = activeVisitors;
+    const end = Number(activeVisitors || 0);
     if (start === end) return;
     const totalFrames = 60;
     let counter = 0;
@@ -30,15 +30,15 @@ const ActiveVisitorsCard = () => {
 
   return (
     <div
-      className="group relative overflow-hidden cursor-pointer h-full"
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '16px',
-        padding: '1.5rem',
+        borderRadius: '28px',
+        padding: '1.75rem',
         boxShadow: 'var(--shadow-card)',
-        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+        transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
       }}
+      className="group relative overflow-hidden cursor-pointer h-full hover:scale-[1.015] active:scale-[0.99]"
     >
       {/* Background decoration */}
       <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-30 blur-3xl group-hover:opacity-50 transition-all" style={{ background: 'rgba(200,16,46,0.15)' }} />
@@ -67,10 +67,10 @@ const ActiveVisitorsCard = () => {
         </div>
 
         <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white"
-          style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.2)' }}
+          className="w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:bg-primary group-hover:text-white"
+          style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-soft)', color: 'var(--color-text-secondary)' }}
         >
-          <Users size={20} strokeWidth={2} />
+          <Users size={16} strokeWidth={2.5} />
         </div>
       </div>
 

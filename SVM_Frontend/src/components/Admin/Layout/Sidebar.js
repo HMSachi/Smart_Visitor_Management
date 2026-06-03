@@ -10,6 +10,7 @@ import {
   ChevronRight,
   LogOut,
   UserPlus,
+  MapPin,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Drawer, Box, IconButton } from "@mui/material";
@@ -47,6 +48,12 @@ const menuItems = [
     icon: UserPlus,
     path: "/admin/all-users",
   },
+  {
+    id: "places",
+    label: "Places to Visit",
+    icon: MapPin,
+    path: "/admin/places-management",
+  },
 ];
 
 const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
@@ -67,7 +74,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
     </div>
 
     {!collapsed && (
-      <span className="text-[13.5px] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+      <span className="text-[12px] font-normal whitespace-nowrap overflow-hidden text-ellipsis">
         {label}
       </span>
     )}
@@ -111,12 +118,12 @@ const SidebarContent = ({
       className="h-full flex flex-col"
       style={{
         background: "var(--color-bg-paper)",
-        borderRight: "1px solid var(--color-border-soft)",
+        borderRight: "none",
       }}
     >
       {/* Logo */}
       <div
-        className={`flex items-center gap-3 px-4 py-5 border-b border-[var(--color-border-soft)] ${isCollapsed ? "justify-center" : ""}`}
+        className={`flex items-center gap-3 px-4 py-5 border-none ${isCollapsed ? "justify-center" : ""}`}
       >
         <img
           src="/logo_mas.png"
@@ -139,7 +146,7 @@ const SidebarContent = ({
       <nav className="flex-1 px-3 py-4 overflow-y-auto no-scrollbar">
         {!isCollapsed && (
           <p className="text-[10.5px] uppercase font-semibold text-[var(--color-text-dim)] tracking-widest px-3 mb-3">
-            Navigation
+            <br></br>
           </p>
         )}
         {menuItems.map((item) => (
@@ -155,7 +162,7 @@ const SidebarContent = ({
       </nav>
 
       {/* User & Logout */}
-      <div className="px-3 py-4 border-t border-[var(--color-border-soft)]">
+      <div className="px-3 py-4 border-none">
         {/* Logout */}
         <button
           onClick={onLogout}
@@ -164,7 +171,7 @@ const SidebarContent = ({
         >
           <LogOut size={17} className="shrink-0" />
           {!isCollapsed && (
-            <span className="text-[13px] font-medium">Sign Out</span>
+            <span className="text-[12px] font-normal">Sign Out</span>
           )}
         </button>
       </div>
@@ -188,7 +195,11 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     if (!window.confirm("Are you sure you want to sign out?")) return;
-    localStorage.removeItem("user_session");
+    try {
+      localStorage.removeItem("user_session");
+    } catch (err) {
+      console.warn("localStorage access blocked:", err);
+    }
     dispatch({ type: LOGOUT });
     navigate("/login");
   };
@@ -229,19 +240,22 @@ const Sidebar = () => {
         size="small"
         sx={{
           position: "absolute",
-          right: -14,
-          top: 88,
-          width: 28,
-          height: 28,
-          background: "var(--color-bg-elevated)",
-          border: "1px solid var(--color-border-medium)",
+          right: 4,
+          top: 76,
+          width: 24,
+          height: 24,
+          background: "transparent",
+          border: "none",
           color: "var(--color-primary)",
-          boxShadow: "var(--shadow-card)",
-          "&:hover": { background: "var(--color-primary)", color: "#fff" },
+          "&:hover": { 
+            background: "var(--color-primary-low)", 
+            color: "var(--color-primary)"
+          },
+          transition: "all 0.2s ease",
           zIndex: 50,
         }}
       >
-        {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </IconButton>
     </aside>
   );

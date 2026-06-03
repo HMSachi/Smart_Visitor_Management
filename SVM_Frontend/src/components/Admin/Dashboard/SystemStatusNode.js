@@ -9,12 +9,12 @@ const SystemStatusNode = () => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center h-full relative overflow-hidden group"
+      className="flex flex-col items-center justify-center h-full relative overflow-hidden group transition-all duration-500 hover:scale-[1.02]"
       style={{
         background: 'var(--color-bg-paper)',
         border: '1px solid var(--color-border-soft)',
-        borderRadius: '16px',
-        padding: '2rem 1.5rem',
+        borderRadius: '28px',
+        padding: '1.75rem',
         boxShadow: 'var(--shadow-card)',
       }}
     >

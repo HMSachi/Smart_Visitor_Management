@@ -1,6 +1,6 @@
 import React from "react";
 
-const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
+const ApprovalModal = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
@@ -25,31 +25,16 @@ const ApprovalModal = ({ isOpen, onClose, onConfirm, comment, setComment }) => {
           </p>
         </div>
 
-        <div className="space-y-4 mb-6 relative z-10">
-          <div className="space-y-3">
-            <label className="text-gray-300 text-[13px] font-medium tracking-wide">
-              Approval notes
-            </label>
-            <textarea
-              rows="4"
-              placeholder="Add a note for the requester or security team (optional)"
-              className="w-full bg-[var(--color-bg-default)] border border-white/5 rounded-2xl p-5 text-white text-sm leading-6 placeholder:text-gray-400 focus:outline-none focus:border-primary/40 focus:bg-[#161618] transition-all resize-none shadow-inner"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            ></textarea>
-          </div>
-        </div>
-
         <div className="flex flex-col sm:flex-row gap-3 relative z-10">
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 bg-[#00B14F] text-white text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl shadow-[0_4px_24px_rgba(0,177,79,0.25)] hover:bg-[#009845] transition-all transform active:scale-95"
+            className="flex-1 py-1.5 bg-[#00B14F] text-white text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl shadow-[0_4px_24px_rgba(0,177,79,0.25)] hover:bg-[#009845] transition-all transform active:scale-95"
           >
             Send Approval
           </button>
           <button
             onClick={onClose}
-            className="flex-1 py-3 bg-white/[0.03] border border-white/10 text-gray-300 text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all"
+            className="flex-1 py-1.5 bg-white/[0.03] border border-white/10 text-gray-300 text-[12px] font-semibold uppercase tracking-[0.14em] rounded-xl hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all"
           >
             Cancel
           </button>
