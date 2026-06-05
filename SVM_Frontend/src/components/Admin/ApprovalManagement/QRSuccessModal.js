@@ -6,6 +6,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { AddGatePass, GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
 import VisitorProfileTokenService from "../../../services/VisitorProfileTokenService";
+import VisitorAccessTokenService from "../../../services/VisitorAccessTokenService";
 import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
 const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnly = false }) => {
@@ -121,10 +122,12 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
       visitorData?.raw?.VVR_Visitor_id ||
       visitorData?.visitorId ||
       visitorData?.raw?.VV_Visitor_id;
+    const requestId = visitorData?.id;
 
     setIsSendingNotification(true);
     try {
-      await VisitorProfileTokenService.GenerateVisitorSmsAndEmailToken(
+      await VisitorAccessTokenService.GenerateVisitorSmsAndEmailAccessToken(
+        requestId,
         visitorId,
         "Admin",
       );
@@ -135,7 +138,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
       }
     } catch (err) {
       console.error("Visitor QR SMS/email notification failed:", err);
-      alert(VisitorProfileTokenService.getNotificationErrorMessage(err));
+      alert(VisitorAccessTokenService.getNotificationErrorMessage(err));
     } finally {
       setIsSendingNotification(false);
     }

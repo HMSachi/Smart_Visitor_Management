@@ -37,9 +37,25 @@ const Step1Main = () => {
   const [visitorRecord, setVisitorRecord] = useState(null);
   const [showError, setShowError] = useState(false);
 
+  const getStoredTokenVisitor = () => {
+    try {
+      const stored = localStorage.getItem("visitor_profile");
+      return stored ? JSON.parse(stored) : null;
+    } catch (err) {
+      console.warn("Could not read stored visitor profile:", err);
+      return null;
+    }
+  };
+
   // Load visitor profile on mount
   useEffect(() => {
     const loadVisitorRecord = async () => {
+      const tokenVisitor = getStoredTokenVisitor();
+      if (tokenVisitor?.VV_Visitor_id) {
+        setVisitorRecord(tokenVisitor);
+        return;
+      }
+
       try {
         const response = await VisitorService.GetAllVisitors();
         const visitors = response?.data?.ResultSet || [];
@@ -51,7 +67,7 @@ const Step1Main = () => {
         console.error("Error loading visitor record:", err);
       }
     };
-    if (userEmail) loadVisitorRecord();
+    if (userEmail || getStoredTokenVisitor()?.VV_Visitor_id) loadVisitorRecord();
     dispatch(GetAllBlacklist());
   }, [userEmail, dispatch]);
 

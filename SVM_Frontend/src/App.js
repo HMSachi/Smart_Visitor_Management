@@ -20,6 +20,7 @@ import GatePass from "./layout/Visitor/GatePass/GatePass";
 import InstructionsPage from "./layout/Visitor/Instructions/Instructions";
 import MyRequests from "./layout/Visitor/MyRequests/MyRequests";
 import RequestDetails from "./layout/Visitor/RequestDetails/RequestDetails";
+import ProfileToken from "./layout/Visitor/ProfileToken/ProfileToken";
 import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
 import ApprovalManagement from "./layout/Admin/ApprovalManagement/ApprovalManagement";
 import SecurityMonitoringPage from "./layout/Admin/SecurityMonitoring/SecurityMonitoring";
@@ -210,6 +211,7 @@ const AppContent = () => {
           <Route path="/visitor/my-requests" element={<MyRequests />} />
           <Route path="/visitor/request-details/:requestId" element={<RequestDetails />} />
           <Route path="/visitor/gate-pass/:gatePassId" element={<GatePass />} />
+          <Route path="/visitor/profile-token" element={<ProfileToken />} />
 
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

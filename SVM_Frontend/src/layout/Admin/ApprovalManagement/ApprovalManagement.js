@@ -29,6 +29,7 @@ import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
 import VisitorService from "../../../services/VisitorService";
+import VisitorAccessTokenService from "../../../services/VisitorAccessTokenService";
 
 const ApprovalManagement = () => {
   const dispatch = useDispatch();
@@ -353,9 +354,35 @@ const ApprovalManagement = () => {
                 dispatch(GetAllGatePasses()); // Refresh gate passes
 
                 if (type === "Approve") {
-                  setApprovedVisitorData(
-                    mappedRequests.find((v) => v.id === id) || selectedVisitor,
-                  );
+                  // Generate access token for the approved request
+                  const approvedEntry =
+                    mappedRequests.find((v) => v.id === id) || selectedVisitor;
+                  const visitorId =
+                    approvedEntry?.raw?.VVR_Visitor_id ||
+                    approvedEntry?.raw?.VV_Visitor_id;
+
+                  if (visitorId && id) {
+                    try {
+                      await VisitorAccessTokenService.GenerateToken(
+                        id,
+                        visitorId,
+                        "Admin",
+                      );
+                      console.log(
+                        "[ApprovalManagement] Access token generated for request:",
+                        id,
+                        "visitor:",
+                        visitorId,
+                      );
+                    } catch (tokenErr) {
+                      console.error(
+                        "[ApprovalManagement] Access token generation failed:",
+                        tokenErr,
+                      );
+                    }
+                  }
+
+                  setApprovedVisitorData(approvedEntry);
                   setQrReadOnly(false);
                   setShowQRModal(true);
                 }
