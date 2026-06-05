@@ -5,6 +5,7 @@ import { CheckSquare, QrCode, Send, Loader2, Download } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { AddGatePass, GetAllGatePasses } from "../../../actions/GatePassAction";
 import VisitorService from "../../../services/VisitorService";
+import VisitorProfileTokenService from "../../../services/VisitorProfileTokenService";
 import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 
 const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnly = false }) => {
@@ -15,6 +16,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
   const [error, setError] = useState(null);
   const [encodedQrValue, setEncodedQrValue] = useState("");
   const [visitorJointData, setVisitorJointData] = useState(null);
+  const [isSendingNotification, setIsSendingNotification] = useState(false);
 
   useEffect(() => {
     if (isOpen) setWasSent(false);
@@ -114,17 +116,29 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
-  const handleSend = () => {
-    // Simulate API call for sending notification
-    setWasSent(true);
+  const handleSend = async () => {
+    const visitorId =
+      visitorData?.raw?.VVR_Visitor_id ||
+      visitorData?.visitorId ||
+      visitorData?.raw?.VV_Visitor_id;
+
+    setIsSendingNotification(true);
     try {
-      if (gatePassId && typeof window !== 'undefined') {
-        window.localStorage.setItem(`svm.gatepass.sent.${gatePassId}`, '1');
+      await VisitorProfileTokenService.GenerateVisitorSmsAndEmailToken(
+        visitorId,
+        "Admin",
+      );
+
+      setWasSent(true);
+      if (gatePassId && typeof window !== "undefined") {
+        window.localStorage.setItem(`svm.gatepass.sent.${gatePassId}`, "1");
       }
-    } catch (e) {
-      // ignore storage errors
+    } catch (err) {
+      console.error("Visitor QR SMS/email notification failed:", err);
+      alert(VisitorProfileTokenService.getNotificationErrorMessage(err));
+    } finally {
+      setIsSendingNotification(false);
     }
-    // Optional: Real integration would happen here
   };
 
   const handleClose = () => {
@@ -362,10 +376,14 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
                     {!readOnly && (
                       <button
                         onClick={handleSend}
-                        disabled={wasSent}
+                        disabled={wasSent || isSendingNotification}
                         className={`flex-1 py-2 text-white text-[11px] font-medium capitalize tracking-[0.1em] rounded-[10px] transition-all shadow-md flex items-center justify-center gap-2 ${wasSent ? "bg-green-500/20 text-green-500 cursor-default" : "bg-primary hover:bg-[#A00D25]"}`}
                       >
-                        {wasSent ? (
+                        {isSendingNotification ? (
+                          <>
+                            <Loader2 size={13} className="animate-spin" /> Sending...
+                          </>
+                        ) : wasSent ? (
                           <>
                             <CheckSquare size={13} /> Dispatched
                           </>

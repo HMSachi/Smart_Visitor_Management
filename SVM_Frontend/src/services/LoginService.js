@@ -3,12 +3,7 @@ import { BACKEND_BASE_URL } from "../index";
 
 const LOGIN_PATH = "/Administrator/LoginAdministrator";
 
-const getApiUrl = (endpoint) => {
-  if (process.env.NODE_ENV === "development") {
-    return `/api${endpoint}`;
-  }
-  return `${BACKEND_BASE_URL}${endpoint}`;
-};
+const getApiUrl = (endpoint) => `${BACKEND_BASE_URL}${endpoint}`;
 
 const GetLogin = async (email, password) => {
   const url = getApiUrl(LOGIN_PATH);

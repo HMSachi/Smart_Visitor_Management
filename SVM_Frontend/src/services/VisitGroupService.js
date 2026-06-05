@@ -1,12 +1,7 @@
 import axios from "axios";
 import { BACKEND_BASE_URL } from "../index";
 
-const getApiUrl = (endpoint) => {
-  if (process.env.NODE_ENV === "development") {
-    return `/api${endpoint}`;
-  }
-  return `${BACKEND_BASE_URL}${endpoint}`;
-};
+const getApiUrl = (endpoint) => `${BACKEND_BASE_URL}${endpoint}`;
 
 const GetAllVisitGroup = async () => {
   let config = {

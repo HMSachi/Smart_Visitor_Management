@@ -11,6 +11,7 @@ import {
   LogOut,
   UserPlus,
   MapPin,
+  KeyRound,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Drawer, Box, IconButton } from "@mui/material";
@@ -53,6 +54,12 @@ const menuItems = [
     label: "Places to Visit",
     icon: MapPin,
     path: "/admin/places-management",
+  },
+  {
+    id: "profile-tokens",
+    label: "Profile Tokens",
+    icon: KeyRound,
+    path: "/admin/profile-tokens",
   },
 ];
 

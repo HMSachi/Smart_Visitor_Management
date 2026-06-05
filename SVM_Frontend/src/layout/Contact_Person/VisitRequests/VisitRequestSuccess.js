@@ -8,6 +8,7 @@ import {
   HelpCircle, Car, Users, Package, Mail, Phone, Building, Hash
 } from "lucide-react";
 import { resetForm } from "../../../reducers/visitRequestFormSlice";
+import VisitorProfileTokenService from "../../../services/VisitorProfileTokenService";
 
 const SummaryItem = ({ icon: Icon, label, value }) => (
   <div className="flex flex-col gap-0.5">
@@ -26,6 +27,7 @@ const VisitRequestSuccess = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { visitationDetails, selectedVisitorDetails, vehicles, people, items } = useSelector((state) => state.visitRequestForm);
+  const [isSendingNotification, setIsSendingNotification] = useState(false);
 
   // If page is refreshed and state is lost, we could fetch from API, but for now we rely on the flow
   useEffect(() => {
@@ -35,9 +37,25 @@ const VisitRequestSuccess = () => {
     }
   }, [visitationDetails, navigate]);
 
-  const handleDone = () => {
-    dispatch(resetForm());
-    navigate("/contact_person/visit-requests");
+  const handleDone = async () => {
+    const visitorId =
+      visitationDetails.VVR_Visitor_id || selectedVisitorDetails?.VV_Visitor_id;
+    const pUid = "Admin";
+
+    setIsSendingNotification(true);
+    try {
+      await VisitorProfileTokenService.GenerateVisitorSmsAndEmailToken(
+        visitorId,
+        pUid,
+      );
+      dispatch(resetForm());
+      navigate("/contact_person/visit-requests");
+    } catch (err) {
+      console.error("Visitor SMS/email notification failed:", err);
+      alert(VisitorProfileTokenService.getNotificationErrorMessage(err));
+    } finally {
+      setIsSendingNotification(false);
+    }
   };
 
   return (
@@ -195,8 +213,8 @@ const VisitRequestSuccess = () => {
 
             {/* Actions */}
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 mt-6">
-              <button onClick={handleDone} className="w-full md:w-auto px-6 py-2 bg-primary hover:bg-primary-hover text-white text-[12px] font-medium capitalize tracking-wide rounded-[8px] shadow-lg shadow-primary/15 transition-all active:scale-95 flex items-center justify-center gap-2">
-                Conclude process <ArrowLeft className="rotate-180" size={14} />
+              <button disabled={isSendingNotification} onClick={handleDone} className="w-full md:w-auto px-6 py-2 bg-primary hover:bg-primary-hover text-white text-[12px] font-medium capitalize tracking-wide rounded-[8px] shadow-lg shadow-primary/15 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                {isSendingNotification ? "Sending..." : "Conclude process"} <ArrowLeft className="rotate-180" size={14} />
               </button>
               <button onClick={() => window.print()} className="w-full md:w-auto px-6 py-2 bg-background-paper border border-border-soft text-text-primary text-[12px] font-medium capitalize tracking-wide rounded-[8px] hover:bg-background-alt transition-all flex items-center justify-center gap-2">
                 <Printer size={14} /> Print receipt

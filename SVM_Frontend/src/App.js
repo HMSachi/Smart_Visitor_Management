@@ -29,6 +29,7 @@ import UserManagement from "./layout/Admin/UserManagement/UserManagement";
 import AllUsers from "./layout/Admin/AllUsers/AllUsers";
 import VisitorManagement from "./layout/Admin/VisitorManagement/VisitorManagement";
 import PlacesManagement from "./layout/Admin/PlacesManagement/PlacesManagement";
+import ProfileTokenManagement from "./layout/Admin/ProfileTokenManagement/ProfileTokenManagement";
 import Login from "./layout/Login/Login";
 import ServerConfig from "./layout/ServerConfig/ServerConfig";
 
@@ -228,7 +229,9 @@ const AppContent = () => {
           <Route path="/admin/user-management" element={<UserManagement />} />
           <Route path="/admin/all-users" element={<AllUsers />} />
           <Route path="/admin/visitor-management" element={<VisitorManagement />} />
-          <Route path="/admin/places-management" element={<PlacesManagement />} />          <Route
+          <Route path="/admin/profile-tokens" element={<ProfileTokenManagement />} />
+          <Route path="/admin/places-management" element={<PlacesManagement />} />
+          <Route
             path="/admin-dashboard"
             element={<Navigate to="/admin/dashboard" replace />}
           />
