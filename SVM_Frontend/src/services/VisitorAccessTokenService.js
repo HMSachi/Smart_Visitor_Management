@@ -125,6 +125,32 @@ const GetTokenByVisitorId = async (visitorId) => {
   return axios.request(config).then((response) => response);
 };
 
+/**
+ * Look up an access token record by its token string value.
+ * Fetches all tokens and finds one whose VVAT_Token matches.
+ * Used by ServerConfig to validate admin-sent access tokens.
+ *
+ * @param {string} tokenValue - The VVAT_Token string
+ * @returns {Promise<object|null>} The token record or null if not found
+ */
+const GetTokenByValue = async (tokenValue) => {
+  if (!tokenValue) return null;
+  try {
+    const response = await GetAllTokens(); // get all tokens
+    const data = response?.data?.ResultSet || response?.data || [];
+    const list = Array.isArray(data) ? data : [];
+    return (
+      list.find(
+        (t) =>
+          String(t.VVAT_Token || t.Token || t.AccessToken || "").trim() ===
+          String(tokenValue).trim()
+      ) || null
+    );
+  } catch {
+    return null;
+  }
+};
+
 const GenerateVisitorSmsAndEmailAccessToken = async (requestId, visitorId, pUid = "Admin") => {
   if (!requestId || !visitorId) {
     throw new Error(
@@ -143,6 +169,7 @@ export default {
   GetAllTokens,
   GetTokenByRequestId,
   GetTokenByVisitorId,
+  GetTokenByValue,
   GenerateVisitorSmsAndEmailAccessToken,
   getNotificationErrorMessage,
 };

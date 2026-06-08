@@ -4,6 +4,8 @@ import { ArrowRight, Home, ShieldCheck, Loader2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useThemeMode } from "../../theme/ThemeModeContext";
 import VisitorProfileTokenService from "../../services/VisitorProfileTokenService";
+import VisitorAccessTokenService from "../../services/VisitorAccessTokenService";
+import VisitorService from "../../services/VisitorService";
 
 const getResultSet = (response) => {
   const data = response?.data?.ResultSet || response?.data || response;
@@ -17,7 +19,7 @@ const ServerConfig = () => {
   const token = searchParams.get("token") || searchParams.get("VVPT_Token");
   const { themeMode } = useThemeMode();
   const isLightMode = themeMode === "light";
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,25 +42,115 @@ const ServerConfig = () => {
     ? "radial-gradient(110% 88% at 78% 10%, rgba(200,16,46,0.12) 0%, rgba(200,16,46,0) 54%), radial-gradient(120% 90% at 22% 92%, rgba(47,107,154,0.1) 0%, rgba(47,107,154,0) 55%), radial-gradient(130% 110% at 50% 50%, rgba(26,38,54,0) 55%, rgba(26,38,54,0.2) 100%)"
     : "radial-gradient(110% 88% at 78% 10%, rgba(200,16,46,0.22) 0%, rgba(200,16,46,0) 54%), radial-gradient(120% 90% at 22% 92%, rgba(47,107,154,0.2) 0%, rgba(47,107,154,0) 55%), radial-gradient(130% 110% at 50% 50%, rgba(4,8,13,0) 55%, rgba(4,8,13,0.44) 100%)";
 
-  const handleContinue = async () => {
-    if (token) {
-      setLoading(true);
-      setError("");
-      try {
-        const validationResponse = await VisitorProfileTokenService.ValidateProfileToken(token);
-        const tokenRecord = getResultSet(validationResponse);
-        if (tokenRecord) {
-          localStorage.setItem("visitor_profile_token", token);
-          localStorage.setItem("visitor_profile", JSON.stringify(tokenRecord));
-        }
-        navigate("/home");
-      } catch (err) {
-        setLoading(false);
-        setError("Invalid or expired token. Please check your link.");
-        console.error("Token validation error:", err);
+  /**
+   * Try to validate token as a visitor PROFILE token first.
+   * Returns the profile record on success, null on failure.
+   */
+  const tryProfileToken = async (tokenValue) => {
+    try {
+      const response = await VisitorProfileTokenService.ValidateProfileToken(tokenValue);
+      return getResultSet(response) || null;
+    } catch {
+      return null;
+    }
+  };
+
+  /**
+   * Try to validate token as an admin ACCESS token (VVAT_Token).
+   * Looks up the token record, extracts visitor ID, then fetches full visitor profile.
+   * Returns a profile-shaped object on success, null on failure.
+   */
+  const tryAccessToken = async (tokenValue) => {
+    try {
+      const tokenRecord = await VisitorAccessTokenService.GetTokenByValue(tokenValue);
+      if (!tokenRecord) return null;
+
+      const visitorId =
+        tokenRecord.VV_Visitor_id ||
+        tokenRecord.Visitor_id ||
+        tokenRecord.VisitorId;
+
+      if (!visitorId) return null;
+
+      // Check the token is still active
+      const status = String(tokenRecord.VVAT_Status || "").trim().toUpperCase();
+      if (status === "E" || status === "EXPIRED") {
+        throw new Error("This access token has already expired. Please contact the admin.");
       }
-    } else {
+
+      // Try to fetch the full visitor record so we have name, email, etc.
+      let visitorName = tokenRecord.VV_Name || tokenRecord.Visitor_Name || null;
+      let visitorEmail = tokenRecord.VV_Email || tokenRecord.Visitor_Email || null;
+
+      if (!visitorName) {
+        try {
+          const visRes = await VisitorService.GetVisitorById(visitorId);
+          const vr = getResultSet(visRes);
+          if (vr) {
+            visitorName = vr.VV_Name || vr.Visitor_Name || null;
+            visitorEmail = vr.VV_Email || vr.Email || null;
+          }
+        } catch {
+          // non-critical — carry on without full profile
+        }
+      }
+
+      // Return a profile-shaped record compatible with what MyRequests.js expects
+      return {
+        VV_Visitor_id: visitorId,
+        Visitor_id: visitorId,
+        VV_Name: visitorName || `Visitor #${visitorId}`,
+        VV_Email: visitorEmail || "",
+        // flag so other parts of the app know this came from an access token
+        _source: "access_token",
+        _accessTokenRecord: tokenRecord,
+      };
+    } catch (err) {
+      throw err; // re-throw so handleContinue can surface expired-token message
+    }
+  };
+
+  const handleContinue = async () => {
+    if (!token) {
       navigate("/home");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      // 1️⃣ Try as a profile token first (contact-person flow)
+      let profile = await tryProfileToken(token);
+
+      if (profile) {
+        localStorage.setItem("visitor_profile_token", token);
+        localStorage.setItem("visitor_profile", JSON.stringify(profile));
+        navigate("/home");
+        return;
+      }
+
+      // 2️⃣ Profile token not found — try as an admin-issued access token
+      const accessProfile = await tryAccessToken(token);
+
+      if (accessProfile) {
+        // Store visitor profile so MyRequests.js can load visit requests
+        localStorage.setItem("visitor_profile_token", token);
+        localStorage.setItem("visitor_profile", JSON.stringify(accessProfile));
+        // Navigate directly to the visitor's requests page
+        navigate("/visitor/my-requests");
+        return;
+      }
+
+      // Neither worked
+      setError("Invalid or expired link. Please contact the admin for a new link.");
+    } catch (err) {
+      setError(
+        err?.message ||
+          "Invalid or expired link. Please contact the admin for a new link."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -153,9 +245,15 @@ const ServerConfig = () => {
                 MAS Visitor Portal
               </h2>
               <p className="text-sm text-white/45">
-                Press continue to load the visitor home page.
+                {token
+                  ? "Your visit has been approved. Press continue to view your visit requests."
+                  : "Press continue to load the visitor home page."}
               </p>
-              {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
+              {error && (
+                <p className="text-red-400 text-xs mt-3 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 leading-relaxed">
+                  {error}
+                </p>
+              )}
             </div>
 
             <div className="flex justify-center mb-8">

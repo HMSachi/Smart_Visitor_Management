@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import { motion } from "framer-motion";
 import {
@@ -15,6 +15,8 @@ import {
 import PageSpinner from "../../../components/common/PageSpinner";
 import GatePassService from "../../../services/GatePassService";
 import VisitorService from "../../../services/VisitorService";
+import VisitorAccessTokenService from "../../../services/VisitorAccessTokenService";
+import VisitRequestService from "../../../services/VisitRequestService";
 import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 // import SubVisitorQRGenerator from "../../../components/SubVisitorQRGenerator";
@@ -22,6 +24,8 @@ import { useThemeMode } from "../../../theme/ThemeModeContext";
 const GatePass = () => {
   const { gatePassId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isToken = new URLSearchParams(location.search).get("isToken") === "true";
   const { themeMode } = useThemeMode();
   const isLight = themeMode === "light";
   
@@ -42,25 +46,84 @@ const GatePass = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await GatePassService.GetGatePassById(gatePassId);
 
-        if (response?.data?.ResultSet && response.data.ResultSet.length > 0) {
-          setGatePassData(response.data.ResultSet[0]);
-        } else if (response?.data) {
-          setGatePassData(response.data);
+        if (isToken) {
+          // Retrieve visitor ID from profile session
+          const profileStr = localStorage.getItem("visitor_profile");
+          let visitorId = null;
+          if (profileStr) {
+            try {
+              const localProfile = JSON.parse(profileStr);
+              visitorId = localProfile.VV_Visitor_id || localProfile.Visitor_id;
+            } catch (e) {}
+          }
+
+          let matchedToken = null;
+
+          if (visitorId) {
+            // Find in visitor's tokens first
+            const tokenRes = await VisitorAccessTokenService.GetTokenByVisitorId(visitorId);
+            const tokenList = tokenRes?.data?.ResultSet || tokenRes?.data || [];
+            matchedToken = (Array.isArray(tokenList) ? tokenList : []).find(
+              (tk) => String(tk.VVAT_Token || tk.Token) === String(gatePassId)
+            );
+          }
+
+          if (!matchedToken) {
+            // Fallback: search all tokens
+            const allTokensRes = await VisitorAccessTokenService.GetAllTokens();
+            const allTokensList = allTokensRes?.data?.ResultSet || allTokensRes?.data || [];
+            matchedToken = (Array.isArray(allTokensList) ? allTokensList : []).find(
+              (tk) => String(tk.VVAT_Token || tk.Token) === String(gatePassId)
+            );
+          }
+
+          if (matchedToken) {
+            const requestId = matchedToken.VVR_Request_id || matchedToken.Request_id;
+            const vrResponse = await VisitRequestService.GetVisitRequestById(requestId);
+            const requestDetails = vrResponse.data?.ResultSet?.[0] || vrResponse.data;
+
+            if (requestDetails) {
+              const formattedData = {
+                ...requestDetails,
+                VGP_Pass_id: gatePassId, // show token as the pass ID
+                VGP_Request_id: requestId,
+                VVR_Places_to_Visit: requestDetails.VVR_Places_to_Visit || requestDetails.Places_to_Visit,
+                VVR_Visit_Date: requestDetails.VVR_Visit_Date || requestDetails.Visit_Date,
+                Visitor_Name: requestDetails.VV_Name || requestDetails.VVR_Visitor_Name || requestDetails.VisitorName || "Visitor",
+                Contact_Person_Name: requestDetails.CP_Name || requestDetails.ContactPersonName || "N/A",
+                VV_Company: requestDetails.VV_Company || requestDetails.Company || "N/A",
+                VGP_Status: matchedToken.VVAT_Status || matchedToken.Status || "A",
+              };
+              setGatePassData(formattedData);
+            } else {
+              setError("Visit request details not found for this access token");
+            }
+          } else {
+            setError("Active access token not found or expired");
+          }
         } else {
-          setError("Gate pass data not found");
+          // Standard gate pass path
+          const response = await GatePassService.GetGatePassById(gatePassId);
+
+          if (response?.data?.ResultSet && response.data.ResultSet.length > 0) {
+            setGatePassData(response.data.ResultSet[0]);
+          } else if (response?.data) {
+            setGatePassData(response.data);
+          } else {
+            setError("Gate pass data not found");
+          }
         }
       } catch (err) {
         console.error("Error fetching gate pass:", err);
-        setError("Failed to load gate pass. Please try again.");
+        setError("Failed to load gate pass details.");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchGatePassWithJointData();
-  }, [gatePassId]);
+  }, [gatePassId, isToken]);
 
   // Fetch visitor joint data when we have the request ID
   useEffect(() => {

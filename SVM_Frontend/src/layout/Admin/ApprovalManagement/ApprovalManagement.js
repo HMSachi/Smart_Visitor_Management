@@ -30,6 +30,7 @@ import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
 import VisitorService from "../../../services/VisitorService";
 import VisitorAccessTokenService from "../../../services/VisitorAccessTokenService";
+import VisitorProfileTokenService from "../../../services/VisitorProfileTokenService";
 
 const ApprovalManagement = () => {
   const dispatch = useDispatch();
@@ -354,7 +355,7 @@ const ApprovalManagement = () => {
                 dispatch(GetAllGatePasses()); // Refresh gate passes
 
                 if (type === "Approve") {
-                  // Generate access token for the approved request
+                  // Generate profile token (contact person link) for the approved request
                   const approvedEntry =
                     mappedRequests.find((v) => v.id === id) || selectedVisitor;
                   const visitorId =
@@ -363,20 +364,19 @@ const ApprovalManagement = () => {
 
                   if (visitorId && id) {
                     try {
-                      await VisitorAccessTokenService.GenerateToken(
-                        id,
+                      await VisitorProfileTokenService.GenerateProfileToken(
                         visitorId,
                         "Admin",
                       );
                       console.log(
-                        "[ApprovalManagement] Access token generated for request:",
+                        "[ApprovalManagement] Profile token generated for request:",
                         id,
                         "visitor:",
                         visitorId,
                       );
                     } catch (tokenErr) {
                       console.error(
-                        "[ApprovalManagement] Access token generation failed:",
+                        "[ApprovalManagement] Profile token generation failed:",
                         tokenErr,
                       );
                     }

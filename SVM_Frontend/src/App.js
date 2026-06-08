@@ -31,6 +31,7 @@ import AllUsers from "./layout/Admin/AllUsers/AllUsers";
 import VisitorManagement from "./layout/Admin/VisitorManagement/VisitorManagement";
 import PlacesManagement from "./layout/Admin/PlacesManagement/PlacesManagement";
 import ProfileTokenManagement from "./layout/Admin/ProfileTokenManagement/ProfileTokenManagement";
+import AccessTokenManagement from "./layout/Admin/AccessTokenManagement/AccessTokenManagement";
 import Login from "./layout/Login/Login";
 import ServerConfig from "./layout/ServerConfig/ServerConfig";
 
@@ -48,8 +49,6 @@ import CreateVisitRequestDetails from "./layout/Contact_Person/VisitRequests/Cre
 import VisitRequestSuccess from "./layout/Contact_Person/VisitRequests/VisitRequestSuccess";
 import ContactRestrictedManagement from "./layout/Contact_Person/BlacklistManagement/BlacklistManagement";
 
-
-
 // Security Support Layouts
 import Scanner from "./layout/Security_Officer/Scanner/Scanner";
 import Verification from "./layout/Security_Officer/Verification/Verification";
@@ -61,7 +60,6 @@ import LogsHistory from "./layout/Security_Officer/LogsHistory/LogsHistory";
 import SecurityNotifications from "./layout/Security_Officer/Notifications/Notifications";
 import SecurityDashboard from "./layout/Security_Officer/Dashboard/Dashboard";
 import SecurityRestrictedManagement from "./layout/Security_Officer/BlacklistManagement/BlacklistManagement";
-
 
 import { useEffect, useMemo } from "react";
 import { updateIsMobile } from "./reducers/uiSlice";
@@ -232,6 +230,7 @@ const AppContent = () => {
           <Route path="/admin/all-users" element={<AllUsers />} />
           <Route path="/admin/visitor-management" element={<VisitorManagement />} />
           <Route path="/admin/profile-tokens" element={<ProfileTokenManagement />} />
+          <Route path="/admin/access-tokens" element={<AccessTokenManagement />} />
           <Route path="/admin/places-management" element={<PlacesManagement />} />
           <Route
             path="/admin-dashboard"
@@ -243,10 +242,6 @@ const AppContent = () => {
             path="/contact_person/dashboard"
             element={<ContactDashboard />}
           />
-          {/* <Route
-            path="/contact_person/requests-inbox"
-            element={<RequestsInbox />}
-          /> */}
           <Route
             path="/contact_person/request-review"
             element={<RequestReview />}
@@ -296,7 +291,6 @@ const AppContent = () => {
             element={<ContactRestrictedManagement />}
           />
 
-
           {/* Security Support Routes */}
           <Route path="/Security_Officer/scanner" element={<Scanner />} />
           <Route
@@ -335,7 +329,6 @@ const AppContent = () => {
             path="/Security_Officer/blacklist-management"
             element={<SecurityRestrictedManagement />}
           />
-
 
           <Route
             path="/security-dashboard"

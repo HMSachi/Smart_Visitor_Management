@@ -12,6 +12,7 @@ import {
   UserPlus,
   MapPin,
   KeyRound,
+  Ticket,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Drawer, Box, IconButton } from "@mui/material";
@@ -60,6 +61,12 @@ const menuItems = [
     label: "Profile Tokens",
     icon: KeyRound,
     path: "/admin/profile-tokens",
+  },
+  {
+    id: "access-tokens",
+    label: "Access Tokens",
+    icon: Ticket,
+    path: "/admin/access-tokens",
   },
 ];
 
