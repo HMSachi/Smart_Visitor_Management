@@ -1,21 +1,18 @@
 import React, { useState } from "react";
-import { validateEmail, validatePhone, sanitizePhoneInput, sanitizePlateInput } from "../../../utils/validation";
+import { validateEmail } from "../../../utils/validation";
 
 const AccessMain = () => {
   const [formData, setFormData] = useState({
     email: "",
-    phone: "",
-    refId: "",
+    username: "",
   });
 
   const [errors, setErrors] = useState({});
+  const [retrieved, setRetrieved] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    let next = value;
-    if (name === "phone") next = sanitizePhoneInput(value);
-    if (name === "refId") next = sanitizePlateInput(value);
-    setFormData({ ...formData, [name]: next });
+    setFormData({ ...formData, [name]: value });
     // Clear error when typing
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -28,10 +25,9 @@ const AccessMain = () => {
     const newErrors = {};
     const emailErr = validateEmail(formData.email);
     if (emailErr) newErrors.email = emailErr || "Verification email required";
-    const phoneErr = validatePhone(formData.phone);
-    if (phoneErr) newErrors.phone = phoneErr || "Contact number required";
-    if (!formData.refId || !/^[A-Z0-9\-\s]+$/i.test(formData.refId)) {
-      newErrors.refId = "Reference ID is required and must be alphanumeric";
+    
+    if (!formData.username || formData.username.trim() === "") {
+      newErrors.username = "User name is required";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -39,8 +35,9 @@ const AccessMain = () => {
       return;
     }
 
-    console.log("Accessing visit...", formData);
-    // Logic for access
+    console.log("Retrieving details for...", formData);
+    // Simulate retrieval
+    setRetrieved(true);
   };
 
   return (
@@ -63,83 +60,83 @@ const AccessMain = () => {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-white uppercase tracking-tight mb-2">Access My Visit</h2>
+          <h2 className="text-xl font-bold text-white uppercase tracking-tight mb-2">Retrieve Visit Details</h2>
           <p className="text-gray-500 text-[13px] font-bold uppercase tracking-widest">
             Identity Verification Node
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email Field */}
-          <div className="space-y-1.5">
-            <label className="text-[14px] font-bold uppercase tracking-widest text-gray-500">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="visitor@company.com"
-              className="compact-input w-full"
-            />
-            {errors.email && (
-              <span className="text-primary text-[13px] font-bold uppercase tracking-wider block">
-                {errors.email}
-              </span>
-            )}
-          </div>
+        {!retrieved ? (
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email Field */}
+            <div className="space-y-1.5">
+              <label className="text-[14px] font-bold uppercase tracking-widest text-gray-500">
+                Email Address
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="visitor@company.com"
+                className="compact-input w-full"
+              />
+              {errors.email && (
+                <span className="text-primary text-[13px] font-bold uppercase tracking-wider block">
+                  {errors.email}
+                </span>
+              )}
+            </div>
 
-          {/* Phone Field */}
-          <div className="space-y-1.5">
-            <label className="text-[14px] font-bold uppercase tracking-widest text-gray-500">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              placeholder="+94 XX XXX XXXX"
-              className="compact-input w-full"
-            />
-            {errors.phone && (
-              <span className="text-primary text-[13px] font-bold uppercase tracking-wider block">
-                {errors.phone}
-              </span>
-            )}
-          </div>
+            {/* Username Field */}
+            <div className="space-y-1.5">
+              <label className="text-[14px] font-bold uppercase tracking-widest text-gray-500">
+                User Name
+              </label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                placeholder="John Doe"
+                className="compact-input w-full"
+              />
+              {errors.username && (
+                <span className="text-primary text-[13px] font-bold uppercase tracking-wider block">
+                  {errors.username}
+                </span>
+              )}
+            </div>
 
-          {/* Reference ID Field */}
-          <div className="space-y-1.5">
-            <label className="text-[14px] font-bold uppercase tracking-widest text-gray-500">
-              Reference ID
-            </label>
-            <input
-              type="text"
-              name="refId"
-              value={formData.refId}
-              onChange={handleInputChange}
-              placeholder="MAS-VAS-XXXXX"
-              className="compact-input w-full"
-            />
-            {errors.refId && (
-              <span className="text-primary text-[13px] font-bold uppercase tracking-wider block">
-                {errors.refId}
-              </span>
-            )}
-          </div>
-
-          {/* Submit Button */}
-          <div className="pt-4">
+            {/* Submit Button */}
+            <div className="pt-4">
+              <button
+                type="submit"
+                className="compact-btn !w-full !py-4"
+              >
+                Retrieve Details
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="text-center space-y-6 animate-fade-in">
+            <div className="w-16 h-16 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto border border-green-500/20">
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-2">Details Retrieved</h3>
+              <p className="text-gray-400 text-sm">We have found your visit details based on the provided email and user name.</p>
+            </div>
             <button
-              type="submit"
-              className="compact-btn !w-full !py-4"
+              onClick={() => setRetrieved(false)}
+              className="compact-btn !w-full !py-3 bg-white/5 hover:bg-white/10 text-white"
             >
-              Access My Visit
+              Search Again
             </button>
           </div>
-        </form>
+        )}
 
         <div className="mt-8 text-center">
           <p className="text-gray-500 text-[12px] font-bold uppercase tracking-widest leading-relaxed">

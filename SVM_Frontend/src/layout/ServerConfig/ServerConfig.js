@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Home, ShieldCheck } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowRight, Home, ShieldCheck, Loader2 } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useThemeMode } from "../../theme/ThemeModeContext";
+import VisitorProfileTokenService from "../../services/VisitorProfileTokenService";
+
+const getResultSet = (response) => {
+  const data = response?.data?.ResultSet || response?.data || response;
+  if (!data) return null;
+  return Array.isArray(data) ? data[0] : data;
+};
 
 const ServerConfig = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token") || searchParams.get("VVPT_Token");
   const { themeMode } = useThemeMode();
   const isLightMode = themeMode === "light";
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const leftPanelBackground = isLightMode
     ? "rgba(255,255,255,0.72)"
@@ -28,8 +40,26 @@ const ServerConfig = () => {
     ? "radial-gradient(110% 88% at 78% 10%, rgba(200,16,46,0.12) 0%, rgba(200,16,46,0) 54%), radial-gradient(120% 90% at 22% 92%, rgba(47,107,154,0.1) 0%, rgba(47,107,154,0) 55%), radial-gradient(130% 110% at 50% 50%, rgba(26,38,54,0) 55%, rgba(26,38,54,0.2) 100%)"
     : "radial-gradient(110% 88% at 78% 10%, rgba(200,16,46,0.22) 0%, rgba(200,16,46,0) 54%), radial-gradient(120% 90% at 22% 92%, rgba(47,107,154,0.2) 0%, rgba(47,107,154,0) 55%), radial-gradient(130% 110% at 50% 50%, rgba(4,8,13,0) 55%, rgba(4,8,13,0.44) 100%)";
 
-  const handleContinue = () => {
-    navigate("/home");
+  const handleContinue = async () => {
+    if (token) {
+      setLoading(true);
+      setError("");
+      try {
+        const validationResponse = await VisitorProfileTokenService.ValidateProfileToken(token);
+        const tokenRecord = getResultSet(validationResponse);
+        if (tokenRecord) {
+          localStorage.setItem("visitor_profile_token", token);
+          localStorage.setItem("visitor_profile", JSON.stringify(tokenRecord));
+        }
+        navigate("/home");
+      } catch (err) {
+        setLoading(false);
+        setError("Invalid or expired token. Please check your link.");
+        console.error("Token validation error:", err);
+      }
+    } else {
+      navigate("/home");
+    }
   };
 
   return (
@@ -125,6 +155,7 @@ const ServerConfig = () => {
               <p className="text-sm text-white/45">
                 Press continue to load the visitor home page.
               </p>
+              {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
             </div>
 
             <div className="flex justify-center mb-8">
@@ -138,14 +169,24 @@ const ServerConfig = () => {
               whileTap={{ scale: 0.97 }}
               type="button"
               onClick={handleContinue}
-              className="w-full flex items-center justify-center gap-3 py-[14px] rounded-xl font-semibold text-sm text-white tracking-wide transition-all"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-3 py-[14px] rounded-xl font-semibold text-sm text-white tracking-wide transition-all disabled:opacity-70"
               style={{
                 background: "linear-gradient(135deg, #C8102E 0%, #A60D26 100%)",
                 boxShadow: "0 4px 20px rgba(200,16,46,0.35)",
               }}
             >
-              Continue
-              <ArrowRight size={16} />
+              {loading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Validating...
+                </>
+              ) : (
+                <>
+                  Continue
+                  <ArrowRight size={16} />
+                </>
+              )}
             </motion.button>
           </div>
         </motion.div>

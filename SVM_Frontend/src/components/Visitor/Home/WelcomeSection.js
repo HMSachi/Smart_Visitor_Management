@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useThemeMode } from '../../../theme/ThemeModeContext';
-import { ArrowRight, CalendarCheck, Clock } from 'lucide-react';
+import { ArrowRight, CalendarCheck, Clock, User, Mail, Briefcase } from 'lucide-react';
 
 const WelcomeSection = () => {
   const navigate = useNavigate();
   const { user } = useSelector(state => state.login);
   const { themeMode } = useThemeMode();
-  const isVisitor = user?.ResultSet?.[0]?.VA_Role === 'Visitor';
   const isLight = themeMode === 'light';
+
+  const [visitorProfile, setVisitorProfile] = useState(null);
+
+  useEffect(() => {
+    const profileStr = localStorage.getItem("visitor_profile");
+    if (profileStr) {
+      try {
+        setVisitorProfile(JSON.parse(profileStr));
+      } catch (e) {
+        console.error("Failed to parse visitor profile", e);
+      }
+    }
+  }, []);
+
+  const visitorName = visitorProfile?.VV_Name || visitorProfile?.Visitor_Name || visitorProfile?.Name;
+  const isVisitor = user?.ResultSet?.[0]?.VA_Role === 'Visitor' || visitorProfile !== null;
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-[68px]">
@@ -54,18 +69,52 @@ const WelcomeSection = () => {
             className={`font-black leading-[1.1] tracking-tight mb-6 m-0 p-0 ${isLight ? 'text-[var(--color-text-primary)]' : 'text-white'}`}
             style={{ fontSize: 'clamp(2.2rem, 5vw, 4.5rem)' }}
           >
-            Book Your Visit<br />
-            <span className="text-primary">Fast &amp; Securely</span>
+            {visitorName ? (
+              <>Welcome, {visitorName}<br /></>
+            ) : (
+              <>Book Your Visit<br /></>
+            )}
+            <span className="text-primary">{visitorName ? 'To Your Portal' : 'Fast & Securely'}</span>
           </h1>
 
           {/* Subtext */}
           <p
-            className={`text-base sm:text-lg font-medium leading-relaxed mb-10 max-w-xl ${isLight ? 'text-[var(--color-text-secondary)]' : 'text-white/75'}`}
+            className={`text-base sm:text-lg font-medium leading-relaxed mb-6 max-w-xl ${isLight ? 'text-[var(--color-text-secondary)]' : 'text-white/75'}`}
           >
             A simple, smart, and secure way to request access to{' '}
             <span className="text-primary font-bold">MAS Holdings</span> facilities.
             Get in, get checked, and get going — in minutes.
           </p>
+
+          {/* Visitor Details (if available) */}
+          {visitorProfile && (
+            <div className={`p-4 rounded-xl mb-8 flex flex-col sm:flex-row gap-4 sm:gap-8 ${isLight ? 'bg-white/60 border border-gray-200' : 'bg-white/10 border border-white/10 backdrop-blur-md'}`}>
+              {(visitorProfile.VV_Email || visitorProfile.Email) && (
+                <div className="flex items-center gap-2">
+                  <Mail size={16} className="text-primary" />
+                  <span className={`text-[13px] font-medium ${isLight ? 'text-[var(--color-text-primary)]' : 'text-white/90'}`}>
+                    {visitorProfile.VV_Email || visitorProfile.Email}
+                  </span>
+                </div>
+              )}
+              {(visitorProfile.VV_Company || visitorProfile.Company) && (
+                <div className="flex items-center gap-2">
+                  <Briefcase size={16} className="text-primary" />
+                  <span className={`text-[13px] font-medium ${isLight ? 'text-[var(--color-text-primary)]' : 'text-white/90'}`}>
+                    {visitorProfile.VV_Company || visitorProfile.Company}
+                  </span>
+                </div>
+              )}
+              {(visitorProfile.VV_NIC_Passport_NO || visitorProfile.NIC) && (
+                <div className="flex items-center gap-2">
+                  <User size={16} className="text-primary" />
+                  <span className={`text-[13px] font-medium ${isLight ? 'text-[var(--color-text-primary)]' : 'text-white/90'}`}>
+                    {visitorProfile.VV_NIC_Passport_NO || visitorProfile.NIC}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Feature pills */}
           <div className="flex flex-wrap gap-3 mb-10">
@@ -99,28 +148,7 @@ const WelcomeSection = () => {
                 My Visit Requests
                 <ArrowRight size={18} />
               </button>
-            ) : (
-              // <button
-              //   onClick={() => navigate('/request-step-1')}
-              //   className="flex items-center justify-center gap-1.5 px-8 py-4 rounded-2xl text-white font-bold text-[15px] transition-all active:scale-95"
-              //   style={{
-              //     background: 'linear-gradient(135deg, var(--color-primary), #A60D26)',
-              //     boxShadow: '0 6px 24px rgba(200,16,46,0.4)',
-              //   }}
-              // >
-              //   Request a Visit
-              //   <ArrowRight size={18} />
-              // </button>
-              null
-            )}
-
-            {/* <button
-              onClick={() => navigate('/status')}
-              className={`flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold text-[15px] transition-all active:scale-95 ${isLight ? 'bg-white/80 text-gray-800' : 'bg-white/10 text-white'}`}
-              style={{ backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' }}
-            >
-              Check Visit Status
-            </button> */}
+            ) : null}
           </div>
         </div>
       </div>

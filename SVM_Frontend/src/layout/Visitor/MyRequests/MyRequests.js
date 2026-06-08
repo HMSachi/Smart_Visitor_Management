@@ -21,6 +21,7 @@ import VehicleService from "../../../services/VehicleService";
 import VisitGroupService from "../../../services/VisitGroupService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
+import VisitorAccessTokenService from "../../../services/VisitorAccessTokenService";
 import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
 import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
 import { validateNIC, validatePhone } from "../../../utils/validation";
@@ -128,6 +129,7 @@ const MyRequests = () => {
   const userEmail = user?.ResultSet?.[0]?.VA_Email;
   const [visitorId, setVisitorId] = useState(null);
   const [visitorName, setVisitorName] = useState("");
+  const [visitorAccessTokens, setVisitorAccessTokens] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -426,27 +428,42 @@ const MyRequests = () => {
   useEffect(() => {
     const loadVisitorId = async () => {
       try {
-        const response = await VisitorService.GetAllVisitors();
+        // First try to get from token-based session in localStorage
+        const profileStr = localStorage.getItem("visitor_profile");
+        let localProfile = null;
+        if (profileStr) {
+          try {
+            localProfile = JSON.parse(profileStr);
+          } catch (e) {}
+        }
 
-        const visitors = response?.data?.ResultSet || [];
-        const match = visitors.find(
-          (v) =>
-            v?.VV_Email?.trim().toLowerCase() ===
-            userEmail?.trim().toLowerCase(),
-        );
+        if (localProfile && (localProfile.VV_Visitor_id || localProfile.Visitor_id)) {
+          setVisitorId(localProfile.VV_Visitor_id || localProfile.Visitor_id);
+          setVisitorName(localProfile.VV_Name || localProfile.Visitor_Name || localProfile.Name);
+          return; // Skip fetching if we already have it
+        }
 
-        if (match) {
-          setVisitorId(match.VV_Visitor_id);
-          setVisitorName(match.VV_Name);
+        // Fallback to fetching all visitors and matching by email (for traditional login)
+        if (userEmail) {
+          const response = await VisitorService.GetAllVisitors();
+          const visitors = response?.data?.ResultSet || response?.data || [];
+          
+          const match = (Array.isArray(visitors) ? visitors : []).find((v) => {
+            const vEmail = (v?.VV_Email || v?.Email || v?.VA_Email || "").trim().toLowerCase();
+            return vEmail === userEmail.trim().toLowerCase();
+          });
+
+          if (match) {
+            setVisitorId(match.VV_Visitor_id || match.Visitor_id || match.Id);
+            setVisitorName(match.VV_Name || match.Visitor_Name || match.Name);
+          }
         }
       } catch (err) {
         console.error("Error loading visitor:", err);
       }
     };
 
-    if (userEmail) {
-      loadVisitorId();
-    }
+    loadVisitorId();
     dispatch(GetAllGatePasses());
     dispatch(GetAllBlacklist());
     dispatch(GetAllPlaces());
@@ -455,20 +472,55 @@ const MyRequests = () => {
   useEffect(() => {
     if (visitorId) {
       dispatch(GetVisitRequestsByVisitor(visitorId));
+      VisitorAccessTokenService.GetTokenByVisitorId(visitorId).then((res) => {
+        setVisitorAccessTokens(res?.data || []);
+      });
     }
   }, [dispatch, visitorId]);
 
-  const handleViewGatePass = (req) => {
-    // Find the gate pass ID from the gatePasses list
-    const list = Array.isArray(gatePasses)
+  const hasGatePass = (requestId) => {
+    if (!requestId) return false;
+    // Check traditional gate passes
+    const gpList = Array.isArray(gatePasses)
       ? gatePasses
       : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
-    const gatePass = list.find((gp) => {
-      const gpRequestId =
-        gp.VVR_Request_id ||
-        gp.VGP_Request_id ||
-        gp.vvr_Request_id ||
-        gp.vgp_Request_id;
+    const hasGP = gpList.some((gp) => {
+      const gpRequestId = gp.VVR_Request_id || gp.VGP_Request_id || gp.vvr_Request_id || gp.vgp_Request_id;
+      return String(gpRequestId) === String(requestId);
+    });
+
+    // Check visitor access tokens
+    const tokenList = Array.isArray(visitorAccessTokens)
+      ? visitorAccessTokens
+      : visitorAccessTokens?.ResultSet || [];
+    const hasToken = tokenList.some(
+      (tk) => String(tk.VVR_Request_id) === String(requestId)
+    );
+
+    return hasGP || hasToken;
+  };
+
+  const handleViewGatePass = (req) => {
+    // Try to find an access token first
+    const tokenList = Array.isArray(visitorAccessTokens)
+      ? visitorAccessTokens
+      : visitorAccessTokens?.ResultSet || [];
+    const token = tokenList.find(
+      (tk) => String(tk.VVR_Request_id) === String(req.VVR_Request_id)
+    );
+
+    if (token && token.VVAT_Token) {
+      // Instead of navigating away or just using standard gate pass, use the token specifically
+      navigate(`/visitor/gate-pass/${token.VVAT_Token}?isToken=true`);
+      return;
+    }
+
+    // Fallback to gate pass
+    const gpList = Array.isArray(gatePasses)
+      ? gatePasses
+      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
+    const gatePass = gpList.find((gp) => {
+      const gpRequestId = gp.VVR_Request_id || gp.VGP_Request_id || gp.vvr_Request_id || gp.vgp_Request_id;
       return String(gpRequestId) === String(req.VVR_Request_id);
     });
 
@@ -481,21 +533,6 @@ const MyRequests = () => {
 
     // Navigate with gatePassId as URL parameter
     navigate(`/visitor/gate-pass/${gatePassId}`);
-  };
-
-  const hasGatePass = (requestId) => {
-    if (!requestId) return false;
-    const list = Array.isArray(gatePasses)
-      ? gatePasses
-      : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
-    return list.some((gp) => {
-      const gpRequestId =
-        gp.VVR_Request_id ||
-        gp.VGP_Request_id ||
-        gp.vvr_Request_id ||
-        gp.vgp_Request_id;
-      return String(gpRequestId) === String(requestId);
-    });
   };
 
   const handleOpenReviewPage = (request) => {
