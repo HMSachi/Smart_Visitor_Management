@@ -116,6 +116,20 @@ const AllUsers = () => {
     return value === "ACTIVE" || value === "A" ? "ACTIVE" : "INACTIVE";
   };
 
+  const getAdministratorMobile = (record = {}) =>
+    record.VA_Mobile_Number ||
+    record.VA_Phone ||
+    record.VA_Mobile ||
+    record.VA_Contact_Number ||
+    "";
+
+  const getContactMobile = (record = {}) =>
+    record.VCP_Phone ||
+    record.VCP_Mobile ||
+    record.VCP_Mobile_Number ||
+    record.VCP_Contact_Number ||
+    "";
+
   const matchesStatus = (item) => {
     if (statusFilter === "ALL") return true;
     const itemStatus = normalizeStatus(item.VA_Status || item.VCP_Status);
@@ -135,7 +149,8 @@ const AllUsers = () => {
       item.VCP_Email,
       item.VA_Role,
       item.VCP_Department,
-      item.VCP_Phone,
+      getAdministratorMobile(item),
+      getContactMobile(item),
       normalizeStatus(item.VA_Status || item.VCP_Status),
     ];
 
@@ -211,8 +226,7 @@ const AllUsers = () => {
         email: item.VCP_Email || "",
         role: "Contact_Person",
         password: "",
-        phone:
-          item.VCP_Phone || item.VCP_Mobile || item.VCP_Contact_Number || "",
+        phone: getContactMobile(item),
         department:
           item.VCP_Department || item.VCP_Designation || item.VCP_Dept || "",
         type: "CONTACT",
@@ -225,7 +239,7 @@ const AllUsers = () => {
       email: item.VA_Email || "",
       role: item.VA_Role || item.VA_Role_Name || "",
       password: "",
-      phone: item.VA_Phone || item.VA_Mobile || item.VA_Contact_Number || "",
+      phone: getAdministratorMobile(item),
       department:
         item.VA_Department || item.VA_Designation || item.VA_Dept || "",
       type: "ADMIN",
@@ -268,11 +282,7 @@ const AllUsers = () => {
           email: record.VCP_Email || cached?.email || baseFormData.email,
           role: baseFormData.role || "Contact_Person",
           phone:
-            record.VCP_Phone ||
-            record.VCP_Mobile ||
-            record.VCP_Contact_Number ||
-            cached?.phone ||
-            baseFormData.phone,
+            getContactMobile(record) || cached?.phone || baseFormData.phone,
           department:
             record.VCP_Department ||
             record.VCP_Designation ||
@@ -299,11 +309,7 @@ const AllUsers = () => {
           email: record.VA_Email || cached?.email || baseFormData.email,
           role: record.VA_Role || cached?.role || resolvedRole,
           phone:
-            record.VA_Phone ||
-            record.VA_Mobile ||
-            record.VA_Contact_Number ||
-            cached?.phone ||
-            baseFormData.phone,
+            getAdministratorMobile(record) || cached?.phone || baseFormData.phone,
           department:
             record.VA_Department ||
             record.VA_Designation ||
@@ -427,6 +433,7 @@ const AllUsers = () => {
         VA_Email: formData.email,
         VA_Password: formData.password,
         VA_Role: formData.role,
+        VA_Mobile_Number: formData.phone,
         VA_Phone: formData.phone,
         VA_Department: formData.department,
       };
@@ -498,6 +505,7 @@ const AllUsers = () => {
           VA_Email: formData.email,
           VA_Password: formData.password,
           VA_Role: formData.role,
+          VA_Mobile_Number: formData.phone,
           VA_Phone: formData.phone,
           VA_Department: formData.department,
         };
@@ -917,7 +925,8 @@ const AllUsers = () => {
                                     >
                                       {item.VA_Created_Date
                                         ? item.VA_Created_Date.split(" ")[0]
-                                        : item.VCP_Phone || "AUTHEN.SYSTEM"}
+                                        : getContactMobile(item) ||
+                                          "AUTHEN.SYSTEM"}
                                     </TableCell>
                                     <TableCell
                                       sx={{

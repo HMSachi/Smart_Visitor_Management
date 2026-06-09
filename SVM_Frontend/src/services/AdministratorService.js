@@ -3,6 +3,32 @@ import { BACKEND_BASE_URL } from "../index";
 
 const getApiUrl = (endpoint) => `${BACKEND_BASE_URL}${endpoint}`;
 
+const getAdminMobileNumber = (adminData) =>
+  adminData.VA_Mobile_Number ||
+  adminData.VA_Phone ||
+  adminData.VA_Mobile ||
+  adminData.VA_Contact_Number ||
+  "";
+
+const buildAdminQuery = (adminData, includeId = false) => {
+  const params = new URLSearchParams({
+    VA_Name: adminData.VA_Name || "",
+    VA_Role: adminData.VA_Role || "",
+    VA_Email: adminData.VA_Email || "",
+    VA_Password: adminData.VA_Password || "",
+    VA_Mobile_Number: getAdminMobileNumber(adminData),
+    VA_Phone: getAdminMobileNumber(adminData),
+    VA_Department: adminData.VA_Department || "",
+  });
+
+  if (includeId) {
+    params.set("VA_Admin_id", adminData.VA_Admin_id || "");
+    params.set("VA_Status", adminData.VA_Status || "");
+  }
+
+  return params.toString();
+};
+
 const GetAllAdministrator = async () => {
   let config = {
     method: "get",
@@ -15,7 +41,7 @@ const AddAdministrator = async (adminData) => {
   let config = {
     method: "post",
     url: getApiUrl(
-      `/Administrator/AddAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}&VA_Phone=${encodeURIComponent(adminData.VA_Phone || "")}&VA_Department=${encodeURIComponent(adminData.VA_Department || "")}`,
+      `/Administrator/AddAdministrator?${buildAdminQuery(adminData)}`,
     ),
     data: "",
   };
@@ -26,7 +52,7 @@ const UpdateAdministrator = async (adminData) => {
   let config = {
     method: "post",
     url: getApiUrl(
-      `/Administrator/UpdateAdministrator?VA_Name=${encodeURIComponent(adminData.VA_Name)}&VA_Role=${encodeURIComponent(adminData.VA_Role)}&VA_Email=${encodeURIComponent(adminData.VA_Email)}&VA_Password=${encodeURIComponent(adminData.VA_Password)}&VA_Admin_id=${encodeURIComponent(adminData.VA_Admin_id)}&VA_Status=${encodeURIComponent(adminData.VA_Status || "")}&VA_Phone=${encodeURIComponent(adminData.VA_Phone || "")}&VA_Department=${encodeURIComponent(adminData.VA_Department || "")}`,
+      `/Administrator/UpdateAdministrator?${buildAdminQuery(adminData, true)}`,
     ),
     data: "",
   };
