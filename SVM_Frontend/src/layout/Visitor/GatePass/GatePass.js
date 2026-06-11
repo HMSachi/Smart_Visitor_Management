@@ -329,12 +329,20 @@ const GatePass = () => {
     buildSecureQr();
   }, [qrPayload]);
 
-  // The QR value used for scanning: use the gatePassId directly for best scannability.
-  // The encrypted value is a fallback but produces a very dense QR that may be hard to scan.
+  // The QR value used for scanning.
+  // - Regular gate pass: encode the numeric VGP_Pass_id directly → scanner calls GetGatePassById(id)
+  // - Token-based pass (isToken=true): the gatePassId is a token string, NOT a VGP_Pass_id.
+  //   Encode a small JSON so the scanner knows to do a token lookup instead.
   const displayQrValue = useMemo(() => {
-    if (gatePassId) return String(gatePassId);
-    return encodedQrValue || "SVMQR_PENDING";
-  }, [gatePassId, encodedQrValue]);
+    if (!gatePassId) return encodedQrValue || "SVMQR_PENDING";
+    if (isToken) {
+      // Include the numeric requestId so the scanner can resolve the gate pass via the token
+      const requestId = gatePassData?.VGP_Request_id || gatePassData?.VVR_Request_id || null;
+      return JSON.stringify({ type: "token", token: String(gatePassId), requestId });
+    }
+    // Standard gate pass — plain numeric ID is enough
+    return String(gatePassId);
+  }, [gatePassId, isToken, gatePassData, encodedQrValue]);
 
   const handleDownloadQR = useCallback(() => {
     if (isDownloading) return;

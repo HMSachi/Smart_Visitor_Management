@@ -47,6 +47,7 @@ import {
 } from "../../../utils/secureQrPayload";
 import VisitorService from "../../../services/VisitorService";
 import GatePassService from "../../../services/GatePassService";
+import VisitorAccessTokenService from "../../../services/VisitorAccessTokenService";
 import VisitLogService from "../../../services/VisitLogService";
 import ItemCarriedService from "../../../services/ItemCarriedService";
 import VehicleService from "../../../services/VehicleService";
@@ -318,13 +319,14 @@ const LiveFeed = () => {
 
     try {
       console.log("[LiveFeed] Scanned QR data length:", data?.length);
-      console.log("[LiveFeed] Scanned QR starts with:", data?.substring(0, 20));
+      console.log("[LiveFeed] Scanned QR starts with:", data?.substring(0, 40));
 
       let passId = data;
       let parsedQrData = null;
       let isSubVisitorQR = false;
 
       if (isSecureQrPayload(data)) {
+        // ── Encrypted secure QR (SVMQR1. prefix) ──────────────────────────
         console.log("[LiveFeed] Detected secure QR format");
         const decoded = await decodeSecureQrPayload(data);
         console.log("[LiveFeed] Decoded secure QR payload:", decoded);
@@ -343,18 +345,77 @@ const LiveFeed = () => {
           passId = decoded.id;
         }
       } else {
-        console.log("[LiveFeed] Not a secure QR, trying legacy format");
-        // Backward compatibility: handle old plain JSON and raw pass ID QR values.
+        // ── Plain text / JSON QR ────────────────────────────────────────────
+        console.log("[LiveFeed] Not a secure QR, trying JSON/legacy formats");
         try {
           const parsed = JSON.parse(data);
           if (parsed && typeof parsed === "object") {
             parsedQrData = parsed;
-            setQrData(parsed);
+
+            // ── TOKEN-based gate pass ──────────────────────────────────────
+            // QR encoded as: { type: "token", token: "F023...", requestId: 42 }
+            if (parsed.type === "token" && parsed.token) {
+              console.log("[LiveFeed] Token-type QR detected. Token:", parsed.token, "RequestId:", parsed.requestId);
+              setScanMessage("Access token detected. Resolving gate pass...");
+
+              // Strategy 1: use requestId from QR to find gate pass directly
+              if (parsed.requestId) {
+                try {
+                  const allPassesRes = await GatePassService.GetAllGatePasses();
+                  const allPasses = allPassesRes?.data?.ResultSet || allPassesRes?.data || [];
+                  const matched = (Array.isArray(allPasses) ? allPasses : []).find(
+                    (p) => String(p.VGP_Request_id) === String(parsed.requestId)
+                  );
+                  if (matched?.VGP_Pass_id) {
+                    passId = matched.VGP_Pass_id;
+                    console.log("[LiveFeed] Resolved token to gate pass ID via requestId:", passId);
+                  }
+                } catch (e) {
+                  console.warn("[LiveFeed] Could not resolve token via requestId:", e);
+                }
+              }
+
+              // Strategy 2: token string lookup as fallback
+              if (passId === data || !passId) {
+                try {
+                  const tokenRecord = await VisitorAccessTokenService.GetTokenByValue(parsed.token);
+                  if (tokenRecord) {
+                    const reqId = tokenRecord.VVR_Request_id || tokenRecord.Request_id;
+                    if (reqId) {
+                      const allPassesRes = await GatePassService.GetAllGatePasses();
+                      const allPasses = allPassesRes?.data?.ResultSet || allPassesRes?.data || [];
+                      const matched = (Array.isArray(allPasses) ? allPasses : []).find(
+                        (p) => String(p.VGP_Request_id) === String(reqId)
+                      );
+                      if (matched?.VGP_Pass_id) {
+                        passId = matched.VGP_Pass_id;
+                        console.log("[LiveFeed] Resolved token to gate pass ID via token lookup:", passId);
+                      }
+                    }
+                  }
+                } catch (e) {
+                  console.warn("[LiveFeed] Token lookup failed:", e);
+                }
+              }
+
+              if (passId === data) {
+                throw new Error("Could not resolve the access token to a gate pass. Please ensure the visitor has a valid approved gate pass.");
+              }
+
+              // Don't call setQrData(parsed) for token QR — it has no profile fields
+            } else {
+              // ── Legacy plain JSON QR ───────────────────────────────────────
+              setQrData(parsed);
+              if (parsed?.id) {
+                passId = parsed.id;
+              }
+            }
           }
-          if (parsed?.id) {
-            passId = parsed.id;
+        } catch (jsonErr) {
+          // Not JSON — treat as raw gate pass ID string
+          if (jsonErr.message && jsonErr.message.includes("Could not resolve")) {
+            throw jsonErr; // re-throw our own error
           }
-        } catch (e) {
           console.log(
             "[LiveFeed] QR data is not JSON, treating as gate pass ID:",
             data,
