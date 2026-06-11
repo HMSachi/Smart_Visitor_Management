@@ -169,22 +169,22 @@ const VisitorTable = ({
             <table className="w-full min-w-[920px] text-left border-collapse">
               <thead className="sticky top-0 z-20 bg-[var(--color-bg-paper)] font-normal text-[12px]">
                 <tr className="border-b border-white/5 bg-[var(--color-bg-paper)]">
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-left">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-left bg-[var(--color-bg-paper)]">
                     Visitor name
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center min-w-[180px]">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center min-w-[180px] bg-[var(--color-bg-paper)]">
                     Visit date
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-left min-w-[300px]">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-left min-w-[300px] bg-[var(--color-bg-paper)]">
                     Visiting place
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center w-[220px]">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center w-[220px] bg-[var(--color-bg-paper)]">
                     Status
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center w-28">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-[var(--color-text-secondary)] text-center w-28 bg-[var(--color-bg-paper)]">
                     Gatepass
                   </th>
-                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-primary text-right md:pr-4 lg:pr-6 w-32">
+                  <th className="px-3 md:px-2.5 lg:px-6 py-2 text-[12px] font-normal tracking-[0.3em] text-primary text-right md:pr-4 lg:pr-6 w-32 bg-[var(--color-bg-paper)]">
                     Actions
                   </th>
                 </tr>

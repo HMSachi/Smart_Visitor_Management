@@ -619,12 +619,12 @@ const AllUsers = () => {
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
             <div className="px-3 sm:px-4 md:px-5 py-2 border-b border-white/5 bg-transparent flex flex-col xl:flex-row justify-between items-start xl:items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
-              <div className="flex flex-wrap gap-2 md:gap-4 w-full md:w-auto relative max-w-full overflow-x-auto no-scrollbar">
+              <div className="flex flex-nowrap overflow-x-auto no-scrollbar gap-2 md:gap-4 w-full md:w-auto relative max-w-full">
                 {categories.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => setTableFilter(cat.id)}
-                    className={`relative w-full md:w-auto md:flex-none px-2 sm:px-3 md:px-4 py-1.5 rounded-md text-[13px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 ${tableFilter === cat.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
+                    className={`relative px-3 py-1.5 rounded-md text-[13px] font-medium tracking-wide transition-all duration-500 z-10 whitespace-nowrap min-w-0 flex-shrink-0 ${tableFilter === cat.id ? "!text-white" : "text-[var(--color-text-dim)] hover:text-[var(--color-text-primary)]"}`}
                   >
                     {tableFilter === cat.id && (
                       <motion.div
@@ -642,13 +642,13 @@ const AllUsers = () => {
                 ))}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 items-center shrink-0 w-full xl:w-auto">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-black/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-white/80 shrink-0">
+              <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center shrink-0 w-full xl:w-auto">
+                <div className="inline-flex items-center justify-center gap-2 rounded-full border border-white/8 bg-black/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-white/80 shrink-0 w-full sm:w-auto">
                   <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
                   {totalUsers} records
                 </div>
 
-                <div className="flex items-center bg-black/40 border border-white/10 px-4 py-1.5 rounded-full group focus-within:border-primary transition-all w-full md:w-64">
+                <div className="flex items-center bg-black/40 border border-white/10 px-4 py-1.5 rounded-full group focus-within:border-primary transition-all w-full sm:w-64">
                   <Search
                     size={14}
                     className="text-white/20 group-focus-within:text-primary"
@@ -664,7 +664,7 @@ const AllUsers = () => {
 
                 <button
                   onClick={() => openModal("add")}
-                  className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold tracking-wider transition-all shadow-lg active:scale-95 group shrink-0"
+                  className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold tracking-wider transition-all shadow-lg active:scale-95 group shrink-0 w-full sm:w-auto"
                 >
                   <Plus
                     size={14}
@@ -741,7 +741,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.05)",
                                   width: "8%",
                                 }}
-                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                               >
                                 User ID
                               </TableCell>
@@ -752,7 +752,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.05)",
                                   width: "15%",
                                 }}
-                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                               >
                                 Name
                               </TableCell>
@@ -763,7 +763,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.05)",
                                   width: "20%",
                                 }}
-                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                               >
                                 Email
                               </TableCell>
@@ -774,7 +774,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.05)",
                                   width: "12%",
                                 }}
-                                className={`hidden sm:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit`}
+                                className={`hidden sm:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]`}
                               >
                                 {cat.id === "CONTACT" ? "Department" : "Role"}
                               </TableCell>
@@ -785,7 +785,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.05)",
                                   width: "15%",
                                 }}
-                                className={`hidden md:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit`}
+                                className={`hidden md:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]`}
                               >
                                 {cat.id === "CONTACT" ? "Contact" : "Joined"}
                               </TableCell>
@@ -796,7 +796,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.05)",
                                   width: "10%",
                                 }}
-                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                               >
                                 Status
                               </TableCell>
@@ -808,7 +808,7 @@ const AllUsers = () => {
                                     "1px solid rgba(255,255,255,0.05)",
                                   width: "10%",
                                 }}
-                                className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                                className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                               >
                                 Actions
                               </TableCell>
@@ -993,7 +993,7 @@ const AllUsers = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 animate-fade-in overflow-y-auto">
           <div
-            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl w-full ${modalWidthClass} overflow-hidden relative my-auto`}
+            className={`bg-[var(--color-bg-paper)] border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl w-[95%] sm:w-full sm:max-w-2xl md:max-w-3xl overflow-hidden relative my-auto`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none rounded-2xl sm:rounded-3xl"></div>
 

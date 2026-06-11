@@ -95,7 +95,7 @@ const PlacesManagement = () => {
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="max-w-none mx-auto">
           {/* Toolbar */}
-          <header className="mb-6 flex flex-col xl:flex-row justify-between items-center gap-6 relative z-10 px-1">
+          <header className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10 px-1">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center text-primary shadow-xl backdrop-blur-md">
                 <MapPin size={22} strokeWidth={1.5} />
@@ -115,7 +115,7 @@ const PlacesManagement = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 items-center shrink-0 w-full xl:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center shrink-0 w-full md:w-auto">
               {/* Search Box - Rounded Style */}
               <div className="relative w-full sm:w-64 group">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -173,9 +173,10 @@ const PlacesManagement = () => {
                   maxHeight: "600px",
                   minHeight: "400px",
                   overflow: "auto",
+                  overflowX: "auto",
                 }}
               >
-                <Table stickyHeader aria-label="places table" sx={{ tableLayout: "fixed", width: "100%" }}>
+                <Table stickyHeader aria-label="places table" sx={{ minWidth: 660, tableLayout: "fixed", width: "100%" }}>
                   <TableHead>
                     <TableRow
                       sx={{
@@ -189,7 +190,7 @@ const PlacesManagement = () => {
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                           width: "110px",
                         }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                       >
                         Location ID
                       </TableCell>
@@ -199,7 +200,7 @@ const PlacesManagement = () => {
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                           width: "260px",
                         }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                       >
                         Facility Name
                       </TableCell>
@@ -210,7 +211,7 @@ const PlacesManagement = () => {
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                           width: "170px",
                         }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit text-center"
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)] text-center"
                       >
                         Status
                       </TableCell>
@@ -221,7 +222,7 @@ const PlacesManagement = () => {
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                           width: "120px",
                         }}
-                        className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                       >
                         Actions
                       </TableCell>

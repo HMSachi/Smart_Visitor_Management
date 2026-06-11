@@ -310,7 +310,7 @@ const AccessTokenManagement = () => {
         
         <div className="max-w-none mx-auto">
           {/* Top Info Cards */}
-          <header className="mb-6 flex flex-col xl:flex-row justify-between items-center gap-6 relative z-10 px-1">
+          <header className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10 px-1">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center text-primary shadow-xl backdrop-blur-md">
                 <KeyRound size={22} strokeWidth={1.5} />
@@ -330,11 +330,11 @@ const AccessTokenManagement = () => {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-3 items-center shrink-0 w-full xl:w-auto justify-end">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center shrink-0 w-full md:w-auto justify-end">
               <button
                 type="button"
                 onClick={() => setGenDialogOpen(true)}
-                className="flex items-center justify-center gap-2 h-9 px-4 rounded-[10px] bg-primary text-white hover:bg-primary-hover transition-all text-[11px] font-bold uppercase tracking-widest"
+                className="flex items-center justify-center gap-2 h-9 px-4 rounded-[10px] bg-primary text-white hover:bg-primary-hover transition-all text-[11px] font-bold uppercase tracking-widest w-full sm:w-auto"
               >
                 <Plus size={14} />
                 Generate Token
@@ -344,7 +344,7 @@ const AccessTokenManagement = () => {
                 type="button"
                 onClick={() => loadTokens(statusFilter)}
                 disabled={loading}
-                className="flex items-center justify-center gap-2 h-9 px-4 rounded-[10px] border border-[var(--color-border-soft)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-white/5 transition-all disabled:opacity-50 text-[11px] font-bold uppercase tracking-widest"
+                className="flex items-center justify-center gap-2 h-9 px-4 rounded-[10px] border border-[var(--color-border-soft)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-white/5 transition-all disabled:opacity-50 text-[11px] font-bold uppercase tracking-widest w-full sm:w-auto"
               >
                 <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
                 Refresh
@@ -381,7 +381,7 @@ const AccessTokenManagement = () => {
             /* TAB 0: TOKEN REGISTRY */
             <div className="space-y-4">
               {/* Filter / Search Bar */}
-              <div className="flex flex-col lg:flex-row gap-3 justify-between items-center bg-[var(--color-surface-1)] p-4 border border-[var(--color-border-soft)] rounded-[12px]">
+              <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center bg-[var(--color-surface-1)] p-4 border border-[var(--color-border-soft)] rounded-[12px]">
                 <div className="flex gap-1 p-1 bg-[var(--color-bg-default)] border border-[var(--color-border-soft)] rounded-[10px] w-full sm:w-auto">
                   {statusOptions.map((option) => (
                     <button
@@ -391,7 +391,7 @@ const AccessTokenManagement = () => {
                         setSearchQuery("");
                         setStatusFilter(option.value);
                       }}
-                      className={`h-7 px-4 rounded-[6px] text-[10px] font-bold uppercase tracking-widest transition-all ${
+                      className={`h-7 px-4 rounded-[6px] text-[10px] font-bold uppercase tracking-widest transition-all flex-1 sm:flex-none ${
                         statusFilter === option.value
                           ? "bg-primary text-white"
                           : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
@@ -450,9 +450,9 @@ const AccessTokenManagement = () => {
                   <TableContainer
                     component={Paper}
                     className="bg-transparent border-none z-10 relative"
-                    sx={{ maxHeight: "620px", minHeight: "400px", overflow: "auto" }}
+                    sx={{ maxHeight: "620px", minHeight: "400px", overflow: "auto", overflowX: "auto" }}
                   >
-                    <Table stickyHeader aria-label="access token table" sx={{ tableLayout: "fixed", width: "100%" }}>
+                    <Table stickyHeader aria-label="access token table" sx={{ minWidth: 920, tableLayout: "fixed", width: "100%" }}>
                       <TableHead>
                         <TableRow sx={{ height: "24px", backgroundColor: "var(--color-bg-paper)" }}>
                           {["Request ID", "Visitor ID", "Token Value", "Created On", "Expired On", "Status", "Actions"].map((heading, index) => (
@@ -464,7 +464,7 @@ const AccessTokenManagement = () => {
                                 borderBottom: "1px solid rgba(255,255,255,0.05)",
                                 width: index === 2 ? "30%" : index >= 5 ? "120px" : "14%",
                               }}
-                              className="text-[var(--color-text-secondary)] font-normal text-[11px] tracking-[0.2em] uppercase whitespace-nowrap bg-inherit"
+                              className="text-[var(--color-text-secondary)] font-normal text-[11px] tracking-[0.2em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                             >
                               {heading}
                             </TableCell>
@@ -621,9 +621,9 @@ const AccessTokenManagement = () => {
                   <TableContainer
                     component={Paper}
                     className="bg-transparent border-none z-10 relative"
-                    sx={{ maxHeight: "620px", overflow: "auto" }}
+                    sx={{ maxHeight: "620px", overflow: "auto", overflowX: "auto" }}
                   >
-                    <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+                    <Table sx={{ minWidth: 900, tableLayout: "fixed", width: "100%" }}>
                       <TableHead>
                         <TableRow sx={{ height: "24px", backgroundColor: "var(--color-bg-paper)" }}>
                           {["Request ID", "Visit Date", "Visiting Place", "Purpose", "Status", "Actions"].map((heading, index) => (
@@ -635,7 +635,7 @@ const AccessTokenManagement = () => {
                                 borderBottom: "1px solid rgba(255,255,255,0.05)",
                                 width: index === 2 || index === 3 ? "24%" : index >= 4 ? "140px" : "12%",
                               }}
-                              className="text-[var(--color-text-secondary)] font-normal text-[11px] tracking-[0.2em] uppercase whitespace-nowrap bg-inherit"
+                              className="text-[var(--color-text-secondary)] font-normal text-[11px] tracking-[0.2em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                             >
                               {heading}
                             </TableCell>

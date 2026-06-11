@@ -165,7 +165,7 @@ const VisitorManagement = () => {
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                           width: "8%",
                         }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                       >
                         ID
                       </TableCell>
@@ -174,7 +174,7 @@ const VisitorManagement = () => {
                           padding: "8px 24px",
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                         }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                       >
                         Visitor Identity
                       </TableCell>
@@ -183,7 +183,7 @@ const VisitorManagement = () => {
                           padding: "8px 24px",
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                         }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                       >
                         Credentials
                       </TableCell>
@@ -192,7 +192,7 @@ const VisitorManagement = () => {
                           padding: "8px 24px",
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                         }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                       >
                         Organization
                       </TableCell>
@@ -202,7 +202,7 @@ const VisitorManagement = () => {
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                           width: "20%",
                         }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                       >
                         Destination
                       </TableCell>
@@ -213,7 +213,7 @@ const VisitorManagement = () => {
                           borderBottom: "1px solid rgba(255,255,255,0.05)",
                           width: "12%",
                         }}
-                        className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                        className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                       >
                         Status
                       </TableCell>

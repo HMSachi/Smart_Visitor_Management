@@ -162,7 +162,7 @@ const ProfileTokenManagement = () => {
       <div className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto w-full animate-fade-in-slow relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="max-w-none mx-auto">
-          <header className="mb-6 flex flex-col xl:flex-row justify-between items-center gap-6 relative z-10 px-1">
+          <header className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10 px-1">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center text-primary shadow-xl backdrop-blur-md">
                 <KeyRound size={22} strokeWidth={1.5} />
@@ -182,7 +182,7 @@ const ProfileTokenManagement = () => {
               </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-3 items-center shrink-0 w-full xl:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center shrink-0 w-full md:w-auto">
               <div className="flex gap-1 p-1.5 bg-[var(--color-surface-1)] border border-[var(--color-border-soft)] rounded-[12px] w-full sm:w-auto">
                 {statusOptions.map((option) => (
                   <button
@@ -192,7 +192,7 @@ const ProfileTokenManagement = () => {
                       setVisitorId("");
                       setStatusFilter(option.value);
                     }}
-                    className={`h-8 px-4 rounded-[8px] text-[11px] font-bold uppercase tracking-widest transition-all ${
+                    className={`h-8 px-4 rounded-[8px] text-[11px] font-bold uppercase tracking-widest transition-all flex-1 sm:flex-none ${
                       statusFilter === option.value
                         ? "bg-primary text-white"
                         : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-white/5"
@@ -262,9 +262,9 @@ const ProfileTokenManagement = () => {
               <TableContainer
                 component={Paper}
                 className="bg-transparent border-none z-10 relative"
-                sx={{ maxHeight: "620px", minHeight: "400px", overflow: "auto" }}
+                sx={{ maxHeight: "620px", minHeight: "400px", overflow: "auto", overflowX: "auto" }}
               >
-                <Table stickyHeader aria-label="profile token table" sx={{ tableLayout: "fixed", width: "100%" }}>
+                <Table stickyHeader aria-label="profile token table" sx={{ minWidth: 900, tableLayout: "fixed", width: "100%" }}>
                   <TableHead>
                     <TableRow sx={{ height: "24px", backgroundColor: "var(--color-bg-paper)" }}>
                       {["Visitor ID", "Token", "Created", "Expired", "Status", "Actions"].map((heading, index) => (
@@ -276,7 +276,7 @@ const ProfileTokenManagement = () => {
                             borderBottom: "1px solid rgba(255,255,255,0.05)",
                             width: index === 1 ? "34%" : index >= 4 ? "130px" : "16%",
                           }}
-                          className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-inherit"
+                          className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
                         >
                           {heading}
                         </TableCell>

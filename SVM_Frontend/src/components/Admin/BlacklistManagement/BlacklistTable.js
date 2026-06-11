@@ -304,7 +304,7 @@ const BlacklistTable = () => {
       >
         {/* ── Toolbar ── */}
         <header className="flex flex-col sm:flex-row justify-end items-center gap-4 relative z-10 px-1 w-full">
-          <div className="flex flex-col sm:flex-row gap-3 items-center shrink-0 w-full sm:w-auto ml-auto">
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center shrink-0 w-full sm:w-auto ml-auto">
             {/* Search Box - Rounded Style */}
             <div className="relative w-full sm:w-80 group">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -325,7 +325,7 @@ const BlacklistTable = () => {
             {!isContactPerson && (
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold uppercase tracking-[0.1em] transition-all shadow-[0_8px_20px_-4px_rgba(255,107,0,0.4)] active:scale-95 group shrink-0"
+                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 h-10 rounded-full text-[12px] font-bold uppercase tracking-[0.1em] transition-all shadow-[0_8px_20px_-4px_rgba(255,107,0,0.4)] active:scale-95 group shrink-0 w-full sm:w-auto"
               >
                 <UserPlus size={16} />
                 Add Restricted User
