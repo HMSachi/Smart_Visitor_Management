@@ -173,7 +173,7 @@ const CreateVisitRequest = () => {
 
       if (requestId) {
         dispatch(setSavedRequestId(requestId));
-        navigate("/contact_person/create-visit-request-details");
+        navigate("/contact_person/create-visit-request-details", { state: { fromStep1: true } });
       } else {
         alert("Could not retrieve the new visit request ID. Please try again.");
       }

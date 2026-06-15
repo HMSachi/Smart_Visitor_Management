@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../../../components/Contact_Person/Layout/Sidebar";
 import Header from "../../../components/Contact_Person/Layout/Header";
 import { AddVehicle } from "../../../actions/VehicleAction";
@@ -26,7 +26,9 @@ import { validateName, validateNIC, validatePhone, validatePlateNumber } from ".
 
 const CreateVisitRequestDetails = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const [showSaveModal, setShowSaveModal] = useState(location.state?.fromStep1 || false);
   const {
     visitationDetails: formData,
     savedRequestId,
@@ -933,6 +935,29 @@ const CreateVisitRequestDetails = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showSaveModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm border border-gray-100 p-6 text-center relative animate-fade-in">
+            <div className="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_15px_rgba(34,197,94,0.15)]">
+              <CheckCircle2 size={28} />
+            </div>
+            <h3 className="text-[15px] font-bold text-gray-800 tracking-tight mb-2">
+              Basic Details Saved!
+            </h3>
+            <p className="text-[12px] text-gray-500 leading-relaxed tracking-wide mb-6">
+              Basic details have been saved successfully. Click Continue and then Submit to send the email and SMS invitation to the visitor. Otherwise, the email and SMS will not be sent.
+             
+            </p>
+            <button
+              onClick={() => setShowSaveModal(false)}
+              className="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white text-[12px] font-bold tracking-wider rounded-xl shadow-lg shadow-green-600/20 hover:shadow-green-600/35 transition-all active:scale-95 uppercase"
+            >
+              Continue
+            </button>
           </div>
         </div>
       )}
