@@ -155,9 +155,9 @@ const ServerConfig = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-default)] text-white flex flex-col lg:flex-row relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--color-bg-default)] text-white flex flex-col lg:flex-row relative overflow-y-auto overflow-x-hidden lg:overflow-hidden">
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="fixed inset-0 z-0 pointer-events-none"
         style={{
           backgroundImage: `${pageBackgroundOverlay}, url(${pageBackgroundImage})`,
           backgroundSize: "cover",
@@ -166,11 +166,11 @@ const ServerConfig = () => {
         }}
       />
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="fixed inset-0 z-0 pointer-events-none"
         style={{ background: vignetteOverlay }}
       />
       <div
-        className="absolute inset-0 z-0 pointer-events-none circuit-grid"
+        className="fixed inset-0 z-0 pointer-events-none circuit-grid"
         style={{ opacity: isLightMode ? 0.34 : 0.56 }}
       />
 
@@ -187,7 +187,7 @@ const ServerConfig = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="relative text-center flex flex-col items-center max-w-sm w-full"
+          className="relative text-center flex flex-col items-center max-w-sm w-full mt-16 lg:mt-18"
         >
           <div className="relative mb-10">
             <motion.img
@@ -224,7 +224,7 @@ const ServerConfig = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="w-full max-w-md"
+          className="w-full max-w-md mt-16 lg:mt-18"
         >
           <div
             className="relative w-full overflow-hidden"

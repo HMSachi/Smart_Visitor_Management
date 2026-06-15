@@ -62,12 +62,12 @@ const menuItems = [
     icon: KeyRound,
     path: "/admin/profile-tokens",
   },
-  {
-    id: "access-tokens",
-    label: "Access Tokens",
-    icon: Ticket,
-    path: "/admin/access-tokens",
-  },
+  // {
+  //   id: "access-tokens",
+  //   label: "Access Tokens",
+  //   icon: Ticket,
+  //   path: "/admin/access-tokens",
+  // },
 ];
 
 const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
