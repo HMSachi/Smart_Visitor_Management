@@ -20,6 +20,7 @@ import {
   normalizeVisitLog,
   sortVisitLogsNewestFirst,
   unwrapApiList,
+  cleanPassId,
 } from "../../../utils/visitLogUtils";
 
 const CsvCell = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
@@ -44,7 +45,7 @@ const LogMobileCard = ({ log }) => (
           {log.name}
         </h3>
         <p className="text-[11px] text-[var(--color-text-secondary)]">
-          {log.ref} | {log.date}
+          NIC/Passport: {log.nic} | {log.date}
         </p>
       </div>
       <StatusBadge status={log.status} />
@@ -104,7 +105,7 @@ const LogsHistoryMain = () => {
           visitLogs.map((log) =>
             normalizeVisitLog(
               log,
-              passLookup.get(String(getVisitLogPassId(log))) || {},
+              passLookup.get(cleanPassId(getVisitLogPassId(log))) || {},
             ),
           ),
         ),
@@ -330,7 +331,7 @@ const LogsHistoryMain = () => {
                           {log.name}
                         </p>
                         <p className="text-[11px] text-[var(--color-text-secondary)]">
-                          {log.ref} | NIC: {log.nic}
+                          NIC/Passport: {log.nic}
                         </p>
                       </td>
                       <td className="px-5 py-4 text-[12px] text-[var(--color-text-secondary)]">

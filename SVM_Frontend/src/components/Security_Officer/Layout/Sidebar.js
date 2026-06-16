@@ -24,15 +24,21 @@ const menuItems = [
   },
   {
     id: "scanner",
-    label: "Check-in / Check-out",
+    label: "Scan a QR Code",
     icon: QrCode,
     path: "/Security_Officer/scanner",
   },
   {
-    id: "active-visitors",
-    label: "Active/Left Visitors",
+    id: "inside-visitors",
+    label: "Inside Visitors",
     icon: Users,
-    path: "/Security_Officer/active-visitors",
+    path: "/Security_Officer/inside-visitors",
+  },
+  {
+    id: "left-visitors",
+    label: "Left Visitors",
+    icon: LogOut,
+    path: "/Security_Officer/left-visitors",
   },
   {
     id: "blacklist",

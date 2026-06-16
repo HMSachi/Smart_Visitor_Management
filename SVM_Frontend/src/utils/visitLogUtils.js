@@ -37,12 +37,35 @@ export const formatDateOnly = (date = new Date()) => {
 };
 
 export const parseDateValue = (value) => {
-  if (!value) {
-    return null;
+  if (!value) return null;
+
+  // Try standard parse
+  let parsed = new Date(value);
+  if (!Number.isNaN(parsed.getTime())) return parsed;
+
+  if (typeof value === "string") {
+    // Try DD/MM/YYYY
+    const parts = value.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})(.*)/);
+    if (parts) {
+      parsed = new Date(`${parts[3]}/${parts[2]}/${parts[1]}${parts[4]}`);
+      if (!Number.isNaN(parsed.getTime())) return parsed;
+      
+      parsed = new Date(`${parts[3]}/${parts[1]}/${parts[2]}${parts[4]}`);
+      if (!Number.isNaN(parsed.getTime())) return parsed;
+    }
+    
+    // Try time only
+    const timeMatch = value.match(/^(\d{2}):(\d{2})(?::(\d{2}))?$/);
+    if (timeMatch) {
+      const today = new Date();
+      today.setHours(parseInt(timeMatch[1], 10));
+      today.setMinutes(parseInt(timeMatch[2], 10));
+      today.setSeconds(timeMatch[3] ? parseInt(timeMatch[3], 10) : 0);
+      return today;
+    }
   }
 
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? null : parsed;
+  return null;
 };
 
 export const formatDisplayDate = (value) => {
@@ -105,15 +128,15 @@ export const getVisitLogPassId = (log) =>
   null;
 
 export const getVisitLogCheckInTime = (log) =>
-  log?.VVL_Created_Date ||
-  log?.Created_Date ||
-  log?.CreatedDate ||
   log?.VVL_Check_In_Time ||
   log?.VVL_CheckInTime ||
   log?.VVL_In_Time ||
   log?.VVL_Entry_Time ||
   log?.Check_In_Time ||
   log?.CheckInTime ||
+  log?.VVL_Created_Date ||
+  log?.Created_Date ||
+  log?.CreatedDate ||
   null;
 
 export const getVisitLogCheckOutTime = (log) =>
@@ -172,19 +195,24 @@ export const findOpenVisitLog = (logs, passId) =>
       !hasVisitLogCheckedOut(log),
   ) || null;
 
+export const cleanPassId = (id) => {
+  if (!id) return "";
+  return String(id).replace(/^(PASS|GP|gp)-/i, "").trim();
+};
+
 export const createPassLookup = (passes) => {
   const lookup = new Map();
   unwrapApiList(passes).forEach((pass) => {
     const passId = pass?.VGP_Pass_id || pass?.Pass_id || pass?.id;
     if (passId !== undefined && passId !== null) {
-      lookup.set(String(passId), pass);
+      lookup.set(cleanPassId(passId), pass);
     }
   });
   return lookup;
 };
 
 export const normalizeVisitLog = (log, pass = {}) => {
-  const passId = getVisitLogPassId(log);
+  const passId = cleanPassId(getVisitLogPassId(log));
   const checkInTime = getVisitLogCheckInTime(log);
   const checkOutTime = getVisitLogCheckOutTime(log);
   const accessedAreas = getVisitLogAreas(log, pass);
@@ -248,7 +276,7 @@ export const normalizeVisitLog = (log, pass = {}) => {
     date: formatDisplayDate(checkInTime || log?.VVL_Expiry_Date),
     duration: formatDurationFrom(checkInTime),
     status: checkOutTime ? "Left" : "Active",
-    ref: passId ? `PASS-${passId}` : "PASS-N/A",
+    ref: passId ? `Pass ID: ${passId}` : "Pass ID: N/A",
     node: log?.VVL_Node || pass?.VGP_Node || "Gate 01",
     remarks: log?.VVL_Remarks || log?.Remarks || "",
   };

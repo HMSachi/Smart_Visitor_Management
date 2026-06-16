@@ -25,6 +25,7 @@ import AdminDashboard from "./layout/Admin/Dashboard/Dashboard";
 import ApprovalManagement from "./layout/Admin/ApprovalManagement/ApprovalManagement";
 import SecurityMonitoringPage from "./layout/Admin/SecurityMonitoring/SecurityMonitoring";
 import RestrictedManagement from "./layout/Admin/BlacklistManagement/BlacklistManagement";
+import AdminActiveVisitors from "./layout/Admin/ActiveVisitors/ActiveVisitors";
 
 import UserManagement from "./layout/Admin/UserManagement/UserManagement";
 import AllUsers from "./layout/Admin/AllUsers/AllUsers";
@@ -227,6 +228,8 @@ const AppContent = () => {
           />
 
           <Route path="/admin/user-management" element={<UserManagement />} />
+          <Route path="/admin/inside-visitors" element={<AdminActiveVisitors defaultTab="inside" />} />
+          <Route path="/admin/visitor-logs" element={<AdminActiveVisitors defaultTab="all" />} />
           <Route path="/admin/all-users" element={<AllUsers />} />
           <Route path="/admin/visitor-management" element={<VisitorManagement />} />
           <Route path="/admin/profile-tokens" element={<ProfileTokenManagement />} />
@@ -303,7 +306,15 @@ const AppContent = () => {
           />
           <Route
             path="/Security_Officer/active-visitors"
-            element={<ActiveVisitors />}
+            element={<Navigate to="/Security_Officer/inside-visitors" replace />}
+          />
+          <Route
+            path="/Security_Officer/inside-visitors"
+            element={<ActiveVisitors defaultTab="inside" />}
+          />
+          <Route
+            path="/Security_Officer/left-visitors"
+            element={<ActiveVisitors defaultTab="left" />}
           />
           <Route
             path="/Security_Officer/exit-verification"

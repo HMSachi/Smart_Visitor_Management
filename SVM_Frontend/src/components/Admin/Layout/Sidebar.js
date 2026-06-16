@@ -45,6 +45,12 @@ const menuItems = [
     path: "/admin/blacklist-management",
   },
   {
+    id: "visitor-logs",
+    label: "All Visitor Logs",
+    icon: LayoutDashboard,
+    path: "/admin/visitor-logs",
+  },
+  {
     id: "all-users",
     label: "All Users",
     icon: UserPlus,

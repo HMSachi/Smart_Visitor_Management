@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import visitLogService from "../../../services/VisitLogService";
+import GatePassService from "../../../services/GatePassService";
 import { isSecureQrPayload, decodeSecureQrPayload } from "../../../utils/secureQrPayload";
+import { unwrapApiList, createPassLookup, normalizeVisitLog, getVisitLogPassId, cleanPassId } from "../../../utils/visitLogUtils";
 import { 
   Users, 
   LogOut, 
@@ -35,20 +37,30 @@ const SecurityScannerDashboard = () => {
 
   const loadData = async () => {
     try {
-      const [insideRes, allLogsRes] = await Promise.all([
+      const [insideRes, allLogsRes, passesRes] = await Promise.allSettled([
         visitLogService.GetVisitorsInside(),
-        visitLogService.GetAllVisitLogs()
+        visitLogService.GetAllVisitLogs(),
+        GatePassService.GetAllGatePasses()
       ]);
 
-      const insideData = insideRes?.data || [];
-      const allLogsData = allLogsRes?.data || [];
-      
+      const rawInside = insideRes.status === "fulfilled" ? unwrapApiList(insideRes.value) : [];
+      const rawAllLogs = allLogsRes.status === "fulfilled" ? unwrapApiList(allLogsRes.value) : [];
+      const passes = passesRes.status === "fulfilled" ? unwrapApiList(passesRes.value) : [];
+      const passLookup = createPassLookup(passes);
+
+      const insideData = rawInside.map(log => 
+        normalizeVisitLog(log, passLookup.get(cleanPassId(getVisitLogPassId(log))) || {})
+      );
+      const allLogsData = rawAllLogs.map(log => 
+        normalizeVisitLog(log, passLookup.get(cleanPassId(getVisitLogPassId(log))) || {})
+      );
+
       setVisitorsInside(insideData);
       setTotalLogs(allLogsData);
 
-      const checkedOutList = allLogsData.filter(log => log.VVL_Check_Out_Time);
+      const checkedOutList = allLogsData.filter(log => log.checkOutTime);
       const latest = allLogsData.length > 0 
-        ? allLogsData[allLogsData.length - 1].VVL_Accessed_Areas || "Latest Scan" 
+        ? allLogsData[allLogsData.length - 1].accessedAreas || "Latest Scan" 
         : "None";
 
       setStats({
@@ -123,7 +135,6 @@ const SecurityScannerDashboard = () => {
         const decoded = await decodeSecureQrPayload(text);
         passId = decoded.id;
       } else if (text.startsWith("{")) {
-        // Handle JSON payload like {"type":"token","token":"123"}
         const parsed = JSON.parse(text);
         passId = parsed.token || parsed.id || text;
       }
@@ -131,30 +142,70 @@ const SecurityScannerDashboard = () => {
       console.warn("Failed to parse QR code as secure payload or JSON, using raw text", e);
     }
 
+    passId = cleanPassId(passId);
+
+    const existingVisit = visitorsInside.find(v => 
+      String(v.passId) === String(passId) || 
+      String(v.VVL_Pass_id) === String(passId) || 
+      String(v.VGP_Pass_id) === String(passId) || 
+      String(v.PassId) === String(passId)
+    );
+
     try {
-      const today = new Date();
-      today.setHours(23, 59, 59, 999);
-      const expiry = today.toISOString().split('.')[0];
-      
-      await visitLogService.AddVisitLog(passId, "General Entry", expiry);
-      setSuccessMsg(`Check-in successful for Pass ID: ${passId}`);
-      loadData(); // refresh
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      const localTimeStr = [
+        now.getFullYear(),
+        pad(now.getMonth() + 1),
+        pad(now.getDate()),
+      ].join("-") + `T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+      if (existingVisit) {
+        // Visitor is inside, so this is a Check-Out
+        await visitLogService.UpdateVisitLog(
+          existingVisit.id || existingVisit.VVL_Visit_id || existingVisit.VisitLogId,
+          passId,
+          existingVisit.accessedAreas || existingVisit.VVL_Accessed_Areas || "General Entry",
+          localTimeStr
+        );
+        setSuccessMsg(`Check-out successful for Pass ID: ${passId}`);
+      } else {
+        // Visitor is outside, so this is a Check-In
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        const expiry = [
+          today.getFullYear(),
+          pad(today.getMonth() + 1),
+          pad(today.getDate()),
+        ].join("-") + `T${pad(today.getHours())}:${pad(today.getMinutes())}:${pad(today.getSeconds())}`;
+        
+        await visitLogService.AddVisitLog(passId, "General Entry", expiry);
+        setSuccessMsg(`Check-in successful for Pass ID: ${passId}`);
+      }
+      loadData();
     } catch (err) {
-      console.error("Check-in failed:", err);
-      setError("Failed to process check-in for the scanned code.");
+      console.error("Scan processing failed:", err);
+      setError("Failed to process the scanned code. Please try again.");
     }
   };
 
   const handleManualCheckOut = async (visit) => {
     try {
-      const outTime = new Date().toISOString().split('.')[0];
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      const outTime = [
+        now.getFullYear(),
+        pad(now.getMonth() + 1),
+        pad(now.getDate()),
+      ].join("-") + `T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
       await visitLogService.UpdateVisitLog(
-        visit.VVL_Visit_id,
-        visit.VVL_Pass_id,
-        visit.VVL_Accessed_Areas,
+        visit.id || visit.VVL_Visit_id || visit.VisitLogId,
+        visit.passId || visit.VVL_Pass_id,
+        visit.accessedAreas || visit.VVL_Accessed_Areas,
         outTime
       );
-      setSuccessMsg(`Check-out successful for Pass ID: ${visit.VVL_Pass_id}`);
+      setSuccessMsg(`Check-out successful for Pass ID: ${visit.passId || visit.VVL_Pass_id}`);
       loadData();
     } catch (err) {
       console.error("Check-out failed:", err);
@@ -298,23 +349,26 @@ const SecurityScannerDashboard = () => {
                     <motion.div 
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      key={visit.VVL_Visit_id} 
+                      key={visit.id || visit.VVL_Visit_id} 
                       className="bg-gray-50 hover:bg-gray-100 transition-colors p-4 rounded-xl border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                     >
                       <div className="flex flex-col">
-                        <span className="font-semibold text-gray-900">Pass ID: {visit.VVL_Pass_id}</span>
+                        <span className="font-semibold text-gray-900">
+                          {visit.name || visit.Visitor_Name || visit.VV_Name || visit.Visitor_Full_Name || "Unknown Visitor"}
+                        </span>
+                        <span className="text-xs text-gray-400 mt-0.5">NIC/Passport: {visit.nic || "N/A"}</span>
                         <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-500">
                           <span className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-md">
                             <Clock size={14} className="text-blue-500" />
-                            <span className="font-medium text-gray-700">In:</span> {new Date(visit.VVL_Created_Date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            <span className="font-medium text-gray-700">In:</span> {new Date(visit.checkInTime || visit.VVL_Created_Date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                           <span className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-md">
                             <RefreshCw size={14} className="text-orange-500" />
-                            <span className="font-medium text-gray-700">Time spent:</span> {calculateDuration(visit.VVL_Created_Date)}
+                            <span className="font-medium text-gray-700">Time spent:</span> {calculateDuration(visit.checkInTime || visit.VVL_Created_Date)}
                           </span>
                           <span className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-md">
                             <FileText size={14} className="text-green-500" />
-                            <span className="font-medium text-gray-700">Area:</span> {visit.VVL_Accessed_Areas || "N/A"}
+                            <span className="font-medium text-gray-700">Area:</span> {visit.accessedAreas || visit.VVL_Accessed_Areas || "N/A"}
                           </span>
                         </div>
                       </div>
