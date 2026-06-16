@@ -24,7 +24,7 @@ const menuItems = [
   },
   {
     id: "scanner",
-    label: "Scan a QR Code",
+    label: "Check-in / Check-out",
     icon: QrCode,
     path: "/Security_Officer/scanner",
   },
@@ -36,7 +36,7 @@ const menuItems = [
   },
   {
     id: "blacklist",
-    label: "Blocked Visitors",
+    label: "Block Visitor",
     icon: ShieldAlert,
     path: "/Security_Officer/blacklist-management",
   },

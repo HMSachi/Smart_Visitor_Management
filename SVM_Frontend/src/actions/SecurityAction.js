@@ -4,32 +4,170 @@ import {
   setAccessLogs,
   setAlerts,
 } from "../reducers/securitySlice";
+import GatePassService from "../services/GatePassService";
+import VisitLogService from "../services/VisitLogService";
+import {
+  createPassLookup,
+  formatDateOnly,
+  getVisitLogPassId,
+  hasVisitLogCheckedOut,
+  normalizeVisitLog,
+  sortVisitLogsNewestFirst,
+  unwrapApiList,
+} from "../utils/visitLogUtils";
 
 export const FetchSecurityDashboardData = () => async (dispatch) => {
   try {
-    const localDashboard = loadLocalSecurityDashboard();
-    dispatch(setActiveVisitors(localDashboard.activeVisitors));
-    dispatch(setAlerts(localDashboard.alerts));
-    dispatch(setAccessLogs(localDashboard.accessLogs));
+    const dashboard = await loadVisitLogSecurityDashboard();
+    dispatch(setActiveVisitors(dashboard.activeVisitors));
+    dispatch(setAlerts(dashboard.alerts));
+    dispatch(setAccessLogs(dashboard.accessLogs));
 
     dispatch(
       updateMetric({
         label: "People Inside",
-        value: localDashboard.metrics.peopleInside.toString(),
+        value: dashboard.metrics.peopleInside.toString(),
       }),
     );
     dispatch(
       updateMetric({
         label: "Scans Today",
-        value: localDashboard.metrics.scansToday.toString(),
+        value: dashboard.metrics.scansToday.toString(),
       }),
     );
 
     return { success: true };
   } catch (error) {
     console.error("Error fetching security dashboard data:", error);
+    const fallback = loadLocalSecurityDashboard();
+    dispatch(setActiveVisitors(fallback.activeVisitors));
+    dispatch(setAlerts(fallback.alerts));
+    dispatch(setAccessLogs(fallback.accessLogs));
+    dispatch(
+      updateMetric({
+        label: "People Inside",
+        value: fallback.metrics.peopleInside.toString(),
+      }),
+    );
+    dispatch(
+      updateMetric({
+        label: "Scans Today",
+        value: fallback.metrics.scansToday.toString(),
+      }),
+    );
     return { success: false, error };
   }
+};
+
+const loadVisitLogSecurityDashboard = async () => {
+  const [insideResult, allResult, passesResult] = await Promise.allSettled([
+    VisitLogService.GetVisitorsInside(),
+    VisitLogService.GetAllVisitLogs(),
+    GatePassService.GetAllGatePasses(),
+  ]);
+
+  const insideLogs =
+    insideResult.status === "fulfilled" ? unwrapApiList(insideResult.value) : [];
+  const allLogs =
+    allResult.status === "fulfilled" ? unwrapApiList(allResult.value) : [];
+  const passes =
+    passesResult.status === "fulfilled" ? unwrapApiList(passesResult.value) : [];
+
+  if (insideResult.status === "rejected" && allResult.status === "rejected") {
+    throw insideResult.reason || allResult.reason;
+  }
+
+  const passLookup = createPassLookup(passes);
+  const allSource = allLogs.length > 0 ? allLogs : insideLogs;
+  const activeSource =
+    insideLogs.length > 0
+      ? insideLogs
+      : allSource.filter((log) => !hasVisitLogCheckedOut(log));
+
+  const mapLog = (log) =>
+    normalizeVisitLog(log, passLookup.get(String(getVisitLogPassId(log))) || {});
+
+  const activeVisitors = sortVisitLogsNewestFirst(activeSource.map(mapLog)).map(
+    (visitor) => ({
+      id: visitor.id || visitor.passId,
+      name: visitor.name,
+      location: visitor.accessedAreas,
+      duration: visitor.duration,
+      badge: visitor.ref,
+      status: "approved",
+    }),
+  );
+
+  const normalizedLogs = sortVisitLogsNewestFirst(allSource.map(mapLog));
+  const movementEntries = normalizedLogs.flatMap((visitor) => {
+    const entries = [];
+
+    if (visitor.checkInTime) {
+      entries.push({
+        id: `${visitor.id || visitor.passId}-in`,
+        rawTimestamp: visitor.checkInTime,
+        visitorName: visitor.name,
+        action: "Entry",
+        location: visitor.accessedAreas,
+        status: "Success",
+        method: "QR Code",
+      });
+    }
+
+    if (visitor.checkOutTime) {
+      entries.push({
+        id: `${visitor.id || visitor.passId}-out`,
+        rawTimestamp: visitor.checkOutTime,
+        visitorName: visitor.name,
+        action: "Exit",
+        location: visitor.accessedAreas,
+        status: "Success",
+        method: "QR Code",
+      });
+    }
+
+    return entries;
+  });
+
+  movementEntries.sort(
+    (a, b) => new Date(b.rawTimestamp || 0) - new Date(a.rawTimestamp || 0),
+  );
+
+  const todayKey = formatDateOnly(new Date());
+  const scansToday = movementEntries.filter((entry) =>
+    String(entry.rawTimestamp || "").startsWith(todayKey),
+  );
+
+  const accessLogs = movementEntries.slice(0, 20).map((entry) => ({
+    ...entry,
+    timestamp: entry.rawTimestamp
+      ? new Date(entry.rawTimestamp).toLocaleString([], {
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "N/A",
+  }));
+
+  const alerts = movementEntries.slice(0, 10).map((entry) => ({
+    id: `alert-${entry.id}`,
+    type: entry.action === "Entry" ? "info" : "success",
+    title: entry.action === "Entry" ? "Visitor Entered" : "Visitor Exited",
+    description: `${entry.visitorName} ${entry.action === "Entry" ? "checked in" : "checked out"} at ${entry.location}`,
+    time: entry.rawTimestamp ? calculateRelativeTime(entry.rawTimestamp) : "Just now",
+    severity: "normal",
+  }));
+
+  return {
+    metrics: {
+      peopleInside: activeVisitors.length,
+      scansToday: scansToday.length,
+    },
+    activeVisitors,
+    accessLogs,
+    alerts,
+  };
 };
 
 const loadLocalSecurityDashboard = () => {

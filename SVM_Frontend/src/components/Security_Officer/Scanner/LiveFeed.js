@@ -12,9 +12,7 @@ import {
   QrCode,
   Zap,
   RefreshCw,
-  ShieldCheck,
   AlertTriangle,
-  ArrowRight,
   User,
   CreditCard,
   Mail,
@@ -55,6 +53,15 @@ import VisitGroupService from "../../../services/VisitGroupService";
 import VisitorAttachmentService from "../../../services/VisitorAttachmentService";
 import AttachmentPreviewModal from "../../../components/common/AttachmentPreviewModal";
 import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
+import {
+  findOpenVisitLog,
+  getPassAccessAreas,
+  getVisitExpiryDate,
+  getVisitLogAreas,
+  getVisitLogId,
+  toLocalApiDateTime,
+  unwrapApiList,
+} from "../../../utils/visitLogUtils";
 
 // ── Helper: a single icon + label + value row ──────────────────────────────
 const InfoRow = ({ icon, label, value }) => (
@@ -93,50 +100,6 @@ const InfoRow = ({ icon, label, value }) => (
   </div>
 );
 
-const formatDateYYYYMMDD = (date) => {
-  if (!date || Number.isNaN(date.getTime())) {
-    return null;
-  }
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const parseDateOnly = (value) => {
-  if (!value) {
-    return null;
-  }
-
-  const raw = String(value).trim();
-  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (match) {
-    const year = Number(match[1]);
-    const month = Number(match[2]) - 1;
-    const day = Number(match[3]);
-    return new Date(year, month, day);
-  }
-
-  const parsed = new Date(raw);
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-
-  return parsed;
-};
-
-const getExpiryDateFromVisitDate = (visitDate) => {
-  const base = parseDateOnly(visitDate);
-  if (!base) {
-    return null;
-  }
-
-  const expiry = new Date(base);
-  expiry.setDate(expiry.getDate() + 1);
-  return formatDateYYYYMMDD(expiry);
-};
-
 const LiveFeed = () => {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -144,12 +107,11 @@ const LiveFeed = () => {
   const videoRef = useRef(null);
   const controlsRef = useRef(null);
   const scannerRef = useRef(null);
-  const useDemoScanLog = true;
   const [scanStatus, setScanStatus] = useState("idle"); // idle, scanning, success, error, details
   const [scanMessage, setScanMessage] = useState(
     "Point your camera at the QR code to get started.",
   );
-  const [scanResult, setScanResult] = useState("");
+  const [, setScanResult] = useState("");
   const [passDetails, setPassDetails] = useState(null);
   const [qrData, setQrData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -158,8 +120,8 @@ const LiveFeed = () => {
   // The specific VisitorJoint row matched when scanning a sub-visitor QR
   const [subVisitorApiData, setSubVisitorApiData] = useState(null);
   // Track check-in/checkout
-  const [scanCount, setScanCount] = useState(0);
   const [scanType, setScanType] = useState(null); // "CHECK_IN" or "CHECK_OUT"
+  const [currentVisitLog, setCurrentVisitLog] = useState(null);
   const [remarks, setRemarks] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   // Items carried by the main visitor + their checked state
@@ -178,11 +140,6 @@ const LiveFeed = () => {
 
   // Vehicle registry state
   const [vehiclesList, setVehiclesList] = useState([]);
-
-  const getTodayDateKey = () => new Date().toISOString().slice(0, 10);
-
-  const getDemoScanLogKey = (passId, dateKey) =>
-    `svm.scanLog.${passId}.${dateKey}`;
 
   const persistGatePassMeta = (details) => {
     if (!details?.VGP_Pass_id || typeof window === "undefined") {
@@ -204,29 +161,6 @@ const LiveFeed = () => {
     } catch (err) {
       console.warn("localStorage access blocked:", err);
     }
-  };
-
-  const getTodayScanCountDemo = (passId) => {
-    const dateKey = getTodayDateKey();
-    const raw = localStorage.getItem(getDemoScanLogKey(passId, dateKey));
-    const entries = raw ? JSON.parse(raw) : [];
-    return { count: Array.isArray(entries) ? entries.length : 0, entries };
-  };
-
-  const logScanEntryDemo = (passId, type, remarkText) => {
-    const dateKey = getTodayDateKey();
-    const key = getDemoScanLogKey(passId, dateKey);
-    const raw = localStorage.getItem(key);
-    const entries = raw ? JSON.parse(raw) : [];
-    const next = Array.isArray(entries) ? entries : [];
-    next.push({
-      passId,
-      type,
-      remarks: remarkText || "",
-      timestamp: new Date().toISOString(),
-    });
-    localStorage.setItem(key, JSON.stringify(next));
-    return { Status: "Success" };
   };
 
   const stopScanner = useCallback(() => {
@@ -268,6 +202,7 @@ const LiveFeed = () => {
     setQrData(null);
     setSubVisitorsData([]);
     setSubVisitorApiData(null);
+    setCurrentVisitLog(null);
     setMainVisitorItems([]);
     setItemCheckStates({});
     setScanStatus("scanning");
@@ -508,14 +443,6 @@ const LiveFeed = () => {
 
       if (details && details.VGP_Pass_id) {
         // Database validation successful
-        if (useDemoScanLog) {
-          const localStatus = localStorage.getItem(
-            `svm.gatePassStatus.${details.VGP_Pass_id}`,
-          );
-          if (localStatus) {
-            details.VGP_Status = localStatus;
-          }
-        }
         setPassDetails(details);
         persistGatePassMeta(details);
         setScanStatus("details");
@@ -523,44 +450,38 @@ const LiveFeed = () => {
           "The visitor details were found and verified successfully.",
         );
 
-        // Fetch scan count for today to determine check-in or checkout
+        // Use the database visit-log registry to decide entry vs exit.
         try {
-          let count = 0;
-          if (useDemoScanLog) {
-            const demo = getTodayScanCountDemo(details.VGP_Pass_id);
-            count = demo.count || 0;
-          } else {
-            const scanCountResponse = await GatePassService.GetTodayScanCount(
-              details.VGP_Pass_id,
-            );
-            count =
-              scanCountResponse?.data?.scanCount ||
-              scanCountResponse?.data?.count ||
-              0;
-          }
+          const activeLogsResponse = await VisitLogService.GetVisitorsInside();
+          const activeLogs = unwrapApiList(activeLogsResponse);
+          const openLog = findOpenVisitLog(activeLogs, details.VGP_Pass_id);
 
-          setScanCount(count);
-
-          // Determine scan type based on count
-          if (count === 0 || count === 1) {
-            setScanType(count === 0 ? "CHECK_IN" : "CHECK_OUT");
-          } else {
+          setCurrentVisitLog(openLog);
+          if (openLog) {
             setScanType("CHECK_OUT");
+            setScanMessage(
+              "Visitor is currently inside. Checkout is ready for this pass.",
+            );
+          } else {
+            setScanType("CHECK_IN");
+            setScanMessage(
+              "Visitor is verified. Check-in is ready for this pass.",
+            );
           }
 
           console.log(
-            "[LiveFeed] Scan count for today:",
-            count,
+            "[LiveFeed] Open visit log:",
+            openLog,
             "Scan type:",
-            count === 0 ? "CHECK_IN" : "CHECK_OUT",
+            openLog ? "CHECK_OUT" : "CHECK_IN",
           );
         } catch (err) {
           console.warn(
-            "[LiveFeed] Could not fetch scan count, defaulting to CHECK_IN:",
+            "[LiveFeed] Could not load active visit logs, defaulting to CHECK_IN:",
             err,
           );
-          setScanCount(0);
           setScanType("CHECK_IN");
+          setCurrentVisitLog(null);
         }
 
         // Fetch sub-visitor data live from the VisitGroupService and VisitorJoint API
@@ -822,10 +743,6 @@ const LiveFeed = () => {
     return merged;
   }, [qrData, passDetails, subVisitorsData, subVisitorApiData]);
 
-  const hasFullQrProfile = Object.values(profileData).some(
-    (value) => value !== "N/A" && !Array.isArray(value),
-  );
-
   const openViewAttachments = async (
     visitorId,
     visitorName,
@@ -889,8 +806,8 @@ const LiveFeed = () => {
     setIsLoading(false);
     setScanStatus("idle");
     setScanMessage("Point your camera at the QR code to get started.");
-    setScanCount(0);
     setScanType(null);
+    setCurrentVisitLog(null);
     setRemarks("");
     setIsSubmitting(false);
     setViewAttachments({
@@ -910,13 +827,6 @@ const LiveFeed = () => {
       return;
     }
 
-    if (scanType === "CHECK_OUT" && !remarks.trim()) {
-      alert(
-        "Please enter remarks about the visitor behavior before checking out.",
-      );
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       // Update item statuses first (A = taken/ticked, I = not taken/unticked)
@@ -933,72 +843,76 @@ const LiveFeed = () => {
         console.log("[LiveFeed] Item statuses updated.");
       }
 
-      let result = null;
-      if (useDemoScanLog) {
-        result = {
-          data: logScanEntryDemo(passDetails.VGP_Pass_id, scanType, remarks),
-        };
-      } else {
-        result = await GatePassService.LogScanEntry(
+      if (scanType === "CHECK_IN") {
+        const activeLogsResponse = await VisitLogService.GetVisitorsInside();
+        const existingOpenLog = findOpenVisitLog(
+          unwrapApiList(activeLogsResponse),
           passDetails.VGP_Pass_id,
-          scanType,
-          remarks,
         );
-      }
 
-      if (result?.data?.Status === "Success" || result?.status === 200) {
-        if (scanType === "CHECK_IN") {
-          const expiryDate = getExpiryDateFromVisitDate(
-            passDetails?.VVR_Visit_Date,
+        if (existingOpenLog) {
+          setCurrentVisitLog(existingOpenLog);
+          setScanType("CHECK_OUT");
+          setScanMessage(
+            "This visitor is already inside. Checkout is ready now.",
           );
-          if (!expiryDate) {
-            throw new Error(
-              "Visit date is missing or invalid; unable to calculate expiry date.",
-            );
-          }
+          return;
+        }
 
-          const accessedAreas =
-            passDetails?.VVR_Places_to_Visit ||
-            passDetails?.VGP_Visiting_Area ||
-            "N/A";
-
-          await VisitLogService.AddVisitLog(
+        await VisitLogService.AddVisitLog(
+          passDetails.VGP_Pass_id,
+          getPassAccessAreas(passDetails),
+          getVisitExpiryDate(passDetails),
+        );
+      } else if (scanType === "CHECK_OUT") {
+        let openLog = currentVisitLog;
+        if (!openLog) {
+          const activeLogsResponse = await VisitLogService.GetVisitorsInside();
+          openLog = findOpenVisitLog(
+            unwrapApiList(activeLogsResponse),
             passDetails.VGP_Pass_id,
-            accessedAreas,
-            expiryDate,
           );
         }
 
-        // Update gate pass status in backend and localStorage
-        const newStatus = scanType === "CHECK_IN" ? "IN" : "OUT";
-        try {
-          await dispatch(
-            UpdateGatePassStatus(passDetails.VGP_Pass_id, newStatus),
-          );
-        } catch (statusErr) {
-          console.warn(
-            "[LiveFeed] Could not update gate pass status in backend:",
-            statusErr,
+        const visitId = getVisitLogId(openLog);
+        if (!visitId) {
+          throw new Error(
+            "No open visit log was found for this pass. Please refresh and scan again.",
           );
         }
-        localStorage.setItem(
-          `svm.gatePassStatus.${passDetails.VGP_Pass_id}`,
-          newStatus,
-        );
 
-        const actionText = scanType === "CHECK_IN" ? "Check-in" : "Check-out";
-        setScanMessage(
-          `${actionText} successful! ${scanType === "CHECK_OUT" && remarks ? "Remarks logged." : ""}`,
+        await VisitLogService.UpdateVisitLog(
+          visitId,
+          passDetails.VGP_Pass_id,
+          getVisitLogAreas(openLog, passDetails),
+          toLocalApiDateTime(new Date()),
         );
-
-        // Show success for 2 seconds then reset
-        setTimeout(() => {
-          handleResetNode();
-          startScanner();
-        }, 2000);
       } else {
-        throw new Error("Failed to log scan entry");
+        throw new Error("Scan mode is not ready. Please scan the QR code again.");
       }
+
+      // Update gate pass status after the authoritative visit-log write.
+      const newStatus = scanType === "CHECK_IN" ? "IN" : "OUT";
+      try {
+        await dispatch(UpdateGatePassStatus(passDetails.VGP_Pass_id, newStatus));
+      } catch (statusErr) {
+        console.warn(
+          "[LiveFeed] Could not update gate pass status in backend:",
+          statusErr,
+        );
+      }
+      localStorage.setItem(
+        `svm.gatePassStatus.${passDetails.VGP_Pass_id}`,
+        newStatus,
+      );
+
+      const actionText = scanType === "CHECK_IN" ? "Check-in" : "Check-out";
+      setScanMessage(`${actionText} successful. Visit log database updated.`);
+
+      setTimeout(() => {
+        handleResetNode();
+        startScanner();
+      }, 2000);
     } catch (err) {
       console.error("Error logging scan entry:", err);
       alert(`Failed to log ${scanType}: ${err.message}`);
@@ -1856,8 +1770,7 @@ const LiveFeed = () => {
                     disabled={isSubmitting}
                   />
                   <p className="text-[8px] text-[var(--color-text-dim)] mt-1.5">
-                    Required: Please provide feedback about the visitor's
-                    behavior and conduct during the visit.
+                    Optional: add a short note for security handover if needed.
                   </p>
                 </div>
               )}
@@ -1873,9 +1786,7 @@ const LiveFeed = () => {
             >
               <button
                 onClick={handleCheckInOut}
-                disabled={
-                  isSubmitting || (scanType === "CHECK_OUT" && !remarks.trim())
-                }
+                disabled={isSubmitting}
                 className={`flex-1 py-2.5 font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all flex items-center justify-center gap-2 text-white disabled:opacity-50 disabled:cursor-not-allowed`}
                 style={{
                   background:

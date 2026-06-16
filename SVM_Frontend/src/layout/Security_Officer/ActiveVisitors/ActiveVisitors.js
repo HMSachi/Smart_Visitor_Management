@@ -1,7 +1,6 @@
 import React from 'react';
 import Header from '../../../components/Security_Officer/Layout/Header';
 import ActiveVisitorsComponent from '../../../components/Security_Officer/ActiveVisitors/ActiveVisitors';
-import { Users } from 'lucide-react';
 
 const ActiveVisitors = () => {
   return (
