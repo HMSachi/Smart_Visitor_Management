@@ -158,8 +158,94 @@ const PlacesManagement = () => {
             </div>
           </header>
 
-          {/* Table Container */}
-          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
+          {/* ── MOBILE CARDS ── */}
+          <div className="md:hidden space-y-3 mb-6">
+            {loading ? (
+              <div className="flex justify-center py-16">
+                <PageSpinner size={44} color="var(--color-primary)" />
+              </div>
+            ) : filteredPlaces.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 py-16 text-center">
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 text-primary">
+                  <MapPin size={22} />
+                </div>
+                <p className="text-[var(--color-text-dim)] text-[12px] uppercase tracking-widest">
+                  {searchTerm ? "No matches found" : "No records available"}
+                </p>
+              </div>
+            ) : (
+              filteredPlaces.map((place, index) => {
+                const placeId = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || index + 1;
+                const placeNameVal = place.VAIL_Item_Name || place.Item_Name || "Unnamed";
+                const status = (place.VAIL_Status || place.Status || "A").toString().trim().toUpperCase();
+                const isActive = status === "A";
+                return (
+                  <div
+                    key={placeId}
+                    className="relative rounded-[16px] border overflow-hidden shadow-lg bg-[var(--color-bg-paper)] border-white/[0.07]"
+                  >
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary/60 via-red-500/40 to-transparent" />
+                    <div className="p-4 pt-5">
+                      {/* Header row */}
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                            <MapPin size={16} className="text-primary" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className={`text-[14px] font-bold truncate ${isActive ? "text-white" : "text-white/40 line-through"}`}>
+                              {placeNameVal}
+                            </p>
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <Hash size={10} className="text-primary/40 shrink-0" />
+                              <span className="text-[11px] text-[var(--color-text-secondary)]">{placeId}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleToggleStatus(place)}
+                          disabled={isSubmitting}
+                          className={`svm-status-pill shrink-0 transition-colors cursor-pointer ${
+                            isActive ? "svm-status-pill--success" : "svm-status-pill--danger"
+                          }`}
+                        >
+                          {isActive ? "Active" : "Inactive"}
+                        </button>
+                      </div>
+
+                      <div className="w-full h-px bg-white/[0.05] mb-3" />
+
+                      {/* Action buttons */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          onClick={() => handleToggleStatus(place)}
+                          disabled={isSubmitting}
+                          className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[12px] font-bold transition-all active:scale-95 ${
+                            isActive
+                              ? "bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500 hover:text-white"
+                              : "bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
+                          }`}
+                        >
+                          {isActive ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
+                          {isActive ? "Deactivate" : "Activate"}
+                        </button>
+                        <button
+                          onClick={() => handleOpenEdit(place)}
+                          className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[12px] font-bold bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-white transition-all active:scale-95"
+                        >
+                          <Edit size={14} />
+                          Edit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* ── DESKTOP TABLE ── */}
+          <div className="hidden md:block bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
             {loading ? (
               <div className="p-20 flex items-center justify-center">
@@ -169,181 +255,56 @@ const PlacesManagement = () => {
               <TableContainer
                 component={Paper}
                 className="bg-transparent border-none z-10 relative"
-                sx={{
-                  maxHeight: "600px",
-                  minHeight: "400px",
-                  overflow: "auto",
-                  overflowX: "auto",
-                }}
+                sx={{ maxHeight: "600px", minHeight: "400px", overflow: "auto", overflowX: "auto" }}
               >
                 <Table stickyHeader aria-label="places table" sx={{ minWidth: 660, tableLayout: "fixed", width: "100%" }}>
                   <TableHead>
-                    <TableRow
-                      sx={{
-                        height: "24px",
-                        backgroundColor: "var(--color-bg-paper)",
-                      }}
-                    >
-                      <TableCell
-                        sx={{
-                          padding: "8px 16px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "110px",
-                        }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                      >
-                        Location ID
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          padding: "8px 12px 8px 12px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "260px",
-                        }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                      >
-                        Facility Name
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{
-                          padding: "8px 0px 8px 0px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "170px",
-                        }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)] text-center"
-                      >
-                        Status
-                      </TableCell>
-                      <TableCell
-                        align="left"
-                        sx={{
-                          padding: "8px 0px 8px 0px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "120px",
-                        }}
-                        className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                      >
-                        Actions
-                      </TableCell>
+                    <TableRow sx={{ height: "24px", backgroundColor: "var(--color-bg-paper)" }}>
+                      <TableCell sx={{ padding: "8px 16px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "110px" }} className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">Location ID</TableCell>
+                      <TableCell sx={{ padding: "8px 12px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "260px" }} className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">Facility Name</TableCell>
+                      <TableCell align="center" sx={{ padding: "8px 0px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "170px" }} className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)] text-center">Status</TableCell>
+                      <TableCell align="left" sx={{ padding: "8px 0px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "120px" }} className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody className="divide-y divide-white/[0.04]">
                     {filteredPlaces.length === 0 ? (
                       <TableRow>
-                        <TableCell
-                          colSpan={4}
-                          align="center"
-                          className="py-12 text-[var(--color-text-dim)] uppercase tracking-widest text-[12px]"
-                        >
-                          {searchTerm
-                            ? "No matches found"
-                            : "No records available"}
+                        <TableCell colSpan={4} align="center" className="py-12 text-[var(--color-text-dim)] uppercase tracking-widest text-[12px]">
+                          {searchTerm ? "No matches found" : "No records available"}
                         </TableCell>
                       </TableRow>
                     ) : (
                       filteredPlaces.map((place, index) => {
-                        const placeId =
-                          place.VAIL_Item_List_ID ||
-                          place.Item_List_ID ||
-                          place.Id ||
-                          index + 1;
-                        const placeNameVal =
-                          place.VAIL_Item_Name || place.Item_Name || "Unnamed";
-                        const status = (
-                          place.VAIL_Status ||
-                          place.Status ||
-                          "A"
-                        )
-                          .toString()
-                          .trim()
-                          .toUpperCase();
+                        const placeId = place.VAIL_Item_List_ID || place.Item_List_ID || place.Id || index + 1;
+                        const placeNameVal = place.VAIL_Item_Name || place.Item_Name || "Unnamed";
+                        const status = (place.VAIL_Status || place.Status || "A").toString().trim().toUpperCase();
                         const isActive = status === "A";
-
                         return (
-                          <TableRow
-                            key={placeId}
-                            sx={{
-                              "&:hover": {
-                                backgroundColor: "rgba(255,255,255,0.02)",
-                              },
-                              height: "28px",
-                              transition: "all 0.2s ease",
-                            }}
-                          >
-                            <TableCell
-                              sx={{
-                                padding: "8px 16px",
-                                borderBottom: "none",
-                                width: "110px",
-                              }}
-                              className="text-white align-middle font-normal text-[12px]"
-                            >
+                          <TableRow key={placeId} sx={{ "&:hover": { backgroundColor: "rgba(255,255,255,0.02)" }, height: "28px", transition: "all 0.2s ease" }}>
+                            <TableCell sx={{ padding: "8px 16px", borderBottom: "none", width: "110px" }} className="text-white align-middle font-normal text-[12px]">
                               <div className="flex items-center gap-1">
                                 <Hash size={10} className="text-primary/40" />
                                 <span>{placeId}</span>
                               </div>
                             </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 12px 8px 12px",
-                                width: "260px",
-                              }}
-                              className={`font-normal align-middle transition-colors text-[12px] ${
-                                isActive ? "text-white" : "text-white/40 line-through"
-                              }`}
-                            >
+                            <TableCell sx={{ padding: "8px 12px", width: "260px" }} className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40 line-through"}`}>
                               {placeNameVal}
                             </TableCell>
-                            <TableCell
-                              align="left"
-                              sx={{
-                                padding: "8px 0px 8px 0px",
-                                borderBottom: "none",
-                                width: "170px",
-                              }}
-                              className="text-left"
-                            >
+                            <TableCell align="left" sx={{ padding: "8px 0px", borderBottom: "none", width: "170px" }} className="text-left">
                               <button
                                 onClick={() => handleToggleStatus(place)}
                                 disabled={isSubmitting}
-                                className={`svm-status-pill transition-colors cursor-pointer ${
-                                  isActive
-                                    ? "svm-status-pill--success hover:bg-green-500/20"
-                                    : "svm-status-pill--danger hover:bg-primary/20"
-                                }`}
+                                className={`svm-status-pill transition-colors cursor-pointer ${isActive ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"}`}
                               >
                                 {isActive ? "Active" : "Inactive"}
                               </button>
                             </TableCell>
-                            <TableCell
-                              align="left"
-                              sx={{
-                                padding: "8px 0px 8px 0px",
-                                borderBottom: "none",
-                                width: "120px",
-                              }}
-                            >
+                            <TableCell align="left" sx={{ padding: "8px 0px", borderBottom: "none", width: "120px" }}>
                               <div className="flex items-center justify-start gap-1">
-                                <IconButton
-                                  onClick={() => handleToggleStatus(place)}
-                                  size="small"
-                                  disabled={isSubmitting}
-                                  sx={{
-                                    color: isActive ? "#22c55e" : "#ef4444",
-                                  }}
-                                >
-                                  {isActive ? (
-                                    <ToggleRight size={18} />
-                                  ) : (
-                                    <ToggleLeft size={18} />
-                                  )}
+                                <IconButton onClick={() => handleToggleStatus(place)} size="small" disabled={isSubmitting} sx={{ color: isActive ? "#22c55e" : "#ef4444" }}>
+                                  {isActive ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
                                 </IconButton>
-                                <IconButton
-                                  onClick={() => handleOpenEdit(place)}
-                                  size="small"
-                                  className="text-white/40 hover:text-white p-1"
-                                >
+                                <IconButton onClick={() => handleOpenEdit(place)} size="small" className="text-white/40 hover:text-white p-1">
                                   <Edit size={16} />
                                 </IconButton>
                               </div>

@@ -21,6 +21,9 @@ import {
   AlertCircle,
   Users,
   Hash,
+  CreditCard,
+  Building2,
+  MapPin,
 } from "lucide-react";
 import PageSpinner from "../../../components/common/PageSpinner";
 
@@ -125,7 +128,100 @@ const VisitorManagement = () => {
             </div>
           </header>
 
-          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
+          {/* ── MOBILE CARDS ── */}
+          <div className="md:hidden space-y-3 mb-6">
+            {isLoading ? (
+              <div className="flex justify-center py-16">
+                <PageSpinner size={40} color="var(--color-primary)" />
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center gap-3 py-16 text-center">
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 text-primary">
+                  <AlertCircle size={22} />
+                </div>
+                <p className="text-primary text-[12px] font-bold uppercase tracking-widest">{error}</p>
+              </div>
+            ) : !visitors || visitors.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 py-16 text-center">
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 text-primary">
+                  <Users size={22} />
+                </div>
+                <p className="text-[var(--color-text-dim)] text-[12px] uppercase tracking-widest">No visitor records detected</p>
+              </div>
+            ) : (
+              [...visitors]
+                .sort((a, b) => (b.VV_Visitor_id || 0) - (a.VV_Visitor_id || 0))
+                .map((visitor) => {
+                  const isActive =
+                    (visitor.VV_Status || "").toString().trim().toUpperCase() === "A" ||
+                    (visitor.VV_Status || "").toString().trim().toUpperCase() === "ACTIVE";
+                  return (
+                    <div
+                      key={visitor.VV_Visitor_id}
+                      className="relative rounded-[16px] border overflow-hidden shadow-lg bg-[var(--color-bg-paper)] border-white/[0.07]"
+                    >
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary/60 via-red-500/40 to-transparent" />
+                      <div className="p-4 pt-5">
+                        {/* Header row */}
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                              <span className="text-[13px] font-black text-primary uppercase">
+                                {(visitor.VV_Name || "V").slice(0, 2)}
+                              </span>
+                            </div>
+                            <div className="min-w-0">
+                              <p className={`text-[14px] font-bold truncate ${isActive ? "text-white" : "text-white/40 line-through"}`}>
+                                {visitor.VV_Name || "—"}
+                              </p>
+                              <div className="flex items-center gap-1 mt-0.5">
+                                <Hash size={10} className="text-primary/40 shrink-0" />
+                                <span className="text-[11px] text-[var(--color-text-secondary)]">{visitor.VV_Visitor_id}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleToggleStatus(visitor)}
+                            disabled={isLoading}
+                            className={`svm-status-pill shrink-0 transition-colors cursor-pointer ${
+                              isActive ? "svm-status-pill--success" : "svm-status-pill--danger"
+                            }`}
+                          >
+                            {isActive ? "ACTIVE" : "INACTIVE"}
+                          </button>
+                        </div>
+
+                        <div className="w-full h-px bg-white/[0.05] mb-3" />
+
+                        <div className="space-y-2">
+                          {visitor.VV_NIC_Passport_NO && (
+                            <div className="flex items-center gap-2">
+                              <CreditCard size={13} className="text-primary/50 shrink-0" />
+                              <span className="text-[12px] text-white/65 truncate">{visitor.VV_NIC_Passport_NO}</span>
+                            </div>
+                          )}
+                          {visitor.VV_Company && (
+                            <div className="flex items-center gap-2">
+                              <Building2 size={13} className="text-primary/50 shrink-0" />
+                              <span className="text-[12px] text-white/65 truncate">{visitor.VV_Company}</span>
+                            </div>
+                          )}
+                          {visitor.VV_Visiting_places && (
+                            <div className="flex items-center gap-2">
+                              <MapPin size={13} className="text-primary/50 shrink-0" />
+                              <span className="text-[12px] text-white/65 truncate">{visitor.VV_Visiting_places}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+            )}
+          </div>
+
+          {/* ── DESKTOP TABLE ── */}
+          <div className="hidden md:block bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
             {isLoading ? (
@@ -145,193 +241,71 @@ const VisitorManagement = () => {
               <TableContainer
                 component={Paper}
                 className="bg-transparent border-none z-10 relative"
-                sx={{
-                  maxHeight: "600px",
-                  minHeight: "400px",
-                  overflow: "auto",
-                }}
+                sx={{ maxHeight: "600px", minHeight: "400px", overflow: "auto" }}
               >
                 <Table stickyHeader aria-label="visitors table">
                   <TableHead>
-                    <TableRow
-                      sx={{
-                        height: "24px",
-                        backgroundColor: "var(--color-bg-paper)",
-                      }}
-                    >
-                      <TableCell
-                        sx={{
-                          padding: "8px 24px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "8%",
-                        }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                      >
-                        ID
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          padding: "8px 24px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                        }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                      >
-                        Visitor Identity
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          padding: "8px 24px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                        }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                      >
-                        Credentials
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          padding: "8px 24px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                        }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                      >
-                        Organization
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          padding: "8px 24px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "20%",
-                        }}
-                        className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                      >
-                        Destination
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{
-                          padding: "8px 24px",
-                          borderBottom: "1px solid rgba(255,255,255,0.05)",
-                          width: "12%",
-                        }}
-                        className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                      >
-                        Status
-                      </TableCell>
+                    <TableRow sx={{ height: "24px", backgroundColor: "var(--color-bg-paper)" }}>
+                      {["ID", "Visitor Identity", "Credentials", "Organization", "Destination", "Status"].map((h, i) => (
+                        <TableCell
+                          key={h}
+                          align={i === 5 ? "center" : "left"}
+                          sx={{ padding: "8px 24px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: i === 0 ? "8%" : i === 4 ? "20%" : i === 5 ? "12%" : undefined }}
+                          className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
+                        >
+                          {h}
+                        </TableCell>
+                      ))}
                     </TableRow>
                   </TableHead>
                   <TableBody className="divide-y divide-white/[0.04]">
                     {visitors && visitors.length > 0 ? (
                       [...visitors]
-                        .sort(
-                          (a, b) =>
-                            (b.VV_Visitor_id || 0) - (a.VV_Visitor_id || 0),
-                        )
+                        .sort((a, b) => (b.VV_Visitor_id || 0) - (a.VV_Visitor_id || 0))
                         .map((visitor) => {
-                        const isActive =
-                          (visitor.VV_Status || "")
-                            .toString()
-                            .trim()
-                            .toUpperCase() === "A" ||
-                          (visitor.VV_Status || "")
-                            .toString()
-                            .trim()
-                            .toUpperCase() === "ACTIVE";
-                        return (
-                          <TableRow
-                            key={visitor.VV_Visitor_id}
-                            sx={{
-                              "&:hover": {
-                                backgroundColor: "rgba(255,255,255,0.02)",
-                              },
-                              height: "28px",
-                              transition: "all 0.2s ease",
-                            }}
-                          >
-                            <TableCell
-                              sx={{
-                                padding: "8px 24px",
-                                borderBottom: "none",
-                              }}
-                              className="text-white align-middle font-normal text-[12px]"
+                          const isActive =
+                            (visitor.VV_Status || "").toString().trim().toUpperCase() === "A" ||
+                            (visitor.VV_Status || "").toString().trim().toUpperCase() === "ACTIVE";
+                          return (
+                            <TableRow
+                              key={visitor.VV_Visitor_id}
+                              sx={{ "&:hover": { backgroundColor: "rgba(255,255,255,0.02)" }, height: "28px", transition: "all 0.2s ease" }}
                             >
-                              <div className="flex items-center gap-1">
-                                <Hash size={10} className="text-primary/40" />
-                                <span>{visitor.VV_Visitor_id}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 24px",
-                                borderBottom: "none",
-                              }}
-                              className={`font-normal align-middle transition-colors text-[12px] ${
-                                isActive ? "text-white" : "text-white/40 line-through"
-                              }`}
-                            >
-                              {visitor.VV_Name || "-"}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 24px",
-                                borderBottom: "none",
-                              }}
-                              className={`font-normal align-middle transition-colors text-[12px] ${
-                                isActive ? "text-white/70" : "text-white/20"
-                              }`}
-                            >
-                              {visitor.VV_NIC_Passport_NO || "-"}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 24px",
-                                borderBottom: "none",
-                              }}
-                              className={`font-normal align-middle transition-colors text-[12px] ${
-                                isActive ? "text-white/70" : "text-white/20"
-                              }`}
-                            >
-                              {visitor.VV_Company || "-"}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                padding: "8px 24px",
-                                borderBottom: "none",
-                              }}
-                              className={`font-normal align-middle transition-colors text-[12px] ${
-                                isActive ? "text-white/70" : "text-white/20"
-                              }`}
-                            >
-                              {visitor.VV_Visiting_places || "-"}
-                            </TableCell>
-                            <TableCell
-                              align="center"
-                              sx={{
-                                padding: "8px 24px",
-                                borderBottom: "none",
-                              }}
-                            >
-                              <button
-                                onClick={() => handleToggleStatus(visitor)}
-                                disabled={isLoading}
-                                className={`svm-status-pill transition-colors cursor-pointer ${
-                                  isActive
-                                    ? "svm-status-pill--success hover:bg-green-500/20"
-                                    : "svm-status-pill--danger hover:bg-primary/20"
-                                }`}
-                              >
-                                {isActive ? "ACTIVE" : "INACTIVE"}
-                              </button>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "none" }} className="text-white align-middle font-normal text-[12px]">
+                                <div className="flex items-center gap-1">
+                                  <Hash size={10} className="text-primary/40" />
+                                  <span>{visitor.VV_Visitor_id}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "none" }} className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40 line-through"}`}>
+                                {visitor.VV_Name || "-"}
+                              </TableCell>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "none" }} className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}>
+                                {visitor.VV_NIC_Passport_NO || "-"}
+                              </TableCell>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "none" }} className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}>
+                                {visitor.VV_Company || "-"}
+                              </TableCell>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "none" }} className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}>
+                                {visitor.VV_Visiting_places || "-"}
+                              </TableCell>
+                              <TableCell align="center" sx={{ padding: "8px 24px", borderBottom: "none" }}>
+                                <button
+                                  onClick={() => handleToggleStatus(visitor)}
+                                  disabled={isLoading}
+                                  className={`svm-status-pill transition-colors cursor-pointer ${
+                                    isActive ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"
+                                  }`}
+                                >
+                                  {isActive ? "ACTIVE" : "INACTIVE"}
+                                </button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
                     ) : (
                       <TableRow>
-                        <TableCell
-                          colSpan={6}
-                          align="center"
-                          className="py-12 text-[var(--color-text-dim)] uppercase tracking-widest text-[12px]"
-                        >
+                        <TableCell colSpan={6} align="center" className="py-12 text-[var(--color-text-dim)] uppercase tracking-widest text-[12px]">
                           No visitor records detected
                         </TableCell>
                       </TableRow>
@@ -341,6 +315,7 @@ const VisitorManagement = () => {
               </TableContainer>
             )}
           </div>
+
         </div>
       </div>
     </div>

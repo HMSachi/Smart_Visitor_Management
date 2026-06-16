@@ -710,236 +710,170 @@ const AllUsers = () => {
                       <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent"></div>
                     </div>
 
-                    <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
+                    {/* ── MOBILE CARDS ── */}
+                    <div className="md:hidden space-y-3 mb-2">
+                      {cat.data.length === 0 ? (
+                        <div className="flex flex-col items-center gap-3 py-12 text-center">
+                          <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 text-primary">
+                            <cat.icon size={22} />
+                          </div>
+                          <p className="text-[var(--color-text-dim)] text-[12px] uppercase tracking-widest">No users in this category</p>
+                        </div>
+                      ) : (
+                        cat.data.map((item) => {
+                          const isActive =
+                            (item.VA_Status || item.VCP_Status || "").toString().trim().toUpperCase() === "A" ||
+                            (item.VA_Status || item.VCP_Status || "").toString().trim().toUpperCase() === "ACTIVE";
+                          const userName = item.VA_Name || item.VCP_Name || "—";
+                          const userEmail = item.VA_Email || item.VCP_Email || "—";
+                          const userId = item.VA_Admin_id || item.VCP_Contact_person_id;
+                          const roleOrDept = cat.id === "CONTACT"
+                            ? (item.VCP_Department || "—")
+                            : (item.VA_Role || "—");
+                          const phoneOrDate = cat.id === "CONTACT"
+                            ? (getContactMobile(item) || "—")
+                            : (item.VA_Created_Date ? item.VA_Created_Date.split(" ")[0] : "—");
+
+                          return (
+                            <div
+                              key={userId}
+                              className="relative rounded-[16px] border overflow-hidden shadow-lg bg-[var(--color-bg-paper)] border-white/[0.07]"
+                            >
+                              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary/60 via-red-500/40 to-transparent" />
+                              <div className="p-4 pt-5">
+                                {/* Header row */}
+                                <div className="flex items-start justify-between gap-3 mb-3">
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                                      <span className="text-[13px] font-black text-primary uppercase">
+                                        {(userName || "U").slice(0, 2)}
+                                      </span>
+                                    </div>
+                                    <div className="min-w-0">
+                                      <p className={`text-[14px] font-bold truncate ${isActive ? "text-white" : "text-white/40 line-through"}`}>
+                                        {userName}
+                                      </p>
+                                      <div className="flex items-center gap-1 mt-0.5">
+                                        <Hash size={10} className="text-primary/40 shrink-0" />
+                                        <span className="text-[11px] text-[var(--color-text-secondary)]">{userId}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={() => handleToggleStatus(item, cat.id)}
+                                    disabled={loading}
+                                    title="Click to toggle status"
+                                    className={`svm-status-pill shrink-0 transition-colors cursor-pointer ${
+                                      isActive ? "svm-status-pill--success" : "svm-status-pill--danger"
+                                    }`}
+                                  >
+                                    {isActive ? "Active" : "Inactive"}
+                                  </button>
+                                </div>
+
+                                <div className="w-full h-px bg-white/[0.05] mb-3" />
+
+                                <div className="space-y-2">
+                                  {/* Email */}
+                                  <div className="flex items-center gap-2">
+                                    <Mail size={13} className="text-primary/50 shrink-0" />
+                                    <span className={`text-[12px] truncate ${isActive ? "text-white/65" : "text-white/20"}`}>{userEmail}</span>
+                                  </div>
+                                  {/* Role / Department */}
+                                  <div className="flex items-center gap-2">
+                                    <Shield size={13} className="text-primary/50 shrink-0" />
+                                    <span className={`text-[12px] ${isActive ? "text-white/65" : "text-white/20"}`}>
+                                      {cat.id === "CONTACT" ? "Dept: " : "Role: "}{roleOrDept}
+                                    </span>
+                                  </div>
+                                  {/* Phone / Joined */}
+                                  <div className="flex items-center gap-2">
+                                    {cat.id === "CONTACT" ? (
+                                      <Phone size={13} className="text-primary/50 shrink-0" />
+                                    ) : (
+                                      <Calendar size={13} className="text-primary/50 shrink-0" />
+                                    )}
+                                    <span className={`text-[12px] ${isActive ? "text-white/65" : "text-white/20"}`}>
+                                      {cat.id === "CONTACT" ? "" : "Joined: "}{phoneOrDate}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Edit button */}
+                                <div className="mt-4">
+                                  <button
+                                    onClick={() => openModal("edit", item, cat.id)}
+                                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-[10px] bg-primary/10 border border-primary/20 text-primary text-[12px] font-bold uppercase tracking-[0.1em] hover:bg-primary hover:text-white transition-all active:scale-95"
+                                  >
+                                    <Edit size={14} />
+                                    Edit User
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+
+                    {/* ── DESKTOP TABLE ── */}
+                    <div className="hidden md:block bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
                       <TableContainer
                         component={Paper}
                         className="bg-transparent border-none z-10 relative shadow-none"
-                        sx={{
-                          maxHeight: "600px",
-                          minHeight: "400px",
-                          overflow: "auto",
-                          overflowX: "auto",
-                        }}
+                        sx={{ maxHeight: "600px", minHeight: "400px", overflow: "auto", overflowX: "auto" }}
                       >
-                        <Table
-                          sx={{ minWidth: 920 }}
-                          stickyHeader
-                          aria-label={`${cat.title} table`}
-                        >
+                        <Table sx={{ minWidth: 920 }} stickyHeader aria-label={`${cat.title} table`}>
                           <TableHead>
-                            <TableRow
-                              sx={{
-                                height: "24px",
-                                backgroundColor: "var(--color-bg-paper)",
-                              }}
-                            >
-                              <TableCell
-                                sx={{
-                                  padding: "8px 24px",
-                                  borderBottom:
-                                    "1px solid rgba(255,255,255,0.05)",
-                                  width: "8%",
-                                }}
-                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                              >
-                                User ID
-                              </TableCell>
-                              <TableCell
-                                sx={{
-                                  padding: "8px 24px",
-                                  borderBottom:
-                                    "1px solid rgba(255,255,255,0.05)",
-                                  width: "15%",
-                                }}
-                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                              >
-                                Name
-                              </TableCell>
-                              <TableCell
-                                sx={{
-                                  padding: "8px 24px",
-                                  borderBottom:
-                                    "1px solid rgba(255,255,255,0.05)",
-                                  width: "20%",
-                                }}
-                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                              >
-                                Email
-                              </TableCell>
-                              <TableCell
-                                sx={{
-                                  padding: "8px 24px",
-                                  borderBottom:
-                                    "1px solid rgba(255,255,255,0.05)",
-                                  width: "12%",
-                                }}
-                                className={`hidden sm:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]`}
-                              >
-                                {cat.id === "CONTACT" ? "Department" : "Role"}
-                              </TableCell>
-                              <TableCell
-                                sx={{
-                                  padding: "8px 24px",
-                                  borderBottom:
-                                    "1px solid rgba(255,255,255,0.05)",
-                                  width: "15%",
-                                }}
-                                className={`hidden md:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]`}
-                              >
-                                {cat.id === "CONTACT" ? "Contact" : "Joined"}
-                              </TableCell>
-                              <TableCell
-                                sx={{
-                                  padding: "8px 24px",
-                                  borderBottom:
-                                    "1px solid rgba(255,255,255,0.05)",
-                                  width: "10%",
-                                }}
-                                className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                              >
-                                Status
-                              </TableCell>
-                              <TableCell
-                                align="right"
-                                sx={{
-                                  padding: "8px 24px",
-                                  borderBottom:
-                                    "1px solid rgba(255,255,255,0.05)",
-                                  width: "10%",
-                                }}
-                                className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]"
-                              >
-                                Actions
-                              </TableCell>
+                            <TableRow sx={{ height: "24px", backgroundColor: "var(--color-bg-paper)" }}>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "8%" }} className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">User ID</TableCell>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "15%" }} className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">Name</TableCell>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "20%" }} className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">Email</TableCell>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "12%" }} className="hidden sm:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">{cat.id === "CONTACT" ? "Department" : "Role"}</TableCell>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "15%" }} className="hidden md:table-cell text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">{cat.id === "CONTACT" ? "Contact" : "Joined"}</TableCell>
+                              <TableCell sx={{ padding: "8px 24px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "10%" }} className="text-[var(--color-text-secondary)] font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">Status</TableCell>
+                              <TableCell align="right" sx={{ padding: "8px 24px", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "10%" }} className="text-primary font-normal text-[12px] tracking-[0.3em] uppercase whitespace-nowrap bg-[var(--color-bg-paper)]">Actions</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody className="divide-y divide-white/[0.04]">
                             {cat.data.length === 0 ? (
-                              <TableRow
-                                sx={{
-                                  height: "44px",
-                                  "&:hover": { backgroundColor: "transparent" },
-                                }}
-                              >
-                                <TableCell
-                                  colSpan={7}
-                                  align="center"
-                                  sx={{
-                                    padding: "8px",
-                                    borderBottom:
-                                      "1px solid rgba(255,255,255,0.05)",
-                                  }}
-                                  className="text-[var(--color-text-dim)] text-[12px] font-normal"
-                                >
+                              <TableRow sx={{ height: "44px", "&:hover": { backgroundColor: "transparent" } }}>
+                                <TableCell colSpan={7} align="center" sx={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.05)" }} className="text-[var(--color-text-dim)] text-[12px] font-normal">
                                   No users in this category
                                 </TableCell>
                               </TableRow>
                             ) : (
                               cat.data.map((item) => {
                                 const isActive =
-                                  (item.VA_Status || item.VCP_Status || "")
-                                    .toString()
-                                    .trim()
-                                    .toUpperCase() === "A" ||
-                                  (item.VA_Status || item.VCP_Status || "")
-                                    .toString()
-                                    .trim()
-                                    .toUpperCase() === "ACTIVE";
-
+                                  (item.VA_Status || item.VCP_Status || "").toString().trim().toUpperCase() === "A" ||
+                                  (item.VA_Status || item.VCP_Status || "").toString().trim().toUpperCase() === "ACTIVE";
                                 return (
                                   <TableRow
-                                    key={
-                                      item.VA_Admin_id ||
-                                      item.VCP_Contact_person_id
-                                    }
-                                    sx={{
-                                      "&:hover": {
-                                        backgroundColor:
-                                          "rgba(255,255,255,0.02)",
-                                      },
-                                      height: "28px",
-                                      borderBottom:
-                                        "1px solid rgba(255,255,255,0.05)",
-                                      transition: "background-color 0.2s ease",
-                                    }}
+                                    key={item.VA_Admin_id || item.VCP_Contact_person_id}
+                                    sx={{ "&:hover": { backgroundColor: "rgba(255,255,255,0.02)" }, height: "28px", borderBottom: "1px solid rgba(255,255,255,0.05)", transition: "background-color 0.2s ease" }}
                                   >
-                                    <TableCell
-                                      sx={{
-                                        padding: "8px 24px",
-                                        width: "8%",
-                                        borderBottom: "none",
-                                      }}
-                                      className="text-white align-middle font-normal text-[12px] whitespace-nowrap"
-                                    >
+                                    <TableCell sx={{ padding: "8px 24px", width: "8%", borderBottom: "none" }} className="text-white align-middle font-normal text-[12px] whitespace-nowrap">
                                       <div className="flex items-center gap-1">
-                                        <Hash
-                                          size={10}
-                                          className="text-primary/40"
-                                        />
-                                        <span>
-                                          {item.VA_Admin_id ||
-                                            item.VCP_Contact_person_id}
-                                        </span>
+                                        <Hash size={10} className="text-primary/40" />
+                                        <span>{item.VA_Admin_id || item.VCP_Contact_person_id}</span>
                                       </div>
                                     </TableCell>
-                                    <TableCell
-                                      sx={{
-                                        padding: "8px 24px",
-                                        width: "15%",
-                                        borderBottom: "none",
-                                      }}
-                                      className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40 line-through"}`}
-                                    >
+                                    <TableCell sx={{ padding: "8px 24px", width: "15%", borderBottom: "none" }} className={`font-normal align-middle transition-colors text-[12px] ${isActive ? "text-white" : "text-white/40 line-through"}`}>
                                       {item.VA_Name || item.VCP_Name || "-"}
                                     </TableCell>
-                                    <TableCell
-                                      sx={{
-                                        padding: "8px 24px",
-                                        width: "20%",
-                                        borderBottom: "none",
-                                      }}
-                                      className={`font-normal align-middle transition-colors text-[12px] whitespace-nowrap ${isActive ? "text-white/70" : "text-white/20"}`}
-                                    >
+                                    <TableCell sx={{ padding: "8px 24px", width: "20%", borderBottom: "none" }} className={`font-normal align-middle transition-colors text-[12px] whitespace-nowrap ${isActive ? "text-white/70" : "text-white/20"}`}>
                                       {item.VA_Email || item.VCP_Email}
                                     </TableCell>
-                                    <TableCell
-                                      sx={{
-                                        padding: "8px 24px",
-                                        width: "12%",
-                                        borderBottom: "none",
-                                      }}
-                                      className={`hidden sm:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
-                                    >
-                                      {item.VA_Role ||
-                                        item.VCP_Department ||
-                                        "-"}
+                                    <TableCell sx={{ padding: "8px 24px", width: "12%", borderBottom: "none" }} className={`hidden sm:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}>
+                                      {item.VA_Role || item.VCP_Department || "-"}
                                     </TableCell>
-                                    <TableCell
-                                      sx={{
-                                        padding: "8px 24px",
-                                        width: "15%",
-                                        borderBottom: "none",
-                                      }}
-                                      className={`hidden md:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}
-                                    >
-                                      {item.VA_Created_Date
-                                        ? item.VA_Created_Date.split(" ")[0]
-                                        : getContactMobile(item) ||
-                                          "AUTHEN.SYSTEM"}
+                                    <TableCell sx={{ padding: "8px 24px", width: "15%", borderBottom: "none" }} className={`hidden md:table-cell align-middle transition-colors font-normal text-[12px] ${isActive ? "text-white/70" : "text-white/20"}`}>
+                                      {item.VA_Created_Date ? item.VA_Created_Date.split(" ")[0] : getContactMobile(item) || "AUTHEN.SYSTEM"}
                                     </TableCell>
-                                    <TableCell
-                                      sx={{
-                                        padding: "8px 24px",
-                                        width: "10%",
-                                        borderBottom: "none",
-                                      }}
-                                      className="text-[12px] align-middle font-normal"
-                                    >
+                                    <TableCell sx={{ padding: "8px 24px", width: "10%", borderBottom: "none" }} className="text-[12px] align-middle font-normal">
                                       <button
-                                        onClick={() =>
-                                          handleToggleStatus(item, cat.id)
-                                        }
+                                        onClick={() => handleToggleStatus(item, cat.id)}
                                         disabled={loading}
                                         title="Click to toggle status"
                                         className={`svm-status-pill transition-colors cursor-pointer ${isActive ? "svm-status-pill--success hover:bg-green-500/20" : "svm-status-pill--danger hover:bg-primary/20"}`}
@@ -947,22 +881,8 @@ const AllUsers = () => {
                                         {isActive ? "Active" : "Inactive"}
                                       </button>
                                     </TableCell>
-                                    <TableCell
-                                      sx={{
-                                        padding: "8px 24px",
-                                        width: "10%",
-                                        borderBottom: "none",
-                                      }}
-                                      align="right"
-                                      className="text-[12px] align-middle font-normal"
-                                    >
-                                      <IconButton
-                                        onClick={() =>
-                                          openModal("edit", item, cat.id)
-                                        }
-                                        size="small"
-                                        className="text-white/40 hover:text-white p-1"
-                                      >
+                                    <TableCell sx={{ padding: "8px 24px", width: "10%", borderBottom: "none" }} align="right" className="text-[12px] align-middle font-normal">
+                                      <IconButton onClick={() => openModal("edit", item, cat.id)} size="small" className="text-white/40 hover:text-white p-1">
                                         <Edit size={16} />
                                       </IconButton>
                                     </TableCell>

@@ -7,7 +7,10 @@ import {
   Search,
   CheckCircle,
   XCircle,
-  
+  AlertTriangle,
+  Mail,
+  CalendarDays,
+  FileText,
 } from "lucide-react";
 import PageSpinner from "../../common/PageSpinner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -334,42 +337,221 @@ const BlacklistTable = () => {
           </div>
         </header>
 
-        {/* ── Table card ── */}
-        <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
+        {/* ── MOBILE CARDS (visible below md) ── */}
+        <div className="md:hidden space-y-3">
+          {isLoading ? (
+            <div className="flex justify-center py-16">
+              <PageSpinner size={40} color="var(--color-primary)" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center gap-4 py-16 text-center"
+            >
+              <div className="w-16 h-16 bg-primary/5 rounded-[24px] flex items-center justify-center border border-primary/10 shadow-inner">
+                <Shield size={26} className="text-primary/40" />
+              </div>
+              <div>
+                <h3 className={`text-base font-bold capitalize tracking-[0.2em] mb-1 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>
+                  No Restricted Visitors
+                </h3>
+                <p className={`text-[12px] tracking-widest ${isLight ? "text-gray-500" : "text-gray-300/60"}`}>
+                  There are currently no visitors on the restricted list.
+                </p>
+              </div>
+            </motion.div>
+          ) : (
+            <AnimatePresence>
+              {filtered.map((item, idx) => {
+                const resolvedName =
+                  item.VB_Name ||
+                  (item.VVG_id && companionMap[String(item.VVG_id)]?.name) ||
+                  (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.name) ||
+                  `Visitor ID: ${item.VB_Visitor_id}`;
+
+                const resolvedEmail =
+                  item.VB_Email ||
+                  (item.VVG_id && companionMap[String(item.VVG_id)]?.email) ||
+                  (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.email) ||
+                  null;
+
+                const displayStatus = normalizeApprovalStatus(item.VB_Approval_Status);
+                const statusColor =
+                  displayStatus === "Pending"
+                    ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-400"
+                    : displayStatus === "Approved"
+                    ? "bg-green-500/10 border-green-500/20 text-green-400"
+                    : "bg-red-500/10 border-red-500/20 text-red-400";
+
+                return (
+                  <motion.div
+                    key={item.VB_id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ delay: idx * 0.03 }}
+                    className={`relative rounded-[16px] border overflow-hidden shadow-lg ${
+                      isLight
+                        ? "bg-white border-gray-200"
+                        : "bg-[var(--color-bg-paper)] border-white/[0.07]"
+                    }`}
+                  >
+                    {/* Top accent stripe */}
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary/60 via-red-500/40 to-transparent" />
+
+                    <div className="p-4 pt-5">
+                      {/* Header row: Avatar + Name + Status badge */}
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          {/* Avatar circle */}
+                          <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 shadow-md">
+                            <span className="text-[13px] font-black text-primary uppercase">
+                              {(resolvedName || "?").slice(0, 2)}
+                            </span>
+                          </div>
+                          <div className="min-w-0">
+                            <p className={`text-[14px] font-bold truncate ${
+                              isLight ? "text-[#1A1A1A]" : "text-white"
+                            }`}>
+                              {resolvedName}
+                            </p>
+                            {resolvedEmail && (
+                              <p className="flex items-center gap-1 text-[11px] text-[var(--color-text-secondary)] truncate mt-0.5">
+                                <Mail size={11} className="shrink-0 text-primary/50" />
+                                {resolvedEmail}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Status badge */}
+                        {item.VB_Approval_Status ? (
+                          <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold border shrink-0 ${statusColor}`}>
+                            {displayStatus}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400/55 font-mono text-[11px] shrink-0">—</span>
+                        )}
+                      </div>
+
+                      {/* Divider */}
+                      <div className={`w-full h-px mb-3 ${isLight ? "bg-gray-100" : "bg-white/[0.05]"}`} />
+
+                      {/* Meta rows */}
+                      <div className="space-y-2">
+                        {/* Reason */}
+                        {item.VB_Description && (
+                          <div className="flex items-start gap-2">
+                            <FileText size={13} className="text-primary/50 shrink-0 mt-0.5" />
+                            <p className={`text-[12px] leading-relaxed line-clamp-2 ${
+                              isLight ? "text-gray-600" : "text-white/65"
+                            }`}>
+                              {item.VB_Description}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Alert type */}
+                        {item.VB_Alert_Type && (
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle size={13} className="text-yellow-500/70 shrink-0" />
+                            <span className={`text-[12px] font-medium ${
+                              isLight ? "text-gray-600" : "text-white/65"
+                            }`}>
+                              {item.VB_Alert_Type}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Date added */}
+                        <div className="flex items-center gap-2">
+                          <CalendarDays size={13} className="text-primary/50 shrink-0" />
+                          <span className={`text-[12px] ${
+                            isLight ? "text-gray-500" : "text-white/50"
+                          }`}>
+                            Added:{" "}
+                            {item.VB_Created_Date
+                              ? item.VB_Created_Date.split(" ")[0]
+                              : "—"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className="mt-4 flex items-center gap-2 flex-wrap">
+                        <button
+                          onClick={() => handleViewDetails(item)}
+                          className="flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2 px-4 rounded-[10px] bg-primary/10 border border-primary/20 text-primary text-[12px] font-bold uppercase tracking-[0.1em] hover:bg-primary hover:text-white transition-all active:scale-95"
+                        >
+                          <Eye size={14} />
+                          View Details
+                        </button>
+
+                        {!isContactPerson &&
+                          !isSecurityPortal &&
+                          displayStatus === "Pending" && (
+                            <>
+                              <button
+                                onClick={() => handleApprove(item)}
+                                title="Approve"
+                                className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] bg-green-500/10 border border-green-500/20 text-green-400 text-[12px] font-bold hover:bg-green-500 hover:text-white transition-all active:scale-95"
+                              >
+                                <CheckCircle size={14} /> Approve
+                              </button>
+                              <button
+                                onClick={() => handleReject(item)}
+                                title="Reject"
+                                className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] bg-red-500/10 border border-red-500/20 text-red-400 text-[12px] font-bold hover:bg-red-500 hover:text-white transition-all active:scale-95"
+                              >
+                                <XCircle size={14} /> Reject
+                              </button>
+                            </>
+                          )}
+
+                        {!isContactPerson && (
+                          <button
+                            onClick={() => handleEditClick(item)}
+                            title="Edit"
+                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[12px] font-bold transition-all active:scale-95 ${
+                              isLight
+                                ? "bg-amber-500/10 border border-amber-500/20 text-amber-600 hover:bg-amber-500 hover:text-white"
+                                : "bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-white"
+                            }`}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                            Edit
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          )}
+        </div>
+
+        {/* ── DESKTOP TABLE (visible from md up) ── */}
+        <div className="hidden md:block bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
           <div className="flex-1 overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
                 <tr className="bg-inherit">
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
-                    Visitor Name
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
-                    Visitor Email
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">
-                    Reason for Restriction
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">
-                    Added Date
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">
-                    Status
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-primary border-b border-white/5 text-right whitespace-nowrap">
-                    Management
-                  </th>
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">Visitor Name</th>
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">Visitor Email</th>
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 whitespace-nowrap">Reason for Restriction</th>
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">Added Date</th>
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-[var(--color-text-secondary)] border-b border-white/5 text-center whitespace-nowrap">Status</th>
+                  <th className="px-6 py-4 text-[12px] font-normal tracking-[0.3em] uppercase text-primary border-b border-white/5 text-right whitespace-nowrap">Management</th>
                 </tr>
               </thead>
-
               <tbody className="divide-y divide-white/[0.04]">
                 <AnimatePresence>
                   {isLoading ? (
-                    <motion.tr
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                    >
+                    <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                       <td colSpan="6" className="py-20 text-center">
                         <div className="flex items-center justify-center">
                           <PageSpinner size={40} color="var(--color-primary)" />
@@ -385,144 +567,86 @@ const BlacklistTable = () => {
                         transition={{ delay: idx * 0.03 }}
                         className="group hover:bg-white/[0.02] transition-colors"
                       >
-                        {/* Visitor Name */}
-                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
+                        <td className="px-6 py-4 align-middle">
                           <span className="text-[13px] font-medium text-white tracking-wide group-hover:text-primary transition-colors block">
                             {item.VB_Name ||
-                              (item.VVG_id &&
-                                companionMap[String(item.VVG_id)]?.name) ||
-                              (item.VB_Visitor_id &&
-                                visitorMap[String(item.VB_Visitor_id)]?.name) ||
+                              (item.VVG_id && companionMap[String(item.VVG_id)]?.name) ||
+                              (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.name) ||
                               `Visitor ID: ${item.VB_Visitor_id}`}
                           </span>
                         </td>
-
-                        {/* Visitor Email */}
-                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
+                        <td className="px-6 py-4 align-middle">
                           <span className="text-[13px] font-medium text-white tracking-wide block">
                             {item.VB_Email ||
-                              (item.VVG_id &&
-                                companionMap[String(item.VVG_id)]?.email) ||
-                              (item.VB_Visitor_id &&
-                                visitorMap[String(item.VB_Visitor_id)]
-                                  ?.email) ||
+                              (item.VVG_id && companionMap[String(item.VVG_id)]?.email) ||
+                              (item.VB_Visitor_id && visitorMap[String(item.VB_Visitor_id)]?.email) ||
                               "—"}
                           </span>
                         </td>
-
-                        {/* Reason */}
-                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
+                        <td className="px-6 py-4 align-middle">
                           <div className="max-w-xs xl:max-w-md">
                             <p className="text-[12px] text-white/70 leading-relaxed line-clamp-2">
                               {item.VB_Description || "—"}
                             </p>
                           </div>
                         </td>
-
-                        {/* Date Added */}
-                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
+                        <td className="px-6 py-4 align-middle">
                           <div className="flex flex-col items-center gap-2">
                             <div className="flex items-center gap-1.5 text-[12px] text-white/60">
                               <Clock size={12} className="text-primary/40" />
                               <span className="tracking-wider">
-                                {item.VB_Created_Date
-                                  ? item.VB_Created_Date.split(" ")[0]
-                                  : "—"}
+                                {item.VB_Created_Date ? item.VB_Created_Date.split(" ")[0] : "—"}
                               </span>
                             </div>
                           </div>
                         </td>
-
-                        {/* Status */}
-                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-center">
+                        <td className="px-6 py-4 align-middle text-center">
                           {item.VB_Approval_Status ? (
                             (() => {
-                              const displayStatus = normalizeApprovalStatus(
-                                item.VB_Approval_Status,
-                              );
+                              const ds = normalizeApprovalStatus(item.VB_Approval_Status);
                               return (
-                            <span
-                              className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-bold border ${
-                                displayStatus === "Pending"
-                                  ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-400"
-                                  : displayStatus === "Approved"
+                                <span className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-bold border min-w-[110px] ${
+                                  ds === "Pending"
+                                    ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-400"
+                                    : ds === "Approved"
                                     ? "bg-green-500/10 border-green-500/20 text-green-400"
                                     : "bg-red-500/10 border-red-500/20 text-red-400"
-                              } min-w-[110px]`}
-                            >
-                              {displayStatus}
-                            </span>
+                                }`}>{ds}</span>
                               );
                             })()
                           ) : (
-                            <span className="text-gray-400/55 font-mono text-[11px]">
-                              —
-                            </span>
+                            <span className="text-gray-400/55 font-mono text-[11px]">—</span>
                           )}
                         </td>
-
-                        {/* Actions */}
-                        <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
+                        <td className="px-6 py-4 align-middle">
                           <div className="flex justify-end items-center gap-2">
                             <button
                               onClick={() => handleViewDetails(item)}
                               className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-all group/btn"
                             >
-                              <Eye
-                                size={16}
-                                className="group-hover/btn:scale-110 transition-transform"
-                              />
+                              <Eye size={16} className="group-hover/btn:scale-110 transition-transform" />
                             </button>
-
-                            {!isContactPerson &&
-                              !isSecurityPortal &&
+                            {!isContactPerson && !isSecurityPortal &&
                               normalizeApprovalStatus(item.VB_Approval_Status) === "Pending" && (
                                 <>
-                                  <button
-                                    onClick={() => handleApprove(item)}
-                                    title="Approve Report"
-                                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border bg-green-500/5 border-green-500/20 text-green-400 hover:text-white hover:bg-green-500 hover:border-green-500"
-                                  >
-                                    <CheckCircle
-                                      size={15}
-                                      className="group-hover/btn:scale-110 transition-transform"
-                                    />
+                                  <button onClick={() => handleApprove(item)} title="Approve Report"
+                                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border bg-green-500/5 border-green-500/20 text-green-400 hover:text-white hover:bg-green-500 hover:border-green-500">
+                                    <CheckCircle size={15} className="group-hover/btn:scale-110 transition-transform" />
                                   </button>
-                                  <button
-                                    onClick={() => handleReject(item)}
-                                    title="Reject Report"
-                                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border bg-red-500/5 border-red-500/20 text-red-400 hover:text-white hover:bg-red-500 hover:border-red-500"
-                                  >
-                                    <XCircle
-                                      size={15}
-                                      className="group-hover/btn:scale-110 transition-transform"
-                                    />
+                                  <button onClick={() => handleReject(item)} title="Reject Report"
+                                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border bg-red-500/5 border-red-500/20 text-red-400 hover:text-white hover:bg-red-500 hover:border-red-500">
+                                    <XCircle size={15} className="group-hover/btn:scale-110 transition-transform" />
                                   </button>
                                 </>
                               )}
-
-                            {/* Edit button */}
                             {!isContactPerson && (
-                              <button
-                                onClick={() => handleEditClick(item)}
-                                title="Edit Blacklist"
-                                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${isLight ? "bg-amber-500/5 border-amber-500/20 text-amber-500 hover:text-white hover:bg-amber-500 hover:border-amber-500" : "bg-yellow-500/5 border-yellow-500/20 text-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-yellow-500"}`}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="15"
-                                  height="15"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  className="lucide lucide-edit-3 group-hover/btn:scale-110 transition-transform"
-                                >
-                                  <path d="M12 20h9" />
-                                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                                </svg>
+                              <button onClick={() => handleEditClick(item)} title="Edit Blacklist"
+                                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-xl group/btn border ${
+                                  isLight
+                                    ? "bg-amber-500/5 border-amber-500/20 text-amber-500 hover:text-white hover:bg-amber-500 hover:border-amber-500"
+                                    : "bg-yellow-500/5 border-yellow-500/20 text-yellow-500 hover:text-white hover:bg-yellow-500 hover:border-yellow-500"
+                                }`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-edit-3 group-hover/btn:scale-110 transition-transform"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                               </button>
                             )}
                           </div>
@@ -530,30 +654,15 @@ const BlacklistTable = () => {
                       </motion.tr>
                     ))
                   ) : (
-                    <motion.tr
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="block sm:table-row"
-                    >
-                      <td
-                        colSpan="6"
-                        className="px-6 py-14 text-center block sm:table-cell"
-                      >
+                    <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <td colSpan="6" className="px-6 py-14 text-center">
                         <div className="flex flex-col items-center gap-4">
                           <div className="w-16 h-16 bg-primary/5 rounded-[24px] flex items-center justify-center border border-primary/10 shadow-inner">
                             <Shield size={26} className="text-primary/40" />
                           </div>
                           <div>
-                            <h3
-                              className={`text-base font-bold capitalize tracking-[0.2em] mb-2 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}
-                            >
-                              No Blacklisted Visitors
-                            </h3>
-                            <p
-                              className={`text-[12px] capitalize tracking-widest ${isLight ? "text-gray-500" : "text-gray-300/60"}`}
-                            >
-                              There are currently no visitors on the blacklist.
-                            </p>
+                            <h3 className={`text-base font-bold capitalize tracking-[0.2em] mb-2 ${isLight ? "text-[#1A1A1A]" : "text-white"}`}>No Blacklisted Visitors</h3>
+                            <p className={`text-[12px] capitalize tracking-widest ${isLight ? "text-gray-500" : "text-gray-300/60"}`}>There are currently no visitors on the blacklist.</p>
                           </div>
                         </div>
                       </td>

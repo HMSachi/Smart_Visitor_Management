@@ -242,7 +242,103 @@ const ProfileTokenManagement = () => {
             </div>
           </header>
 
-          <div className="bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
+          {/* ── MOBILE CARDS ── */}
+          <div className="md:hidden space-y-3 mb-6">
+            {loading ? (
+              <div className="flex justify-center py-16">
+                <PageSpinner size={40} color="var(--color-primary)" />
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center gap-3 py-16 text-center">
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 text-primary">
+                  <AlertCircle size={22} />
+                </div>
+                <p className="text-primary text-[12px] font-bold uppercase tracking-widest">{error}</p>
+              </div>
+            ) : tokens.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 py-16 text-center">
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 text-primary">
+                  <KeyRound size={22} />
+                </div>
+                <p className="text-[var(--color-text-dim)] text-[12px] uppercase tracking-widest">No profile tokens found</p>
+              </div>
+            ) : (
+              tokens.map((token, index) => {
+                const visitorIdValue = getField(token, ["VV_Visitor_id", "Visitor_id", "VisitorId"]);
+                const tokenValue = getField(token, ["VVPT_Token", "Token", "ProfileToken"]);
+                const createdAt = getField(token, ["VVPT_Created_Date", "Created_Date", "CreatedDate", "Created_On"], "");
+                const expiredAt = getField(token, ["VVPT_Expired_Date", "Expired_Date", "ExpiredDate", "Expired_On"], "");
+                const active = isActiveToken(token);
+
+                return (
+                  <div
+                    key={`${visitorIdValue}-${tokenValue}-${index}`}
+                    className="relative rounded-[16px] border overflow-hidden shadow-lg bg-[var(--color-bg-paper)] border-white/[0.07]"
+                  >
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary/60 via-red-500/40 to-transparent" />
+                    <div className="p-4 pt-5">
+                      {/* Header row */}
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                            <KeyRound size={15} className="text-primary" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1">
+                              <Hash size={10} className="text-primary/40 shrink-0" />
+                              <span className="text-[14px] font-bold text-white">Visitor #{visitorIdValue}</span>
+                            </div>
+                            <p className="text-[11px] text-[var(--color-text-secondary)] font-mono truncate mt-0.5 max-w-[180px]">
+                              {tokenValue}
+                            </p>
+                          </div>
+                        </div>
+                        {/* Status badge */}
+                        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold border shrink-0 ${
+                          active
+                            ? "bg-green-500/10 border-green-500/20 text-green-400"
+                            : "bg-red-500/10 border-red-500/20 text-red-400"
+                        }`}>
+                          {active ? <CheckCircle2 size={11} /> : <Clock3 size={11} />}
+                          {getStatusLabel(token)}
+                        </span>
+                      </div>
+
+                      <div className="w-full h-px bg-white/[0.05] mb-3" />
+
+                      <div className="space-y-2 mb-4">
+                        {createdAt && (
+                          <div className="flex items-center gap-2">
+                            <Clock3 size={13} className="text-primary/50 shrink-0" />
+                            <span className="text-[12px] text-white/65">Created: {formatDate(createdAt)}</span>
+                          </div>
+                        )}
+                        {expiredAt && (
+                          <div className="flex items-center gap-2">
+                            <ShieldOff size={13} className="text-red-400/60 shrink-0" />
+                            <span className="text-[12px] text-white/65">Expired: {formatDate(expiredAt)}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setConfirmToken(token)}
+                        disabled={!active || isExpiring}
+                        className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-[10px] bg-primary/10 border border-primary/20 text-primary text-[12px] font-bold uppercase tracking-[0.1em] hover:bg-primary hover:text-white transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <ShieldOff size={14} />
+                        Expire Token
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* ── DESKTOP TABLE ── */}
+          <div className="hidden md:block bg-[var(--color-bg-paper)] border border-white/5 rounded-[5px] shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
             {loading ? (
@@ -286,11 +382,7 @@ const ProfileTokenManagement = () => {
                   <TableBody className="divide-y divide-white/[0.04]">
                     {tokens.length === 0 ? (
                       <TableRow>
-                        <TableCell
-                          colSpan={6}
-                          align="center"
-                          className="py-12 text-[var(--color-text-dim)] uppercase tracking-widest text-[12px]"
-                        >
+                        <TableCell colSpan={6} align="center" className="py-12 text-[var(--color-text-dim)] uppercase tracking-widest text-[12px]">
                           No profile tokens found
                         </TableCell>
                       </TableRow>
@@ -301,15 +393,10 @@ const ProfileTokenManagement = () => {
                         const createdAt = getField(token, ["VVPT_Created_Date", "Created_Date", "CreatedDate", "Created_On"], "");
                         const expiredAt = getField(token, ["VVPT_Expired_Date", "Expired_Date", "ExpiredDate", "Expired_On"], "");
                         const active = isActiveToken(token);
-
                         return (
                           <TableRow
                             key={`${visitorIdValue}-${tokenValue}-${index}`}
-                            sx={{
-                              "&:hover": { backgroundColor: "rgba(255,255,255,0.02)" },
-                              height: "32px",
-                              transition: "all 0.2s ease",
-                            }}
+                            sx={{ "&:hover": { backgroundColor: "rgba(255,255,255,0.02)" }, height: "32px", transition: "all 0.2s ease" }}
                           >
                             <TableCell sx={{ padding: "8px 16px", borderBottom: "none" }} className="text-[var(--color-text-primary)] align-middle font-normal text-[12px]">
                               <div className="flex items-center gap-1">
@@ -332,9 +419,7 @@ const ProfileTokenManagement = () => {
                                 label={getStatusLabel(token)}
                                 size="small"
                                 sx={{
-                                  height: 24,
-                                  fontSize: "11px",
-                                  fontWeight: 700,
+                                  height: 24, fontSize: "11px", fontWeight: 700,
                                   color: active ? "#22c55e" : "#ef4444",
                                   backgroundColor: active ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)",
                                   border: `1px solid ${active ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`,
