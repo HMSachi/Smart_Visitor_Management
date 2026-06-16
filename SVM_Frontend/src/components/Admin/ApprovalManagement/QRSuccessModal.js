@@ -126,8 +126,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
 
     setIsSendingNotification(true);
     try {
-      await VisitorAccessTokenService.GenerateVisitorSmsAndEmailAccessToken(
-        requestId,
+      await VisitorProfileTokenService.GenerateVisitorSmsAndEmailToken(
         visitorId,
         "Admin",
       );
@@ -138,7 +137,7 @@ const QRSuccessModal = ({ isOpen, onClose, visitorData, gatePasses = [], readOnl
       }
     } catch (err) {
       console.error("Visitor QR SMS/email notification failed:", err);
-      alert(VisitorAccessTokenService.getNotificationErrorMessage(err));
+      alert(VisitorProfileTokenService.getNotificationErrorMessage(err));
     } finally {
       setIsSendingNotification(false);
     }

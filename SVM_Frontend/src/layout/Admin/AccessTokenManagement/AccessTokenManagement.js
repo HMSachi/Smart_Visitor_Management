@@ -25,6 +25,7 @@ import {
   Clock3,
   Hash,
   KeyRound,
+  Key,
   RefreshCw,
   Search,
   ShieldOff,
@@ -105,7 +106,6 @@ const AccessTokenManagement = () => {
   const [genRequestId, setGenRequestId] = useState("");
   const [genVisitorId, setGenVisitorId] = useState("");
   const [genPuid, setGenPuid] = useState("Admin");
-  const [sendNotificationOption, setSendNotificationOption] = useState(true);
 
   const activeCount = useMemo(
     () => tokens.filter((token) => isActiveToken(token)).length,
@@ -192,25 +192,13 @@ const AccessTokenManagement = () => {
 
     try {
       setIsActioning(true);
-      if (sendNotificationOption) {
-        // Generate and dispatch SMS/Email
-        await VisitorAccessTokenService.GenerateVisitorSmsAndEmailAccessToken(
-          genRequestId.trim(),
-          genVisitorId.trim(),
-          genPuid.trim() || "Admin",
-        );
-        notify(
-          `Access token generated and notifications dispatched to visitor #${genVisitorId}.`,
-        );
-      } else {
-        // Generate only
-        await VisitorAccessTokenService.GenerateToken(
-          genRequestId.trim(),
-          genVisitorId.trim(),
-          genPuid.trim() || "Admin",
-        );
-        notify(`Access token generated successfully for visitor #${genVisitorId}.`);
-      }
+      // Generate only
+      await VisitorAccessTokenService.GenerateToken(
+        genRequestId.trim(),
+        genVisitorId.trim(),
+        genPuid.trim() || "Admin",
+      );
+      notify(`Access token generated successfully for visitor #${genVisitorId}.`);
       setGenDialogOpen(false);
       setGenRequestId("");
       setGenVisitorId("");
@@ -242,13 +230,13 @@ const AccessTokenManagement = () => {
 
     try {
       setIsActioning(true);
-      await VisitorAccessTokenService.GenerateVisitorSmsAndEmailAccessToken(
+      await VisitorAccessTokenService.GenerateToken(
         rId,
         vId,
         "Admin",
       );
       notify(
-        `Access token generated and SMS/Email sent to visitor for request #${rId}!`,
+        `Access token generated successfully for request #${rId}!`,
       );
       await loadTokens(statusFilter);
       // Reload lookup requests to update UI
@@ -731,8 +719,8 @@ const AccessTokenManagement = () => {
                                     disabled={isActioning}
                                     className="inline-flex items-center justify-center gap-1.5 h-7 px-3 rounded-[6px] text-[10px] font-bold uppercase tracking-widest bg-green-500/10 border border-green-500/20 text-[#22c55e] hover:bg-green-500 hover:text-white transition-all disabled:opacity-40"
                                   >
-                                    <Send size={11} />
-                                    Send SMS/Email
+                                    <Key size={11} />
+                                    Generate Token
                                   </button>
                                 ) : (
                                   <span className="text-[10px] text-[var(--color-text-dim)] uppercase tracking-wider">
@@ -820,19 +808,6 @@ const AccessTokenManagement = () => {
                 className="w-full bg-[var(--color-bg-paper)] border border-[var(--color-border-soft)] text-[var(--color-text-primary)] text-[13px] rounded-lg py-2 px-3 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all"
               />
             </div>
-
-            <div className="flex items-center gap-2 pt-2">
-              <input
-                type="checkbox"
-                id="send-notif-checkbox"
-                checked={sendNotificationOption}
-                onChange={(e) => setSendNotificationOption(e.target.checked)}
-                className="w-4 h-4 accent-primary"
-              />
-              <label htmlFor="send-notif-checkbox" className="text-[12px] text-[var(--color-text-secondary)] font-medium cursor-pointer">
-                Automatically dispatch SMS and Email notification (dispatches to visitor's registered contacts)
-              </label>
-            </div>
           </form>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
@@ -847,7 +822,7 @@ const AccessTokenManagement = () => {
             disabled={isActioning || !genRequestId || !genVisitorId}
             className="flex items-center gap-1.5"
           >
-            {isActioning ? "Processing..." : sendNotificationOption ? "Generate & Send" : "Generate Token"}
+            {isActioning ? "Processing..." : "Generate Token"}
           </Button>
         </DialogActions>
       </Dialog>

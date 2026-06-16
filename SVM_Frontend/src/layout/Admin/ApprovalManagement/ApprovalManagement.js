@@ -355,32 +355,8 @@ const ApprovalManagement = () => {
                 dispatch(GetAllGatePasses()); // Refresh gate passes
 
                 if (type === "Approve") {
-                  // Generate profile token (contact person link) for the approved request
                   const approvedEntry =
                     mappedRequests.find((v) => v.id === id) || selectedVisitor;
-                  const visitorId =
-                    approvedEntry?.raw?.VVR_Visitor_id ||
-                    approvedEntry?.raw?.VV_Visitor_id;
-
-                  if (visitorId && id) {
-                    try {
-                      await VisitorProfileTokenService.GenerateProfileToken(
-                        visitorId,
-                        "Admin",
-                      );
-                      console.log(
-                        "[ApprovalManagement] Profile token generated for request:",
-                        id,
-                        "visitor:",
-                        visitorId,
-                      );
-                    } catch (tokenErr) {
-                      console.error(
-                        "[ApprovalManagement] Profile token generation failed:",
-                        tokenErr,
-                      );
-                    }
-                  }
 
                   setApprovedVisitorData(approvedEntry);
                   setQrReadOnly(false);
