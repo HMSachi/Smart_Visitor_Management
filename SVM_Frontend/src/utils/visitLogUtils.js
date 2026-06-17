@@ -197,6 +197,60 @@ export const findOpenVisitLog = (logs, passId) =>
       !hasVisitLogCheckedOut(log),
   ) || null;
 
+export const getOrdinal = (n) => {
+  const num = Number(n) || 0;
+  const suffixes = ["th", "st", "nd", "rd"];
+  const mod100 = num % 100;
+  const suffix =
+    suffixes[(mod100 - 20) % 10] || suffixes[mod100] || suffixes[0];
+  return `${num}${suffix}`;
+};
+
+export const countVisitLogsForPass = (logs, passId) =>
+  unwrapApiList(logs).filter(
+    (log) => String(getVisitLogPassId(log)) === String(passId),
+  );
+
+export const countCompletedVisitLogs = (logs, passId) =>
+  countVisitLogsForPass(logs, passId).filter(hasVisitLogCheckedOut).length;
+
+/**
+ * Derive check-in vs check-out from visit-log history for a pass.
+ * Scan 1 → check-in, scan 2 → check-out, scan 3+ → blocked (no re-entry).
+ */
+export const resolveScanSession = (logs, passId) => {
+  const openLog = findOpenVisitLog(logs, passId);
+  const completedCount = countCompletedVisitLogs(logs, passId);
+  const scanNumber = openLog ? completedCount * 2 + 2 : completedCount * 2 + 1;
+  const ordinal = getOrdinal(scanNumber);
+
+  if (!openLog && scanNumber >= 3) {
+    return {
+      scanType: "BLOCKED",
+      scanNumber,
+      ordinal,
+      openLog: null,
+      title: "Access Denied",
+      message: `${ordinal} scan — this visitor already checked in and out. Re-entry is not permitted.`,
+    };
+  }
+
+  const scanType = openLog ? "CHECK_OUT" : "CHECK_IN";
+
+  let title;
+  let message;
+
+  if (scanType === "CHECK_IN") {
+    title = "Check In";
+    message = `${ordinal} scan — visitor is arriving at the gate. Confirm check-in to allow entry.`;
+  } else {
+    title = "Check Out";
+    message = `${ordinal} scan — visitor is currently inside and ready to leave. Confirm check-out to record their exit.`;
+  }
+
+  return { scanType, scanNumber, ordinal, openLog, title, message };
+};
+
 export const cleanPassId = (id) => {
   if (!id) return "";
   return String(id).replace(/^(PASS|GP|gp)-/i, "").trim();

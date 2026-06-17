@@ -501,21 +501,6 @@ const MyRequests = () => {
   };
 
   const handleViewGatePass = (req) => {
-    // Try to find an access token first
-    const tokenList = Array.isArray(visitorAccessTokens)
-      ? visitorAccessTokens
-      : visitorAccessTokens?.ResultSet || [];
-    const token = tokenList.find(
-      (tk) => String(tk.VVR_Request_id) === String(req.VVR_Request_id)
-    );
-
-    if (token && token.VVAT_Token) {
-      // Instead of navigating away or just using standard gate pass, use the token specifically
-      navigate(`/visitor/gate-pass/${token.VVAT_Token}?isToken=true`);
-      return;
-    }
-
-    // Fallback to gate pass
     const gpList = Array.isArray(gatePasses)
       ? gatePasses
       : gatePasses?.gatePasses || gatePasses?.ResultSet || [];
@@ -526,13 +511,24 @@ const MyRequests = () => {
 
     const gatePassId = gatePass?.VGP_Pass_id || gatePass?.vgp_Pass_id;
 
-    if (!gatePassId) {
-      console.error("Gate pass not found");
+    if (gatePassId) {
+      navigate(`/visitor/gate-pass/${gatePassId}`);
       return;
     }
 
-    // Navigate with gatePassId as URL parameter
-    navigate(`/visitor/gate-pass/${gatePassId}`);
+    const tokenList = Array.isArray(visitorAccessTokens)
+      ? visitorAccessTokens
+      : visitorAccessTokens?.ResultSet || [];
+    const token = tokenList.find(
+      (tk) => String(tk.VVR_Request_id) === String(req.VVR_Request_id),
+    );
+
+    if (token?.VVAT_Token) {
+      navigate(`/visitor/gate-pass/${token.VVAT_Token}?isToken=true`);
+      return;
+    }
+
+    console.error("Gate pass not found");
   };
 
   const handleOpenReviewPage = (request) => {

@@ -34,11 +34,28 @@ const getNotificationErrorMessage = (error) => {
   return error?.message || "Failed to send SMS/email to the visitor.";
 };
 
-const GenerateProfileToken = async (visitorId, pUid = "Admin") => {
+const GenerateProfileToken = async (
+  visitorId,
+  pUid = "Admin",
+  { gatePassId, requestId } = {},
+) => {
+  const params = new URLSearchParams({
+    VV_Visitor_id: String(visitorId),
+    P_UID: String(pUid),
+  });
+
+  if (gatePassId) {
+    params.set("VGP_Pass_id", String(gatePassId));
+  }
+
+  if (requestId) {
+    params.set("VVR_Request_id", String(requestId));
+  }
+
   const config = {
     method: "post",
     url: getApiUrl(
-      `/VisitorProfileToken/GenerateProfileToken?VV_Visitor_id=${encodeURIComponent(visitorId)}&P_UID=${encodeURIComponent(pUid)}`,
+      `/VisitorProfileToken/GenerateProfileToken?${params.toString()}`,
     ),
     data: "",
   };
@@ -85,15 +102,21 @@ const GetProfileTokenByVisitorId = async (visitorId) => {
   return axios.request(config).then((response) => response);
 };
 
-const GenerateVisitorSmsAndEmailToken = async (visitorId, pUid = "Admin") => {
+const GenerateVisitorSmsAndEmailToken = async (
+  visitorId,
+  pUid = "Admin",
+  { gatePassId, requestId } = {},
+) => {
   if (!visitorId) {
     throw new Error(
       "Visitor ID is required to generate the visitor SMS/email token.",
     );
   }
 
-  // Backend resolves registered main visitor phone/email from VV_Visitor_id.
-  const response = await GenerateProfileToken(visitorId, pUid);
+  const response = await GenerateProfileToken(visitorId, pUid, {
+    gatePassId,
+    requestId,
+  });
   return unwrapResult(response);
 };
 

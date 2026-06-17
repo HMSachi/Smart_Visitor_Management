@@ -49,6 +49,11 @@ const ProfileToken = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = searchParams.get("token") || searchParams.get("VVPT_Token") || "";
+  const gatePassId =
+    searchParams.get("gatePassId") ||
+    searchParams.get("VGP_Pass_id") ||
+    searchParams.get("passId") ||
+    "";
 
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
@@ -128,6 +133,11 @@ const ProfileToken = () => {
   }, [dispatch, token]);
 
   const handleContinue = () => {
+    if (gatePassId) {
+      navigate(`/visitor/gate-pass/${gatePassId}`);
+      return;
+    }
+
     navigate("/home");
   };
 
@@ -166,8 +176,10 @@ const ProfileToken = () => {
             </h1>
 
             <p className="text-base sm:text-lg font-medium leading-relaxed mb-8 max-w-xl text-white/75">
-              Your visitor profile has been verified. Continue to the MAS
-              Visitor Portal home page to manage your visit.
+              Your visitor profile has been verified.
+              {gatePassId
+                ? " Continue to open your digital gate pass with the same QR code used by security."
+                : " Continue to the MAS Visitor Portal home page to manage your visit."}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mb-8">

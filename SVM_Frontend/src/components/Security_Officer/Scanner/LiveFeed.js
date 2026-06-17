@@ -56,10 +56,12 @@ import AttachmentPreviewModal from "../../../components/common/AttachmentPreview
 import { useAttachmentPreview } from "../../../hooks/useAttachmentPreview";
 import {
   findOpenVisitLog,
+  getOrdinal,
   getPassAccessAreas,
   getVisitExpiryDate,
   getVisitLogAreas,
   getVisitLogId,
+  resolveScanSession,
   toLocalApiDateTime,
   unwrapApiList,
 } from "../../../utils/visitLogUtils";
@@ -122,6 +124,8 @@ const LiveFeed = () => {
   const [subVisitorApiData, setSubVisitorApiData] = useState(null);
   // Track check-in/checkout
   const [scanType, setScanType] = useState(null); // "CHECK_IN" or "CHECK_OUT"
+  const [scanNumber, setScanNumber] = useState(null);
+  const [scanSessionTitle, setScanSessionTitle] = useState("");
   const [currentVisitLog, setCurrentVisitLog] = useState(null);
   const [remarks, setRemarks] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -447,41 +451,36 @@ const LiveFeed = () => {
         setPassDetails(details);
         persistGatePassMeta(details);
         setScanStatus("details");
-        setScanMessage(
-          "The visitor details were found and verified successfully.",
-        );
 
-        // Use the database visit-log registry to decide entry vs exit.
+        // Use visit-log history to decide entry vs exit (1st scan = in, 2nd = out, 3rd = in…).
         try {
-          const activeLogsResponse = await VisitLogService.GetVisitorsInside();
-          const activeLogs = unwrapApiList(activeLogsResponse);
-          const openLog = findOpenVisitLog(activeLogs, details.VGP_Pass_id);
+          const allLogsResponse = await VisitLogService.GetAllVisitLogs();
+          const allLogs = unwrapApiList(allLogsResponse);
+          const session = resolveScanSession(allLogs, details.VGP_Pass_id);
 
-          setCurrentVisitLog(openLog);
-          if (openLog) {
-            setScanType("CHECK_OUT");
-            setScanMessage(
-              "Visitor is currently inside. Checkout is ready for this pass.",
-            );
-          } else {
-            setScanType("CHECK_IN");
-            setScanMessage(
-              "Visitor is verified. Check-in is ready for this pass.",
-            );
-          }
+          setCurrentVisitLog(session.openLog);
+          setScanType(session.scanType);
+          setScanNumber(session.scanNumber);
+          setScanSessionTitle(session.title);
+          setScanMessage(session.message);
 
           console.log(
-            "[LiveFeed] Open visit log:",
-            openLog,
-            "Scan type:",
-            openLog ? "CHECK_OUT" : "CHECK_IN",
+            "[LiveFeed] Scan session:",
+            session.scanType,
+            "scan #",
+            session.scanNumber,
           );
         } catch (err) {
           console.warn(
-            "[LiveFeed] Could not load active visit logs, defaulting to CHECK_IN:",
+            "[LiveFeed] Could not load visit logs, defaulting to CHECK_IN:",
             err,
           );
           setScanType("CHECK_IN");
+          setScanNumber(1);
+          setScanSessionTitle("Check In");
+          setScanMessage(
+            "1st scan — visitor is arriving at the gate. Confirm check-in to allow entry.",
+          );
           setCurrentVisitLog(null);
         }
 
@@ -815,6 +814,8 @@ const LiveFeed = () => {
     setScanStatus("idle");
     setScanMessage("Point your camera at the QR code to get started.");
     setScanType(null);
+    setScanNumber(null);
+    setScanSessionTitle("");
     setCurrentVisitLog(null);
     setRemarks("");
     setIsSubmitting(false);
@@ -829,9 +830,15 @@ const LiveFeed = () => {
     });
   };
 
+  const isScanBlocked = scanType === "BLOCKED";
+
   const handleCheckInOut = async () => {
     if (!passDetails?.VGP_Pass_id) {
       console.error("No pass ID available for check-in/out");
+      return;
+    }
+
+    if (isScanBlocked) {
       return;
     }
 
@@ -852,18 +859,25 @@ const LiveFeed = () => {
       }
 
       if (scanType === "CHECK_IN") {
-        const activeLogsResponse = await VisitLogService.GetVisitorsInside();
-        const existingOpenLog = findOpenVisitLog(
-          unwrapApiList(activeLogsResponse),
-          passDetails.VGP_Pass_id,
-        );
+        const allLogsResponse = await VisitLogService.GetAllVisitLogs();
+        const allLogs = unwrapApiList(allLogsResponse);
+        const session = resolveScanSession(allLogs, passDetails.VGP_Pass_id);
+        if (session.scanType === "BLOCKED") {
+          setScanType("BLOCKED");
+          setScanNumber(session.scanNumber);
+          setScanSessionTitle(session.title);
+          setScanMessage(session.message);
+          return;
+        }
+
+        const existingOpenLog = findOpenVisitLog(allLogs, passDetails.VGP_Pass_id);
 
         if (existingOpenLog) {
           setCurrentVisitLog(existingOpenLog);
-          setScanType("CHECK_OUT");
-          setScanMessage(
-            "This visitor is already inside. Checkout is ready now.",
-          );
+          setScanType(session.scanType);
+          setScanNumber(session.scanNumber);
+          setScanSessionTitle(session.title);
+          setScanMessage(session.message);
           return;
         }
 
@@ -915,7 +929,12 @@ const LiveFeed = () => {
       );
 
       const actionText = scanType === "CHECK_IN" ? "Check-in" : "Check-out";
-      setScanMessage(`${actionText} successful. Visit log database updated.`);
+      const ordinalLabel = scanNumber ? `${getOrdinal(scanNumber)} scan` : actionText;
+      setScanMessage(
+        scanType === "CHECK_IN"
+          ? `${ordinalLabel} complete — visitor has been checked in successfully.`
+          : `${ordinalLabel} complete — visitor has been checked out successfully.`,
+      );
 
       setTimeout(() => {
         handleResetNode();
@@ -964,19 +983,7 @@ const LiveFeed = () => {
   }, [location.pathname, stopScanner]);
 
   return (
-    <div className="max-w-2xl w-full space-y-4 md:space-y-6 relative z-10 mx-auto px-4">
-      <div className="text-center space-y-3">
-        <div className="flex items-center justify-center gap-3 mb-1">
-          <Zap size={14} className="text-primary animate-pulse" />
-          <span className="text-primary uppercase tracking-[0.3em] text-[10px] font-bold">
-            Security Checkpoint
-          </span>
-        </div>
-        <h1 className="uppercase text-2xl md:text-3xl font-black tracking-tight italic">
-          QR Scanner
-        </h1>
-      </div>
-
+    <div className="w-full space-y-4 md:space-y-6 relative z-10">
       <AnimatePresence mode="wait">
         {scanStatus !== "details" ? (
           <motion.div
@@ -984,7 +991,7 @@ const LiveFeed = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
-            className="space-y-6"
+            className="space-y-6 max-w-md mx-auto"
           >
             {/* Scanner Frame */}
             <div className="relative aspect-square max-w-[18rem] md:max-w-xs mx-auto mas-glass border-primary/20 p-1 group overflow-hidden rounded-[24px]">
@@ -1062,14 +1069,99 @@ const LiveFeed = () => {
             key="details"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-lg mx-auto rounded-[28px] shadow-2xl transition-colors duration-300 flex flex-col"
+            className="w-full rounded-[28px] shadow-2xl transition-colors duration-300 flex flex-col"
             style={{
               background: "var(--color-bg-paper)",
               border: "1px solid var(--color-border-soft)",
               boxShadow: "0 20px 50px rgba(0, 0, 0, 0.15)",
-              maxHeight: "85vh",
+              maxHeight: "calc(100vh - 8rem)",
             }}
           >
+            {/* Scan session banner */}
+            {scanType && (
+              <div
+                className="px-5 py-3 flex items-start gap-3 flex-shrink-0"
+                style={{
+                  background: isScanBlocked
+                    ? "linear-gradient(135deg, rgba(220, 38, 38, 0.12) 0%, rgba(220, 38, 38, 0.04) 100%)"
+                    : scanType === "CHECK_OUT"
+                      ? "linear-gradient(135deg, rgba(249, 115, 22, 0.14) 0%, rgba(249, 115, 22, 0.05) 100%)"
+                      : "linear-gradient(135deg, rgba(34, 197, 94, 0.14) 0%, rgba(34, 197, 94, 0.05) 100%)",
+                  borderBottom: isScanBlocked
+                    ? "1px solid rgba(220, 38, 38, 0.25)"
+                    : "1px solid var(--color-border-soft)",
+                }}
+              >
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: isScanBlocked
+                      ? "rgba(220, 38, 38, 0.15)"
+                      : scanType === "CHECK_OUT"
+                        ? "rgba(249, 115, 22, 0.18)"
+                        : "rgba(34, 197, 94, 0.18)",
+                    color: isScanBlocked
+                      ? "#dc2626"
+                      : scanType === "CHECK_OUT"
+                        ? "#ea580c"
+                        : "#16a34a",
+                  }}
+                >
+                  {isScanBlocked ? (
+                    <AlertCircle size={18} />
+                  ) : scanType === "CHECK_OUT" ? (
+                    <LogOut size={18} />
+                  ) : (
+                    <LogIn size={18} />
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                    <span
+                      className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-[0.16em]"
+                      style={{
+                        background: isScanBlocked
+                          ? "rgba(220, 38, 38, 0.12)"
+                          : scanType === "CHECK_OUT"
+                            ? "rgba(249, 115, 22, 0.15)"
+                            : "rgba(34, 197, 94, 0.15)",
+                        color: isScanBlocked
+                          ? "#dc2626"
+                          : scanType === "CHECK_OUT"
+                            ? "#ea580c"
+                            : "#16a34a",
+                      }}
+                    >
+                      {scanSessionTitle ||
+                        (isScanBlocked
+                          ? "Access Denied"
+                          : scanType === "CHECK_OUT"
+                            ? "Check Out"
+                            : "Check In")}
+                    </span>
+                    {scanNumber && (
+                      <span
+                        className="text-[9px] font-bold uppercase tracking-[0.14em]"
+                        style={{
+                          color: isScanBlocked ? "#dc2626" : "var(--color-text-dim)",
+                        }}
+                      >
+                        Scan #{scanNumber}
+                      </span>
+                    )}
+                  </div>
+                  <p
+                    className="text-[12px] md:text-[13px] font-semibold leading-snug"
+                    style={{
+                      color: isScanBlocked ? "#dc2626" : "var(--color-text-primary)",
+                    }}
+                  >
+                    {scanMessage}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* ── Header gradient strip ── */}
             <div
               className="relative px-4 pt-4 pb-5 overflow-hidden flex-shrink-0"
@@ -1154,6 +1246,7 @@ const LiveFeed = () => {
 
             {/* ── Info sections (scrollable) ── */}
             <div className="divide-y divide-[var(--color-border-soft)] transition-colors duration-300 overflow-y-auto flex-1 text-[13px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-[var(--color-border-soft)]">
               {/* Section: Identity */}
               <div className="px-4 py-2.5">
                 <p className="text-[8px] uppercase tracking-[0.3em] font-bold mb-2 text-[var(--color-text-dim)]">
@@ -1298,6 +1391,7 @@ const LiveFeed = () => {
                   </div>
                 </div>
               )}
+              </div>
 
               {/* Section: Vehicle Details */}
               {vehiclesList && vehiclesList.length > 0 && (
@@ -1738,21 +1832,36 @@ const LiveFeed = () => {
 
               {/* Access status bar */}
               <div
-                className="px-4 py-1 flex items-center justify-between transition-colors duration-300 flex-shrink-0"
+                className="px-4 py-2 flex items-center justify-between transition-colors duration-300 flex-shrink-0 border-t border-[var(--color-border-soft)]"
                 style={{ background: "var(--color-surface-1)" }}
               >
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2 min-w-0">
                   <div
-                    className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-                      scanType === "CHECK_OUT"
-                        ? "bg-orange-500"
-                        : "bg-green-500"
+                    className={`w-2 h-2 rounded-full animate-pulse flex-shrink-0 ${
+                      isScanBlocked
+                        ? "bg-red-500"
+                        : scanType === "CHECK_OUT"
+                          ? "bg-orange-500"
+                          : "bg-green-500"
                     }`}
                   />
-                  <span className="text-[9px] uppercase tracking-widest font-medium text-[var(--color-text-secondary)]">
-                    {scanType === "CHECK_OUT"
-                      ? "Second scan detected — checkout mode"
-                      : "Pass verified — check-in"}
+                  <span
+                    className="text-[10px] md:text-[11px] uppercase tracking-[0.12em] font-semibold truncate"
+                    style={{
+                      color: isScanBlocked ? "#dc2626" : "var(--color-text-secondary)",
+                    }}
+                  >
+                    {isScanBlocked
+                      ? scanNumber
+                        ? `${getOrdinal(scanNumber)} scan — check-in not allowed`
+                        : "Check-in not allowed"
+                      : scanType === "CHECK_OUT"
+                        ? scanNumber
+                          ? `${getOrdinal(scanNumber)} scan — visitor leaving`
+                          : "Visitor leaving — confirm check-out"
+                        : scanNumber
+                          ? `${getOrdinal(scanNumber)} scan — visitor entering`
+                          : "Visitor entering — confirm check-in"}
                   </span>
                 </div>
                 {scanType === "CHECK_OUT" ? (
@@ -1808,36 +1917,38 @@ const LiveFeed = () => {
                 borderTop: "1px solid var(--color-border-soft)",
               }}
             >
-              <button
-                onClick={handleCheckInOut}
-                disabled={isSubmitting}
-                className={`flex-1 py-2.5 font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all flex items-center justify-center gap-2 text-white disabled:opacity-50 disabled:cursor-not-allowed`}
-                style={{
-                  background:
-                    scanType === "CHECK_OUT"
-                      ? "linear-gradient(135deg, #ea580c, #f97316)"
-                      : "linear-gradient(135deg, #16a34a, #22c55e)",
-                  boxShadow:
-                    scanType === "CHECK_OUT"
-                      ? "0 4px 12px rgba(249, 115, 22, 0.25)"
-                      : "0 4px 12px rgba(34, 197, 94, 0.25)",
-                }}
-              >
-                {isSubmitting ? (
-                  <>
-                    <RefreshCw size={13} className="animate-spin" />
-                    Processing...
-                  </>
-                ) : scanType === "CHECK_OUT" ? (
-                  <>
-                    Check Out <LogOut size={13} />
-                  </>
-                ) : (
-                  <>
-                    Check In <LogIn size={13} />
-                  </>
-                )}
-              </button>
+              {!isScanBlocked && (
+                <button
+                  onClick={handleCheckInOut}
+                  disabled={isSubmitting}
+                  className="flex-1 py-2.5 font-black uppercase text-[9px] tracking-[0.22em] rounded-xl transition-all flex items-center justify-center gap-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    background:
+                      scanType === "CHECK_OUT"
+                        ? "linear-gradient(135deg, #ea580c, #f97316)"
+                        : "linear-gradient(135deg, #16a34a, #22c55e)",
+                    boxShadow:
+                      scanType === "CHECK_OUT"
+                        ? "0 4px 12px rgba(249, 115, 22, 0.25)"
+                        : "0 4px 12px rgba(34, 197, 94, 0.25)",
+                  }}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <RefreshCw size={13} className="animate-spin" />
+                      Processing...
+                    </>
+                  ) : scanType === "CHECK_OUT" ? (
+                    <>
+                      Check Out <LogOut size={13} />
+                    </>
+                  ) : (
+                    <>
+                      Check In <LogIn size={13} />
+                    </>
+                  )}
+                </button>
+              )}
               <button
                 onClick={handleResetNode}
                 disabled={isSubmitting}

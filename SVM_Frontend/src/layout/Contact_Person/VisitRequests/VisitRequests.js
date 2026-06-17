@@ -66,7 +66,10 @@ import {
 } from "lucide-react";
 import { setSelectedRequest } from "../../../reducers/contactPersonSlice";
 import { QRCodeSVG } from "qrcode.react";
-import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
+import {
+  mapJointRowsToSubVisitors,
+  resolveGatePassQrValue,
+} from "../../../utils/gatePassQrUtils";
 
 const StatusBadge = ({ status }) => {
   const s = (status || "").toString().trim().toUpperCase();
@@ -677,12 +680,20 @@ const VisitRequests = () => {
     setIsGeneratingQr(true);
 
     try {
-      const payload = {
-        id: gatePassId,
-        v: 1,
-        iat: Date.now(),
-      };
-      const encoded = await encodeSecureQrPayload(payload);
+      let jointData = null;
+      try {
+        const jointResponse = await VisitorService.GetVisitorJoint(req.VVR_Request_id);
+        jointData = jointResponse?.data;
+      } catch (jointErr) {
+        console.warn("Could not load joint visitors for gate pass QR:", jointErr);
+      }
+
+      const encoded = await resolveGatePassQrValue({
+        gatePassId,
+        subVisitors: mapJointRowsToSubVisitors(jointData),
+        gatePassMeta: gatePass,
+        preferCache: true,
+      });
       setEncodedQr(encoded);
     } catch (err) {
       console.error("Failed to generate secure QR:", err);

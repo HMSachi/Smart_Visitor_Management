@@ -16,7 +16,10 @@ import GatePassService from "../../../services/GatePassService";
 import VisitorService from "../../../services/VisitorService";
 import VisitorAccessTokenService from "../../../services/VisitorAccessTokenService";
 import VisitRequestService from "../../../services/VisitRequestService";
-import { encodeSecureQrPayload } from "../../../utils/secureQrPayload";
+import {
+  mapJointRowsToSubVisitors,
+  resolveGatePassQrValue,
+} from "../../../utils/gatePassQrUtils";
 import { useThemeMode } from "../../../theme/ThemeModeContext";
 // import SubVisitorQRGenerator from "../../../components/SubVisitorQRGenerator";
 
@@ -32,6 +35,7 @@ const GatePass = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const [gatePassData, setGatePassData] = useState(null);
+  const [resolvedPassId, setResolvedPassId] = useState(null);
   const [visitorJointData, setVisitorJointData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -86,9 +90,24 @@ const GatePass = () => {
             const requestDetails = vrResponse.data?.ResultSet?.[0] || vrResponse.data;
 
             if (requestDetails) {
+              let numericPassId = null;
+              try {
+                const allPassesRes = await GatePassService.GetAllGatePasses();
+                const allPasses =
+                  allPassesRes?.data?.ResultSet || allPassesRes?.data || [];
+                const matchedPass = (Array.isArray(allPasses) ? allPasses : []).find(
+                  (pass) => String(pass.VGP_Request_id) === String(requestId),
+                );
+                numericPassId = matchedPass?.VGP_Pass_id || matchedPass?.vgp_Pass_id || null;
+              } catch (passErr) {
+                console.warn("[GatePass] Could not resolve gate pass from request:", passErr);
+              }
+
+              setResolvedPassId(numericPassId);
+
               const formattedData = {
                 ...requestDetails,
-                VGP_Pass_id: gatePassId, // show token as the pass ID
+                VGP_Pass_id: numericPassId || gatePassId,
                 VGP_Request_id: requestId,
                 VVR_Places_to_Visit: requestDetails.VVR_Places_to_Visit || requestDetails.Places_to_Visit,
                 VVR_Visit_Date: requestDetails.VVR_Visit_Date || requestDetails.Visit_Date,
@@ -106,6 +125,7 @@ const GatePass = () => {
           }
         } else {
           // Standard gate pass path
+          setResolvedPassId(gatePassId);
           const response = await GatePassService.GetGatePassById(gatePassId);
 
           if (response?.data?.ResultSet && response.data.ResultSet.length > 0) {
@@ -225,100 +245,31 @@ const GatePass = () => {
     }
   }, [gatePassData]);
 
-  // Extract sub-visitor information from joint data
-  const subVisitors = useMemo(() => {
-    console.log("[GatePass] subVisitors useMemo triggered. visitorJointData:", visitorJointData);
+  const subVisitors = useMemo(
+    () => mapJointRowsToSubVisitors(visitorJointData),
+    [visitorJointData],
+  );
 
-    if (!visitorJointData) {
-      console.log("[GatePass] No visitorJointData available");
-      return [];
-    }
-
-    // Handle different response structures
-    let rows = [];
-
-    if (Array.isArray(visitorJointData)) {
-      rows = visitorJointData;
-    } else if (visitorJointData.ResultSet && Array.isArray(visitorJointData.ResultSet)) {
-      rows = visitorJointData.ResultSet;
-    } else if (visitorJointData.data && Array.isArray(visitorJointData.data)) {
-      rows = visitorJointData.data;
-    } else if (typeof visitorJointData === 'object') {
-      rows = [visitorJointData];
-    }
-
-    // Deduplicate by NIC so each sub-visitor appears only once.
-    const seen = new Set();
-    const visitors = [];
-    for (const row of rows) {
-      const nic = row.Visit_Group_NIC_Passport_Number || row.Members_NIC_Passport_Number || row.nic;
-      const name = row.Visitor_Group_Name || row.Group_Members || row.VVG_Visitor_Name || row.name;
-      if (!name) continue; // Skip rows with no sub-visitor name
-      const key = nic || name;
-      if (!seen.has(key)) {
-        seen.add(key);
-        visitors.push(row);
-      }
-    }
-
-    console.log("[GatePass] Extracted unique sub-visitors:", visitors);
-    return visitors;
-  }, [visitorJointData]);
-
-  const qrPayload = useMemo(() => {
-    console.log("[GatePass] Building QR Payload. gatePassData:", !!gatePassData, "subVisitors.length:", subVisitors?.length);
-    
-    if (!gatePassData) {
-      console.log("[GatePass] No gatePassData, returning null payload");
-      return null;
-    }
-    
-    const payload = {
-      id: gatePassId,
-      v: 1,
-      iat: Date.now(),
-    };
-
-    // Add sub-visitor information if available
-    if (subVisitors && subVisitors.length > 0) {
-      console.log("[GatePass] Adding subVisitors to QR payload. Count:", subVisitors.length);
-      const mapped = subVisitors.map((sv) => {
-        const mapped_name = sv.Visitor_Group_Name || sv.Group_Members || sv.VVG_Visitor_Name || sv.name || "N/A";
-        const mapped_nic = sv.Visit_Group_NIC_Passport_Number || sv.Members_NIC_Passport_Number || sv.VVG_NIC_Passport_Number || sv.nic || "N/A";
-        console.log("[GatePass] Mapped to - name:", mapped_name, "nic:", mapped_nic);
-        return {
-          name: mapped_name,
-          nic: mapped_nic,
-        };
-      });
-      payload.subVisitors = mapped;
-      console.log("[GatePass] Mapped subVisitors for QR:", mapped);
-    } else {
-      console.log("[GatePass] No sub-visitors to add. subVisitors is:", subVisitors);
-    }
-
-    console.log("[GatePass] FINAL QR Payload before encoding:", payload);
-    return payload;
-  }, [gatePassData, gatePassId, subVisitors]);
+  const qrPassId = useMemo(() => {
+    if (resolvedPassId) return resolvedPassId;
+    if (gatePassData?.VGP_Pass_id && !isToken) return gatePassData.VGP_Pass_id;
+    return isToken ? null : gatePassId;
+  }, [resolvedPassId, gatePassData, gatePassId, isToken]);
 
   useEffect(() => {
     const buildSecureQr = async () => {
-      console.log("[GatePass] buildSecureQr effect triggered. qrPayload:", qrPayload);
-      
-      if (!qrPayload) {
-        console.log("[GatePass] No qrPayload, skipping encoding");
+      if (!gatePassData || !qrPassId) {
         setEncodedQrValue("");
         return;
       }
 
       try {
-        console.log("[GatePass] Building secure QR with payload:", qrPayload);
-        console.log("[GatePass] Payload has subVisitors:", !!qrPayload.subVisitors, "count:", qrPayload.subVisitors?.length);
-        const encoded = await encodeSecureQrPayload(qrPayload);
-        console.log(
-          "[GatePass] QR encoded successfully, length:",
-          encoded.length,
-        );
+        const encoded = await resolveGatePassQrValue({
+          gatePassId: qrPassId,
+          subVisitors,
+          gatePassMeta: gatePassData,
+          preferCache: true,
+        });
         setEncodedQrValue(encoded);
       } catch (err) {
         console.error("[GatePass] Failed to encode secure QR payload:", err);
@@ -327,22 +278,10 @@ const GatePass = () => {
     };
 
     buildSecureQr();
-  }, [qrPayload]);
+  }, [gatePassData, qrPassId, subVisitors]);
 
-  // The QR value used for scanning.
-  // - Regular gate pass: encode the numeric VGP_Pass_id directly → scanner calls GetGatePassById(id)
-  // - Token-based pass (isToken=true): the gatePassId is a token string, NOT a VGP_Pass_id.
-  //   Encode a small JSON so the scanner knows to do a token lookup instead.
-  const displayQrValue = useMemo(() => {
-    if (!gatePassId) return encodedQrValue || "SVMQR_PENDING";
-    if (isToken) {
-      // Include the numeric requestId so the scanner can resolve the gate pass via the token
-      const requestId = gatePassData?.VGP_Request_id || gatePassData?.VVR_Request_id || null;
-      return JSON.stringify({ type: "token", token: String(gatePassId), requestId });
-    }
-    // Standard gate pass — plain numeric ID is enough
-    return String(gatePassId);
-  }, [gatePassId, isToken, gatePassData, encodedQrValue]);
+  const displayQrValue = encodedQrValue || "SVMQR_PENDING";
+  const displayPassNo = qrPassId || gatePassId;
 
   const handleDownloadQR = useCallback(() => {
     if (isDownloading) return;
@@ -408,7 +347,7 @@ const GatePass = () => {
 
       ctx.fillStyle = "#444444";
       ctx.font = "12px Arial, sans-serif";
-      ctx.fillText(`PASS NO: ${gatePassId || "N/A"}`, totalW / 2, footerTop + 38);
+      ctx.fillText(`PASS NO: ${displayPassNo || "N/A"}`, totalW / 2, footerTop + 38);
 
       ctx.fillStyle = "#666666";
       ctx.font = "11px Arial, sans-serif";
@@ -420,7 +359,7 @@ const GatePass = () => {
 
       const pngDataUrl = out.toDataURL("image/png", 1.0);
       const link = document.createElement("a");
-      link.download = `GatePass_${gatePassId || "Visitor"}.png`;
+      link.download = `GatePass_${displayPassNo || "Visitor"}.png`;
       link.href = pngDataUrl;
       document.body.appendChild(link);
       link.click();
@@ -430,7 +369,7 @@ const GatePass = () => {
     } finally {
       setIsDownloading(false);
     }
-  }, [gatePassId, visitorName, formattedDate, isDownloading]);
+  }, [displayPassNo, visitorName, formattedDate, isDownloading]);
 
   if (isLoading) {
     return (
@@ -474,7 +413,7 @@ const GatePass = () => {
       <div className="absolute bottom-0 left-0 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-blue-500/5 rounded-full blur-[100px] sm:blur-[150px] pointer-events-none"></div>
 
       {/* Hidden canvas for reliable PNG download */}
-      {qrPayload && (
+      {encodedQrValue && (
         <div
           ref={downloadCanvasWrapperRef}
           style={{ position: "fixed", left: "-9999px", top: "-9999px", opacity: 0, pointerEvents: "none", zIndex: -1 }}
@@ -536,7 +475,7 @@ const GatePass = () => {
 
           {/* QR Code Section */}
           <div className="px-5 sm:px-6 pt-6 pb-5 flex flex-col items-center justify-center text-center relative z-10 border-b border-[var(--color-border-soft)]">
-            {qrPayload ? (
+            {encodedQrValue ? (
               <>
                 {/* QR code — pure white, no overlays, maximum scannability */}
                 <div className="bg-white rounded-[16px] p-4 shadow-[0_4px_24px_rgba(0,0,0,0.13)] border border-gray-200 inline-block visitor-qr-svg-container">
@@ -553,7 +492,7 @@ const GatePass = () => {
                 {/* Pass No — clearly below QR box */}
                 <div className="mt-4 flex items-center justify-center gap-2">
                   <span className="text-[9px] font-bold text-[var(--color-text-dim)] uppercase tracking-[0.18em]">Pass No.</span>
-                  <span className="text-[var(--color-primary)] font-mono font-black text-[11px] tracking-wide break-all">{gatePassId}</span>
+                  <span className="text-[var(--color-primary)] font-mono font-black text-[11px] tracking-wide break-all">{displayPassNo}</span>
                 </div>
 
                 {/* Identity label */}
@@ -624,7 +563,7 @@ const GatePass = () => {
           <div className="px-4 sm:px-5 py-4 sm:py-5 bg-white/[0.015] relative z-10 flex gap-2 sm:gap-3">
             <button
               onClick={handleDownloadQR}
-              disabled={isDownloading || !qrPayload}
+              disabled={isDownloading || !encodedQrValue}
               className="flex-1 py-3 sm:py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-60 disabled:cursor-not-allowed text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.16em] rounded-xl transition-all shadow-[0_4px_14px_rgba(200,16,46,0.25)] hover:shadow-[0_6px_20px_rgba(200,16,46,0.35)] flex items-center justify-center gap-1.5 sm:gap-2 border-0 cursor-pointer"
             >
               <Download size={13} />
