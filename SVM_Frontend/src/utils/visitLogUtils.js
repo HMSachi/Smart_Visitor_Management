@@ -128,6 +128,7 @@ export const getVisitLogPassId = (log) =>
   null;
 
 export const getVisitLogCheckInTime = (log) =>
+  log?.VVL_Check_in_Time ||
   log?.VVL_Check_In_Time ||
   log?.VVL_CheckInTime ||
   log?.VVL_In_Time ||
@@ -140,6 +141,7 @@ export const getVisitLogCheckInTime = (log) =>
   null;
 
 export const getVisitLogCheckOutTime = (log) =>
+  log?.VVL_Check_out_Time ||
   log?.VVL_Check_Out_Time ||
   log?.VVL_CheckOutTime ||
   log?.VVL_Out_Time ||

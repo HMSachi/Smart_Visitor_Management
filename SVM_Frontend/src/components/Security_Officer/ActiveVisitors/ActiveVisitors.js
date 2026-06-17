@@ -68,8 +68,8 @@ const getField = (obj, ...keys) => {
   return null;
 };
 
-const getInTime  = (log) => getField(log, "VVL_Created_Date", "VVL_Check_In_Time", "VVL_CheckInTime", "VVL_In_Time", "VVL_Entry_Time", "Check_In_Time", "CheckInTime", "Created_Date", "CreatedDate", "vvl_created_date", "vvl_check_in_time") || log?.checkInTime;
-const getOutTime = (log) => getField(log, "VVL_Check_Out_Time", "VVL_Out_Time", "VVL_CheckOutTime", "Check_Out_Time", "CheckOutTime", "vvl_check_out_time") || log?.checkOutTime;
+const getInTime  = (log) => getField(log, "VVL_Check_in_Time", "VVL_Created_Date", "VVL_Check_In_Time", "VVL_CheckInTime", "VVL_In_Time", "VVL_Entry_Time", "Check_In_Time", "CheckInTime", "Created_Date", "CreatedDate", "vvl_created_date", "vvl_check_in_time") || log?.checkInTime;
+const getOutTime = (log) => getField(log, "VVL_Check_out_Time", "VVL_Check_Out_Time", "VVL_Out_Time", "VVL_CheckOutTime", "Check_Out_Time", "CheckOutTime", "vvl_check_out_time") || log?.checkOutTime;
 const getPassId  = (log) => cleanPassId(getField(log, "VVL_Pass_id", "VGP_Pass_id", "PassId", "Pass_id", "vvl_pass_id") || log?.passId);
 const getVisitId = (log) => getField(log, "VVL_Visit_id", "VisitLogId", "id", "vvl_visit_id") || log?.id;
 const getAreas   = (log) => getField(log, "VVL_Accessed_Areas", "Accessed_Areas") || log?.accessedAreas || "General Entry";

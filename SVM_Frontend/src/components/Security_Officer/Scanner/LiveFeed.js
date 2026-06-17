@@ -33,6 +33,7 @@ import {
   AlertCircle,
   Car,
   Shield,
+  Calendar,
 } from "lucide-react";
 import {
   GetGatePassById,
@@ -655,6 +656,7 @@ const LiveFeed = () => {
         "Phone number": "N/A",
         Company: "N/A",
         "Visiting purpose": "N/A",
+        "Visit Date": subVisitorApiData?.VVR_Visit_Date || qrData?.VVR_Visit_Date || qrData?.["Visit Date"] || "N/A",
       };
 
       // Add items from QR payload (compact format: n=name, q=quantity)
@@ -709,6 +711,12 @@ const LiveFeed = () => {
         qrData?.["Visiting area"] ||
         passDetails?.VVR_Places_to_Visit ||
         passDetails?.VGP_Visiting_Area ||
+        "N/A",
+      "Visit Date":
+        qrData?.VVR_Visit_Date ||
+        qrData?.["Visit Date"] ||
+        passDetails?.VVR_Visit_Date ||
+        passDetails?.VGP_Issue_Date ||
         "N/A",
     };
 
@@ -1224,6 +1232,14 @@ const LiveFeed = () => {
                             value={profileData["Visiting area"]}
                           />
                         )}
+                      {profileData["Visit Date"] &&
+                        profileData["Visit Date"] !== "N/A" && (
+                          <InfoRow
+                            icon={<Calendar size={14} />}
+                            label="Visit Date"
+                            value={profileData["Visit Date"]}
+                          />
+                        )}
                     </div>
                   </div>
                 )}
@@ -1271,6 +1287,14 @@ const LiveFeed = () => {
                       label="Location"
                       value={profileData["Visiting area"]}
                     />
+                    {profileData["Visit Date"] &&
+                      profileData["Visit Date"] !== "N/A" && (
+                        <InfoRow
+                          icon={<Calendar size={14} />}
+                          label="Visit Date"
+                          value={profileData["Visit Date"]}
+                        />
+                      )}
                   </div>
                 </div>
               )}
