@@ -190,6 +190,132 @@ export const getVisitExpiryDate = (pass = {}) => {
 
 export const hasVisitLogCheckedOut = (log) => Boolean(getVisitLogCheckOutTime(log));
 
+export const getVisitorIdFromRecord = (record = {}) =>
+  record?.VV_Visitor_id ||
+  record?.VGP_Visitor_id ||
+  record?.Visitor_Id ||
+  record?.Visitor_ID ||
+  record?.VVR_Visitor_id ||
+  null;
+
+export const getNicFromRecord = (record = {}) =>
+  record?.VV_NIC_Passport_NO ||
+  record?.Visitor_NIC ||
+  record?.NIC ||
+  null;
+
+export const normalizeNic = (nic) => {
+  if (!nic || nic === "N/A") return null;
+  return String(nic).trim().toUpperCase().replace(/\s+/g, "");
+};
+
+export const isSameCalendarDay = (dateA, dateB = new Date()) => {
+  const a = parseDateValue(dateA);
+  const b = parseDateValue(dateB);
+  if (!a || !b) return false;
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+};
+
+export const getVisitDateFromPass = (pass = {}) =>
+  pass?.VVR_Visit_Date ||
+  pass?.Visit_Date ||
+  pass?.VGP_Issue_Date ||
+  null;
+
+export const validateVisitDateForToday = (pass = {}) => {
+  const visitDate = getVisitDateFromPass(pass);
+  if (!visitDate) {
+    return { valid: true };
+  }
+
+  if (isSameCalendarDay(visitDate, new Date())) {
+    return { valid: true };
+  }
+
+  const formatted = formatDisplayDate(visitDate);
+  const today = formatDisplayDate(new Date());
+  return {
+    valid: false,
+    title: "Wrong Visit Date",
+    message: `This QR is for ${formatted}, not today (${today}). Please use the pass on the correct visit date.`,
+  };
+};
+
+export const findOpenInsideByVisitorOrNic = (
+  logs,
+  passLookup,
+  passDetails,
+  excludePassId = null,
+) => {
+  const visitorId = getVisitorIdFromRecord(passDetails);
+  const nic = normalizeNic(getNicFromRecord(passDetails));
+
+  for (const log of unwrapApiList(logs)) {
+    if (hasVisitLogCheckedOut(log)) continue;
+
+    const logPassId = getVisitLogPassId(log);
+    if (excludePassId && String(logPassId) === String(excludePassId)) continue;
+
+    const pass = passLookup?.get?.(cleanPassId(logPassId)) || {};
+    const merged = { ...log, ...pass };
+    const logVisitorId = getVisitorIdFromRecord(merged);
+    const logNic = normalizeNic(getNicFromRecord(merged));
+
+    if (visitorId && logVisitorId && String(visitorId) === String(logVisitorId)) {
+      return { log, pass, matchType: "visitorId", matchedId: visitorId };
+    }
+
+    if (nic && logNic && nic === logNic) {
+      return { log, pass, matchType: "nic", matchedNic: nic };
+    }
+  }
+
+  return null;
+};
+
+export const checkDuplicateInsideVisitor = (logs, passLookup, passDetails) => {
+  const excludePassId = passDetails?.VGP_Pass_id;
+  const visitorId = getVisitorIdFromRecord(passDetails);
+  const visitorName =
+    passDetails?.Visitor_Name || passDetails?.VV_Name || "This visitor";
+  const nic = getNicFromRecord(passDetails);
+
+  const duplicate = findOpenInsideByVisitorOrNic(
+    logs,
+    passLookup,
+    passDetails,
+    excludePassId,
+  );
+
+  if (!duplicate) return null;
+
+  const dupPassId = cleanPassId(getVisitLogPassId(duplicate.log));
+  const dupName =
+    duplicate.pass?.Visitor_Name ||
+    duplicate.pass?.VV_Name ||
+    duplicate.log?.Visitor_Name ||
+    visitorName;
+  const entryTime = formatDisplayTime(getVisitLogCheckInTime(duplicate.log));
+
+  if (duplicate.matchType === "visitorId") {
+    return {
+      blocked: true,
+      title: "Already Inside",
+      message: `${visitorName} (Visitor ID: ${visitorId}) is already inside since ${entryTime} with Pass ID ${dupPassId}. The same person cannot enter again with another QR code until they check out.`,
+    };
+  }
+
+  return {
+    blocked: true,
+    title: "Already Inside",
+    message: `A person with NIC ${nic || "N/A"} is already inside since ${entryTime} with Pass ID ${dupPassId} (${dupName}). The same person cannot enter again with another QR code until they check out.`,
+  };
+};
+
 export const findOpenVisitLog = (logs, passId) =>
   unwrapApiList(logs).find(
     (log) =>

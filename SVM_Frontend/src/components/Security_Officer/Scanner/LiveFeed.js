@@ -64,6 +64,9 @@ import {
   resolveScanSession,
   toLocalApiDateTime,
   unwrapApiList,
+  createPassLookup,
+  validateVisitDateForToday,
+  checkDuplicateInsideVisitor,
 } from "../../../utils/visitLogUtils";
 
 // ── Helper: a single icon + label + value row ──────────────────────────────
@@ -395,6 +398,19 @@ const LiveFeed = () => {
 
         setSubVisitorApiData(matchedRow);
 
+        const subVisitDateCheck = validateVisitDateForToday({
+          VVR_Visit_Date:
+            matchedRow?.VVR_Visit_Date ||
+            parsedQrData?.VVR_Visit_Date ||
+            parsedQrData?.["Visit Date"],
+        });
+        if (!subVisitDateCheck.valid) {
+          setScanStatus("error");
+          setScanMessage(subVisitDateCheck.message);
+          setIsLoading(false);
+          return;
+        }
+
         // Fetch vehicles for this request
         try {
           const vehicleResponse = await VehicleService.GetAllVehicles();
@@ -447,6 +463,14 @@ const LiveFeed = () => {
       console.log("[LiveFeed] Database lookup result:", details);
 
       if (details && details.VGP_Pass_id) {
+        const visitDateCheck = validateVisitDateForToday(details);
+        if (!visitDateCheck.valid) {
+          setScanStatus("error");
+          setScanMessage(visitDateCheck.message);
+          setIsLoading(false);
+          return;
+        }
+
         // Database validation successful
         setPassDetails(details);
         persistGatePassMeta(details);
@@ -454,8 +478,12 @@ const LiveFeed = () => {
 
         // Use visit-log history to decide entry vs exit (1st scan = in, 2nd = out, 3rd = in…).
         try {
-          const allLogsResponse = await VisitLogService.GetAllVisitLogs();
+          const [allLogsResponse, passesResponse] = await Promise.all([
+            VisitLogService.GetAllVisitLogs(),
+            GatePassService.GetAllGatePasses(),
+          ]);
           const allLogs = unwrapApiList(allLogsResponse);
+          const passLookup = createPassLookup(unwrapApiList(passesResponse));
           const session = resolveScanSession(allLogs, details.VGP_Pass_id);
 
           setCurrentVisitLog(session.openLog);
@@ -463,6 +491,19 @@ const LiveFeed = () => {
           setScanNumber(session.scanNumber);
           setScanSessionTitle(session.title);
           setScanMessage(session.message);
+
+          if (session.scanType === "CHECK_IN") {
+            const duplicateCheck = checkDuplicateInsideVisitor(
+              allLogs,
+              passLookup,
+              details,
+            );
+            if (duplicateCheck?.blocked) {
+              setScanType("BLOCKED");
+              setScanSessionTitle(duplicateCheck.title);
+              setScanMessage(duplicateCheck.message);
+            }
+          }
 
           console.log(
             "[LiveFeed] Scan session:",
@@ -859,14 +900,38 @@ const LiveFeed = () => {
       }
 
       if (scanType === "CHECK_IN") {
-        const allLogsResponse = await VisitLogService.GetAllVisitLogs();
+        const [allLogsResponse, passesResponse] = await Promise.all([
+          VisitLogService.GetAllVisitLogs(),
+          GatePassService.GetAllGatePasses(),
+        ]);
         const allLogs = unwrapApiList(allLogsResponse);
+        const passLookup = createPassLookup(unwrapApiList(passesResponse));
         const session = resolveScanSession(allLogs, passDetails.VGP_Pass_id);
         if (session.scanType === "BLOCKED") {
           setScanType("BLOCKED");
           setScanNumber(session.scanNumber);
           setScanSessionTitle(session.title);
           setScanMessage(session.message);
+          return;
+        }
+
+        const duplicateCheck = checkDuplicateInsideVisitor(
+          allLogs,
+          passLookup,
+          passDetails,
+        );
+        if (duplicateCheck?.blocked) {
+          setScanType("BLOCKED");
+          setScanSessionTitle(duplicateCheck.title);
+          setScanMessage(duplicateCheck.message);
+          return;
+        }
+
+        const visitDateCheck = validateVisitDateForToday(passDetails);
+        if (!visitDateCheck.valid) {
+          setScanType("BLOCKED");
+          setScanSessionTitle(visitDateCheck.title);
+          setScanMessage(visitDateCheck.message);
           return;
         }
 

@@ -3,6 +3,7 @@ import {
   Activity,
   Building,
   Clock,
+  Filter,
   LogOut,
   MapPin,
   Phone,
@@ -107,6 +108,31 @@ const Badge = ({ children, color = "gray" }) => {
       {children}
     </span>
   );
+};
+
+const StatusFilterSelect = ({ value, onChange, className = "" }) => (
+  <div className={`relative ${className}`}>
+    <Filter
+      size={14}
+      className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)]"
+    />
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full rounded-[5px] border border-[var(--color-border-soft)] bg-[var(--color-surface-1)] py-2 pl-9 pr-3 text-[12px] text-[var(--color-text-primary)] outline-none transition focus:border-primary/50 sm:w-44"
+    >
+      <option value="all">All visitors</option>
+      <option value="inside">Inside only</option>
+      <option value="outside">Outside only</option>
+    </select>
+  </div>
+);
+
+const matchesStatusFilter = (log, statusFilter) => {
+  const isInside = !getOutTime(log);
+  if (statusFilter === "inside") return isInside;
+  if (statusFilter === "outside") return !isInside;
+  return true;
 };
 
 const StatCard = ({ icon: Icon, label, value, sub }) => (
@@ -417,6 +443,7 @@ const LeftVisitors = ({ isAdmin = false }) => {
   const [syncing, setSyncing] = useState(false);
   const [error, setError]     = useState("");
   const [query, setQuery]     = useState("");
+  const [statusFilter, setStatusFilter] = useState("outside");
 
   const load = useCallback(async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
@@ -434,15 +461,12 @@ const LeftVisitors = ({ isAdmin = false }) => {
         normalizeVisitLog(log, passLookup.get(cleanPassId(getVisitLogPassId(log))) || {})
       );
       
-      // Only those with a checkout time
-      const departed = normalized.filter((log) => !!getOutTime(log));
-      // Newest first
-      departed.sort((a, b) => {
-        const ta = safeDate(getOutTime(a))?.getTime() || 0;
-        const tb = safeDate(getOutTime(b))?.getTime() || 0;
+      normalized.sort((a, b) => {
+        const ta = safeDate(getOutTime(a) || getInTime(a))?.getTime() || 0;
+        const tb = safeDate(getOutTime(b) || getInTime(b))?.getTime() || 0;
         return tb - ta;
       });
-      setLogs(departed);
+      setLogs(normalized);
     } catch (e) {
       console.error(e);
       setError("Could not load departed visitors. Please check the connection.");
@@ -455,11 +479,15 @@ const LeftVisitors = ({ isAdmin = false }) => {
   useEffect(() => { load(); }, [load]);
 
   const filtered = logs.filter((log) => {
+    if (!matchesStatusFilter(log, statusFilter)) return false;
     if (!query.trim()) return true;
     const q = query.toLowerCase();
     return [getName(log), getNIC(log), String(getPassId(log) || ""), getAreas(log)]
       .some((v) => String(v).toLowerCase().includes(q));
   });
+
+  const insideCount = logs.filter((l) => !getOutTime(l)).length;
+  const outsideCount = logs.filter((l) => !!getOutTime(l)).length;
 
   return (
     <div className="space-y-5">
@@ -488,9 +516,9 @@ const LeftVisitors = ({ isAdmin = false }) => {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <StatCard icon={LogOut}      label="Total checked out"  value={logs.length}  sub="Since last data clear" />
-        <StatCard icon={CheckCircle2} label="Completed visits"   value={logs.length}  sub="With full in/out record" />
-        <StatCard icon={Activity}    label="All logs"            value={logs.length}  sub="Sorted newest first" />
+        <StatCard icon={LogOut}      label="Checked out"    value={outsideCount}  sub="Visitors who left" />
+        <StatCard icon={Users}       label="Inside now"     value={insideCount}   sub="Still on premises" />
+        <StatCard icon={Activity}    label="Showing"        value={filtered.length} sub="After current filters" />
       </div>
 
       {/* Table */}
@@ -498,16 +526,19 @@ const LeftVisitors = ({ isAdmin = false }) => {
         <div className="flex flex-col gap-3 border-b border-[var(--color-border-soft)] p-4 sm:flex-row sm:items-center sm:justify-between">
           <Badge color="orange">
             <span className="h-1.5 w-1.5 rounded-full bg-orange-500 inline-block" />
-            {filtered.length} departed visitor{filtered.length !== 1 ? "s" : ""}
+            {filtered.length} record{filtered.length !== 1 ? "s" : ""}
           </Badge>
-          <div className="relative w-full sm:max-w-xs">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)]" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, NIC, pass or area…"
-              className="w-full rounded-[5px] border border-[var(--color-border-soft)] bg-[var(--color-surface-1)] py-2 pl-9 pr-3 text-[12px] outline-none transition focus:border-primary/50"
-            />
+          <div className="flex w-full flex-col gap-2 sm:max-w-xl sm:flex-row">
+            <StatusFilterSelect value={statusFilter} onChange={setStatusFilter} />
+            <div className="relative w-full sm:flex-1">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)]" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search by name, NIC, pass or area…"
+                className="w-full rounded-[5px] border border-[var(--color-border-soft)] bg-[var(--color-surface-1)] py-2 pl-9 pr-3 text-[12px] outline-none transition focus:border-primary/50"
+              />
+            </div>
           </div>
         </div>
 
@@ -522,8 +553,8 @@ const LeftVisitors = ({ isAdmin = false }) => {
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-orange-500/10 text-orange-500 mb-4">
               <LogOut size={26} />
             </div>
-            <p className="text-sm font-semibold text-[var(--color-text-primary)]">No departed visitors yet</p>
-            <p className="mt-1 text-[12px] text-[var(--color-text-secondary)]">Check-out a visitor from the Inside Visitors page.</p>
+            <p className="text-sm font-semibold text-[var(--color-text-primary)]">No visitors match your filters</p>
+            <p className="mt-1 text-[12px] text-[var(--color-text-secondary)]">Try changing the status filter or search term.</p>
           </div>
         ) : (
           <>
@@ -533,20 +564,27 @@ const LeftVisitors = ({ isAdmin = false }) => {
                 const visitId = getVisitId(log);
                 const inTime  = getInTime(log);
                 const outTime = getOutTime(log);
+                const isInside = !outTime;
                 return (
                   <div key={visitId || getPassId(log)} className="rounded-[6px] border border-[var(--color-border-soft)] bg-[var(--color-surface-1)] p-4">
                     <div className="flex items-center gap-3 mb-3">
-                      <Avatar name={getName(log)} dot="bg-orange-500" />
+                      <Avatar name={getName(log)} dot={isInside ? "bg-green-500" : "bg-orange-500"} />
                       <div className="min-w-0 flex-1">
                         <p className="font-bold text-sm truncate">{getName(log)}</p>
                         <p className="text-[11px] text-[var(--color-text-secondary)]">NIC/Passport: {getNIC(log)}</p>
                       </div>
-                      <Badge color="orange">Left</Badge>
+                      <Badge color={isInside ? "green" : "orange"}>{isInside ? "Inside" : "Left"}</Badge>
                     </div>
                     <div className="space-y-1.5 text-[12px] text-[var(--color-text-secondary)]">
                       <div className="flex items-center gap-2"><Clock size={13} className="text-green-500" /><span>In: {formatTime(inTime)}</span></div>
-                      <div className="flex items-center gap-2"><LogOut size={13} className="text-orange-500" /><span>Out: {formatTime(outTime)}</span></div>
-                      <div className="flex items-center gap-2"><Clock size={13} className="text-blue-500" /><span>Duration: {calcDuration(inTime, outTime)}</span></div>
+                      {outTime ? (
+                        <div className="flex items-center gap-2"><LogOut size={13} className="text-orange-500" /><span>Out: {formatTime(outTime)}</span></div>
+                      ) : (
+                        <div className="flex items-center gap-2"><Clock size={13} className="text-blue-500" /><span>Time spent: {calcDuration(inTime, null)}</span></div>
+                      )}
+                      {outTime && (
+                        <div className="flex items-center gap-2"><Clock size={13} className="text-blue-500" /><span>Duration: {calcDuration(inTime, outTime)}</span></div>
+                      )}
                       <div className="flex items-center gap-2"><MapPin size={13} className="text-primary" /><span className="truncate">{getAreas(log)}</span></div>
                       <div className="flex items-center gap-2"><Phone size={13} /><span>{getPhone(log)}</span></div>
                     </div>
@@ -574,11 +612,12 @@ const LeftVisitors = ({ isAdmin = false }) => {
                     const visitId = getVisitId(log);
                     const inTime  = getInTime(log);
                     const outTime = getOutTime(log);
+                    const isInside = !outTime;
                     return (
                       <tr key={visitId || getPassId(log)} className="transition hover:bg-[var(--color-surface-1)]">
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <Avatar name={getName(log)} dot="bg-orange-500" />
+                            <Avatar name={getName(log)} dot={isInside ? "bg-green-500" : "bg-orange-500"} />
                             <div>
                               <p className="text-sm font-bold text-[var(--color-text-primary)]">{getName(log)}</p>
                               <p className="text-[11px] text-[var(--color-text-secondary)]">NIC/Passport: {getNIC(log)}</p>
@@ -595,13 +634,17 @@ const LeftVisitors = ({ isAdmin = false }) => {
                           </div>
                         </td>
                         <td className="px-5 py-4">
-                          <div className="flex items-center gap-2 text-[12px]">
-                            <LogOut size={14} className="text-orange-500 shrink-0" />
-                            <div>
-                              <p className="font-medium text-[var(--color-text-primary)]">{formatTime(outTime)}</p>
-                              <p className="text-[11px] text-[var(--color-text-dim)]">{outTime ? new Date(outTime).toLocaleDateString() : ""}</p>
+                          {outTime ? (
+                            <div className="flex items-center gap-2 text-[12px]">
+                              <LogOut size={14} className="text-orange-500 shrink-0" />
+                              <div>
+                                <p className="font-medium text-[var(--color-text-primary)]">{formatTime(outTime)}</p>
+                                <p className="text-[11px] text-[var(--color-text-dim)]">{new Date(outTime).toLocaleDateString()}</p>
+                              </div>
                             </div>
-                          </div>
+                          ) : (
+                            <span className="text-[11px] text-[var(--color-text-dim)]">Still inside</span>
+                          )}
                         </td>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-2 text-[12px] text-blue-500">
@@ -621,9 +664,9 @@ const LeftVisitors = ({ isAdmin = false }) => {
                           <div className="flex items-center gap-1.5"><Building size={13} /><span>{getCompany(log)}</span></div>
                         </td>
                         <td className="px-5 py-4 text-center">
-                          <Badge color="orange">
-                            <span className="h-1.5 w-1.5 rounded-full bg-orange-500 inline-block" />
-                            Left
+                          <Badge color={isInside ? "green" : "orange"}>
+                            <span className={`h-1.5 w-1.5 rounded-full inline-block ${isInside ? "bg-green-500" : "bg-orange-500"}`} />
+                            {isInside ? "Inside" : "Left"}
                           </Badge>
                         </td>
                       </tr>
@@ -646,6 +689,7 @@ const AllVisitorLogs = () => {
   const [syncing, setSyncing] = useState(false);
   const [error, setError]     = useState("");
   const [query, setQuery]     = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const load = useCallback(async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
@@ -684,6 +728,7 @@ const AllVisitorLogs = () => {
   const leftCount   = logs.filter((l) => !!getOutTime(l)).length;
 
   const filtered = logs.filter((log) => {
+    if (!matchesStatusFilter(log, statusFilter)) return false;
     if (!query.trim()) return true;
     const q = query.toLowerCase();
     return [getName(log), getNIC(log), String(getPassId(log) || ""), getAreas(log)]
@@ -721,14 +766,17 @@ const AllVisitorLogs = () => {
       <div className="rounded-[6px] border border-[var(--color-border-soft)] bg-[var(--color-bg-paper)] shadow-sm">
         <div className="flex flex-col gap-3 border-b border-[var(--color-border-soft)] p-4 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-[12px] font-semibold text-[var(--color-text-secondary)]">{filtered.length} records</span>
-          <div className="relative w-full sm:max-w-xs">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)]" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search name, NIC, pass, area…"
-              className="w-full rounded-[5px] border border-[var(--color-border-soft)] bg-[var(--color-surface-1)] py-2 pl-9 pr-3 text-[12px] outline-none transition focus:border-primary/50"
-            />
+          <div className="flex w-full flex-col gap-2 sm:max-w-xl sm:flex-row">
+            <StatusFilterSelect value={statusFilter} onChange={setStatusFilter} />
+            <div className="relative w-full sm:flex-1">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)]" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search name, NIC, pass, area…"
+                className="w-full rounded-[5px] border border-[var(--color-border-soft)] bg-[var(--color-surface-1)] py-2 pl-9 pr-3 text-[12px] outline-none transition focus:border-primary/50"
+              />
+            </div>
           </div>
         </div>
 
